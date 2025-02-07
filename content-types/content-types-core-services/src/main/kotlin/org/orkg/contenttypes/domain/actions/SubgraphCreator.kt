@@ -18,15 +18,15 @@ import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
-import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.input.UpdateListUseCase
 import org.orkg.graph.output.StatementRepository
 
 class SubgraphCreator(
     private val classService: ClassUseCases,
     private val unsafeResourceUseCases: UnsafeResourceUseCases,
-    private val statementService: StatementUseCases,
+    private val unsafeStatementUseCases: UnsafeStatementUseCases,
     private val literalService: LiteralUseCases,
     private val predicateService: PredicateUseCases,
     private val statementRepository: StatementRepository,
@@ -139,7 +139,7 @@ class SubgraphCreator(
                             label = description
                         )
                     )
-                    statementService.add(
+                    unsafeStatementUseCases.create(
                         CreateStatementUseCase.CreateCommand(
                             contributorId = contributorId,
                             subjectId = predicate,
@@ -191,7 +191,7 @@ class SubgraphCreator(
             val `object` = resolve(objectId, lookup)
             val hasTempId = subjectId.isTempId || predicateId.isTempId || objectId.isTempId
             if (hasTempId || statementRepository.findAll(subjectId = subject, predicateId = predicate, objectId = `object`, pageable = PageRequests.SINGLE).isEmpty) {
-                statementService.add(
+                unsafeStatementUseCases.create(
                     CreateStatementUseCase.CreateCommand(
                         contributorId = contributorId,
                         subjectId = subject,

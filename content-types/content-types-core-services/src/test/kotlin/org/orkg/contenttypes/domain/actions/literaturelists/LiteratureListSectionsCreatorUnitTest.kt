@@ -11,14 +11,14 @@ import org.orkg.contenttypes.input.testing.fixtures.createLiteratureListCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateStatementUseCase
-import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 internal class LiteratureListSectionsCreatorUnitTest : MockkBaseTest {
-    private val statementService: StatementUseCases = mockk()
+    private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
     private val abstractLiteratureListSectionCreator: AbstractLiteratureListSectionCreator = mockk()
 
     private val literatureListSectionsCreator = LiteratureListSectionsCreator(
-        statementService, abstractLiteratureListSectionCreator
+        unsafeStatementUseCases, abstractLiteratureListSectionCreator
     )
 
     @Test
@@ -45,7 +45,7 @@ internal class LiteratureListSectionsCreatorUnitTest : MockkBaseTest {
         val sectionId2 = ThingId("R789")
 
         every { abstractLiteratureListSectionCreator.create(command.contributorId, any()) } returns sectionId1 andThen sectionId2
-        every { statementService.add(any()) } returns StatementId("S1")
+        every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
 
         literatureListSectionsCreator(command, state)
 
@@ -53,7 +53,7 @@ internal class LiteratureListSectionsCreatorUnitTest : MockkBaseTest {
             abstractLiteratureListSectionCreator.create(command.contributorId, command.sections.first())
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = state.literatureListId!!,
@@ -66,7 +66,7 @@ internal class LiteratureListSectionsCreatorUnitTest : MockkBaseTest {
             abstractLiteratureListSectionCreator.create(command.contributorId, command.sections.last())
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = state.literatureListId!!,

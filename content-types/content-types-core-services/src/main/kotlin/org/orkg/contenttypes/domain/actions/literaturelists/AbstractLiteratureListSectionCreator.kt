@@ -12,11 +12,11 @@ import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 class AbstractLiteratureListSectionCreator(
-    private val statementService: StatementUseCases,
+    private val unsafeStatementUseCases: UnsafeStatementUseCases,
     private val unsafeResourceUseCases: UnsafeResourceUseCases,
     private val literalService: LiteralUseCases
 ) {
@@ -40,7 +40,7 @@ class AbstractLiteratureListSectionCreator(
                 contributorId = contributorId
             )
         )
-        statementService.add(
+        unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = contributorId,
                 subjectId = entryId,
@@ -55,7 +55,7 @@ class AbstractLiteratureListSectionCreator(
                     label = description
                 )
             )
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = entryId,
@@ -80,7 +80,7 @@ class AbstractLiteratureListSectionCreator(
         )
         section.entries.forEach {
             val entryId = createListSectionEntry(contributorId, it)
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = sectionId,
@@ -110,7 +110,7 @@ class AbstractLiteratureListSectionCreator(
                 datatype = Literals.XSD.INT.prefixedUri
             )
         )
-        statementService.add(
+        unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = contributorId,
                 subjectId = sectionId,
@@ -124,7 +124,7 @@ class AbstractLiteratureListSectionCreator(
                 label = section.text
             )
         )
-        statementService.add(
+        unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = contributorId,
                 subjectId = sectionId,

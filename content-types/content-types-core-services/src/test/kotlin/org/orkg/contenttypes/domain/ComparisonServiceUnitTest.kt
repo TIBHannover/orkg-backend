@@ -43,6 +43,7 @@ import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ListRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
@@ -63,6 +64,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
     private val resourceService: ResourceUseCases = mockk()
     private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
+    private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()
     private val listService: ListUseCases = mockk()
     private val listRepository: ListRepository = mockk()
@@ -82,6 +84,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
         resourceService = resourceService,
         unsafeResourceUseCases = unsafeResourceUseCases,
         statementService = statementService,
+        unsafeStatementUseCases = unsafeStatementUseCases,
         literalService = literalService,
         listService = listService,
         listRepository = listRepository,
@@ -636,7 +639,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
             )
         } returns resourceId
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = command.comparisonId,
@@ -670,7 +673,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
             )
         } returns descriptionLiteralId
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = resourceId,
@@ -680,7 +683,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
             )
         } returns StatementId("S1")
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = resourceId,
@@ -690,7 +693,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
             )
         } returns StatementId("S2")
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = resourceId,
@@ -713,7 +716,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = command.comparisonId,
@@ -747,7 +750,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = resourceId,
@@ -757,7 +760,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = resourceId,
@@ -767,7 +770,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = resourceId,
@@ -834,7 +837,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
             )
         } returns figureId
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = command.comparisonId,
@@ -860,7 +863,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
             )
         } returns description.id
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = figureId,
@@ -870,7 +873,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
             )
         } returns StatementId("S2")
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = figureId,
@@ -893,7 +896,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = command.comparisonId,
@@ -919,7 +922,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = figureId,
@@ -929,7 +932,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = figureId,

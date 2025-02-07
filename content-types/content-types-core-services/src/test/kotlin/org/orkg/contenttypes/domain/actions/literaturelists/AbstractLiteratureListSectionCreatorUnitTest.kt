@@ -19,16 +19,17 @@ import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
-    private val statementService: StatementUseCases = mockk()
+    private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
     private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()
 
-    private val abstractLiteratureListSectionCreator =
-        AbstractLiteratureListSectionCreator(statementService, unsafeResourceUseCases, literalService)
+    private val abstractLiteratureListSectionCreator = AbstractLiteratureListSectionCreator(
+        unsafeStatementUseCases, unsafeResourceUseCases, literalService
+    )
 
     @Test
     fun `Given a list section definition, when creating a section entry with a description, it returns success`() {
@@ -61,7 +62,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
             )
         } returns entryId
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = sectionId,
@@ -71,7 +72,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
             )
         } returns StatementId("S1")
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = entryId,
@@ -82,7 +83,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
         } returns StatementId("S2")
         every { literalService.create(any()) } returns descriptionId
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = entryId,
@@ -113,7 +114,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = sectionId,
@@ -123,7 +124,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = entryId,
@@ -141,7 +142,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = entryId,
@@ -181,7 +182,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
             )
         } returns entryId
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = sectionId,
@@ -191,7 +192,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
             )
         } returns StatementId("S1")
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = entryId,
@@ -222,7 +223,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = sectionId,
@@ -232,7 +233,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = entryId,
@@ -270,7 +271,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
             )
         } returns headingSizeId
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = sectionId,
@@ -288,7 +289,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
             )
         } returns textId
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = sectionId,
@@ -319,7 +320,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = sectionId,
@@ -337,7 +338,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = sectionId,

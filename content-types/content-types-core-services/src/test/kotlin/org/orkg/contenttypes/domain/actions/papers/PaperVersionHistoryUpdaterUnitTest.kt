@@ -18,14 +18,16 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 
 internal class PaperVersionHistoryUpdaterUnitTest : MockkBaseTest {
     private val statementService: StatementUseCases = mockk()
+    private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
 
-    private val paperVersionHistoryUpdater = PaperVersionHistoryUpdater(statementService)
+    private val paperVersionHistoryUpdater = PaperVersionHistoryUpdater(statementService, unsafeStatementUseCases)
 
     @Test
     fun `Given a paper publish command, when paper does not yet have a published version, it creates a new hasPreviousVersion statement`() {
@@ -40,7 +42,7 @@ internal class PaperVersionHistoryUpdaterUnitTest : MockkBaseTest {
         )
 
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = command.id,
@@ -57,7 +59,7 @@ internal class PaperVersionHistoryUpdaterUnitTest : MockkBaseTest {
         }
 
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = command.id,
@@ -103,7 +105,7 @@ internal class PaperVersionHistoryUpdaterUnitTest : MockkBaseTest {
 
         every { statementService.delete(setOf(statementId)) } just runs
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = state.paperVersionId!!,
@@ -113,7 +115,7 @@ internal class PaperVersionHistoryUpdaterUnitTest : MockkBaseTest {
             )
         } returns StatementId("S1")
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = command.id,
@@ -131,7 +133,7 @@ internal class PaperVersionHistoryUpdaterUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { statementService.delete(setOf(statementId)) }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = state.paperVersionId!!,
@@ -141,7 +143,7 @@ internal class PaperVersionHistoryUpdaterUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = command.id,

@@ -15,14 +15,14 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.CreateStatementUseCase
-import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 internal class SmartReviewContributionCreatorUnitTest : MockkBaseTest {
     private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
-    private val statementService: StatementUseCases = mockk()
+    private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
 
-    private val smartReviewContributionCreator = SmartReviewContributionCreator(unsafeResourceUseCases, statementService)
+    private val smartReviewContributionCreator = SmartReviewContributionCreator(unsafeResourceUseCases, unsafeStatementUseCases)
 
     @Test
     fun `Given a smart review create command, it crates a new smart review contribution resource`() {
@@ -43,7 +43,7 @@ internal class SmartReviewContributionCreatorUnitTest : MockkBaseTest {
 
         every { unsafeResourceUseCases.create(resourceCreateCommand) } returns contributionId
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = state.smartReviewId!!,
@@ -63,7 +63,7 @@ internal class SmartReviewContributionCreatorUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { unsafeResourceUseCases.create(resourceCreateCommand) }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = state.smartReviewId!!,

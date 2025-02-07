@@ -5,15 +5,15 @@ import org.orkg.contenttypes.domain.actions.CreateRosettaStoneTemplateState
 import org.orkg.contenttypes.domain.actions.SingleStatementPropertyCreator
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 class RosettaStoneTemplateDescriptionCreator(
     private val singleStatementPropertyCreator: SingleStatementPropertyCreator
 ) : CreateRosettaStoneTemplateAction {
     constructor(
         literalService: LiteralUseCases,
-        statementService: StatementUseCases
-    ) : this(SingleStatementPropertyCreator(literalService, statementService))
+        unsafeStatementUseCases: UnsafeStatementUseCases
+    ) : this(SingleStatementPropertyCreator(literalService, unsafeStatementUseCases))
 
     override fun invoke(
         command: CreateRosettaStoneTemplateCommand,

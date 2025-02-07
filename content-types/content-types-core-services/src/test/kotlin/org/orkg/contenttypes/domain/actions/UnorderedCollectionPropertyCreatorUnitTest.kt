@@ -13,13 +13,13 @@ import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 internal class UnorderedCollectionPropertyCreatorUnitTest : MockkBaseTest {
     private val literalService: LiteralUseCases = mockk()
-    private val statementService: StatementUseCases = mockk()
+    private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
 
-    private val unorderedCollectionPropertyCreator = UnorderedCollectionPropertyCreator(literalService, statementService)
+    private val unorderedCollectionPropertyCreator = UnorderedCollectionPropertyCreator(literalService, unsafeStatementUseCases)
 
     @Test
     fun `Given a list of labels and a subject id, when list of labels is empty, it does nothing`() {
@@ -47,7 +47,7 @@ internal class UnorderedCollectionPropertyCreatorUnitTest : MockkBaseTest {
             )
         } returns literal
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = subjectId,
@@ -68,7 +68,7 @@ internal class UnorderedCollectionPropertyCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = subjectId,

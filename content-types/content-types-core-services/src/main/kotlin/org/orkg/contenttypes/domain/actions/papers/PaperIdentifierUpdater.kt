@@ -6,14 +6,18 @@ import org.orkg.contenttypes.domain.actions.UpdatePaperCommand
 import org.orkg.contenttypes.domain.actions.UpdatePaperState
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 class PaperIdentifierUpdater(
     private val identifierUpdater: IdentifierUpdater
 ) : UpdatePaperAction {
     constructor(
         statementService: StatementUseCases,
+        unsafeStatementUseCases: UnsafeStatementUseCases,
         literalService: LiteralUseCases
-    ) : this(IdentifierUpdater(statementService, literalService))
+    ) : this(
+        IdentifierUpdater(statementService, unsafeStatementUseCases, literalService)
+    )
 
     override fun invoke(command: UpdatePaperCommand, state: UpdatePaperState): UpdatePaperState {
         if (command.identifiers != null) {

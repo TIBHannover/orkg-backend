@@ -18,9 +18,9 @@ interface UnsafeResourceUseCases : CreateResourceUseCase, UpdateResourceUseCase,
 interface ResourceUseCases : CreateResourceUseCase, UpdateResourceUseCase, DeleteResourceUseCase, RetrieveResourceUseCase,
     OtherResourceUseCases
 
-interface StatementUseCases : CreateStatementUseCase,
-    RetrieveStatementUseCase, UpdateStatementUseCase,
-    DeleteStatementUseCase
+interface UnsafeStatementUseCases : CreateStatementUseCase, UpdateStatementUseCase, DeleteStatementUseCase
+
+interface StatementUseCases : CreateStatementUseCase, RetrieveStatementUseCase, UpdateStatementUseCase, DeleteStatementUseCase
 
 interface ListUseCases : CreateListUseCase, RetrieveListUseCase,
     UpdateListUseCase, DeleteListUseCase

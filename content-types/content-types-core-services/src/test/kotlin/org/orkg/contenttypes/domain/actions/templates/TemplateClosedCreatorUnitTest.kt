@@ -16,13 +16,13 @@ import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 internal class TemplateClosedCreatorUnitTest : MockkBaseTest {
     private val literalService: LiteralUseCases = mockk()
-    private val statementService: StatementUseCases = mockk()
+    private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
 
-    private val templateClosedCreator = TemplateClosedCreator(literalService, statementService)
+    private val templateClosedCreator = TemplateClosedCreator(literalService, unsafeStatementUseCases)
 
     @Test
     fun `Given a template create command, when closed is true, it creates a new statement`() {
@@ -43,7 +43,7 @@ internal class TemplateClosedCreatorUnitTest : MockkBaseTest {
             )
         } returns closedLiteralId
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = state.templateId!!,
@@ -69,7 +69,7 @@ internal class TemplateClosedCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = state.templateId!!,

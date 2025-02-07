@@ -7,14 +7,22 @@ import org.orkg.contenttypes.domain.identifiers.Identifier
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 class IdentifierUpdater(
     private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater
 ) {
     constructor(
         statementService: StatementUseCases,
+        unsafeStatementUseCases: UnsafeStatementUseCases,
         literalService: LiteralUseCases,
-    ) : this(StatementCollectionPropertyUpdater(literalService, statementService))
+    ) : this(
+        StatementCollectionPropertyUpdater(
+            literalService,
+            statementService,
+            unsafeStatementUseCases
+        )
+    )
 
     internal fun update(
         statements: Map<ThingId, List<GeneralStatement>>,

@@ -5,16 +5,16 @@ import org.orkg.contenttypes.domain.actions.comparisons.PublishComparisonAction.
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateStatementUseCase
-import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 
 class ComparisonVersionHistoryUpdater(
-    private val statementService: StatementUseCases,
+    private val unsafeStatementUseCases: UnsafeStatementUseCases,
     private val unsafeResourceUseCases: UnsafeResourceUseCases
 ) : PublishComparisonAction {
     override fun invoke(command: PublishComparisonCommand, state: State): State {
-        statementService.add(
+        unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = command.contributorId,
                 subjectId = state.comparison!!.id,

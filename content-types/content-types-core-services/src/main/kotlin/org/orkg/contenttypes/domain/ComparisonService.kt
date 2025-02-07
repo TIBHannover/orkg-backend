@@ -87,6 +87,7 @@ import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ListRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
@@ -108,6 +109,7 @@ class ComparisonService(
     private val resourceService: ResourceUseCases,
     private val unsafeResourceUseCases: UnsafeResourceUseCases,
     private val statementService: StatementUseCases,
+    private val unsafeStatementUseCases: UnsafeStatementUseCases,
     private val literalService: LiteralUseCases,
     private val listService: ListUseCases,
     private val listRepository: ListRepository,
@@ -209,13 +211,13 @@ class ComparisonService(
             SDGValidator({ it.sustainableDevelopmentGoals }),
             ComparisonAuthorCreateValidator(resourceRepository, statementRepository),
             ComparisonResourceCreator(unsafeResourceUseCases),
-            ComparisonDescriptionCreator(literalService, statementService),
-            ComparisonAuthorCreator(unsafeResourceUseCases, statementService, literalService, listService),
-            ComparisonSDGCreator(literalService, statementService),
-            ComparisonResearchFieldCreator(literalService, statementService),
-            ComparisonReferencesCreator(literalService, statementService),
-            ComparisonIsAnonymizedCreator(literalService, statementService),
-            ComparisonContributionCreator(statementService),
+            ComparisonDescriptionCreator(literalService, unsafeStatementUseCases),
+            ComparisonAuthorCreator(unsafeResourceUseCases, unsafeStatementUseCases, literalService, listService),
+            ComparisonSDGCreator(literalService, unsafeStatementUseCases),
+            ComparisonResearchFieldCreator(literalService, unsafeStatementUseCases),
+            ComparisonReferencesCreator(literalService, unsafeStatementUseCases),
+            ComparisonIsAnonymizedCreator(literalService, unsafeStatementUseCases),
+            ComparisonContributionCreator(unsafeStatementUseCases),
             ComparisonTableCreator(comparisonTableRepository)
         )
         return steps.execute(command, CreateComparisonState()).comparisonId!!
@@ -233,7 +235,7 @@ class ComparisonService(
                 classes = setOf(Classes.comparisonRelatedResource)
             )
         )
-        statementService.add(
+        unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = command.contributorId,
                 subjectId = command.comparisonId,
@@ -242,7 +244,7 @@ class ComparisonService(
             )
         )
         if (command.image != null) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = resourceId,
@@ -257,7 +259,7 @@ class ComparisonService(
             )
         }
         if (command.url != null) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = resourceId,
@@ -272,7 +274,7 @@ class ComparisonService(
             )
         }
         if (command.description != null) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = resourceId,
@@ -301,7 +303,7 @@ class ComparisonService(
                 classes = setOf(Classes.comparisonRelatedFigure)
             )
         )
-        statementService.add(
+        unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = command.contributorId,
                 subjectId = command.comparisonId,
@@ -310,7 +312,7 @@ class ComparisonService(
             )
         )
         if (command.image != null) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = figureId,
@@ -325,7 +327,7 @@ class ComparisonService(
             )
         }
         if (command.description != null) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = figureId,
@@ -357,13 +359,13 @@ class ComparisonService(
             SDGValidator({ it.sustainableDevelopmentGoals }),
             ComparisonAuthorUpdateValidator(resourceRepository, statementRepository),
             ComparisonResourceUpdater(unsafeResourceUseCases),
-            ComparisonDescriptionUpdater(literalService, statementService),
-            ComparisonResearchFieldUpdater(literalService, statementService),
-            ComparisonAuthorUpdater(unsafeResourceUseCases, statementService, literalService, listService, listRepository),
-            ComparisonSDGUpdater(literalService, statementService),
-            ComparisonContributionUpdater(literalService, statementService),
-            ComparisonReferencesUpdater(literalService, statementService),
-            ComparisonIsAnonymizedUpdater(literalService, statementService),
+            ComparisonDescriptionUpdater(literalService, statementService, unsafeStatementUseCases),
+            ComparisonResearchFieldUpdater(literalService, statementService, unsafeStatementUseCases),
+            ComparisonAuthorUpdater(unsafeResourceUseCases, statementService, unsafeStatementUseCases, literalService, listService, listRepository),
+            ComparisonSDGUpdater(literalService, statementService, unsafeStatementUseCases),
+            ComparisonContributionUpdater(literalService, statementService, unsafeStatementUseCases),
+            ComparisonReferencesUpdater(literalService, statementService, unsafeStatementUseCases),
+            ComparisonIsAnonymizedUpdater(literalService, statementService, unsafeStatementUseCases),
             ComparisonTableUpdater(comparisonTableRepository)
         )
         steps.execute(command, UpdateComparisonState())
@@ -374,7 +376,8 @@ class ComparisonService(
             comparisonService = this,
             resourceService = resourceService,
             literalService = literalService,
-            statementService = statementService
+            statementService = statementService,
+            unsafeStatementUseCases = unsafeStatementUseCases,
         ).execute(command)
     }
 
@@ -383,7 +386,8 @@ class ComparisonService(
             comparisonService = this,
             resourceService = resourceService,
             literalService = literalService,
-            statementService = statementService
+            statementService = statementService,
+            unsafeStatementUseCases = unsafeStatementUseCases
         ).execute(command)
     }
 
@@ -408,9 +412,9 @@ class ComparisonService(
     override fun publish(command: PublishComparisonCommand): ThingId {
         val steps = listOf<Action<PublishComparisonCommand, PublishComparisonState>>(
             ComparisonPublishableValidator(this, comparisonTableRepository),
-            ComparisonVersionCreator(resourceRepository, statementRepository, unsafeResourceUseCases, statementService, literalService, listService, comparisonPublishedRepository),
-            ComparisonVersionHistoryUpdater(statementService, unsafeResourceUseCases),
-            ComparisonVersionDoiPublisher(statementService, literalService, comparisonRepository, doiService, comparisonPublishBaseUri)
+            ComparisonVersionCreator(resourceRepository, statementRepository, unsafeResourceUseCases, unsafeStatementUseCases, literalService, listService, comparisonPublishedRepository),
+            ComparisonVersionHistoryUpdater(unsafeStatementUseCases, unsafeResourceUseCases),
+            ComparisonVersionDoiPublisher(unsafeStatementUseCases, literalService, comparisonRepository, doiService, comparisonPublishBaseUri)
         )
         return steps.execute(command, PublishComparisonState()).comparisonVersionId!!
     }

@@ -21,8 +21,8 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.createLiteral
@@ -38,7 +38,7 @@ internal class VisualizationServiceUnitTest : MockkBaseTest {
     private val observatoryRepository: ObservatoryRepository = mockk()
     private val organizationRepository: OrganizationRepository = mockk()
     private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
-    private val statementService: StatementUseCases = mockk()
+    private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()
     private val listService: ListUseCases = mockk()
     private val visualizationRepository: VisualizationRepository = mockk()
@@ -49,7 +49,7 @@ internal class VisualizationServiceUnitTest : MockkBaseTest {
         observatoryRepository = observatoryRepository,
         organizationRepository = organizationRepository,
         unsafeResourceUseCases = unsafeResourceUseCases,
-        statementService = statementService,
+        unsafeStatementUseCases = unsafeStatementUseCases,
         literalService = literalService,
         listService = listService,
         visualizationRepository = visualizationRepository

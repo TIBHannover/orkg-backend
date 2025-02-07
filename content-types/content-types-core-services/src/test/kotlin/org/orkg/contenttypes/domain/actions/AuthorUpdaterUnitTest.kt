@@ -18,6 +18,7 @@ import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ListRepository
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
@@ -27,13 +28,21 @@ import org.orkg.testing.pageOf
 internal class AuthorUpdaterUnitTest : MockkBaseTest {
     private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
+    private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()
     private val listService: ListUseCases = mockk()
     private val authorCreator: AuthorCreator = mockk()
     private val listRepository: ListRepository = mockk()
 
-    private val authorUpdater =
-        AuthorUpdater(unsafeResourceUseCases, statementService, literalService, listService, listRepository, authorCreator)
+    private val authorUpdater = AuthorUpdater(
+        unsafeResourceUseCases,
+        statementService,
+        unsafeStatementUseCases,
+        literalService,
+        listService,
+        listRepository,
+        authorCreator
+    )
 
     @Test
     fun `Given a subject resource without author list, it creates a new author list`() {

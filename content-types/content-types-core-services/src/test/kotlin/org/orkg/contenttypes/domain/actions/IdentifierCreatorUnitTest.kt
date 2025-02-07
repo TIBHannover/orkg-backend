@@ -14,13 +14,13 @@ import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 internal class IdentifierCreatorUnitTest : MockkBaseTest {
-    private val statementService: StatementUseCases = mockk()
+    private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()
 
-    private val identifierCreator = object : IdentifierCreator(statementService, literalService) {}
+    private val identifierCreator = object : IdentifierCreator(unsafeStatementUseCases, literalService) {}
 
     @Test
     fun `Given a map of identifiers, it crates new paper identifiers`() {
@@ -44,7 +44,7 @@ internal class IdentifierCreatorUnitTest : MockkBaseTest {
                 )
             )
         } returns doiLiteralId
-        every { statementService.create(command) } returns StatementId("S435")
+        every { unsafeStatementUseCases.create(command) } returns StatementId("S435")
 
         identifierCreator.create(contributorId, identifiers, Identifiers.paper, paperId)
 
@@ -56,7 +56,7 @@ internal class IdentifierCreatorUnitTest : MockkBaseTest {
                 )
             )
         }
-        verify(exactly = 1) { statementService.create(command) }
+        verify(exactly = 1) { unsafeStatementUseCases.create(command) }
     }
 
     @Test
@@ -68,6 +68,6 @@ internal class IdentifierCreatorUnitTest : MockkBaseTest {
         identifierCreator.create(contributorId, identifiers, Identifiers.paper, paperId)
 
         verify(exactly = 0) { literalService.create(any()) }
-        verify(exactly = 0) { statementService.create(any()) }
+        verify(exactly = 0) { unsafeStatementUseCases.create(any()) }
     }
 }

@@ -6,10 +6,10 @@ import org.orkg.contenttypes.domain.actions.CreateTemplateCommand
 import org.orkg.contenttypes.domain.actions.templates.CreateTemplateAction.State
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateStatementUseCase.CreateCommand
-import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 class TemplateRelationsCreator(
-    private val statementUseCases: StatementUseCases
+    private val unsafeStatementUseCases: UnsafeStatementUseCases,
 ) : CreateTemplateAction {
     override fun invoke(command: CreateTemplateCommand, state: State): State {
         linkResearchFields(command.contributorId, state.templateId!!, command.relations.researchFields)
@@ -26,7 +26,7 @@ class TemplateRelationsCreator(
         researchFields: List<ThingId>
     ) {
         researchFields.forEach { researchFieldId ->
-            statementUseCases.add(
+            unsafeStatementUseCases.create(
                 CreateCommand(
                     contributorId = contributorId,
                     subjectId = subjectId,
@@ -43,7 +43,7 @@ class TemplateRelationsCreator(
         researchProblems: List<ThingId>
     ) {
         researchProblems.forEach { researchProblemId ->
-            statementUseCases.add(
+            unsafeStatementUseCases.create(
                 CreateCommand(
                     contributorId = contributorId,
                     subjectId = subjectId,
@@ -59,7 +59,7 @@ class TemplateRelationsCreator(
         subjectId: ThingId,
         predicateId: ThingId
     ) {
-        statementUseCases.add(
+        unsafeStatementUseCases.create(
             CreateCommand(
                 contributorId = contributorId,
                 subjectId = subjectId,

@@ -13,13 +13,13 @@ import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 internal class StatementCollectionPropertyCreatorUnitTest : MockkBaseTest {
     private val literalService: LiteralUseCases = mockk()
-    private val statementService: StatementUseCases = mockk()
+    private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
 
-    private val statementCollectionPropertyCreator = StatementCollectionPropertyCreator(literalService, statementService)
+    private val statementCollectionPropertyCreator = StatementCollectionPropertyCreator(literalService, unsafeStatementUseCases)
 
     @Test
     fun `Given a list of labels and a subject id, when list of labels is empty, it does nothing`() {
@@ -47,7 +47,7 @@ internal class StatementCollectionPropertyCreatorUnitTest : MockkBaseTest {
             )
         } returns literal
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = subjectId,
@@ -68,7 +68,7 @@ internal class StatementCollectionPropertyCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = subjectId,
@@ -85,12 +85,12 @@ internal class StatementCollectionPropertyCreatorUnitTest : MockkBaseTest {
         val contributorId = ContributorId(UUID.randomUUID())
         val subjectId = ThingId("R123")
 
-        every { statementService.add(any()) } returns StatementId("S1")
+        every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
 
         statementCollectionPropertyCreator.create(contributorId, subjectId, Predicates.hasLink, ids)
 
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = subjectId,
@@ -100,7 +100,7 @@ internal class StatementCollectionPropertyCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = subjectId,

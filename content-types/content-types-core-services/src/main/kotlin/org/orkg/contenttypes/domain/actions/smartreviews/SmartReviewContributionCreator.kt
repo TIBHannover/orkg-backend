@@ -6,12 +6,12 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.CreateStatementUseCase
-import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 class SmartReviewContributionCreator(
     private val unsafeResourceUseCases: UnsafeResourceUseCases,
-    private val statementService: StatementUseCases
+    private val unsafeStatementUseCases: UnsafeStatementUseCases,
 ) : CreateSmartReviewAction {
     override fun invoke(command: CreateSmartReviewCommand, state: State): State {
         val contributionId = unsafeResourceUseCases.create(
@@ -24,7 +24,7 @@ class SmartReviewContributionCreator(
                 extractionMethod = command.extractionMethod
             )
         )
-        statementService.add(
+        unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = command.contributorId,
                 subjectId = state.smartReviewId!!,

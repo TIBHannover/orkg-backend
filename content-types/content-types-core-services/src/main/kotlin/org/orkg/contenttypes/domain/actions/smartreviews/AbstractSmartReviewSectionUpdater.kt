@@ -22,6 +22,7 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 
 class AbstractSmartReviewSectionUpdater(
@@ -33,10 +34,11 @@ class AbstractSmartReviewSectionUpdater(
         literalService: LiteralUseCases,
         unsafeResourceUseCases: UnsafeResourceUseCases,
         statementService: StatementUseCases,
+        unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
         unsafeResourceUseCases,
-        SingleStatementPropertyUpdater(literalService, statementService),
-        StatementCollectionPropertyUpdater(literalService, statementService)
+        SingleStatementPropertyUpdater(literalService, statementService, unsafeStatementUseCases),
+        StatementCollectionPropertyUpdater(literalService, statementService, unsafeStatementUseCases)
     )
 
     internal fun updateComparisonSection(

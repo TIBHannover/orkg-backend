@@ -6,11 +6,11 @@ import org.orkg.graph.domain.Literals
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 class SingleStatementPropertyCreator(
     private val literalService: LiteralUseCases,
-    private val statementService: StatementUseCases
+    private val unsafeStatementUseCases: UnsafeStatementUseCases,
 ) {
     internal fun create(
         contributorId: ContributorId,
@@ -26,7 +26,7 @@ class SingleStatementPropertyCreator(
                 datatype = datatype
             )
         )
-        statementService.add(
+        unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = contributorId,
                 subjectId = subjectId,

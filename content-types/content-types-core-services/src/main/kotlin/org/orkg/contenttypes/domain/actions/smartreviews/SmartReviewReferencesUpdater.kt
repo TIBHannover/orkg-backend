@@ -8,14 +8,16 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 class SmartReviewReferencesUpdater(
     private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater
 ) : UpdateSmartReviewAction {
     constructor(
         literalService: LiteralUseCases,
-        statementService: StatementUseCases
-    ) : this(StatementCollectionPropertyUpdater(literalService, statementService))
+        statementService: StatementUseCases,
+        unsafeStatementUseCases: UnsafeStatementUseCases
+    ) : this(StatementCollectionPropertyUpdater(literalService, statementService, unsafeStatementUseCases))
 
     override fun invoke(command: UpdateSmartReviewCommand, state: State): State {
         if (command.references != null && command.references != state.smartReview!!.references) {

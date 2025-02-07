@@ -14,12 +14,12 @@ import org.orkg.contenttypes.input.testing.fixtures.publishSmartReviewCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateStatementUseCase
-import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 internal class SmartReviewVersionHistoryUpdaterUnitTest : MockkBaseTest {
-    private val statementService: StatementUseCases = mockk()
+    private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
 
-    private val smartReviewVersionHistoryUpdater = SmartReviewVersionHistoryUpdater(statementService)
+    private val smartReviewVersionHistoryUpdater = SmartReviewVersionHistoryUpdater(unsafeStatementUseCases)
 
     @Test
     fun `Given a smart review publish command, it crates a new previous version statement`() {
@@ -29,7 +29,7 @@ internal class SmartReviewVersionHistoryUpdaterUnitTest : MockkBaseTest {
         val state = PublishSmartReviewState(smartReview, smartReviewVersionId)
 
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = smartReview.id,
@@ -45,7 +45,7 @@ internal class SmartReviewVersionHistoryUpdaterUnitTest : MockkBaseTest {
         }
 
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = smartReview.id,

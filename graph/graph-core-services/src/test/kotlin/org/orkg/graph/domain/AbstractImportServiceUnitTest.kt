@@ -13,6 +13,7 @@ import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ExternalClassService
 import org.orkg.graph.output.ExternalPredicateService
 import org.orkg.graph.output.ExternalResourceService
@@ -28,6 +29,7 @@ abstract class AbstractImportServiceUnitTest : MockkBaseTest {
         every { this@mockk.supportsMultipleOntologies() } returns false
     }
     protected val statementService: StatementUseCases = mockk()
+    protected val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
     protected val resourceService: ResourceUseCases = mockk()
     protected val classService: ClassUseCases = mockk()
     protected val predicateService: PredicateUseCases = mockk()
@@ -37,6 +39,7 @@ abstract class AbstractImportServiceUnitTest : MockkBaseTest {
         externalResourceRepositories = mutableListOf(externalResourceService),
         externalPredicateRepositories = mutableListOf(externalPredicateService),
         statementService = statementService,
+        unsafeStatementService = unsafeStatementUseCases,
         resourceService = resourceService,
         classService = classService,
         predicateService = predicateService,
@@ -60,7 +63,7 @@ abstract class AbstractImportServiceUnitTest : MockkBaseTest {
                 )
             } returns descriptionId
             every {
-                statementService.add(
+                unsafeStatementUseCases.create(
                     CreateStatementUseCase.CreateCommand(
                         contributorId = contributorId,
                         subjectId = subjectId,
@@ -87,7 +90,7 @@ abstract class AbstractImportServiceUnitTest : MockkBaseTest {
                 )
             }
             verify(exactly = 1) {
-                statementService.add(
+                unsafeStatementUseCases.create(
                     CreateStatementUseCase.CreateCommand(
                         contributorId = contributorId,
                         subjectId = subjectId,
@@ -116,7 +119,7 @@ abstract class AbstractImportServiceUnitTest : MockkBaseTest {
             )
         } returns sameAsLiteralId
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = subjectId,
@@ -142,7 +145,7 @@ abstract class AbstractImportServiceUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = subjectId,

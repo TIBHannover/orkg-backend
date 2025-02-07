@@ -6,14 +6,16 @@ import org.orkg.contenttypes.domain.actions.comparisons.UpdateComparisonAction.S
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 class ComparisonDescriptionUpdater(
     private val singleStatementPropertyUpdater: SingleStatementPropertyUpdater
 ) : UpdateComparisonAction {
     constructor(
         literalService: LiteralUseCases,
-        statementService: StatementUseCases
-    ) : this(SingleStatementPropertyUpdater(literalService, statementService))
+        statementService: StatementUseCases,
+        unsafeStatementUseCases: UnsafeStatementUseCases
+    ) : this(SingleStatementPropertyUpdater(literalService, statementService, unsafeStatementUseCases))
 
     override fun invoke(command: UpdateComparisonCommand, state: State): State {
         if (command.description != null && command.description != state.comparison!!.description) {

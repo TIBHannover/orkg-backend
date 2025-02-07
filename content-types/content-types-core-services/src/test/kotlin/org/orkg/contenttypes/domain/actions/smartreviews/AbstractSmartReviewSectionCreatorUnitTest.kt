@@ -24,17 +24,17 @@ import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
-    private val statementService: StatementUseCases = mockk()
+    private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
     private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()
     private val statementCollectionPropertyCreator: StatementCollectionPropertyCreator = mockk()
 
     private val abstractSmartReviewSectionCreator = AbstractSmartReviewSectionCreator(
-        statementService, unsafeResourceUseCases, literalService, statementCollectionPropertyCreator
+        unsafeStatementUseCases, unsafeResourceUseCases, literalService, statementCollectionPropertyCreator
     )
 
     @Test
@@ -51,7 +51,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
 
         every { unsafeResourceUseCases.create(resourceCreateCommand) } returns sectionId
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = sectionId,
@@ -65,7 +65,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { unsafeResourceUseCases.create(resourceCreateCommand) }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = sectionId,
@@ -109,7 +109,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
 
         every { unsafeResourceUseCases.create(resourceCreateCommand) } returns sectionId
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = sectionId,
@@ -123,7 +123,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { unsafeResourceUseCases.create(resourceCreateCommand) }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = sectionId,
@@ -167,7 +167,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
 
         every { unsafeResourceUseCases.create(resourceCreateCommand) } returns sectionId
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = sectionId,
@@ -181,7 +181,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { unsafeResourceUseCases.create(resourceCreateCommand) }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = sectionId,
@@ -225,7 +225,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
 
         every { unsafeResourceUseCases.create(resourceCreateCommand) } returns sectionId
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = sectionId,
@@ -239,7 +239,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { unsafeResourceUseCases.create(resourceCreateCommand) }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = sectionId,
@@ -340,7 +340,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
         every { unsafeResourceUseCases.create(resourceCreateCommand) } returns sectionId
         every { literalService.create(literalCreateCommand) } returns textId
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = sectionId,
@@ -355,7 +355,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
         verify(exactly = 1) { unsafeResourceUseCases.create(resourceCreateCommand) }
         verify(exactly = 1) { literalService.create(literalCreateCommand) }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = sectionId,

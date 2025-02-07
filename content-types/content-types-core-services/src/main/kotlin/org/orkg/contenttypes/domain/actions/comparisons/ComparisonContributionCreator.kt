@@ -4,14 +4,14 @@ import org.orkg.contenttypes.domain.actions.CreateComparisonCommand
 import org.orkg.contenttypes.domain.actions.comparisons.CreateComparisonAction.State
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateStatementUseCase
-import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 class ComparisonContributionCreator(
-    val statementService: StatementUseCases
+    private val unsafeStatementUseCases: UnsafeStatementUseCases,
 ) : CreateComparisonAction {
     override operator fun invoke(command: CreateComparisonCommand, state: State): State {
         command.contributions.forEach { contributionId ->
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = state.comparisonId!!,

@@ -14,13 +14,13 @@ import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 class AbstractTemplatePropertyCreator(
     private val unsafeResourceUseCases: UnsafeResourceUseCases,
     private val literalService: LiteralUseCases,
-    private val statementService: StatementUseCases
+    private val unsafeStatementUseCases: UnsafeStatementUseCases,
 ) {
     internal fun create(
         contributorId: ContributorId,
@@ -36,7 +36,7 @@ class AbstractTemplatePropertyCreator(
             )
         )
         property.placeholder?.let { placeholder ->
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = propertyId,
@@ -51,7 +51,7 @@ class AbstractTemplatePropertyCreator(
             )
         }
         property.description?.let { description ->
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = propertyId,
@@ -66,7 +66,7 @@ class AbstractTemplatePropertyCreator(
             )
         }
         property.minCount?.let { min ->
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = propertyId,
@@ -82,7 +82,7 @@ class AbstractTemplatePropertyCreator(
             )
         }
         property.maxCount?.let { max ->
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = propertyId,
@@ -99,7 +99,7 @@ class AbstractTemplatePropertyCreator(
         }
         if (property is StringLiteralTemplatePropertyDefinition) {
             property.pattern?.let { pattern ->
-                statementService.add(
+                unsafeStatementUseCases.create(
                     CreateStatementUseCase.CreateCommand(
                         contributorId = contributorId,
                         subjectId = propertyId,
@@ -115,7 +115,7 @@ class AbstractTemplatePropertyCreator(
             }
         } else if (property is NumberLiteralTemplatePropertyDefinition) {
             property.minInclusive?.let { minInclusive ->
-                statementService.add(
+                unsafeStatementUseCases.create(
                     CreateStatementUseCase.CreateCommand(
                         contributorId = contributorId,
                         subjectId = propertyId,
@@ -132,7 +132,7 @@ class AbstractTemplatePropertyCreator(
                 )
             }
             property.maxInclusive?.let { maxInclusive ->
-                statementService.add(
+                unsafeStatementUseCases.create(
                     CreateStatementUseCase.CreateCommand(
                         contributorId = contributorId,
                         subjectId = propertyId,
@@ -150,7 +150,7 @@ class AbstractTemplatePropertyCreator(
             }
         }
         if (property is LiteralTemplatePropertyDefinition) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = propertyId,
@@ -159,7 +159,7 @@ class AbstractTemplatePropertyCreator(
                 )
             )
         } else if (property is ResourceTemplatePropertyDefinition) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = propertyId,
@@ -168,7 +168,7 @@ class AbstractTemplatePropertyCreator(
                 )
             )
         }
-        statementService.add(
+        unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = contributorId,
                 subjectId = propertyId,
@@ -176,7 +176,7 @@ class AbstractTemplatePropertyCreator(
                 objectId = property.path
             )
         )
-        statementService.add(
+        unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = contributorId,
                 subjectId = propertyId,
@@ -190,7 +190,7 @@ class AbstractTemplatePropertyCreator(
                 )
             )
         )
-        statementService.add(
+        unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = contributorId,
                 subjectId = templateId,

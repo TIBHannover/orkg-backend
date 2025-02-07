@@ -5,22 +5,22 @@ import org.orkg.contenttypes.domain.actions.smartreviews.CreateSmartReviewAction
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 class SmartReviewSectionsCreator(
-    private val statementService: StatementUseCases,
+    private val unsafeStatementUseCases: UnsafeStatementUseCases,
     private val abstractSmartReviewSectionCreator: AbstractSmartReviewSectionCreator
 ) : CreateSmartReviewAction {
     constructor(
         literalService: LiteralUseCases,
         unsafeResourceUseCases: UnsafeResourceUseCases,
-        statementService: StatementUseCases
-    ) : this(statementService, AbstractSmartReviewSectionCreator(statementService, unsafeResourceUseCases, literalService))
+        unsafeStatementUseCases: UnsafeStatementUseCases
+    ) : this(unsafeStatementUseCases, AbstractSmartReviewSectionCreator(unsafeStatementUseCases, unsafeResourceUseCases, literalService))
 
     override fun invoke(command: CreateSmartReviewCommand, state: State): State {
         command.sections.forEach { section ->
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = state.contributionId!!,

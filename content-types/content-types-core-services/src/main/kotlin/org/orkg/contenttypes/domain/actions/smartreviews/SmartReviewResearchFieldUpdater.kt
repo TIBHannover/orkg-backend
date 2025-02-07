@@ -7,14 +7,16 @@ import org.orkg.contenttypes.domain.ids
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 class SmartReviewResearchFieldUpdater(
     private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater
 ) : UpdateSmartReviewAction {
     constructor(
         literalService: LiteralUseCases,
-        statementService: StatementUseCases
-    ) : this(StatementCollectionPropertyUpdater(literalService, statementService))
+        statementService: StatementUseCases,
+        unsafeStatementUseCases: UnsafeStatementUseCases
+    ) : this(StatementCollectionPropertyUpdater(literalService, statementService, unsafeStatementUseCases))
 
     override fun invoke(command: UpdateSmartReviewCommand, state: State): State {
         if (command.researchFields != null && command.researchFields != state.smartReview!!.researchFields.ids) {

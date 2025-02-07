@@ -5,15 +5,15 @@ import org.orkg.contenttypes.domain.actions.CreateLiteratureListState
 import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyCreator
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 class LiteratureListSDGCreator(
     private val statementCollectionPropertyCreator: StatementCollectionPropertyCreator
 ) : CreateLiteratureListAction {
     constructor(
         literalService: LiteralUseCases,
-        statementService: StatementUseCases
-    ) : this(StatementCollectionPropertyCreator(literalService, statementService))
+        unsafeStatementUseCases: UnsafeStatementUseCases
+    ) : this(StatementCollectionPropertyCreator(literalService, unsafeStatementUseCases))
 
     override operator fun invoke(
         command: CreateLiteratureListCommand,

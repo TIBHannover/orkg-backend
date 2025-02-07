@@ -9,7 +9,7 @@ import org.orkg.contenttypes.output.DoiService
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 class ComparisonVersionDoiPublisher(
     private val singleStatementPropertyCreator: SingleStatementPropertyCreator,
@@ -18,13 +18,13 @@ class ComparisonVersionDoiPublisher(
     private val comparisonPublishBaseUri: String
 ) : PublishComparisonAction {
     constructor(
-        statementService: StatementUseCases,
+        unsafeStatementUseCases: UnsafeStatementUseCases,
         literalService: LiteralUseCases,
         comparisonRepository: ComparisonRepository,
         doiService: DoiService,
         comparisonPublishBaseUri: String
     ) : this(
-        SingleStatementPropertyCreator(literalService, statementService),
+        SingleStatementPropertyCreator(literalService, unsafeStatementUseCases),
         comparisonRepository,
         doiService,
         comparisonPublishBaseUri

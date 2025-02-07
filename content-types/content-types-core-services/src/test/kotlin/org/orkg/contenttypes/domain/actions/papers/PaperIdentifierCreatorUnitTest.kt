@@ -15,13 +15,13 @@ import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 internal class PaperIdentifierCreatorUnitTest : MockkBaseTest {
-    private val statementService: StatementUseCases = mockk()
+    private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()
 
-    private val paperIdentifierCreator = PaperIdentifierCreator(statementService, literalService)
+    private val paperIdentifierCreator = PaperIdentifierCreator(unsafeStatementUseCases, literalService)
 
     @Test
     fun `Given a paper create command, it crates new paper identifiers`() {
@@ -46,7 +46,7 @@ internal class PaperIdentifierCreatorUnitTest : MockkBaseTest {
             predicateId = Predicates.hasDOI,
             objectId = doiLiteralId
         )
-        every { statementService.create(statementCommand) } returns StatementId("S435")
+        every { unsafeStatementUseCases.create(statementCommand) } returns StatementId("S435")
 
         val result = paperIdentifierCreator(command, state)
 
@@ -66,7 +66,7 @@ internal class PaperIdentifierCreatorUnitTest : MockkBaseTest {
                 )
             )
         }
-        verify(exactly = 1) { statementService.create(statementCommand) }
+        verify(exactly = 1) { unsafeStatementUseCases.create(statementCommand) }
     }
 
     @Test
@@ -88,6 +88,6 @@ internal class PaperIdentifierCreatorUnitTest : MockkBaseTest {
         }
 
         verify(exactly = 0) { literalService.create(any()) }
-        verify(exactly = 0) { statementService.create(any()) }
+        verify(exactly = 0) { unsafeStatementUseCases.create(any()) }
     }
 }

@@ -16,14 +16,17 @@ import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 class AbstractSmartReviewSectionCreator(
-    private val statementService: StatementUseCases,
+    private val unsafeStatementUseCases: UnsafeStatementUseCases,
     private val unsafeResourceUseCases: UnsafeResourceUseCases,
     private val literalService: LiteralUseCases,
-    private val statementCollectionPropertyCreator: StatementCollectionPropertyCreator = StatementCollectionPropertyCreator(literalService, statementService)
+    private val statementCollectionPropertyCreator: StatementCollectionPropertyCreator = StatementCollectionPropertyCreator(
+        literalService,
+        unsafeStatementUseCases
+    )
 ) {
     internal fun create(
         contributorId: ContributorId,
@@ -50,7 +53,7 @@ class AbstractSmartReviewSectionCreator(
             )
         )
         section.comparison?.let { comparisonId ->
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = sectionId,
@@ -74,7 +77,7 @@ class AbstractSmartReviewSectionCreator(
             )
         )
         section.visualization?.let { visualizationId ->
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = sectionId,
@@ -98,7 +101,7 @@ class AbstractSmartReviewSectionCreator(
             )
         )
         section.resource?.let { resourceId ->
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = sectionId,
@@ -122,7 +125,7 @@ class AbstractSmartReviewSectionCreator(
             )
         )
         section.predicate?.let { predicateId ->
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = sectionId,
@@ -177,7 +180,7 @@ class AbstractSmartReviewSectionCreator(
                 label = section.text
             )
         )
-        statementService.add(
+        unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = contributorId,
                 subjectId = sectionId,

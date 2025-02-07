@@ -17,14 +17,16 @@ import org.orkg.graph.input.CreateClassUseCase
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 internal class RosettaStoneTemplateTargetClassCreatorUnitTest : MockkBaseTest {
     private val classService: ClassUseCases = mockk()
-    private val statementService: StatementUseCases = mockk()
+    private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()
 
-    private val rosettaStoneTemplateTargetClassCreator = RosettaStoneTemplateTargetClassCreator(classService, statementService, literalService)
+    private val rosettaStoneTemplateTargetClassCreator = RosettaStoneTemplateTargetClassCreator(
+        classService, unsafeStatementUseCases, literalService
+    )
 
     @Test
     fun `Given a rosetta stone template create command, it crates a new target class and links it to the root resource and creates a new example usage statement`() {
@@ -38,7 +40,7 @@ internal class RosettaStoneTemplateTargetClassCreatorUnitTest : MockkBaseTest {
 
         every { classService.create(any()) } returns classId
         every { literalService.create(any()) } returns exampleUsageId andThen descriptionId
-        every { statementService.add(any()) } returns StatementId("S1")
+        every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
 
         val result = rosettaStoneTemplateTargetClassCreator(command, state)
 
@@ -55,7 +57,7 @@ internal class RosettaStoneTemplateTargetClassCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = state.rosettaStoneTemplateId!!,
@@ -73,7 +75,7 @@ internal class RosettaStoneTemplateTargetClassCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = classId,
@@ -91,7 +93,7 @@ internal class RosettaStoneTemplateTargetClassCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = classId,

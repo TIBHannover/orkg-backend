@@ -11,14 +11,14 @@ import org.orkg.contenttypes.input.testing.fixtures.createSmartReviewCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateStatementUseCase.CreateCommand
-import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 internal class SmartReviewSectionsCreatorUnitTest : MockkBaseTest {
-    private val statementService: StatementUseCases = mockk()
+    private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
     private val abstractSmartReviewSectionCreator: AbstractSmartReviewSectionCreator = mockk()
 
     private val smartReviewSectionsCreator = SmartReviewSectionsCreator(
-        statementService, abstractSmartReviewSectionCreator
+        unsafeStatementUseCases, abstractSmartReviewSectionCreator
     )
 
     @Test
@@ -42,7 +42,7 @@ internal class SmartReviewSectionsCreatorUnitTest : MockkBaseTest {
             val sectionId = ThingId("Section$index")
             every { abstractSmartReviewSectionCreator.create(command.contributorId, section) } returns sectionId
             every {
-                statementService.add(
+                unsafeStatementUseCases.create(
                     CreateCommand(
                         contributorId = command.contributorId,
                         subjectId = contributionId,
@@ -60,7 +60,7 @@ internal class SmartReviewSectionsCreatorUnitTest : MockkBaseTest {
                 abstractSmartReviewSectionCreator.create(command.contributorId, section)
             }
             verify(exactly = 1) {
-                statementService.add(
+                unsafeStatementUseCases.create(
                     CreateCommand(
                         contributorId = command.contributorId,
                         subjectId = contributionId,

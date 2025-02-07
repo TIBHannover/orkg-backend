@@ -13,12 +13,12 @@ import org.orkg.contenttypes.input.testing.fixtures.createComparisonCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateStatementUseCase
-import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 internal class ComparisonContributionCreatorUnitTest : MockkBaseTest {
-    private val statementService: StatementUseCases = mockk()
+    private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
 
-    private val contributionCreator = ComparisonContributionCreator(statementService)
+    private val contributionCreator = ComparisonContributionCreator(unsafeStatementUseCases)
 
     @Test
     fun `Given a subject resource, when linking contributions, it returns success`() {
@@ -28,7 +28,7 @@ internal class ComparisonContributionCreatorUnitTest : MockkBaseTest {
             comparisonId = comparisonId
         )
 
-        every { statementService.add(any()) } returns StatementId("S1")
+        every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
 
         val result = contributionCreator(command, state)
 
@@ -39,7 +39,7 @@ internal class ComparisonContributionCreatorUnitTest : MockkBaseTest {
 
         command.contributions.forEach {
             verify(exactly = 1) {
-                statementService.add(
+                unsafeStatementUseCases.create(
                     CreateStatementUseCase.CreateCommand(
                         contributorId = command.contributorId,
                         subjectId = comparisonId,

@@ -6,14 +6,16 @@ import org.orkg.contenttypes.domain.actions.templates.UpdateTemplateAction.State
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 class TemplateTargetClassUpdater(
     private val singleStatementPropertyUpdater: SingleStatementPropertyUpdater
 ) : UpdateTemplateAction {
     constructor(
         literalService: LiteralUseCases,
-        statementUseCases: StatementUseCases
-    ) : this(SingleStatementPropertyUpdater(literalService, statementUseCases))
+        statementUseCases: StatementUseCases,
+        unsafeStatementUseCases: UnsafeStatementUseCases
+    ) : this(SingleStatementPropertyUpdater(literalService, statementUseCases, unsafeStatementUseCases))
 
     override fun invoke(command: UpdateTemplateCommand, state: State): State {
         if (command.targetClass != null && command.targetClass != state.template!!.targetClass.id) {

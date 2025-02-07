@@ -5,15 +5,15 @@ import org.orkg.contenttypes.domain.actions.SingleStatementPropertyCreator
 import org.orkg.contenttypes.domain.actions.comparisons.CreateComparisonAction.State
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 class ComparisonDescriptionCreator(
     private val singleStatementPropertyCreator: SingleStatementPropertyCreator
 ) : CreateComparisonAction {
     constructor(
         literalService: LiteralUseCases,
-        statementService: StatementUseCases
-    ) : this(SingleStatementPropertyCreator(literalService, statementService))
+        unsafeStatementUseCases: UnsafeStatementUseCases
+    ) : this(SingleStatementPropertyCreator(literalService, unsafeStatementUseCases))
 
     override fun invoke(command: CreateComparisonCommand, state: State): State =
         state.apply {

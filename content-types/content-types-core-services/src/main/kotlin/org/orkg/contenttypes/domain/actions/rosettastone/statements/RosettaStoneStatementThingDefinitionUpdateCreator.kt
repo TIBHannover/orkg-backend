@@ -8,8 +8,8 @@ import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
-import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.StatementRepository
 
 class RosettaStoneStatementThingDefinitionUpdateCreator(
@@ -18,7 +18,7 @@ class RosettaStoneStatementThingDefinitionUpdateCreator(
     constructor(
         classService: ClassUseCases,
         unsafeResourceUseCases: UnsafeResourceUseCases,
-        statementService: StatementUseCases,
+        unsafeStatementUseCases: UnsafeStatementUseCases,
         literalService: LiteralUseCases,
         predicateService: PredicateUseCases,
         statementRepository: StatementRepository,
@@ -27,7 +27,7 @@ class RosettaStoneStatementThingDefinitionUpdateCreator(
         SubgraphCreator(
             classService,
             unsafeResourceUseCases,
-            statementService,
+            unsafeStatementUseCases,
             literalService,
             predicateService,
             statementRepository,

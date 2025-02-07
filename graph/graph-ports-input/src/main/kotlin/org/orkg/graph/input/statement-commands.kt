@@ -6,7 +6,6 @@ import org.orkg.graph.domain.StatementId
 
 interface CreateStatementUseCase {
     fun create(command: CreateCommand): StatementId
-    fun add(command: CreateCommand): StatementId
 
     data class CreateCommand(
         val id: StatementId? = null,
@@ -21,6 +20,7 @@ interface CreateStatementUseCase {
 interface UpdateStatementUseCase {
     fun update(command: UpdateCommand)
 
+    // TODO: Add contributorId and statementId
     data class UpdateCommand(
         val statementId: StatementId,
         val subjectId: ThingId? = null,

@@ -10,20 +10,22 @@ import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 class LiteratureListSectionCreator(
-    private val statementService: StatementUseCases,
+    private val unsafeStatementUseCases: UnsafeStatementUseCases,
     private val abstractLiteratureListSectionCreator: AbstractLiteratureListSectionCreator,
     private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater
 ) : CreateLiteratureListSectionAction {
     constructor(
         literalService: LiteralUseCases,
         unsafeResourceUseCases: UnsafeResourceUseCases,
-        statementService: StatementUseCases
+        statementService: StatementUseCases,
+        unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
-        statementService,
-        AbstractLiteratureListSectionCreator(statementService, unsafeResourceUseCases, literalService),
-        StatementCollectionPropertyUpdater(literalService, statementService)
+        unsafeStatementUseCases,
+        AbstractLiteratureListSectionCreator(unsafeStatementUseCases, unsafeResourceUseCases, literalService),
+        StatementCollectionPropertyUpdater(literalService, statementService, unsafeStatementUseCases)
     )
 
     override fun invoke(
@@ -45,7 +47,7 @@ class LiteratureListSectionCreator(
                     .also { it.add(command.index!!.coerceAtMost(it.size), sectionId) }
             )
         } else {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = command.literatureListId,

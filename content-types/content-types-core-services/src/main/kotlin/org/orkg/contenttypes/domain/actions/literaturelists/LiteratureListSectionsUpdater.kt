@@ -8,6 +8,7 @@ import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 class LiteratureListSectionsUpdater(
     private val abstractLiteratureListSectionCreator: AbstractLiteratureListSectionCreator,
@@ -18,11 +19,12 @@ class LiteratureListSectionsUpdater(
         literalService: LiteralUseCases,
         resourceService: ResourceUseCases,
         unsafeResourceUseCases: UnsafeResourceUseCases,
-        statementService: StatementUseCases
+        statementService: StatementUseCases,
+        unsafeStatementUseCases: UnsafeStatementUseCases
     ) : this(
-        AbstractLiteratureListSectionCreator(statementService, unsafeResourceUseCases, literalService),
+        AbstractLiteratureListSectionCreator(unsafeStatementUseCases, unsafeResourceUseCases, literalService),
         AbstractLiteratureListSectionDeleter(statementService, resourceService),
-        StatementCollectionPropertyUpdater(literalService, statementService)
+        StatementCollectionPropertyUpdater(literalService, statementService, unsafeStatementUseCases)
     )
 
     override fun invoke(

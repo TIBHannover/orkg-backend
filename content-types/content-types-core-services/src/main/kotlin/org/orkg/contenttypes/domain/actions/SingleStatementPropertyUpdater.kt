@@ -11,11 +11,16 @@ import org.orkg.graph.domain.Literals
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 class SingleStatementPropertyUpdater(
     private val literalService: LiteralUseCases,
     private val statementService: StatementUseCases,
-    private val singleStatementPropertyCreator: SingleStatementPropertyCreator = SingleStatementPropertyCreator(literalService, statementService)
+    private val unsafeStatementUseCases: UnsafeStatementUseCases,
+    private val singleStatementPropertyCreator: SingleStatementPropertyCreator = SingleStatementPropertyCreator(
+        literalService,
+        unsafeStatementUseCases
+    )
 ) {
     internal fun updateRequiredProperty(
         contributorId: ContributorId,
@@ -119,7 +124,7 @@ class SingleStatementPropertyUpdater(
         if (toRemove.isNotEmpty()) {
             statementService.delete(toRemove.map { it.id }.toSet())
         }
-        statementService.add(
+        unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = contributorId,
                 subjectId = subjectId,
@@ -141,7 +146,7 @@ class SingleStatementPropertyUpdater(
             statementService.delete(toRemove.map { it.id }.toSet())
         }
         if (objectId != null) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = subjectId,

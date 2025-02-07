@@ -4,13 +4,13 @@ import org.orkg.contenttypes.domain.actions.PublishLiteratureListCommand
 import org.orkg.contenttypes.domain.actions.literaturelists.PublishLiteratureListAction.State
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateStatementUseCase
-import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 class LiteratureListVersionHistoryUpdater(
-    private val statementService: StatementUseCases
+    private val unsafeStatementUseCases: UnsafeStatementUseCases,
 ) : PublishLiteratureListAction {
     override fun invoke(command: PublishLiteratureListCommand, state: State): State {
-        statementService.add(
+        unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = command.contributorId,
                 subjectId = state.literatureList!!.id,

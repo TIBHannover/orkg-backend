@@ -6,14 +6,16 @@ import org.orkg.contenttypes.domain.actions.rosettastone.templates.UpdateRosetta
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 class RosettaStoneTemplateFormattedLabelUpdater(
     private val singleStatementPropertyUpdater: SingleStatementPropertyUpdater
 ) : UpdateRosettaStoneTemplateAction {
     constructor(
         literalService: LiteralUseCases,
-        statementService: StatementUseCases
-    ) : this(SingleStatementPropertyUpdater(literalService, statementService))
+        statementService: StatementUseCases,
+        unsafeStatementUseCases: UnsafeStatementUseCases
+    ) : this(SingleStatementPropertyUpdater(literalService, statementService, unsafeStatementUseCases))
 
     override fun invoke(command: UpdateRosettaStoneTemplateCommand, state: State): State {
         if (command.formattedLabel != state.rosettaStoneTemplate!!.formattedLabel) {

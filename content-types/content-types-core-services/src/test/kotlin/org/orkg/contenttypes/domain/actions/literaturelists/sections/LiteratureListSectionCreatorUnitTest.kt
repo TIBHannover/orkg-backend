@@ -24,18 +24,18 @@ import org.orkg.contenttypes.input.testing.fixtures.createLiteratureListTextSect
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateStatementUseCase
-import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 
 internal class LiteratureListSectionCreatorUnitTest : MockkBaseTest {
-    private val statementService: StatementUseCases = mockk()
+    private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
     private val abstractLiteratureListSectionCreator: AbstractLiteratureListSectionCreator = mockk()
     private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater = mockk()
 
     private val literatureListSectionCreator = LiteratureListSectionCreator(
-        statementService, abstractLiteratureListSectionCreator, statementCollectionPropertyUpdater
+        unsafeStatementUseCases, abstractLiteratureListSectionCreator, statementCollectionPropertyUpdater
     )
 
     @ParameterizedTest
@@ -51,7 +51,7 @@ internal class LiteratureListSectionCreatorUnitTest : MockkBaseTest {
             )
         } returns sectionId
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = command.literatureListId,
@@ -74,7 +74,7 @@ internal class LiteratureListSectionCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = command.literatureListId,

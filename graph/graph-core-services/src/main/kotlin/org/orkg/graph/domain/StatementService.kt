@@ -98,30 +98,6 @@ class StatementService(
         return id
     }
 
-    override fun add(command: CreateStatementUseCase.CreateCommand): StatementId {
-        val subject = thingRepository.findByThingId(command.subjectId)
-            .orElseThrow { StatementSubjectNotFound(command.subjectId) }
-        validateSubject(subject, command.predicateId)
-        val predicate = predicateService.findById(command.predicateId)
-            .orElseThrow { StatementPredicateNotFound(command.predicateId) }
-        val `object` = thingRepository.findByThingId(command.objectId)
-            .orElseThrow { StatementObjectNotFound(command.objectId) }
-        val id = command.id
-            ?.also { id -> statementRepository.findByStatementId(id).ifPresent { throw StatementAlreadyExists(id) } }
-            ?: statementRepository.nextIdentity()
-        val statement = GeneralStatement(
-            id = id,
-            subject = subject,
-            predicate = predicate,
-            `object` = `object`,
-            createdBy = command.contributorId,
-            createdAt = OffsetDateTime.now(clock),
-            modifiable = command.modifiable
-        )
-        statementRepository.save(statement)
-        return id
-    }
-
     override fun totalNumberOfStatements(): Long = statementRepository.count()
 
     /**

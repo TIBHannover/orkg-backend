@@ -14,13 +14,13 @@ import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 internal class SingleStatementPropertyCreatorUnitTest : MockkBaseTest {
     private val literalService: LiteralUseCases = mockk()
-    private val statementService: StatementUseCases = mockk()
+    private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
 
-    private val singleStatementPropertyCreator = SingleStatementPropertyCreator(literalService, statementService)
+    private val singleStatementPropertyCreator = SingleStatementPropertyCreator(literalService, unsafeStatementUseCases)
 
     @Test
     fun `Given a literal value and a subject id, it creates a new literal and links it to the subject resource`() {
@@ -38,7 +38,7 @@ internal class SingleStatementPropertyCreatorUnitTest : MockkBaseTest {
             )
         } returns literal
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = subjectId,
@@ -59,7 +59,7 @@ internal class SingleStatementPropertyCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = subjectId,
@@ -84,7 +84,7 @@ internal class SingleStatementPropertyCreatorUnitTest : MockkBaseTest {
 
         every { literalService.create(literalCreateCommand) } returns literal
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = subjectId,
@@ -104,7 +104,7 @@ internal class SingleStatementPropertyCreatorUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { literalService.create(literalCreateCommand) }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = subjectId,

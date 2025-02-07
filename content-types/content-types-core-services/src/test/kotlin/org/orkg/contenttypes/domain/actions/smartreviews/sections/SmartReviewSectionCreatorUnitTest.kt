@@ -28,18 +28,18 @@ import org.orkg.contenttypes.input.testing.fixtures.createSmartReviewVisualizati
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateStatementUseCase
-import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 
 internal class SmartReviewSectionCreatorUnitTest : MockkBaseTest {
-    private val statementService: StatementUseCases = mockk()
+    private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
     private val abstractSmartReviewSectionCreator: AbstractSmartReviewSectionCreator = mockk()
     private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater = mockk()
 
     private val smartReviewSectionCreator = SmartReviewSectionCreator(
-        statementService, abstractSmartReviewSectionCreator, statementCollectionPropertyUpdater
+        unsafeStatementUseCases, abstractSmartReviewSectionCreator, statementCollectionPropertyUpdater
     )
 
     @ParameterizedTest
@@ -56,7 +56,7 @@ internal class SmartReviewSectionCreatorUnitTest : MockkBaseTest {
             )
         } returns sectionId
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = contributionId,
@@ -79,7 +79,7 @@ internal class SmartReviewSectionCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = contributionId,

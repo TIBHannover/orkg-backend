@@ -28,10 +28,12 @@ import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 
 internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
     private val statementService: StatementUseCases = mockk()
+    private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
     private val resourceService: ResourceUseCases = mockk()
     private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
     private val abstractLiteratureListSectionCreator: AbstractLiteratureListSectionCreator = mockk()
@@ -39,6 +41,7 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
 
     private val abstractLiteratureListSectionUpdater = AbstractLiteratureListSectionUpdater(
         statementService = statementService,
+        unsafeStatementUseCases = unsafeStatementUseCases,
         resourceService = resourceService,
         unsafeResourceUseCases = unsafeResourceUseCases,
         abstractLiteratureListSectionCreator = abstractLiteratureListSectionCreator,
@@ -98,14 +101,14 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
         val entryId = ThingId("R1564")
 
         every { abstractLiteratureListSectionCreator.createListSectionEntry(contributorId, any()) } returns entryId
-        every { statementService.add(any()) } returns StatementId("S1")
+        every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
         every { singleStatementPropertyUpdater.updateOptionalProperty(any<List<GeneralStatement>>(), any(), any(), any(), any<String>()) } just runs
         every { statementService.delete(any<Set<StatementId>>()) } just runs
 
         abstractLiteratureListSectionUpdater.updateListSection(contributorId, newSection, oldSection, statements)
 
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = ThingId("R0"),
@@ -124,7 +127,7 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = ThingId("R1"),
@@ -150,7 +153,7 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = oldSection.id,
@@ -173,7 +176,7 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
         val entryId = ThingId("R1564")
 
         every { abstractLiteratureListSectionCreator.createListSectionEntry(contributorId, any()) } returns entryId
-        every { statementService.add(any()) } returns StatementId("S1")
+        every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
 
         abstractLiteratureListSectionUpdater.updateListSection(contributorId, newSection, oldSection, statements)
 
@@ -181,7 +184,7 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
             abstractLiteratureListSectionCreator.createListSectionEntry(contributorId, newEntry)
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = oldSection.id,
@@ -208,14 +211,14 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
         val entryId = ThingId("R1564")
 
         every { abstractLiteratureListSectionCreator.createListSectionEntry(contributorId, any()) } returns entryId
-        every { statementService.add(any()) } returns StatementId("S1")
+        every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
         every { singleStatementPropertyUpdater.updateOptionalProperty(any<List<GeneralStatement>>(), any(), any(), any(), any<String>()) } just runs
         every { statementService.delete(any<Set<StatementId>>()) } just runs
 
         abstractLiteratureListSectionUpdater.updateListSection(contributorId, newSection, oldSection, statements)
 
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = ThingId("R1"),
@@ -229,7 +232,7 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
             abstractLiteratureListSectionCreator.createListSectionEntry(contributorId, entry)
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = oldSection.id,

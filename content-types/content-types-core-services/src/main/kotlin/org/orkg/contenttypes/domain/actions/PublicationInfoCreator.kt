@@ -13,14 +13,14 @@ import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ResourceRepository
 
 abstract class PublicationInfoCreator(
     protected val unsafeResourceUseCases: UnsafeResourceUseCases,
     protected val resourceRepository: ResourceRepository,
-    protected val statementService: StatementUseCases,
+    protected val unsafeStatementUseCases: UnsafeStatementUseCases,
     protected val literalService: LiteralUseCases
 ) {
     internal fun create(contributorId: ContributorId, publicationInfo: PublicationInfoDefinition, subjectId: ThingId) {
@@ -50,7 +50,7 @@ abstract class PublicationInfoCreator(
                 datatype = Literals.XSD.INT.prefixedUri
             )
         )
-        statementService.add(
+        unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = contributorId,
                 subjectId = subjectId,
@@ -72,7 +72,7 @@ abstract class PublicationInfoCreator(
                 datatype = Literals.XSD.INT.prefixedUri
             )
         )
-        statementService.add(
+        unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = contributorId,
                 subjectId = subjectId,
@@ -98,7 +98,7 @@ abstract class PublicationInfoCreator(
                 contributorId = contributorId
             )
         )
-        statementService.add(
+        unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = contributorId,
                 subjectId = subjectId,
@@ -120,7 +120,7 @@ abstract class PublicationInfoCreator(
                 datatype = Literals.XSD.URI.prefixedUri
             )
         )
-        statementService.add(
+        unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = contributorId,
                 subjectId = subjectId,

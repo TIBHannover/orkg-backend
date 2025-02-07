@@ -20,18 +20,18 @@ import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.testing.fixtures.createLiteral
 
 internal class AuthorCreatorUnitTest : MockkBaseTest {
     private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
-    private val statementService: StatementUseCases = mockk()
+    private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()
     private val listService: ListUseCases = mockk()
 
     private val authorCreator =
-        object : AuthorCreator(unsafeResourceUseCases, statementService, literalService, listService) {}
+        object : AuthorCreator(unsafeResourceUseCases, unsafeStatementUseCases, literalService, listService) {}
 
     @Test
     fun `Given a list of authors, when linking an existing author to the subject resource, it returns success`() {
@@ -61,7 +61,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
             )
         } returns orcidLiteral.id
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = authorId,
@@ -80,7 +80,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
             )
         } returns authorListId
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = subjectId,
@@ -101,7 +101,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = authorId,
@@ -120,7 +120,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = subjectId,
@@ -160,7 +160,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
             )
         } returns authorListId
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = subjectId,
@@ -190,7 +190,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = subjectId,
@@ -233,7 +233,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
             )
         } returns orcidLiteralId
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = authorId,
@@ -252,7 +252,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
             )
         } returns homepageLiteralId
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = authorId,
@@ -271,7 +271,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
             )
         } returns authorListId
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = subjectId,
@@ -293,7 +293,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = authorId,
@@ -312,7 +312,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = authorId,
@@ -331,7 +331,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = subjectId,

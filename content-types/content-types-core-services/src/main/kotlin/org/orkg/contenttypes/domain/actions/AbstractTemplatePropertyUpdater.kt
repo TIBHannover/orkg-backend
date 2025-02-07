@@ -21,10 +21,12 @@ import org.orkg.graph.input.CreateStatementUseCase.CreateCommand
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 
 class AbstractTemplatePropertyUpdater(
     private val statementService: StatementUseCases,
+    private val unsafeStatementUseCases: UnsafeStatementUseCases,
     private val unsafeResourceUseCases: UnsafeResourceUseCases,
     private val singleStatementPropertyUpdater: SingleStatementPropertyUpdater
 ) {
@@ -32,7 +34,13 @@ class AbstractTemplatePropertyUpdater(
         literalService: LiteralUseCases,
         unsafeResourceUseCases: UnsafeResourceUseCases,
         statementService: StatementUseCases,
-    ) : this(statementService, unsafeResourceUseCases, SingleStatementPropertyUpdater(literalService, statementService))
+        unsafeStatementUseCases: UnsafeStatementUseCases,
+    ) : this(
+        statementService,
+        unsafeStatementUseCases,
+        unsafeResourceUseCases,
+        SingleStatementPropertyUpdater(literalService, statementService, unsafeStatementUseCases)
+    )
 
     internal fun update(
         statements: List<GeneralStatement>,
@@ -149,7 +157,7 @@ class AbstractTemplatePropertyUpdater(
                 if (toRemove.isNotEmpty()) {
                     statementService.delete(toRemove.map { it.id }.toSet())
                 }
-                statementService.add(
+                unsafeStatementUseCases.create(
                     CreateCommand(
                         contributorId = contributorId,
                         subjectId = oldProperty.id,
@@ -164,7 +172,7 @@ class AbstractTemplatePropertyUpdater(
                 if (toRemove.isNotEmpty()) {
                     statementService.delete(toRemove.map { it.id }.toSet())
                 }
-                statementService.add(
+                unsafeStatementUseCases.create(
                     CreateCommand(
                         contributorId = contributorId,
                         subjectId = oldProperty.id,

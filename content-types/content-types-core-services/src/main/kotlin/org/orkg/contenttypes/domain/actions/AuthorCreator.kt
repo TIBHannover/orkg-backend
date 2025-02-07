@@ -14,12 +14,12 @@ import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 abstract class AuthorCreator(
     protected val unsafeResourceUseCases: UnsafeResourceUseCases,
-    protected val statementService: StatementUseCases,
+    protected val unsafeStatementUseCases: UnsafeStatementUseCases,
     protected val literalService: LiteralUseCases,
     protected val listService: ListUseCases
 ) {
@@ -46,7 +46,7 @@ abstract class AuthorCreator(
                 contributorId = contributorId
             )
         )
-        statementService.add(
+        unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = contributorId,
                 subjectId = subjectId,
@@ -85,7 +85,7 @@ abstract class AuthorCreator(
                     datatype = Literals.XSD.URI.prefixedUri
                 )
             )
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = authorId,
@@ -112,7 +112,7 @@ abstract class AuthorCreator(
                         label = value
                     )
                 )
-                statementService.add(
+                unsafeStatementUseCases.create(
                     CreateStatementUseCase.CreateCommand(
                         contributorId = contributorId,
                         subjectId = authorId,

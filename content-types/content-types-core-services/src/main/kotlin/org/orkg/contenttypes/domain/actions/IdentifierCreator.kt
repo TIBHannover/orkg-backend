@@ -7,10 +7,10 @@ import org.orkg.contenttypes.domain.identifiers.parse
 import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 abstract class IdentifierCreator(
-    protected val statementService: StatementUseCases,
+    protected val unsafeStatementUseCases: UnsafeStatementUseCases,
     protected val literalService: LiteralUseCases
 ) {
     internal fun create(
@@ -22,7 +22,7 @@ abstract class IdentifierCreator(
         val parsedIdentifiers = identifierDefinitions.parse(identifiers, validate = false)
         parsedIdentifiers.forEach { (identifier, values) ->
             values.forEach { value ->
-                statementService.create(
+                unsafeStatementUseCases.create(
                     CreateStatementUseCase.CreateCommand(
                         contributorId = contributorId,
                         subjectId = subjectId,

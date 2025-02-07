@@ -6,14 +6,16 @@ import org.orkg.contenttypes.domain.actions.templates.UpdateTemplateAction.State
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 class TemplateFormattedLabelUpdater(
     private val singleStatementPropertyUpdater: SingleStatementPropertyUpdater
 ) : UpdateTemplateAction {
     constructor(
         literalService: LiteralUseCases,
-        statementService: StatementUseCases
-    ) : this(SingleStatementPropertyUpdater(literalService, statementService))
+        statementService: StatementUseCases,
+        unsafeStatementUseCases: UnsafeStatementUseCases
+    ) : this(SingleStatementPropertyUpdater(literalService, statementService, unsafeStatementUseCases))
 
     override fun invoke(command: UpdateTemplateCommand, state: State): State {
         if (command.formattedLabel != state.template!!.formattedLabel) {

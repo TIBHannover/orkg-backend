@@ -17,15 +17,15 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateStatementUseCase
-import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 
 internal class ComparisonVersionHistoryUpdaterUnitTest : MockkBaseTest {
-    private val statementService: StatementUseCases = mockk()
+    private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
     private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
 
-    private val comparisonVersionHistoryUpdater = ComparisonVersionHistoryUpdater(statementService, unsafeResourceUseCases)
+    private val comparisonVersionHistoryUpdater = ComparisonVersionHistoryUpdater(unsafeStatementUseCases, unsafeResourceUseCases)
 
     @Test
     fun `Given a comparison publish command, it crates a new previous version statement and updates the previous version comparison class labels`() {
@@ -35,7 +35,7 @@ internal class ComparisonVersionHistoryUpdaterUnitTest : MockkBaseTest {
         val state = PublishComparisonState(comparison, comparisonVersionId)
 
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = comparison.id,
@@ -52,7 +52,7 @@ internal class ComparisonVersionHistoryUpdaterUnitTest : MockkBaseTest {
         }
 
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = comparison.id,
@@ -82,7 +82,7 @@ internal class ComparisonVersionHistoryUpdaterUnitTest : MockkBaseTest {
         val state = PublishComparisonState(comparison, comparisonVersionId)
 
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = comparison.id,
@@ -98,7 +98,7 @@ internal class ComparisonVersionHistoryUpdaterUnitTest : MockkBaseTest {
         }
 
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = comparison.id,

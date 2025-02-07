@@ -18,14 +18,15 @@ import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 internal class ComparisonPublicationInfoCreatorUnitTest : MockkBaseTest {
-    private val statementService: StatementUseCases = mockk()
+    private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()
 
-    private val comparisonPublicationInfoCreator =
-        ComparisonPublicationInfoCreator(statementService, literalService, fixedClock)
+    private val comparisonPublicationInfoCreator = ComparisonPublicationInfoCreator(
+        unsafeStatementUseCases, literalService, fixedClock
+    )
 
     @Test
     fun `Given a comparison publish command, it updates the publication metadata`() {
@@ -37,7 +38,7 @@ internal class ComparisonPublicationInfoCreatorUnitTest : MockkBaseTest {
         val publicationMonthLiteralId = ThingId("L456")
 
         every { literalService.create(any()) } returns publicationYearLiteralId andThen publicationMonthLiteralId
-        every { statementService.add(any()) } returns StatementId("S1")
+        every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
 
         comparisonPublicationInfoCreator(command, state).asClue {
             it.comparisonId shouldBe comparisonId
@@ -54,7 +55,7 @@ internal class ComparisonPublicationInfoCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = comparisonId,
@@ -73,7 +74,7 @@ internal class ComparisonPublicationInfoCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = comparisonId,

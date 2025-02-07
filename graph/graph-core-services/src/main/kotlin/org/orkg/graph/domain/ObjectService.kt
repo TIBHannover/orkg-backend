@@ -21,7 +21,7 @@ import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
-import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 import org.springframework.stereotype.Service
 
 @Service
@@ -29,7 +29,7 @@ class ObjectService(
     private val resourceService: ResourceUseCases,
     private val literalService: LiteralUseCases,
     private val predicateService: PredicateUseCases,
-    private val statementService: StatementUseCases,
+    private val unsafeStatementService: UnsafeStatementUseCases,
     private val classService: ClassUseCases,
     private val listService: ListUseCases,
     private val thingService: ThingService,
@@ -158,7 +158,7 @@ class ObjectService(
                 when {
                     jsonObject.isExisting() -> { // Add an existing resource or literal
                         if (!jsonObject.isTempResource())
-                            statementService.add(
+                            unsafeStatementService.create(
                                 CreateStatementUseCase.CreateCommand(
                                     contributorId = userId,
                                     subjectId = subject,
@@ -176,7 +176,7 @@ class ObjectService(
                             )
                             else {
                                 val tempId = tempResources[jsonObject.`@id`]
-                                statementService.add(
+                                unsafeStatementService.create(
                                     CreateStatementUseCase.CreateCommand(
                                         contributorId = userId,
                                         subjectId = subject,
@@ -199,7 +199,7 @@ class ObjectService(
                         if (jsonObject.`@temp` != null) {
                             tempResources[jsonObject.`@temp`!!] = newLiteral
                         }
-                        statementService.add(
+                        unsafeStatementService.create(
                             CreateStatementUseCase.CreateCommand(
                                 contributorId = userId,
                                 subjectId = subject,
@@ -234,7 +234,7 @@ class ObjectService(
                         if (jsonObject.`@temp` != null) {
                             tempResources[jsonObject.`@temp`!!] = newResource
                         }
-                        statementService.add(
+                        unsafeStatementService.create(
                             CreateStatementUseCase.CreateCommand(
                                 contributorId = userId,
                                 subjectId = subject,
@@ -281,7 +281,7 @@ class ObjectService(
             limit--
             if (tempResources.containsKey(temp.`object`)) {
                 val tempId = tempResources[temp.`object`]
-                statementService.add(
+                unsafeStatementService.create(
                     CreateStatementUseCase.CreateCommand(
                         contributorId = userId,
                         subjectId = temp.subject,

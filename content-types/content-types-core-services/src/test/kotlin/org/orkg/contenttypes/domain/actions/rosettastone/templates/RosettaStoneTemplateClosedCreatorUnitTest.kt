@@ -16,13 +16,13 @@ import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 internal class RosettaStoneTemplateClosedCreatorUnitTest : MockkBaseTest {
     private val literalService: LiteralUseCases = mockk()
-    private val statementService: StatementUseCases = mockk()
+    private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
 
-    private val rosettaStoneTemplateClosedCreator = RosettaStoneTemplateClosedCreator(literalService, statementService)
+    private val rosettaStoneTemplateClosedCreator = RosettaStoneTemplateClosedCreator(literalService, unsafeStatementUseCases)
 
     @Test
     fun `Given a rosetta stone template create command, then it creates a new closed statement`() {
@@ -43,7 +43,7 @@ internal class RosettaStoneTemplateClosedCreatorUnitTest : MockkBaseTest {
             )
         } returns closedLiteralId
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = state.rosettaStoneTemplateId!!,
@@ -69,7 +69,7 @@ internal class RosettaStoneTemplateClosedCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = state.rosettaStoneTemplateId!!,

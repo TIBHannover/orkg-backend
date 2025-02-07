@@ -8,7 +8,7 @@ import org.orkg.contenttypes.output.DoiService
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 class PaperVersionDoiPublisher(
     private val singleStatementPropertyCreator: SingleStatementPropertyCreator,
@@ -16,11 +16,11 @@ class PaperVersionDoiPublisher(
     private val paperPublishBaseUri: String
 ) : PublishPaperAction {
     constructor(
-        statementService: StatementUseCases,
+        unsafeStatementUseCases: UnsafeStatementUseCases,
         literalService: LiteralUseCases,
         doiService: DoiService,
         paperPublishBaseUri: String
-    ) : this(SingleStatementPropertyCreator(literalService, statementService), doiService, paperPublishBaseUri)
+    ) : this(SingleStatementPropertyCreator(literalService, unsafeStatementUseCases), doiService, paperPublishBaseUri)
 
     override fun invoke(command: PublishPaperCommand, state: State): State {
         val paper = state.paper!!

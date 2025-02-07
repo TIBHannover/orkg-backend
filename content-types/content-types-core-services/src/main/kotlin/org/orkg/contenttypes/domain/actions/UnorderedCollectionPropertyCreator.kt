@@ -5,11 +5,11 @@ import org.orkg.common.ThingId
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 class UnorderedCollectionPropertyCreator(
     private val literalService: LiteralUseCases,
-    private val statementService: StatementUseCases
+    private val unsafeStatementUseCases: UnsafeStatementUseCases,
 ) {
     internal fun create(
         contributorId: ContributorId,
@@ -24,7 +24,7 @@ class UnorderedCollectionPropertyCreator(
                     label = label
                 )
             )
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = subjectId,

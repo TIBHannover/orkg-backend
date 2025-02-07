@@ -7,6 +7,7 @@ import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 class TemplatePropertiesUpdater(
     private val abstractTemplatePropertiesUpdater: AbstractTemplatePropertiesUpdater
@@ -16,7 +17,16 @@ class TemplatePropertiesUpdater(
         resourceService: ResourceUseCases,
         unsafeResourceUseCases: UnsafeResourceUseCases,
         statementService: StatementUseCases,
-    ) : this(AbstractTemplatePropertiesUpdater(literalService, resourceService, unsafeResourceUseCases, statementService))
+        unsafeStatementUseCases: UnsafeStatementUseCases,
+    ) : this(
+        AbstractTemplatePropertiesUpdater(
+            literalService,
+            resourceService,
+            unsafeResourceUseCases,
+            statementService,
+            unsafeStatementUseCases
+        )
+    )
 
     override fun invoke(command: UpdateTemplateCommand, state: State): State {
         command.properties?.let { properties ->

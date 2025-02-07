@@ -5,15 +5,15 @@ import org.orkg.contenttypes.domain.actions.SingleStatementPropertyCreator
 import org.orkg.contenttypes.domain.actions.literaturelists.PublishLiteratureListAction.State
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 class LiteratureListChangelogCreator(
     private val singleStatementPropertyCreator: SingleStatementPropertyCreator
 ) : PublishLiteratureListAction {
     constructor(
         literalService: LiteralUseCases,
-        statementService: StatementUseCases,
-    ) : this(SingleStatementPropertyCreator(literalService, statementService))
+        unsafeStatementUseCases: UnsafeStatementUseCases,
+    ) : this(SingleStatementPropertyCreator(literalService, unsafeStatementUseCases))
 
     override fun invoke(command: PublishLiteratureListCommand, state: State): State {
         singleStatementPropertyCreator.create(

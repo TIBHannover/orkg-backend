@@ -14,12 +14,12 @@ import org.orkg.contenttypes.input.testing.fixtures.createTemplateCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateStatementUseCase
-import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 internal class TemplateRelationsCreatorUnitTest : MockkBaseTest {
-    private val statementService: StatementUseCases = mockk()
+    private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
 
-    private val templateRelationsCreator = TemplateRelationsCreator(statementService)
+    private val templateRelationsCreator = TemplateRelationsCreator(unsafeStatementUseCases)
 
     @Test
     fun `Given a template create command, when a related research field is set, it creates a new statement`() {
@@ -36,7 +36,7 @@ internal class TemplateRelationsCreatorUnitTest : MockkBaseTest {
         )
 
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = state.templateId!!,
@@ -53,7 +53,7 @@ internal class TemplateRelationsCreatorUnitTest : MockkBaseTest {
         }
 
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = state.templateId!!,
@@ -79,7 +79,7 @@ internal class TemplateRelationsCreatorUnitTest : MockkBaseTest {
         )
 
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = state.templateId!!,
@@ -96,7 +96,7 @@ internal class TemplateRelationsCreatorUnitTest : MockkBaseTest {
         }
 
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = state.templateId!!,
@@ -122,7 +122,7 @@ internal class TemplateRelationsCreatorUnitTest : MockkBaseTest {
         )
 
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = state.templateId!!,
@@ -139,7 +139,7 @@ internal class TemplateRelationsCreatorUnitTest : MockkBaseTest {
         }
 
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = state.templateId!!,

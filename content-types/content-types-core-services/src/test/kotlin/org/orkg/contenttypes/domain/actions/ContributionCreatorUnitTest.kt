@@ -19,18 +19,16 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.CreateStatementUseCase
-import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 internal class ContributionCreatorUnitTest : MockkBaseTest {
     private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
-    private val statementService: StatementUseCases = mockk()
+    private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
     private val subgraphCreator: SubgraphCreator = mockk()
 
     private val contributionCreator = ContributionCreator(
-        unsafeResourceUseCases = unsafeResourceUseCases,
-        statementService = statementService,
-        subgraphCreator = subgraphCreator
+        unsafeResourceUseCases, unsafeStatementUseCases, subgraphCreator
     )
 
     @Test
@@ -57,7 +55,7 @@ internal class ContributionCreatorUnitTest : MockkBaseTest {
             )
         } returns contributionId
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = paperId,
@@ -100,7 +98,7 @@ internal class ContributionCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = paperId,

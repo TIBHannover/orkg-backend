@@ -13,12 +13,12 @@ import org.orkg.contenttypes.input.testing.fixtures.createTemplateCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateStatementUseCase
-import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 internal class TemplateTargetClassCreatorUnitTest : MockkBaseTest {
-    private val statementService: StatementUseCases = mockk()
+    private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
 
-    private val templateTargetClassCreator = TemplateTargetClassCreator(statementService)
+    private val templateTargetClassCreator = TemplateTargetClassCreator(unsafeStatementUseCases)
 
     @Test
     fun `Given a template create command, it creates a new statement for the target class`() {
@@ -28,7 +28,7 @@ internal class TemplateTargetClassCreatorUnitTest : MockkBaseTest {
         )
 
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = state.templateId!!,
@@ -45,7 +45,7 @@ internal class TemplateTargetClassCreatorUnitTest : MockkBaseTest {
         }
 
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = state.templateId!!,

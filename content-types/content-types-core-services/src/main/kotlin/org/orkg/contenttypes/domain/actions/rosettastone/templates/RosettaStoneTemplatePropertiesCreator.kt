@@ -4,8 +4,8 @@ import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertyCreator
 import org.orkg.contenttypes.domain.actions.CreateRosettaStoneTemplateCommand
 import org.orkg.contenttypes.domain.actions.CreateRosettaStoneTemplateState
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 class RosettaStoneTemplatePropertiesCreator(
     private val abstractTemplatePropertyCreator: AbstractTemplatePropertyCreator
@@ -13,8 +13,8 @@ class RosettaStoneTemplatePropertiesCreator(
     constructor(
         unsafeResourceUseCases: UnsafeResourceUseCases,
         literalService: LiteralUseCases,
-        statementService: StatementUseCases
-    ) : this(AbstractTemplatePropertyCreator(unsafeResourceUseCases, literalService, statementService))
+        unsafeStatementUseCases: UnsafeStatementUseCases
+    ) : this(AbstractTemplatePropertyCreator(unsafeResourceUseCases, literalService, unsafeStatementUseCases))
 
     override fun invoke(
         command: CreateRosettaStoneTemplateCommand,

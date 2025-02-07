@@ -19,6 +19,7 @@ import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createStatement
@@ -27,10 +28,11 @@ import org.orkg.testing.pageOf
 internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
     private val literalService: LiteralUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
+    private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
     private val singleStatementPropertyCreator: SingleStatementPropertyCreator = mockk()
 
     private val singleStatementPropertyUpdater = SingleStatementPropertyUpdater(
-        literalService, statementService, singleStatementPropertyCreator
+        literalService, statementService, unsafeStatementUseCases, singleStatementPropertyCreator
     )
 
     @Test
@@ -406,7 +408,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
         val statements = emptyList<GeneralStatement>()
 
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = subjectId,
@@ -419,7 +421,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
         singleStatementPropertyUpdater.updateRequiredProperty(statements, contributorId, subjectId, Predicates.hasContribution, contributionId)
 
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = subjectId,
@@ -442,7 +444,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
 
         every { statementService.delete(setOf(StatementId("S357"))) } just runs
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = subjectId,
@@ -456,7 +458,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { statementService.delete(setOf(StatementId("S357"))) }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = subjectId,
@@ -475,7 +477,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
         val statements = emptyList<GeneralStatement>()
 
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = subjectId,
@@ -488,7 +490,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
         singleStatementPropertyUpdater.updateOptionalProperty(statements, contributorId, subjectId, Predicates.hasContribution, objectId)
 
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = subjectId,
@@ -511,7 +513,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
 
         every { statementService.delete(setOf(StatementId("S357"))) } just runs
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = subjectId,
@@ -525,7 +527,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { statementService.delete(setOf(StatementId("S357"))) }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = subjectId,

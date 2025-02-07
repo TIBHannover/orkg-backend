@@ -18,10 +18,12 @@ import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 
 class AbstractLiteratureListSectionUpdater(
     private val statementService: StatementUseCases,
+    private val unsafeStatementUseCases: UnsafeStatementUseCases,
     private val resourceService: ResourceUseCases,
     private val unsafeResourceUseCases: UnsafeResourceUseCases,
     private val abstractLiteratureListSectionCreator: AbstractLiteratureListSectionCreator,
@@ -32,12 +34,14 @@ class AbstractLiteratureListSectionUpdater(
         resourceService: ResourceUseCases,
         unsafeResourceUseCases: UnsafeResourceUseCases,
         statementService: StatementUseCases,
+        unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
         statementService,
+        unsafeStatementUseCases,
         resourceService,
         unsafeResourceUseCases,
-        AbstractLiteratureListSectionCreator(statementService, unsafeResourceUseCases, literalService),
-        SingleStatementPropertyUpdater(literalService, statementService)
+        AbstractLiteratureListSectionCreator(unsafeStatementUseCases, unsafeResourceUseCases, literalService),
+        SingleStatementPropertyUpdater(literalService, statementService, unsafeStatementUseCases)
     )
 
     /**
@@ -90,7 +94,7 @@ class AbstractLiteratureListSectionUpdater(
                         } else {
                             if (newEntry.id != connection.hasLinkStatement.`object`.id) {
                                 statementsToRemove += connection.hasLinkStatement.id
-                                statementService.add(
+                                unsafeStatementUseCases.create(
                                     CreateCommand(
                                         contributorId = contributorId,
                                         subjectId = connection.hasEntryStatement.`object`.id,
@@ -122,7 +126,7 @@ class AbstractLiteratureListSectionUpdater(
 
             while (newEntriesIterator.hasNext()) {
                 val entryId = abstractLiteratureListSectionCreator.createListSectionEntry(contributorId, newEntriesIterator.next())
-                statementService.add(
+                unsafeStatementUseCases.create(
                     CreateCommand(
                         contributorId = contributorId,
                         subjectId = oldSection.id,

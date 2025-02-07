@@ -1,5 +1,5 @@
 plugins {
-    id("org.orkg.gradle.kotlin-library")
+    id("org.orkg.gradle.kotlin-library-with-test-fixtures")
 }
 
 dependencies {

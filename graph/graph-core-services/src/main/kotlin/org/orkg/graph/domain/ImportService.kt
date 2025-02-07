@@ -15,6 +15,7 @@ import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ExternalClassService
 import org.orkg.graph.output.ExternalPredicateService
 import org.orkg.graph.output.ExternalResourceService
@@ -28,6 +29,7 @@ class ImportService(
     private val externalResourceRepositories: MutableList<ExternalResourceService>,
     private val externalPredicateRepositories: MutableList<ExternalPredicateService>,
     private val statementService: StatementUseCases,
+    private val unsafeStatementService: UnsafeStatementUseCases,
     private val resourceService: ResourceUseCases,
     private val classService: ClassUseCases,
     private val predicateService: PredicateUseCases,
@@ -231,7 +233,7 @@ class ImportService(
                 datatype = Literals.XSD.URI.prefixedUri
             )
         )
-        statementService.add(
+        unsafeStatementService.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = contributorId,
                 subjectId = subjectId,
@@ -253,7 +255,7 @@ class ImportService(
                     label = description
                 )
             )
-            statementService.add(
+            unsafeStatementService.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = subjectId,

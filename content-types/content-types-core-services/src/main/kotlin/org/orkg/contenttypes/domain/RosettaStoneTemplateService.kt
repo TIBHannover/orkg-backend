@@ -55,6 +55,7 @@ import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
@@ -77,6 +78,7 @@ class RosettaStoneTemplateService(
     private val unsafeResourceUseCases: UnsafeResourceUseCases,
     private val classService: ClassUseCases,
     private val statementService: StatementUseCases,
+    private val unsafeStatementUseCases: UnsafeStatementUseCases,
     private val literalService: LiteralUseCases,
     private val rosettaStoneStatementRepository: RosettaStoneStatementRepository,
     private val contributorRepository: ContributorRepository,
@@ -118,11 +120,11 @@ class RosettaStoneTemplateService(
             OrganizationValidator(organizationRepository, { it.organizations }),
             ObservatoryValidator(observatoryRepository, { it.observatories }),
             RosettaStoneTemplateResourceCreator(unsafeResourceUseCases),
-            RosettaStoneTemplateTargetClassCreator(classService, statementService, literalService),
-            RosettaStoneTemplateDescriptionCreator(literalService, statementService),
-            RosettaStoneTemplateFormattedLabelCreator(literalService, statementService),
-            RosettaStoneTemplateClosedCreator(literalService, statementService),
-            RosettaStoneTemplatePropertiesCreator(unsafeResourceUseCases, literalService, statementService)
+            RosettaStoneTemplateTargetClassCreator(classService, unsafeStatementUseCases, literalService),
+            RosettaStoneTemplateDescriptionCreator(literalService, unsafeStatementUseCases),
+            RosettaStoneTemplateFormattedLabelCreator(literalService, unsafeStatementUseCases),
+            RosettaStoneTemplateClosedCreator(literalService, unsafeStatementUseCases),
+            RosettaStoneTemplatePropertiesCreator(unsafeResourceUseCases, literalService, unsafeStatementUseCases)
         )
         return steps.execute(command, CreateRosettaStoneTemplateState()).rosettaStoneTemplateId!!
     }
@@ -139,10 +141,10 @@ class RosettaStoneTemplateService(
             OrganizationValidator(organizationRepository, { it.organizations }, { it.rosettaStoneTemplate!!.organizations }),
             ObservatoryValidator(observatoryRepository, { it.observatories }, { it.rosettaStoneTemplate!!.observatories }),
             RosettaStoneTemplateResourceUpdater(unsafeResourceUseCases),
-            RosettaStoneTemplateDescriptionUpdater(literalService, statementService),
-            RosettaStoneTemplateFormattedLabelUpdater(literalService, statementService),
-            RosettaStoneTemplateExampleUsageUpdater(literalService, statementService),
-            RosettaStoneTemplatePropertiesUpdater(literalService, resourceService, unsafeResourceUseCases, statementService),
+            RosettaStoneTemplateDescriptionUpdater(literalService, statementService, unsafeStatementUseCases),
+            RosettaStoneTemplateFormattedLabelUpdater(literalService, statementService, unsafeStatementUseCases),
+            RosettaStoneTemplateExampleUsageUpdater(literalService, statementService, unsafeStatementUseCases),
+            RosettaStoneTemplatePropertiesUpdater(literalService, resourceService, unsafeResourceUseCases, statementService, unsafeStatementUseCases),
         )
         steps.execute(command, UpdateRosettaStoneTemplateState())
     }

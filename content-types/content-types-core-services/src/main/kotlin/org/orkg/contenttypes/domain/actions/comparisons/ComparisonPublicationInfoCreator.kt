@@ -9,10 +9,10 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 class ComparisonPublicationInfoCreator(
-    private val statementService: StatementUseCases,
+    private val unsafeStatementUseCases: UnsafeStatementUseCases,
     private val literalService: LiteralUseCases,
     private val clock: Clock = Clock.systemDefaultZone()
 ) : CreateComparisonAction {
@@ -26,7 +26,7 @@ class ComparisonPublicationInfoCreator(
                 datatype = Literals.XSD.INT.prefixedUri
             )
         )
-        statementService.add(
+        unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = command.contributorId,
                 subjectId = comparisonId,
@@ -41,7 +41,7 @@ class ComparisonPublicationInfoCreator(
                 datatype = Literals.XSD.INT.prefixedUri
             )
         )
-        statementService.add(
+        unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = command.contributorId,
                 subjectId = comparisonId,

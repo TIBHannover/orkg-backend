@@ -43,8 +43,8 @@ import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
-import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ClassHierarchyRepository
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ResourceRepository
@@ -65,7 +65,7 @@ class RosettaStoneStatementService(
     private val classRepository: ClassRepository,
     private val classService: ClassUseCases,
     private val unsafeResourceUseCases: UnsafeResourceUseCases,
-    private val statementService: StatementUseCases,
+    private val unsafeStatementUseCases: UnsafeStatementUseCases,
     private val literalService: LiteralUseCases,
     private val predicateService: PredicateUseCases,
     private val statementRepository: StatementRepository,
@@ -111,7 +111,7 @@ class RosettaStoneStatementService(
             OrganizationValidator(organizationRepository, { it.organizations }),
             RosettaStoneStatementThingDefinitionCreateValidator(thingRepository, classRepository),
             RosettaStoneStatementPropertyValueCreateValidator(thingRepository, statementRepository, classHierarchyRepository, this),
-            RosettaStoneStatementThingDefinitionCreateCreator(classService, unsafeResourceUseCases, statementService, literalService, predicateService, statementRepository, listService),
+            RosettaStoneStatementThingDefinitionCreateCreator(classService, unsafeResourceUseCases, unsafeStatementUseCases, literalService, predicateService, statementRepository, listService),
             RosettaStoneStatementCreator(repository, thingRepository, clock)
         )
         return steps.execute(command, CreateRosettaStoneStatementState()).rosettaStoneStatementId!!
@@ -127,7 +127,7 @@ class RosettaStoneStatementService(
             OrganizationValidator(organizationRepository, { it.organizations }, { it.organizations }),
             RosettaStoneStatementThingDefinitionUpdateValidator(thingRepository, classRepository),
             RosettaStoneStatementPropertyValueUpdateValidator(thingRepository, statementRepository, classHierarchyRepository, this),
-            RosettaStoneStatementThingDefinitionUpdateCreator(classService, unsafeResourceUseCases, statementService, literalService, predicateService, statementRepository, listService),
+            RosettaStoneStatementThingDefinitionUpdateCreator(classService, unsafeResourceUseCases, unsafeStatementUseCases, literalService, predicateService, statementRepository, listService),
             RosettaStoneStatementUpdater(repository, thingRepository, clock)
         )
         return steps.execute(command, UpdateRosettaStoneStatementState()).rosettaStoneStatementId!!

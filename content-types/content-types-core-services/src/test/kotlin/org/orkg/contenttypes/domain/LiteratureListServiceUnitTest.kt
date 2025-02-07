@@ -34,6 +34,7 @@ import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ListRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
@@ -55,6 +56,7 @@ internal class LiteratureListServiceUnitTest : MockkBaseTest {
     private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
+    private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
     private val listService: ListUseCases = mockk()
     private val listRepository: ListRepository = mockk()
     private val contributorRepository: ContributorRepository = mockk()
@@ -70,6 +72,7 @@ internal class LiteratureListServiceUnitTest : MockkBaseTest {
         unsafeResourceUseCases,
         literalService,
         statementService,
+        unsafeStatementUseCases,
         listService,
         listRepository,
         contributorRepository

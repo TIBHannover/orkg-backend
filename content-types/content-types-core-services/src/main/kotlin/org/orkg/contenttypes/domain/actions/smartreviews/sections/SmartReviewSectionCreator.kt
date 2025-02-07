@@ -10,20 +10,22 @@ import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 class SmartReviewSectionCreator(
-    private val statementService: StatementUseCases,
+    private val unsafeStatementUseCases: UnsafeStatementUseCases,
     private val abstractSmartReviewSectionCreator: AbstractSmartReviewSectionCreator,
     private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater
 ) : CreateSmartReviewSectionAction {
     constructor(
         literalService: LiteralUseCases,
         unsafeResourceUseCases: UnsafeResourceUseCases,
-        statementService: StatementUseCases
+        statementService: StatementUseCases,
+        unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
-        statementService,
-        AbstractSmartReviewSectionCreator(statementService, unsafeResourceUseCases, literalService),
-        StatementCollectionPropertyUpdater(literalService, statementService)
+        unsafeStatementUseCases,
+        AbstractSmartReviewSectionCreator(unsafeStatementUseCases, unsafeResourceUseCases, literalService),
+        StatementCollectionPropertyUpdater(literalService, statementService, unsafeStatementUseCases)
     )
 
     override fun invoke(command: CreateSmartReviewSectionCommand, state: State): State {
@@ -42,7 +44,7 @@ class SmartReviewSectionCreator(
                     .also { it.add(command.index!!.coerceAtMost(it.size), sectionId) }
             )
         } else {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = state.contributionId!!,

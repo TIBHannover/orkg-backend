@@ -15,13 +15,13 @@ import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 internal class RosettaStoneTemplateFormattedLabelCreatorUnitTest : MockkBaseTest {
     private val literalService: LiteralUseCases = mockk()
-    private val statementService: StatementUseCases = mockk()
+    private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
 
-    private val rosettaStoneTemplateFormattedLabelCreator = RosettaStoneTemplateFormattedLabelCreator(literalService, statementService)
+    private val rosettaStoneTemplateFormattedLabelCreator = RosettaStoneTemplateFormattedLabelCreator(literalService, unsafeStatementUseCases)
 
     @Test
     fun `Given a rosetta stone template create command, then it creates a new formatted label statement`() {
@@ -41,7 +41,7 @@ internal class RosettaStoneTemplateFormattedLabelCreatorUnitTest : MockkBaseTest
             )
         } returns formattedLabelLiteralId
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = state.rosettaStoneTemplateId!!,
@@ -66,7 +66,7 @@ internal class RosettaStoneTemplateFormattedLabelCreatorUnitTest : MockkBaseTest
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = state.rosettaStoneTemplateId!!,

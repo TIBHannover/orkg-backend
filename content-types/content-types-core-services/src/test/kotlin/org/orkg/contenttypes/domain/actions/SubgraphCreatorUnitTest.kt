@@ -35,8 +35,8 @@ import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
-import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.input.UpdateListUseCase
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.createLiteral
@@ -49,7 +49,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
     private val statementRepository: StatementRepository = mockk()
     private val classService: ClassUseCases = mockk()
     private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
-    private val statementService: StatementUseCases = mockk()
+    private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()
     private val predicateService: PredicateUseCases = mockk()
     private val listService: ListUseCases = mockk()
@@ -57,7 +57,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
     private val subgraphCreator = SubgraphCreator(
         classService = classService,
         unsafeResourceUseCases = unsafeResourceUseCases,
-        statementService = statementService,
+        unsafeStatementUseCases = unsafeStatementUseCases,
         literalService = literalService,
         predicateService = predicateService,
         statementRepository = statementRepository,
@@ -346,7 +346,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             )
         } returns literal
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = predicateId,
@@ -381,7 +381,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = predicateId,
@@ -549,7 +549,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             )
         } returns literal
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = resourceId,
@@ -599,7 +599,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = resourceId,
@@ -626,7 +626,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             )
         } returns pageOf()
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = ThingId("R1000"),
@@ -653,7 +653,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = ThingId("R1000"),

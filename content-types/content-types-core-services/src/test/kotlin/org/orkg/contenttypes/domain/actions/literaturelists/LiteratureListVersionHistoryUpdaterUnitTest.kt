@@ -14,12 +14,12 @@ import org.orkg.contenttypes.input.testing.fixtures.publishLiteratureListCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateStatementUseCase
-import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 internal class LiteratureListVersionHistoryUpdaterUnitTest : MockkBaseTest {
-    private val statementService: StatementUseCases = mockk()
+    private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
 
-    private val literatureListVersionHistoryUpdater = LiteratureListVersionHistoryUpdater(statementService)
+    private val literatureListVersionHistoryUpdater = LiteratureListVersionHistoryUpdater(unsafeStatementUseCases)
 
     @Test
     fun `Given a literature list publish command, it crates a new previous version statement`() {
@@ -29,7 +29,7 @@ internal class LiteratureListVersionHistoryUpdaterUnitTest : MockkBaseTest {
         val state = PublishLiteratureListState(literatureList, literatureListVersionId)
 
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = literatureList.id,
@@ -45,7 +45,7 @@ internal class LiteratureListVersionHistoryUpdaterUnitTest : MockkBaseTest {
         }
 
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = literatureList.id,

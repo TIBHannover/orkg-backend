@@ -295,7 +295,7 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
         )
 
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = oldProperty.id,
@@ -328,7 +328,7 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
         abstractTemplatePropertyUpdater.update(statements, contributorId, 2, newProperty, oldProperty)
 
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = oldProperty.id,

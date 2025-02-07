@@ -6,14 +6,16 @@ import org.orkg.contenttypes.domain.actions.UpdateComparisonState
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 class ComparisonSDGUpdater(
     private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater
 ) : UpdateComparisonAction {
     constructor(
         literalService: LiteralUseCases,
-        statementService: StatementUseCases
-    ) : this(StatementCollectionPropertyUpdater(literalService, statementService))
+        statementService: StatementUseCases,
+        unsafeStatementUseCases: UnsafeStatementUseCases
+    ) : this(StatementCollectionPropertyUpdater(literalService, statementService, unsafeStatementUseCases))
 
     override operator fun invoke(command: UpdateComparisonCommand, state: UpdateComparisonState): UpdateComparisonState {
         if (command.sustainableDevelopmentGoals != null && command.sustainableDevelopmentGoals != state.comparison!!.sustainableDevelopmentGoals.map { it.id }.toSet()) {

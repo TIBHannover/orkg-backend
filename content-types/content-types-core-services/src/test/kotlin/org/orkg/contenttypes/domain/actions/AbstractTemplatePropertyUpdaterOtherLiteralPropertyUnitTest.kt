@@ -238,7 +238,7 @@ internal class AbstractTemplatePropertyUpdaterOtherLiteralPropertyUnitTest : Abs
 
         every { statementService.delete(setOf(statementToRemove)) } just runs
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = oldProperty.id,
@@ -252,7 +252,7 @@ internal class AbstractTemplatePropertyUpdaterOtherLiteralPropertyUnitTest : Abs
 
         verify(exactly = 1) { statementService.delete(setOf(statementToRemove)) }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = oldProperty.id,
@@ -288,7 +288,7 @@ internal class AbstractTemplatePropertyUpdaterOtherLiteralPropertyUnitTest : Abs
 
         every { statementService.delete(setOf(statementToRemove)) } just runs
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = oldProperty.id,
@@ -302,7 +302,7 @@ internal class AbstractTemplatePropertyUpdaterOtherLiteralPropertyUnitTest : Abs
 
         verify(exactly = 1) { statementService.delete(setOf(statementToRemove)) }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = oldProperty.id,

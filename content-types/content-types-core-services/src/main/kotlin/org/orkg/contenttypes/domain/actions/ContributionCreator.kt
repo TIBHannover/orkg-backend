@@ -15,30 +15,30 @@ import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
-import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.StatementRepository
 
 class ContributionCreator(
     private val unsafeResourceUseCases: UnsafeResourceUseCases,
-    private val statementService: StatementUseCases,
+    private val unsafeStatementUseCases: UnsafeStatementUseCases,
     private val subgraphCreator: SubgraphCreator
 ) {
     constructor(
         classService: ClassUseCases,
         unsafeResourceUseCases: UnsafeResourceUseCases,
-        statementService: StatementUseCases,
+        unsafeStatementUseCases: UnsafeStatementUseCases,
         literalService: LiteralUseCases,
         predicateService: PredicateUseCases,
         statementRepository: StatementRepository,
         listService: ListUseCases,
     ) : this(
         unsafeResourceUseCases = unsafeResourceUseCases,
-        statementService = statementService,
+        unsafeStatementUseCases = unsafeStatementUseCases,
         subgraphCreator = SubgraphCreator(
             classService = classService,
             unsafeResourceUseCases = unsafeResourceUseCases,
-            statementService = statementService,
+            unsafeStatementUseCases = unsafeStatementUseCases,
             literalService = literalService,
             predicateService = predicateService,
             statementRepository = statementRepository,
@@ -66,7 +66,7 @@ class ContributionCreator(
                 )
             )
             contributionLookup["^$index"] = contributionId
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = paperId,

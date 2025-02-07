@@ -6,11 +6,11 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 class RosettaStoneTemplateFormattedLabelCreator(
     private val literalService: LiteralUseCases,
-    private val statementService: StatementUseCases
+    private val unsafeStatementUseCases: UnsafeStatementUseCases,
 ) : CreateRosettaStoneTemplateAction {
     override fun invoke(
         command: CreateRosettaStoneTemplateCommand,
@@ -23,7 +23,7 @@ class RosettaStoneTemplateFormattedLabelCreator(
                     label = command.formattedLabel.value
                 )
             )
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = rosettaStoneTemplateId!!,

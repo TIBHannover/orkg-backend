@@ -9,8 +9,8 @@ import org.orkg.contenttypes.domain.ids
 import org.orkg.contenttypes.output.ComparisonPublishedRepository
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 
@@ -18,7 +18,7 @@ class ComparisonVersionCreator(
     private val resourceRepository: ResourceRepository,
     private val statementRepository: StatementRepository,
     private val unsafeResourceUseCases: UnsafeResourceUseCases,
-    private val statementService: StatementUseCases,
+    private val unsafeStatementUseCases: UnsafeStatementUseCases,
     private val literalService: LiteralUseCases,
     private val listService: ListUseCases,
     private val comparisonPublishedRepository: ComparisonPublishedRepository
@@ -44,15 +44,15 @@ class ComparisonVersionCreator(
         val steps = listOf(
             ComparisonAuthorCreateValidator(resourceRepository, statementRepository),
             ComparisonVersionResourceCreator(unsafeResourceUseCases),
-            ComparisonDescriptionCreator(literalService, statementService),
-            ComparisonAuthorCreator(unsafeResourceUseCases, statementService, literalService, listService),
-            ComparisonSDGCreator(literalService, statementService),
-            ComparisonResearchFieldCreator(literalService, statementService),
-            ComparisonReferencesCreator(literalService, statementService),
-            ComparisonIsAnonymizedCreator(literalService, statementService),
-            ComparisonContributionCreator(statementService),
+            ComparisonDescriptionCreator(literalService, unsafeStatementUseCases),
+            ComparisonAuthorCreator(unsafeResourceUseCases, unsafeStatementUseCases, literalService, listService),
+            ComparisonSDGCreator(literalService, unsafeStatementUseCases),
+            ComparisonResearchFieldCreator(literalService, unsafeStatementUseCases),
+            ComparisonReferencesCreator(literalService, unsafeStatementUseCases),
+            ComparisonIsAnonymizedCreator(literalService, unsafeStatementUseCases),
+            ComparisonContributionCreator(unsafeStatementUseCases),
             ComparisonVersionTableCreator(comparisonPublishedRepository),
-            ComparisonPublicationInfoCreator(statementService, literalService)
+            ComparisonPublicationInfoCreator(unsafeStatementUseCases, literalService)
         )
         return state.copy(
             comparisonVersionId = steps.execute(

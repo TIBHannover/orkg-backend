@@ -31,6 +31,7 @@ import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
@@ -43,12 +44,14 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
     private val resourceRepository: ResourceRepository = mockk()
     private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
+    private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()
 
     private val paperPublicationInfoUpdater = PaperPublicationInfoUpdater(
         unsafeResourceUseCases = unsafeResourceUseCases,
         resourceRepository = resourceRepository,
         statementService = statementService,
+        unsafeStatementUseCases = unsafeStatementUseCases,
         literalService = literalService
     )
 
@@ -166,7 +169,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             )
         } returns monthLiteralId
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = command.paperId,
@@ -193,7 +196,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = command.paperId,
@@ -249,7 +252,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             )
         } returns newMonthLiteralId
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = command.paperId,
@@ -277,7 +280,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = command.paperId,
@@ -386,7 +389,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             )
         } returns yearLiteralId
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = command.paperId,
@@ -413,7 +416,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = command.paperId,
@@ -469,7 +472,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             )
         } returns newYearLiteralId
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = command.paperId,
@@ -497,7 +500,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = command.paperId,
@@ -613,7 +616,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
         } returns Page.empty()
         every { unsafeResourceUseCases.create(resourceCreateCommand) } returns venueId
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = command.paperId,
@@ -642,7 +645,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) { unsafeResourceUseCases.create(resourceCreateCommand) }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = command.paperId,
@@ -686,7 +689,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             )
         } returns pageOf(venueResource)
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = command.paperId,
@@ -696,7 +699,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             )
         } returns StatementId("S1")
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = command.paperId,
@@ -724,7 +727,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = command.paperId,
@@ -833,7 +836,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             )
         } returns urlLiteralId
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = command.paperId,
@@ -860,7 +863,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = command.paperId,
@@ -916,7 +919,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             )
         } returns newUrlLiteralId
         every {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = command.paperId,
@@ -944,7 +947,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = command.paperId,

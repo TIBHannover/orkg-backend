@@ -30,6 +30,7 @@ import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ClassHierarchyRepository
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ResourceRepository
@@ -44,6 +45,7 @@ class TemplateInstanceService(
     private val resourceRepository: ResourceRepository,
     private val templateService: TemplateUseCases,
     private val statementService: StatementUseCases,
+    private val unsafeStatementUseCases: UnsafeStatementUseCases,
     private val thingRepository: ThingRepository,
     private val classService: ClassUseCases,
     private val unsafeResourceUseCases: UnsafeResourceUseCases,
@@ -101,7 +103,7 @@ class TemplateInstanceService(
             TemplateInstanceThingDefinitionValidator(thingRepository, classRepository),
             TemplateInstancePropertyValueValidator(thingRepository, classRepository, statementRepository, classHierarchyRepository),
             TemplateInstanceSubjectUpdater(resourceRepository),
-            TemplateInstancePropertyValueUpdater(classService, unsafeResourceUseCases, statementService, literalService, predicateService, statementRepository, listService)
+            TemplateInstancePropertyValueUpdater(classService, unsafeResourceUseCases, statementService, unsafeStatementUseCases, literalService, predicateService, statementRepository, listService)
         )
         steps.execute(command, UpdateTemplateInstanceState())
     }

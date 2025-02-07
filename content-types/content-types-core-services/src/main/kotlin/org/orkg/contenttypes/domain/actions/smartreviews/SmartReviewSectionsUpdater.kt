@@ -8,6 +8,7 @@ import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 
 class SmartReviewSectionsUpdater(
     private val abstractSmartReviewSectionCreator: AbstractSmartReviewSectionCreator,
@@ -18,11 +19,12 @@ class SmartReviewSectionsUpdater(
         literalService: LiteralUseCases,
         resourceService: ResourceUseCases,
         unsafeResourceUseCases: UnsafeResourceUseCases,
-        statementService: StatementUseCases
+        statementService: StatementUseCases,
+        unsafeStatementUseCases: UnsafeStatementUseCases
     ) : this(
-        AbstractSmartReviewSectionCreator(statementService, unsafeResourceUseCases, literalService),
+        AbstractSmartReviewSectionCreator(unsafeStatementUseCases, unsafeResourceUseCases, literalService),
         AbstractSmartReviewSectionDeleter(statementService, resourceService),
-        StatementCollectionPropertyUpdater(literalService, statementService)
+        StatementCollectionPropertyUpdater(literalService, statementService, unsafeStatementUseCases)
     )
 
     override fun invoke(command: UpdateSmartReviewCommand, state: State): State {

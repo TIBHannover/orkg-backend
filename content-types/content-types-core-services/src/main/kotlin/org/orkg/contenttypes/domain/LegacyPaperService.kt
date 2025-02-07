@@ -30,6 +30,7 @@ import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ResourceRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
@@ -42,6 +43,7 @@ class LegacyPaperService(
     private val literalService: LiteralUseCases,
     private val predicateService: PredicateUseCases,
     private val statementService: StatementUseCases,
+    private val unsafeStatementUseCases: UnsafeStatementUseCases,
     private val contributorService: RetrieveContributorUseCase,
     private val objectService: CreateObjectUseCase,
     private val resourceRepository: ResourceRepository,
@@ -67,7 +69,7 @@ class LegacyPaperService(
             request.paper.contributions!!.forEach {
                 val contributionId = addCompleteContribution(it, request, userUUID)
                 // Create statement between paper and contribution
-                statementService.add(
+                unsafeStatementUseCases.create(
                     CreateStatementUseCase.CreateCommand(
                         contributorId = userId,
                         subjectId = paperId,
@@ -162,7 +164,7 @@ class LegacyPaperService(
                     label = request.paper.doi!!
                 )
             )
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = userId,
                     subjectId = paperId,
@@ -180,7 +182,7 @@ class LegacyPaperService(
                     label = request.paper.url!!
                 )
             )
-            statementService.add(
+            unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = userId,
                     subjectId = paperId,
@@ -194,7 +196,7 @@ class LegacyPaperService(
         handleAuthors(request, userId, paperId, observatoryId, organizationId)
 
         // paper publication date
-        if (request.paper.hasPublicationMonth()) statementService.add(
+        if (request.paper.hasPublicationMonth()) unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = userId,
                 subjectId = paperId,
@@ -208,7 +210,7 @@ class LegacyPaperService(
                 )
             )
         )
-        if (request.paper.hasPublicationYear()) statementService.add(
+        if (request.paper.hasPublicationYear()) unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = userId,
                 subjectId = paperId,
@@ -229,7 +231,7 @@ class LegacyPaperService(
         )
 
         // paper research field
-        statementService.add(
+        unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = userId,
                 subjectId = paperId,
@@ -272,7 +274,7 @@ class LegacyPaperService(
             resourceRepository.findById(resourceId).get()
         }
         // create a statement with the venue resource
-        statementService.add(
+        unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = userId,
                 subjectId = paperId,
@@ -333,7 +335,7 @@ class LegacyPaperService(
                                 )
                             )
                             // Add ORCID id to the new resource
-                            statementService.add(
+                            unsafeStatementUseCases.create(
                                 CreateStatementUseCase.CreateCommand(
                                     contributorId = userId,
                                     subjectId = authorId,

@@ -62,6 +62,7 @@ import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
@@ -81,6 +82,7 @@ class TemplateService(
     private val unsafeResourceUseCases: UnsafeResourceUseCases,
     private val literalService: LiteralUseCases,
     private val statementService: StatementUseCases,
+    private val unsafeStatementUseCases: UnsafeStatementUseCases,
     private val observatoryRepository: ObservatoryRepository,
     private val organizationRepository: OrganizationRepository,
     private val templateRepository: TemplateRepository,
@@ -138,12 +140,12 @@ class TemplateService(
             OrganizationValidator(organizationRepository, { it.organizations }),
             ObservatoryValidator(observatoryRepository, { it.observatories }),
             TemplateResourceCreator(unsafeResourceUseCases),
-            TemplateTargetClassCreator(statementService),
-            TemplateRelationsCreator(statementService),
-            TemplateDescriptionCreator(literalService, statementService),
-            TemplateFormattedLabelCreator(literalService, statementService),
-            TemplateClosedCreator(literalService, statementService),
-            TemplatePropertiesCreator(unsafeResourceUseCases, literalService, statementService)
+            TemplateTargetClassCreator(unsafeStatementUseCases),
+            TemplateRelationsCreator(unsafeStatementUseCases),
+            TemplateDescriptionCreator(literalService, unsafeStatementUseCases),
+            TemplateFormattedLabelCreator(literalService, unsafeStatementUseCases),
+            TemplateClosedCreator(literalService, unsafeStatementUseCases),
+            TemplatePropertiesCreator(unsafeResourceUseCases, literalService, unsafeStatementUseCases)
         )
         return steps.execute(command, CreateTemplateState()).templateId!!
     }
@@ -153,7 +155,7 @@ class TemplateService(
             TemplatePropertyExistenceCreateValidator(resourceRepository),
             TemplatePropertyTemplateCreateValidator(statementRepository),
             TemplatePropertyValidator(predicateRepository, classRepository, { it }),
-            TemplatePropertyCreator(unsafeResourceUseCases, literalService, statementService)
+            TemplatePropertyCreator(unsafeResourceUseCases, literalService, unsafeStatementUseCases)
         )
         return steps.execute(command, CreateTemplatePropertyState()).templatePropertyId!!
     }
@@ -171,12 +173,12 @@ class TemplateService(
             OrganizationValidator(organizationRepository, { it.organizations }, { it.template!!.organizations }),
             ObservatoryValidator(observatoryRepository, { it.observatories }, { it.template!!.observatories }),
             TemplateResourceUpdater(unsafeResourceUseCases),
-            TemplateTargetClassUpdater(literalService, statementService),
-            TemplateRelationsUpdater(literalService, statementService),
-            TemplateDescriptionUpdater(literalService, statementService),
-            TemplateFormattedLabelUpdater(literalService, statementService),
-            TemplateClosedUpdater(literalService, statementService),
-            TemplatePropertiesUpdater(literalService, resourceService, unsafeResourceUseCases, statementService)
+            TemplateTargetClassUpdater(literalService, statementService, unsafeStatementUseCases),
+            TemplateRelationsUpdater(literalService, statementService, unsafeStatementUseCases),
+            TemplateDescriptionUpdater(literalService, statementService, unsafeStatementUseCases),
+            TemplateFormattedLabelUpdater(literalService, statementService, unsafeStatementUseCases),
+            TemplateClosedUpdater(literalService, statementService, unsafeStatementUseCases),
+            TemplatePropertiesUpdater(literalService, resourceService, unsafeResourceUseCases, statementService, unsafeStatementUseCases)
         )
         steps.execute(command, UpdateTemplateState())
     }
@@ -186,7 +188,7 @@ class TemplateService(
             TemplatePropertyExistenceUpdateValidator(this, resourceRepository),
             TemplatePropertyTemplateUpdateValidator(),
             TemplatePropertyValidator(predicateRepository, classRepository, { it }, { it.templateProperty }),
-            TemplatePropertyUpdater(literalService, unsafeResourceUseCases, statementService)
+            TemplatePropertyUpdater(literalService, unsafeResourceUseCases, statementService, unsafeStatementUseCases)
         )
         steps.execute(command, UpdateTemplatePropertyState())
     }

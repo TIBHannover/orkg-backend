@@ -1,6 +1,9 @@
 package org.orkg.graph.domain
 
 import org.orkg.graph.input.UpdateResourceUseCase
+import org.orkg.graph.input.UpdateStatementUseCase
+import org.orkg.graph.output.PredicateRepository
+import org.orkg.graph.output.ThingRepository
 
 fun UpdateResourceUseCase.UpdateCommand.hasNoContents(): Boolean =
     label == null && classes == null && observatoryId == null && organizationId == null &&
@@ -22,3 +25,22 @@ fun Resource.apply(command: UpdateResourceUseCase.UpdateCommand): Resource =
             else -> unlistedBy
         }
     )
+
+fun UpdateStatementUseCase.UpdateCommand.hasNoContents(): Boolean =
+    subjectId == null && predicateId == null && objectId == null
+
+fun GeneralStatement.apply(
+    command: UpdateStatementUseCase.UpdateCommand,
+    thingRepository: ThingRepository,
+    predicateRepository: PredicateRepository
+): GeneralStatement = copy(
+    subject = command.subjectId?.takeIf { id -> id != subject.id }
+        ?.let { id -> thingRepository.findByThingId(id).orElseThrow { StatementSubjectNotFound(id) } }
+        ?: subject,
+    predicate = command.predicateId?.takeIf { id -> id != predicate.id }
+        ?.let { id -> predicateRepository.findById(id).orElseThrow { StatementPredicateNotFound(id) } }
+        ?: predicate,
+    `object` = command.objectId?.takeIf { id -> id != `object`.id }
+        ?.let { id -> thingRepository.findByThingId(id).orElseThrow { StatementObjectNotFound(id) } }
+        ?: `object`
+)

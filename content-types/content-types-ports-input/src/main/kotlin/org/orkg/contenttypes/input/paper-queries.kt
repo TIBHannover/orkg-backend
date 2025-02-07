@@ -8,6 +8,7 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Paper
 import org.orkg.contenttypes.domain.PaperWithStatementCount
+import org.orkg.contenttypes.domain.identifiers.DOI
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.PaperResourceWithPath
 import org.orkg.graph.domain.SearchString
@@ -32,13 +33,13 @@ interface RetrievePaperUseCase {
         researchField: ThingId? = null,
         includeSubfields: Boolean = false,
         sustainableDevelopmentGoal: ThingId? = null,
-        mentionings: Set<ThingId>? = emptySet()
+        mentionings: Set<ThingId>? = emptySet(),
     ): Page<Paper>
     fun findAllContributorsByPaperId(id: ThingId, pageable: Pageable): Page<ContributorId>
 
     fun countAllStatementsAboutPapers(pageable: Pageable): Page<PaperWithStatementCount>
 
-    fun existsByDOI(doi: String): Optional<ThingId>
+    fun existsByDOI(doi: DOI): Optional<ThingId>
 
     fun existsByTitle(label: ExactSearchString): Optional<ThingId>
 }

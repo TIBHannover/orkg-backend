@@ -64,6 +64,7 @@ import org.orkg.contenttypes.domain.actions.papers.PaperVersionArchiver
 import org.orkg.contenttypes.domain.actions.papers.PaperVersionCreator
 import org.orkg.contenttypes.domain.actions.papers.PaperVersionDoiPublisher
 import org.orkg.contenttypes.domain.actions.papers.PaperVersionHistoryUpdater
+import org.orkg.contenttypes.domain.identifiers.DOI
 import org.orkg.contenttypes.input.PaperUseCases
 import org.orkg.contenttypes.output.DoiService
 import org.orkg.contenttypes.output.PaperPublishedRepository
@@ -243,8 +244,8 @@ class PaperService(
         return steps.execute(command, PublishPaperState()).paperVersionId!!
     }
 
-    override fun existsByDOI(doi: String): Optional<ThingId> =
-        statementRepository.findByDOI(doi, classes = setOf(Classes.paper, Classes.paperVersion))
+    override fun existsByDOI(doi: DOI): Optional<ThingId> =
+        statementRepository.findByDOI(doi.value, classes = setOf(Classes.paper, Classes.paperVersion))
             .map { it.id }
 
     override fun existsByTitle(label: ExactSearchString): Optional<ThingId> =

@@ -1,6 +1,7 @@
 package org.orkg.contenttypes.adapter.input.rest
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.forkhandles.values.ofOrNull
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
@@ -13,8 +14,10 @@ import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId
 import org.orkg.contenttypes.adapter.input.rest.mapping.ContributionRepresentationAdapter
 import org.orkg.contenttypes.adapter.input.rest.mapping.PaperRepresentationAdapter
+import org.orkg.contenttypes.domain.InvalidDOI
 import org.orkg.contenttypes.domain.PaperNotFound
 import org.orkg.contenttypes.domain.PaperWithStatementCount
+import org.orkg.contenttypes.domain.identifiers.DOI
 import org.orkg.contenttypes.input.ContributionDefinition
 import org.orkg.contenttypes.input.CreateContributionUseCase
 import org.orkg.contenttypes.input.CreatePaperUseCase
@@ -94,7 +97,7 @@ class PaperController(
     ): Page<PaperRepresentation> =
         service.findAll(
             pageable = pageable,
-            doi = doi,
+            doi = doi?.also { DOI.ofOrNull(doi) ?: throw InvalidDOI(doi) },
             doiPrefix = doiPrefix,
             label = title?.let { SearchString.of(title, exactMatch) },
             visibility = visibility,
@@ -180,9 +183,8 @@ class PaperController(
     @RequestMapping(method = [RequestMethod.HEAD], params = ["doi"])
     fun existsByDOI(
         @RequestParam("doi", required = false) doi: String,
-        uriComponentsBuilder: UriComponentsBuilder
-    ): ResponseEntity<Nothing> =
-        service.existsByDOI(doi)
+        uriComponentsBuilder: UriComponentsBuilder,
+    ): ResponseEntity<Nothing> = service.existsByDOI(DOI.ofOrNull(doi) ?: throw InvalidDOI(doi))
             .map {
                 val location = uriComponentsBuilder.path("/api/papers/{id}")
                     .buildAndExpand(it)

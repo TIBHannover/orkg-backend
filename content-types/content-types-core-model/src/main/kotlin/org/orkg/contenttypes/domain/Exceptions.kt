@@ -1,6 +1,7 @@
 package org.orkg.contenttypes.domain
 
 import org.orkg.common.ThingId
+import org.orkg.common.exceptions.PropertyValidationException
 import org.orkg.common.exceptions.SimpleMessageException
 import org.orkg.graph.domain.Predicates
 import org.springframework.http.HttpStatus
@@ -424,3 +425,9 @@ class OntologyEntityNotFound(entities: Set<ThingId>) :
 
 class InvalidSmartReviewTextSectionType(type: ThingId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Invalid smart review text section type "$type".""")
+
+class InvalidDOI(doi: String) :
+    PropertyValidationException(
+        property = "doi",
+        message = "The value passed as query parameter \"doi\" is not a valid DOI. The value sent was: $doi",
+    )

@@ -45,6 +45,7 @@ import org.orkg.contenttypes.domain.PaperNotFound
 import org.orkg.contenttypes.domain.ThingIsNotAClass
 import org.orkg.contenttypes.domain.ThingIsNotAPredicate
 import org.orkg.contenttypes.domain.ThingNotDefined
+import org.orkg.contenttypes.domain.identifiers.DOI
 import org.orkg.contenttypes.domain.testing.fixtures.createPaper
 import org.orkg.contenttypes.input.ContributionUseCases
 import org.orkg.contenttypes.input.PaperUseCases
@@ -1253,13 +1254,13 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
     @Test
     @DisplayName("Given a paper, when checking existence by doi and paper is found, then status is 200 OK")
     fun existsByDoi() {
-        val doi = "10.456/8764"
+        val doi = DOI.of("10.456/8764")
         val id = ThingId("R123")
         every { paperService.existsByDOI(doi) } returns Optional.of(id)
 
         // TODO: For unknown reasons, head requests do not work with param builders.
         // Tested on spring rest docs 3.0.3.
-        documentedHeadRequestTo("/api/papers?doi=$doi")
+        documentedHeadRequestTo("/api/papers?doi=${doi.value}")
             .accept(PAPER_JSON_V2)
             .perform()
             .andExpect(status().isOk)
@@ -1281,12 +1282,23 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
     }
 
     @Test
-    fun `Given a paper, when checking existence by doi and paper is not found, then status is 404 NOT FOUND`() {
-        val doi = "10.456/8764"
-        every { paperService.existsByDOI(doi) } returns Optional.empty()
+    fun `Given a paper, when checking existence by doi and doi is invalid, then status is 400 BAD REQUEST`() {
+        val doi = ""
 
         head("/api/papers")
             .param("doi", doi)
+            .accept(PAPER_JSON_V2)
+            .perform()
+            .andExpect(status().isBadRequest)
+    }
+
+    @Test
+    fun `Given a paper, when checking existence by doi and paper is not found, then status is 404 NOT FOUND`() {
+        val doi = DOI.of("10.456/8764")
+        every { paperService.existsByDOI(doi) } returns Optional.empty()
+
+        head("/api/papers")
+            .param("doi", doi.value)
             .accept(PAPER_JSON_V2)
             .perform()
             .andExpect(status().isNotFound)

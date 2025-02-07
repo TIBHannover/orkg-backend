@@ -8,7 +8,7 @@ value class DOI private constructor(override val value: String) : IdentifierValu
     companion object : IdentifierValueFactory<DOI>(
         fn = ::DOI,
         validationRegex = VALID_DOI_REGEX,
-        uriValidationRegex = VALID_DOI_URI_REGEX
+        uriValidationRegex = VALID_DOI_URI_REGEX,
     )
 
     override val uri: String get() = "https://doi.org/$value"

@@ -5,6 +5,7 @@ plugins {
 dependencies {
     api("org.springframework.data:spring-data-commons")
     api("org.springframework:spring-context")
+    api("org.springframework:spring-tx")
     api(project(":common:identifiers"))
     api(project(":community:community-adapter-output-spring-data-jpa"))
     api(project(":community:community-ports-output"))

@@ -1,5 +1,6 @@
 package org.orkg.profiling.adapter.output.facade
 
+import java.time.LocalDate
 import java.time.OffsetDateTime
 import kotlin.random.Random
 import kotlin.reflect.KType
@@ -32,6 +33,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 
 @Component
 @Profile("profileRepositories")
@@ -148,6 +150,7 @@ class SetValueGenerator : ValueGenerator<Set<*>> {
 }
 
 @Component
+@Transactional
 @Profile("profileRepositories")
 class ObservatoryIdValueGenerator(
     private val observatoryRepository: ObservatoryRepository
@@ -163,6 +166,7 @@ class ObservatoryIdValueGenerator(
 }
 
 @Component
+@Transactional
 @Profile("profileRepositories")
 class OrganizationIdValueGenerator(
     private val organizationRepository: PostgresOrganizationRepository
@@ -402,6 +406,17 @@ class OffsetDateTimeValueGenerator : ValueGenerator<OffsetDateTime> {
         type: KType,
         randomInstances: (Random, String, KType) -> List<Any>
     ): List<OffsetDateTime> = listOf(OffsetDateTime.parse("2023-01-23T16:28:34.513038Z"))
+}
+
+@Component
+@Profile("profileRepositories")
+class LocalDateValueGenerator : ValueGenerator<LocalDate> {
+    override operator fun invoke(
+        random: Random,
+        name: String,
+        type: KType,
+        randomInstances: (Random, String, KType) -> List<Any>
+    ): List<LocalDate> = listOf(LocalDate.parse("2023-01-23"))
 }
 
 @Component

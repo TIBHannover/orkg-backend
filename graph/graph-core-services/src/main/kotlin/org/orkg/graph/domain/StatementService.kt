@@ -131,48 +131,31 @@ class StatementService(
     }
 
     override fun update(command: UpdateStatementUseCase.UpdateCommand) {
-        val found = statementRepository.findByStatementId(command.statementId)
+        if (command.hasNoContents()) return
+        val statement = statementRepository.findByStatementId(command.statementId)
             .orElseThrow { StatementNotFound(command.statementId.value) }
-        if (!found.modifiable) {
-            throw StatementNotModifiable(found.id)
+        if (!statement.modifiable) {
+            throw StatementNotModifiable(statement.id)
         }
-        if (found.predicate.id == Predicates.hasListElement && found.subject is Resource && Classes.list in (found.subject as Resource).classes) {
+        if (statement.predicate.id == Predicates.hasListElement && statement.subject is Resource && Classes.list in (statement.subject as Resource).classes) {
             throw InvalidStatement.isListElementStatement()
         }
-
-        var statement = found
-
-        if (command.subjectId != null && command.subjectId != found.subject.id) {
-            val foundSubject = thingRepository.findByThingId(command.subjectId!!)
-                .orElseThrow { StatementSubjectNotFound(command.subjectId!!) }
-
-            if (foundSubject is Resource) {
-                if (Classes.rosettaStoneStatement in foundSubject.classes) {
+        val updated = statement.apply(command, thingRepository, predicateService, { subject ->
+            if (subject is Resource) {
+                if (Classes.rosettaStoneStatement in subject.classes) {
                     throw InvalidStatement.includesRosettaStoneStatementResource()
-                } else if ((found.predicate.id == Predicates.hasListElement || command.predicateId == Predicates.hasListElement) && Classes.list in foundSubject.classes) {
+                } else if ((statement.predicate.id == Predicates.hasListElement || command.predicateId == Predicates.hasListElement) && Classes.list in subject.classes) {
                     throw InvalidStatement.isListElementStatement()
                 }
             }
-            statement = statement.copy(subject = foundSubject)
-        }
-        if (command.predicateId != null && command.predicateId != found.predicate.id) {
-            val foundPredicate = predicateService.findById(command.predicateId!!)
-                .orElseThrow { StatementPredicateNotFound(command.predicateId!!) }
-            statement = statement.copy(predicate = foundPredicate)
-        }
-        if (command.objectId != null && command.objectId != found.`object`.id) {
-            val foundObject = thingRepository.findByThingId(command.objectId!!)
-                .orElseThrow { StatementObjectNotFound(command.objectId!!) }
-            statement = statement.copy(`object` = foundObject)
-        }
-
-        if (statement != found) {
+        })
+        if (updated != statement) {
             statementRepository.deleteByStatementId(command.statementId)
-            // Restore literal that may have automatically been deleted by statement deletion
-            if (found.`object` is Literal && statement.`object` == found.`object`) {
-                literalRepository.save(found.`object` as Literal)
+            // restore literal that may have automatically been deleted by statement deletion
+            if (statement.`object` is Literal && updated.`object` == statement.`object`) {
+                literalRepository.save(statement.`object` as Literal)
             }
-            statementRepository.save(statement)
+            statementRepository.save(updated)
         }
     }
 

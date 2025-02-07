@@ -241,7 +241,6 @@ dependencies {
     "integrationTestImplementation"("org.junit.jupiter:junit-jupiter-params")
     "integrationTestImplementation"("org.springframework.boot:spring-boot-test")
     "integrationTestImplementation"("org.springframework.restdocs:spring-restdocs-core")
-    "integrationTestImplementation"("org.springframework.security:spring-security-test")
     "integrationTestImplementation"("org.springframework:spring-beans")
     "integrationTestImplementation"("org.springframework:spring-test")
     "integrationTestImplementation"("org.springframework:spring-tx")

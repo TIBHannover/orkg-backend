@@ -20,12 +20,13 @@ interface CreateStatementUseCase {
 interface UpdateStatementUseCase {
     fun update(command: UpdateCommand)
 
-    // TODO: Add contributorId and statementId
     data class UpdateCommand(
         val statementId: StatementId,
+        val contributorId: ContributorId,
         val subjectId: ThingId? = null,
         val predicateId: ThingId? = null,
         val objectId: ThingId? = null,
+        val modifiable: Boolean? = null
     )
 }
 

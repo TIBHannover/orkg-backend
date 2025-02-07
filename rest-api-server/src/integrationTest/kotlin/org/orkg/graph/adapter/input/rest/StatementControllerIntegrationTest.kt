@@ -4,10 +4,10 @@ import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.orkg.createStatement
 import org.orkg.createLiteral
 import org.orkg.createPredicate
 import org.orkg.createResource
+import org.orkg.createStatement
 import org.orkg.graph.adapter.input.rest.PredicateControllerIntegrationTest.RestDoc.predicateResponseFields
 import org.orkg.graph.adapter.input.rest.testing.fixtures.resourceResponseFields
 import org.orkg.graph.input.LiteralUseCases
@@ -23,7 +23,6 @@ import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
-import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
@@ -138,7 +137,7 @@ internal class StatementControllerIntegrationTest : MockMvcBaseTest("statements"
     }
 
     @Test
-    @WithMockUser
+    @TestWithMockUser
     fun editResourceStatement() {
         val s = resourceService.createResource(label = "ORKG")
         val p = predicateService.createPredicate(label = "created by")
@@ -162,7 +161,7 @@ internal class StatementControllerIntegrationTest : MockMvcBaseTest("statements"
     }
 
     @Test
-    @WithMockUser
+    @TestWithMockUser
     fun editLiteralStatement() {
         val s = resourceService.createResource(label = "ORKG")
         val p = predicateService.createPredicate(label = "based in")

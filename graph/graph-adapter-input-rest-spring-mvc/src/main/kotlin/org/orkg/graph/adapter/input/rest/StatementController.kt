@@ -112,11 +112,13 @@ class StatementController(
         @PathVariable id: StatementId,
         @RequestBody request: UpdateStatementRequest,
         uriComponentsBuilder: UriComponentsBuilder,
+        currentUser: Authentication?,
         capabilities: MediaTypeCapabilities
     ): ResponseEntity<StatementRepresentation> {
         statementService.update(
             UpdateStatementUseCase.UpdateCommand(
                 statementId = id,
+                contributorId = currentUser.contributorId(),
                 subjectId = request.subjectId,
                 predicateId = request.predicateId,
                 objectId = request.objectId

@@ -30,6 +30,7 @@ import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
+import org.orkg.testing.MockUserId
 import org.orkg.testing.pageOf
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Sort
@@ -406,6 +407,7 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
     }
 
     describe("updating a statement") {
+        val contributorId = ContributorId(MockUserId.USER)
         context("with a non-literal object") {
             it("successfully updates the statement") {
                 val id = StatementId("S1")
@@ -415,6 +417,7 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
                 val newObject = createResource(ThingId("newObject"))
                 val command = UpdateStatementUseCase.UpdateCommand(
                     statementId = id,
+                    contributorId = contributorId,
                     subjectId = newSubject.id,
                     predicateId = newPredicate.id,
                     objectId = newObject.id
@@ -457,6 +460,7 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
                 val newPredicate = createPredicate(ThingId("newPredicate"))
                 val command = UpdateStatementUseCase.UpdateCommand(
                     statementId = id,
+                    contributorId = contributorId,
                     subjectId = newSubject.id,
                     predicateId = newPredicate.id,
                 )
@@ -496,6 +500,7 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
                 val statement = createStatement()
                 val command = UpdateStatementUseCase.UpdateCommand(
                     statementId = id,
+                    contributorId = contributorId,
                     subjectId = statement.subject.id,
                     predicateId = statement.predicate.id,
                     objectId = statement.`object`.id
@@ -513,7 +518,9 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
             it("throws an error") {
                 val id = StatementId("S1")
                 val command = UpdateStatementUseCase.UpdateCommand(
-                    statementId = id
+                    statementId = id,
+                    contributorId = contributorId,
+                    subjectId = ThingId("someChange")
                 )
                 every { statementRepository.findByStatementId(id) } returns Optional.empty()
 
@@ -529,7 +536,7 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
         context("that is non-modifiable") {
             val id = StatementId("S1")
             val fakeStatement = createStatement(id, modifiable = false)
-            val command = UpdateStatementUseCase.UpdateCommand(id)
+            val command = UpdateStatementUseCase.UpdateCommand(id, contributorId, subjectId = ThingId("someChange"))
 
             it("throws an exception") {
                 every { statementRepository.findByStatementId(id) } returns Optional.of(fakeStatement)
@@ -546,7 +553,9 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
                 val listId = ThingId("L1")
                 val id = StatementId("S1")
                 val command = UpdateStatementUseCase.UpdateCommand(
-                    statementId = id
+                    statementId = id,
+                    contributorId = contributorId,
+                    subjectId = ThingId("someChange")
                 )
                 val existingStatement = GeneralStatement(
                     id = id,
@@ -577,6 +586,7 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
                 val statement = createStatement()
                 val command = UpdateStatementUseCase.UpdateCommand(
                     statementId = id,
+                    contributorId = contributorId,
                     subjectId = ThingId("missing")
                 )
                 every { statementRepository.findByStatementId(id) } returns Optional.of(statement)
@@ -598,6 +608,7 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
                 val id = StatementId("S1")
                 val command = UpdateStatementUseCase.UpdateCommand(
                     statementId = id,
+                    contributorId = contributorId,
                     subjectId = listId,
                     predicateId = Predicates.hasListElement
                 )
@@ -645,6 +656,7 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
                         service.update(
                             UpdateStatementUseCase.UpdateCommand(
                                 statementId = id,
+                                contributorId = contributorId,
                                 subjectId = subjectId,
                                 predicateId = Predicates.description,
                                 objectId = ThingId("R1")
@@ -665,6 +677,7 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
                 val statement = createStatement()
                 val command = UpdateStatementUseCase.UpdateCommand(
                     statementId = id,
+                    contributorId = contributorId,
                     predicateId = ThingId("missing")
                 )
                 every { statementRepository.findByStatementId(id) } returns Optional.of(statement)
@@ -686,6 +699,7 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
                 val statement = createStatement()
                 val command = UpdateStatementUseCase.UpdateCommand(
                     statementId = id,
+                    contributorId = contributorId,
                     objectId = ThingId("missing")
                 )
                 every { statementRepository.findByStatementId(id) } returns Optional.of(statement)

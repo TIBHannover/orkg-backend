@@ -10,6 +10,7 @@ import io.mockk.verify
 import java.time.OffsetDateTime
 import java.util.*
 import org.junit.jupiter.api.Test
+import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.common.testing.fixtures.fixedClock
@@ -24,6 +25,7 @@ import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
+import org.orkg.testing.MockUserId
 
 internal class UnsafeStatementServiceUnitTest : MockkBaseTest {
 
@@ -144,7 +146,8 @@ internal class UnsafeStatementServiceUnitTest : MockkBaseTest {
         val command = updateStatementCommand().copy(
             subjectId = ThingId("R321"),
             predicateId = ThingId("P321"),
-            objectId = ThingId("L321")
+            objectId = ThingId("L321"),
+            modifiable = false
         )
         val statement = createStatement(command.statementId)
         val subject = createResource(command.subjectId!!)
@@ -173,7 +176,7 @@ internal class UnsafeStatementServiceUnitTest : MockkBaseTest {
                 it.`object` shouldBe `object`
                 it.createdBy shouldBe statement.createdBy
                 it.createdAt shouldBe statement.createdAt
-                it.modifiable shouldBe statement.modifiable
+                it.modifiable shouldBe command.modifiable
             })
         }
     }
@@ -219,7 +222,8 @@ internal class UnsafeStatementServiceUnitTest : MockkBaseTest {
     @Test
     fun `Given a statement update command, when updating no properties, it does nothing`() {
         val id = StatementId("S123")
-        val command = UpdateStatementUseCase.UpdateCommand(id)
+        val contributorId = ContributorId(MockUserId.USER)
+        val command = UpdateStatementUseCase.UpdateCommand(id, contributorId)
 
         service.update(command)
     }
@@ -227,11 +231,14 @@ internal class UnsafeStatementServiceUnitTest : MockkBaseTest {
     @Test
     fun `Given a statement update command, when inputs are identical to existing statement, it does nothing`() {
         val statement = createStatement()
+        val contributorId = ContributorId(MockUserId.USER)
         val command = UpdateStatementUseCase.UpdateCommand(
             statementId = statement.id,
+            contributorId = contributorId,
             subjectId = statement.subject.id,
             predicateId = statement.predicate.id,
             objectId = statement.`object`.id,
+            modifiable = statement.modifiable,
         )
 
         every { statementRepository.findByStatementId(command.statementId) } returns Optional.of(statement)

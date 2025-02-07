@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.RequireLogin
+import org.orkg.common.contributorId
 import org.orkg.contenttypes.domain.pmap
 import org.orkg.graph.adapter.input.rest.mapping.StatementRepresentationAdapter
 import org.orkg.graph.domain.StatementId
@@ -15,6 +16,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.noContent
+import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PutMapping
@@ -72,12 +74,14 @@ class BulkStatementController(
     fun edit(
         @RequestParam("ids") statementsIds: List<StatementId>,
         @RequestBody(required = true) statementEditRequest: BulkStatementEditRequest,
+        currentUser: Authentication?,
         capabilities: MediaTypeCapabilities
     ): Iterable<BulkPutStatementResponse> =
         statementsIds.map {
             statementService.update(
                 UpdateStatementUseCase.UpdateCommand(
                     statementId = it,
+                    contributorId = currentUser.contributorId(),
                     subjectId = statementEditRequest.subjectId,
                     predicateId = statementEditRequest.predicateId,
                     objectId = statementEditRequest.objectId,

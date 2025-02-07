@@ -19,7 +19,9 @@ fun createStatementCommand(): CreateStatementUseCase.CreateCommand =
 fun updateStatementCommand(): UpdateStatementUseCase.UpdateCommand =
     UpdateStatementUseCase.UpdateCommand(
         statementId = StatementId("S123"),
+        contributorId = ContributorId("cfaaec46-d5e9-49a8-8c39-4aa9651928fe"),
         subjectId = ThingId("R123"),
         predicateId = ThingId("P123"),
         objectId = ThingId("L123"),
+        modifiable = true
     )

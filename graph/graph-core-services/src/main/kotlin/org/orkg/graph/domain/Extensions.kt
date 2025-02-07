@@ -27,20 +27,27 @@ fun Resource.apply(command: UpdateResourceUseCase.UpdateCommand): Resource =
     )
 
 fun UpdateStatementUseCase.UpdateCommand.hasNoContents(): Boolean =
-    subjectId == null && predicateId == null && objectId == null
+    subjectId == null && predicateId == null && objectId == null && modifiable == null
 
 fun GeneralStatement.apply(
     command: UpdateStatementUseCase.UpdateCommand,
     thingRepository: ThingRepository,
-    predicateRepository: PredicateRepository
+    predicateRepository: PredicateRepository,
+    subjectValidator: (Thing) -> Unit = {},
+    predicateValidator: (Predicate) -> Unit = {},
+    objectValidator: (Thing) -> Unit = {},
 ): GeneralStatement = copy(
     subject = command.subjectId?.takeIf { id -> id != subject.id }
         ?.let { id -> thingRepository.findByThingId(id).orElseThrow { StatementSubjectNotFound(id) } }
+        ?.also(subjectValidator)
         ?: subject,
     predicate = command.predicateId?.takeIf { id -> id != predicate.id }
         ?.let { id -> predicateRepository.findById(id).orElseThrow { StatementPredicateNotFound(id) } }
+        ?.also(predicateValidator)
         ?: predicate,
     `object` = command.objectId?.takeIf { id -> id != `object`.id }
         ?.let { id -> thingRepository.findByThingId(id).orElseThrow { StatementObjectNotFound(id) } }
-        ?: `object`
+        ?.also(objectValidator)
+        ?: `object`,
+    modifiable = command.modifiable ?: modifiable,
 )

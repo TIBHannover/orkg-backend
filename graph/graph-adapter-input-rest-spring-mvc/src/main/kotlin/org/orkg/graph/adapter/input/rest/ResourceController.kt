@@ -213,7 +213,7 @@ class ResourceController(
     ): Page<ResourceRepresentation> {
         return service.findAllByClassInAndVisibility(
             classes = classes,
-            visibility = visibility ?: visibilityFilterFromFlags(featured, unlisted),
+            visibility = visibility ?: VisibilityFilter.fromFlags(featured, unlisted),
             pageable = pageable
         ).mapToResourceRepresentation(capabilities)
     }
@@ -258,13 +258,3 @@ data class UpdateResourceObservatoryRequest(
     @JsonProperty("organization_id")
     val organizationId: OrganizationId
 )
-
-fun visibilityFilterFromFlags(featured: Boolean?, unlisted: Boolean?): VisibilityFilter =
-    when (unlisted ?: false) {
-        true -> VisibilityFilter.UNLISTED
-        false -> when (featured) {
-            null -> VisibilityFilter.ALL_LISTED
-            true -> VisibilityFilter.FEATURED
-            false -> VisibilityFilter.NON_FEATURED
-        }
-    }

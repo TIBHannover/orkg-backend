@@ -16,12 +16,12 @@ dependencies {
     api("org.springframework:spring-web")
     api("com.fasterxml.jackson.core:jackson-databind")
     api("jakarta.validation:jakarta.validation-api")
-    implementation(project(":common:pagination"))
     api(project(":common:identifiers"))
     api(project(":common:spring-webmvc"))
     api(project(":community:community-ports-input"))
-    api(project(":content-types:content-types-core-model"))
+    implementation(project(":content-types:content-types-core-model"))
     api(project(":graph:graph-core-model"))
+    api(project(":graph:graph-adapter-input-representations"))
     api(project(":graph:graph-ports-input"))
     implementation(project(":community:community-core-model"))
 
@@ -35,6 +35,7 @@ testing {
         val test by getting(JvmTestSuite::class) {
             dependencies {
                 implementation(project(":common:serialization"))
+                implementation(project(":common:pagination"))
                 implementation(testFixtures(project(":community:community-core-model")))
                 implementation(testFixtures(project(":graph:graph-core-model")))
                 implementation(testFixtures(project(":testing:spring")))
@@ -51,7 +52,6 @@ testing {
                 implementation("org.springframework.security:spring-security-test")
                 implementation("org.springframework:spring-beans")
                 implementation("org.springframework:spring-test")
-                implementation("org.assertj:assertj-core")
                 implementation("io.kotest:kotest-assertions-core")
                 implementation("com.ninja-squad:springmockk")
                 implementation("org.springframework.restdocs:spring-restdocs-mockmvc")

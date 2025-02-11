@@ -34,5 +34,6 @@ dependencies {
     api("org.springframework:spring-context")
     api("org.springframework:spring-web")
     api(project(":statistics:statistics-core-model"))
+    api(project(":statistics:statistics-adapter-input-representations"))
     api(project(":statistics:statistics-ports-input"))
 }

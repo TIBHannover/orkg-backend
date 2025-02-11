@@ -9,12 +9,12 @@ interface ComparisonRelatedFigureRepresentationAdapter : AuthorRepresentationAda
     LabeledObjectRepresentationAdapter,
     PublicationInfoRepresentationAdapter {
 
-    fun Optional<ComparisonRelatedFigure>.mapToComparisonRelatedFigureRepresentation() : Optional<ComparisonRelatedFigureRepresentation> =
+    fun Optional<ComparisonRelatedFigure>.mapToComparisonRelatedFigureRepresentation(): Optional<ComparisonRelatedFigureRepresentation> =
         map { it.toComparisonRelatedFigureRepresentation() }
 
-    fun Page<ComparisonRelatedFigure>.mapToComparisonRelatedFigureRepresentation() : Page<ComparisonRelatedFigureRepresentation> =
+    fun Page<ComparisonRelatedFigure>.mapToComparisonRelatedFigureRepresentation(): Page<ComparisonRelatedFigureRepresentation> =
         map { it.toComparisonRelatedFigureRepresentation() }
 
-    fun ComparisonRelatedFigure.toComparisonRelatedFigureRepresentation() : ComparisonRelatedFigureRepresentation =
+    fun ComparisonRelatedFigure.toComparisonRelatedFigureRepresentation(): ComparisonRelatedFigureRepresentation =
         ComparisonRelatedFigureRepresentation(id, label, image, description, createdAt, createdBy)
 }

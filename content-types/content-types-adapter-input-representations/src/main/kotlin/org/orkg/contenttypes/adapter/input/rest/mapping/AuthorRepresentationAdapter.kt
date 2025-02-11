@@ -5,9 +5,9 @@ import org.orkg.contenttypes.domain.Author
 
 interface AuthorRepresentationAdapter {
 
-    fun List<Author>.mapToAuthorRepresentation() : List<AuthorRepresentation> =
+    fun List<Author>.mapToAuthorRepresentation(): List<AuthorRepresentation> =
         map { it.toAuthorRepresentation() }
 
-    fun Author.toAuthorRepresentation() : AuthorRepresentation =
+    fun Author.toAuthorRepresentation(): AuthorRepresentation =
         AuthorRepresentation(id, name, identifiers.orEmpty(), homepage)
 }

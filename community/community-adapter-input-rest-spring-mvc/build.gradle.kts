@@ -39,15 +39,16 @@ testing {
 dependencies {
     api("com.fasterxml.jackson.core:jackson-annotations")
     api("com.fasterxml.jackson.core:jackson-core")
+    api("com.fasterxml.jackson.core:jackson-databind")
+    api("jakarta.validation:jakarta.validation-api")
     api("org.apache.tomcat.embed:tomcat-embed-core")
     api("org.springframework.data:spring-data-commons")
     api("org.springframework.security:spring-security-core")
     api("org.springframework:spring-context")
     api("org.springframework:spring-web")
-    api("jakarta.validation:jakarta.validation-api")
-    api("com.fasterxml.jackson.core:jackson-databind")
     api(project(":common:identifiers"))
     api(project(":common:spring-webmvc"))
+    api(project(":community:community-adapter-input-representations"))
     api(project(":community:community-core-model"))
     api(project(":community:community-ports-input"))
     api(project(":community:community-ports-output")) // uses repository directly

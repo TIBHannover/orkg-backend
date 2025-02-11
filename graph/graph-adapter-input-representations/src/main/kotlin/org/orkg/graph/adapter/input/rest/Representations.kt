@@ -9,7 +9,6 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.domain.ComparisonAuthorInfo
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.StatementId
@@ -185,11 +184,6 @@ sealed interface AuthorRepresentation {
 data class PaperAuthorRepresentation(
     val author: AuthorRepresentation,
     val papers: Int
-)
-
-data class ComparisonAuthorRepresentation(
-    val author: AuthorRepresentation,
-    val info: Iterable<ComparisonAuthorInfo>
 )
 
 data class PaperCountPerResearchProblemRepresentation(

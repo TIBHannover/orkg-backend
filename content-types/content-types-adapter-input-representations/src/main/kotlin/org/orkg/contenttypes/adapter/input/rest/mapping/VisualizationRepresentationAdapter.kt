@@ -8,13 +8,13 @@ import org.springframework.data.domain.Page
 interface VisualizationRepresentationAdapter : AuthorRepresentationAdapter, LabeledObjectRepresentationAdapter,
     PublicationInfoRepresentationAdapter {
 
-    fun Optional<Visualization>.mapToVisualizationRepresentation() : Optional<VisualizationRepresentation> =
+    fun Optional<Visualization>.mapToVisualizationRepresentation(): Optional<VisualizationRepresentation> =
         map { it.toVisualizationRepresentation() }
 
-    fun Page<Visualization>.mapToVisualizationRepresentation() : Page<VisualizationRepresentation> =
+    fun Page<Visualization>.mapToVisualizationRepresentation(): Page<VisualizationRepresentation> =
         map { it.toVisualizationRepresentation() }
 
-    fun Visualization.toVisualizationRepresentation() : VisualizationRepresentation =
+    fun Visualization.toVisualizationRepresentation(): VisualizationRepresentation =
         VisualizationRepresentation(
             id = id,
             title = title,

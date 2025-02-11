@@ -69,7 +69,7 @@ class ObservatoryResourceController(
     ): Page<ResourceRepresentation> =
         resourceService.findAllByClassInAndVisibilityAndObservatoryId(
             classes = classes,
-            visibility = visibility ?: visibilityFilterFromFlags(featured, unlisted),
+            visibility = visibility ?: VisibilityFilter.fromFlags(featured, unlisted),
             id = id,
             pageable = pageable
         ).mapToResourceRepresentation(capabilities)

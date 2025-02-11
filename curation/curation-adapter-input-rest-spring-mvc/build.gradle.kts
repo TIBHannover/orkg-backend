@@ -31,7 +31,7 @@ dependencies {
     api("org.springframework.data:spring-data-commons")
     api("org.springframework:spring-web")
     api(project(":curation:curation-ports-input"))
-    api(project(":graph:graph-adapter-input-rest-spring-mvc"))
+    api(project(":graph:graph-adapter-input-representations"))
     api(project(":graph:graph-core-model"))
     api(project(":graph:graph-ports-input"))
 }

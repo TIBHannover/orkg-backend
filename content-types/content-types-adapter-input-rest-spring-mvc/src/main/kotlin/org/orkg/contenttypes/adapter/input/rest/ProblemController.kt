@@ -14,7 +14,6 @@ import org.orkg.graph.adapter.input.rest.ResourceRepresentation
 import org.orkg.graph.adapter.input.rest.mapping.AuthorRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.mapping.FieldPerProblemRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
-import org.orkg.graph.adapter.input.rest.visibilityFilterFromFlags
 import org.orkg.graph.domain.DetailsPerProblem
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.FormattedLabelUseCases
@@ -69,7 +68,7 @@ class ProblemController(
         service.findAllEntitiesBasedOnClassByProblem(
             problemId = id,
             classes = classes,
-            visibilityFilter = visibility ?: visibilityFilterFromFlags(featured, unlisted),
+            visibilityFilter = visibility ?: VisibilityFilter.fromFlags(featured, unlisted),
             pageable = pageable
         )
 

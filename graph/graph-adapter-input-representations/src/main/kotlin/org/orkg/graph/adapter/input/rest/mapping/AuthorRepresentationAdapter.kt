@@ -6,13 +6,13 @@ import org.orkg.contenttypes.domain.PaperAuthor
 import org.orkg.contenttypes.domain.SimpleAuthor
 import org.orkg.contenttypes.domain.SimpleAuthor.LiteralAuthor
 import org.orkg.contenttypes.domain.SimpleAuthor.ResourceAuthor
-import org.orkg.graph.domain.FormattedLabels
-import org.orkg.graph.domain.StatementCounts
 import org.orkg.graph.adapter.input.rest.AuthorRepresentation
 import org.orkg.graph.adapter.input.rest.AuthorRepresentation.LiteralAuthorRepresentation
 import org.orkg.graph.adapter.input.rest.AuthorRepresentation.ResourceAuthorRepresentation
 import org.orkg.graph.adapter.input.rest.ComparisonAuthorRepresentation
 import org.orkg.graph.adapter.input.rest.PaperAuthorRepresentation
+import org.orkg.graph.domain.FormattedLabels
+import org.orkg.graph.domain.StatementCounts
 import org.springframework.data.domain.Page
 
 interface AuthorRepresentationAdapter : ResourceRepresentationAdapter {

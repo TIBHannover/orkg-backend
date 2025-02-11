@@ -37,6 +37,7 @@ include(
     "graph:graph-ports-input",
     "graph:graph-ports-output",
     "graph:graph-adapter-input-rest-spring-mvc",
+    "graph:graph-adapter-input-representations",
     "graph:graph-adapter-output-spring-data-neo4j-sdn6",
     "graph:graph-adapter-output-in-memory",
     "graph:graph-adapter-output-web",
@@ -47,6 +48,7 @@ include(
     "content-types:content-types-ports-input",
     "content-types:content-types-ports-output",
     "content-types:content-types-adapter-input-rest-spring-mvc",
+    "content-types:content-types-adapter-input-representations",
     "content-types:content-types-adapter-output-web",
     "content-types:content-types-adapter-output-simcomp",
     "content-types:content-types-adapter-output-spring-data-neo4j-sdn6",
@@ -61,6 +63,7 @@ include(
     "community:community-adapter-input-keycloak",
     "community:community-adapter-input-rest-spring-mvc",
     "community:community-adapter-input-rest-spring-mvc-legacy",
+    "community:community-adapter-input-representations",
     "community:community-adapter-output-spring-data-jpa",
 )
 include(
@@ -98,6 +101,7 @@ include(
     "statistics:statistics-ports-input",
     "statistics:statistics-ports-output",
     "statistics:statistics-adapter-input-rest-spring-mvc",
+    "statistics:statistics-adapter-input-representations",
     "statistics:statistics-adapter-output-spring-data-neo4j-sdn6",
 )
 include(

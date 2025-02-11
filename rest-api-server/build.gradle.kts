@@ -48,6 +48,7 @@ testing {
                 implementation(project(":community:community-ports-output")) // for CuratorRepository
                 implementation(testFixtures(project(":community:community-adapter-input-rest-spring-mvc")))
                 implementation(testFixtures(project(":community:community-core-model")))
+                implementation(project(":content-types:content-types-adapter-input-representations"))
                 implementation("org.springframework.restdocs:spring-restdocs-mockmvc")
                 runtimeOnly("org.springframework.boot:spring-boot-starter-test")
                 implementation("com.ninja-squad:springmockk")

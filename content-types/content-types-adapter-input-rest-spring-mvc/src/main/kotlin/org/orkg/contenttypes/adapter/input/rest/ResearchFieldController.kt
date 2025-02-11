@@ -10,7 +10,6 @@ import org.orkg.graph.adapter.input.rest.PaperCountPerResearchProblemRepresentat
 import org.orkg.graph.adapter.input.rest.ResourceRepresentation
 import org.orkg.graph.adapter.input.rest.mapping.PaperCountPerResearchProblemRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
-import org.orkg.graph.adapter.input.rest.visibilityFilterFromFlags
 import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.FormattedLabelUseCases
@@ -81,7 +80,7 @@ class ResearchFieldController(
         resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
         return service.findAllResearchProblemsByResearchField(
             id = id,
-            visibility = visibility ?: visibilityFilterFromFlags(featured, unlisted),
+            visibility = visibility ?: VisibilityFilter.fromFlags(featured, unlisted),
             includeSubFields = true,
             pageable = pageable
         ).mapToResourceRepresentation(capabilities)
@@ -122,7 +121,7 @@ class ResearchFieldController(
         resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
         return comparisonRepository.findAll(
             researchField = id,
-            visibility = visibility ?: visibilityFilterFromFlags(featured, unlisted),
+            visibility = visibility ?: VisibilityFilter.fromFlags(featured, unlisted),
             includeSubfields = true,
             pageable = pageable
         ).mapToResourceRepresentation(capabilities)
@@ -148,7 +147,7 @@ class ResearchFieldController(
         resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
         return service.findAllPapersByResearchField(
             id = id,
-            visibility = visibility ?: visibilityFilterFromFlags(featured, unlisted),
+            visibility = visibility ?: VisibilityFilter.fromFlags(featured, unlisted),
             includeSubFields = true,
             pageable = pageable
         ).mapToResourceRepresentation(capabilities)
@@ -174,7 +173,7 @@ class ResearchFieldController(
         resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
         return service.findAllPapersByResearchField(
             id = id,
-            visibility = visibility ?: visibilityFilterFromFlags(featured, unlisted),
+            visibility = visibility ?: VisibilityFilter.fromFlags(featured, unlisted),
             includeSubFields = false,
             pageable = pageable
         ).mapToResourceRepresentation(capabilities)
@@ -201,7 +200,7 @@ class ResearchFieldController(
         resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
         return comparisonRepository.findAll(
             researchField = id,
-            visibility = visibility ?: visibilityFilterFromFlags(featured, unlisted),
+            visibility = visibility ?: VisibilityFilter.fromFlags(featured, unlisted),
             includeSubfields = false,
             pageable = pageable
         ).mapToResourceRepresentation(capabilities)
@@ -242,7 +241,7 @@ class ResearchFieldController(
         resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
         return service.findAllResearchProblemsByResearchField(
             id = id,
-            visibility = visibility ?: visibilityFilterFromFlags(featured, unlisted),
+            visibility = visibility ?: VisibilityFilter.fromFlags(featured, unlisted),
             includeSubFields = false,
             pageable = pageable
         ).mapToResourceRepresentation(capabilities)
@@ -269,7 +268,7 @@ class ResearchFieldController(
         service.findAllEntitiesBasedOnClassesByResearchField(
             id = id,
             classesList = classes,
-            visibility = visibility ?: visibilityFilterFromFlags(featured, unlisted),
+            visibility = visibility ?: VisibilityFilter.fromFlags(featured, unlisted),
             includeSubFields = true,
             pageable = pageable
         ).mapToResourceRepresentation(capabilities)
@@ -295,7 +294,7 @@ class ResearchFieldController(
         service.findAllEntitiesBasedOnClassesByResearchField(
             id = id,
             classesList = classes,
-            visibility = visibility ?: visibilityFilterFromFlags(featured, unlisted),
+            visibility = visibility ?: VisibilityFilter.fromFlags(featured, unlisted),
             includeSubFields = false,
             pageable = pageable
         ).mapToResourceRepresentation(capabilities)

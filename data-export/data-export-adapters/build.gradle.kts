@@ -36,7 +36,7 @@ dependencies {
     api(project(":common:identifiers"))
     api(project(":common:spring-webmvc"))
     api(project(":data-export:data-export-ports-input"))
-    api(project(":graph:graph-adapter-input-rest-spring-mvc")) // for representation adapters, TODO: break dependency
+    api(project(":graph:graph-adapter-input-representations"))
     api(project(":graph:graph-core-model"))
     api(project(":graph:graph-ports-input"))
     api(project(":graph:graph-ports-output"))

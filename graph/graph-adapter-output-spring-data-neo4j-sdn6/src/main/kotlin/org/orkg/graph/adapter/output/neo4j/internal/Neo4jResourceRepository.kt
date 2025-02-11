@@ -9,7 +9,6 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.repository.Neo4jRepository
 import org.springframework.data.neo4j.repository.query.Query
-import org.springframework.transaction.annotation.Transactional
 
 private const val classes = "${'$'}classes"
 private const val label = "${'$'}label"
@@ -66,7 +65,6 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, ThingId> {
         countQuery = """MATCH (n:`Resource`) WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" RETURN COUNT(DISTINCT n.created_by) as cnt""")
     fun findAllContributorIds(pageable: Pageable): Page<ContributorId>
 
-    @Transactional
     override fun deleteById(id: ThingId)
 
     @Query("""MATCH (node:Resource) $WHERE_VISIBILITY AND ANY(c in $classes WHERE c IN labels(node)) $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE $ORDER_BY_PAGE_PARAMS""",

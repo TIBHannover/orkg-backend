@@ -21,7 +21,6 @@ import org.neo4j.cypherdsl.core.SymbolicName
 import org.neo4j.driver.Record
 import org.neo4j.driver.types.TypeSystem
 import org.orkg.common.ContributorId
-import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Certainty
 import org.orkg.contenttypes.domain.RosettaStoneStatement
 import org.orkg.contenttypes.domain.RosettaStoneStatementVersion

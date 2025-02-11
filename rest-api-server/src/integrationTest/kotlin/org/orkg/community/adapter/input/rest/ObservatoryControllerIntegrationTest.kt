@@ -28,13 +28,10 @@ import org.springframework.restdocs.request.RequestDocumentation.parameterWithNa
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.transaction.annotation.Transactional
 import orkg.orkg.community.testing.fixtures.observatoryResponseFields
 
 @Neo4jContainerIntegrationTest
-@Transactional
 internal class ObservatoryControllerIntegrationTest : MockMvcBaseTest("observatories") {
-
     @Autowired
     private lateinit var contributorService: ContributorUseCases
 

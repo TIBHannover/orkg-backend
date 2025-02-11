@@ -1,6 +1,5 @@
 package org.orkg.community.domain
 
-import org.orkg.community.output.ObservatoryFilterRepository
 import java.time.Clock
 import java.time.LocalDateTime
 import java.util.*
@@ -8,18 +7,19 @@ import org.orkg.common.ObservatoryId
 import org.orkg.community.input.CreateObservatoryFilterUseCase
 import org.orkg.community.input.ObservatoryFilterUseCases
 import org.orkg.community.input.UpdateObservatoryFilterUseCase
+import org.orkg.community.output.ObservatoryFilterRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.graph.domain.ClassNotFound
 import org.orkg.graph.domain.PredicateNotFound
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.PredicateRepository
+import org.orkg.spring.data.annotations.TransactionalOnJPA
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 
 @Service
-@Transactional
+@TransactionalOnJPA
 class ObservatoryFilterService(
     private val repository: ObservatoryFilterRepository,
     private val observatoryRepository: ObservatoryRepository,

@@ -18,7 +18,7 @@ dependencies {
     api("org.eclipse.rdf4j:rdf4j-common-io")
     api("org.springframework.data:spring-data-commons")
     api("org.springframework:spring-context")
-    api("org.springframework:spring-tx")
+    api(project(":common:spring-data"))
     implementation("dev.forkhandles:values4k")
     implementation(project(":community:community-core-model"))
 }

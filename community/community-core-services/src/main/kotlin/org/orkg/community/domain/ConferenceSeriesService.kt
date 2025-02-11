@@ -5,13 +5,13 @@ import org.orkg.common.OrganizationId
 import org.orkg.community.input.ConferenceSeriesUseCases
 import org.orkg.community.output.ConferenceSeriesRepository
 import org.orkg.community.output.OrganizationRepository
+import org.orkg.spring.data.annotations.TransactionalOnJPA
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 
 @Service
-@Transactional
+@TransactionalOnJPA
 class ConferenceSeriesService(
     private val postgresConferenceSeriesRepository: ConferenceSeriesRepository,
     private val postgresOrganizationRepository: OrganizationRepository

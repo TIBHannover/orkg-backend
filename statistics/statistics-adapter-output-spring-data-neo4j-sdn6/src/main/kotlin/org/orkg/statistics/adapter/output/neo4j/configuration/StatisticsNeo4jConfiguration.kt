@@ -2,7 +2,9 @@ package org.orkg.statistics.adapter.output.neo4j.configuration
 
 import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.context.annotation.Configuration
+import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories
 
 @Configuration
-@EntityScan("org.orkg.statistics.adapter.output.neo4j.internal")
+@EnableNeo4jRepositories("org.orkg.statistics.adapter.output.neo4j", transactionManagerRef = "neo4jTransactionManager")
+@EntityScan("org.orkg.statistics.adapter.output.neo4j")
 class StatisticsNeo4jConfiguration

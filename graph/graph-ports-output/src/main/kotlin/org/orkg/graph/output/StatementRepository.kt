@@ -18,25 +18,26 @@ import org.orkg.graph.domain.VisibilityFilter
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
-import org.springframework.transaction.annotation.Transactional
 
-interface StatementRepository : EntityRepository<GeneralStatement, StatementId> {
-    fun countIncomingStatements(id: ThingId): Long
-    fun countIncomingStatements(ids: Set<ThingId>): Map<ThingId, Long>
-    fun findAllDescriptions(ids: Set<ThingId>): Map<ThingId, String>
-    fun determineOwnership(statementIds: Set<StatementId>): Set<OwnershipInfo>
-    // legacy methods:
-    fun nextIdentity(): StatementId
-    @Transactional
-    fun save(statement: GeneralStatement)
-    @Transactional
-    fun saveAll(statements: Set<GeneralStatement>)
+interface StatementReadRepository : EntityRepository<GeneralStatement, StatementId> {
     fun count(): Long
-    fun delete(statement: GeneralStatement)
-    fun deleteByStatementId(id: StatementId)
-    fun deleteByStatementIds(ids: Set<StatementId>)
-    fun deleteAll()
-    fun findByStatementId(id: StatementId): Optional<GeneralStatement>
+
+    fun countByIdRecursive(id: ThingId): Long // Subject id
+
+    fun countIncomingStatements(ids: Set<ThingId>): Map<ThingId, Long>
+
+    fun countIncomingStatements(id: ThingId): Long
+
+    fun countPredicateUsage(pageable: Pageable): Page<PredicateUsageCount>
+
+    fun determineOwnership(statementIds: Set<StatementId>): Set<OwnershipInfo>
+
+    fun fetchAsBundle(
+        id: ThingId,
+        configuration: BundleConfiguration,
+        sort: Sort,
+    ): Iterable<GeneralStatement>
+
     fun findAll(
         pageable: Pageable,
         subjectClasses: Set<ThingId> = emptySet(),
@@ -48,31 +49,88 @@ interface StatementRepository : EntityRepository<GeneralStatement, StatementId> 
         createdAtEnd: OffsetDateTime? = null,
         objectClasses: Set<ThingId> = emptySet(),
         objectId: ThingId? = null,
-        objectLabel: String? = null
+        objectLabel: String? = null,
     ): Page<GeneralStatement>
-    fun findAllByStatementIdIn(ids: Set<StatementId>, pageable: Pageable): Page<GeneralStatement>
-    fun countByIdRecursive(id: ThingId): Long // Subject id
-    fun findAllBySubjects(subjectIds: List<ThingId>, pageable: Pageable): Page<GeneralStatement>
-    fun findAllByObjects(objectIds: List<ThingId>, pageable: Pageable): Page<GeneralStatement>
-    fun fetchAsBundle(id: ThingId, configuration: BundleConfiguration, sort: Sort): Iterable<GeneralStatement>
-    fun countPredicateUsage(pageable: Pageable): Page<PredicateUsageCount>
-    fun findDOIByContributionId(id: ThingId): Optional<Literal>
 
-    fun findByDOI(doi: String, classes: Set<ThingId>): Optional<Resource>
-    fun findAllBySubjectClassAndDOI(subjectClass: ThingId, doi: String, pageable: Pageable): Page<Resource>
+    fun findAllByObjects(
+        objectIds: List<ThingId>,
+        pageable: Pageable,
+    ): Page<GeneralStatement>
 
-    fun findAllProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Resource>
-    fun findAllContributorsByResourceId(id: ThingId, pageable: Pageable): Page<ContributorId>
-    fun findTimelineByResourceId(id: ThingId, pageable: Pageable): Page<ResourceContributor>
-    fun findAllProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource>
+    fun findAllByStatementIdIn(
+        ids: Set<StatementId>,
+        pageable: Pageable,
+    ): Page<GeneralStatement>
+
+    fun findAllBySubjectClassAndDOI(
+        subjectClass: ThingId,
+        doi: String,
+        pageable: Pageable,
+    ): Page<Resource>
+
+    fun findAllBySubjects(
+        subjectIds: List<ThingId>,
+        pageable: Pageable,
+    ): Page<GeneralStatement>
+
+    fun findAllContributorsByResourceId(
+        id: ThingId,
+        pageable: Pageable,
+    ): Page<ContributorId>
+
+    fun findAllDescriptions(ids: Set<ThingId>): Map<ThingId, String>
 
     fun findAllPapersByObservatoryIdAndFilters(
         observatoryId: ObservatoryId?,
         filters: List<SearchFilter>,
         visibility: VisibilityFilter,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<Resource>
+
+    fun findAllProblemsByObservatoryId(
+        id: ObservatoryId,
+        pageable: Pageable,
+    ): Page<Resource>
+
+    fun findAllProblemsByOrganizationId(
+        id: OrganizationId,
+        pageable: Pageable,
+    ): Page<Resource>
+
+    fun findByDOI(
+        doi: String,
+        classes: Set<ThingId>,
+    ): Optional<Resource>
+
+    fun findByStatementId(id: StatementId): Optional<GeneralStatement>
+
+    fun findDOIByContributionId(id: ThingId): Optional<Literal>
+
+    fun findTimelineByResourceId(
+        id: ThingId,
+        pageable: Pageable,
+    ): Page<ResourceContributor>
 }
+
+interface StatementWriteRepository {
+    fun delete(statement: GeneralStatement)
+
+    fun deleteAll()
+
+    fun deleteByStatementId(id: StatementId)
+
+    fun deleteByStatementIds(ids: Set<StatementId>)
+
+    fun nextIdentity(): StatementId
+
+    fun save(statement: GeneralStatement)
+
+    fun saveAll(statements: Set<GeneralStatement>)
+}
+
+interface StatementRepository :
+    StatementReadRepository,
+    StatementWriteRepository
 
 data class OwnershipInfo(
     val statementId: StatementId,

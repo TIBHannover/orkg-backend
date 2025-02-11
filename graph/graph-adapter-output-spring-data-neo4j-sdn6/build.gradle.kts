@@ -9,6 +9,7 @@ plugins {
 
 dependencies {
     api(project(":common:identifiers"))
+    api(project(":common:spring-data"))
     api(project(":graph:graph-core-model"))
     api(project(":graph:graph-ports-output"))
     implementation(project(":common:datatypes"))
@@ -22,7 +23,6 @@ dependencies {
     api("org.springframework.data:spring-data-neo4j")
     api("org.springframework:spring-context")
     api("org.springframework:spring-core")
-    api("org.springframework:spring-tx")
 
     implementation("org.eclipse.rdf4j:rdf4j-common-io")
     implementation(project(":common:neo4j-dsl"))
@@ -51,7 +51,6 @@ testing {
                 implementation(testFixtures(project(":graph:graph-ports-output")))
                 implementation(testFixtures(project(":testing:spring")))
                 implementation("io.kotest:kotest-assertions-shared")
-                implementation("org.springframework.boot:spring-boot-test-autoconfigure")
                 implementation("org.springframework:spring-beans")
                 implementation("org.springframework:spring-test")
                 implementation("io.kotest:kotest-assertions-core")

@@ -8,11 +8,13 @@ import org.orkg.community.output.ObservatoryFilterRepository
 import java.util.*
 import org.orkg.common.ObservatoryId
 import org.orkg.community.domain.ObservatoryFilterId
+import org.orkg.spring.data.annotations.TransactionalOnJPA
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
 
 @Component
+@TransactionalOnJPA
 class SpringJpaPostgresObservatoryFilterAdapter(
     private val postgresRepository: PostgresObservatoryFilterRepository
 ) : ObservatoryFilterRepository {

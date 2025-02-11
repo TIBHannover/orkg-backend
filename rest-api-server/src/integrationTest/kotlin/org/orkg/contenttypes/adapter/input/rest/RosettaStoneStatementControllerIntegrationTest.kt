@@ -62,13 +62,10 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageRequest
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.transaction.annotation.Transactional
 
 @Neo4jContainerIntegrationTest
-@Transactional
 @Import(ContentTypeJacksonModule::class)
 internal class RosettaStoneStatementControllerIntegrationTest : MockMvcBaseTest("rosetta-stone-statements") {
-
     @Autowired
     private lateinit var contributorService: ContributorUseCases
 

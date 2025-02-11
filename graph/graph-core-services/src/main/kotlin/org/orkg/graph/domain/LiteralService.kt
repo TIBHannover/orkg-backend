@@ -10,13 +10,13 @@ import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.output.LiteralRepository
 import org.orkg.graph.output.StatementRepository
+import org.orkg.spring.data.annotations.TransactionalOnNeo4j
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 
 @Service
-@Transactional
+@TransactionalOnNeo4j
 class LiteralService(
     private val repository: LiteralRepository,
     private val statementRepository: StatementRepository,
@@ -49,7 +49,7 @@ class LiteralService(
         return id
     }
 
-    @Transactional(readOnly = true)
+    @TransactionalOnNeo4j(readOnly = true)
     override fun exists(id: ThingId): Boolean = repository.exists(id)
 
     override fun findAll(

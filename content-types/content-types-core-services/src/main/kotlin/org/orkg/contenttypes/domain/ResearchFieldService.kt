@@ -14,14 +14,14 @@ import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.ResourceUseCases
+import org.orkg.spring.data.annotations.TransactionalOnNeo4j
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 
 @Service
-@Transactional
+@TransactionalOnNeo4j
 class ResearchFieldService(
     private val researchFieldRepository: ResearchFieldRepository,
     private val researchFieldsQuery: FindResearchFieldsQuery,

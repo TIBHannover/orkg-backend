@@ -9,13 +9,13 @@ import org.orkg.graph.input.ClassHierarchyUseCases
 import org.orkg.graph.output.ClassHierarchyRepository
 import org.orkg.graph.output.ClassRelationRepository
 import org.orkg.graph.output.ClassRepository
+import org.orkg.spring.data.annotations.TransactionalOnNeo4j
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 
 @Service
-@Transactional
+@TransactionalOnNeo4j
 class ClassHierarchyService(
     private val repository: ClassHierarchyRepository,
     private val relationRepository: ClassRelationRepository,

@@ -13,6 +13,7 @@ include(
     "common:testing",
     "common:serialization",
     "common:neo4j-dsl",
+    "common:spring-data",
     "common:spring-webmvc",
     "common:identifiers",
     "common:pagination",
@@ -22,7 +23,7 @@ include(
 )
 include(
     "migrations:liquibase",
-    "migrations:neo4j-migrations"
+    "migrations:neo4j-migrations",
 )
 include("keycloak")
 include("testing:kotest")
@@ -93,7 +94,7 @@ include(
     "profiling:profiling-core-services",
     "profiling:profiling-ports-output",
     "profiling:profiling-adapter-output",
-    "profiling:profiling-adapter-output-spring-data-neo4j-sdn6"
+    "profiling:profiling-adapter-output-spring-data-neo4j-sdn6",
 )
 include(
     "statistics:statistics-core-model",

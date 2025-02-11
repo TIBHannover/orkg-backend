@@ -22,6 +22,7 @@ dependencies {
     testFixturesApi("org.springframework:spring-core")
     testFixturesApi("org.springframework:spring-test")
     testFixturesApi("org.springframework.data:spring-data-commons")
+    testFixturesApi("org.springframework.data:spring-data-neo4j")
     testFixturesApi("com.fasterxml.jackson.core:jackson-databind")
     testFixturesApi("org.springframework.restdocs:spring-restdocs-mockmvc")
     testFixturesApi("org.testcontainers:junit-jupiter")
@@ -34,4 +35,6 @@ dependencies {
     testFixturesImplementation("org.springframework.security:spring-security-crypto")
     testFixturesImplementation("org.springframework:spring-web")
     testFixturesImplementation("org.testcontainers:testcontainers")
+    testFixturesApi("org.neo4j.driver:neo4j-java-driver")
+    testFixturesImplementation("org.springframework:spring-tx")
 }

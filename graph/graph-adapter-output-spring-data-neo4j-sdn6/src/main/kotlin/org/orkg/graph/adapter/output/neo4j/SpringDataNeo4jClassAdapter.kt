@@ -23,6 +23,7 @@ import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.FuzzySearchString
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.output.ClassRepository
+import org.orkg.spring.data.annotations.TransactionalOnNeo4j
 import org.springframework.cache.annotation.CacheConfig
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.cache.annotation.Cacheable
@@ -39,11 +40,12 @@ const val CLASS_ID_TO_CLASS_EXISTS_CACHE = "class-id-to-class-exists"
 private const val FULLTEXT_INDEX_FOR_LABEL = "fulltext_idx_for_class_on_label"
 
 @Component
+@TransactionalOnNeo4j
 @CacheConfig(cacheNames = [CLASS_ID_TO_CLASS_CACHE, CLASS_ID_TO_CLASS_EXISTS_CACHE])
 class SpringDataNeo4jClassAdapter(
     private val neo4jRepository: Neo4jClassRepository,
     private val neo4jClassIdGenerator: Neo4jClassIdGenerator,
-    private val neo4jClient: Neo4jClient
+    private val neo4jClient: Neo4jClient,
 ) : ClassRepository {
     @Caching(
         evict = [

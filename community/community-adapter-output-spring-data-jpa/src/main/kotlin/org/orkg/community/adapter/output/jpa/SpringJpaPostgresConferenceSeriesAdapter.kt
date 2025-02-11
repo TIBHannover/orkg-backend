@@ -8,11 +8,13 @@ import org.orkg.community.adapter.output.jpa.internal.PostgresOrganizationReposi
 import org.orkg.community.domain.ConferenceSeries
 import org.orkg.community.domain.ConferenceSeriesId
 import org.orkg.community.output.ConferenceSeriesRepository
+import org.orkg.spring.data.annotations.TransactionalOnJPA
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
 
 @Component
+@TransactionalOnJPA
 class SpringJpaPostgresConferenceSeriesAdapter(
     private val postgresConferenceSeriesRepository: PostgresConferenceSeriesRepository,
     private val postgresOrganizationRepository: PostgresOrganizationRepository,

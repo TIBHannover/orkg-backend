@@ -38,6 +38,7 @@ import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.output.ResourceRepository
+import org.orkg.spring.data.annotations.TransactionalOnNeo4j
 import org.springframework.cache.annotation.CacheConfig
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.cache.annotation.Cacheable
@@ -55,11 +56,12 @@ private const val INSTANCE_OF = "INSTANCE_OF"
 private const val SUBCLASS_OF = "SUBCLASS_OF"
 
 @Component
+@TransactionalOnNeo4j
 @CacheConfig(cacheNames = [RESOURCE_ID_TO_RESOURCE_CACHE, RESOURCE_ID_TO_RESOURCE_EXISTS_CACHE])
 class SpringDataNeo4jResourceAdapter(
     private val neo4jRepository: Neo4jResourceRepository,
     private val neo4jResourceIdGenerator: Neo4jResourceIdGenerator,
-    private val neo4jClient: Neo4jClient
+    private val neo4jClient: Neo4jClient,
 ) : ResourceRepository {
     override fun nextIdentity(): ThingId {
         // IDs could exist already by manual creation. We need to find the next available one.

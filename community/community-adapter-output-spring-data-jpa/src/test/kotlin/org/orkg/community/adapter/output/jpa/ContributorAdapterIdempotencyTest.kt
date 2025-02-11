@@ -5,6 +5,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.community.adapter.output.jpa.configuration.CommunityJpaConfiguration
+import org.orkg.community.adapter.output.jpa.configuration.CommunityJpaTestConfiguration
 import org.orkg.eventbus.ReallySimpleEventBus
 import org.orkg.eventbus.events.UserRegistered
 import org.orkg.testing.MockUserId
@@ -19,10 +20,11 @@ import org.springframework.test.context.TestConstructor
 @ContextConfiguration(
     classes = [
         CommunityJpaConfiguration::class,
+        CommunityJpaTestConfiguration::class,
         ContributorFromUserAdapter::class,
         ReallySimpleEventBus::class,
     ],
-    initializers = [PostgresContainerInitializer::class]
+    initializers = [PostgresContainerInitializer::class],
 )
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)

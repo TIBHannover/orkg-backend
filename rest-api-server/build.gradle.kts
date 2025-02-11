@@ -187,6 +187,8 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-databind")
     implementation("org.springframework:spring-tx")
     implementation("org.springframework:spring-webmvc")
+    implementation("org.springframework:spring-orm")
+    implementation("jakarta.persistence:jakarta.persistence-api")
 
     kapt("org.springframework.boot:spring-boot-configuration-processor")
 
@@ -244,7 +246,6 @@ dependencies {
     "integrationTestImplementation"("org.springframework.restdocs:spring-restdocs-core")
     "integrationTestImplementation"("org.springframework:spring-beans")
     "integrationTestImplementation"("org.springframework:spring-test")
-    "integrationTestImplementation"("org.springframework:spring-tx")
     "integrationTestImplementation"(project(":content-types:content-types-adapter-input-rest-spring-mvc"))
     "integrationTestImplementation"(project(":content-types:content-types-core-model"))
     "integrationTestImplementation"(project(":content-types:content-types-ports-input"))

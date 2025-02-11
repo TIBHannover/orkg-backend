@@ -58,6 +58,7 @@ import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.output.OwnershipInfo
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.StatementRepository
+import org.orkg.spring.data.annotations.TransactionalOnNeo4j
 import org.springframework.cache.CacheManager
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
@@ -69,6 +70,7 @@ import org.springframework.stereotype.Component
 private const val RELATED = "RELATED"
 
 @Component
+@TransactionalOnNeo4j
 class SpringDataNeo4jStatementAdapter(
     private val neo4jStatementIdGenerator: Neo4jStatementIdGenerator,
     private val predicateRepository: PredicateRepository,

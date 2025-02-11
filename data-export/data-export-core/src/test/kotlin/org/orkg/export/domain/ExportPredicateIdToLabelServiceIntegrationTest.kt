@@ -8,7 +8,6 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkDescribeSpec
 import org.orkg.export.testing.fixtures.verifyThatDirectoryExistsAndIsEmpty
 import org.orkg.graph.domain.Predicates

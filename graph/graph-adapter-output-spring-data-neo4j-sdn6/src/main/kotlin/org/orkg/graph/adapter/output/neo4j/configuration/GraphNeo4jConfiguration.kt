@@ -19,7 +19,7 @@ import org.springframework.data.neo4j.core.convert.Neo4jConversions
 import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories
 
 @Configuration
-@EnableNeo4jRepositories("org.orkg.graph.adapter.output.neo4j.internal")
+@EnableNeo4jRepositories("org.orkg.graph.adapter.output.neo4j.internal", transactionManagerRef = "neo4jTransactionManager")
 @EntityScan("org.orkg.graph.adapter.output.neo4j.internal")
 @ComponentScan(basePackages = ["org.orkg.graph.adapter.output.neo4j.internal"])
 class GraphNeo4jConfiguration {
@@ -43,9 +43,10 @@ class GraphNeo4jConfiguration {
     fun neo4jClient(
         driver: Driver,
         databaseNameProvider: DatabaseSelectionProvider,
-        neo4jConversions: Neo4jConversions
+        neo4jConversions: Neo4jConversions,
     ): Neo4jClient =
-        Neo4jClient.with(driver)
+        Neo4jClient
+            .with(driver)
             .withDatabaseSelectionProvider(databaseNameProvider)
             .withNeo4jConversions(neo4jConversions)
             .build()

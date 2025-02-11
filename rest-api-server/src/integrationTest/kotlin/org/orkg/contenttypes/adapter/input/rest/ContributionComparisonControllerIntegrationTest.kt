@@ -25,10 +25,8 @@ import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.transaction.annotation.Transactional
 
 @Neo4jContainerIntegrationTest
-@Transactional
 internal class ContributionComparisonControllerIntegrationTest : MockMvcBaseTest("contribution-comparison") {
 
     @Autowired

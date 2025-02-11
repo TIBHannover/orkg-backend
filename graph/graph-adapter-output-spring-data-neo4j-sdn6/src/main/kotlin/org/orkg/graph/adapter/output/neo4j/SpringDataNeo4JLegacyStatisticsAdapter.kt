@@ -13,12 +13,14 @@ import org.orkg.graph.domain.ResearchFieldStats
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.TrendingResearchProblems
 import org.orkg.graph.output.LegacyStatisticsRepository
+import org.orkg.spring.data.annotations.TransactionalOnNeo4j
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.stereotype.Component
 
 @Component
+@TransactionalOnNeo4j
 class SpringDataNeo4JLegacyStatisticsAdapter(
     private val neo4jRepository: Neo4jLegacyStatisticsRepository,
     private val neo4jClient: Neo4jClient,

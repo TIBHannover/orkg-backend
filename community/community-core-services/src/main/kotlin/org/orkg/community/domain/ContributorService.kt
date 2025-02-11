@@ -5,11 +5,11 @@ import org.orkg.common.ContributorId
 import org.orkg.community.input.ContributorUseCases
 import org.orkg.community.input.CreateContributorUseCase.CreateCommand
 import org.orkg.community.output.ContributorRepository
+import org.orkg.spring.data.annotations.TransactionalOnJPA
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 
 @Service
-@Transactional
+@TransactionalOnJPA
 class ContributorService(
     private val repository: ContributorRepository,
 ) : ContributorUseCases {

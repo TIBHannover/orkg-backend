@@ -10,13 +10,13 @@ import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.UpdateListUseCase
 import org.orkg.graph.output.ListRepository
 import org.orkg.graph.output.ThingRepository
+import org.orkg.spring.data.annotations.TransactionalOnNeo4j
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 
 @Service
-@Transactional
+@TransactionalOnNeo4j
 class ListService(
     private val repository: ListRepository,
     private val thingRepository: ThingRepository,

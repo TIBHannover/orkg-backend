@@ -11,10 +11,8 @@ import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UpdateResourceUseCase.UpdateCommand
 import org.orkg.graph.output.ResourceRepository
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 
 @Service
-@Transactional
 class UnsafeResourceService(
     protected val repository: ResourceRepository,
     protected val clock: Clock,

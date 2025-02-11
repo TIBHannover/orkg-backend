@@ -40,13 +40,10 @@ import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.transaction.annotation.Transactional
 
 @Neo4jContainerIntegrationTest
-@Transactional
 @TestPropertySource(properties = ["orkg.features.formatted_labels=false"])
 internal class ResourceControllerIntegrationTest : MockMvcBaseTest("resources") {
-
     @Autowired
     private lateinit var service: ResourceUseCases
 

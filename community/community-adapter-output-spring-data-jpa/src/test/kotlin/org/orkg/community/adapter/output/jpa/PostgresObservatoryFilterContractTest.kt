@@ -1,6 +1,7 @@
 package org.orkg.community.adapter.output.jpa
 
 import org.orkg.community.adapter.output.jpa.configuration.CommunityJpaConfiguration
+import org.orkg.community.adapter.output.jpa.configuration.CommunityJpaTestConfiguration
 import org.orkg.community.output.ObservatoryFilterRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
@@ -19,6 +20,7 @@ import org.springframework.test.context.TestConstructor
     classes = [
         SpringJpaPostgresObservatoryFilterAdapter::class,
         CommunityJpaConfiguration::class,
+        CommunityJpaTestConfiguration::class,
         ReallySimpleEventBus::class,
     ],
     initializers = [PostgresContainerInitializer::class]
@@ -26,7 +28,6 @@ import org.springframework.test.context.TestConstructor
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 internal class PostgresObservatoryFilterContractTest : ObservatoryFilterRepositoryContracts {
-
     @Autowired
     private lateinit var adapter: SpringJpaPostgresObservatoryFilterAdapter
 

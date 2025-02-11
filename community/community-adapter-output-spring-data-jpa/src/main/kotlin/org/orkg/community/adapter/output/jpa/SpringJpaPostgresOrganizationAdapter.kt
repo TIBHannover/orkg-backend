@@ -12,11 +12,13 @@ import org.orkg.community.domain.Contributor
 import org.orkg.community.domain.Organization
 import org.orkg.community.domain.OrganizationType
 import org.orkg.community.output.OrganizationRepository
+import org.orkg.spring.data.annotations.TransactionalOnJPA
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
 
 @Component
+@TransactionalOnJPA
 class SpringJpaPostgresOrganizationAdapter(
     private val postgresOrganizationRepository: PostgresOrganizationRepository,
     private val postgresObservatoryRepository: PostgresObservatoryRepository,

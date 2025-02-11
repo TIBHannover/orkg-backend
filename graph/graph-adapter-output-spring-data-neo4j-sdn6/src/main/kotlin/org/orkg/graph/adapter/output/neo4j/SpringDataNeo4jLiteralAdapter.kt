@@ -23,6 +23,7 @@ import org.orkg.graph.domain.FuzzySearchString
 import org.orkg.graph.domain.Literal
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.output.LiteralRepository
+import org.orkg.spring.data.annotations.TransactionalOnNeo4j
 import org.springframework.cache.annotation.CacheConfig
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.cache.annotation.Cacheable
@@ -39,11 +40,12 @@ const val LITERAL_ID_TO_LITERAL_EXISTS_CACHE = "literal-id-to-literal-exists"
 private const val FULLTEXT_INDEX_FOR_LABEL = "fulltext_idx_for_literal_on_label"
 
 @Component
+@TransactionalOnNeo4j
 @CacheConfig(cacheNames = [LITERAL_ID_TO_LITERAL_CACHE, LITERAL_ID_TO_LITERAL_EXISTS_CACHE])
 class SpringDataNeo4jLiteralAdapter(
     private val neo4jRepository: Neo4jLiteralRepository,
     private val neo4jLiteralIdGenerator: Neo4jLiteralIdGenerator,
-    private val neo4jClient: Neo4jClient
+    private val neo4jClient: Neo4jClient,
 ) : LiteralRepository {
     override fun nextIdentity(): ThingId {
         // IDs could exist already by manual creation. We need to find the next available one.

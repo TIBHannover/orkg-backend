@@ -25,12 +25,9 @@ import org.springframework.restdocs.payload.ResponseFieldsSnippet
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.transaction.annotation.Transactional
 
 @Neo4jContainerIntegrationTest
-@Transactional
 internal class OrganizationControllerIntegrationTest : MockMvcBaseTest("organizations") {
-
     @Autowired
     private lateinit var contributorService: ContributorUseCases
 
@@ -58,11 +55,11 @@ internal class OrganizationControllerIntegrationTest : MockMvcBaseTest("organiza
 
     @AfterEach
     fun cleanup() {
-        service.removeAll()
         observatoryService.removeAll()
+        service.removeAll()
+        contributorService.deleteAll()
         resourceService.removeAll()
         classService.removeAll()
-        contributorService.deleteAll()
     }
 
     @Test

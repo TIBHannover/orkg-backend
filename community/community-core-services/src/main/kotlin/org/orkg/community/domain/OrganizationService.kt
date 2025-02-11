@@ -10,11 +10,11 @@ import org.orkg.mediastorage.domain.Image
 import org.orkg.mediastorage.domain.ImageId
 import org.orkg.mediastorage.input.CreateImageUseCase
 import org.orkg.mediastorage.input.ImageUseCases
+import org.orkg.spring.data.annotations.TransactionalOnJPA
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 
 @Service
-@Transactional
+@TransactionalOnJPA
 class OrganizationService(
     private val postgresOrganizationRepository: OrganizationRepository,
     private val imageService: ImageUseCases

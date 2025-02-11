@@ -14,12 +14,14 @@ import org.orkg.eventbus.EventBus
 import org.orkg.eventbus.Listener
 import org.orkg.eventbus.events.DisplayNameUpdated
 import org.orkg.eventbus.events.UserRegistered
+import org.orkg.spring.data.annotations.TransactionalOnJPA
 import org.springframework.beans.factory.InitializingBean
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
 
 @Component
+@TransactionalOnJPA
 class ContributorFromUserAdapter(
     private val eventBus: EventBus,
     private val postgresContributorRepository: PostgresContributorRepository,

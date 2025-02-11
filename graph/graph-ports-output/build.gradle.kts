@@ -9,7 +9,6 @@ dependencies {
 
     api("org.eclipse.rdf4j:rdf4j-common-io")
     api("org.springframework.data:spring-data-commons")
-    api("org.springframework:spring-tx")
 
     testFixturesApi("io.kotest:kotest-framework-api")
     testFixturesImplementation("io.kotest:kotest-assertions-shared")

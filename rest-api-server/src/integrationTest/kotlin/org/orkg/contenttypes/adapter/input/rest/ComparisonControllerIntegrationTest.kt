@@ -58,10 +58,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageRequest
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.transaction.annotation.Transactional
 
 @Neo4jContainerIntegrationTest
-@Transactional
 @Import(InMemorySimCompThingRepositoryAdapter::class)
 internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparisons") {
 

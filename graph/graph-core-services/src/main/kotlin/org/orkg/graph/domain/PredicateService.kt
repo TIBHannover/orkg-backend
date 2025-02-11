@@ -12,19 +12,19 @@ import org.orkg.graph.input.CreatePredicateUseCase
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.UpdatePredicateUseCase
 import org.orkg.graph.output.PredicateRepository
+import org.orkg.spring.data.annotations.TransactionalOnNeo4j
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 
 @Service
-@Transactional
+@TransactionalOnNeo4j
 class PredicateService(
     private val repository: PredicateRepository,
     private val contributorRepository: ContributorRepository,
     private val clock: Clock,
 ) : PredicateUseCases {
-    @Transactional(readOnly = true)
+    @TransactionalOnNeo4j(readOnly = true)
     override fun exists(id: ThingId): Boolean = repository.exists(id)
 
     override fun create(command: CreatePredicateUseCase.CreateCommand): ThingId {

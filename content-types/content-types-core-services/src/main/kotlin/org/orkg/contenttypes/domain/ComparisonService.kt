@@ -91,15 +91,15 @@ import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ListRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
+import org.orkg.spring.data.annotations.TransactionalOnNeo4j
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 
 @Service
-@Transactional
+@TransactionalOnNeo4j
 class ComparisonService(
     private val repository: ContributionComparisonRepository,
     private val resourceRepository: ResourceRepository,

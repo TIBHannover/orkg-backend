@@ -10,10 +10,8 @@ import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.output.ThingRepository
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 
 @Service
-@Transactional
 class UnsafeStatementService(
     private val thingRepository: ThingRepository,
     private val predicateRepository: PredicateRepository,

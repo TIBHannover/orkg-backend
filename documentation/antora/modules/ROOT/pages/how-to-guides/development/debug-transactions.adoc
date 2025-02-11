@@ -1,0 +1,100 @@
+= How to debug transaction issues
+
+Transaction issues can be tricky.
+We rely on correct nesting and TX reuse.
+To make debugging easier, there exists a script (`scripts/analyseTransactionLogfile.main.kts`) that visualizes transactions from test output.
+
+== Capturing the test output
+
+Creating the test output is straight-forward, but not obvious:
+
+. Select an integration test to visualize.
+It needs to be a test that uses the relevant infrastructure (to create transactions), and should ideally be accessed via a controller (over HTTP).
+
+. Annotate the text class with `@ExtendWith(OutputCaptureExtension::class)`.
+
+. Increase logger output for all transaction related loggers to at least the `DEBUG` level (`TRACE` is recommended), e.g., by setting the properties on the test class:
++
+[source,kotlin]
+----
+@TestPropertySource(
+    properties = [
+        "logging.level.org.springframework.transaction=TRACE",
+        "logging.level.org.springframework.orm.jpa=TRACE",
+        "logging.level.org.springframework.data.neo4j.core.transaction=TRACE",
+    ]
+)
+----
++
+Alternatively, these can be set via `application.yaml` or some other mean.
++
+NOTE: The settings above are set minimal, recommended set which the script expects.
+
+. Inject a `CapturedOutput` instance into the test, and save the output to a file after the test is finished, e.g.
++
+[source,kotlin]
+----
+@Test
+fun txTest(output: CapturedOutput) {
+    // Test code here ...
+
+    // You can save the "all" (recommended), "out", or "err" captures.
+    File("captured.log").writeText(output.all)
+}
+----
+
+The final setup should look something like this:
+
+[source,kotlin]
+----
+@ExtendWith(OutputCaptureExtension::class)
+@TestPropertySource(
+    properties = [
+        "logging.level.org.springframework.transaction=TRACE",
+        "logging.level.org.springframework.orm.jpa=TRACE",
+        "logging.level.org.springframework.data.neo4j.core.transaction=TRACE",
+    ],
+)
+// Other annotations here ...
+internal class MyIntegrationTest {
+    @Test
+    fun txTest(output: CapturedOutput) {
+        // Test code here ...
+        File("captured.log").writeText(output.all)
+    }
+
+    // Possibly more test methods here ...
+}
+
+----
+
+After the test was started and ran to completion, the output file can be analyzed.
+If you do not provide an explicit path, it is usually relative to the Gradle module that the test belongs to.
+
+== Analysis
+
+=== Generating the diagram
+
+Now that you captured the output, you can run `analyseTransactionLogfile.main.kts` to create a PlantUML sequence diagram.
+The script returns the output on standard output, so redirecting the output to a file is required, like this:
+
+[source,shell]
+----
+./analyseTransactionLogfile.main.kts captured.log > captured.log.puml
+----
+
+NOTE: If you open the file in IntelliJ IDEA, it can take up to a minute to process it, because of its size.
+
+You can further process the file, e.g., converting it to SVG; either directly from IntelliJ IDEA or using other means, like the PlantUML command line tool or Kroki.
+
+=== Notes on the diagram
+
+The transaction managers are color-coded to make it easier to spot.
+Transactions are displayed as boxes, marking their beginning and end, as well as all calls made to other services.
+Calls creating a new transactions are prefixed with a plus sign ("+") in front of their name.
+Square brackets indicate the log line number that relates to the call in the diagram, so you can find them easily.
+
+Ideally, there should only be one straight box on the left from top to bottom, meaning that all later transactions are reusing the outermost one.
+Note that due to direct service calls in a setup method, each such call can (and will) open its own transaction.
+This is fine in setup and teardown methods, but not in the test method itself.
+If you see the same behavior, once the call to the controller starts, the transaction is not reused, which can indicate a performance problem.

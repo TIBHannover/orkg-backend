@@ -130,3 +130,7 @@ spring:
 logging:
   level:
     org.springframework.data.neo4j: DEBUG
+    # Transaction logging
+    #org.springframework.transaction: TRACE
+    #org.springframework.orm.jpa: TRACE
+    #org.springframework.data.neo4j.core.transaction: TRACE

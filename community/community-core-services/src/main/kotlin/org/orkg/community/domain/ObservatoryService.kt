@@ -14,13 +14,13 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ResearchFieldNotFound
 import org.orkg.graph.domain.Resources
 import org.orkg.graph.output.ResourceRepository
+import org.orkg.spring.data.annotations.TransactionalOnJPA
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 
 @Service
-@Transactional
+@TransactionalOnJPA
 class ObservatoryService(
     private val postgresObservatoryRepository: ObservatoryRepository,
     private val postgresOrganizationRepository: OrganizationRepository,

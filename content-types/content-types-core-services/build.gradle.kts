@@ -10,7 +10,7 @@ dependencies {
     api("org.springframework.data:spring-data-commons")
     api("org.springframework:spring-beans")
     api("org.springframework:spring-context")
-    api("org.springframework:spring-tx")
+    api(project(":common:spring-data"))
     api("org.jbibtex:jbibtex")
     api(project(":common:functional"))
     implementation(project(":common:pagination"))

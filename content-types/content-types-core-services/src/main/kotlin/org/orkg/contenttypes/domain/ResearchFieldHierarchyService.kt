@@ -6,13 +6,13 @@ import org.orkg.contenttypes.output.ResearchFieldHierarchyRepository
 import org.orkg.contenttypes.output.ResearchFieldRepository
 import org.orkg.graph.domain.ResearchFieldNotFound
 import org.orkg.graph.domain.Resource
+import org.orkg.spring.data.annotations.TransactionalOnNeo4j
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 
 @Service
-@Transactional
+@TransactionalOnNeo4j
 class ResearchFieldHierarchyService(
     private val repository: ResearchFieldHierarchyRepository,
     private val researchFieldRepository: ResearchFieldRepository

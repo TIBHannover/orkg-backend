@@ -23,6 +23,7 @@ import org.orkg.graph.domain.FuzzySearchString
 import org.orkg.graph.domain.Predicate
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.output.PredicateRepository
+import org.orkg.spring.data.annotations.TransactionalOnNeo4j
 import org.springframework.cache.annotation.CacheConfig
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.cache.annotation.Cacheable
@@ -38,11 +39,12 @@ const val PREDICATE_ID_TO_PREDICATE_CACHE = "predicate-id-to-predicate"
 private const val FULLTEXT_INDEX_FOR_LABEL = "fulltext_idx_for_predicate_on_label"
 
 @Component
+@TransactionalOnNeo4j
 @CacheConfig(cacheNames = [PREDICATE_ID_TO_PREDICATE_CACHE])
 class SpringDataNeo4jPredicateAdapter(
     private val neo4jRepository: Neo4jPredicateRepository,
     private val idGenerator: Neo4jPredicateIdGenerator,
-    private val neo4jClient: Neo4jClient
+    private val neo4jClient: Neo4jClient,
 ) : PredicateRepository {
     override fun exists(id: ThingId): Boolean = neo4jRepository.existsById(id)
 

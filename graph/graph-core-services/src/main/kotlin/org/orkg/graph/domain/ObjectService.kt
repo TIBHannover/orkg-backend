@@ -22,9 +22,11 @@ import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
+import org.orkg.spring.data.annotations.TransactionalOnNeo4j
 import org.springframework.stereotype.Service
 
 @Service
+@TransactionalOnNeo4j
 class ObjectService(
     private val resourceService: ResourceUseCases,
     private val literalService: LiteralUseCases,

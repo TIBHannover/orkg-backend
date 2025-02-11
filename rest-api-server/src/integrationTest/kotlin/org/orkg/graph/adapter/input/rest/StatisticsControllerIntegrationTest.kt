@@ -20,12 +20,9 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.transaction.annotation.Transactional
 
 @Neo4jContainerIntegrationTest
-@Transactional
 internal class StatisticsControllerIntegrationTest : MockMvcBaseTest("statistics") {
-
     @Autowired
     private lateinit var resourceService: ResourceUseCases
 

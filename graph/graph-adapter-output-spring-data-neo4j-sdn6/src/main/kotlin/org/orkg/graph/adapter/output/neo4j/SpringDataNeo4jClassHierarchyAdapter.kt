@@ -26,6 +26,7 @@ import org.orkg.graph.domain.ClassHierarchyEntry
 import org.orkg.graph.domain.ClassSubclassRelation
 import org.orkg.graph.output.ClassHierarchyRepository
 import org.orkg.graph.output.ClassRelationRepository
+import org.orkg.spring.data.annotations.TransactionalOnNeo4j
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.core.Neo4jClient
@@ -35,8 +36,9 @@ private const val SUBCLASS_OF = "SUBCLASS_OF"
 private const val INSTANCE_OF = "INSTANCE_OF"
 
 @Component
+@TransactionalOnNeo4j
 class SpringDataNeo4jClassHierarchyAdapter(
-    private val neo4jClient: Neo4jClient
+    private val neo4jClient: Neo4jClient,
 ) : ClassHierarchyRepository, ClassRelationRepository {
 
     override fun save(classRelation: ClassSubclassRelation) {

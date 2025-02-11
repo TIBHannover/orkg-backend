@@ -14,11 +14,13 @@ import org.orkg.community.adapter.output.jpa.internal.toObservatory
 import org.orkg.community.domain.Contributor
 import org.orkg.community.domain.Observatory
 import org.orkg.community.output.ObservatoryRepository
+import org.orkg.spring.data.annotations.TransactionalOnJPA
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
 
 @Component
+@TransactionalOnJPA
 class SpringJpaPostgresObservatoryAdapter(
     private val postgresRepository: PostgresObservatoryRepository,
     private val postgresOrganizationRepository: PostgresOrganizationRepository,

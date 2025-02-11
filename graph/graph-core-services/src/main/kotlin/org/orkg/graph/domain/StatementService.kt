@@ -13,14 +13,14 @@ import org.orkg.graph.output.LiteralRepository
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.output.ThingRepository
+import org.orkg.spring.data.annotations.TransactionalOnNeo4j
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 
 @Service
-@Transactional
+@TransactionalOnNeo4j
 class StatementService(
     private val thingRepository: ThingRepository,
     private val predicateService: PredicateRepository,
@@ -32,7 +32,7 @@ class StatementService(
     override fun findById(statementId: StatementId): Optional<GeneralStatement> =
         statementRepository.findByStatementId(statementId)
 
-    @Transactional(readOnly = true)
+    @TransactionalOnNeo4j(readOnly = true)
     override fun exists(id: StatementId): Boolean = statementRepository.exists(id)
 
     override fun findAll(

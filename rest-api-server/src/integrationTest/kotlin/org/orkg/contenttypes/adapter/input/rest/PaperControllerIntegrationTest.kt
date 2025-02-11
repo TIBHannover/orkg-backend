@@ -46,12 +46,9 @@ import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.transaction.annotation.Transactional
 
 @Neo4jContainerIntegrationTest
-@Transactional
 internal class PaperControllerIntegrationTest : MockMvcBaseTest("papers") {
-
     @Autowired
     private lateinit var contributorService: ContributorUseCases
 

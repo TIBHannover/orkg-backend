@@ -4,11 +4,11 @@ import org.orkg.community.adapter.output.jpa.internal.KeycloakEventStateEntity
 import org.orkg.community.adapter.output.jpa.internal.PostgresKeycloakEventStateRepository
 import org.orkg.community.domain.EventType
 import org.orkg.community.output.KeycloakEventStateRepository
+import org.orkg.spring.data.annotations.TransactionalOnJPA
 import org.springframework.stereotype.Component
-import org.springframework.transaction.annotation.Transactional
 
 @Component
-@Transactional
+@TransactionalOnJPA
 class SpringJpaPostgresKeycloakEventStateAdapter(
     private val postgresRepository: PostgresKeycloakEventStateRepository,
 ) : KeycloakEventStateRepository {

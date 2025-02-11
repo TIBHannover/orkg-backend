@@ -14,14 +14,14 @@ import org.orkg.community.output.OrganizationRepository
 import org.orkg.graph.input.RetrieveLegacyStatisticsUseCase
 import org.orkg.graph.output.LegacyStatisticsRepository
 import org.orkg.graph.output.ResourceRepository
+import org.orkg.spring.data.annotations.TransactionalOnNeo4j
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 
 @Service
-@Transactional
+@TransactionalOnNeo4j
 class LegacyStatisticsService(
     private val legacyStatisticsRepository: LegacyStatisticsRepository,
     private val contributorRepository: ContributorRepository,

@@ -29,6 +29,7 @@ testing {
 }
 
 dependencies {
+    api("org.springframework.boot:spring-boot-autoconfigure")
     api("org.springframework.data:spring-data-commons")
     api("org.springframework.data:spring-data-neo4j")
     api("org.springframework:spring-context")

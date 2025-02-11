@@ -4,11 +4,11 @@ import java.util.*
 import org.orkg.common.ThingId
 import org.orkg.graph.input.RetrieveThingUseCase
 import org.orkg.graph.output.ThingRepository
+import org.orkg.spring.data.annotations.TransactionalOnNeo4j
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 
 @Service
-@Transactional
+@TransactionalOnNeo4j(readOnly = true)
 class ThingService(
     private val repository: ThingRepository,
 ) : RetrieveThingUseCase {

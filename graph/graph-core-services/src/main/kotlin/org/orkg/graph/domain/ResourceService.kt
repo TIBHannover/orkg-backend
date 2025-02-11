@@ -22,13 +22,13 @@ import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.output.ThingRepository
+import org.orkg.spring.data.annotations.TransactionalOnNeo4j
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 
 @Service
-@Transactional
+@TransactionalOnNeo4j
 class ResourceService(
     private val repository: ResourceRepository,
     private val statementRepository: StatementRepository,
@@ -39,7 +39,7 @@ class ResourceService(
     private val observatoryRepository: ObservatoryRepository,
     private val organizationRepository: OrganizationRepository
 ) : ResourceUseCases {
-    @Transactional(readOnly = true)
+    @TransactionalOnNeo4j(readOnly = true)
     override fun exists(id: ThingId): Boolean = repository.exists(id)
 
     override fun create(command: CreateResourceUseCase.CreateCommand): ThingId {

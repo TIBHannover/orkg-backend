@@ -19,17 +19,10 @@ import org.orkg.graph.output.LiteralRepository
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
-import org.orkg.testing.Neo4jContainerInitializer
+import org.orkg.testing.annotations.Neo4jContainerUnitTest
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.test.autoconfigure.data.neo4j.DataNeo4jTest
-import org.springframework.cache.annotation.EnableCaching
-import org.springframework.test.context.ContextConfiguration
 
-@EnableAutoConfiguration
-@DataNeo4jTest
-@EnableCaching
-@ContextConfiguration(
+@Neo4jContainerUnitTest(
     classes = [
         SpringDataNeo4jStatementAdapter::class,
         SpringDataNeo4jResourceAdapter::class,
@@ -41,11 +34,8 @@ import org.springframework.test.context.ContextConfiguration
         SpringDataNeo4jRosettaStoneStatementAdapter::class,
         SpringDataNeo4jRankingServiceAdapter::class,
         GraphNeo4jConfiguration::class,
-        ContentTypesNeo4jConfiguration::class
+        ContentTypesNeo4jConfiguration::class,
     ],
-    initializers = [
-        Neo4jContainerInitializer::class
-    ]
 )
 internal class SpringDataNeo4jRankingServiceAdapterContractTest(
     @Autowired private val springDataNeo4jStatementAdapter: StatementRepository,

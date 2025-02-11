@@ -4,16 +4,15 @@ import kotlin.collections.List
 import org.orkg.common.ThingId
 import org.orkg.graph.input.GetBulkStatementsQuery
 import org.orkg.graph.output.StatementRepository
+import org.orkg.spring.data.annotations.TransactionalOnNeo4j
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 
 @Service
-@Transactional
+@TransactionalOnNeo4j
 class BulkStatementService(
     private val statementRepository: StatementRepository,
 ) : GetBulkStatementsQuery {
-
     override fun getBulkStatementsBySubjects(
         subjects: List<ThingId>,
         pageable: Pageable

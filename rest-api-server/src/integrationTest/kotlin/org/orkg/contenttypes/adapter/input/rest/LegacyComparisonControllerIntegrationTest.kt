@@ -33,7 +33,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @Neo4jContainerIntegrationTest
 internal class LegacyComparisonControllerIntegrationTest : MockMvcBaseTest("comparisons") {
-
     @Autowired
     private lateinit var resourceService: ResourceUseCases
 

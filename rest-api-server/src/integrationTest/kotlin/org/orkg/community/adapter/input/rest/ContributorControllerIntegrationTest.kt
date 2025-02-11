@@ -13,10 +13,8 @@ import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.transaction.annotation.Transactional
 
 @SpringBootTest
-@Transactional
 internal class ContributorControllerIntegrationTest : MockMvcBaseTest("contributors") {
 
     @Autowired

@@ -19,11 +19,11 @@ import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ExternalClassService
 import org.orkg.graph.output.ExternalPredicateService
 import org.orkg.graph.output.ExternalResourceService
+import org.orkg.spring.data.annotations.TransactionalOnNeo4j
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 
 @Service
-@Transactional
+@TransactionalOnNeo4j
 class ImportService(
     private val externalClassRepositories: MutableList<ExternalClassService>,
     private val externalResourceRepositories: MutableList<ExternalResourceService>,

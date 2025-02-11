@@ -3,12 +3,10 @@ package org.orkg.graph.adapter.output.neo4j.internal
 import org.orkg.common.ThingId
 import org.springframework.data.neo4j.repository.Neo4jRepository
 import org.springframework.data.neo4j.repository.query.Query
-import org.springframework.transaction.annotation.Transactional
 
 private const val id = "${'$'}id"
 
 interface Neo4jPredicateRepository : Neo4jRepository<Neo4jPredicate, ThingId> {
-    @Transactional
     override fun deleteById(id: ThingId)
 
     @Query("""

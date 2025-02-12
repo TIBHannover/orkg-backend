@@ -109,6 +109,11 @@ management:
       enabled: true
 hawtio:
   authenticationEnabled: false
+org:
+  neo4j:
+    migrations:
+      packages-to-scan:
+        - "org.orkg.migrations.neo4j"
 ---
 spring:
   config:

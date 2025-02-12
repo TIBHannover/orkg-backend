@@ -14,10 +14,11 @@ class Neo4jContainerInitializer : ApplicationContextInitializer<ConfigurableAppl
     // TODO: might be nice to aggregate values for debugging, if possible
 
     companion object {
-        val neo4jContainer: Neo4jContainer<*> =
-            Neo4jContainer(DockerImageName.parse(BuildConfig.CONTAINER_IMAGE_NEO4J))
+        val neo4jContainer: Neo4jContainer<*> = Neo4jContainer(DockerImageName.parse(BuildConfig.CONTAINER_IMAGE_NEO4J))
+            .withNeo4jConfig("initial.dbms.default_database", "orkg")
+            .withNeo4jConfig("apoc.custom.procedures.refresh", "100")
             .withoutAuthentication()
-            .withPlugins("apoc")
+            .withPlugins("apoc", "apoc-extended")
     }
 
     override fun initialize(applicationContext: ConfigurableApplicationContext) {

@@ -4,7 +4,7 @@
 #
 set -e
 
-neo4j_version=4.4-community
+neo4j_version=5-community
 
 dump_volume=orkg-dumps
 source_dir=orkg-backend
@@ -47,7 +47,7 @@ docker compose stop neo4j
 # Load dump.
 # The double dash seems to be required to make the script work with "Git Bash" in Windows. :-/
 docker run -i --rm --entrypoint //bin/bash --volumes-from "${source_dir}-neo4j-1" --volume "${dump_volume}:/dumps" neo4j:$neo4j_version <<EOS
-neo4j-admin load --from=/dumps/neo4j-dump-latest.dump --database=orkg --force
+neo4j-admin database load orkg --overwrite-destination=true --from-stdin < /dumps/neo4j-dump-latest.dump
 EOS
 
 # Destroy database container. This is required to get rid of the logs, so the next step can wait successfully.

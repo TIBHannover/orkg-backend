@@ -18,7 +18,7 @@ interface Neo4jPaperRepository : Neo4jRepository<Neo4jResource, ThingId> {
 MATCH (r:Resource {id: $id})
 CALL apoc.path.expandConfig(r, {relationshipFilter: "<RELATED", labelFilter: "/Paper", uniqueness: "RELATIONSHIP_GLOBAL"})
 YIELD path
-WITH last(nodes(path)) AS paper, apoc.coll.reverse(apoc.coll.flatten([r in relationships(path) | [r, startNode(r)]])) AS path
+WITH last(nodes(path)) AS paper, reverse(apoc.coll.flatten([r in relationships(path) | [r, startNode(r)]])) AS path
 UNWIND path AS thing
 MATCH (t:Thing)
 WHERE t.id = thing.id

@@ -21,10 +21,12 @@ import org.springframework.core.annotation.AliasFor
 import org.springframework.data.neo4j.core.DatabaseSelectionProvider
 import org.springframework.data.neo4j.core.transaction.Neo4jTransactionManager
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.TestPropertySource
 
 @SpringBootTest
 @ContextConfiguration(initializers = [Neo4jContainerInitializer::class])
 @ImportAutoConfiguration(MigrationsAutoConfiguration::class)
+@TestPropertySource(properties = ["org.neo4j.migrations.packages-to-scan=org.orkg.migrations.neo4j"])
 annotation class Neo4jContainerIntegrationTest
 
 @DataNeo4jTest
@@ -32,6 +34,7 @@ annotation class Neo4jContainerIntegrationTest
 @ContextConfiguration(initializers = [Neo4jContainerInitializer::class])
 @ImportAutoConfiguration(MigrationsAutoConfiguration::class)
 @Import(Neo4jTestConfiguration::class)
+@TestPropertySource(properties = ["org.neo4j.migrations.packages-to-scan=org.orkg.migrations.neo4j"])
 annotation class Neo4jContainerUnitTest(
     @get:AliasFor(annotation = ContextConfiguration::class, attribute = "classes")
     val classes: Array<KClass<*>> = [],

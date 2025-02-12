@@ -24,7 +24,7 @@ RETURN apoc.coll.containsAll(collect(node.id), $ids) AS result""")
     fun existsAll(ids: Set<ThingId>): Boolean
 
     @Query("""
-CALL {
+CALL () {
     MATCH (:Thing {id: $id})<-[r:RELATED]-()
     RETURN r
     UNION ALL

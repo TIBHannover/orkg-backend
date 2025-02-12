@@ -1,6 +1,7 @@
 package org.orkg.statistics.adapter.output.neo4j
 
 import io.kotest.core.spec.style.DescribeSpec
+import org.orkg.common.neo4jdsl.configuration.CypherQueryBuilderConfiguration
 import org.orkg.graph.adapter.output.neo4j.SpringDataNeo4jClassAdapter
 import org.orkg.graph.adapter.output.neo4j.SpringDataNeo4jLiteralAdapter
 import org.orkg.graph.adapter.output.neo4j.SpringDataNeo4jPredicateAdapter
@@ -29,6 +30,7 @@ import org.springframework.cache.annotation.EnableCaching
         SpringDataNeo4jLiteralAdapter::class,
         SpringDataNeo4jClassAdapter::class,
         GraphNeo4jConfiguration::class,
+        CypherQueryBuilderConfiguration::class,
         StatisticsNeo4jConfiguration::class
     ]
 )

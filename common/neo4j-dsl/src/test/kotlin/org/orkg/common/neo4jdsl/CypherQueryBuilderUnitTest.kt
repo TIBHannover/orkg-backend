@@ -10,7 +10,7 @@ import org.neo4j.cypherdsl.core.Cypher.anyNode
 import org.neo4j.cypherdsl.core.Cypher.count
 import org.neo4j.cypherdsl.core.Cypher.match
 import org.neo4j.cypherdsl.core.Cypher.name
-import org.neo4j.cypherdsl.core.Statement
+import org.neo4j.cypherdsl.core.renderer.Configuration
 import org.neo4j.driver.summary.ResultSummary
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.springframework.data.domain.PageRequest
@@ -18,6 +18,7 @@ import org.springframework.data.domain.Sort
 import org.springframework.data.neo4j.core.Neo4jClient
 
 internal class CypherQueryBuilderUnitTest : MockkBaseTest {
+    private val configuration: Configuration = Configuration.defaultConfig()
     private val neo4jClient: Neo4jClient = mockk()
     private val unboundRunnableSpec: Neo4jClient.UnboundRunnableSpec = mockk()
     private val runnableSpec: Neo4jClient.RunnableSpec = mockk()
@@ -26,9 +27,9 @@ internal class CypherQueryBuilderUnitTest : MockkBaseTest {
     private val longMappingSpec: Neo4jClient.MappingSpec<Long> = mockk()
 
     class SimpleQueryCache : QueryCache {
-        private val cache: MutableMap<Any, Statement> = mutableMapOf()
+        private val cache: MutableMap<Any, ConfigurationAwareStatement> = mutableMapOf()
 
-        override fun getOrPut(key: Any, valueSupplier: () -> Statement): Statement =
+        override fun getOrPut(key: Any, valueSupplier: () -> ConfigurationAwareStatement): ConfigurationAwareStatement =
             cache.getOrPut(key, valueSupplier)
 
         val size: Int get() = cache.size
@@ -43,7 +44,7 @@ internal class CypherQueryBuilderUnitTest : MockkBaseTest {
         every { runnableSpec.run() } returns resultSummary
 
         val runQuery = {
-            CypherQueryBuilder(neo4jClient, queryCache)
+            CypherQueryBuilder(configuration, neo4jClient, queryCache)
                 .withQuery {
                     val node = anyNode().named("node")
                     match(node).returning(count(node))
@@ -74,7 +75,7 @@ internal class CypherQueryBuilderUnitTest : MockkBaseTest {
         every { longMappingSpec.one() } returns Optional.of(1L)
 
         val runQuery = {
-            CypherQueryBuilder(neo4jClient, queryCache)
+            CypherQueryBuilder(configuration, neo4jClient, queryCache)
                 .withCommonQuery {
                     match(anyNode().named("node"))
                 }
@@ -104,6 +105,8 @@ internal class CypherQueryBuilderUnitTest : MockkBaseTest {
 
     @Test
     fun `paged query builder does not add order by clause when unsorted`() {
+        val queryCache = SimpleQueryCache()
+
         every { neo4jClient.query(any<String>()) } returns unboundRunnableSpec
         every { unboundRunnableSpec.bindAll(any()) } returns runnableSpec
         every { runnableSpec.fetchAs(String::class.java) } returns stringMappingSpec
@@ -111,7 +114,7 @@ internal class CypherQueryBuilderUnitTest : MockkBaseTest {
         every { runnableSpec.fetchAs(Long::class.java) } returns longMappingSpec
         every { longMappingSpec.one() } returns Optional.of(1L)
 
-        CypherQueryBuilder(neo4jClient)
+        CypherQueryBuilder(configuration, neo4jClient, queryCache)
             .withCommonQuery {
                 match(anyNode().named("node"))
             }
@@ -135,6 +138,8 @@ internal class CypherQueryBuilderUnitTest : MockkBaseTest {
 
     @Test
     fun `paged query builder generates order by clause correctly`() {
+        val queryCache = SimpleQueryCache()
+
         every { neo4jClient.query(any<String>()) } returns unboundRunnableSpec
         every { unboundRunnableSpec.bindAll(any()) } returns runnableSpec
         every { runnableSpec.fetchAs(String::class.java) } returns stringMappingSpec
@@ -144,7 +149,7 @@ internal class CypherQueryBuilderUnitTest : MockkBaseTest {
 
         val sort = Sort.by("property1").ascending().and(Sort.by("property2").descending())
 
-        CypherQueryBuilder(neo4jClient)
+        CypherQueryBuilder(configuration, neo4jClient, queryCache)
             .withCommonQuery {
                 match(anyNode().named("node"))
             }

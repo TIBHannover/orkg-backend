@@ -1,6 +1,7 @@
 package org.orkg.contenttypes.adapter.output.neo4j
 
 import io.kotest.core.spec.style.DescribeSpec
+import org.orkg.common.neo4jdsl.configuration.CypherQueryBuilderConfiguration
 import org.orkg.contenttypes.adapter.output.neo4j.configuration.ContentTypesNeo4jConfiguration
 import org.orkg.contenttypes.output.ResearchFieldHierarchyRepository
 import org.orkg.contenttypes.output.testing.fixtures.researchFieldHierarchyRepositoryContract
@@ -23,7 +24,8 @@ import org.springframework.cache.annotation.EnableCaching
         SpringDataNeo4jResourceAdapter::class,
         SpringDataNeo4jPredicateAdapter::class,
         GraphNeo4jConfiguration::class,
-        ContentTypesNeo4jConfiguration::class
+        ContentTypesNeo4jConfiguration::class,
+        CypherQueryBuilderConfiguration::class
     ]
 )
 internal class SpringDataNeo4jResearchFieldHierarchyAdapterContractTest(

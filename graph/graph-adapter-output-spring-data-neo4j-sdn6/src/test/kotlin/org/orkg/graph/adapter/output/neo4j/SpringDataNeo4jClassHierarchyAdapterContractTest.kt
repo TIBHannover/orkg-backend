@@ -1,6 +1,7 @@
 package org.orkg.graph.adapter.output.neo4j
 
 import io.kotest.core.spec.style.DescribeSpec
+import org.orkg.common.neo4jdsl.configuration.CypherQueryBuilderConfiguration
 import org.orkg.graph.adapter.output.neo4j.configuration.GraphNeo4jConfiguration
 import org.orkg.graph.output.ClassHierarchyRepository
 import org.orkg.graph.output.ClassRelationRepository
@@ -16,7 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired
         SpringDataNeo4jClassAdapter::class,
         SpringDataNeo4jClassHierarchyAdapter::class,
         SpringDataNeo4jResourceAdapter::class,
-        GraphNeo4jConfiguration::class
+        GraphNeo4jConfiguration::class,
+        CypherQueryBuilderConfiguration::class
     ]
 )
 internal class SpringDataNeo4jClassHierarchyAdapterContractTest(

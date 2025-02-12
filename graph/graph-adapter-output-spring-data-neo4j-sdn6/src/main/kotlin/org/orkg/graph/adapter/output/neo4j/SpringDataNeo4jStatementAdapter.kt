@@ -9,9 +9,8 @@ import org.neo4j.cypherdsl.core.Cypher.anyNode
 import org.neo4j.cypherdsl.core.Cypher.asExpression
 import org.neo4j.cypherdsl.core.Cypher.call
 import org.neo4j.cypherdsl.core.Cypher.collect
+import org.neo4j.cypherdsl.core.Cypher.count
 import org.neo4j.cypherdsl.core.Cypher.countDistinct
-import org.neo4j.cypherdsl.core.Expression
-import org.neo4j.cypherdsl.core.Node
 import org.neo4j.cypherdsl.core.Cypher.exists
 import org.neo4j.cypherdsl.core.Cypher.listOf
 import org.neo4j.cypherdsl.core.Cypher.literalOf
@@ -21,19 +20,20 @@ import org.neo4j.cypherdsl.core.Cypher.noCondition
 import org.neo4j.cypherdsl.core.Cypher.node
 import org.neo4j.cypherdsl.core.Cypher.parameter
 import org.neo4j.cypherdsl.core.Cypher.returning
-import org.neo4j.cypherdsl.core.Cypher.union
 import org.neo4j.cypherdsl.core.Cypher.toUpper
+import org.neo4j.cypherdsl.core.Cypher.union
 import org.neo4j.cypherdsl.core.Cypher.unwind
-import org.neo4j.cypherdsl.core.Cypher.count
 import org.neo4j.cypherdsl.core.Cypher.valueAt
 import org.neo4j.cypherdsl.core.ExposesWith
+import org.neo4j.cypherdsl.core.Expression
+import org.neo4j.cypherdsl.core.Node
 import org.neo4j.cypherdsl.core.Relationship
 import org.neo4j.cypherdsl.core.StatementBuilder
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.common.neo4jdsl.CypherQueryBuilder
+import org.orkg.common.neo4jdsl.CypherQueryBuilderFactory
 import org.orkg.common.neo4jdsl.PagedQueryBuilder.countDistinctOver
 import org.orkg.common.neo4jdsl.PagedQueryBuilder.countOver
 import org.orkg.common.neo4jdsl.PagedQueryBuilder.mappedBy
@@ -75,6 +75,7 @@ class SpringDataNeo4jStatementAdapter(
     private val neo4jStatementIdGenerator: Neo4jStatementIdGenerator,
     private val predicateRepository: PredicateRepository,
     private val neo4jClient: Neo4jClient,
+    private val cypherQueryBuilderFactory: CypherQueryBuilderFactory,
     private val cacheManager: CacheManager? = null,
 ) : StatementRepository {
 
@@ -88,7 +89,7 @@ class SpringDataNeo4jStatementAdapter(
     }
 
     override fun save(statement: GeneralStatement) {
-        CypherQueryBuilder(neo4jClient)
+        cypherQueryBuilderFactory.newBuilder()
             .withQuery {
                 val subject = node("Thing")
                     .withProperties("id", parameter("subjectId"))
@@ -123,7 +124,7 @@ class SpringDataNeo4jStatementAdapter(
     }
 
     override fun saveAll(statements: Set<GeneralStatement>) {
-        CypherQueryBuilder(neo4jClient)
+        cypherQueryBuilderFactory.newBuilder()
             .withQuery {
                 val statement = name("statement")
                 val subject = node("Thing").named("s")
@@ -161,7 +162,7 @@ class SpringDataNeo4jStatementAdapter(
             .run()
     }
 
-    override fun count(): Long = CypherQueryBuilder(neo4jClient)
+    override fun count(): Long = cypherQueryBuilderFactory.newBuilder()
         .withQuery {
             val r = name("rel")
             match(anyNode().relationshipTo(anyNode(), RELATED).named(r))
@@ -174,7 +175,7 @@ class SpringDataNeo4jStatementAdapter(
     override fun delete(statement: GeneralStatement) = deleteByStatementId(statement.id)
 
     override fun deleteByStatementId(id: StatementId) {
-        CypherQueryBuilder(neo4jClient)
+        cypherQueryBuilderFactory.newBuilder()
             .withQuery {
                 val o = name("obj")
                 val l = name("l")
@@ -201,7 +202,7 @@ class SpringDataNeo4jStatementAdapter(
     }
 
     override fun deleteByStatementIds(ids: Set<StatementId>) {
-        val literals = CypherQueryBuilder(neo4jClient)
+        val literals = cypherQueryBuilderFactory.newBuilder()
             .withQuery {
                 val o = name("obj")
                 val l = name("l")
@@ -233,7 +234,7 @@ class SpringDataNeo4jStatementAdapter(
     }
 
     override fun deleteAll() {
-        CypherQueryBuilder(neo4jClient)
+        cypherQueryBuilderFactory.newBuilder()
             .withQuery {
                 val r = name("rel")
                 match(anyNode().relationshipTo(anyNode(), RELATED).named(r))
@@ -257,7 +258,7 @@ class SpringDataNeo4jStatementAdapter(
             objectLabel = null
         )
 
-    override fun countIncomingStatements(id: ThingId): Long = CypherQueryBuilder(neo4jClient)
+    override fun countIncomingStatements(id: ThingId): Long = cypherQueryBuilderFactory.newBuilder()
         .withQuery {
             val r = name("rel")
             val subject = node("Thing")
@@ -274,7 +275,7 @@ class SpringDataNeo4jStatementAdapter(
         .orElse(0)
 
     override fun countIncomingStatements(ids: Set<ThingId>): Map<ThingId, Long> =
-        CypherQueryBuilder(neo4jClient)
+        cypherQueryBuilderFactory.newBuilder()
             .withQuery {
                 val r = name("rel")
                 val id = name("id")
@@ -294,7 +295,7 @@ class SpringDataNeo4jStatementAdapter(
             .toMap()
 
     override fun findAllDescriptions(ids: Set<ThingId>): Map<ThingId, String> =
-        CypherQueryBuilder(neo4jClient)
+        cypherQueryBuilderFactory.newBuilder()
             .withQuery {
                 val id = name("id")
                 val subject = node("Thing").withProperties("id", id)
@@ -312,7 +313,7 @@ class SpringDataNeo4jStatementAdapter(
             .toMap()
 
     override fun determineOwnership(statementIds: Set<StatementId>): Set<OwnershipInfo> =
-        CypherQueryBuilder(neo4jClient)
+        cypherQueryBuilderFactory.newBuilder()
             .withQuery {
                 val id = name("id")
                 val statementId = name("statementId")
@@ -337,7 +338,7 @@ class SpringDataNeo4jStatementAdapter(
             .all()
             .toSet()
 
-    override fun findByStatementId(id: StatementId): Optional<GeneralStatement> = CypherQueryBuilder(neo4jClient)
+    override fun findByStatementId(id: StatementId): Optional<GeneralStatement> = cypherQueryBuilderFactory.newBuilder()
         .withQuery {
             val r = name("rel")
             val subject = node("Thing")
@@ -364,7 +365,7 @@ class SpringDataNeo4jStatementAdapter(
         objectClasses: Set<ThingId>,
         objectId: ThingId?,
         objectLabel: String?
-    ): Page<GeneralStatement> = CypherQueryBuilder(neo4jClient, Uncached)
+    ): Page<GeneralStatement> = cypherQueryBuilderFactory.newBuilder(Uncached)
         .withCommonQuery {
             val subject = node("Thing").named("sub")
             val r = name("r")
@@ -430,7 +431,7 @@ class SpringDataNeo4jStatementAdapter(
         .fetch(pageable, false)
 
     override fun findAllByStatementIdIn(ids: Set<StatementId>, pageable: Pageable): Page<GeneralStatement> =
-        CypherQueryBuilder(neo4jClient)
+        cypherQueryBuilderFactory.newBuilder()
             .withCommonQuery {
                 val subject = node("Thing").named("sub")
                 val `object` = node("Thing").named("obj")
@@ -452,7 +453,7 @@ class SpringDataNeo4jStatementAdapter(
             .mappedBy(StatementMapper(predicateRepository))
             .fetch(pageable)
 
-    override fun countByIdRecursive(id: ThingId): Long = CypherQueryBuilder(neo4jClient)
+    override fun countByIdRecursive(id: ThingId): Long = cypherQueryBuilderFactory.newBuilder()
         .withQuery {
             val apocConfiguration = mapOf<String, Any>(
                 "relationshipFilter" to ">",
@@ -496,7 +497,7 @@ class SpringDataNeo4jStatementAdapter(
         }
 
     override fun fetchAsBundle(id: ThingId, configuration: BundleConfiguration, sort: Sort): Iterable<GeneralStatement> =
-        CypherQueryBuilder(neo4jClient)
+        cypherQueryBuilderFactory.newBuilder()
             .withQuery {
                 val n = name("n")
                 val relationships = name("relationships")
@@ -522,7 +523,7 @@ class SpringDataNeo4jStatementAdapter(
             .mappedBy(StatementMapper(predicateRepository))
             .all()
 
-    override fun exists(id: StatementId): Boolean = CypherQueryBuilder(neo4jClient)
+    override fun exists(id: StatementId): Boolean = cypherQueryBuilderFactory.newBuilder()
         .withQuery {
             returning(
                 exists(
@@ -536,7 +537,7 @@ class SpringDataNeo4jStatementAdapter(
         .one()
         .orElse(false)
 
-    override fun countPredicateUsage(pageable: Pageable): Page<PredicateUsageCount> = CypherQueryBuilder(neo4jClient)
+    override fun countPredicateUsage(pageable: Pageable): Page<PredicateUsageCount> = cypherQueryBuilderFactory.newBuilder()
         .withCommonQuery {
             match(anyNode().relationshipTo(anyNode(), RELATED).named("rel"))
         }
@@ -554,7 +555,7 @@ class SpringDataNeo4jStatementAdapter(
         .mappedBy { _, record -> PredicateUsageCount(ThingId(record["id"].asString()), record["c"].asLong()) }
         .fetch(pageable)
 
-    override fun findDOIByContributionId(id: ThingId): Optional<Literal> = CypherQueryBuilder(neo4jClient)
+    override fun findDOIByContributionId(id: ThingId): Optional<Literal> = cypherQueryBuilderFactory.newBuilder()
         .withQuery {
             val doi = name("doi")
             val relations = node("Resource")
@@ -569,7 +570,7 @@ class SpringDataNeo4jStatementAdapter(
         .mappedBy(LiteralMapper("doi"))
         .one()
 
-    override fun findByDOI(doi: String, classes: Set<ThingId>): Optional<Resource> = CypherQueryBuilder(neo4jClient, Uncached)
+    override fun findByDOI(doi: String, classes: Set<ThingId>): Optional<Resource> = cypherQueryBuilderFactory.newBuilder(Uncached)
         .withQuery {
             val p = node("Resource").named("p")
             val l = name("l")
@@ -588,7 +589,7 @@ class SpringDataNeo4jStatementAdapter(
         .one()
 
     override fun findAllBySubjectClassAndDOI(subjectClass: ThingId, doi: String, pageable: Pageable): Page<Resource> =
-        CypherQueryBuilder(neo4jClient)
+        cypherQueryBuilderFactory.newBuilder()
             .withCommonQuery {
                 val resource = node("Resource")
                     .named("n")
@@ -609,7 +610,7 @@ class SpringDataNeo4jStatementAdapter(
             .fetch(pageable)
 
     override fun findAllProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Resource> =
-        CypherQueryBuilder(neo4jClient)
+        cypherQueryBuilderFactory.newBuilder()
             .withCommonQuery {
                 val problem = name("p")
                 val idParameter = parameter("id")
@@ -645,7 +646,7 @@ class SpringDataNeo4jStatementAdapter(
             .fetch(pageable)
 
     override fun findAllContributorsByResourceId(id: ThingId, pageable: Pageable): Page<ContributorId> =
-        CypherQueryBuilder(neo4jClient)
+        cypherQueryBuilderFactory.newBuilder()
             .withCommonQuery {
                 val apocConfiguration = mapOf<String, Any>(
                     "relationshipFilter" to ">",
@@ -684,7 +685,7 @@ class SpringDataNeo4jStatementAdapter(
             .fetch(pageable)
 
     override fun findTimelineByResourceId(id: ThingId, pageable: Pageable): Page<ResourceContributor> =
-        CypherQueryBuilder(neo4jClient)
+        cypherQueryBuilderFactory.newBuilder()
             .withCommonQuery {
                 val apocConfiguration = mapOf<String, Any>(
                     "relationshipFilter" to ">",
@@ -747,7 +748,7 @@ class SpringDataNeo4jStatementAdapter(
             .fetch(pageable)
 
     override fun findAllProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> =
-        CypherQueryBuilder(neo4jClient)
+        cypherQueryBuilderFactory.newBuilder()
             .withCommonQuery {
                 match(
                     comparisonNode()
@@ -880,7 +881,7 @@ class SpringDataNeo4jStatementAdapter(
         subject: Node = node("Thing"),
         `object`: Node = node("Thing"),
         filter: (subject: Node, relationship: Relationship, `object`: Node) -> Condition
-    ): Page<GeneralStatement> = CypherQueryBuilder(neo4jClient)
+    ): Page<GeneralStatement> = cypherQueryBuilderFactory.newBuilder()
         .withCommonQuery {
             val r = name("rel")
             val relation = subject.relationshipTo(`object`, RELATED)

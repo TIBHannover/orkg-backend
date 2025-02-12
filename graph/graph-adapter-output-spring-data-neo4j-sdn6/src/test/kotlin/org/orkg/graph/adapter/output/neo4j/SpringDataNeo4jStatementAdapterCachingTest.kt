@@ -12,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.neo4j.driver.Record
 import org.neo4j.driver.types.TypeSystem
 import org.orkg.common.ThingId
+import org.orkg.common.neo4jdsl.CypherQueryBuilderFactory
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.graph.adapter.output.neo4j.internal.Neo4jLiteralRepository
 import org.orkg.graph.domain.StatementId
@@ -30,6 +31,7 @@ import org.springframework.data.neo4j.core.Neo4jClient.UnboundRunnableSpec
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.util.AopTestUtils
+import org.neo4j.cypherdsl.core.renderer.Configuration as CypherConfiguration
 
 private val allCacheNames: Array<out String> = arrayOf(
     THING_ID_TO_THING_CACHE,
@@ -140,10 +142,12 @@ internal class SpringDataNeo4jStatementAdapterCachingTest : MockkBaseTest {
 
         @Bean
         fun statementAdapter(
+            cypherQueryBuilderFactory: CypherQueryBuilderFactory,
             neo4jClient: Neo4jClient,
             cacheManager: CacheManager
         ): StatementRepository = SpringDataNeo4jStatementAdapter(
             // The stuff we care about:
+            cypherQueryBuilderFactory = cypherQueryBuilderFactory,
             neo4jClient = neo4jClient,
             cacheManager = cacheManager,
             // We need to provide those, but do not care about them. (Except for not being called.)
@@ -152,11 +156,14 @@ internal class SpringDataNeo4jStatementAdapterCachingTest : MockkBaseTest {
         )
 
         @Bean
-        fun literalAdapter(neo4jLiteralRepository: Neo4jLiteralRepository): LiteralRepository =
+        fun literalAdapter(
+            neo4jLiteralRepository: Neo4jLiteralRepository,
+            neo4jClient: Neo4jClient
+        ): LiteralRepository =
             SpringDataNeo4jLiteralAdapter(
                 neo4jRepository = neo4jLiteralRepository,
                 neo4jLiteralIdGenerator = mockk(),
-                neo4jClient()
+                cypherQueryBuilderFactory(neo4jClient)
             )
 
         // The "real" repositories used by both adapters, where we want to mock the interaction.
@@ -165,5 +172,9 @@ internal class SpringDataNeo4jStatementAdapterCachingTest : MockkBaseTest {
 
         @Bean
         fun neo4jClient(): Neo4jClient = mockk()
+
+        @Bean
+        fun cypherQueryBuilderFactory(neo4jClient: Neo4jClient): CypherQueryBuilderFactory =
+            CypherQueryBuilderFactory(CypherConfiguration.defaultConfig(), neo4jClient)
     }
 }

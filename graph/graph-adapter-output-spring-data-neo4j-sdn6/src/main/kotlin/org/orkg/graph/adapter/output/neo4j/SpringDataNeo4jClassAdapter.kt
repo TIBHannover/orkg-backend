@@ -11,7 +11,7 @@ import org.neo4j.cypherdsl.core.Cypher.size
 import org.neo4j.cypherdsl.core.Cypher.toLower
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
-import org.orkg.common.neo4jdsl.CypherQueryBuilder
+import org.orkg.common.neo4jdsl.CypherQueryBuilderFactory
 import org.orkg.common.neo4jdsl.PagedQueryBuilder.countOver
 import org.orkg.common.neo4jdsl.PagedQueryBuilder.mappedBy
 import org.orkg.common.neo4jdsl.QueryCache.Uncached
@@ -31,7 +31,6 @@ import org.springframework.cache.annotation.Caching
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
-import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.stereotype.Component
 
 const val CLASS_ID_TO_CLASS_CACHE = "class-id-to-class"
@@ -45,7 +44,7 @@ private const val FULLTEXT_INDEX_FOR_LABEL = "fulltext_idx_for_class_on_label"
 class SpringDataNeo4jClassAdapter(
     private val neo4jRepository: Neo4jClassRepository,
     private val neo4jClassIdGenerator: Neo4jClassIdGenerator,
-    private val neo4jClient: Neo4jClient,
+    private val cypherQueryBuilderFactory: CypherQueryBuilderFactory,
 ) : ClassRepository {
     @Caching(
         evict = [
@@ -72,7 +71,7 @@ class SpringDataNeo4jClassAdapter(
         createdBy: ContributorId?,
         createdAtStart: OffsetDateTime?,
         createdAtEnd: OffsetDateTime?
-    ): Page<Class> = CypherQueryBuilder(neo4jClient, Uncached)
+    ): Page<Class> = cypherQueryBuilderFactory.newBuilder(Uncached)
         .withCommonQuery {
             val node = Cypher.node("Class").named("node")
             val match = label?.let { searchString ->

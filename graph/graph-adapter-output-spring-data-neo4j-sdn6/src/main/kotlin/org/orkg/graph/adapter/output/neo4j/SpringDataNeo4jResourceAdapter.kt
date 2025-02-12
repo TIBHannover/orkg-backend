@@ -20,11 +20,12 @@ import org.neo4j.cypherdsl.core.Cypher.size
 import org.neo4j.cypherdsl.core.Cypher.toLower
 import org.neo4j.cypherdsl.core.Cypher.union
 import org.neo4j.cypherdsl.core.Cypher.unwind
+import org.neo4j.cypherdsl.core.renderer.Renderer
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.common.neo4jdsl.CypherQueryBuilder
+import org.orkg.common.neo4jdsl.CypherQueryBuilderFactory
 import org.orkg.common.neo4jdsl.PagedQueryBuilder.countOver
 import org.orkg.common.neo4jdsl.PagedQueryBuilder.mappedBy
 import org.orkg.common.neo4jdsl.QueryCache.Uncached
@@ -48,6 +49,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.stereotype.Component
+import org.neo4j.cypherdsl.core.renderer.Configuration as CypherConfiguration
 
 const val RESOURCE_ID_TO_RESOURCE_CACHE = "resource-id-to-resource"
 const val RESOURCE_ID_TO_RESOURCE_EXISTS_CACHE = "resource-id-to-resource-exists"
@@ -62,6 +64,8 @@ class SpringDataNeo4jResourceAdapter(
     private val neo4jRepository: Neo4jResourceRepository,
     private val neo4jResourceIdGenerator: Neo4jResourceIdGenerator,
     private val neo4jClient: Neo4jClient,
+    private val neo4jConfiguration: CypherConfiguration,
+    private val cypherQueryBuilderFactory: CypherQueryBuilderFactory,
 ) : ResourceRepository {
     override fun nextIdentity(): ThingId {
         // IDs could exist already by manual creation. We need to find the next available one.
@@ -158,7 +162,7 @@ class SpringDataNeo4jResourceAdapter(
                 .returning(neo4jResource)
                 .build()
         )
-        neo4jClient.query(query.cypher)
+        neo4jClient.query(Renderer.getRenderer(neo4jConfiguration).render(query))
             .bindAll(
                 mapOf(
                     "__id__" to resource.id.value,
@@ -237,7 +241,7 @@ class SpringDataNeo4jResourceAdapter(
         baseClass: ThingId?,
         observatoryId: ObservatoryId?,
         organizationId: OrganizationId?
-    ): Page<Resource> = CypherQueryBuilder(neo4jClient, Uncached)
+    ): Page<Resource> = cypherQueryBuilderFactory.newBuilder(Uncached)
         .withCommonQuery {
             val node = node("Resource", includeClasses.map { it.value }).named("node")
             val match = label?.let { searchString ->

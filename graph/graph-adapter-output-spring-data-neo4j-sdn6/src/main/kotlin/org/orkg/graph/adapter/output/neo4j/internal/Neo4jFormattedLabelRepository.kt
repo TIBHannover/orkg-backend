@@ -10,8 +10,7 @@ private const val resourceIdToTemplateTargetClass = "${'$'}resourceIdToTemplateT
 interface Neo4jFormattedLabelRepository : Neo4jRepository<Neo4jResource, ThingId> {
     @Query("""
 UNWIND keys($resourceIdToTemplateTargetClass) AS key
-CALL {
-    WITH key
+CALL (key) {
     MATCH (format:Literal)<-[:RELATED {predicate_id:'TemplateLabelFormat'}]-(template:NodeShape)-[:RELATED {predicate_id:'sh:targetClass'}]->(cls:Class {id: $resourceIdToTemplateTargetClass[key]})
     MATCH (res:Resource {id: key})-[p:RELATED]->(o:Thing)
     RETURN key AS id, COLLECT(p.predicate_id) AS predicates, COLLECT(o.label) AS values, $resourceIdToTemplateTargetClass[key] AS classId, format.label AS format, template.id AS templateId, template.label AS label

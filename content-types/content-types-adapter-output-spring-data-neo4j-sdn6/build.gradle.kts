@@ -41,6 +41,6 @@ dependencies {
     api(project(":graph:graph-ports-output"))
     api("org.neo4j.driver:neo4j-java-driver")
     api("org.neo4j:neo4j-cypher-dsl")
-    implementation(project(":common:neo4j-dsl"))
+    api(project(":common:neo4j-dsl"))
     implementation("dev.forkhandles:values4k")
 }

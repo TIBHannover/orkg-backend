@@ -19,7 +19,7 @@ RETURN h AS head, COLLECT(p) AS published""")
     fun findVersionHistoryForPublishedComparison(id: ThingId): Neo4jVersionInfo
 
     @Query("""
-CALL {
+CALL () {
     MATCH (node:ComparisonPublished:LatestVersion)
     WHERE (node.visibility = 'DEFAULT' OR node.visibility = 'FEATURED') AND NOT EXISTS((node)-[:`RELATED` {predicate_id: 'P26'}]->(:`Literal`))
     RETURN node
@@ -31,7 +31,7 @@ CALL {
 WITH node
 RETURN node $ORDER_BY_PAGE_PARAMS""",
         countQuery = """
-CALL {
+CALL () {
     MATCH (node:ComparisonPublished:LatestVersion)
     WHERE (node.visibility = 'DEFAULT' OR node.visibility = 'FEATURED') AND NOT EXISTS((node)-[:`RELATED` {predicate_id: 'P26'}]->(:`Literal`))
     RETURN node

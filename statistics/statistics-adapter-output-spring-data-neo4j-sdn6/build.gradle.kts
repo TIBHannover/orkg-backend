@@ -31,7 +31,7 @@ dependencies {
     api("org.springframework.boot:spring-boot-autoconfigure")
     api("org.springframework.data:spring-data-neo4j")
     api("org.springframework:spring-context")
+    api(project(":common:neo4j-dsl"))
     api(project(":statistics:statistics-ports-output"))
     implementation("org.neo4j:neo4j-cypher-dsl")
-    implementation(project(":common:neo4j-dsl"))
 }

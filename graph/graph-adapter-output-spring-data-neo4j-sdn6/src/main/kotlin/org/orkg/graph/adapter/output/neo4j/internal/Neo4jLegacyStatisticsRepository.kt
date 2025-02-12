@@ -47,14 +47,12 @@ RETURN COUNT(DISTINCT(n.observatory_id))""")
 
     @Query("""
 MATCH (rsf:ResearchField {id: $id})
-CALL {
-    WITH rsf
+CALL (rsf) {
     MATCH (ppr:Paper)-[:RELATED {predicate_id: "P30"}]->(rsf)
     RETURN COUNT(DISTINCT ppr) as papers
 }
 WITH rsf, papers
-CALL {
-    WITH rsf
+CALL (rsf) {
     MATCH (rsf)<-[:RELATED {predicate_id: "hasSubject"}]-(cmp:ComparisonPublished:LatestVersion)
     RETURN COUNT(DISTINCT cmp) AS comparisons
 }
@@ -63,7 +61,7 @@ RETURN $id AS id, papers, comparisons, (papers + comparisons) AS total""")
     fun findResearchFieldStatsById(id: ThingId): Optional<ResearchFieldStats>
 
     @Query("""
-CALL {
+CALL () {
     MATCH (field:ResearchField {id: $id})
     RETURN field AS rsf
     UNION ALL
@@ -76,15 +74,13 @@ CALL {
     RETURN endNode(rel) AS rsf
 }
 WITH COLLECT(rsf) AS rsfs
-CALL {
-    WITH rsfs
+CALL (rsfs) {
     UNWIND rsfs AS rsf
     MATCH (ppr:Paper)-[:RELATED {predicate_id: "P30"}]->(rsf)
     RETURN COUNT(DISTINCT ppr) as papers
 }
 WITH rsfs, papers
-CALL {
-    WITH rsfs
+CALL (rsfs) {
     UNWIND rsfs AS rsf
     MATCH (rsf)<-[:RELATED {predicate_id: "hasSubject"}]-(cmp:ComparisonPublished:LatestVersion)
     RETURN COUNT(DISTINCT cmp) AS comparisons
@@ -104,7 +100,7 @@ RETURN $id AS observatoryId, papers, comparisons, total""")
     fun findObservatoryStatsById(id: ObservatoryId): Optional<ObservatoryStats>
 
     @Query("""
-CALL {
+CALL () {
     MATCH (n:Paper)
     WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date
     RETURN n.created_by AS id, COUNT(n) AS papers, 0 AS comparisons, 0 AS contributions, 0 AS visualizations, 0 AS problems
@@ -126,7 +122,7 @@ CALL {
 } WITH id, SUM(papers) AS papers, SUM(contributions) AS contributions, SUM(comparisons) AS comparisons, SUM(visualizations) AS visualizations, SUM(problems) AS problems
 RETURN id AS contributor, papers, contributions, comparisons, visualizations, problems, (papers + contributions + comparisons + visualizations + problems) AS total $ORDER_BY_PAGE_PARAMS""",
         countQuery = """
-CALL {
+CALL () {
     MATCH (n:Paper)
     WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date
     RETURN DISTINCT n.created_by AS id
@@ -154,7 +150,7 @@ RETURN COUNT(id)""")
      * This query fetches the contributor IDs from sub research fields as well.
      */
     @Query("""
-CALL {
+CALL () {
     MATCH (field:ResearchField {id: $id})
     RETURN field
     UNION ALL
@@ -184,7 +180,7 @@ WHERE n[0] IS NOT NULL AND n[0].created_by <> "00000000-0000-0000-0000-000000000
 WITH n[0].created_by AS contributor, SUM(n[1][0]) AS papers, SUM(n[1][1]) AS contributions, SUM(n[1][2]) AS comparisons, SUM(n[1][3]) AS visualizations, SUM(n[1][4]) AS problems
 RETURN contributor, papers, contributions, comparisons, visualizations, problems, (papers + contributions + comparisons + visualizations + problems) AS total $ORDER_BY_PAGE_PARAMS""",
     countQuery = """
-CALL {
+CALL () {
     MATCH (field:ResearchField {id: $id})
     RETURN field
     UNION ALL
@@ -245,7 +241,7 @@ RETURN COUNT(contributor)""")
     fun getTopCurContribIdsAndContribCountByResearchFieldIdExcludeSubFields(id: ThingId, date: String, pageable: Pageable): Page<ContributorRecord>
 
     @Query("""
-CALL {
+CALL () {
     MATCH (n:Paper) RETURN n
     UNION ALL
     MATCH (n:Contribution) RETURN n
@@ -258,7 +254,7 @@ CALL {
 }
 RETURN n $ORDER_BY_PAGE_PARAMS""",
         countQuery = """
-CALL {
+CALL () {
     MATCH (n:Paper) RETURN n
     UNION ALL
     MATCH (n:Contribution) RETURN n
@@ -274,7 +270,7 @@ RETURN COUNT(n)
     fun getChangeLog(pageable: Pageable): Page<Neo4jResource>
 
     @Query("""
-CALL {
+CALL () {
     MATCH (field:ResearchField {id: $id})
     RETURN field
     UNION ALL
@@ -295,7 +291,7 @@ WITH DISTINCT n
 WHERE n IS NOT NULL
 RETURN n $ORDER_BY_PAGE_PARAMS""",
         countQuery = """
-CALL {
+CALL () {
     MATCH (field:ResearchField {id: $id})
     RETURN field
     UNION ALL

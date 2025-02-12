@@ -1,6 +1,7 @@
 package org.orkg.contenttypes.adapter.output.neo4j
 
 import io.kotest.core.spec.style.DescribeSpec
+import org.orkg.common.neo4jdsl.configuration.CypherQueryBuilderConfiguration
 import org.orkg.contenttypes.adapter.output.neo4j.configuration.ContentTypesNeo4jConfiguration
 import org.orkg.contenttypes.output.RankingService
 import org.orkg.contenttypes.output.RosettaStoneStatementRepository
@@ -35,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired
         SpringDataNeo4jRankingServiceAdapter::class,
         GraphNeo4jConfiguration::class,
         ContentTypesNeo4jConfiguration::class,
+        CypherQueryBuilderConfiguration::class,
     ],
 )
 internal class SpringDataNeo4jRankingServiceAdapterContractTest(

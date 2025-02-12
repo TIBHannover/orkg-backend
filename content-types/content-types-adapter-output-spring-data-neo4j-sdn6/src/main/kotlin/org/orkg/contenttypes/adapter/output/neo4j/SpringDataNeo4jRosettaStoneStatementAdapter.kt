@@ -6,19 +6,19 @@ import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import java.util.*
 import org.neo4j.cypherdsl.core.Condition
 import org.neo4j.cypherdsl.core.Cypher.anonParameter
+import org.neo4j.cypherdsl.core.Cypher.collect
+import org.neo4j.cypherdsl.core.Cypher.count
 import org.neo4j.cypherdsl.core.Cypher.listOf
 import org.neo4j.cypherdsl.core.Cypher.literalOf
 import org.neo4j.cypherdsl.core.Cypher.match
 import org.neo4j.cypherdsl.core.Cypher.name
-import org.neo4j.cypherdsl.core.Cypher.node
-import org.neo4j.cypherdsl.core.Cypher.collect
-import org.neo4j.cypherdsl.core.Cypher.count
 import org.neo4j.cypherdsl.core.Cypher.noCondition
+import org.neo4j.cypherdsl.core.Cypher.node
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.common.neo4jdsl.CypherQueryBuilder
+import org.orkg.common.neo4jdsl.CypherQueryBuilderFactory
 import org.orkg.common.neo4jdsl.PagedQueryBuilder.fetchAs
 import org.orkg.common.neo4jdsl.QueryCache
 import org.orkg.contenttypes.domain.RosettaStoneStatement
@@ -41,6 +41,7 @@ import org.springframework.stereotype.Component
 class SpringDataNeo4jRosettaStoneStatementAdapter(
     private val neo4jRepository: Neo4jResourceRepository,
     private val neo4jClient: Neo4jClient,
+    private val cypherQueryBuilderFactory: CypherQueryBuilderFactory,
     private val clock: Clock = Clock.systemDefaultZone()
 ) : RosettaStoneStatementRepository {
     override fun nextIdentity(): ThingId {
@@ -54,7 +55,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
 
     override fun findByIdOrVersionId(id: ThingId): Optional<RosettaStoneStatement> {
         return neo4jClient.query("""
-            CALL {
+            CALL () {
                 MATCH (latest:RosettaStoneStatement:LatestVersion {id: ${'$'}id})
                 RETURN latest
                 UNION
@@ -67,8 +68,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
                   (latest)-[:TEMPLATE]->(template:RosettaNodeShape)
             MATCH (version)-[:SUBJECT]->(subjectNode:SubjectNode)-[:VALUE]->(subject:Thing)
             WITH latest, context.id AS contextId, template.id AS templateId, metadata, version, COLLECT([subject, subjectNode.index]) AS subjects
-            CALL {
-                WITH version
+            CALL (version) {
                 MATCH (version)-[:OBJECT]->(objectNode:ObjectNode)-[:VALUE]->(object:Thing)
                 RETURN COLLECT([object, objectNode.index, objectNode.position]) AS objects
             }
@@ -92,7 +92,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
         createdAtEnd: OffsetDateTime?,
         observatoryId: ObservatoryId?,
         organizationId: OrganizationId?
-    ): Page<RosettaStoneStatement> = CypherQueryBuilder(neo4jClient, QueryCache.Uncached)
+    ): Page<RosettaStoneStatement> = cypherQueryBuilderFactory.newBuilder(QueryCache.Uncached)
         .withCommonQuery {
             match(node("RosettaStoneStatement", "LatestVersion").named("latest"))
         }
@@ -244,8 +244,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
             SET latest += ${'$'}__properties__
             SET latest:`${statement.templateTargetClassId}`
             WITH latest
-            CALL {
-                WITH latest
+            CALL (latest) {
                 UNWIND ${'$'}__labels__ AS label
                 OPTIONAL MATCH (c:`Class` {id: label})
                 WITH latest, c
@@ -253,21 +252,18 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
                 CREATE (latest)-[rc:`INSTANCE_OF`]->(c)
                 RETURN COUNT(latest) AS latest_instance_of_subquery_create
             }
-            CALL {
-                WITH latest
+            CALL (latest) {
                 MATCH (template:RosettaNodeShape {id: ${'$'}__templateId__})
                 CREATE (latest)-[:TEMPLATE]->(template)
                 RETURN COUNT(latest) AS template_subquery_create
             }
-            CALL {
-                WITH latest
+            CALL (latest) {
                 MATCH (context:Thing {id: ${'$'}__contextId__})
                 WHERE context IS NOT NULL
                 CREATE (latest)-[:CONTEXT]->(context)
                 RETURN COUNT(latest) AS context_subquery_create
             }
-            CALL {
-                WITH latest
+            CALL (latest) {
                 UNWIND ${'$'}__versions__ AS __version__
                 CREATE (latest)-[:VERSION]->(version:RosettaStoneStatement:Version:Resource:Thing)
                 CREATE (version)-[:METADATA]->(metadata:RosettaStoneStatementMetadata)
@@ -275,8 +271,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
                 SET version += __version__.__properties__
                 SET metadata += __version__.__metadata__
                 WITH latest, __version__, version
-                CALL {
-                    WITH latest, __version__, version
+                CALL (latest, __version__, version) {
                     UNWIND __version__.__labels__ AS label
                     OPTIONAL MATCH (c:`Class` {id: label})
                     WITH latest, c
@@ -284,15 +279,13 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
                     CREATE (version)-[rc:`INSTANCE_OF`]->(c)
                     RETURN COUNT(latest) AS version_instance_of_subquery_create
                 }
-                CALL {
-                    WITH latest, __version__, version
+                CALL (latest, __version__, version) {
                     UNWIND __version__.__subjects__ AS __subject__
                     MATCH (subject:Thing {id: __subject__.id})
                     CREATE (version)-[:SUBJECT]->(:SubjectNode {index: __subject__.index})-[:VALUE]->(subject)
                     RETURN COUNT(latest) AS subject_subquery_create
                 }
-                CALL {
-                    WITH latest, __version__, version
+                CALL (latest, __version__, version) {
                     UNWIND __version__.__objects__ AS __object__
                     MATCH (object:Thing {id: __object__.id})
                     CREATE (version)-[:OBJECT]->(:ObjectNode {index: __object__.index, position: __object__.position})-[:VALUE]->(object)
@@ -310,8 +303,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
             WHERE latest.version = (coalesce(${'$'}__version__, 0) + 1)
             SET latest += ${'$'}__properties__
             WITH latest
-            CALL {
-                WITH latest
+            CALL (latest) {
                 UNWIND ${'$'}__versions__ AS __version__
                 CREATE (latest)-[:VERSION]->(version:RosettaStoneStatement:Version:Resource:Thing)
                 CREATE (version)-[:METADATA]->(metadata:RosettaStoneStatementMetadata)
@@ -320,8 +312,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
                 SET version:`${statement.templateTargetClassId}`
                 SET metadata += __version__.__metadata__
                 WITH latest, __version__, version
-                CALL {
-                    WITH latest, __version__, version
+                CALL (latest, __version__, version) {
                     UNWIND __version__.__labels__ AS label
                     OPTIONAL MATCH (c:`Class` {id: label})
                     WITH latest, c
@@ -329,15 +320,13 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
                     CREATE (version)-[rc:`INSTANCE_OF`]->(c)
                     RETURN COUNT(latest) AS version_instance_of_subquery_update
                 }
-                CALL {
-                    WITH latest, __version__, version
+                CALL (latest, __version__, version) {
                     UNWIND __version__.__subjects__ AS __subject__
                     MATCH (subject:Thing {id: __subject__.id})
                     CREATE (version)-[:SUBJECT]->(:SubjectNode {index: __subject__.index})-[:VALUE]->(subject)
                     RETURN COUNT(latest) AS subject_subquery_update
                 }
-                CALL {
-                    WITH latest, __version__, version
+                CALL (latest, __version__, version) {
                     UNWIND __version__.__objects__ AS __object__
                     MATCH (object:Thing {id: __object__.id})
                     CREATE (version)-[:OBJECT]->(:ObjectNode {index: __object__.index, position: __object__.position})-[:VALUE]->(object)
@@ -463,7 +452,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
 
     override fun isUsedAsObject(id: ThingId): Boolean =
         neo4jClient.query("""
-            CALL {
+            CALL () {
                 MATCH (latest:RosettaStoneStatement:LatestVersion {id: ${'$'}id})
                 RETURN latest
                 UNION
@@ -474,12 +463,10 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
             WITH latest.id AS latestId, COLLECT(version.id) AS ids
             WITH (latestId + ids) AS ids
             UNWIND ids AS id
-            CALL {
-                WITH id
+            CALL (id) {
                 MATCH (:Thing {id: id})<-[r:RELATED]-()
                 RETURN r
                 UNION ALL
-                WITH id
                 MATCH (:Thing {id: id})<-[r:VALUE]-()
                 RETURN r
             }

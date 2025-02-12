@@ -1,6 +1,7 @@
 package org.orkg.curation.adapter.output.neo4j
 
 import io.kotest.core.spec.style.DescribeSpec
+import org.orkg.common.neo4jdsl.configuration.CypherQueryBuilderConfiguration
 import org.orkg.curation.adapter.output.neo4j.configuration.CurationNeo4jConfiguration
 import org.orkg.curation.output.CurationRepository
 import org.orkg.curation.testing.fixtures.curationRepositoryContract
@@ -29,6 +30,7 @@ import org.springframework.cache.annotation.EnableCaching
         SpringDataNeo4jLiteralAdapter::class,
         SpringDataNeo4jClassAdapter::class,
         GraphNeo4jConfiguration::class,
+        CypherQueryBuilderConfiguration::class,
         CurationNeo4jConfiguration::class
     ]
 )

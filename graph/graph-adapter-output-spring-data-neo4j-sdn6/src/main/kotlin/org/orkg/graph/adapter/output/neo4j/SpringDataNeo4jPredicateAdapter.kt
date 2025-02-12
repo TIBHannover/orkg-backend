@@ -11,7 +11,7 @@ import org.neo4j.cypherdsl.core.Cypher.size
 import org.neo4j.cypherdsl.core.Cypher.toLower
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
-import org.orkg.common.neo4jdsl.CypherQueryBuilder
+import org.orkg.common.neo4jdsl.CypherQueryBuilderFactory
 import org.orkg.common.neo4jdsl.PagedQueryBuilder.countOver
 import org.orkg.common.neo4jdsl.PagedQueryBuilder.mappedBy
 import org.orkg.common.neo4jdsl.QueryCache.Uncached
@@ -31,7 +31,6 @@ import org.springframework.cache.annotation.Caching
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
-import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.stereotype.Component
 
 const val PREDICATE_ID_TO_PREDICATE_CACHE = "predicate-id-to-predicate"
@@ -44,7 +43,7 @@ private const val FULLTEXT_INDEX_FOR_LABEL = "fulltext_idx_for_predicate_on_labe
 class SpringDataNeo4jPredicateAdapter(
     private val neo4jRepository: Neo4jPredicateRepository,
     private val idGenerator: Neo4jPredicateIdGenerator,
-    private val neo4jClient: Neo4jClient,
+    private val cypherQueryBuilderFactory: CypherQueryBuilderFactory,
 ) : PredicateRepository {
     override fun exists(id: ThingId): Boolean = neo4jRepository.existsById(id)
 
@@ -67,7 +66,7 @@ class SpringDataNeo4jPredicateAdapter(
         createdBy: ContributorId?,
         createdAtStart: OffsetDateTime?,
         createdAtEnd: OffsetDateTime?
-    ): Page<Predicate> = CypherQueryBuilder(neo4jClient, Uncached)
+    ): Page<Predicate> = cypherQueryBuilderFactory.newBuilder(Uncached)
         .withCommonQuery {
             val node = Cypher.node("Predicate").named("node")
             val match = label?.let { searchString ->

@@ -19,7 +19,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.common.neo4jdsl.CypherQueryBuilder
+import org.orkg.common.neo4jdsl.CypherQueryBuilderFactory
 import org.orkg.common.neo4jdsl.PagedQueryBuilder.countDistinctOver
 import org.orkg.common.neo4jdsl.PagedQueryBuilder.mappedBy
 import org.orkg.common.neo4jdsl.QueryCache
@@ -39,14 +39,13 @@ import org.orkg.graph.domain.VisibilityFilter
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
-import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.stereotype.Component
 
 private const val RELATED = "RELATED"
 
 @Component
 class SpringDataNeo4jContentTypeAdapter(
-    private val neo4jClient: Neo4jClient
+    private val cypherQueryBuilderFactory: CypherQueryBuilderFactory
 ) : ContentTypeRepository {
     override fun findAll(
         pageable: Pageable,
@@ -62,7 +61,7 @@ class SpringDataNeo4jContentTypeAdapter(
         sustainableDevelopmentGoal: ThingId?,
         authorId: ThingId?,
         authorName: String?
-    ): Page<Resource> = CypherQueryBuilder(neo4jClient, QueryCache.Uncached)
+    ): Page<Resource> = cypherQueryBuilderFactory.newBuilder(QueryCache.Uncached)
         .withCommonQuery {
             val node = name("node")
             val matches = classes.map { contentType ->

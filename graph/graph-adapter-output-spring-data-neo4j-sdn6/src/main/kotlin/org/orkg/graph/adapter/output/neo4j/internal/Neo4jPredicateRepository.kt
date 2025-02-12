@@ -10,7 +10,7 @@ interface Neo4jPredicateRepository : Neo4jRepository<Neo4jPredicate, ThingId> {
     override fun deleteById(id: ThingId)
 
     @Query("""
-CALL {
+CALL () {
     MATCH (:Predicate {id: $id})<-[r:RELATED]-()
     RETURN r
     UNION ALL

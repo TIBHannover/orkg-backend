@@ -23,7 +23,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.common.neo4jdsl.CypherQueryBuilder
+import org.orkg.common.neo4jdsl.CypherQueryBuilderFactory
 import org.orkg.common.neo4jdsl.PagedQueryBuilder.countDistinctOver
 import org.orkg.common.neo4jdsl.PagedQueryBuilder.mappedBy
 import org.orkg.common.neo4jdsl.QueryCache
@@ -54,7 +54,6 @@ import org.orkg.graph.domain.VisibilityFilter
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
-import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.stereotype.Component
 
 private const val RELATED = "RELATED"
@@ -63,7 +62,7 @@ private const val FULLTEXT_INDEX_FOR_LABEL = "fulltext_idx_for_resource_on_label
 @Component
 class SpringDataNeo4jComparisonAdapter(
     private val neo4jRepository: Neo4jComparisonRepository,
-    private val neo4jClient: Neo4jClient
+    private val cypherQueryBuilderFactory: CypherQueryBuilderFactory
 ) : ComparisonRepository {
     override fun findAll(
         pageable: Pageable,
@@ -145,7 +144,7 @@ class SpringDataNeo4jComparisonAdapter(
         published: Boolean?,
         sustainableDevelopmentGoal: ThingId?,
         researchProblem: ThingId?
-    ) = CypherQueryBuilder(neo4jClient, QueryCache.Uncached)
+    ) = cypherQueryBuilderFactory.newBuilder(QueryCache.Uncached)
         .withCommonQuery {
             val patterns: (Node) -> Collection<RelationshipPattern> = { node ->
                 listOfNotNull(
@@ -251,7 +250,7 @@ class SpringDataNeo4jComparisonAdapter(
             )
         }
 
-    override fun findAllDOIsRelatedToComparison(id: ThingId): Iterable<String> = CypherQueryBuilder(neo4jClient)
+    override fun findAllDOIsRelatedToComparison(id: ThingId): Iterable<String> = cypherQueryBuilderFactory.newBuilder()
         .withQuery {
             val doi = name("doi")
             val node = name("node")

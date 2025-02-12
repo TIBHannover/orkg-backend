@@ -187,10 +187,10 @@ internal fun endNode(symbolicName: SymbolicName): FunctionInvocation =
 
 internal operator fun MapAccessor.get(symbolicName: SymbolicName): Value = this[symbolicName.value]
 
-fun paperNode() = node("Paper", "Resource")
-fun comparisonNode() = node("Comparison", "Resource")
-fun problemNode() = node("Problem", "Resource")
-fun contributionNode() = node("Contribution", "Resource")
+fun paperNode() = node("Paper")
+fun comparisonNode() = node("Comparison")
+fun problemNode() = node("Problem")
+fun contributionNode() = node("Contribution")
 
 fun ExposesWith.withSortableFields(node: String) =
     withSortableFields(name(node))

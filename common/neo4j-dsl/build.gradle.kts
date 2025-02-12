@@ -1,7 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
 plugins {
-    id("org.orkg.gradle.kotlin")
+    id("org.orkg.gradle.spring-library")
 }
 
 dependencies {
@@ -9,6 +9,8 @@ dependencies {
     api("org.neo4j:neo4j-cypher-dsl")
     api("org.springframework.data:spring-data-commons")
     api("org.springframework.data:spring-data-neo4j")
+    api("org.springframework:spring-context")
+    api("org.apiguardian:apiguardian-api")
 }
 
 testing {

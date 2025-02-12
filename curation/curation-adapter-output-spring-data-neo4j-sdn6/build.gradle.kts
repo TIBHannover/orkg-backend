@@ -17,6 +17,7 @@ testing {
                 implementation("org.springframework:spring-beans")
                 implementation("io.kotest:kotest-runner-junit5")
                 runtimeOnly("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-starter")
+                implementation(project(":common:neo4j-dsl"))
                 implementation(project(":graph:graph-ports-output"))
                 implementation(testFixtures(project(":curation:curation-ports-output")))
                 implementation(testFixtures(project(":testing:spring")))

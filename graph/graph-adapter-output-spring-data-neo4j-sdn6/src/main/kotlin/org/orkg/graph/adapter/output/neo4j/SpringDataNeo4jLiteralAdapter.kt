@@ -11,7 +11,7 @@ import org.neo4j.cypherdsl.core.Cypher.size
 import org.neo4j.cypherdsl.core.Cypher.toLower
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
-import org.orkg.common.neo4jdsl.CypherQueryBuilder
+import org.orkg.common.neo4jdsl.CypherQueryBuilderFactory
 import org.orkg.common.neo4jdsl.PagedQueryBuilder.countOver
 import org.orkg.common.neo4jdsl.PagedQueryBuilder.mappedBy
 import org.orkg.common.neo4jdsl.QueryCache.Uncached
@@ -31,7 +31,6 @@ import org.springframework.cache.annotation.Caching
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
-import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.stereotype.Component
 
 const val LITERAL_ID_TO_LITERAL_CACHE = "literal-id-to-literal"
@@ -45,7 +44,7 @@ private const val FULLTEXT_INDEX_FOR_LABEL = "fulltext_idx_for_literal_on_label"
 class SpringDataNeo4jLiteralAdapter(
     private val neo4jRepository: Neo4jLiteralRepository,
     private val neo4jLiteralIdGenerator: Neo4jLiteralIdGenerator,
-    private val neo4jClient: Neo4jClient,
+    private val cypherQueryBuilderFactory: CypherQueryBuilderFactory,
 ) : LiteralRepository {
     override fun nextIdentity(): ThingId {
         // IDs could exist already by manual creation. We need to find the next available one.
@@ -82,7 +81,7 @@ class SpringDataNeo4jLiteralAdapter(
         createdBy: ContributorId?,
         createdAtStart: OffsetDateTime?,
         createdAtEnd: OffsetDateTime?
-    ): Page<Literal> = CypherQueryBuilder(neo4jClient, Uncached)
+    ): Page<Literal> = cypherQueryBuilderFactory.newBuilder(Uncached)
         .withCommonQuery {
             val node = Cypher.node("Literal").named("node")
             val match = label?.let { searchString ->

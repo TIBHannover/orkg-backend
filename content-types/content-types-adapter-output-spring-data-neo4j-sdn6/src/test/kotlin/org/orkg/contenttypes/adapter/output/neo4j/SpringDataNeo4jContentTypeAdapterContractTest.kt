@@ -1,6 +1,7 @@
 package org.orkg.contenttypes.adapter.output.neo4j
 
 import io.kotest.core.spec.style.DescribeSpec
+import org.orkg.common.neo4jdsl.configuration.CypherQueryBuilderConfiguration
 import org.orkg.contenttypes.adapter.output.neo4j.configuration.ContentTypesNeo4jConfiguration
 import org.orkg.contenttypes.output.ContentTypeRepository
 import org.orkg.contenttypes.output.testing.fixtures.contentTypeRepositoryContract
@@ -27,7 +28,8 @@ import org.springframework.beans.factory.annotation.Autowired
         SpringDataNeo4jLiteralAdapter::class,
         SpringDataNeo4jClassAdapter::class,
         GraphNeo4jConfiguration::class,
-        ContentTypesNeo4jConfiguration::class
+        ContentTypesNeo4jConfiguration::class,
+        CypherQueryBuilderConfiguration::class
     ]
 )
 internal class SpringDataNeo4jContentTypeAdapterContractTest(

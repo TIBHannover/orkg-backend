@@ -5,21 +5,20 @@ import org.neo4j.cypherdsl.core.Cypher.count
 import org.neo4j.cypherdsl.core.Cypher.exists
 import org.neo4j.cypherdsl.core.Cypher.match
 import org.neo4j.cypherdsl.core.Cypher.node
-import org.orkg.common.neo4jdsl.CypherQueryBuilder
+import org.orkg.common.neo4jdsl.CypherQueryBuilderFactory
 import org.orkg.common.neo4jdsl.QueryCache.Uncached
 import org.orkg.common.neo4jdsl.SingleQueryBuilder.fetchAs
 import org.orkg.statistics.output.StatisticsRepository
-import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.stereotype.Component
 
 private const val RELATED = "RELATED"
 
 @Component
 class SpringDataNeo4jStatisticsAdapter(
-    private val neo4jClient: Neo4jClient
+    private val cypherQueryBuilderFactory: CypherQueryBuilderFactory
 ) : StatisticsRepository {
     override fun countNodes(label: String): Long =
-        CypherQueryBuilder(neo4jClient, Uncached)
+        cypherQueryBuilderFactory.newBuilder(Uncached)
             .withQuery {
                 val node = node(label)
                 match(node).returning(count(node))
@@ -29,7 +28,7 @@ class SpringDataNeo4jStatisticsAdapter(
             .orElse(0)
 
     override fun countRelations(type: String): Long =
-        CypherQueryBuilder(neo4jClient, Uncached)
+        cypherQueryBuilderFactory.newBuilder(Uncached)
             .withQuery {
                 val rel = node("Thing").relationshipTo(node("Thing"), type)
                 match(rel).returning(count(rel.asExpression()))
@@ -39,7 +38,7 @@ class SpringDataNeo4jStatisticsAdapter(
             .orElse(0)
 
     override fun countUnusedNodes(label: String): Long =
-        CypherQueryBuilder(neo4jClient, Uncached)
+        cypherQueryBuilderFactory.newBuilder(Uncached)
             .withQuery {
                 val node = node(label)
                 match(node)
@@ -51,7 +50,7 @@ class SpringDataNeo4jStatisticsAdapter(
             .orElse(0)
 
     override fun countOrphanNodes(label: String): Long =
-        CypherQueryBuilder(neo4jClient, Uncached)
+        cypherQueryBuilderFactory.newBuilder(Uncached)
             .withQuery {
                 val node = node(label)
                 match(node)

@@ -9,6 +9,7 @@ import org.neo4j.cypherdsl.core.Cypher.anyNode
 import org.neo4j.cypherdsl.core.Cypher.labels
 import org.neo4j.cypherdsl.core.Cypher.literalOf
 import org.neo4j.cypherdsl.core.Cypher.match
+import org.orkg.common.neo4jdsl.configuration.CypherQueryBuilderConfiguration
 import org.orkg.graph.adapter.output.neo4j.configuration.GraphNeo4jConfiguration
 import org.orkg.graph.output.LiteralRepository
 import org.orkg.graph.testing.fixtures.createLiteral
@@ -21,7 +22,8 @@ import org.springframework.data.neo4j.core.fetchAs
 @Neo4jContainerUnitTest(
     classes = [
         SpringDataNeo4jLiteralAdapter::class,
-        GraphNeo4jConfiguration::class
+        GraphNeo4jConfiguration::class,
+        CypherQueryBuilderConfiguration::class
     ]
 )
 internal class SpringDataNeo4jLiteralAdapterContractTests(

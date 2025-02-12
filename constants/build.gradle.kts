@@ -11,6 +11,6 @@ buildConfig {
 
     buildConfigField("APP_NAME", rootProject.name)
     buildConfigField("CONTAINER_IMAGE_NEO4J", "neo4j:5-community")
-    buildConfigField("CONTAINER_IMAGE_POSTGRES", "postgres:11")
+    buildConfigField("CONTAINER_IMAGE_POSTGRES", "postgres:17")
     buildConfigField("CONTAINER_IMAGE_KEYCLOAK", "registry.gitlab.com/tibhannover/orkg/keycloak-docker-image:26.0.5")
 }

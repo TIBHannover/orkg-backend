@@ -106,19 +106,39 @@ fun <
     // (unpublished 3) -> (published 1)
     // (unpublished 4) -> (published 2)
     // (unpublished 5) -> (published 3 + 4)
-    // (unpublished 6) -> (published 4 + 6)
+    // (unpublished 6) -> (published 5 + 6)
     fun createTestGraph(transform: (Int, Resource) -> Resource = { _, it -> it.copy(visibility = Visibility.DEFAULT) }): TestGraph {
         val resources = fabricator.random<List<Resource>>().mapIndexed(transform)
         val unpublished = resources.take(6).map { it.copy(classes = setOf(Classes.smartReview)) }
         val published = resources.drop(6).mapIndexed { index, it ->
             it.copy(
-                classes = setOf(Classes.smartReviewPublished),
+                classes = setOf(Classes.smartReviewPublished, Classes.latestVersion),
                 createdAt = OffsetDateTime.now(fixedClock).minusHours(index.toLong())
             )
-        }
+        }.toMutableList()
         val statements = mutableListOf<GeneralStatement>()
         val hasPublishedVersion = fabricator.random<Predicate>().copy(id = Predicates.hasPublishedVersion)
         val ignored = mutableSetOf<Resource>()
+        // link two published lists to an unpublished list (2x)
+        for (i in 0..1) {
+            for (j in 0..1) {
+                if (j > 0) {
+                    // published, but outdated, so we want to ignore them later
+                    val outdated = published[2 + i * 2 + j].let {
+                        it.copy(classes = it.classes - Classes.latestVersion)
+                    }
+                    published[2 + i * 2 + j] = outdated
+                    ignored.add(outdated)
+                }
+                statements.add(
+                    fabricator.random<GeneralStatement>().copy(
+                        subject = unpublished[4 + i],
+                        predicate = hasPublishedVersion,
+                        `object` = published[2 + i * 2 + j]
+                    )
+                )
+            }
+        }
         // link a single published list to an unpublished list (2x)
         for (i in 0..1) {
             statements.add(
@@ -128,22 +148,6 @@ fun <
                     `object` = published[i]
                 )
             )
-        }
-        // link two published lists to an unpublished list (2x)
-        for (i in 0..1) {
-            for (j in 0..1) {
-                statements.add(
-                    fabricator.random<GeneralStatement>().copy(
-                        subject = unpublished[4 + i],
-                        predicate = hasPublishedVersion,
-                        `object` = published[2 + i * 2 + j]
-                    )
-                )
-                if (j > 0) {
-                    // published, but outdated, so we want to ignore them later
-                    ignored.add(published[2 + i * 2 + j])
-                }
-            }
         }
         return TestGraph(unpublished + published, statements, ignored)
     }

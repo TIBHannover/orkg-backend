@@ -3,18 +3,10 @@ package org.orkg.contenttypes.adapter.output.neo4j
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import java.util.function.BiFunction
-import org.neo4j.cypherdsl.core.Condition
-import org.neo4j.cypherdsl.core.Cypher.anyNode
 import org.neo4j.cypherdsl.core.Cypher.call
-import org.neo4j.cypherdsl.core.Cypher.literalOf
-import org.neo4j.cypherdsl.core.Cypher.match
-import org.neo4j.cypherdsl.core.Cypher.name
 import org.neo4j.cypherdsl.core.Cypher.node
 import org.neo4j.cypherdsl.core.Cypher.unionAll
-import org.neo4j.cypherdsl.core.Cypher.valueAt
-import org.neo4j.cypherdsl.core.Cypher.collect
 import org.neo4j.cypherdsl.core.Node
-import org.neo4j.cypherdsl.core.Cypher.exists
 import org.neo4j.cypherdsl.core.RelationshipPattern
 import org.neo4j.cypherdsl.core.StatementBuilder
 import org.neo4j.cypherdsl.core.SymbolicName
@@ -30,7 +22,6 @@ import org.orkg.graph.adapter.output.neo4j.toThing
 import org.orkg.graph.adapter.output.neo4j.toThingId
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.FormattedLabel
-import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Thing
 
 private const val RELATED = "RELATED"
@@ -148,24 +139,8 @@ internal fun matchLiteratureList(
 private fun matchPublishedLiteratureLists(
     symbolicName: SymbolicName,
     patternGenerator: (Node) -> Collection<RelationshipPattern>
-): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere {
-    val llp = node("LiteratureListPublished").named("llp")
-    val lll = name("lll")
-    return match(
-        llp.relationshipFrom(node("LiteratureList").named(lll), RELATED)
-            .withProperties("predicate_id", literalOf<String>(Predicates.hasPublishedVersion.value))
-    ).with(
-        lll,
-        valueAt(call("apoc.coll.sortNodes").withArgs(collect(llp), literalOf<String>("created_at")).asFunction(), 0).`as`(symbolicName)
-    ).let {
-        val patterns = patternGenerator(anyNode().named(symbolicName))
-        if (patterns.isNotEmpty()) {
-            it.where(patterns.map(::exists).reduceOrNull(Condition::and)!!).with(symbolicName)
-        } else {
-            it
-        }
-    }
-}
+): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere =
+    matchDistinct(node("LiteratureListPublished", "LatestVersion").named(symbolicName), patternGenerator)
 
 private fun matchUnpublishedLiteratureLists(
     symbolicName: SymbolicName,
@@ -192,24 +167,8 @@ internal fun matchSmartReview(
 private fun matchPublishedSmartReviews(
     symbolicName: SymbolicName,
     patternGenerator: (Node) -> Collection<RelationshipPattern>
-): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere {
-    val srp = node("SmartReviewPublished").named("srp")
-    val srl = name("srl")
-    return match(
-        srp.relationshipFrom(node("SmartReview").named(srl), RELATED)
-            .withProperties("predicate_id", literalOf<String>(Predicates.hasPublishedVersion.value))
-    ).with(
-        srl,
-        valueAt(call("apoc.coll.sortNodes").withArgs(collect(srp), literalOf<String>("created_at")).asFunction(), 0).`as`(symbolicName)
-    ).let {
-        val patterns = patternGenerator(anyNode().named(symbolicName))
-        if (patterns.isNotEmpty()) {
-            it.where(patterns.map(::exists).reduceOrNull(Condition::and)!!).with(symbolicName)
-        } else {
-            it
-        }
-    }
-}
+): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere =
+    matchDistinct(node("SmartReviewPublished", "LatestVersion").named(symbolicName), patternGenerator)
 
 private fun matchUnpublishedSmartReviews(
     symbolicName: SymbolicName,

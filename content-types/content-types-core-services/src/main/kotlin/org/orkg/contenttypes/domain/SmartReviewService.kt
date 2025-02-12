@@ -261,7 +261,7 @@ class SmartReviewService(
             SmartReviewVersionCreator(resourceRepository, statementRepository, unsafeResourceUseCases, unsafeStatementUseCases, literalService, listService),
             SmartReviewChangelogCreator(literalService, unsafeStatementUseCases),
             SmartReviewVersionArchiver(statementService, smartReviewPublishedRepository),
-            SmartReviewVersionHistoryUpdater(unsafeStatementUseCases),
+            SmartReviewVersionHistoryUpdater(unsafeStatementUseCases, unsafeResourceUseCases),
             SmartReviewVersionDoiPublisher(unsafeStatementUseCases, literalService, doiService, smartReviewPublishBaseUri)
         )
         return steps.execute(command, PublishSmartReviewState()).smartReviewVersionId!!

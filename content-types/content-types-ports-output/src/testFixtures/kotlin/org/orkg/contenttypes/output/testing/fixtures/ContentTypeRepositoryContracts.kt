@@ -137,12 +137,12 @@ fun <
         resources[9] = resources[9].copy(classes = setOf(Classes.literatureList))
 
         resources[10] = resources[10].copy(classes = setOf(Classes.literatureList))
-        resources[11] = resources[11].copy(classes = setOf(Classes.literatureListPublished))
+        resources[11] = resources[11].copy(classes = setOf(Classes.literatureListPublished, Classes.latestVersion))
 
         statements += resources[10].hasPublishedVersion(resources[11])
 
         resources[12] = resources[12].copy(classes = setOf(Classes.literatureList))
-        resources[13] = resources[13].copy(classes = setOf(Classes.literatureListPublished))
+        resources[13] = resources[13].copy(classes = setOf(Classes.literatureListPublished, Classes.latestVersion))
         resources[14] = resources[14].copy( // ignored, because outdated
             classes = setOf(Classes.literatureListPublished),
             createdAt = resources[13].createdAt.minusDays(1)
@@ -154,12 +154,12 @@ fun <
         resources[15] = resources[15].copy(classes = setOf(Classes.smartReview))
 
         resources[16] = resources[16].copy(classes = setOf(Classes.smartReview))
-        resources[17] = resources[17].copy(classes = setOf(Classes.smartReviewPublished))
+        resources[17] = resources[17].copy(classes = setOf(Classes.smartReviewPublished, Classes.latestVersion))
 
         statements += resources[16].hasPublishedVersion(resources[17])
 
         resources[18] = resources[18].copy(classes = setOf(Classes.smartReview))
-        resources[19] = resources[19].copy(classes = setOf(Classes.smartReviewPublished))
+        resources[19] = resources[19].copy(classes = setOf(Classes.smartReviewPublished, Classes.latestVersion))
         resources[20] = resources[20].copy( // ignored, because outdated
             classes = setOf(Classes.smartReviewPublished),
             createdAt = resources[19].createdAt.minusDays(1)

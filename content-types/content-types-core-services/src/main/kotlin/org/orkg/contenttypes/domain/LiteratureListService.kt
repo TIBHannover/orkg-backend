@@ -227,7 +227,7 @@ class LiteratureListService(
             LiteratureListVersionCreator(resourceRepository, statementRepository, unsafeResourceUseCases, unsafeStatementUseCases, literalService, listService),
             LiteratureListChangelogCreator(literalService, unsafeStatementUseCases),
             LiteratureListVersionArchiver(statementService, literatureListPublishedRepository),
-            LiteratureListVersionHistoryUpdater(unsafeStatementUseCases)
+            LiteratureListVersionHistoryUpdater(unsafeStatementUseCases, unsafeResourceUseCases)
         )
         return steps.execute(command, PublishLiteratureListState()).literatureListVersionId!!
     }

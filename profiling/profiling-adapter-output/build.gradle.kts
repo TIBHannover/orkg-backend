@@ -15,4 +15,5 @@ dependencies {
     api(project(":profiling:profiling-core-model"))
     api(project(":profiling:profiling-ports-output"))
     implementation(project(":community:community-core-model"))
+    implementation(project(":graph:graph-core-constants"))
 }

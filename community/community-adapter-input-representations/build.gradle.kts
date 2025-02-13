@@ -9,4 +9,5 @@ dependencies {
     api(project(":community:community-core-model"))
     api(project(":graph:graph-core-model"))
     api(project(":graph:graph-ports-input"))
+    implementation(project(":graph:graph-core-constants"))
 }

@@ -33,6 +33,7 @@ include(
     // services. This name might also reflect better that we may be able to split it out as a separate application (or
     // "microservice", if you prefer.) Also, we will share the ports from within the domain project for the time being.
     // This may change in the future.
+    "graph:graph-core-constants",
     "graph:graph-core-model",
     "graph:graph-core-services",
     "graph:graph-ports-input",
@@ -114,3 +115,4 @@ include(
 )
 include("widget")
 include("rest-api-server")
+include(":integrations:datacite-serialization")

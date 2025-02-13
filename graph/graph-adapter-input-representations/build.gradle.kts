@@ -4,8 +4,6 @@ plugins {
 
 dependencies {
     api("com.fasterxml.jackson.core:jackson-annotations")
-    api("com.fasterxml.jackson.core:jackson-annotations")
-    api("org.eclipse.rdf4j:rdf4j-common-io")
     api("org.eclipse.rdf4j:rdf4j-common-io")
     api("org.springframework.data:spring-data-commons")
     api(project(":common:identifiers"))
@@ -14,6 +12,7 @@ dependencies {
     api(project(":graph:graph-core-model"))
     api(project(":graph:graph-ports-input"))
     implementation(project(":common:pagination"))
+    implementation(project(":graph:graph-core-constants"))
 }
 
 testing {

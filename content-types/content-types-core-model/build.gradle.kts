@@ -18,6 +18,7 @@ dependencies {
     api(project(":common:datatypes"))
     api(project(":common:spring-webmvc"))
     api(project(":graph:graph-core-model"))
+    implementation(project(":graph:graph-core-constants"))
     api("org.springframework:spring-web")
 
     testFixturesApi(project(":common:identifiers"))
@@ -27,6 +28,7 @@ dependencies {
     testFixturesImplementation("org.eclipse.rdf4j:rdf4j-common-io")
     testFixturesImplementation("dev.forkhandles:values4k")
     testFixturesImplementation(testFixtures(project(":graph:graph-core-model")))
+    testFixturesImplementation(project(":graph:graph-core-constants"))
 }
 
 testing {

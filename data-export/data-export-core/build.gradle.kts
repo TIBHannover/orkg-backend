@@ -6,12 +6,10 @@ plugins {
 }
 
 dependencies {
+    api("com.fasterxml.jackson.core:jackson-databind")
     api("org.eclipse.rdf4j:rdf4j-model-api")
-    implementation("org.eclipse.rdf4j:rdf4j-common-io")
     api("org.springframework:spring-beans")
     api("org.springframework:spring-context")
-    api("com.fasterxml.jackson.core:jackson-databind")
-    implementation(project(":common:pagination"))
     api(project(":common:identifiers"))
     api(project(":content-types:content-types-ports-input"))
     api(project(":content-types:content-types-ports-output"))
@@ -19,11 +17,15 @@ dependencies {
     api(project(":graph:graph-core-model"))
     api(project(":graph:graph-ports-output"))
     implementation("com.fasterxml.jackson.core:jackson-core")
+    implementation("org.eclipse.rdf4j:rdf4j-common-io")
     implementation("org.eclipse.rdf4j:rdf4j-model")
     implementation("org.eclipse.rdf4j:rdf4j-model-vocabulary")
-    implementation("org.springframework.data:spring-data-commons")
-    implementation(project(":content-types:content-types-core-model"))
     implementation("org.slf4j:slf4j-api")
+    implementation("org.springframework.data:spring-data-commons")
+    implementation(project(":common:pagination"))
+    implementation(project(":content-types:content-types-core-model"))
+    implementation(project(":integrations:datacite-serialization"))
+    implementation(project(":graph:graph-core-constants"))
 
     testFixturesImplementation("io.kotest:kotest-runner-junit5")
     testFixturesImplementation("io.kotest:kotest-assertions-shared")

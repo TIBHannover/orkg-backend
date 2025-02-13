@@ -18,6 +18,7 @@ dependencies {
     api(project(":media-storage:media-storage-ports-input"))
     implementation(project(":content-types:content-types-core-model"))
     implementation(project(":graph:graph-core-model")) // for ResearchFields
+    implementation(project(":graph:graph-core-constants"))
     implementation("org.springframework:spring-core")
 }
 

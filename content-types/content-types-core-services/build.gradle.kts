@@ -7,15 +7,13 @@ plugins {
 
 dependencies {
     api("org.eclipse.rdf4j:rdf4j-common-io")
+    api("org.jbibtex:jbibtex")
     api("org.springframework.data:spring-data-commons")
     api("org.springframework:spring-beans")
     api("org.springframework:spring-context")
-    api(project(":common:spring-data"))
-    api("org.jbibtex:jbibtex")
     api(project(":common:functional"))
-    implementation(project(":common:pagination"))
-    implementation(project(":common:datatypes"))
     api(project(":common:identifiers"))
+    api(project(":common:spring-data"))
     api(project(":community:community-core-model"))
     api(project(":community:community-ports-input")) // used in LegacyPaperService
     api(project(":community:community-ports-output"))
@@ -27,6 +25,9 @@ dependencies {
     api(project(":graph:graph-ports-output"))
     api(project(":statistics:statistics-core-model"))
     implementation("dev.forkhandles:values4k")
+    implementation(project(":common:datatypes"))
+    implementation(project(":common:pagination"))
+    implementation(project(":graph:graph-core-constants"))
 }
 
 testing {

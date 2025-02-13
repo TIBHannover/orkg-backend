@@ -14,6 +14,7 @@ dependencies {
     implementation("org.springframework:spring-web")
     implementation("dev.forkhandles:values4k")
     implementation(project(":common:spring-webmvc"))
+    implementation(project(":integrations:datacite-serialization"))
 }
 
 testing {

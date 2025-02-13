@@ -16,6 +16,7 @@ testing {
                 implementation(testFixtures(project(":media-storage:media-storage-core-model")))
                 implementation(project(":common:serialization"))
                 implementation(project(":content-types:content-types-core-model"))
+                implementation(project(":graph:graph-core-constants"))
                 implementation("io.kotest:kotest-assertions-shared")
                 implementation("io.mockk:mockk-dsl")
                 implementation("io.mockk:mockk-jvm")

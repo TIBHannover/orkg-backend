@@ -20,6 +20,7 @@ dependencies {
     testFixturesApi(project(":media-storage:media-storage-core-model"))
     testFixturesImplementation(project(":graph:graph-core-model"))
     testFixturesImplementation(testFixtures(project(":testing:spring")))
+    testFixturesImplementation(project(":graph:graph-core-constants"))
 }
 
 testing {

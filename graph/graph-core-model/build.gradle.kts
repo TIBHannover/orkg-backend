@@ -9,6 +9,7 @@ dependencies {
     api("org.springframework:spring-web")
     api("dev.forkhandles:values4k")
     api(project(":common:identifiers"))
+    implementation(project(":graph:graph-core-constants"))
     api(project(":common:spring-webmvc"))
     implementation(project(":common:datatypes"))
     implementation(project(":common:string-utils"))
@@ -19,6 +20,7 @@ dependencies {
     testFixturesApi(project(":common:identifiers"))
     testFixturesImplementation(testFixtures(project(":testing:spring")))
     testFixturesRuntimeOnly("org.springframework:spring-core")
+    testFixturesImplementation(project(":graph:graph-core-constants"))
 }
 
 testing {

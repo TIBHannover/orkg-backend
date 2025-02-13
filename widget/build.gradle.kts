@@ -12,6 +12,7 @@ dependencies {
     implementation(project(":common:spring-webmvc"))
     api(project(":graph:graph-ports-input"))
     implementation(project(":graph:graph-core-model"))
+    implementation(project(":graph:graph-core-constants"))
 }
 
 testing {

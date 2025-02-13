@@ -16,6 +16,7 @@ dependencies {
     implementation(project(":common:datatypes"))
     implementation(project(":common:spring-webmvc"))
     implementation(project(":common:string-utils"))
+    implementation(project(":graph:graph-core-constants"))
 
     api("org.neo4j.driver:neo4j-java-driver")
     api("org.neo4j:neo4j-cypher-dsl")

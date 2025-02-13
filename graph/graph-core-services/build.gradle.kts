@@ -12,8 +12,9 @@ dependencies {
     api(project(":graph:graph-core-model"))
     api(project(":graph:graph-ports-input"))
     api(project(":graph:graph-ports-output"))
-    implementation(project(":common:pagination"))
     implementation(project(":common:datatypes"))
+    implementation(project(":common:pagination"))
+    implementation(project(":graph:graph-core-constants"))
 
     api("org.eclipse.rdf4j:rdf4j-common-io")
     api("org.springframework.data:spring-data-commons")

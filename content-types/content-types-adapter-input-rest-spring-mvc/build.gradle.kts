@@ -34,10 +34,11 @@ dependencies {
     implementation(project(":common:datatypes"))
     implementation(project(":common:functional"))
     implementation(project(":common:serialization"))
+    implementation(project(":graph:graph-core-constants"))
     testFixturesApi(project(":content-types:content-types-adapter-input-representations"))
     testFixturesImplementation(project(":common:datatypes"))
     testFixturesImplementation(project(":common:identifiers"))
-    testFixturesImplementation(project(":graph:graph-core-model"))
+    testFixturesImplementation(project(":graph:graph-core-constants"))
 }
 
 testing {

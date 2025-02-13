@@ -16,6 +16,7 @@ dependencies {
     testFixturesImplementation("io.kotest:kotest-runner-junit5")
     testFixturesImplementation("io.kotest:kotest-assertions-core")
     testFixturesImplementation(project(":common:identifiers"))
+    testFixturesImplementation(project(":graph:graph-core-constants"))
     testFixturesImplementation(project(":graph:graph-core-model"))
     testFixturesImplementation(testFixtures(project(":graph:graph-core-model")))
 }

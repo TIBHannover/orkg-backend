@@ -36,6 +36,7 @@ testing {
             dependencies {
                 implementation(project(":common:serialization"))
                 implementation(project(":common:pagination"))
+                implementation(project(":graph:graph-core-constants"))
                 implementation(testFixtures(project(":community:community-core-model")))
                 implementation(testFixtures(project(":graph:graph-core-model")))
                 implementation(testFixtures(project(":testing:spring")))

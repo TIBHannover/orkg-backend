@@ -4,6 +4,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.orkg.common.testing.fixtures.Assets.png
 import org.orkg.community.domain.OrganizationType
 import org.orkg.community.input.ContributorUseCases
 import org.orkg.community.input.ObservatoryUseCases
@@ -15,6 +16,9 @@ import org.orkg.createOrganization
 import org.orkg.createResource
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.ResourceUseCases
+import org.orkg.mediastorage.domain.ImageData
+import org.orkg.mediastorage.input.CreateImageUseCase
+import org.orkg.mediastorage.input.ImageUseCases
 import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.beans.factory.annotation.Autowired
@@ -25,6 +29,7 @@ import org.springframework.restdocs.payload.ResponseFieldsSnippet
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.util.MimeType
 
 @Neo4jContainerIntegrationTest
 internal class OrganizationControllerIntegrationTest : MockMvcBaseTest("organizations") {
@@ -42,6 +47,9 @@ internal class OrganizationControllerIntegrationTest : MockMvcBaseTest("organiza
 
     @Autowired
     private lateinit var classService: ClassUseCases
+
+    @Autowired
+    private lateinit var imageService: ImageUseCases
 
     @BeforeEach
     fun setup() {
@@ -95,6 +103,21 @@ internal class OrganizationControllerIntegrationTest : MockMvcBaseTest("organiza
                 )
             )
             .andDo(generateDefaultDocSnippets())
+    }
+
+    @Test
+    fun fetchLogo() {
+        val contributorId = contributorService.createContributor()
+        val imageId = imageService.create(CreateImageUseCase.CreateCommand(
+            data = ImageData(png("white_pixel")),
+            mimeType = MimeType.valueOf("image/png"),
+            createdBy = contributorId,
+        ))
+        val organizationId = service.createOrganization(createdBy = contributorId, logoId = imageId)
+
+        get("/api/organizations/{id}/logo", organizationId)
+            .perform()
+            .andExpect(status().isOk)
     }
 
     @Test

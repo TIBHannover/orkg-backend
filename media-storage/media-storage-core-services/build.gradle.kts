@@ -6,11 +6,12 @@ plugins {
 
 dependencies {
     api("org.springframework:spring-context")
+    api(project(":common:spring-data"))
     api(project(":media-storage:media-storage-core-model"))
     api(project(":media-storage:media-storage-ports-input"))
     api(project(":media-storage:media-storage-ports-output"))
-    implementation(project(":common:identifiers"))
     implementation("org.springframework:spring-core")
+    implementation(project(":common:identifiers"))
 }
 
 testing {

@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 
 @Configuration
-@EnableJpaRepositories("org.orkg.mediastorage.adapter.output.jpa.internal")
+@EnableJpaRepositories("org.orkg.mediastorage.adapter.output.jpa.internal", transactionManagerRef = "jpaTransactionManager")
 @EntityScan("org.orkg.mediastorage.adapter.output.jpa.internal")
 @ComponentScan(basePackages = ["org.orkg.mediastorage.adapter.output.jpa"])
 class MediaStorageJpaConfiguration

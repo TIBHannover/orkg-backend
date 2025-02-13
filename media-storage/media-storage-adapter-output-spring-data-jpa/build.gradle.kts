@@ -32,6 +32,8 @@ testing {
                 implementation("org.springframework:spring-test")
                 implementation(testFixtures(project(":media-storage:media-storage-ports-output")))
                 implementation(testFixtures(project(":testing:spring")))
+                implementation("org.springframework.boot:spring-boot-test")
+                implementation("org.springframework:spring-orm")
             }
         }
     }

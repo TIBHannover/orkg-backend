@@ -65,6 +65,8 @@ testing {
                 implementation("org.keycloak:keycloak-client-common-synced")
                 runtimeOnly("org.springframework.boot:spring-boot")
                 runtimeOnly(project(":keycloak"))
+                implementation("org.springframework:spring-core")
+                implementation(project(":media-storage:media-storage-ports-input"))
             }
             targets {
                 all {

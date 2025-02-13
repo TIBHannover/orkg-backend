@@ -5,9 +5,11 @@ import java.time.OffsetDateTime
 import org.orkg.mediastorage.input.CreateImageUseCase
 import org.orkg.mediastorage.input.ImageUseCases
 import org.orkg.mediastorage.output.ImageRepository
+import org.orkg.spring.data.annotations.TransactionalOnJPA
 import org.springframework.stereotype.Service
 
 @Service
+@TransactionalOnJPA
 class ImageService(
     private val repository: ImageRepository,
     private val clock: Clock = Clock.systemDefaultZone(),

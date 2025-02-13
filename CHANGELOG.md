@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.77.3] - 2025-02-13
+### Fixed
+- DOIs are now validated when passed as a filter.
+  Passing an empty `doi` request parameter is no longer allowed as a consequence of this change.
+  (See: [!1206](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1206))
+### Changed
+- The databases were upgraded to Neo4j 5 and PostgreSQL 17.
+  Local setups need recent dumps or manual migration.
+
 ## [0.77.2] - 2025-02-04
 ### Fixed
 - The release pipeline was broken and was fixed.
@@ -1377,7 +1386,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.77.2...master
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.77.3...master
+[0.77.3]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.77.3
 [0.77.2]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.77.2
 [0.77.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.77.1
 [0.77.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.77.0

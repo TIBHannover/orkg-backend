@@ -61,6 +61,6 @@ until docker compose logs neo4j | grep -q 'Remote interface available at http:';
 # Apply some migrations that already ran, containing custom procedures. This is a work-around because we cannot share
 # the "system" database.
 # shellcheck disable=SC2002
-cat "${root_dir}/migrations/neo4j-migrations/src/main/resources/neo4j/migrations/R0027__create_custom_subgraph_procedure.cypher" \
-  "${root_dir}/migrations/neo4j-migrations/src/main/resources/neo4j/migrations/R0031__create_custom_timestamp_parsing_function.cypher" \
-  | docker compose exec -T neo4j cypher-shell
+cat "${root_dir}/migrations/neo4j-migrations/src/main/resources/neo4j/migrations-system/R0027__create_custom_subgraph_procedure.cypher" \
+  "${root_dir}/migrations/neo4j-migrations/src/main/resources/neo4j/migrations-system/R0031__create_custom_timestamp_parsing_function.cypher" \
+  | docker compose exec -T neo4j cypher-shell -d system

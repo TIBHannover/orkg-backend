@@ -3,14 +3,17 @@ package org.orkg.migrations.neo4j
 import ac.simons.neo4j.migrations.core.JavaBasedMigration
 import ac.simons.neo4j.migrations.core.MigrationContext
 import java.lang.Thread.sleep
+import java.net.URI
 import java.util.*
+import org.springframework.core.io.ClassPathResource
 
 abstract class AbstractCustomProcedureMigration(
-    private val migrationQuery: String,
+    private val migrationQueryFile: String,
     private val validationQuery: String,
-    private val version: Long,
     private val validationIntervalMs: Long = 100,
 ) : JavaBasedMigration {
+    val migrationQuery: String by lazy { loadQuery() }
+
     override fun apply(context: MigrationContext) {
         val systemDBContext = context.getSessionConfig { it.withDatabase("system") }
         context.driver.session(systemDBContext).executeWriteWithoutResult { tx ->
@@ -40,5 +43,9 @@ abstract class AbstractCustomProcedureMigration(
             ?.trim()
     )
 
-    override fun getChecksum(): Optional<String> = Optional.of(version.toString())
+    override fun getChecksum(): Optional<String> = Optional.of(migrationQuery.hashCode().toString())
+
+    private fun loadQuery(): String =
+        ClassPathResource(URI.create("classpath:/neo4j/migrations-system/$migrationQueryFile.cypher").path)
+            .inputStream.use { String(it.readBytes()) }
 }

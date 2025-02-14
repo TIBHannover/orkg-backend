@@ -1,6 +1,7 @@
 package org.orkg.graph.domain
 
 import io.kotest.assertions.asClue
+import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.mockk.every
@@ -516,6 +517,24 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
     }
 
     @Test
+    fun `Given a resource update command, when observatory is unknown, is does not throw an exception`() {
+        val resource = createResource(observatoryId = ObservatoryId("04c4d2f9-82e0-47c3-b0ef-79c1f515a940"))
+        val command = UpdateResourceUseCase.UpdateCommand(
+            id = resource.id,
+            contributorId = ContributorId(MockUserId.USER),
+            observatoryId = ObservatoryId.UNKNOWN
+        )
+
+        every { repository.findById(resource.id) } returns Optional.of(resource)
+        every { repository.save(any()) } just runs
+
+        shouldNotThrow<ObservatoryNotFound> { service.update(command) }
+
+        verify(exactly = 1) { repository.findById(resource.id) }
+        verify(exactly = 1) { repository.save(withArg { it.observatoryId shouldBe ObservatoryId.UNKNOWN }) }
+    }
+
+    @Test
     fun `Given a resource update command, when organization does not exist, it throws an exception`() {
         val resource = createResource()
         val command = UpdateResourceUseCase.UpdateCommand(
@@ -531,6 +550,24 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { repository.findById(resource.id) }
         verify(exactly = 1) { organizationRepository.findById(command.organizationId!!) }
+    }
+
+    @Test
+    fun `Given a resource update command, when organization is unknown, is does not throw an exception`() {
+        val resource = createResource(organizationId = OrganizationId("04c4d2f9-82e0-47c3-b0ef-79c1f515a940"))
+        val command = UpdateResourceUseCase.UpdateCommand(
+            id = resource.id,
+            contributorId = ContributorId(MockUserId.USER),
+            organizationId = OrganizationId.UNKNOWN
+        )
+
+        every { repository.findById(resource.id) } returns Optional.of(resource)
+        every { repository.save(any()) } just runs
+
+        shouldNotThrow<OrganizationNotFound> { service.update(command) }
+
+        verify(exactly = 1) { repository.findById(resource.id) }
+        verify(exactly = 1) { repository.save(withArg { it.organizationId shouldBe OrganizationId.UNKNOWN }) }
     }
 
     @Test

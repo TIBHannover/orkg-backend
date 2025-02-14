@@ -124,42 +124,41 @@ class ResourceService(
             .orElseThrow { ResourceNotFound.withId(id) }
 
     override fun update(command: UpdateCommand) {
-        if (!command.hasNoContents()) {
-            val resource = repository.findById(command.id)
-                .orElseThrow { ResourceNotFound.withId(command.id) }
-            if (!resource.modifiable) {
-                throw ResourceNotModifiable(command.id)
+        if (command.hasNoContents()) return
+        val resource = repository.findById(command.id)
+            .orElseThrow { ResourceNotFound.withId(command.id) }
+        if (!resource.modifiable) {
+            throw ResourceNotModifiable(command.id)
+        }
+        command.label?.also { Label.ofOrNull(it) ?: throw InvalidLabel() }
+        command.classes?.also { validateClasses(it) }
+        command.observatoryId?.let { observatoryId ->
+            if (observatoryId != resource.observatoryId && observatoryId != ObservatoryId.UNKNOWN && !observatoryRepository.existsById(observatoryId)) {
+                throw ObservatoryNotFound(observatoryId)
             }
-            command.label?.also { Label.ofOrNull(it) ?: throw InvalidLabel() }
-            command.classes?.also { validateClasses(it) }
-            command.observatoryId?.let { observatoryId ->
-                if (observatoryId != resource.observatoryId && !observatoryRepository.existsById(observatoryId)) {
-                    throw ObservatoryNotFound(observatoryId)
+        }
+        command.organizationId?.let { organizationId ->
+            if (organizationId != resource.organizationId && organizationId != OrganizationId.UNKNOWN && organizationRepository.findById(organizationId).isEmpty) {
+                throw OrganizationNotFound(organizationId)
+            }
+        }
+        val contributor by lazy {
+            contributorRepository.findById(command.contributorId)
+                .orElseThrow { ContributorNotFound(command.contributorId) }
+        }
+        if (command.visibility != null && command.visibility != resource.visibility) {
+            if (!resource.isOwnedBy(command.contributorId) || !isAllowedVisibilityChangeByOwner(command.visibility!!, resource.visibility)) {
+                if (!contributor.isCurator) {
+                    throw NeitherOwnerNorCurator.cannotChangeVisibility(resource.id)
                 }
             }
-            command.organizationId?.let { organizationId ->
-                if (organizationId != resource.organizationId && organizationRepository.findById(organizationId).isEmpty) {
-                    throw OrganizationNotFound(organizationId)
-                }
-            }
-            val contributor by lazy {
-                contributorRepository.findById(command.contributorId)
-                    .orElseThrow { ContributorNotFound(command.contributorId) }
-            }
-            if (command.visibility != null && command.visibility != resource.visibility) {
-                if (!resource.isOwnedBy(command.contributorId) || !isAllowedVisibilityChangeByOwner(command.visibility!!, resource.visibility)) {
-                    if (!contributor.isCurator) {
-                        throw NeitherOwnerNorCurator.cannotChangeVisibility(resource.id)
-                    }
-                }
-            }
-            if (command.verified != null && command.verified != resource.verified && !contributor.isCurator) {
-                throw NotACurator.cannotChangeVerifiedStatus(contributor.id)
-            }
-            val updated = resource.apply(command)
-            if (updated != resource) {
-                repository.save(updated)
-            }
+        }
+        if (command.verified != null && command.verified != resource.verified && !contributor.isCurator) {
+            throw NotACurator.cannotChangeVerifiedStatus(contributor.id)
+        }
+        val updated = resource.apply(command)
+        if (updated != resource) {
+            repository.save(updated)
         }
     }
 

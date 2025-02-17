@@ -51,7 +51,7 @@ class StatementCollectionPropertyUpdater(
 
         // Remove unwanted object statements
         if (toRemove.isNotEmpty()) {
-            statementService.delete(toRemove.map { objectId2statementId[it]!! }.toSet())
+            statementService.deleteAllById(toRemove.map { objectId2statementId[it]!! }.toSet())
         }
 
         // Create new object statements
@@ -125,7 +125,7 @@ class StatementCollectionPropertyUpdater(
         }
 
         if (toRemove.isNotEmpty()) {
-            statementService.delete(toRemove)
+            statementService.deleteAllById(toRemove)
         }
     }
 
@@ -165,7 +165,7 @@ class StatementCollectionPropertyUpdater(
 
         // Remove unwanted object statements
         if (toRemove.isNotEmpty()) {
-            statementService.delete(toRemove.map { objectId2statementId[it]!! }.flatten().map { it.id }.toSet())
+            statementService.deleteAllById(toRemove.map { objectId2statementId[it]!! }.flatten().map { it.id }.toSet())
         }
 
         // Create new object statements
@@ -237,7 +237,7 @@ class StatementCollectionPropertyUpdater(
         }
 
         if (toRemove.isNotEmpty()) {
-            statementService.delete(toRemove)
+            statementService.deleteAllById(toRemove)
         }
     }
 }

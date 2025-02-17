@@ -407,7 +407,7 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
         val comparisonId = ThingId("R123")
         val comparisonRelatedResource = listOf(createComparisonRelatedResource())
 
-        every { comparisonService.findAllRelatedResources(comparisonId, any()) } returns pageOf(comparisonRelatedResource)
+        every { comparisonService.findAllRelatedResourcesById(comparisonId, any()) } returns pageOf(comparisonRelatedResource)
 
         documentedGetRequestTo("/api/comparisons/{id}/related-resources", comparisonId)
             .accept(COMPARISON_JSON_V2)
@@ -424,7 +424,7 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { comparisonService.findAllRelatedResources(comparisonId, any()) }
+        verify(exactly = 1) { comparisonService.findAllRelatedResourcesById(comparisonId, any()) }
     }
 
     @Test
@@ -492,7 +492,7 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
         val comparisonId = ThingId("R123")
         val comparisonRelatedFigure = listOf(createComparisonRelatedFigure())
 
-        every { comparisonService.findAllRelatedFigures(comparisonId, any()) } returns pageOf(comparisonRelatedFigure)
+        every { comparisonService.findAllRelatedFiguresById(comparisonId, any()) } returns pageOf(comparisonRelatedFigure)
 
         documentedGetRequestTo("/api/comparisons/{id}/related-figures", comparisonId)
             .accept(COMPARISON_JSON_V2)
@@ -509,7 +509,7 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { comparisonService.findAllRelatedFigures(comparisonId, any()) }
+        verify(exactly = 1) { comparisonService.findAllRelatedFiguresById(comparisonId, any()) }
     }
 
     @Test

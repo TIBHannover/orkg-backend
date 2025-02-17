@@ -70,8 +70,8 @@ internal class BulkStatementControllerUnitTest : MockMvcBaseTest("bulk-statement
 
         every { statementService.findAll(subjectId = r1, pageable = any()) } returns pageOf(s1, pageable = pageable)
         every { statementService.findAll(subjectId = r3, pageable = any()) } returns pageOf(s2, pageable = pageable)
-        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
-        every { statementService.findAllDescriptions(any()) } returns emptyMap()
+        every { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) } returns emptyMap()
+        every { statementService.findAllDescriptionsById(any()) } returns emptyMap()
 
         documentedGetRequestTo("/api/statements/subjects")
             .param("ids", "$r1", "$r3")
@@ -97,10 +97,10 @@ internal class BulkStatementControllerUnitTest : MockMvcBaseTest("bulk-statement
             statementService.findAll(subjectId = r3, pageable = any())
         }
         verify(exactly = 2) {
-            statementService.countIncomingStatements(any<Set<ThingId>>())
+            statementService.countAllIncomingStatementsById(any<Set<ThingId>>())
         }
         verify(exactly = 2) {
-            statementService.findAllDescriptions(any())
+            statementService.findAllDescriptionsById(any())
         }
     }
 
@@ -128,8 +128,8 @@ internal class BulkStatementControllerUnitTest : MockMvcBaseTest("bulk-statement
 
         every { statementService.findAll(objectId = r2, pageable = any()) } returns pageOf(s1, pageable = pageable)
         every { statementService.findAll(objectId = r4, pageable = any()) } returns pageOf(s2, pageable = pageable)
-        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
-        every { statementService.findAllDescriptions(any()) } returns emptyMap()
+        every { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) } returns emptyMap()
+        every { statementService.findAllDescriptionsById(any()) } returns emptyMap()
 
         documentedGetRequestTo("/api/statements/objects")
             .param("ids", "$r2", "$r4")
@@ -155,8 +155,8 @@ internal class BulkStatementControllerUnitTest : MockMvcBaseTest("bulk-statement
             statementService.findAll(objectId = r4, pageable = any())
         }
         verify(exactly = 2) {
-            statementService.countIncomingStatements(any<Set<ThingId>>())
-            statementService.findAllDescriptions(any())
+            statementService.countAllIncomingStatementsById(any<Set<ThingId>>())
+            statementService.findAllDescriptionsById(any())
         }
     }
 
@@ -208,8 +208,8 @@ internal class BulkStatementControllerUnitTest : MockMvcBaseTest("bulk-statement
         every { statementService.update(match { it.statementId == s1.id || it.statementId == s2.id }) } just runs
         every { statementService.findById(s1.id) } returns Optional.of(newS1)
         every { statementService.findById(s2.id) } returns Optional.of(newS2)
-        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
-        every { statementService.findAllDescriptions(any()) } returns emptyMap()
+        every { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) } returns emptyMap()
+        every { statementService.findAllDescriptionsById(any()) } returns emptyMap()
 
         documentedPutRequestTo("/api/statements")
             .param("ids", "${s1.id}", "${s2.id}")
@@ -236,8 +236,8 @@ internal class BulkStatementControllerUnitTest : MockMvcBaseTest("bulk-statement
             statementService.update(match { it.statementId == s2.id })
             statementService.findById(s1.id)
             statementService.findById(s2.id)
-            statementService.countIncomingStatements(any<Set<ThingId>>())
-            statementService.findAllDescriptions(any())
+            statementService.countAllIncomingStatementsById(any<Set<ThingId>>())
+            statementService.findAllDescriptionsById(any())
         }
     }
 
@@ -247,7 +247,7 @@ internal class BulkStatementControllerUnitTest : MockMvcBaseTest("bulk-statement
         val s1 = StatementId("S1")
         val s2 = StatementId("S2")
 
-        every { statementService.delete(setOf(s1, s2)) } just runs
+        every { statementService.deleteAllById(setOf(s1, s2)) } just runs
 
         // TODO: For unknown reasons, delete requests do not work with param builders.
         // Tested on spring rest docs 3.0.3.
@@ -261,6 +261,6 @@ internal class BulkStatementControllerUnitTest : MockMvcBaseTest("bulk-statement
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { statementService.delete(setOf(s1, s2)) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(s1, s2)) }
     }
 }

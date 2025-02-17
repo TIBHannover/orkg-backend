@@ -247,11 +247,11 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
         )
         val statementsToRemove = statements.map { it.id }.toSet()
 
-        every { statementService.delete(statementsToRemove) } just runs
+        every { statementService.deleteAllById(statementsToRemove) } just runs
 
         abstractTemplatePropertyUpdater.update(statements, contributorId, 3, newProperty, oldProperty)
 
-        verify(exactly = 1) { statementService.delete(statementsToRemove) }
+        verify(exactly = 1) { statementService.deleteAllById(statementsToRemove) }
     }
 
     @Test

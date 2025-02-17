@@ -65,12 +65,12 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
         val newSection = oldSection.copy(entries = oldSection.entries.take(1)).toLiteratureListListSectionDefinition()
         val statements = oldSection.toGroupedStatements()
 
-        every { statementService.delete(any<Set<StatementId>>()) } just runs
+        every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
         every { resourceService.delete(any(), contributorId) } just runs
 
         abstractLiteratureListSectionUpdater.updateListSection(contributorId, newSection, oldSection, statements)
 
-        verify(exactly = 1) { statementService.delete(setOf(StatementId("S1"), StatementId("S1_2"))) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S1"), StatementId("S1_2"))) }
         verify(exactly = 1) { resourceService.delete(ThingId("R1"), contributorId) }
     }
 
@@ -81,12 +81,12 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
         val newSection = oldSection.copy(entries = oldSection.entries.drop(1)).toLiteratureListListSectionDefinition()
         val statements = oldSection.toGroupedStatements()
 
-        every { statementService.delete(any<Set<StatementId>>()) } just runs
+        every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
         every { resourceService.delete(any(), contributorId) } just runs
 
         abstractLiteratureListSectionUpdater.updateListSection(contributorId, newSection, oldSection, statements)
 
-        verify(exactly = 1) { statementService.delete(setOf(StatementId("S0"), StatementId("S0_2"), StatementId("S0_3"))) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S0"), StatementId("S0_2"), StatementId("S0_3"))) }
         verify(exactly = 1) { resourceService.delete(ThingId("R0"), contributorId) }
     }
 
@@ -103,7 +103,7 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
         every { abstractLiteratureListSectionCreator.createListSectionEntry(contributorId, any()) } returns entryId
         every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
         every { singleStatementPropertyUpdater.updateOptionalProperty(any<List<GeneralStatement>>(), any(), any(), any(), any<String>()) } just runs
-        every { statementService.delete(any<Set<StatementId>>()) } just runs
+        every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
 
         abstractLiteratureListSectionUpdater.updateListSection(contributorId, newSection, oldSection, statements)
 
@@ -145,7 +145,7 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
                 label = "paper entry description"
             )
         }
-        verify(exactly = 1) { statementService.delete(setOf(StatementId("S0_2"), StatementId("S1_2"))) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S0_2"), StatementId("S1_2"))) }
         verify(exactly = 1) {
             abstractLiteratureListSectionCreator.createListSectionEntry(
                 contributorId = contributorId,
@@ -213,7 +213,7 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
         every { abstractLiteratureListSectionCreator.createListSectionEntry(contributorId, any()) } returns entryId
         every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
         every { singleStatementPropertyUpdater.updateOptionalProperty(any<List<GeneralStatement>>(), any(), any(), any(), any<String>()) } just runs
-        every { statementService.delete(any<Set<StatementId>>()) } just runs
+        every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
 
         abstractLiteratureListSectionUpdater.updateListSection(contributorId, newSection, oldSection, statements)
 
@@ -227,7 +227,7 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
                 )
             )
         }
-        verify(exactly = 1) { statementService.delete(setOf(StatementId("S1_2"))) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S1_2"))) }
         verify(exactly = 1) {
             abstractLiteratureListSectionCreator.createListSectionEntry(contributorId, entry)
         }

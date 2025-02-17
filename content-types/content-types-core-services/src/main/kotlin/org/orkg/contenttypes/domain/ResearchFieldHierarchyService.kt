@@ -18,26 +18,26 @@ class ResearchFieldHierarchyService(
     private val researchFieldRepository: ResearchFieldRepository
 ) : ResearchFieldHierarchyUseCases {
 
-    override fun findChildren(id: ThingId, pageable: Pageable): Page<ResearchFieldWithChildCount> =
+    override fun findAllChildrenByAncestorId(id: ThingId, pageable: Pageable): Page<ResearchFieldWithChildCount> =
         researchFieldRepository.findById(id)
-            .map { repository.findChildren(id, pageable) }
+            .map { repository.findAllChildrenByAncestorId(id, pageable) }
             .orElseThrow { ResearchFieldNotFound(id) }
 
-    override fun findParents(id: ThingId, pageable: Pageable): Page<Resource> =
+    override fun findAllParentsByChildId(id: ThingId, pageable: Pageable): Page<Resource> =
         researchFieldRepository.findById(id)
-            .map { repository.findParents(id, pageable) }
+            .map { repository.findAllParentsByChildId(id, pageable) }
             .orElseThrow { ResearchFieldNotFound(id) }
 
-    override fun findRoots(id: ThingId, pageable: Pageable): Page<Resource> =
+    override fun findAllRootsByDescendantId(id: ThingId, pageable: Pageable): Page<Resource> =
         researchFieldRepository.findById(id)
-            .map { repository.findRoots(id, pageable) }
+            .map { repository.findAllRootsByDescendantId(id, pageable) }
             .orElseThrow { ResearchFieldNotFound(id) }
 
     override fun findAllRoots(pageable: Pageable): Page<Resource> =
         repository.findAllRoots(pageable)
 
-    override fun findResearchFieldHierarchy(id: ThingId, pageable: Pageable): Page<ResearchFieldHierarchyEntry> =
+    override fun findResearchFieldHierarchyByResearchFieldId(id: ThingId, pageable: Pageable): Page<ResearchFieldHierarchyEntry> =
         researchFieldRepository.findById(id)
-            .map { repository.findResearchFieldHierarchy(id, pageable) }
+            .map { repository.findResearchFieldHierarchyByResearchFieldId(id, pageable) }
             .orElseThrow { ResearchFieldNotFound(id) }
 }

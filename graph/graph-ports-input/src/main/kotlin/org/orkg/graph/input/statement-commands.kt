@@ -31,9 +31,9 @@ interface UpdateStatementUseCase {
 }
 
 interface DeleteStatementUseCase {
-    fun delete(statementId: StatementId)
-    fun delete(statementIds: Set<StatementId>)
+    fun deleteById(statementId: StatementId)
+    fun deleteAllById(statementIds: Set<StatementId>)
 
     // For tests only!
-    fun removeAll()
+    fun deleteAll()
 }

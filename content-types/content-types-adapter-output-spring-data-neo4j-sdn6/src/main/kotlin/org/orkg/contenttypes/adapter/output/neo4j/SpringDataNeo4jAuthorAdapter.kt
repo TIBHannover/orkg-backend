@@ -23,8 +23,8 @@ class SpringDataNeo4jAuthorAdapter(
         neo4jRepository.findTopAuthorsOfComparison(id, pageable)
             .map(Neo4jAuthorOfComparison::toComparisonAuthor)
 
-    override fun findAuthorsLeaderboardPerProblem(problemId: ThingId, pageable: Pageable): Page<PaperAuthor> =
-        neo4jRepository.findAuthorsLeaderboardPerProblem(problemId, pageable)
+    override fun findAllByProblemId(problemId: ThingId, pageable: Pageable): Page<PaperAuthor> =
+        neo4jRepository.findAllByProblemId(problemId, pageable)
             .map(Neo4jAuthorPerProblem::toPaperAuthor)
 }
 

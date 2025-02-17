@@ -133,7 +133,7 @@ class TemplateController(
         currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
-        service.createTemplateProperty(request.toCreateCommand(userId, id))
+        service.create(request.toCreateCommand(userId, id))
         val location = uriComponentsBuilder
             .path("/api/templates/{id}")
             .buildAndExpand(id)
@@ -151,7 +151,7 @@ class TemplateController(
         currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
-        service.updateTemplateProperty(request.toUpdateCommand(propertyId, userId, id))
+        service.update(request.toUpdateCommand(propertyId, userId, id))
         val location = uriComponentsBuilder
             .path("/api/templates/{id}")
             .buildAndExpand(id)

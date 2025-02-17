@@ -36,15 +36,16 @@ class ClassHierarchyController(
 ) : ClassHierarchyEntryRepresentationAdapter, ChildClassRepresentationAdapter {
 
     @GetMapping("/{id}/children")
-    fun findChildren(
+    fun findAllChildrenByAncestorId(
         @PathVariable id: ThingId,
         pageable: Pageable
-    ): Page<ChildClassRepresentation> = service.findChildren(id, pageable).mapToChildClassRepresentation()
+    ): Page<ChildClassRepresentation> =
+        service.findAllChildrenByAncestorId(id, pageable).mapToChildClassRepresentation()
 
     @GetMapping("/{id}/parent")
-    fun findParent(
+    fun findParentByChildId(
         @PathVariable id: ThingId
-    ): ResponseEntity<ClassRepresentation> = service.findParent(id)
+    ): ResponseEntity<ClassRepresentation> = service.findParentByChildId(id)
         .mapToClassRepresentation()
         .map(::ok)
         .orElseGet { noContent().build() }
@@ -55,13 +56,13 @@ class ClassHierarchyController(
         @PathVariable id: ThingId,
         uriComponentsBuilder: UriComponentsBuilder
     ): ResponseEntity<Any> {
-        service.delete(id)
+        service.deleteByChildId(id)
         return noContent().build()
     }
 
     @PostMapping("/{id}/parent", consumes = [MediaType.APPLICATION_JSON_VALUE])
     @RequireCuratorRole
-    fun postParentRelation(
+    fun createParentRelation(
         @PathVariable id: ThingId,
         @RequestBody request: CreateParentRequest,
         uriComponentsBuilder: UriComponentsBuilder,
@@ -76,9 +77,9 @@ class ClassHierarchyController(
     }
 
     @GetMapping("/{id}/root")
-    fun findRoot(
+    fun findRootByDescendantId(
         @PathVariable id: ThingId
-    ): ResponseEntity<ClassRepresentation> = service.findRoot(id)
+    ): ResponseEntity<ClassRepresentation> = service.findRootByDescendantId(id)
         .mapToClassRepresentation()
         .map(::ok)
         .orElseGet { noContent().build() }
@@ -90,7 +91,7 @@ class ClassHierarchyController(
 
     @PostMapping("/{id}/children", consumes = [MediaType.APPLICATION_JSON_VALUE])
     @RequireCuratorRole
-    fun postChildrenRelation(
+    fun createChildRelations(
         @PathVariable id: ThingId,
         @RequestBody request: CreateChildrenRequest,
         uriComponentsBuilder: UriComponentsBuilder,
@@ -106,7 +107,7 @@ class ClassHierarchyController(
 
     @PatchMapping("/{id}/children", consumes = [MediaType.APPLICATION_JSON_VALUE])
     @RequireCuratorRole
-    fun patchChildrenRelation(
+    fun updateChildRelations(
         @PathVariable id: ThingId,
         @RequestBody request: CreateChildrenRequest,
         uriComponentsBuilder: UriComponentsBuilder,

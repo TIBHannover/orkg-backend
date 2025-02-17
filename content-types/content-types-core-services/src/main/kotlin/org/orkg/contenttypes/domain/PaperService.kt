@@ -121,7 +121,7 @@ class PaperService(
 
     override fun countAllStatementsAboutPapers(pageable: Pageable): Page<PaperWithStatementCount> {
         return paperRepository.findAll(pageable = pageable).pmap { paper ->
-            val totalStatementCount = statementRepository.countByIdRecursive(paper.id)
+            val totalStatementCount = statementRepository.countStatementsInPaperSubgraph(paper.id)
             PaperWithStatementCount(paper.id, paper.label, totalStatementCount)
         }
     }
@@ -196,7 +196,7 @@ class PaperService(
         return steps.execute(command, CreatePaperState()).paperId!!
     }
 
-    override fun createContribution(command: CreateContributionCommand): ThingId {
+    override fun create(command: CreateContributionCommand): ThingId {
         val steps = listOf(
             ContributionTempIdValidator(),
             ContributionPaperValidator(resourceRepository),

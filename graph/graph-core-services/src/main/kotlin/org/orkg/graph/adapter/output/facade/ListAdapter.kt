@@ -71,7 +71,7 @@ class ListAdapter(
                     id = statementRepository.nextIdentity(),
                     subject = listResource,
                     predicate = predicate,
-                    `object` = thingRepository.findByThingId(entry.key).get(),
+                    `object` = thingRepository.findById(entry.key).get(),
                     createdAt = OffsetDateTime.now(clock),
                     createdBy = contributorId,
                     index = entry.value
@@ -98,13 +98,13 @@ class ListAdapter(
 
     override fun nextIdentity(): ThingId = resourceRepository.nextIdentity()
 
-    override fun exists(id: ThingId): Boolean =
+    override fun existsById(id: ThingId): Boolean =
         resourceRepository.findById(id)
             .filter { Classes.list in it.classes }
             .isPresent
 
-    override fun delete(id: ThingId) {
-        if (exists(id)) {
+    override fun deleteById(id: ThingId) {
+        if (existsById(id)) {
             resourceRepository.deleteById(id)
         }
     }

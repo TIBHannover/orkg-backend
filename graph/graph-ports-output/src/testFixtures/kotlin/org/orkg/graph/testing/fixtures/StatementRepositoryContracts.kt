@@ -167,24 +167,24 @@ fun <
             context("recursively by resource id") {
                 it("returns the correct result") {
                     graph.forEach(saveStatement)
-                    val actual = repository.countByIdRecursive(ThingId("R1"))
+                    val actual = repository.countStatementsInPaperSubgraph(ThingId("R1"))
                     actual shouldBe 6
                 }
                 it("returns zero when the resource is missing in the graph") {
                     graph.forEach(saveStatement)
-                    val actual = repository.countByIdRecursive(ThingId("missing"))
+                    val actual = repository.countStatementsInPaperSubgraph(ThingId("missing"))
                     actual shouldBe 0
                 }
             }
             context("about a resource") {
                 it("returns the correct result") {
                     graph.forEach(saveStatement)
-                    repository.countIncomingStatements(ThingId("R1")) shouldBe 1
-                    repository.countIncomingStatements(ThingId("R3")) shouldBe 2
+                    repository.countIncomingStatementsById(ThingId("R1")) shouldBe 1
+                    repository.countIncomingStatementsById(ThingId("R3")) shouldBe 2
                 }
                 it("returns zero when the resource is missing in the graph") {
                     graph.forEach(saveStatement)
-                    val actual = repository.countIncomingStatements(ThingId("missing"))
+                    val actual = repository.countIncomingStatementsById(ThingId("missing"))
                     actual shouldBe 0
                 }
             }
@@ -198,18 +198,18 @@ fun <
                         // 10L to 0L
                     ).mapKeys { ThingId("R${it.key}") }
                     val resourceIds = expected.keys + ThingId("R10")
-                    val actual = repository.countIncomingStatements(resourceIds)
+                    val actual = repository.countAllIncomingStatementsById(resourceIds)
                     actual shouldContainExactly expected
                 }
                 it("returns empty result when no ids are given") {
                     graph.forEach(saveStatement)
-                    val actual = repository.countIncomingStatements(setOf())
+                    val actual = repository.countAllIncomingStatementsById(setOf())
                     actual.size shouldBe 0
                 }
                 // TODO: do we expect results for missing resource ids to be zero or missing?
                 it("returns nothing when the given resource is missing in the graph") {
                     graph.forEach(saveStatement)
-                    val actual = repository.countIncomingStatements(setOf(ThingId("missing")))
+                    val actual = repository.countAllIncomingStatementsById(setOf(ThingId("missing")))
                     actual.size shouldBe 0
                 }
             }
@@ -244,7 +244,7 @@ fun <
 
         it("returns the correct result") {
             graph.forEach(saveStatement)
-            val result = repository.findAllDescriptions(graph.map { it.subject.id }.toSet())
+            val result = repository.findAllDescriptionsById(graph.map { it.subject.id }.toSet())
             result shouldBe mapOf(
                 graph[0].subject.id to "description 1",
                 graph[1].subject.id to "description 2"
@@ -252,12 +252,12 @@ fun <
         }
         it("returns empty result when no ids are given") {
             graph.forEach(saveStatement)
-            val actual = repository.countIncomingStatements(setOf())
+            val actual = repository.countAllIncomingStatementsById(setOf())
             actual.size shouldBe 0
         }
         it("returns nothing when the given resource is missing in the graph") {
             graph.forEach(saveStatement)
-            val actual = repository.countIncomingStatements(setOf(ThingId("missing")))
+            val actual = repository.countAllIncomingStatementsById(setOf(ThingId("missing")))
             actual.size shouldBe 0
         }
     }

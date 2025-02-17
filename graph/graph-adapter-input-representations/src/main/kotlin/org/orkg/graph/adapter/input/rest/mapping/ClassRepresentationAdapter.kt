@@ -28,7 +28,7 @@ interface ClassRepresentationAdapter {
         val descriptions = when {
             content.isNotEmpty() -> {
                 val ids = content.mapTo(mutableSetOf()) { it.id }
-                statementService.findAllDescriptions(ids)
+                statementService.findAllDescriptionsById(ids)
             }
             else -> emptyMap()
         }

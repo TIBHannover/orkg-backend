@@ -14,7 +14,7 @@ import org.springframework.data.domain.Pageable
 interface RetrieveResearchProblemUseCase {
     fun findById(id: ThingId): Optional<Resource>
 
-    fun findFieldsPerProblem(problemId: ThingId): List<FieldWithFreq>
+    fun findAllResearchFields(problemId: ThingId): List<FieldWithFreq>
 
     fun findAllEntitiesBasedOnClassByProblem(
         problemId: ThingId,
@@ -25,7 +25,7 @@ interface RetrieveResearchProblemUseCase {
 
     fun findTopResearchProblems(): List<Resource>
 
-    fun findContributorsPerProblem(problemId: ThingId, pageable: Pageable): List<ContributorPerProblem>
+    fun findAllContributorsPerProblem(problemId: ThingId, pageable: Pageable): List<ContributorPerProblem>
 
-    fun forDataset(id: ThingId, pageable: Pageable): Optional<Page<ResearchProblem>>
+    fun findAllByDatasetId(id: ThingId, pageable: Pageable): Optional<Page<ResearchProblem>>
 }

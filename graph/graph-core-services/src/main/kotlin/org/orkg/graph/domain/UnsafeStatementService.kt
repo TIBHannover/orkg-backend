@@ -21,11 +21,11 @@ class UnsafeStatementService(
 ) : UnsafeStatementUseCases {
 
     override fun create(command: CreateStatementUseCase.CreateCommand): StatementId {
-        val subject = thingRepository.findByThingId(command.subjectId)
+        val subject = thingRepository.findById(command.subjectId)
             .orElseThrow { StatementSubjectNotFound(command.subjectId) }
         val predicate = predicateRepository.findById(command.predicateId)
             .orElseThrow { StatementPredicateNotFound(command.predicateId) }
-        val `object` = thingRepository.findByThingId(command.objectId)
+        val `object` = thingRepository.findById(command.objectId)
             .orElseThrow { StatementObjectNotFound(command.objectId) }
         val statement = GeneralStatement(
             id = command.id ?: statementRepository.nextIdentity(),
@@ -55,13 +55,13 @@ class UnsafeStatementService(
         }
     }
 
-    override fun delete(statementId: StatementId) {
+    override fun deleteById(statementId: StatementId) {
         statementRepository.deleteByStatementId(statementId)
     }
 
-    override fun delete(statementIds: Set<StatementId>) {
+    override fun deleteAllById(statementIds: Set<StatementId>) {
         statementRepository.deleteByStatementIds(statementIds)
     }
 
-    override fun removeAll() = statementRepository.deleteAll()
+    override fun deleteAll() = statementRepository.deleteAll()
 }

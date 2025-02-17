@@ -45,5 +45,5 @@ interface RetrievePaperUseCase {
 }
 
 interface LegacyRetrievePaperUseCase {
-    fun findPapersRelatedToResource(related: ThingId, pageable: Pageable): Page<PaperResourceWithPath>
+    fun findAllPapersRelatedToResource(related: ThingId, pageable: Pageable): Page<PaperResourceWithPath>
 }

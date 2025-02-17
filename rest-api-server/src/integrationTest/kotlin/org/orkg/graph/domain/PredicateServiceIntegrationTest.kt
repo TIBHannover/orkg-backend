@@ -17,7 +17,7 @@ internal class PredicateServiceIntegrationTest {
 
     @BeforeEach
     fun setup() {
-        service.removeAll()
+        service.deleteAll()
 
         assertThat(service.findAll(PageRequest.of(0, 10))).hasSize(0)
     }

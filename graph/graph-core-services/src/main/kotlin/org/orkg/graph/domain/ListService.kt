@@ -26,9 +26,9 @@ class ListService(
         val label = Label.ofOrNull(command.label)?.value
             ?: throw InvalidLabel()
         val id = command.id
-            ?.also { id -> thingRepository.findByThingId(id).ifPresent { throw ThingAlreadyExists(id) } }
+            ?.also { id -> thingRepository.findById(id).ifPresent { throw ThingAlreadyExists(id) } }
             ?: repository.nextIdentity()
-        if (command.elements.isNotEmpty() && !thingRepository.existsAll(command.elements.toSet()))
+        if (command.elements.isNotEmpty() && !thingRepository.existsAllById(command.elements.toSet()))
             throw ListElementNotFound()
         val list = List(
             id = id,
@@ -46,11 +46,11 @@ class ListService(
         repository.findById(id)
 
     override fun findAllElementsById(id: ThingId, pageable: Pageable): Page<Thing> {
-        if (!exists(id)) throw ListNotFound(id)
+        if (!existsById(id)) throw ListNotFound(id)
         return repository.findAllElementsById(id, pageable)
     }
 
-    override fun exists(id: ThingId): Boolean = repository.exists(id)
+    override fun existsById(id: ThingId): Boolean = repository.existsById(id)
 
     override fun update(command: UpdateListUseCase.UpdateCommand) {
         val list = repository.findById(command.id)
@@ -61,7 +61,7 @@ class ListService(
             Label.ofOrNull(it)?.value ?: throw InvalidLabel()
         }
         val elements = command.elements?.also {
-            if (it.isNotEmpty() && !thingRepository.existsAll(it.toSet()))
+            if (it.isNotEmpty() && !thingRepository.existsAllById(it.toSet()))
                 throw ListElementNotFound()
         }
         val updated = list.copy(
@@ -73,7 +73,7 @@ class ListService(
         }
     }
 
-    override fun delete(id: ThingId) {
+    override fun deleteById(id: ThingId) {
         repository.findById(id).ifPresent {
             if (!it.modifiable) {
                 throw ListNotModifiable(id)
@@ -81,7 +81,7 @@ class ListService(
             if (thingRepository.isUsedAsObject(id)) {
                 throw ListInUse(id)
             }
-            repository.delete(id)
+            repository.deleteById(id)
         }
     }
 }

@@ -39,10 +39,10 @@ internal class StatisticsControllerIntegrationTest : MockMvcBaseTest("statistics
     fun setup() {
         val tempPageable = PageRequest.of(0, 10)
 
-        resourceService.removeAll()
-        predicateService.removeAll()
-        literalService.removeAll()
-        classService.removeAll()
+        resourceService.deleteAll()
+        predicateService.deleteAll()
+        literalService.deleteAll()
+        classService.deleteAll()
 
         assertThat(resourceService.findAll(tempPageable)).hasSize(0)
         assertThat(predicateService.findAll(tempPageable)).hasSize(0)

@@ -32,8 +32,8 @@ class ResearchProblemService(
     override fun findById(id: ThingId): Optional<Resource> =
         resourceService.findById(id).filter { Classes.problem in it.classes }
 
-    override fun findFieldsPerProblem(problemId: ThingId): List<FieldWithFreq> {
-        return researchProblemRepository.findResearchFieldsPerProblem(problemId).map {
+    override fun findAllResearchFields(problemId: ThingId): List<FieldWithFreq> {
+        return researchProblemRepository.findAllResearchFieldsWithPaperCountByProblemId(problemId).map {
             FieldWithFreq(it.field, it.freq)
         }
     }
@@ -100,16 +100,16 @@ class ResearchProblemService(
             findTopResearchProblemsGoingBack(listOfMonths.drop(1), newResult)
     }
 
-    override fun findContributorsPerProblem(problemId: ThingId, pageable: Pageable): List<ContributorPerProblem> {
+    override fun findAllContributorsPerProblem(problemId: ThingId, pageable: Pageable): List<ContributorPerProblem> {
         return researchProblemRepository
-            .findContributorsLeaderboardPerProblem(problemId, pageable)
+            .findAllContributorsPerProblem(problemId, pageable)
             .content
     }
 
-    override fun forDataset(id: ThingId, pageable: Pageable): Optional<Page<ResearchProblem>> {
+    override fun findAllByDatasetId(id: ThingId, pageable: Pageable): Optional<Page<ResearchProblem>> {
         val dataset = resourceService.findById(id)
         if (!dataset.isPresent) return Optional.empty()
-        return Optional.of(researchProblemQueries.findResearchProblemForDataset(id, pageable))
+        return Optional.of(researchProblemQueries.findAllByDatasetId(id, pageable))
     }
 
     private fun findAllListedEntitiesBasedOnClassByProblem(

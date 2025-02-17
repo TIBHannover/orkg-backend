@@ -22,11 +22,11 @@ import org.springframework.data.domain.Sort
 interface StatementReadRepository : EntityRepository<GeneralStatement, StatementId> {
     fun count(): Long
 
-    fun countByIdRecursive(id: ThingId): Long // Subject id
+    fun countStatementsInPaperSubgraph(id: ThingId): Long // Subject id
 
-    fun countIncomingStatements(ids: Set<ThingId>): Map<ThingId, Long>
+    fun countAllIncomingStatementsById(ids: Set<ThingId>): Map<ThingId, Long>
 
-    fun countIncomingStatements(id: ThingId): Long
+    fun countIncomingStatementsById(id: ThingId): Long
 
     fun countPredicateUsage(pageable: Pageable): Page<PredicateUsageCount>
 
@@ -78,7 +78,7 @@ interface StatementReadRepository : EntityRepository<GeneralStatement, Statement
         pageable: Pageable,
     ): Page<ContributorId>
 
-    fun findAllDescriptions(ids: Set<ThingId>): Map<ThingId, String>
+    fun findAllDescriptionsById(ids: Set<ThingId>): Map<ThingId, String>
 
     fun findAllPapersByObservatoryIdAndFilters(
         observatoryId: ObservatoryId?,

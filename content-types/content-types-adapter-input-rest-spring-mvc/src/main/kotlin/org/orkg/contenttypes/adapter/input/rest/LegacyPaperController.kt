@@ -39,7 +39,7 @@ class LegacyPaperController(
 
     @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.CREATED)
-    fun add(
+    fun create(
         @RequestBody paper: LegacyCreatePaperUseCase.LegacyCreatePaperRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         @RequestParam("mergeIfExists", required = false, defaultValue = "false") mergeIfExists: Boolean,
@@ -56,11 +56,11 @@ class LegacyPaperController(
     }
 
     @GetMapping
-    fun findPaperResourcesRelatedTo(
+    fun findAllPapersRelatedToResource(
         @RequestParam("linkedTo", required = true) id: ThingId,
         pageable: Pageable,
         capabilities: MediaTypeCapabilities
     ): Page<PaperResourceWithPathRepresentation> =
-        service.findPapersRelatedToResource(id, pageable)
+        service.findAllPapersRelatedToResource(id, pageable)
             .mapToPaperResourceWithPathRepresentation(capabilities)
 }

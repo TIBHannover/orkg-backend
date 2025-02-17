@@ -75,7 +75,7 @@ internal class ComparisonRelatedFigureDeleterUnitTest : MockkBaseTest {
             createStatement(StatementId("Statement1")),
             createStatement(StatementId("Statement2"))
         )
-        every { statementService.delete(any<Set<StatementId>>()) } just runs
+        every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
         every { resourceService.delete(comparisonRelatedFigureId, contributorId) } just runs
 
         contributionCreator.execute(comparisonId, comparisonRelatedFigureId, contributorId)
@@ -110,7 +110,7 @@ internal class ComparisonRelatedFigureDeleterUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.delete(
+            statementService.deleteAllById(
                 setOf(hasRelatedFigure.id, StatementId("Statement1"), StatementId("Statement2"))
             )
         }
@@ -298,7 +298,7 @@ internal class ComparisonRelatedFigureDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         } returns pageOf(hasRelatedFigure, createStatement(`object` = comparisonRelatedFigure))
-        every { statementService.delete(any<Set<StatementId>>()) } just runs
+        every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
 
         contributionCreator.execute(comparisonId, comparisonRelatedFigureId, contributorId)
 
@@ -325,6 +325,6 @@ internal class ComparisonRelatedFigureDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(setOf(hasRelatedFigure.id)) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(hasRelatedFigure.id)) }
     }
 }

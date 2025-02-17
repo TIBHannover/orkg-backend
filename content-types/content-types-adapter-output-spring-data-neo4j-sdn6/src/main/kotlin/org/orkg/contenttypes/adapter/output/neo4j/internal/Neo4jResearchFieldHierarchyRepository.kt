@@ -21,7 +21,7 @@ RETURN resource, childCount $PAGE_PARAMS""",
         countQuery = """
 MATCH (p:ResearchField {id: $id})-[:RELATED {predicate_id: "P36"}]->(c:ResearchField)
 RETURN COUNT(c) as cnt""")
-    fun findChildren(id: ThingId, pageable: Pageable): Page<Neo4jResearchFieldWithChildCount>
+    fun findAllChildrenByAncestorId(id: ThingId, pageable: Pageable): Page<Neo4jResearchFieldWithChildCount>
 
     @Query("""
 MATCH (:ResearchField {id: $id})<-[:RELATED {predicate_id: "P36"}]-(p:ResearchField)
@@ -31,7 +31,7 @@ RETURN p $PAGE_PARAMS""",
         countQuery = """
 MATCH (:ResearchField {id: $id})<-[:RELATED {predicate_id: "P36"}]-(p:ResearchField)
 RETURN COUNT(p)""")
-    fun findParents(id: ThingId, pageable: Pageable): Page<Neo4jResource>
+    fun findAllParentsByChildId(id: ThingId, pageable: Pageable): Page<Neo4jResource>
 
     @Query("""
 MATCH (:ResearchField {id: $id})<-[:RELATED* {predicate_id: "P36"}]-(r:ResearchField)
@@ -41,7 +41,7 @@ RETURN DISTINCT r $PAGE_PARAMS""",
 MATCH (:ResearchField {id: $id})<-[:RELATED* {predicate_id: "P36"}]-(r:ResearchField)
 WHERE NOT (r)<-[:RELATED {predicate_id: "P36"}]-(:ResearchField)
 RETURN COUNT(DISTINCT r)""")
-    fun findRoots(id: ThingId, pageable: Pageable): Page<Neo4jResource>
+    fun findAllRootsByDescendantId(id: ThingId, pageable: Pageable): Page<Neo4jResource>
 
     @Query("""
 MATCH (r:ResearchField)
@@ -69,7 +69,7 @@ MATCH (c:ResearchField {id: $id})<-[:RELATED*0.. {predicate_id: "P36"}]-(p:Resea
 WITH COLLECT(p) + COLLECT(c) AS researchFields
 UNWIND researchFields AS researchField
 RETURN COUNT(DISTINCT researchField)""")
-    fun findResearchFieldHierarchy(id: ThingId, pageable: Pageable): Page<Neo4jResearchFieldHierarchyEntry>
+    fun findResearchFieldHierarchyByResearchFieldId(id: ThingId, pageable: Pageable): Page<Neo4jResearchFieldHierarchyEntry>
 }
 
 data class Neo4jResearchFieldWithChildCount(

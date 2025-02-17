@@ -14,8 +14,8 @@ class InMemoryClassRelationRepository(
         classRelations.forEach(inMemoryGraph::add)
 
     override fun deleteByChildId(childId: ThingId) =
-        inMemoryGraph.findClassRelationByChildId(childId).ifPresent(inMemoryGraph::remove)
+        inMemoryGraph.findClassRelationByChildId(childId).ifPresent(inMemoryGraph::delete)
 
     override fun deleteAll() =
-        inMemoryGraph.removeAllClassRelations()
+        inMemoryGraph.deleteAllClassRelations()
 }

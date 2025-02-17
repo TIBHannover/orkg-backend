@@ -22,7 +22,7 @@ interface ThingIdValidator {
                 }
                 Either.left(id)
             } else {
-                thingRepository.findByThingId(ThingId(id))
+                thingRepository.findById(ThingId(id))
                     .map { Either.right<String, Thing>(it) }
                     .orElseThrow { ThingNotFound(id) }
             }

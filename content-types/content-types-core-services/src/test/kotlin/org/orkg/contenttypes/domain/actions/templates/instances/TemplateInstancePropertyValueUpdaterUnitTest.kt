@@ -78,7 +78,7 @@ internal class TemplateInstancePropertyValueUpdaterUnitTest : MockkBaseTest {
         )
 
         every { statementService.findAll(subjectId = command.subject, pageable = PageRequests.ALL) } returns pageOf(statementToRemove)
-        every { statementService.delete(setOf(statementToRemove.id)) } just runs
+        every { statementService.deleteAllById(setOf(statementToRemove.id)) } just runs
 
         val result = templateInstancePropertyValueUpdater(command, state)
 
@@ -93,6 +93,6 @@ internal class TemplateInstancePropertyValueUpdaterUnitTest : MockkBaseTest {
         }
 
         verify(exactly = 1) { statementService.findAll(subjectId = command.subject, pageable = PageRequests.ALL) }
-        verify(exactly = 1) { statementService.delete(setOf(statementToRemove.id)) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(statementToRemove.id)) }
     }
 }

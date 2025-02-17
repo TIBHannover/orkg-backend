@@ -10,7 +10,7 @@ interface ChildClassRepresentationAdapter : ClassRepresentationAdapter {
         val descriptions = when {
             content.isNotEmpty() -> {
                 val ids = content.mapTo(mutableSetOf()) { it.`class`.id }
-                statementService.findAllDescriptions(ids)
+                statementService.findAllDescriptionsById(ids)
             }
             else -> emptyMap()
         }

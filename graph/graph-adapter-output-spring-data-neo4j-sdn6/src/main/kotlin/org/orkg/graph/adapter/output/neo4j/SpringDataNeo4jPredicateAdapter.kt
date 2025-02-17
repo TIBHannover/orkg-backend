@@ -45,7 +45,7 @@ class SpringDataNeo4jPredicateAdapter(
     private val idGenerator: Neo4jPredicateIdGenerator,
     private val cypherQueryBuilderFactory: CypherQueryBuilderFactory,
 ) : PredicateRepository {
-    override fun exists(id: ThingId): Boolean = neo4jRepository.existsById(id)
+    override fun existsById(id: ThingId): Boolean = neo4jRepository.existsById(id)
 
     @Cacheable(key = "#id")
     override fun findById(id: ThingId): Optional<Predicate> =

@@ -29,9 +29,9 @@ internal class StatementServiceIntegrationTest {
     fun setup() {
         val tempPageable = PageRequest.of(0, 10)
 
-        resourceService.removeAll()
-        predicateService.removeAll()
-        service.removeAll()
+        resourceService.deleteAll()
+        predicateService.deleteAll()
+        service.deleteAll()
 
         assertThat(resourceService.findAll(tempPageable)).hasSize(0)
         assertThat(predicateService.findAll(tempPageable)).hasSize(0)

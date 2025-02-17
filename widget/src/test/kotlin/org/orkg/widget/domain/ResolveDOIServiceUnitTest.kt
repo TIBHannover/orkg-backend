@@ -62,15 +62,15 @@ internal class ResolveDOIServiceUnitTest : MockkDescribeSpec({
                     .copy(classes = setOf(ThingId(publishedClassName)))
                 every { resourceUseCases.findByDOI("some DOI", publishableClasses) } returns Optional.of(resource)
                 if (numStatements != null)
-                    every { statementUseCases.countStatements(ThingId("R1")) } returns numStatements
+                    every { statementUseCases.countStatementsInPaperSubgraph(ThingId("R1")) } returns numStatements
 
                 val result = service.resolveDOI("some DOI", null)
 
                 verify(exactly = 1) { resourceUseCases.findByDOI("some DOI", publishableClasses) }
                 if (numStatements != null)
-                    verify(exactly = 1) { statementUseCases.countStatements(ThingId("R1")) }
+                    verify(exactly = 1) { statementUseCases.countStatementsInPaperSubgraph(ThingId("R1")) }
                 else
-                    verify(exactly = 0) { statementUseCases.countStatements(ThingId("R1")) }
+                    verify(exactly = 0) { statementUseCases.countStatementsInPaperSubgraph(ThingId("R1")) }
 
                 result.asClue {
                     it.id shouldBe ThingId("R1")
@@ -99,15 +99,15 @@ internal class ResolveDOIServiceUnitTest : MockkDescribeSpec({
                     .copy(classes = setOf(ThingId(publishedClassName)))
                 every { resourceUseCases.findByDOI("some DOI", publishableClasses) } returns Optional.of(resource)
                 if (numStatements != null)
-                    every { statementUseCases.countStatements(ThingId("R1")) } returns numStatements
+                    every { statementUseCases.countStatementsInPaperSubgraph(ThingId("R1")) } returns numStatements
 
                 val result = service.resolveDOI("some DOI", null)
 
                 verify(exactly = 1) { resourceUseCases.findByDOI("some DOI", publishableClasses) }
                 if (numStatements != null)
-                    verify(exactly = 1) { statementUseCases.countStatements(ThingId("R1")) }
+                    verify(exactly = 1) { statementUseCases.countStatementsInPaperSubgraph(ThingId("R1")) }
                 else
-                    verify(exactly = 0) { statementUseCases.countStatements(ThingId("R1")) }
+                    verify(exactly = 0) { statementUseCases.countStatementsInPaperSubgraph(ThingId("R1")) }
 
                 result.asClue {
                     it.id shouldBe ThingId("R1")

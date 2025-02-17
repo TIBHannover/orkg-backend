@@ -107,10 +107,10 @@ class InMemoryGraph {
 
     fun findAllStatements(): List<GeneralStatement> = statements.values.distinct()
 
-    fun remove(thing: Thing) =
-        remove(thing.id)
+    fun delete(thing: Thing) =
+        delete(thing.id)
 
-    fun remove(thingId: ThingId): Thing? =
+    fun delete(thingId: ThingId): Thing? =
         things.remove(thingId)?.also { thing ->
             when (thing) {
                 is Resource -> resources.remove(thingId)
@@ -128,26 +128,26 @@ class InMemoryGraph {
                 .forEach { statements.remove(it.id) }
         }
 
-    fun remove(statementId: StatementId): GeneralStatement? =
+    fun delete(statementId: StatementId): GeneralStatement? =
         statements.remove(statementId)
 
-    fun remove(statement: GeneralStatement): GeneralStatement? =
-        remove(statement.id)
+    fun delete(statement: GeneralStatement): GeneralStatement? =
+        delete(statement.id)
 
-    fun remove(classRelation: ClassSubclassRelation): ClassSubclassRelation? =
+    fun delete(classRelation: ClassSubclassRelation): ClassSubclassRelation? =
         childClassIdToClassRelation.remove(classRelation.child.id)
 
-    fun removeAll() {
+    fun deleteAll() {
         statements.clear()
         things.clear()
         resources.clear()
         predicates.clear()
         classes.clear()
         literals.clear()
-        removeAllClassRelations()
+        deleteAllClassRelations()
     }
 
-    fun removeAllClassRelations() {
+    fun deleteAllClassRelations() {
         childClassIdToClassRelation.clear()
     }
 }

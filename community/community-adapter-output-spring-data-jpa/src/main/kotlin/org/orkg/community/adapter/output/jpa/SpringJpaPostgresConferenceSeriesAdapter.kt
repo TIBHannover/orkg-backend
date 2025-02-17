@@ -36,7 +36,7 @@ class SpringJpaPostgresConferenceSeriesAdapter(
     override fun findById(id: ConferenceSeriesId): Optional<ConferenceSeries> =
         postgresConferenceSeriesRepository.findById(id.value).map(ConferenceSeriesEntity::toConferenceSeries)
 
-    override fun findByOrganizationId(id: OrganizationId, pageable: Pageable): Page<ConferenceSeries> =
+    override fun findAllByOrganizationId(id: OrganizationId, pageable: Pageable): Page<ConferenceSeries> =
         postgresConferenceSeriesRepository.findByOrganizationId(id.value, pageable)
             .map(ConferenceSeriesEntity::toConferenceSeries)
 

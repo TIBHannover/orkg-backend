@@ -30,7 +30,7 @@ internal class ResearchFieldHierarchyServiceUnitTest : MockkBaseTest {
         every { researchFieldRepository.findById(subfieldId) } returns Optional.empty()
 
         val exception = assertThrows<ResearchFieldNotFound> {
-            service.findChildren(subfieldId, PageRequest.of(0, 5))
+            service.findAllChildrenByAncestorId(subfieldId, PageRequest.of(0, 5))
         }
         assertThat(exception.message).isEqualTo(ResearchFieldNotFound(subfieldId).message)
 
@@ -43,12 +43,12 @@ internal class ResearchFieldHierarchyServiceUnitTest : MockkBaseTest {
         val pageable = PageRequest.of(0, 5)
 
         every { researchFieldRepository.findById(subfieldId) } returns Optional.of(createResearchField(subfieldId))
-        every { repository.findChildren(subfieldId, pageable) } returns Page.empty()
+        every { repository.findAllChildrenByAncestorId(subfieldId, pageable) } returns Page.empty()
 
-        service.findChildren(subfieldId, pageable)
+        service.findAllChildrenByAncestorId(subfieldId, pageable)
 
         verify(exactly = 1) { researchFieldRepository.findById(subfieldId) }
-        verify(exactly = 1) { repository.findChildren(subfieldId, pageable) }
+        verify(exactly = 1) { repository.findAllChildrenByAncestorId(subfieldId, pageable) }
     }
 
     @Test
@@ -58,7 +58,7 @@ internal class ResearchFieldHierarchyServiceUnitTest : MockkBaseTest {
         every { researchFieldRepository.findById(subfieldId) } returns Optional.empty()
 
         val exception = assertThrows<ResearchFieldNotFound> {
-            service.findParents(subfieldId, PageRequest.of(0, 5))
+            service.findAllParentsByChildId(subfieldId, PageRequest.of(0, 5))
         }
         assertThat(exception.message).isEqualTo(ResearchFieldNotFound(subfieldId).message)
 
@@ -70,12 +70,12 @@ internal class ResearchFieldHierarchyServiceUnitTest : MockkBaseTest {
         val subfieldId = ThingId("child")
 
         every { researchFieldRepository.findById(subfieldId) } returns Optional.of(createResearchField(subfieldId))
-        every { repository.findParents(subfieldId, any()) } returns pageOf(createResearchField(ThingId("parent")))
+        every { repository.findAllParentsByChildId(subfieldId, any()) } returns pageOf(createResearchField(ThingId("parent")))
 
-        service.findParents(subfieldId, PageRequest.of(0, 5))
+        service.findAllParentsByChildId(subfieldId, PageRequest.of(0, 5))
 
         verify(exactly = 1) { researchFieldRepository.findById(subfieldId) }
-        verify(exactly = 1) { repository.findParents(subfieldId, any()) }
+        verify(exactly = 1) { repository.findAllParentsByChildId(subfieldId, any()) }
     }
 
     @Test
@@ -83,12 +83,12 @@ internal class ResearchFieldHierarchyServiceUnitTest : MockkBaseTest {
         val subfieldId = ThingId("child")
 
         every { researchFieldRepository.findById(subfieldId) } returns Optional.of(createResearchField(subfieldId))
-        every { repository.findParents(subfieldId, any()) } returns Page.empty()
+        every { repository.findAllParentsByChildId(subfieldId, any()) } returns Page.empty()
 
-        service.findParents(subfieldId, PageRequest.of(0, 5))
+        service.findAllParentsByChildId(subfieldId, PageRequest.of(0, 5))
 
         verify(exactly = 1) { researchFieldRepository.findById(subfieldId) }
-        verify(exactly = 1) { repository.findParents(subfieldId, any()) }
+        verify(exactly = 1) { repository.findAllParentsByChildId(subfieldId, any()) }
     }
 
     @Test
@@ -98,7 +98,7 @@ internal class ResearchFieldHierarchyServiceUnitTest : MockkBaseTest {
         every { researchFieldRepository.findById(subfieldId) } returns Optional.empty()
 
         val exception = assertThrows<ResearchFieldNotFound> {
-            service.findRoots(subfieldId, PageRequest.of(0, 5))
+            service.findAllRootsByDescendantId(subfieldId, PageRequest.of(0, 5))
         }
         assertThat(exception.message).isEqualTo(ResearchFieldNotFound(subfieldId).message)
 
@@ -110,12 +110,12 @@ internal class ResearchFieldHierarchyServiceUnitTest : MockkBaseTest {
         val subfieldId = ThingId("child")
 
         every { researchFieldRepository.findById(subfieldId) } returns Optional.of(createResearchField(subfieldId))
-        every { repository.findRoots(subfieldId, any()) } returns pageOf(createResearchField(ThingId("root")))
+        every { repository.findAllRootsByDescendantId(subfieldId, any()) } returns pageOf(createResearchField(ThingId("root")))
 
-        service.findRoots(subfieldId, PageRequest.of(0, 5))
+        service.findAllRootsByDescendantId(subfieldId, PageRequest.of(0, 5))
 
         verify(exactly = 1) { researchFieldRepository.findById(subfieldId) }
-        verify(exactly = 1) { repository.findRoots(subfieldId, any()) }
+        verify(exactly = 1) { repository.findAllRootsByDescendantId(subfieldId, any()) }
     }
 
     @Test
@@ -123,12 +123,12 @@ internal class ResearchFieldHierarchyServiceUnitTest : MockkBaseTest {
         val subfieldId = ThingId("child")
 
         every { researchFieldRepository.findById(subfieldId) } returns Optional.of(createResearchField(subfieldId))
-        every { repository.findRoots(subfieldId, any()) } returns Page.empty()
+        every { repository.findAllRootsByDescendantId(subfieldId, any()) } returns Page.empty()
 
-        service.findRoots(subfieldId, PageRequest.of(0, 5))
+        service.findAllRootsByDescendantId(subfieldId, PageRequest.of(0, 5))
 
         verify(exactly = 1) { researchFieldRepository.findById(subfieldId) }
-        verify(exactly = 1) { repository.findRoots(subfieldId, any()) }
+        verify(exactly = 1) { repository.findAllRootsByDescendantId(subfieldId, any()) }
     }
 
     @Test
@@ -138,7 +138,7 @@ internal class ResearchFieldHierarchyServiceUnitTest : MockkBaseTest {
         every { researchFieldRepository.findById(subfieldId) } returns Optional.empty()
 
         val exception = assertThrows<ResearchFieldNotFound> {
-            service.findResearchFieldHierarchy(subfieldId, PageRequest.of(0, 5))
+            service.findResearchFieldHierarchyByResearchFieldId(subfieldId, PageRequest.of(0, 5))
         }
         assertThat(exception.message).isEqualTo(ResearchFieldNotFound(subfieldId).message)
 
@@ -151,12 +151,12 @@ internal class ResearchFieldHierarchyServiceUnitTest : MockkBaseTest {
         val pageable = PageRequest.of(0, 5)
 
         every { researchFieldRepository.findById(subfieldId) } returns Optional.of(createResearchField(subfieldId))
-        every { repository.findResearchFieldHierarchy(subfieldId, pageable) } returns pageOf()
+        every { repository.findResearchFieldHierarchyByResearchFieldId(subfieldId, pageable) } returns pageOf()
 
-        service.findResearchFieldHierarchy(subfieldId, pageable)
+        service.findResearchFieldHierarchyByResearchFieldId(subfieldId, pageable)
 
         verify(exactly = 1) { researchFieldRepository.findById(subfieldId) }
-        verify(exactly = 1) { repository.findResearchFieldHierarchy(subfieldId, pageable) }
+        verify(exactly = 1) { repository.findResearchFieldHierarchyByResearchFieldId(subfieldId, pageable) }
     }
 
     private fun createResearchField(id: ThingId) =

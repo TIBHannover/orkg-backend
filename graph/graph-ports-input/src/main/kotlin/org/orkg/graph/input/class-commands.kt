@@ -35,5 +35,5 @@ interface UpdateClassUseCase {
 
 interface DeleteClassUseCase {
     // legacy methods:
-    fun removeAll()
+    fun deleteAll()
 }

@@ -20,8 +20,8 @@ class InMemoryPredicateRepository(val inMemoryGraph: InMemoryGraph) :
             override val keys: Collection<ThingId> get() = inMemoryGraph.findAllPredicates().map { it.id }
             override val values: MutableCollection<Predicate> get() = inMemoryGraph.findAllPredicates().toMutableSet()
 
-            override fun remove(key: ThingId): Predicate? = get(key)?.also { inMemoryGraph.remove(it.id) }
-            override fun clear() = inMemoryGraph.findAllPredicates().forEach(inMemoryGraph::remove)
+            override fun remove(key: ThingId): Predicate? = get(key)?.also { inMemoryGraph.delete(it.id) }
+            override fun clear() = inMemoryGraph.findAllPredicates().forEach(inMemoryGraph::delete)
 
             override fun get(key: ThingId): Predicate? = inMemoryGraph.findPredicateById(key).getOrNull()
             override fun set(key: ThingId, value: Predicate): Predicate? =

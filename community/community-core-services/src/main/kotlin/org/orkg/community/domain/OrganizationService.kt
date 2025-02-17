@@ -42,11 +42,11 @@ class OrganizationService(
         return organizationId
     }
 
-    override fun listOrganizations(): List<Organization> =
-        postgresOrganizationRepository.findByType(OrganizationType.GENERAL)
+    override fun findAll(): List<Organization> =
+        postgresOrganizationRepository.findAllByType(OrganizationType.GENERAL)
 
-    override fun listConferences(): List<Organization> =
-        postgresOrganizationRepository.findByType(OrganizationType.CONFERENCE)
+    override fun findAllConferences(): List<Organization> =
+        postgresOrganizationRepository.findAllByType(OrganizationType.CONFERENCE)
 
     override fun findById(id: OrganizationId): Optional<Organization> =
         postgresOrganizationRepository.findById(id)
@@ -57,7 +57,7 @@ class OrganizationService(
     override fun findByDisplayId(name: String): Optional<Organization> =
         postgresOrganizationRepository.findByDisplayId(name)
 
-    override fun updateOrganization(organization: Organization) {
+    override fun update(organization: Organization) {
         val found = postgresOrganizationRepository.findById(organization.id!!)
             .orElseThrow { OrganizationNotFound(organization.id!!) }
 
@@ -73,12 +73,12 @@ class OrganizationService(
         postgresOrganizationRepository.save(found)
     }
 
-    override fun removeAll() = postgresOrganizationRepository.deleteAll()
+    override fun deleteAll() = postgresOrganizationRepository.deleteAll()
 
-    override fun findLogo(id: OrganizationId): Optional<Image> {
+    override fun findLogoById(id: OrganizationId): Optional<Image> {
         val organization = postgresOrganizationRepository.findById(id)
             .orElseThrow { OrganizationNotFound(id) }
-        return if (organization.logoId != null) imageService.find(ImageId(organization.logoId!!.value))
+        return if (organization.logoId != null) imageService.findById(ImageId(organization.logoId!!.value))
         else Optional.empty()
     }
 

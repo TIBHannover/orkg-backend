@@ -14,7 +14,7 @@ abstract class InMemoryRepository<ID, T>(
     override fun findAll(pageable: Pageable): Page<T> =
         findAllFilteredAndPaged(pageable) { true }
 
-    override fun exists(id: ID): Boolean = entities.contains(id)
+    override fun existsById(id: ID): Boolean = entities.contains(id)
 
     protected fun findAllFilteredAndPaged(
         pageable: Pageable,

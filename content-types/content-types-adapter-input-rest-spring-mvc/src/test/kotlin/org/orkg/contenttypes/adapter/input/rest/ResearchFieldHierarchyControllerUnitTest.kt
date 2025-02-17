@@ -56,8 +56,8 @@ internal class ResearchFieldHierarchyControllerUnitTest : MockMvcBaseTest("resea
         val subfieldId = ThingId("subfield")
         val response = ResearchFieldWithChildCount(createResearchField(subfieldId), 1)
 
-        every { service.findChildren(parentId, any()) } returns pageOf(response)
-        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
+        every { service.findAllChildrenByAncestorId(parentId, any()) } returns pageOf(response)
+        every { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) } returns emptyMap()
 
         documentedGetRequestTo("/api/research-fields/{id}/children", parentId)
             .perform()
@@ -76,8 +76,8 @@ internal class ResearchFieldHierarchyControllerUnitTest : MockMvcBaseTest("resea
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { service.findChildren(parentId, any()) }
-        verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
+        verify(exactly = 1) { service.findAllChildrenByAncestorId(parentId, any()) }
+        verify(exactly = 1) { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) }
     }
 
     @Test
@@ -85,7 +85,7 @@ internal class ResearchFieldHierarchyControllerUnitTest : MockMvcBaseTest("resea
         val parentId = ThingId("parent")
         val exception = ResearchFieldNotFound(parentId)
 
-        every { service.findChildren(parentId, any()) } throws exception
+        every { service.findAllChildrenByAncestorId(parentId, any()) } throws exception
 
         get("/api/research-fields/{id}/children", parentId)
             .perform()
@@ -94,7 +94,7 @@ internal class ResearchFieldHierarchyControllerUnitTest : MockMvcBaseTest("resea
             .andExpect(jsonPath("$.path").value("/api/research-fields/$parentId/children"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { service.findChildren(parentId, any()) }
+        verify(exactly = 1) { service.findAllChildrenByAncestorId(parentId, any()) }
     }
 
     @Test
@@ -103,8 +103,8 @@ internal class ResearchFieldHierarchyControllerUnitTest : MockMvcBaseTest("resea
         val parentId = ThingId("parent")
         val subfieldId = ThingId("R123")
 
-        every { service.findParents(subfieldId, any()) } returns pageOf(createResearchField(parentId))
-        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
+        every { service.findAllParentsByChildId(subfieldId, any()) } returns pageOf(createResearchField(parentId))
+        every { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) } returns emptyMap()
 
         documentedGetRequestTo("/api/research-fields/{id}/parents", subfieldId)
             .perform()
@@ -120,8 +120,8 @@ internal class ResearchFieldHierarchyControllerUnitTest : MockMvcBaseTest("resea
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { service.findParents(subfieldId, any()) }
-        verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
+        verify(exactly = 1) { service.findAllParentsByChildId(subfieldId, any()) }
+        verify(exactly = 1) { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) }
     }
 
     @Test
@@ -129,7 +129,7 @@ internal class ResearchFieldHierarchyControllerUnitTest : MockMvcBaseTest("resea
         val subfieldId = ThingId("subfield")
         val exception = ResearchFieldNotFound(subfieldId)
 
-        every { service.findParents(subfieldId, any()) } throws exception
+        every { service.findAllParentsByChildId(subfieldId, any()) } throws exception
 
         get("/api/research-fields/{id}/parents", subfieldId)
             .perform()
@@ -138,14 +138,14 @@ internal class ResearchFieldHierarchyControllerUnitTest : MockMvcBaseTest("resea
             .andExpect(jsonPath("$.path").value("/api/research-fields/$subfieldId/parents"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { service.findParents(subfieldId, any()) }
+        verify(exactly = 1) { service.findAllParentsByChildId(subfieldId, any()) }
     }
 
     @Test
     fun `Given a subfield id, when the parent research field cannot be found, then status is 200 OK and empty page is returned`() {
         val subfieldId = ThingId("subfield")
 
-        every { service.findParents(subfieldId, any()) } returns Page.empty()
+        every { service.findAllParentsByChildId(subfieldId, any()) } returns Page.empty()
 
         get("/api/research-fields/{id}/parents", subfieldId)
             .perform()
@@ -153,7 +153,7 @@ internal class ResearchFieldHierarchyControllerUnitTest : MockMvcBaseTest("resea
             .andExpectPage()
             .andExpect(jsonPath("$.content", empty<Collection<*>>()))
 
-        verify(exactly = 1) { service.findParents(subfieldId, any()) }
+        verify(exactly = 1) { service.findAllParentsByChildId(subfieldId, any()) }
     }
 
     @Test
@@ -163,8 +163,8 @@ internal class ResearchFieldHierarchyControllerUnitTest : MockMvcBaseTest("resea
         val subfieldId = ThingId("subfield")
         val root = createResearchField(rootId)
 
-        every { service.findRoots(subfieldId, any()) } returns pageOf(root)
-        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
+        every { service.findAllRootsByDescendantId(subfieldId, any()) } returns pageOf(root)
+        every { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) } returns emptyMap()
 
         documentedGetRequestTo("/api/research-fields/{id}/roots", subfieldId)
             .perform()
@@ -180,8 +180,8 @@ internal class ResearchFieldHierarchyControllerUnitTest : MockMvcBaseTest("resea
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { service.findRoots(subfieldId, any()) }
-        verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
+        verify(exactly = 1) { service.findAllRootsByDescendantId(subfieldId, any()) }
+        verify(exactly = 1) { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) }
     }
 
     @Test
@@ -189,7 +189,7 @@ internal class ResearchFieldHierarchyControllerUnitTest : MockMvcBaseTest("resea
         val subfieldId = ThingId("subfield")
         val exception = ResearchFieldNotFound(subfieldId)
 
-        every { service.findRoots(subfieldId, any()) } throws exception
+        every { service.findAllRootsByDescendantId(subfieldId, any()) } throws exception
 
         get("/api/research-fields/{id}/roots", subfieldId)
             .perform()
@@ -198,14 +198,14 @@ internal class ResearchFieldHierarchyControllerUnitTest : MockMvcBaseTest("resea
             .andExpect(jsonPath("$.path").value("/api/research-fields/$subfieldId/roots"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { service.findRoots(subfieldId, any()) }
+        verify(exactly = 1) { service.findAllRootsByDescendantId(subfieldId, any()) }
     }
 
     @Test
     fun `Given a subfield id, when searched for its root but it has no parent research field, then status is 200 OK and empty page is returned`() {
         val subfieldId = ThingId("subfield")
 
-        every { service.findRoots(subfieldId, any()) } returns Page.empty()
+        every { service.findAllRootsByDescendantId(subfieldId, any()) } returns Page.empty()
 
         get("/api/research-fields/{id}/roots", subfieldId)
             .perform()
@@ -213,7 +213,7 @@ internal class ResearchFieldHierarchyControllerUnitTest : MockMvcBaseTest("resea
             .andExpectPage()
             .andExpect(jsonPath("$.content", empty<Collection<*>>()))
 
-        verify(exactly = 1) { service.findRoots(subfieldId, any()) }
+        verify(exactly = 1) { service.findAllRootsByDescendantId(subfieldId, any()) }
     }
 
     @Test
@@ -224,8 +224,8 @@ internal class ResearchFieldHierarchyControllerUnitTest : MockMvcBaseTest("resea
         val childResearchField = createResearchField().copy(id = subfieldId)
         val entry = ResearchFieldHierarchyEntry(childResearchField, setOf(parentId))
 
-        every { service.findResearchFieldHierarchy(subfieldId, any()) } returns pageOf(entry)
-        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
+        every { service.findResearchFieldHierarchyByResearchFieldId(subfieldId, any()) } returns pageOf(entry)
+        every { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) } returns emptyMap()
 
         documentedGetRequestTo("/api/research-fields/{id}/hierarchy", subfieldId)
             .perform()
@@ -243,8 +243,8 @@ internal class ResearchFieldHierarchyControllerUnitTest : MockMvcBaseTest("resea
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { service.findResearchFieldHierarchy(subfieldId, any()) }
-        verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
+        verify(exactly = 1) { service.findResearchFieldHierarchyByResearchFieldId(subfieldId, any()) }
+        verify(exactly = 1) { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) }
     }
 
     @Test
@@ -252,7 +252,7 @@ internal class ResearchFieldHierarchyControllerUnitTest : MockMvcBaseTest("resea
         val subfieldId = ThingId("subfield")
         val exception = ResearchFieldNotFound(subfieldId)
 
-        every { service.findResearchFieldHierarchy(subfieldId, any()) } throws exception
+        every { service.findResearchFieldHierarchyByResearchFieldId(subfieldId, any()) } throws exception
 
         get("/api/research-fields/{id}/hierarchy", subfieldId)
             .perform()
@@ -261,7 +261,7 @@ internal class ResearchFieldHierarchyControllerUnitTest : MockMvcBaseTest("resea
             .andExpect(jsonPath("$.path").value("/api/research-fields/$subfieldId/hierarchy"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { service.findResearchFieldHierarchy(subfieldId, any()) }
+        verify(exactly = 1) { service.findResearchFieldHierarchyByResearchFieldId(subfieldId, any()) }
     }
 
     @Test
@@ -271,7 +271,7 @@ internal class ResearchFieldHierarchyControllerUnitTest : MockMvcBaseTest("resea
         val root = createResearchField(rootId)
 
         every { service.findAllRoots(any()) } returns pageOf(root)
-        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
+        every { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) } returns emptyMap()
 
         documentedGetRequestTo("/api/research-fields/roots")
             .perform()
@@ -281,7 +281,7 @@ internal class ResearchFieldHierarchyControllerUnitTest : MockMvcBaseTest("resea
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { service.findAllRoots(any()) }
-        verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
+        verify(exactly = 1) { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) }
     }
 
     private fun createResearchField(id: ThingId = ThingId("R1")) =

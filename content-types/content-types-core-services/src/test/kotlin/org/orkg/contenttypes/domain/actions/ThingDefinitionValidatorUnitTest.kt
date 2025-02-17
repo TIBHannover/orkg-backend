@@ -76,8 +76,8 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
         val r123 = createResource(id = ThingId("R123"))
         val c2000 = createClass(id = ThingId("C2000"))
 
-        every { thingRepository.findByThingId(r123.id) } returns Optional.of(r123)
-        every { thingRepository.findByThingId(c2000.id) } returns Optional.of(c2000)
+        every { thingRepository.findById(r123.id) } returns Optional.of(r123)
+        every { thingRepository.findById(c2000.id) } returns Optional.of(c2000)
 
         val validatedIds = mutableMapOf<String, Either<String, Thing>>()
         val tempIds = setOf("#temp1", "#temp2", "#temp3", "#temp4")
@@ -94,8 +94,8 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
             "C2000" to Either.right(c2000)
         )
 
-        verify(exactly = 1) { thingRepository.findByThingId(r123.id) }
-        verify(exactly = 1) { thingRepository.findByThingId(c2000.id) }
+        verify(exactly = 1) { thingRepository.findById(r123.id) }
+        verify(exactly = 1) { thingRepository.findById(c2000.id) }
     }
 
     @Test
@@ -112,7 +112,7 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
             contributions = emptyList()
         )
 
-        every { thingRepository.findByThingId(any()) } returns Optional.empty()
+        every { thingRepository.findById(any()) } returns Optional.empty()
 
         assertThrows<ThingNotFound> {
             thingDefinitionValidator.validateThingDefinitionsInPlace(
@@ -122,7 +122,7 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
             )
         }
 
-        verify(exactly = 1) { thingRepository.findByThingId(any()) }
+        verify(exactly = 1) { thingRepository.findById(any()) }
     }
 
     @Test
@@ -140,7 +140,7 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
         )
         val resource = createResource()
 
-        every { thingRepository.findByThingId(any()) } returns Optional.of(resource)
+        every { thingRepository.findById(any()) } returns Optional.of(resource)
 
         assertThrows<ThingIsNotAClass> {
             thingDefinitionValidator.validateThingDefinitionsInPlace(
@@ -150,7 +150,7 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
             )
         }
 
-        verify(exactly = 1) { thingRepository.findByThingId(any()) }
+        verify(exactly = 1) { thingRepository.findById(any()) }
     }
 
     @Test

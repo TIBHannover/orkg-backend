@@ -28,7 +28,7 @@ class AbstractSmartReviewSectionDeleter(
         contentTypePartDeleter.delete(contributionId, section.id) { incomingStatements ->
             val toRemove = statements[section.id]?.map { it.id }.orEmpty() union incomingStatements.map { it.id }
             if (toRemove.isNotEmpty()) {
-                statementService.delete(toRemove)
+                statementService.deleteAllById(toRemove)
             }
             resourceService.tryDelete(section.id, contributorId)
         }

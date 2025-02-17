@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service
 class ThingService(
     private val repository: ThingRepository,
 ) : RetrieveThingUseCase {
-    override fun exists(id: ThingId): Boolean = repository.findByThingId(id).isPresent
+    override fun existsById(id: ThingId): Boolean = repository.findById(id).isPresent
 
-    override fun findById(id: ThingId): Optional<Thing> = repository.findByThingId(id)
+    override fun findById(id: ThingId): Optional<Thing> = repository.findById(id)
 }

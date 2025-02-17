@@ -51,7 +51,7 @@ class TemplateInstancePropertyValueUpdater(
                     .filter { BakedStatement(it.subject.id.value, it.predicate.id.value, it.`object`.id.value) in statementsToRemove }
                     .mapTo(mutableSetOf()) { it.id }
                     .takeIf { it.isNotEmpty() }
-                    ?.let(statementService::delete)
+                    ?.let(statementService::deleteAllById)
             }
             if (statementsToAdd.isNotEmpty()) {
                 subgraphCreator.createThingsAndStatements(

@@ -52,7 +52,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         } returns pageOf(oldObjectStatements)
-        every { statementService.delete(any<Set<StatementId>>()) } just runs
+        every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
         every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
 
         statementCollectionPropertyUpdater.update(contributorId, subjectId, Predicates.reference, objects.toSet())
@@ -64,7 +64,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(oldObjectStatements.map { it.id }.toSet()) }
+        verify(exactly = 1) { statementService.deleteAllById(oldObjectStatements.map { it.id }.toSet()) }
         verify(exactly = 1) {
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
@@ -101,7 +101,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         } returns pageOf(oldObjectStatements)
-        every { statementService.delete(any<Set<StatementId>>()) } just runs
+        every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
         every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
 
         statementCollectionPropertyUpdater.update(contributorId, subjectId, Predicates.reference, objects.toSet())
@@ -113,7 +113,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(setOf(oldObjectStatements[0].id)) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(oldObjectStatements[0].id)) }
         verify(exactly = 1) {
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
@@ -166,7 +166,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         } returns pageOf(oldObjectStatements)
-        every { statementService.delete(any<Set<StatementId>>()) } just runs
+        every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
 
         statementCollectionPropertyUpdater.update(contributorId, subjectId, Predicates.reference, objects.toSet())
 
@@ -177,7 +177,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(oldObjectStatements.map { it.id }.toSet()) }
+        verify(exactly = 1) { statementService.deleteAllById(oldObjectStatements.map { it.id }.toSet()) }
     }
 
     @Test
@@ -241,7 +241,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         } returns pageOf(oldLiteralStatements)
-        every { statementService.delete(any<Set<StatementId>>()) } just runs
+        every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
         every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
         every { literalService.create(any()) } returns ThingId("L1") andThen ThingId("L2")
 
@@ -255,7 +255,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(oldLiteralStatements.map { it.id }.toSet()) }
+        verify(exactly = 1) { statementService.deleteAllById(oldLiteralStatements.map { it.id }.toSet()) }
         literals.forEach { literal ->
             verify(exactly = 1) {
                 literalService.create(
@@ -300,7 +300,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         } returns pageOf(oldLiteralStatements)
-        every { statementService.delete(any<Set<StatementId>>()) } just runs
+        every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
         every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
         every { literalService.create(any()) } returns ThingId("L1")
 
@@ -314,7 +314,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(setOf(oldLiteralStatements[0].id)) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(oldLiteralStatements[0].id)) }
         verify(exactly = 1) {
             literalService.create(
                 CreateLiteralUseCase.CreateCommand(label = literals[1], contributorId = contributorId)
@@ -375,7 +375,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         } returns pageOf(oldLiteralStatements)
-        every { statementService.delete(any<Set<StatementId>>()) } just runs
+        every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
 
         statementCollectionPropertyUpdater.update(contributorId, subjectId, Predicates.reference, literals.toSet())
 
@@ -387,7 +387,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(oldLiteralStatements.map { it.id }.toSet()) }
+        verify(exactly = 1) { statementService.deleteAllById(oldLiteralStatements.map { it.id }.toSet()) }
     }
 
     @Test
@@ -460,7 +460,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         } returns pageOf(oldObjectStatements)
-        every { statementService.delete(any<Set<StatementId>>()) } just runs
+        every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
         every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
 
         statementCollectionPropertyUpdater.update(contributorId, subjectId, Predicates.reference, objects)
@@ -472,7 +472,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(oldObjectStatements.map { it.id }.toSet()) }
+        verify(exactly = 1) { statementService.deleteAllById(oldObjectStatements.map { it.id }.toSet()) }
         verify(exactly = 1) {
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
@@ -509,7 +509,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         } returns pageOf(oldObjectStatements)
-        every { statementService.delete(any<Set<StatementId>>()) } just runs
+        every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
         every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
 
         statementCollectionPropertyUpdater.update(contributorId, subjectId, Predicates.reference, objects)
@@ -521,7 +521,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(setOf(oldObjectStatements[0].id)) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(oldObjectStatements[0].id)) }
         verify(exactly = 1) {
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
@@ -574,7 +574,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         } returns pageOf(oldObjectStatements)
-        every { statementService.delete(any<Set<StatementId>>()) } just runs
+        every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
 
         statementCollectionPropertyUpdater.update(contributorId, subjectId, Predicates.reference, objects)
 
@@ -585,7 +585,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(oldObjectStatements.map { it.id }.toSet()) }
+        verify(exactly = 1) { statementService.deleteAllById(oldObjectStatements.map { it.id }.toSet()) }
     }
 
     @Test
@@ -649,7 +649,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         } returns pageOf(oldObjectStatements)
-        every { statementService.delete(any<Set<StatementId>>()) } just runs
+        every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
 
         statementCollectionPropertyUpdater.update(contributorId, subjectId, Predicates.reference, objects)
 
@@ -660,7 +660,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(excessiveObjectStatements.map { it.id }.toSet()) }
+        verify(exactly = 1) { statementService.deleteAllById(excessiveObjectStatements.map { it.id }.toSet()) }
     }
 
     @Test
@@ -682,14 +682,14 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
             datatype = Literals.XSD.STRING.prefixedUri
         )
 
-        every { statementService.delete(any<Set<StatementId>>()) } just runs
+        every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
         every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
         every { literalService.create(literalCreateCommand1) } returns literalId1
         every { literalService.create(literalCreateCommand2) } returns literalId2
 
         statementCollectionPropertyUpdater.update(oldObjectStatements, contributorId, subjectId, Predicates.reference, literals)
 
-        verify(exactly = 1) { statementService.delete(oldObjectStatements.map { it.id }.toSet()) }
+        verify(exactly = 1) { statementService.deleteAllById(oldObjectStatements.map { it.id }.toSet()) }
         verify(exactly = 1) { literalService.create(literalCreateCommand1) }
         verify(exactly = 1) { literalService.create(literalCreateCommand2) }
         verify(exactly = 1) {
@@ -727,13 +727,13 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
             datatype = Literals.XSD.STRING.prefixedUri
         )
 
-        every { statementService.delete(any<Set<StatementId>>()) } just runs
+        every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
         every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
         every { literalService.create(literalCreateCommand2) } returns literalId2
 
         statementCollectionPropertyUpdater.update(oldObjectStatements, contributorId, subjectId, Predicates.reference, literals)
 
-        verify(exactly = 1) { statementService.delete(setOf(oldObjectStatements[0].id)) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(oldObjectStatements[0].id)) }
         verify(exactly = 1) { literalService.create(literalCreateCommand2) }
         verify(exactly = 1) {
             unsafeStatementUseCases.create(
@@ -764,11 +764,11 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         val oldObjectStatements = listOf("R1", "R2").toLiteralStatements(subjectId)
         val contributorId = ContributorId(UUID.randomUUID())
 
-        every { statementService.delete(any<Set<StatementId>>()) } just runs
+        every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
 
         statementCollectionPropertyUpdater.update(oldObjectStatements, contributorId, subjectId, Predicates.reference, literals)
 
-        verify(exactly = 1) { statementService.delete(oldObjectStatements.map { it.id }.toSet()) }
+        verify(exactly = 1) { statementService.deleteAllById(oldObjectStatements.map { it.id }.toSet()) }
     }
 
     @Test
@@ -827,11 +827,11 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         val oldObjectStatements = literals.toLiteralStatements(subjectId) + excessiveObjectStatements
         val contributorId = ContributorId(UUID.randomUUID())
 
-        every { statementService.delete(any<Set<StatementId>>()) } just runs
+        every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
 
         statementCollectionPropertyUpdater.update(oldObjectStatements, contributorId, subjectId, Predicates.reference, literals)
 
-        verify(exactly = 1) { statementService.delete(excessiveObjectStatements.map { it.id }.toSet()) }
+        verify(exactly = 1) { statementService.deleteAllById(excessiveObjectStatements.map { it.id }.toSet()) }
     }
 
     private fun Collection<ThingId>.toReferenceStatements(subjectId: ThingId): List<GeneralStatement> = mapIndexed { index, id ->

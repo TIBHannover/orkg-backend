@@ -38,7 +38,7 @@ RETURN author, thing, papers $PAGE_PARAMS""",
 MATCH (problem:Problem:Resource {id: $problemId})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution:Resource)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper:Resource)-[:RELATED {predicate_id: 'hasAuthors'}]->(:List)-[:RELATED {predicate_id: "hasListElement"}]->(author:Thing)
 WITH DISTINCT author.label AS author, author AS thing
 RETURN COUNT(author)""")
-    fun findAuthorsLeaderboardPerProblem(problemId: ThingId, pageable: Pageable): Page<Neo4jAuthorPerProblem>
+    fun findAllByProblemId(problemId: ThingId, pageable: Pageable): Page<Neo4jAuthorPerProblem>
 }
 
 data class Neo4jAuthorOfComparison(

@@ -12,9 +12,9 @@ interface ConferenceSeriesUseCases {
 
     fun create(id: ConferenceSeriesId?, organizationId: OrganizationId, name: String, url: String, displayId: String, metadata: Metadata): ConferenceSeries
 
-    fun listConferenceSeries(pageable: Pageable): Page<ConferenceSeries>
+    fun findAll(pageable: Pageable): Page<ConferenceSeries>
 
-    fun findSeriesByConference(id: OrganizationId, pageable: Pageable): Page<ConferenceSeries>
+    fun findAllByOrganizationId(id: OrganizationId, pageable: Pageable): Page<ConferenceSeries>
 
     fun findById(id: ConferenceSeriesId): Optional<ConferenceSeries>
 
@@ -22,5 +22,5 @@ interface ConferenceSeriesUseCases {
 
     fun findByDisplayId(name: String): Optional<ConferenceSeries>
 
-    fun removeAll()
+    fun deleteAll()
 }

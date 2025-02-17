@@ -150,7 +150,7 @@ class TemplateService(
         return steps.execute(command, CreateTemplateState()).templateId!!
     }
 
-    override fun createTemplateProperty(command: CreateTemplatePropertyCommand): ThingId {
+    override fun create(command: CreateTemplatePropertyCommand): ThingId {
         val steps = listOf(
             TemplatePropertyExistenceCreateValidator(resourceRepository),
             TemplatePropertyTemplateCreateValidator(statementRepository),
@@ -183,7 +183,7 @@ class TemplateService(
         steps.execute(command, UpdateTemplateState())
     }
 
-    override fun updateTemplateProperty(command: UpdateTemplatePropertyCommand) {
+    override fun update(command: UpdateTemplatePropertyCommand) {
         val steps = listOf(
             TemplatePropertyExistenceUpdateValidator(this, resourceRepository),
             TemplatePropertyTemplateUpdateValidator(),

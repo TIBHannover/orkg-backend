@@ -200,7 +200,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
         val rosettaStoneStatementResource = createResource(latestVersionId, classes = setOf(Classes.rosettaStoneStatement))
         val subjects = listOf(latestVersionId.value)
 
-        every { thingRepository.findByThingId(latestVersionId) } returns Optional.of(rosettaStoneStatementResource)
+        every { thingRepository.findById(latestVersionId) } returns Optional.of(rosettaStoneStatementResource)
         every { abstractTemplatePropertyValueValidator.validateCardinality(any(), any()) } just runs
         every { rosettaStoneStatementService.findByIdOrVersionId(any()) } returns Optional.of(rosettaStoneStatement)
 
@@ -216,7 +216,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
             )
         }
 
-        verify(exactly = 1) { thingRepository.findByThingId(latestVersionId) }
+        verify(exactly = 1) { thingRepository.findById(latestVersionId) }
         verify(exactly = 1) { abstractTemplatePropertyValueValidator.validateCardinality(any(), any()) }
         verify(exactly = 1) { rosettaStoneStatementService.findByIdOrVersionId(latestVersionId) }
     }
@@ -234,7 +234,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
         val rosettaStoneStatementResource = createResource(latestVersionId, classes = setOf(Classes.rosettaStoneStatement))
         val subjects = listOf(latestVersionId.value)
 
-        every { thingRepository.findByThingId(latestVersionId) } returns Optional.of(rosettaStoneStatementResource)
+        every { thingRepository.findById(latestVersionId) } returns Optional.of(rosettaStoneStatementResource)
         every { abstractTemplatePropertyValueValidator.validateCardinality(any(), any()) } just runs
         every { rosettaStoneStatementService.findByIdOrVersionId(any()) } returns Optional.of(rosettaStoneStatement)
         every { abstractTemplatePropertyValueValidator.validateObject(any(), any(), any()) } just runs
@@ -253,7 +253,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
             latestVersionId.value to Either.right<String, Thing>(rosettaStoneStatementResource)
         )
 
-        verify(exactly = 1) { thingRepository.findByThingId(latestVersionId) }
+        verify(exactly = 1) { thingRepository.findById(latestVersionId) }
         verify(exactly = 1) { abstractTemplatePropertyValueValidator.validateCardinality(any(), any()) }
         verify(exactly = 1) { rosettaStoneStatementService.findByIdOrVersionId(latestVersionId) }
         verify(exactly = 1) { abstractTemplatePropertyValueValidator.validateObject(any(), latestVersionId.value, any()) }
@@ -272,7 +272,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
         val rosettaStoneStatementResource = createResource(latestVersionId, classes = setOf(Classes.rosettaStoneStatement))
         val subjects = listOf(latestVersionId.value)
 
-        every { thingRepository.findByThingId(latestVersionId) } returns Optional.of(rosettaStoneStatementResource)
+        every { thingRepository.findById(latestVersionId) } returns Optional.of(rosettaStoneStatementResource)
         every { abstractTemplatePropertyValueValidator.validateCardinality(any(), any()) } just runs
         every { rosettaStoneStatementService.findByIdOrVersionId(any()) } returns Optional.empty()
 
@@ -288,7 +288,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
             )
         }
 
-        verify(exactly = 1) { thingRepository.findByThingId(latestVersionId) }
+        verify(exactly = 1) { thingRepository.findById(latestVersionId) }
         verify(exactly = 1) { abstractTemplatePropertyValueValidator.validateCardinality(any(), any()) }
         verify(exactly = 1) { rosettaStoneStatementService.findByIdOrVersionId(latestVersionId) }
     }
@@ -306,7 +306,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
         val rosettaStoneStatementResource = createResource(latestVersionId, classes = setOf(Classes.rosettaStoneStatement))
         val subjects = listOf(latestVersionId.value)
 
-        every { thingRepository.findByThingId(latestVersionId) } returns Optional.of(rosettaStoneStatementResource)
+        every { thingRepository.findById(latestVersionId) } returns Optional.of(rosettaStoneStatementResource)
         every { abstractTemplatePropertyValueValidator.validateCardinality(any(), any()) } just runs
         every { rosettaStoneStatementService.findByIdOrVersionId(any()) } returns Optional.of(rosettaStoneStatement)
 
@@ -322,7 +322,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
             )
         }
 
-        verify(exactly = 1) { thingRepository.findByThingId(latestVersionId) }
+        verify(exactly = 1) { thingRepository.findById(latestVersionId) }
         verify(exactly = 1) { abstractTemplatePropertyValueValidator.validateCardinality(any(), any()) }
         verify(exactly = 1) { rosettaStoneStatementService.findByIdOrVersionId(latestVersionId) }
     }

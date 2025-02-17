@@ -36,16 +36,16 @@ interface ThingRepresentationAdapter : ResourceRepresentationAdapter, ClassRepre
     ): ThingRepresentation =
         when (this) {
             is Resource -> {
-                val count = statementService.countIncomingStatements(id)
+                val count = statementService.countIncomingStatementsById(id)
                 toResourceRepresentation(mapOf(id to count), formatLabelFor(listOf(this), capabilities))
             }
             is Class -> {
-                val description = statementService.findAllDescriptions(setOf(id))
+                val description = statementService.findAllDescriptionsById(setOf(id))
                 toClassRepresentation(description[id])
             }
             is Literal -> toLiteralRepresentation()
             is Predicate -> {
-                val description = statementService.findAllDescriptions(setOf(id))
+                val description = statementService.findAllDescriptionsById(setOf(id))
                 toPredicateRepresentation(description[id])
             }
         }
@@ -67,6 +67,6 @@ interface ThingRepresentationAdapter : ResourceRepresentationAdapter, ClassRepre
             return emptyMap()
         }
         val predicateIds = ids.mapTo(mutableSetOf()) { it.id }
-        return statementService.findAllDescriptions(predicateIds)
+        return statementService.findAllDescriptionsById(predicateIds)
     }
 }

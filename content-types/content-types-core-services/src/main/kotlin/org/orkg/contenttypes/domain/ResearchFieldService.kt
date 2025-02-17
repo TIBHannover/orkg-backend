@@ -33,11 +33,11 @@ class ResearchFieldService(
     override fun findById(id: ThingId): Optional<Resource> =
         resourceService.findById(id).filter { Classes.researchField in it.classes }
 
-    override fun getResearchProblemsOfField(
+    override fun findAllPaperCountsPerResearchProblem(
         id: ThingId,
         pageable: Pageable
     ): Page<PaperCountPerResearchProblem> {
-        return researchFieldRepository.getResearchProblemsOfField(id, pageable).map {
+        return researchFieldRepository.findAllPaperCountsPerResearchProblem(id, pageable).map {
             PaperCountPerResearchProblem(
                 problem = it.problem,
                 papers = it.papers,
@@ -45,14 +45,14 @@ class ResearchFieldService(
         }
     }
 
-    override fun getContributorsIncludingSubFields(id: ThingId, pageable: Pageable): Page<Contributor> {
-        val contributors = researchFieldRepository.getContributorIdsFromResearchFieldAndIncludeSubfields(id, pageable)
-        return PageImpl(contributorRepository.findAllByIds(contributors.content))
+    override fun findAllContributorsIncludingSubFields(id: ThingId, pageable: Pageable): Page<Contributor> {
+        val contributors = researchFieldRepository.findAllContributorIdsIncludingSubFields(id, pageable)
+        return PageImpl(contributorRepository.findAllById(contributors.content), pageable, contributors.totalElements)
     }
 
-    override fun getContributorsExcludingSubFields(id: ThingId, pageable: Pageable): Page<Contributor> {
-        val contributors = researchFieldRepository.getContributorIdsExcludingSubFields(id, pageable)
-        return PageImpl(contributorRepository.findAllByIds(contributors.content))
+    override fun findAllContributorsExcludingSubFields(id: ThingId, pageable: Pageable): Page<Contributor> {
+        val contributors = researchFieldRepository.findAllContributorIdsExcludingSubFields(id, pageable)
+        return PageImpl(contributorRepository.findAllById(contributors.content), pageable, contributors.totalElements)
     }
 
     override fun findAllPapersByResearchField(
@@ -170,7 +170,8 @@ class ResearchFieldService(
         return PageImpl(resultList, pageable, totalElements)
     }
 
-    override fun withBenchmarks(pageable: Pageable): Page<ResearchField> = researchFieldsQuery.withBenchmarks(pageable)
+    override fun findAllWithBenchmarks(pageable: Pageable): Page<ResearchField> =
+        researchFieldsQuery.findAllWithBenchmarks(pageable)
 
     private fun findAllListedEntitiesBasedOnClassesByResearchField(
         id: ThingId,

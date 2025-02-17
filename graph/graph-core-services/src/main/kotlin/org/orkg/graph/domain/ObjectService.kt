@@ -303,18 +303,18 @@ class ObjectService(
      * o/w throw out a suitable exception
      */
     private fun checkIfPredicateExists(predicate: String) {
-        if (!predicateService.exists(ThingId(predicate))) throw PredicateNotFound(predicate)
+        if (!predicateService.existsById(ThingId(predicate))) throw PredicateNotFound(predicate)
     }
 
     /**
      * Check if a class exists, otherwise throw out suitable exception.
      */
     private fun checkIfClassExists(it: String) {
-        if (!classService.exists(ThingId(it))) throw ClassNotFound.withId(it)
+        if (!classService.existsById(ThingId(it))) throw ClassNotFound.withId(it)
     }
 
     private fun checkIfThingExists(id: ThingId) {
-        if (!thingService.exists(id))
+        if (!thingService.existsById(id))
             throw ThingNotFound(id)
     }
 
@@ -323,7 +323,7 @@ class ObjectService(
      */
     private fun checkIfListExists(listId: String) {
         val id = ThingId(listId)
-        if (!listService.exists(id)) throw ListNotFound(id)
+        if (!listService.existsById(id)) throw ListNotFound(id)
     }
 
     /**

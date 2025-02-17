@@ -66,7 +66,7 @@ class SingleStatementPropertyUpdater(
             }
 
             if (toRemove.isNotEmpty()) {
-                statementService.delete(toRemove.map { it.id }.toSet())
+                statementService.deleteAllById(toRemove.map { it.id }.toSet())
             }
         }
     }
@@ -106,7 +106,7 @@ class SingleStatementPropertyUpdater(
                 .toSet()
 
             if (toRemove.isNotEmpty()) {
-                statementService.delete(toRemove)
+                statementService.deleteAllById(toRemove)
             }
         } else {
             updateRequiredProperty(statements, contributorId, subjectId, predicateId, label, datatype)
@@ -122,7 +122,7 @@ class SingleStatementPropertyUpdater(
     ) {
         val toRemove = statements.wherePredicate(predicateId).toMutableSet()
         if (toRemove.isNotEmpty()) {
-            statementService.delete(toRemove.map { it.id }.toSet())
+            statementService.deleteAllById(toRemove.map { it.id }.toSet())
         }
         unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
@@ -143,7 +143,7 @@ class SingleStatementPropertyUpdater(
     ) {
         val toRemove = statements.wherePredicate(predicateId).toMutableSet()
         if (toRemove.isNotEmpty()) {
-            statementService.delete(toRemove.map { it.id }.toSet())
+            statementService.deleteAllById(toRemove.map { it.id }.toSet())
         }
         if (objectId != null) {
             unsafeStatementUseCases.create(

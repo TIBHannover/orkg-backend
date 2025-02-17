@@ -101,8 +101,8 @@ internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparison
         assertThat(resourceService.findAll(tempPageable)).hasSize(0)
         assertThat(classService.findAll(tempPageable)).hasSize(0)
         assertThat(observatoryService.findAll(tempPageable)).hasSize(0)
-        assertThat(organizationService.listOrganizations()).hasSize(0)
-        assertThat(organizationService.listConferences()).hasSize(0)
+        assertThat(organizationService.findAll()).hasSize(0)
+        assertThat(organizationService.findAllConferences()).hasSize(0)
 
         listOf(
             Predicates.hasAuthors,
@@ -204,12 +204,12 @@ internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparison
 
     @AfterEach
     fun cleanup() {
-        statementService.removeAll()
-        predicateService.removeAll()
-        resourceService.removeAll()
-        classService.removeAll()
-        observatoryService.removeAll()
-        organizationService.removeAll()
+        statementService.deleteAll()
+        predicateService.deleteAll()
+        resourceService.deleteAll()
+        classService.deleteAll()
+        observatoryService.deleteAll()
+        organizationService.deleteAll()
         contributorService.deleteAll()
     }
 

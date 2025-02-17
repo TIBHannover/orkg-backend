@@ -190,7 +190,7 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
     @DisplayName("Given several predicates, when filtering by no parameters, then status is 200 OK and predicates are returned")
     fun getPaged() {
         every { predicateService.findAll(any()) } returns pageOf(createPredicate())
-        every { statementService.findAllDescriptions(any<Set<ThingId>>()) } returns emptyMap()
+        every { statementService.findAllDescriptionsById(any<Set<ThingId>>()) } returns emptyMap()
 
         documentedGetRequestTo("/api/predicates")
             .accept(APPLICATION_JSON)
@@ -201,14 +201,14 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { predicateService.findAll(any()) }
-        verify(exactly = 1) { statementService.findAllDescriptions(any<Set<ThingId>>()) }
+        verify(exactly = 1) { statementService.findAllDescriptionsById(any<Set<ThingId>>()) }
     }
 
     @Test
     @DisplayName("Given several predicates, when they are fetched with all possible filtering parameters, then status is 200 OK and predicates are returned")
     fun getPagedWithParameters() {
         every { predicateService.findAll(any(), any(), any(), any(), any()) } returns pageOf(createPredicate())
-        every { statementService.findAllDescriptions(any<Set<ThingId>>()) } returns emptyMap()
+        every { statementService.findAllDescriptionsById(any<Set<ThingId>>()) } returns emptyMap()
 
         val label = "label"
         val exact = true
@@ -251,7 +251,7 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
                 createdAtEnd = createdAtEnd
             )
         }
-        verify(exactly = 1) { statementService.findAllDescriptions(any<Set<ThingId>>()) }
+        verify(exactly = 1) { statementService.findAllDescriptionsById(any<Set<ThingId>>()) }
     }
 
     @Test

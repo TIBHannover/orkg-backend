@@ -15,7 +15,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 interface RetrieveResourceUseCase {
-    fun exists(id: ThingId): Boolean
+    fun existsById(id: ThingId): Boolean
     fun findAll(
         pageable: Pageable,
         label: SearchString? = null,

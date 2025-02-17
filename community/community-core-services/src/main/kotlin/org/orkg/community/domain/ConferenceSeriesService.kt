@@ -32,7 +32,7 @@ class ConferenceSeriesService(
         return newSeries
     }
 
-    override fun listConferenceSeries(pageable: Pageable): Page<ConferenceSeries> =
+    override fun findAll(pageable: Pageable): Page<ConferenceSeries> =
         postgresConferenceSeriesRepository.findAll(pageable)
 
     override fun findById(id: ConferenceSeriesId): Optional<ConferenceSeries> =
@@ -44,8 +44,8 @@ class ConferenceSeriesService(
     override fun findByDisplayId(name: String): Optional<ConferenceSeries> =
         postgresConferenceSeriesRepository.findByDisplayId(name)
 
-    override fun findSeriesByConference(id: OrganizationId, pageable: Pageable): Page<ConferenceSeries> =
-        postgresConferenceSeriesRepository.findByOrganizationId(id, pageable)
+    override fun findAllByOrganizationId(id: OrganizationId, pageable: Pageable): Page<ConferenceSeries> =
+        postgresConferenceSeriesRepository.findAllByOrganizationId(id, pageable)
 
-    override fun removeAll() = postgresConferenceSeriesRepository.deleteAll()
+    override fun deleteAll() = postgresConferenceSeriesRepository.deleteAll()
 }

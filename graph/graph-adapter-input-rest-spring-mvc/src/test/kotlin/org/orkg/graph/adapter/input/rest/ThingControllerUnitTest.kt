@@ -44,7 +44,7 @@ internal class ThingControllerUnitTest : MockMvcBaseTest("things") {
         val thing = createResource()
 
         every { thingService.findById(any()) } returns Optional.of(thing)
-        every { statementService.countIncomingStatements(thing.id) } returns 23
+        every { statementService.countIncomingStatementsById(thing.id) } returns 23
 
         documentedGetRequestTo("/api/things/{id}", thing.id)
             .perform()
@@ -60,6 +60,6 @@ internal class ThingControllerUnitTest : MockMvcBaseTest("things") {
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { thingService.findById(any()) }
-        verify(exactly = 1) { statementService.countIncomingStatements(thing.id) }
+        verify(exactly = 1) { statementService.countIncomingStatementsById(thing.id) }
     }
 }

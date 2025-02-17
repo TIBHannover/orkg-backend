@@ -144,7 +144,7 @@ class SmartReviewController(
         currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
-        service.createSection(request.toCreateCommand(userId, id, index))
+        service.create(request.toCreateCommand(userId, id, index))
         val location = uriComponentsBuilder
             .path("/api/smart-reviews/{id}")
             .buildAndExpand(id)
@@ -179,7 +179,7 @@ class SmartReviewController(
         currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
-        service.updateSection(request.toUpdateCommand(sectionId, userId, id))
+        service.update(request.toUpdateCommand(sectionId, userId, id))
         val location = uriComponentsBuilder
             .path("/api/smart-reviews/{id}")
             .buildAndExpand(id)
@@ -196,7 +196,7 @@ class SmartReviewController(
         currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
-        service.deleteSection(DeleteSmartReviewSectionUseCase.DeleteCommand(id, sectionId, userId))
+        service.delete(DeleteSmartReviewSectionUseCase.DeleteCommand(id, sectionId, userId))
         val location = uriComponentsBuilder
             .path("/api/smart-reviews/{id}")
             .buildAndExpand(id)

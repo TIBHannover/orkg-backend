@@ -10,5 +10,5 @@ interface FindResearchFieldsQuery {
      *
      * @return This list of research fields, or an empty list otherwise.
      */
-    fun withBenchmarks(pageable: Pageable): Page<ResearchField>
+    fun findAllWithBenchmarks(pageable: Pageable): Page<ResearchField>
 }

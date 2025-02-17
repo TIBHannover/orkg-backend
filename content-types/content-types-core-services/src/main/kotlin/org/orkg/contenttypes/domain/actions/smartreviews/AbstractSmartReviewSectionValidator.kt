@@ -63,7 +63,7 @@ class AbstractSmartReviewSectionValidator(
             is SmartReviewOntologySectionDefinition -> {
                 val entitiesToValidate = section.entities.toSet() - validIds
                 if (entitiesToValidate.isNotEmpty()) {
-                    if (!thingRepository.existsAll(entitiesToValidate)) {
+                    if (!thingRepository.existsAllById(entitiesToValidate)) {
                         throw OntologyEntityNotFound(entitiesToValidate)
                     }
                     validIds += section.entities

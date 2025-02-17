@@ -16,5 +16,5 @@ interface RetrieveContributorUseCase {
      */
     fun findById(id: ContributorId): Optional<Contributor>
 
-    fun findAllByIds(ids: List<ContributorId>): List<Contributor>
+    fun findAllById(ids: List<ContributorId>): List<Contributor>
 }

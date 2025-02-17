@@ -59,9 +59,9 @@ internal class ProblemControllerIntegrationTest : MockMvcBaseTest("research-prob
 
     @BeforeEach
     fun setup() {
-        predicateService.removeAll()
-        resourceService.removeAll()
-        classService.removeAll()
+        predicateService.deleteAll()
+        resourceService.deleteAll()
+        classService.deleteAll()
 
         classService.createClasses("Problem", "Contribution", "Author", "Paper")
         predicateService.createPredicate(Predicates.hasResearchProblem)

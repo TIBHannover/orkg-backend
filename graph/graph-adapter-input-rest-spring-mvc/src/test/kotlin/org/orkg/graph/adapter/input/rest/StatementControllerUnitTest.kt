@@ -80,7 +80,7 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
     fun getSingle() {
         val statement = createStatement()
         every { statementService.findById(statement.id) } returns Optional.of(statement)
-        every { statementService.findAllDescriptions(any()) } returns emptyMap()
+        every { statementService.findAllDescriptionsById(any()) } returns emptyMap()
 
         documentedGetRequestTo("/api/statements/{id}", statement.id)
             .perform()
@@ -97,14 +97,14 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { statementService.findById(statement.id) }
-        verify(exactly = 1) { statementService.findAllDescriptions(any()) }
+        verify(exactly = 1) { statementService.findAllDescriptionsById(any()) }
     }
 
     @Test
     @DisplayName("Given several statements, when filtering by no parameters, then status is 200 OK and statements are returned")
     fun getPaged() {
         every { statementService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns pageOf(createStatement())
-        every { statementService.findAllDescriptions(any()) } returns emptyMap()
+        every { statementService.findAllDescriptionsById(any()) } returns emptyMap()
 
         documentedGetRequestTo("/api/statements")
             .perform()
@@ -115,7 +115,7 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
 
         verify(exactly = 1) {
             statementService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
-            statementService.findAllDescriptions(any())
+            statementService.findAllDescriptionsById(any())
         }
     }
 
@@ -127,8 +127,8 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
             `object` = createLiteral()
         )
         every { statementService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns pageOf(statement)
-        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
-        every { statementService.findAllDescriptions(any()) } returns emptyMap()
+        every { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) } returns emptyMap()
+        every { statementService.findAllDescriptionsById(any()) } returns emptyMap()
 
         val subjectClasses = (statement.subject as Resource).classes
         val subjectId = statement.subject.id
@@ -188,8 +188,8 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
                 objectId = objectId,
                 objectLabel = objectLabel
             )
-            statementService.countIncomingStatements(any<Set<ThingId>>())
-            statementService.findAllDescriptions(any())
+            statementService.countAllIncomingStatementsById(any<Set<ThingId>>())
+            statementService.findAllDescriptionsById(any())
         }
     }
 
@@ -232,8 +232,8 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
 
         every { statementService.create(command) } returns id
         every { statementService.findById(id) } returns Optional.of(statement)
-        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
-        every { statementService.findAllDescriptions(any()) } returns emptyMap()
+        every { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) } returns emptyMap()
+        every { statementService.findAllDescriptionsById(any()) } returns emptyMap()
 
         documentedPostRequestTo("/api/statements")
             .content(request)
@@ -259,8 +259,8 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
 
         verify(exactly = 1) { statementService.create(command) }
         verify(exactly = 1) { statementService.findById(id) }
-        verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
-        verify(exactly = 1) { statementService.findAllDescriptions(any()) }
+        verify(exactly = 1) { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) }
+        verify(exactly = 1) { statementService.findAllDescriptionsById(any()) }
     }
 
     @Test
@@ -383,8 +383,8 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
         )
         every { statementService.update(any()) } just runs
         every { statementService.findById(id) } returns Optional.of(updatedStatement)
-        every { statementService.findAllDescriptions(any()) } returns emptyMap()
-        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
+        every { statementService.findAllDescriptionsById(any()) } returns emptyMap()
+        every { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) } returns emptyMap()
 
         documentedPutRequestTo("/api/statements/{id}", id)
             .content(request)
@@ -418,8 +418,8 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
             })
         }
         verify(exactly = 1) { statementService.findById(id) }
-        verify(exactly = 1) { statementService.findAllDescriptions(any()) }
-        verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
+        verify(exactly = 1) { statementService.findAllDescriptionsById(any()) }
+        verify(exactly = 1) { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) }
     }
 
     @Nested
@@ -431,7 +431,7 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
         fun deleteById_isNoContent() {
             val id = StatementId("S1")
 
-            every { statementService.delete(id) } just Runs
+            every { statementService.deleteById(id) } just Runs
 
             documentedDeleteRequestTo("/api/statements/{id}", id)
                 .perform()
@@ -445,7 +445,7 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
                 )
                 .andDo(generateDefaultDocSnippets())
 
-            verify(exactly = 1) { statementService.delete(id) }
+            verify(exactly = 1) { statementService.deleteById(id) }
         }
     }
 
@@ -460,7 +460,7 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
                 .perform()
                 .andExpect(status().isForbidden)
 
-            verify(exactly = 0) { statementService.delete(id) }
+            verify(exactly = 0) { statementService.deleteById(id) }
         }
     }
 

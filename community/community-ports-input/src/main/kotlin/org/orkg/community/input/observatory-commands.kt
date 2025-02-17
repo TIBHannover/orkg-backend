@@ -50,5 +50,5 @@ interface DeleteObservatoryUseCase {
     /**
      * Remove all observatories
      */
-    fun removeAll()
+    fun deleteAll()
 }

@@ -12,7 +12,6 @@ import org.orkg.contenttypes.domain.SmartReviewResourceSection
 import org.orkg.contenttypes.domain.SmartReviewSection
 import org.orkg.contenttypes.domain.SmartReviewTextSection
 import org.orkg.contenttypes.domain.SmartReviewVisualizationSection
-import org.orkg.contenttypes.input.CreateSmartReviewSectionUseCase.CreateCommand
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Visibility
 
@@ -34,7 +33,7 @@ interface CreateSmartReviewUseCase {
 }
 
 interface CreateSmartReviewSectionUseCase {
-    fun createSection(command: CreateCommand): ThingId
+    fun create(command: CreateCommand): ThingId
 
     sealed interface CreateCommand {
         val contributorId: ContributorId
@@ -113,7 +112,7 @@ interface UpdateSmartReviewUseCase {
 }
 
 interface UpdateSmartReviewSectionUseCase {
-    fun updateSection(command: UpdateCommand)
+    fun update(command: UpdateCommand)
 
     sealed interface UpdateCommand {
         val smartReviewSectionId: ThingId
@@ -173,7 +172,7 @@ interface UpdateSmartReviewSectionUseCase {
 }
 
 interface DeleteSmartReviewSectionUseCase {
-    fun deleteSection(command: DeleteCommand)
+    fun delete(command: DeleteCommand)
 
     data class DeleteCommand(
         val smartReviewId: ThingId,

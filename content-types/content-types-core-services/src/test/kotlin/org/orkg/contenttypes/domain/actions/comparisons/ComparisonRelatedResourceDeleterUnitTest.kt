@@ -75,7 +75,7 @@ internal class ComparisonRelatedResourceDeleterUnitTest : MockkBaseTest {
             createStatement(StatementId("Statement1")),
             createStatement(StatementId("Statement2"))
         )
-        every { statementService.delete(any<Set<StatementId>>()) } just runs
+        every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
         every { resourceService.delete(comparisonRelatedResourceId, contributorId) } just runs
 
         contributionCreator.execute(comparisonId, comparisonRelatedResourceId, contributorId)
@@ -110,7 +110,7 @@ internal class ComparisonRelatedResourceDeleterUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.delete(
+            statementService.deleteAllById(
                 setOf(hasRelatedResource.id, StatementId("Statement1"), StatementId("Statement2"))
             )
         }
@@ -298,7 +298,7 @@ internal class ComparisonRelatedResourceDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         } returns pageOf(hasRelatedResource, createStatement(`object` = comparisonRelatedResource))
-        every { statementService.delete(any<Set<StatementId>>()) } just runs
+        every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
 
         contributionCreator.execute(comparisonId, comparisonRelatedResourceId, contributorId)
 
@@ -325,6 +325,6 @@ internal class ComparisonRelatedResourceDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(setOf(hasRelatedResource.id)) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(hasRelatedResource.id)) }
     }
 }

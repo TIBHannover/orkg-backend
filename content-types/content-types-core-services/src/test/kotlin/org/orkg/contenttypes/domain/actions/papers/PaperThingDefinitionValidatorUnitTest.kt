@@ -32,7 +32,7 @@ internal class PaperThingDefinitionValidatorUnitTest : MockkBaseTest {
 
         val `class` = createClass(ThingId("R2000"))
 
-        every { thingRepository.findByThingId(`class`.id) } returns Optional.of(`class`)
+        every { thingRepository.findById(`class`.id) } returns Optional.of(`class`)
 
         val result = paperThingDefinitionValidator(command, state)
 
@@ -44,7 +44,7 @@ internal class PaperThingDefinitionValidatorUnitTest : MockkBaseTest {
             it.paperId shouldBe null
         }
 
-        verify(exactly = 1) { thingRepository.findByThingId(`class`.id) }
+        verify(exactly = 1) { thingRepository.findById(`class`.id) }
     }
 
     @Test

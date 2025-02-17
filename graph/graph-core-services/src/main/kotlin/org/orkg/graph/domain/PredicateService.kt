@@ -25,7 +25,7 @@ class PredicateService(
     private val clock: Clock,
 ) : PredicateUseCases {
     @TransactionalOnNeo4j(readOnly = true)
-    override fun exists(id: ThingId): Boolean = repository.exists(id)
+    override fun existsById(id: ThingId): Boolean = repository.existsById(id)
 
     override fun create(command: CreatePredicateUseCase.CreateCommand): ThingId {
         val id = command.id
@@ -83,5 +83,5 @@ class PredicateService(
         repository.deleteById(predicate.id)
     }
 
-    override fun removeAll() = repository.deleteAll()
+    override fun deleteAll() = repository.deleteAll()
 }

@@ -11,11 +11,11 @@ interface ContributorRepository {
 
     fun findById(id: ContributorId): Optional<Contributor>
 
-    fun findAllByIds(ids: List<ContributorId>): List<Contributor>
+    fun findAllById(ids: List<ContributorId>): List<Contributor>
 
     fun save(contributor: Contributor)
 
-    fun countActiveUsers(): Long
+    fun count(): Long
 
     fun deleteById(contributorId: ContributorId)
 

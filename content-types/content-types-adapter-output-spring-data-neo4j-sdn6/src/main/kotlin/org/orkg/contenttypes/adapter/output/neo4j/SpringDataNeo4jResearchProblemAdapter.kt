@@ -2,7 +2,7 @@ package org.orkg.contenttypes.adapter.output.neo4j
 
 import java.util.*
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.adapter.output.neo4j.internal.Neo4jFieldPerProblem
+import org.orkg.contenttypes.adapter.output.neo4j.internal.Neo4jResearchFieldWithPaperCount
 import org.orkg.contenttypes.adapter.output.neo4j.internal.Neo4jProblemRepository
 import org.orkg.contenttypes.output.ResearchProblemRepository
 import org.orkg.graph.domain.ContributorPerProblem
@@ -86,8 +86,8 @@ class SpringDataNeo4jResearchProblemAdapter(
         neo4jRepository.findAllVisualizationsByProblemAndVisibility(id, visibility, pageable)
             .map { it.toResource() }
 
-    override fun findResearchFieldsPerProblem(problemId: ThingId): Iterable<FieldWithFreq> =
-        neo4jRepository.findResearchFieldsPerProblem(problemId).map { it.toFieldWithFreq() }
+    override fun findAllResearchFieldsWithPaperCountByProblemId(problemId: ThingId): Iterable<FieldWithFreq> =
+        neo4jRepository.findAllResearchFieldsWithPaperCountByProblemId(problemId).map { it.toFieldWithFreq() }
 
     override fun findTopResearchProblemsGoingBack(months: Int): Iterable<Resource> =
         neo4jRepository.findTopResearchProblemsGoingBack(months).map { it.toResource() }
@@ -95,14 +95,14 @@ class SpringDataNeo4jResearchProblemAdapter(
     override fun findTopResearchProblemsAllTime(): Iterable<Resource> =
         neo4jRepository.findTopResearchProblemsAllTime().map { it.toResource() }
 
-    override fun findContributorsLeaderboardPerProblem(
+    override fun findAllContributorsPerProblem(
         problemId: ThingId,
         pageable: Pageable
     ): Page<ContributorPerProblem> =
-        neo4jRepository.findContributorsLeaderboardPerProblem(problemId, pageable)
+        neo4jRepository.findAllContributorsPerProblem(problemId, pageable)
 
-    override fun findResearchProblemForDataset(datasetId: ThingId, pageable: Pageable): Page<Resource> =
-        neo4jRepository.findResearchProblemForDataset(datasetId, pageable).map { it.toResource() }
+    override fun findAllByDatasetId(datasetId: ThingId, pageable: Pageable): Page<Resource> =
+        neo4jRepository.findAllByDatasetId(datasetId, pageable).map { it.toResource() }
 
     override fun findAllListedProblems(pageable: Pageable): Page<Resource> =
         neo4jRepository.findAllListedProblems(pageable).map { it.toResource() }
@@ -110,9 +110,9 @@ class SpringDataNeo4jResearchProblemAdapter(
     override fun findAllProblemsByVisibility(visibility: Visibility, pageable: Pageable): Page<Resource> =
         neo4jRepository.findAllProblemsByVisibility(visibility, pageable).map { it.toResource() }
 
-    fun Neo4jFieldPerProblem.toFieldWithFreq() =
+    fun Neo4jResearchFieldWithPaperCount.toFieldWithFreq() =
         FieldWithFreq(
             field = field.toResource(),
-            freq = freq
+            freq = paperCount
         )
 }

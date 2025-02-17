@@ -40,15 +40,15 @@ internal class ListServiceUnitTest : MockkBaseTest {
             modifiable = false
         )
 
-        every { thingRepository.findByThingId(command.id!!) } returns Optional.empty()
-        every { thingRepository.existsAll(command.elements.toSet()) } returns true
+        every { thingRepository.findById(command.id!!) } returns Optional.empty()
+        every { thingRepository.existsAllById(command.elements.toSet()) } returns true
         every { repository.save(any(), any()) } just runs
 
         val result = service.create(command)
         result shouldBe command.id
 
-        verify(exactly = 1) { thingRepository.findByThingId(command.id!!) }
-        verify(exactly = 1) { thingRepository.existsAll(command.elements.toSet()) }
+        verify(exactly = 1) { thingRepository.findById(command.id!!) }
+        verify(exactly = 1) { thingRepository.existsAllById(command.elements.toSet()) }
         verify(exactly = 1) { repository.save(any(), any()) }
     }
 
@@ -73,13 +73,13 @@ internal class ListServiceUnitTest : MockkBaseTest {
             elements = listOf(ThingId("R1"))
         )
 
-        every { thingRepository.findByThingId(command.id!!) } returns Optional.empty()
-        every { thingRepository.existsAll(command.elements.toSet()) } returns false
+        every { thingRepository.findById(command.id!!) } returns Optional.empty()
+        every { thingRepository.existsAllById(command.elements.toSet()) } returns false
 
         assertThrows<ListElementNotFound> { service.create(command) }
 
-        verify(exactly = 1) { thingRepository.findByThingId(command.id!!) }
-        verify(exactly = 1) { thingRepository.existsAll(command.elements.toSet()) }
+        verify(exactly = 1) { thingRepository.findById(command.id!!) }
+        verify(exactly = 1) { thingRepository.existsAllById(command.elements.toSet()) }
     }
 
     @Test
@@ -93,14 +93,14 @@ internal class ListServiceUnitTest : MockkBaseTest {
         val id = ThingId("1")
 
         every { repository.nextIdentity() } returns id
-        every { thingRepository.existsAll(command.elements.toSet()) } returns true
+        every { thingRepository.existsAllById(command.elements.toSet()) } returns true
         every { repository.save(any(), any()) } just runs
 
         val result = service.create(command)
         result shouldBe id
 
         verify(exactly = 1) { repository.nextIdentity() }
-        verify(exactly = 1) { thingRepository.existsAll(command.elements.toSet()) }
+        verify(exactly = 1) { thingRepository.existsAllById(command.elements.toSet()) }
         verify(exactly = 1) { repository.save(any(), any()) }
     }
 
@@ -120,13 +120,13 @@ internal class ListServiceUnitTest : MockkBaseTest {
         )
 
         every { repository.findById(id) } returns Optional.of(list)
-        every { thingRepository.existsAll(command.elements!!.toSet()) } returns true
+        every { thingRepository.existsAllById(command.elements!!.toSet()) } returns true
         every { repository.save(any(), any()) } just runs
 
         service.update(command)
 
         verify(exactly = 1) { repository.findById(id) }
-        verify(exactly = 1) { thingRepository.existsAll(command.elements!!.toSet()) }
+        verify(exactly = 1) { thingRepository.existsAllById(command.elements!!.toSet()) }
         verify(exactly = 1) { repository.save(expected, ContributorId.UNKNOWN) }
     }
 
@@ -177,12 +177,12 @@ internal class ListServiceUnitTest : MockkBaseTest {
         val list = createList(id = id)
 
         every { repository.findById(id) } returns Optional.of(list)
-        every { thingRepository.existsAll(command.elements!!.toSet()) } returns false
+        every { thingRepository.existsAllById(command.elements!!.toSet()) } returns false
 
         assertThrows<ListElementNotFound> { service.update(command) }
 
         verify(exactly = 1) { repository.findById(id) }
-        verify(exactly = 1) { thingRepository.existsAll(command.elements!!.toSet()) }
+        verify(exactly = 1) { thingRepository.existsAllById(command.elements!!.toSet()) }
     }
 
     @Test
@@ -223,13 +223,13 @@ internal class ListServiceUnitTest : MockkBaseTest {
         )
 
         every { repository.findById(id) } returns Optional.of(list)
-        every { thingRepository.existsAll(command.elements!!.toSet()) } returns true
+        every { thingRepository.existsAllById(command.elements!!.toSet()) } returns true
         every { repository.save(any(), any()) } just runs
 
         service.update(command)
 
         verify(exactly = 1) { repository.findById(id) }
-        verify(exactly = 1) { thingRepository.existsAll(command.elements!!.toSet()) }
+        verify(exactly = 1) { thingRepository.existsAllById(command.elements!!.toSet()) }
         verify(exactly = 1) { repository.save(expected, ContributorId.UNKNOWN) }
     }
 
@@ -286,12 +286,12 @@ internal class ListServiceUnitTest : MockkBaseTest {
         )
         val pageable = PageRequest.of(0, 5)
 
-        every { repository.exists(id) } returns true
+        every { repository.existsById(id) } returns true
         every { repository.findAllElementsById(id, any()) } returns PageImpl(elements)
 
         service.findAllElementsById(id, pageable)
 
-        verify(exactly = 1) { repository.exists(id) }
+        verify(exactly = 1) { repository.existsById(id) }
         verify(exactly = 1) { repository.findAllElementsById(id, any()) }
     }
 
@@ -300,11 +300,11 @@ internal class ListServiceUnitTest : MockkBaseTest {
         val id = ThingId("List1")
         val pageable = PageRequest.of(0, 5)
 
-        every { repository.exists(id) } returns false
+        every { repository.existsById(id) } returns false
 
         assertThrows<ListNotFound> { service.findAllElementsById(id, pageable) }
 
-        verify(exactly = 1) { repository.exists(id) }
+        verify(exactly = 1) { repository.existsById(id) }
     }
 
     @Test
@@ -314,13 +314,13 @@ internal class ListServiceUnitTest : MockkBaseTest {
 
         every { repository.findById(id) } returns Optional.of(list)
         every { thingRepository.isUsedAsObject(id) } returns false
-        every { repository.delete(id) } just runs
+        every { repository.deleteById(id) } just runs
 
-        service.delete(id)
+        service.deleteById(id)
 
         verify(exactly = 1) { repository.findById(id) }
         verify(exactly = 1) { thingRepository.isUsedAsObject(id) }
-        verify(exactly = 1) { repository.delete(id) }
+        verify(exactly = 1) { repository.deleteById(id) }
     }
 
     @Test
@@ -329,7 +329,7 @@ internal class ListServiceUnitTest : MockkBaseTest {
 
         every { repository.findById(id) } returns Optional.empty()
 
-        service.delete(id)
+        service.deleteById(id)
 
         verify(exactly = 1) { repository.findById(id) }
     }
@@ -341,7 +341,7 @@ internal class ListServiceUnitTest : MockkBaseTest {
 
         every { repository.findById(id) } returns Optional.of(list)
 
-        assertThrows<ListNotModifiable> { service.delete(id) }
+        assertThrows<ListNotModifiable> { service.deleteById(id) }
 
         verify(exactly = 1) { repository.findById(id) }
     }
@@ -354,7 +354,7 @@ internal class ListServiceUnitTest : MockkBaseTest {
         every { repository.findById(id) } returns Optional.of(list)
         every { thingRepository.isUsedAsObject(id) } returns true
 
-        assertThrows<ListInUse> { service.delete(id) }
+        assertThrows<ListInUse> { service.deleteById(id) }
 
         verify(exactly = 1) { repository.findById(id) }
         verify(exactly = 1) { thingRepository.isUsedAsObject(id) }

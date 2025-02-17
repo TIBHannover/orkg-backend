@@ -54,7 +54,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         } returns pageOf(contributionHasSectionStatement)
-        every { statementService.delete(any<Set<StatementId>>()) } just runs
+        every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
         every { resourceService.delete(any(), contributorId) } just runs
 
         abstractTemplatePropertyDeleter.delete(contributorId, contributionId, section, statements)
@@ -65,7 +65,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(setOf(StatementId("S1"), contributionHasSectionStatement.id)) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S1"), contributionHasSectionStatement.id)) }
         verify(exactly = 1) { resourceService.delete(section.id, contributorId) }
     }
 
@@ -94,7 +94,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         } returns pageOf(contributionHasSectionStatement, otherStatementAboutComparisonSection)
-        every { statementService.delete(setOf(contributionHasSectionStatement.id)) } just runs
+        every { statementService.deleteAllById(setOf(contributionHasSectionStatement.id)) } just runs
 
         abstractTemplatePropertyDeleter.delete(contributorId, contributionId, section, statements)
 
@@ -104,7 +104,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(setOf(contributionHasSectionStatement.id)) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(contributionHasSectionStatement.id)) }
     }
 
     @Test
@@ -126,7 +126,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         } returns pageOf(contributionHasSectionStatement)
-        every { statementService.delete(any<Set<StatementId>>()) } just runs
+        every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
         every { resourceService.delete(any(), contributorId) } throws NeitherOwnerNorCurator(contributorId)
 
         assertDoesNotThrow {
@@ -139,7 +139,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(setOf(StatementId("S1"), contributionHasSectionStatement.id)) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S1"), contributionHasSectionStatement.id)) }
         verify(exactly = 1) { resourceService.delete(section.id, contributorId) }
     }
 
@@ -162,7 +162,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         } returns pageOf(contributionHasSectionStatement)
-        every { statementService.delete(any<Set<StatementId>>()) } just runs
+        every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
         every { resourceService.delete(any(), contributorId) } just runs
 
         abstractTemplatePropertyDeleter.delete(contributorId, contributionId, section, statements)
@@ -173,7 +173,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(setOf(StatementId("S1"), contributionHasSectionStatement.id)) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S1"), contributionHasSectionStatement.id)) }
         verify(exactly = 1) { resourceService.delete(section.id, contributorId) }
     }
 
@@ -202,7 +202,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         } returns pageOf(contributionHasSectionStatement, otherStatementAboutVisualizationSection)
-        every { statementService.delete(setOf(contributionHasSectionStatement.id)) } just runs
+        every { statementService.deleteAllById(setOf(contributionHasSectionStatement.id)) } just runs
 
         abstractTemplatePropertyDeleter.delete(contributorId, contributionId, section, statements)
 
@@ -212,7 +212,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(setOf(contributionHasSectionStatement.id)) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(contributionHasSectionStatement.id)) }
     }
 
     @Test
@@ -234,7 +234,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         } returns pageOf(contributionHasSectionStatement)
-        every { statementService.delete(any<Set<StatementId>>()) } just runs
+        every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
         every { resourceService.delete(any(), contributorId) } throws NeitherOwnerNorCurator(contributorId)
 
         assertDoesNotThrow {
@@ -247,7 +247,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(setOf(StatementId("S1"), contributionHasSectionStatement.id)) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S1"), contributionHasSectionStatement.id)) }
         verify(exactly = 1) { resourceService.delete(section.id, contributorId) }
     }
 
@@ -270,7 +270,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         } returns pageOf(contributionHasSectionStatement)
-        every { statementService.delete(any<Set<StatementId>>()) } just runs
+        every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
         every { resourceService.delete(any(), contributorId) } just runs
 
         abstractTemplatePropertyDeleter.delete(contributorId, contributionId, section, statements)
@@ -281,7 +281,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(setOf(StatementId("S1"), contributionHasSectionStatement.id)) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S1"), contributionHasSectionStatement.id)) }
         verify(exactly = 1) { resourceService.delete(section.id, contributorId) }
     }
 
@@ -310,7 +310,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         } returns pageOf(contributionHasSectionStatement, otherStatementAboutResourceSection)
-        every { statementService.delete(setOf(contributionHasSectionStatement.id)) } just runs
+        every { statementService.deleteAllById(setOf(contributionHasSectionStatement.id)) } just runs
 
         abstractTemplatePropertyDeleter.delete(contributorId, contributionId, section, statements)
 
@@ -320,7 +320,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(setOf(contributionHasSectionStatement.id)) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(contributionHasSectionStatement.id)) }
     }
 
     @Test
@@ -342,7 +342,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         } returns pageOf(contributionHasSectionStatement)
-        every { statementService.delete(any<Set<StatementId>>()) } just runs
+        every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
         every { resourceService.delete(any(), contributorId) } throws NeitherOwnerNorCurator(contributorId)
 
         assertDoesNotThrow {
@@ -355,7 +355,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(setOf(StatementId("S1"), contributionHasSectionStatement.id)) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S1"), contributionHasSectionStatement.id)) }
         verify(exactly = 1) { resourceService.delete(section.id, contributorId) }
     }
 
@@ -378,7 +378,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         } returns pageOf(contributionHasSectionStatement)
-        every { statementService.delete(any<Set<StatementId>>()) } just runs
+        every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
         every { resourceService.delete(any(), contributorId) } just runs
 
         abstractTemplatePropertyDeleter.delete(contributorId, contributionId, section, statements)
@@ -389,7 +389,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(setOf(StatementId("S1"), contributionHasSectionStatement.id)) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S1"), contributionHasSectionStatement.id)) }
         verify(exactly = 1) { resourceService.delete(section.id, contributorId) }
     }
 
@@ -418,7 +418,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         } returns pageOf(contributionHasSectionStatement, otherStatementAboutPredicateSection)
-        every { statementService.delete(setOf(contributionHasSectionStatement.id)) } just runs
+        every { statementService.deleteAllById(setOf(contributionHasSectionStatement.id)) } just runs
 
         abstractTemplatePropertyDeleter.delete(contributorId, contributionId, section, statements)
 
@@ -428,7 +428,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(setOf(contributionHasSectionStatement.id)) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(contributionHasSectionStatement.id)) }
     }
 
     @Test
@@ -449,7 +449,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         } returns pageOf(smartReviewHasSectionStatement)
-        every { statementService.delete(any<Set<StatementId>>()) } just runs
+        every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
         every { resourceService.delete(any(), contributorId) } throws NeitherOwnerNorCurator(contributorId)
 
         assertDoesNotThrow {
@@ -462,7 +462,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(setOf(StatementId("S1"))) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S1"))) }
         verify(exactly = 1) { resourceService.delete(section.id, contributorId) }
     }
 
@@ -485,7 +485,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         } returns pageOf(contributionHasSectionStatement)
-        every { statementService.delete(any<Set<StatementId>>()) } just runs
+        every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
         every { resourceService.delete(any(), contributorId) } just runs
 
         abstractTemplatePropertyDeleter.delete(contributorId, contributionId, section, statements)
@@ -497,7 +497,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.delete(
+            statementService.deleteAllById(
                 setOf(
                     StatementId("S0"),
                     StatementId("S1"),
@@ -532,7 +532,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         } returns pageOf(contributionHasSectionStatement, otherStatementAboutOntologySection)
-        every { statementService.delete(setOf(contributionHasSectionStatement.id)) } just runs
+        every { statementService.deleteAllById(setOf(contributionHasSectionStatement.id)) } just runs
 
         abstractTemplatePropertyDeleter.delete(contributorId, contributionId, section, statements)
 
@@ -542,7 +542,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(setOf(contributionHasSectionStatement.id)) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(contributionHasSectionStatement.id)) }
     }
 
     @Test
@@ -564,7 +564,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         } returns pageOf(smartReviewHasSectionStatement)
-        every { statementService.delete(any<Set<StatementId>>()) } just runs
+        every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
         every { resourceService.delete(any(), contributorId) } throws NeitherOwnerNorCurator(contributorId)
 
         assertDoesNotThrow {
@@ -578,7 +578,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.delete(
+            statementService.deleteAllById(
                 setOf(
                     StatementId("S0"),
                     StatementId("S1"),
@@ -609,7 +609,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         } returns pageOf(contributionHasSectionStatement)
-        every { statementService.delete(any<Set<StatementId>>()) } just runs
+        every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
         every { resourceService.delete(any(), contributorId) } just runs
 
         abstractTemplatePropertyDeleter.delete(contributorId, contributionId, section, statements)
@@ -620,7 +620,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(setOf(StatementId("S1"), contributionHasSectionStatement.id)) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S1"), contributionHasSectionStatement.id)) }
         verify(exactly = 1) { resourceService.delete(section.id, contributorId) }
     }
 
@@ -649,7 +649,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         } returns pageOf(contributionHasSectionStatement, otherStatementAboutTextSection)
-        every { statementService.delete(setOf(contributionHasSectionStatement.id)) } just runs
+        every { statementService.deleteAllById(setOf(contributionHasSectionStatement.id)) } just runs
 
         abstractTemplatePropertyDeleter.delete(contributorId, contributionId, section, statements)
 
@@ -659,7 +659,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(setOf(contributionHasSectionStatement.id)) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(contributionHasSectionStatement.id)) }
     }
 
     @Test
@@ -681,7 +681,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         } returns pageOf(contributionHasSectionStatement)
-        every { statementService.delete(any<Set<StatementId>>()) } just runs
+        every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
         every { resourceService.delete(any(), contributorId) } throws NeitherOwnerNorCurator(contributorId)
 
         assertDoesNotThrow {
@@ -694,7 +694,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(setOf(StatementId("S1"), contributionHasSectionStatement.id)) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S1"), contributionHasSectionStatement.id)) }
         verify(exactly = 1) { resourceService.delete(section.id, contributorId) }
     }
 }

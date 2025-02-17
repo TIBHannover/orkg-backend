@@ -24,6 +24,6 @@ class ImageService(
         return uuid
     }
 
-    override fun find(id: ImageId) =
+    override fun findById(id: ImageId) =
         repository.findById(id)
 }

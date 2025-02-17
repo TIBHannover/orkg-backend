@@ -28,9 +28,11 @@ import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
 import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
 import org.orkg.contenttypes.input.ContributionUseCases
 import org.orkg.contenttypes.input.CreateSmartReviewSectionUseCase
+import org.orkg.contenttypes.input.CreateSmartReviewUseCase
 import org.orkg.contenttypes.input.DeleteSmartReviewSectionUseCase
 import org.orkg.contenttypes.input.SmartReviewUseCases
 import org.orkg.contenttypes.input.UpdateSmartReviewSectionUseCase
+import org.orkg.contenttypes.input.UpdateSmartReviewUseCase
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
@@ -303,8 +305,8 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
         val sectionId = ThingId("R123")
 
         every { smartReviewService.findPublishedContentById(any(), any()) } returns Either.right(listOf(createStatement(subject = createResource(sectionId))))
-        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
-        every { statementService.findAllDescriptions(any()) } returns emptyMap()
+        every { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) } returns emptyMap()
+        every { statementService.findAllDescriptionsById(any()) } returns emptyMap()
 
         documentedGetRequestTo("/api/smart-reviews/{id}/published-contents/{contentId}", id, sectionId)
             .perform()
@@ -325,8 +327,8 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { smartReviewService.findPublishedContentById(id, sectionId) }
-        verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
-        verify(exactly = 1) { statementService.findAllDescriptions(any()) }
+        verify(exactly = 1) { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) }
+        verify(exactly = 1) { statementService.findAllDescriptionsById(any()) }
     }
 
     @Test
@@ -334,7 +336,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
     @DisplayName("Given a smart review create request, when service succeeds, it creates the smart review")
     fun create() {
         val id = ThingId("R123")
-        every { smartReviewService.create(any()) } returns id
+        every { smartReviewService.create(any<CreateSmartReviewUseCase.CreateCommand>()) } returns id
 
         documentedPostRequestTo("/api/smart-reviews")
             .content(createSmartReviewRequest())
@@ -362,7 +364,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { smartReviewService.create(any()) }
+        verify(exactly = 1) { smartReviewService.create(any<CreateSmartReviewUseCase.CreateCommand>()) }
     }
 
     @Test
@@ -373,7 +375,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
         val sectionId = ThingId("R123")
         val request = comparisonSectionRequest()
 
-        every { smartReviewService.createSection(any()) } returns sectionId
+        every { smartReviewService.create(any<CreateSmartReviewSectionUseCase.CreateComparisonSectionCommand>()) } returns sectionId
 
         post("/api/smart-reviews/{id}/sections", id)
             .content(request)
@@ -384,7 +386,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
             .andExpect(header().string("Location", endsWith("/api/smart-reviews/$id")))
 
         verify(exactly = 1) {
-            smartReviewService.createSection(withArg {
+            smartReviewService.create(withArg<CreateSmartReviewSectionUseCase.CreateComparisonSectionCommand> {
                 it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateComparisonSectionCommand>()
                 it.index shouldBe null
             })
@@ -400,7 +402,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
         val index = 5
         val request = comparisonSectionRequest()
 
-        every { smartReviewService.createSection(any()) } returns sectionId
+        every { smartReviewService.create(any<CreateSmartReviewSectionUseCase.CreateComparisonSectionCommand>()) } returns sectionId
 
         documentedPostRequestTo("/api/smart-reviews/{id}/sections/{index}", id, index)
             .content(request)
@@ -427,7 +429,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) {
-            smartReviewService.createSection(withArg {
+            smartReviewService.create(withArg<CreateSmartReviewSectionUseCase.CreateComparisonSectionCommand> {
                 it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateComparisonSectionCommand>()
                 it.index shouldBe index
             })
@@ -442,7 +444,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
         val sectionId = ThingId("R123")
         val request = visualizationSectionRequest()
 
-        every { smartReviewService.createSection(any()) } returns sectionId
+        every { smartReviewService.create(any<CreateSmartReviewSectionUseCase.CreateVisualizationSectionCommand>()) } returns sectionId
 
         post("/api/smart-reviews/{id}/sections", id)
             .content(request)
@@ -453,7 +455,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
             .andExpect(header().string("Location", endsWith("/api/smart-reviews/$id")))
 
         verify(exactly = 1) {
-            smartReviewService.createSection(withArg {
+            smartReviewService.create(withArg<CreateSmartReviewSectionUseCase.CreateVisualizationSectionCommand> {
                 it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateVisualizationSectionCommand>()
                 it.index shouldBe null
             })
@@ -469,7 +471,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
         val index = 5
         val request = visualizationSectionRequest()
 
-        every { smartReviewService.createSection(any()) } returns sectionId
+        every { smartReviewService.create(any<CreateSmartReviewSectionUseCase.CreateVisualizationSectionCommand>()) } returns sectionId
 
         documentedPostRequestTo("/api/smart-reviews/{id}/sections/{index}", id, index)
             .content(request)
@@ -496,7 +498,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) {
-            smartReviewService.createSection(withArg {
+            smartReviewService.create(withArg<CreateSmartReviewSectionUseCase.CreateVisualizationSectionCommand> {
                 it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateVisualizationSectionCommand>()
                 it.index shouldBe index
             })
@@ -511,7 +513,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
         val sectionId = ThingId("R123")
         val request = resourceSectionRequest()
 
-        every { smartReviewService.createSection(any()) } returns sectionId
+        every { smartReviewService.create(any<CreateSmartReviewSectionUseCase.CreateResourceSectionCommand>()) } returns sectionId
 
         post("/api/smart-reviews/{id}/sections", id)
             .content(request)
@@ -522,7 +524,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
             .andExpect(header().string("Location", endsWith("/api/smart-reviews/$id")))
 
         verify(exactly = 1) {
-            smartReviewService.createSection(withArg {
+            smartReviewService.create(withArg<CreateSmartReviewSectionUseCase.CreateResourceSectionCommand> {
                 it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateResourceSectionCommand>()
                 it.index shouldBe null
             })
@@ -538,7 +540,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
         val index = 5
         val request = resourceSectionRequest()
 
-        every { smartReviewService.createSection(any()) } returns sectionId
+        every { smartReviewService.create(any<CreateSmartReviewSectionUseCase.CreateResourceSectionCommand>()) } returns sectionId
 
         documentedPostRequestTo("/api/smart-reviews/{id}/sections/{index}", id, index)
             .content(request)
@@ -565,7 +567,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) {
-            smartReviewService.createSection(withArg {
+            smartReviewService.create(withArg<CreateSmartReviewSectionUseCase.CreateResourceSectionCommand> {
                 it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateResourceSectionCommand>()
                 it.index shouldBe index
             })
@@ -580,7 +582,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
         val sectionId = ThingId("R123")
         val request = predicateSectionRequest()
 
-        every { smartReviewService.createSection(any()) } returns sectionId
+        every { smartReviewService.create(any<CreateSmartReviewSectionUseCase.CreatePredicateSectionCommand>()) } returns sectionId
 
         post("/api/smart-reviews/{id}/sections", id)
             .content(request)
@@ -591,7 +593,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
             .andExpect(header().string("Location", endsWith("/api/smart-reviews/$id")))
 
         verify(exactly = 1) {
-            smartReviewService.createSection(withArg {
+            smartReviewService.create(withArg<CreateSmartReviewSectionUseCase.CreatePredicateSectionCommand> {
                 it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreatePredicateSectionCommand>()
                 it.index shouldBe null
             })
@@ -607,7 +609,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
         val index = 5
         val request = predicateSectionRequest()
 
-        every { smartReviewService.createSection(any()) } returns sectionId
+        every { smartReviewService.create(any<CreateSmartReviewSectionUseCase.CreatePredicateSectionCommand>()) } returns sectionId
 
         documentedPostRequestTo("/api/smart-reviews/{id}/sections/{index}", id, index)
             .content(request)
@@ -634,7 +636,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) {
-            smartReviewService.createSection(withArg {
+            smartReviewService.create(withArg<CreateSmartReviewSectionUseCase.CreatePredicateSectionCommand> {
                 it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreatePredicateSectionCommand>()
                 it.index shouldBe index
             })
@@ -649,7 +651,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
         val sectionId = ThingId("R123")
         val request = ontologySectionRequest()
 
-        every { smartReviewService.createSection(any()) } returns sectionId
+        every { smartReviewService.create(any<CreateSmartReviewSectionUseCase.CreateOntologySectionCommand>()) } returns sectionId
 
         post("/api/smart-reviews/{id}/sections", id)
             .content(request)
@@ -660,7 +662,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
             .andExpect(header().string("Location", endsWith("/api/smart-reviews/$id")))
 
         verify(exactly = 1) {
-            smartReviewService.createSection(withArg {
+            smartReviewService.create(withArg<CreateSmartReviewSectionUseCase.CreateOntologySectionCommand> {
                 it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateOntologySectionCommand>()
                 it.index shouldBe null
             })
@@ -676,7 +678,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
         val index = 5
         val request = ontologySectionRequest()
 
-        every { smartReviewService.createSection(any()) } returns sectionId
+        every { smartReviewService.create(any<CreateSmartReviewSectionUseCase.CreateOntologySectionCommand>()) } returns sectionId
 
         documentedPostRequestTo("/api/smart-reviews/{id}/sections/{index}", id, index)
             .content(request)
@@ -704,7 +706,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) {
-            smartReviewService.createSection(withArg {
+            smartReviewService.create(withArg<CreateSmartReviewSectionUseCase.CreateOntologySectionCommand> {
                 it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateOntologySectionCommand>()
                 it.index shouldBe index
             })
@@ -719,7 +721,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
         val sectionId = ThingId("R123")
         val request = textSectionRequest()
 
-        every { smartReviewService.createSection(any()) } returns sectionId
+        every { smartReviewService.create(any<CreateSmartReviewSectionUseCase.CreateTextSectionCommand>()) } returns sectionId
 
         post("/api/smart-reviews/{id}/sections", id)
             .content(request)
@@ -730,7 +732,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
             .andExpect(header().string("Location", endsWith("/api/smart-reviews/$id")))
 
         verify(exactly = 1) {
-            smartReviewService.createSection(withArg {
+            smartReviewService.create(withArg<CreateSmartReviewSectionUseCase.CreateTextSectionCommand> {
                 it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateTextSectionCommand>()
                 it.index shouldBe null
             })
@@ -746,7 +748,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
         val index = 5
         val request = textSectionRequest()
 
-        every { smartReviewService.createSection(any()) } returns sectionId
+        every { smartReviewService.create(any<CreateSmartReviewSectionUseCase.CreateTextSectionCommand>()) } returns sectionId
 
         documentedPostRequestTo("/api/smart-reviews/{id}/sections/{index}", id, index)
             .content(request)
@@ -774,7 +776,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) {
-            smartReviewService.createSection(withArg {
+            smartReviewService.create(withArg<CreateSmartReviewSectionUseCase.CreateTextSectionCommand> {
                 it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateTextSectionCommand>()
                 it.index shouldBe index
             })
@@ -786,7 +788,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
     @DisplayName("Given a smart review update request, when service succeeds, it updates the smart review")
     fun update() {
         val id = ThingId("R123")
-        every { smartReviewService.update(any()) } just runs
+        every { smartReviewService.update(any<UpdateSmartReviewUseCase.UpdateCommand>()) } just runs
 
         documentedPutRequestTo("/api/smart-reviews/{id}", id)
             .content(updateSmartReviewRequest())
@@ -818,7 +820,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { smartReviewService.update(any()) }
+        verify(exactly = 1) { smartReviewService.update(any<UpdateSmartReviewUseCase.UpdateCommand>()) }
     }
 
     @Test
@@ -829,7 +831,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
         val sectionId = ThingId("R123")
         val request = comparisonSectionRequest()
 
-        every { smartReviewService.updateSection(any()) } just runs
+        every { smartReviewService.update(any<UpdateSmartReviewSectionUseCase.UpdateComparisonSectionCommand>()) } just runs
 
         documentedPutRequestTo("/api/smart-reviews/{id}/sections/{sectionId}", id, sectionId)
             .content(request)
@@ -856,7 +858,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) {
-            smartReviewService.updateSection(any<UpdateSmartReviewSectionUseCase.UpdateComparisonSectionCommand>())
+            smartReviewService.update(any<UpdateSmartReviewSectionUseCase.UpdateComparisonSectionCommand>())
         }
     }
 
@@ -868,7 +870,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
         val sectionId = ThingId("R123")
         val request = visualizationSectionRequest()
 
-        every { smartReviewService.updateSection(any()) } just runs
+        every { smartReviewService.update(any<UpdateSmartReviewSectionUseCase.UpdateVisualizationSectionCommand>()) } just runs
 
         documentedPutRequestTo("/api/smart-reviews/{id}/sections/{sectionId}", id, sectionId)
             .content(request)
@@ -895,7 +897,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) {
-            smartReviewService.updateSection(any<UpdateSmartReviewSectionUseCase.UpdateVisualizationSectionCommand>())
+            smartReviewService.update(any<UpdateSmartReviewSectionUseCase.UpdateVisualizationSectionCommand>())
         }
     }
 
@@ -907,7 +909,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
         val sectionId = ThingId("R123")
         val request = resourceSectionRequest()
 
-        every { smartReviewService.updateSection(any()) } just runs
+        every { smartReviewService.update(any<UpdateSmartReviewSectionUseCase.UpdateResourceSectionCommand>()) } just runs
 
         documentedPutRequestTo("/api/smart-reviews/{id}/sections/{sectionId}", id, sectionId)
             .content(request)
@@ -934,7 +936,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) {
-            smartReviewService.updateSection(any<UpdateSmartReviewSectionUseCase.UpdateResourceSectionCommand>())
+            smartReviewService.update(any<UpdateSmartReviewSectionUseCase.UpdateResourceSectionCommand>())
         }
     }
 
@@ -946,7 +948,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
         val sectionId = ThingId("R123")
         val request = predicateSectionRequest()
 
-        every { smartReviewService.updateSection(any()) } just runs
+        every { smartReviewService.update(any<UpdateSmartReviewSectionUseCase.UpdatePredicateSectionCommand>()) } just runs
 
         documentedPutRequestTo("/api/smart-reviews/{id}/sections/{sectionId}", id, sectionId)
             .content(request)
@@ -973,7 +975,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) {
-            smartReviewService.updateSection(any<UpdateSmartReviewSectionUseCase.UpdatePredicateSectionCommand>())
+            smartReviewService.update(any<UpdateSmartReviewSectionUseCase.UpdatePredicateSectionCommand>())
         }
     }
 
@@ -985,7 +987,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
         val sectionId = ThingId("R123")
         val request = ontologySectionRequest()
 
-        every { smartReviewService.updateSection(any()) } just runs
+        every { smartReviewService.update(any<UpdateSmartReviewSectionUseCase.UpdateOntologySectionCommand>()) } just runs
 
         documentedPutRequestTo("/api/smart-reviews/{id}/sections/{sectionId}", id, sectionId)
             .content(request)
@@ -1013,7 +1015,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) {
-            smartReviewService.updateSection(any<UpdateSmartReviewSectionUseCase.UpdateOntologySectionCommand>())
+            smartReviewService.update(any<UpdateSmartReviewSectionUseCase.UpdateOntologySectionCommand>())
         }
     }
 
@@ -1025,7 +1027,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
         val sectionId = ThingId("R123")
         val request = textSectionRequest()
 
-        every { smartReviewService.updateSection(any()) } just runs
+        every { smartReviewService.update(any<UpdateSmartReviewSectionUseCase.UpdateTextSectionCommand>()) } just runs
 
         documentedPutRequestTo("/api/smart-reviews/{id}/sections/{sectionId}", id, sectionId)
             .content(request)
@@ -1053,7 +1055,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) {
-            smartReviewService.updateSection(any<UpdateSmartReviewSectionUseCase.UpdateTextSectionCommand>())
+            smartReviewService.update(any<UpdateSmartReviewSectionUseCase.UpdateTextSectionCommand>())
         }
     }
 
@@ -1066,7 +1068,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
         val command = DeleteSmartReviewSectionUseCase.DeleteCommand(
             id, sectionId, ContributorId(MockUserId.USER)
         )
-        every { smartReviewService.deleteSection(command) } just runs
+        every { smartReviewService.delete(command) } just runs
 
         documentedDeleteRequestTo("/api/smart-reviews/{id}/sections/{sectionId}", id, sectionId)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
@@ -1086,7 +1088,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { smartReviewService.deleteSection(command) }
+        verify(exactly = 1) { smartReviewService.delete(command) }
     }
 
     @Test

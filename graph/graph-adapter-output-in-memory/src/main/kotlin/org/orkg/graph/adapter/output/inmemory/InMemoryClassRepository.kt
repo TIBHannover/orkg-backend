@@ -21,8 +21,8 @@ class InMemoryClassRepository(inMemoryGraph: InMemoryGraph) :
             override val keys: Collection<ThingId> get() = inMemoryGraph.findAllClasses().map { it.id }
             override val values: MutableCollection<Class> get() = inMemoryGraph.findAllClasses().toMutableSet()
 
-            override fun remove(key: ThingId): Class? = get(key)?.also { inMemoryGraph.remove(it.id) }
-            override fun clear() = inMemoryGraph.findAllClasses().forEach(inMemoryGraph::remove)
+            override fun remove(key: ThingId): Class? = get(key)?.also { inMemoryGraph.delete(it.id) }
+            override fun clear() = inMemoryGraph.findAllClasses().forEach(inMemoryGraph::delete)
 
             override fun get(key: ThingId): Class? = inMemoryGraph.findClassById(key).getOrNull()
             override fun set(key: ThingId, value: Class): Class? =
@@ -86,6 +86,6 @@ class InMemoryClassRepository(inMemoryGraph: InMemoryGraph) :
         return id
     }
 
-    override fun existsAll(ids: Set<ThingId>): Boolean =
+    override fun existsAllById(ids: Set<ThingId>): Boolean =
         if (ids.isNotEmpty()) entities.keys.containsAll(ids) else false
 }

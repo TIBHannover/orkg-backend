@@ -144,11 +144,11 @@ class ComparisonController(
             .orElseThrow { ComparisonRelatedResourceNotFound(comparisonRelatedResourceId) }
 
     @GetMapping("/{id}/related-resources", produces = [COMPARISON_JSON_V2])
-    fun findAllRelatedResources(
+    fun findAllRelatedResourcesById(
         @PathVariable id: ThingId,
         pageable: Pageable
     ): Page<ComparisonRelatedResourceRepresentation> =
-        service.findAllRelatedResources(id, pageable)
+        service.findAllRelatedResourcesById(id, pageable)
             .mapToComparisonRelatedResourceRepresentation()
 
     @RequireLogin
@@ -213,11 +213,11 @@ class ComparisonController(
             .orElseThrow { ComparisonRelatedFigureNotFound(comparisonRelatedFigureId) }
 
     @GetMapping("/{id}/related-figures", produces = [COMPARISON_JSON_V2])
-    fun findAllRelatedFigures(
+    fun findAllRelatedFiguresById(
         @PathVariable id: ThingId,
         pageable: Pageable
     ): Page<ComparisonRelatedFigureRepresentation> =
-        service.findAllRelatedFigures(id, pageable)
+        service.findAllRelatedFiguresById(id, pageable)
             .mapToComparisonRelatedFigureRepresentation()
 
     @RequireLogin

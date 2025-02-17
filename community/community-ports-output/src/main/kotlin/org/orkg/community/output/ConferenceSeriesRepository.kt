@@ -16,7 +16,7 @@ interface ConferenceSeriesRepository {
 
     fun findById(id: ConferenceSeriesId): Optional<ConferenceSeries>
 
-    fun findByOrganizationId(id: OrganizationId, pageable: Pageable): Page<ConferenceSeries>
+    fun findAllByOrganizationId(id: OrganizationId, pageable: Pageable): Page<ConferenceSeries>
 
     fun findByDisplayId(displayId: String): Optional<ConferenceSeries>
 

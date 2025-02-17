@@ -11,6 +11,6 @@ import org.springframework.stereotype.Component
 class FindResearchFieldsQueryAdapter(
     private val repository: ResearchFieldRepository,
 ) : FindResearchFieldsQuery {
-    override fun withBenchmarks(pageable: Pageable): Page<ResearchField> =
-        repository.findResearchFieldsWithBenchmarks(pageable).map { ResearchField(it.id.value, it.label) }
+    override fun findAllWithBenchmarks(pageable: Pageable): Page<ResearchField> =
+        repository.findAllWithBenchmarks(pageable).map { ResearchField(it.id.value, it.label) }
 }

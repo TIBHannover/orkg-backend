@@ -56,7 +56,7 @@ class ComparisonRelatedResourceDeleter(
             ).content + incomingStatements
 
             if (statementToRemove.isNotEmpty()) {
-                statementService.delete(statementToRemove.map { it.id }.toSet())
+                statementService.deleteAllById(statementToRemove.map { it.id }.toSet())
             }
 
             resourceService.tryDelete(comparisonRelatedResource.id, contributorId)

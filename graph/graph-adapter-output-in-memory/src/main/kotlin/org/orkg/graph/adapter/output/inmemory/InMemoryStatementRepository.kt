@@ -41,8 +41,8 @@ class InMemoryStatementRepository(private val inMemoryGraph: InMemoryGraph) :
             override val values: MutableCollection<GeneralStatement>
                 get() = inMemoryGraph.findAllStatements().toMutableSet()
 
-            override fun remove(key: StatementId): GeneralStatement? = get(key)?.also { inMemoryGraph.remove(it.id) }
-            override fun clear() = inMemoryGraph.findAllStatements().forEach(inMemoryGraph::remove)
+            override fun remove(key: StatementId): GeneralStatement? = get(key)?.also { inMemoryGraph.delete(it.id) }
+            override fun clear() = inMemoryGraph.findAllStatements().forEach(inMemoryGraph::delete)
 
             override fun get(key: StatementId): GeneralStatement? = inMemoryGraph.findStatementById(key).getOrNull()
             override fun set(key: StatementId, value: GeneralStatement): GeneralStatement? =
@@ -120,7 +120,7 @@ class InMemoryStatementRepository(private val inMemoryGraph: InMemoryGraph) :
     override fun findAllByStatementIdIn(ids: Set<StatementId>, pageable: Pageable): Page<GeneralStatement> =
         findAllFilteredAndPaged(pageable) { it.id in ids }
 
-    override fun countByIdRecursive(id: ThingId): Long =
+    override fun countStatementsInPaperSubgraph(id: ThingId): Long =
         findSubgraph(ThingId(id.value)) { statement, _ ->
             statement.`object` !is Resource || (statement.`object` as Resource).classes.none { `class` ->
                 `class` == Classes.paper || `class` == Classes.problem || `class` == Classes.researchField
@@ -234,15 +234,15 @@ class InMemoryStatementRepository(private val inMemoryGraph: InMemoryGraph) :
         entities.clear()
     }
 
-    override fun countIncomingStatements(id: ThingId) =
+    override fun countIncomingStatementsById(id: ThingId) =
         entities.count { id == it.`object`.id }.toLong()
 
-    override fun countIncomingStatements(ids: Set<ThingId>) =
+    override fun countAllIncomingStatementsById(ids: Set<ThingId>) =
         entities.groupBy { it.`object`.id }
             .filter { it.value.isNotEmpty() && it.key in ids }
             .mapValues { it.value.size.toLong() }
 
-    override fun findAllDescriptions(ids: Set<ThingId>): Map<ThingId, String> =
+    override fun findAllDescriptionsById(ids: Set<ThingId>): Map<ThingId, String> =
         entities.groupBy { it.subject.id }
             .filter { it.value.any { statement -> statement.`object` is Literal } && it.key in ids }
             .mapValues { it.value.first().`object`.label }

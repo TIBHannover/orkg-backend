@@ -85,7 +85,7 @@ class ObservatoryController(
         }
         return when {
             name != null -> service.findAllByNameContains(name, pageable)
-            researchField != null -> service.findAllByResearchField(researchField, pageable)
+            researchField != null -> service.findAllByResearchFieldId(researchField, pageable)
             else -> service.findAll(pageable)
         }.mapToObservatoryRepresentation()
     }
@@ -101,7 +101,7 @@ class ObservatoryController(
         @PathVariable id: ObservatoryId,
         pageable: Pageable
     ): Page<Contributor> =
-        observatoryRepository.allMembers(id, pageable)
+        observatoryRepository.findAllMembersByObservatoryId(id, pageable)
 
     @RequireCuratorRole
     @PatchMapping("/{id}")

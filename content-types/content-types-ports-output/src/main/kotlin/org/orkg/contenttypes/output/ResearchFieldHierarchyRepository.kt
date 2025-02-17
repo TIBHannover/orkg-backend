@@ -8,13 +8,13 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 interface ResearchFieldHierarchyRepository {
-    fun findChildren(id: ThingId, pageable: Pageable): Page<ResearchFieldWithChildCount>
+    fun findAllChildrenByAncestorId(id: ThingId, pageable: Pageable): Page<ResearchFieldWithChildCount>
 
-    fun findParents(id: ThingId, pageable: Pageable): Page<Resource>
+    fun findAllParentsByChildId(id: ThingId, pageable: Pageable): Page<Resource>
 
-    fun findRoots(id: ThingId, pageable: Pageable): Page<Resource>
+    fun findAllRootsByDescendantId(id: ThingId, pageable: Pageable): Page<Resource>
 
     fun findAllRoots(pageable: Pageable): Page<Resource>
 
-    fun findResearchFieldHierarchy(id: ThingId, pageable: Pageable): Page<ResearchFieldHierarchyEntry>
+    fun findResearchFieldHierarchyByResearchFieldId(id: ThingId, pageable: Pageable): Page<ResearchFieldHierarchyEntry>
 }

@@ -46,15 +46,15 @@ class ProblemController(
 ) : ResourceRepresentationAdapter, AuthorRepresentationAdapter, FieldPerProblemRepresentationAdapter {
 
     @GetMapping("/{id}/fields")
-    fun getFieldPerProblem(
+    fun findAllResearchFields(
         @PathVariable id: ThingId,
         capabilities: MediaTypeCapabilities
     ): List<FieldWithFreqRepresentation> =
-        service.findFieldsPerProblem(id)
+        service.findAllResearchFields(id)
             .mapToFieldWithFreqRepresentation(capabilities)
 
     @GetMapping("/{id}")
-    fun getFieldPerProblemAndClasses(
+    fun findAllEntitiesBasedOnClassByProblem(
         @PathVariable id: ThingId,
         @RequestParam(value = "classes") classes: List<String>,
         @RequestParam("featured", required = false, defaultValue = "false")
@@ -73,15 +73,15 @@ class ProblemController(
         )
 
     @GetMapping("/top")
-    fun getTopProblems(capabilities: MediaTypeCapabilities): Iterable<ResourceRepresentation> =
+    fun findTopResearchProblems(capabilities: MediaTypeCapabilities): Iterable<ResourceRepresentation> =
         service.findTopResearchProblems().mapToResourceRepresentation(capabilities)
 
     @GetMapping("/{id}/users")
-    fun getContributorsPerProblem(
+    fun findAllContributorsPerProblem(
         @PathVariable id: ThingId,
         pageable: Pageable
     ): ResponseEntity<Iterable<Any>> {
-        val contributors = service.findContributorsPerProblem(id, pageable).map {
+        val contributors = service.findAllContributorsPerProblem(id, pageable).map {
             val user = contributorService.findById(ContributorId(it.user)).get()
             object {
                 val user = user
@@ -92,12 +92,12 @@ class ProblemController(
     }
 
     @GetMapping("/{id}/authors")
-    fun getAuthorsPerProblem(
+    fun findAllByProblemId(
         @PathVariable id: ThingId,
         pageable: Pageable,
         capabilities: MediaTypeCapabilities
     ): Page<PaperAuthorRepresentation> =
-        authorService.findAuthorsPerProblem(id, pageable)
+        authorService.findAllByProblemId(id, pageable)
             .mapToPaperAuthorRepresentation(capabilities)
 
     @PutMapping("/{id}/metadata/featured")

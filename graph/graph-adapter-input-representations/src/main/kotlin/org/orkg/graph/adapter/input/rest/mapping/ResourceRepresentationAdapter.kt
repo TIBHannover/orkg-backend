@@ -16,7 +16,7 @@ interface ResourceRepresentationAdapter : FormattedLabelRepresentationAdapter {
 
     fun Optional<Resource>.mapToResourceRepresentation(capabilities: MediaTypeCapabilities): Optional<ResourceRepresentation> =
         map {
-            val count = statementService.countIncomingStatements(it.id)
+            val count = statementService.countIncomingStatementsById(it.id)
             val formattedLabel = formatLabelFor(listOf(it), capabilities)
             it.toResourceRepresentation(mapOf(it.id to count), formattedLabel)
         }
@@ -38,7 +38,7 @@ interface ResourceRepresentationAdapter : FormattedLabelRepresentationAdapter {
             return emptyMap()
         }
         val resourceIds = resources.map { it.id }.toSet()
-        return statementService.countIncomingStatements(resourceIds)
+        return statementService.countAllIncomingStatementsById(resourceIds)
     }
 
     fun Resource.toResourceRepresentation(

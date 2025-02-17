@@ -27,5 +27,5 @@ interface UpdateListUseCase {
 }
 
 interface DeleteListUseCase {
-    fun delete(id: ThingId)
+    fun deleteById(id: ThingId)
 }

@@ -36,19 +36,21 @@ import org.orkg.contenttypes.domain.TemplateAlreadyExistsForClass
 import org.orkg.contenttypes.domain.TemplateClosed
 import org.orkg.contenttypes.domain.TemplateNotFound
 import org.orkg.contenttypes.domain.testing.fixtures.createTemplate
-import org.orkg.contenttypes.input.CreateTemplatePropertyUseCase.CreateCommand
+import org.orkg.contenttypes.input.CreateTemplatePropertyUseCase
 import org.orkg.contenttypes.input.CreateTemplatePropertyUseCase.CreateNumberLiteralPropertyCommand
 import org.orkg.contenttypes.input.CreateTemplatePropertyUseCase.CreateOtherLiteralPropertyCommand
 import org.orkg.contenttypes.input.CreateTemplatePropertyUseCase.CreateResourcePropertyCommand
 import org.orkg.contenttypes.input.CreateTemplatePropertyUseCase.CreateStringLiteralPropertyCommand
 import org.orkg.contenttypes.input.CreateTemplatePropertyUseCase.CreateUntypedPropertyCommand
+import org.orkg.contenttypes.input.CreateTemplateUseCase
 import org.orkg.contenttypes.input.TemplateUseCases
-import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase.UpdateCommand
+import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase
 import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase.UpdateNumberLiteralPropertyCommand
 import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase.UpdateOtherLiteralPropertyCommand
 import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase.UpdateResourcePropertyCommand
 import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase.UpdateStringLiteralPropertyCommand
 import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase.UpdateUntypedPropertyCommand
+import org.orkg.contenttypes.input.UpdateTemplateUseCase
 import org.orkg.contenttypes.input.testing.fixtures.numberLiteralTemplatePropertyRequest
 import org.orkg.contenttypes.input.testing.fixtures.otherLiteralTemplatePropertyRequest
 import org.orkg.contenttypes.input.testing.fixtures.resourceTemplatePropertyRequest
@@ -280,7 +282,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
     @DisplayName("Given a template create request, when service succeeds, it creates and returns the template")
     fun create() {
         val id = ThingId("R123")
-        every { templateService.create(any()) } returns id
+        every { templateService.create(any<CreateTemplateUseCase.CreateCommand>()) } returns id
 
         documentedPostRequestTo("/api/templates")
             .content(createTemplateRequest())
@@ -313,14 +315,14 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { templateService.create(any()) }
+        verify(exactly = 1) { templateService.create(any<CreateTemplateUseCase.CreateCommand>()) }
     }
 
     @Test
     @TestWithMockUser
     fun `Given a template create request, when service reports target class, or datatype or class range not found, then status is 404 NOT FOUND`() {
         val exception = ClassNotFound.withThingId(ThingId("invalid"))
-        every { templateService.create(any()) } throws exception
+        every { templateService.create(any<CreateTemplateUseCase.CreateCommand>()) } throws exception
 
         post("/api/templates")
             .content(createTemplateRequest())
@@ -332,14 +334,14 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             .andExpect(jsonPath("$.path").value("/api/templates"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { templateService.create(any()) }
+        verify(exactly = 1) { templateService.create(any<CreateTemplateUseCase.CreateCommand>()) }
     }
 
     @Test
     @TestWithMockUser
     fun `Given a template create request, when service reports template already exists for class, then status is 400 BAD REQUEST`() {
         val exception = TemplateAlreadyExistsForClass(ThingId("R123"), ThingId("R456"))
-        every { templateService.create(any()) } throws exception
+        every { templateService.create(any<CreateTemplateUseCase.CreateCommand>()) } throws exception
 
         post("/api/templates")
             .content(createTemplateRequest())
@@ -351,14 +353,14 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             .andExpect(jsonPath("$.path").value("/api/templates"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { templateService.create(any()) }
+        verify(exactly = 1) { templateService.create(any<CreateTemplateUseCase.CreateCommand>()) }
     }
 
     @Test
     @TestWithMockUser
     fun `Given a template create request, when service reports related research field not found, then status is 404 NOT FOUND`() {
         val exception = ResearchFieldNotFound(ThingId("R22"))
-        every { templateService.create(any()) } throws exception
+        every { templateService.create(any<CreateTemplateUseCase.CreateCommand>()) } throws exception
 
         post("/api/templates")
             .content(createTemplateRequest())
@@ -370,14 +372,14 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             .andExpect(jsonPath("$.path").value("/api/templates"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { templateService.create(any()) }
+        verify(exactly = 1) { templateService.create(any<CreateTemplateUseCase.CreateCommand>()) }
     }
 
     @Test
     @TestWithMockUser
     fun `Given a template create request, when service reports related research problem not found, then status is 404 NOT FOUND`() {
         val exception = ResearchProblemNotFound(ThingId("R22"))
-        every { templateService.create(any()) } throws exception
+        every { templateService.create(any<CreateTemplateUseCase.CreateCommand>()) } throws exception
 
         post("/api/templates")
             .content(createTemplateRequest())
@@ -389,14 +391,14 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             .andExpect(jsonPath("$.path").value("/api/templates"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { templateService.create(any()) }
+        verify(exactly = 1) { templateService.create(any<CreateTemplateUseCase.CreateCommand>()) }
     }
 
     @Test
     @TestWithMockUser
     fun `Given a template create request, when service reports related predicate not found, then status is 404 NOT FOUND`() {
         val exception = PredicateNotFound(ThingId("R22"))
-        every { templateService.create(any()) } throws exception
+        every { templateService.create(any<CreateTemplateUseCase.CreateCommand>()) } throws exception
 
         post("/api/templates")
             .content(createTemplateRequest())
@@ -408,14 +410,14 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             .andExpect(jsonPath("$.path").value("/api/templates"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { templateService.create(any()) }
+        verify(exactly = 1) { templateService.create(any<CreateTemplateUseCase.CreateCommand>()) }
     }
 
     @Test
     @TestWithMockUser
     fun `Given a template create request, when service reports invalid min count, then status is 400 BAD REQUEST`() {
         val exception = InvalidMinCount(-1)
-        every { templateService.create(any()) } throws exception
+        every { templateService.create(any<CreateTemplateUseCase.CreateCommand>()) } throws exception
 
         post("/api/templates")
             .content(createTemplateRequest())
@@ -427,14 +429,14 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             .andExpect(jsonPath("$.path").value("/api/templates"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { templateService.create(any()) }
+        verify(exactly = 1) { templateService.create(any<CreateTemplateUseCase.CreateCommand>()) }
     }
 
     @Test
     @TestWithMockUser
     fun `Given a template create request, when service reports invalid max count, then status is 400 BAD REQUEST`() {
         val exception = InvalidMaxCount(-1)
-        every { templateService.create(any()) } throws exception
+        every { templateService.create(any<CreateTemplateUseCase.CreateCommand>()) } throws exception
 
         post("/api/templates")
             .content(createTemplateRequest())
@@ -446,14 +448,14 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             .andExpect(jsonPath("$.path").value("/api/templates"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { templateService.create(any()) }
+        verify(exactly = 1) { templateService.create(any<CreateTemplateUseCase.CreateCommand>()) }
     }
 
     @Test
     @TestWithMockUser
     fun `Given a template create request, when service reports invalid cardinality, then status is 400 BAD REQUEST`() {
         val exception = InvalidCardinality(5, 1)
-        every { templateService.create(any()) } throws exception
+        every { templateService.create(any<CreateTemplateUseCase.CreateCommand>()) } throws exception
 
         post("/api/templates")
             .content(createTemplateRequest())
@@ -465,14 +467,14 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             .andExpect(jsonPath("$.path").value("/api/templates"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { templateService.create(any()) }
+        verify(exactly = 1) { templateService.create(any<CreateTemplateUseCase.CreateCommand>()) }
     }
 
     @Test
     @TestWithMockUser
     fun `Given a template create request, when service reports invalid pattern, then status is 400 BAD REQUEST`() {
         val exception = InvalidRegexPattern("\\", Exception("Invalid regex pattern"))
-        every { templateService.create(any()) } throws exception
+        every { templateService.create(any<CreateTemplateUseCase.CreateCommand>()) } throws exception
 
         post("/api/templates")
             .content(createTemplateRequest())
@@ -484,14 +486,14 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             .andExpect(jsonPath("$.path").value("/api/templates"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { templateService.create(any()) }
+        verify(exactly = 1) { templateService.create(any<CreateTemplateUseCase.CreateCommand>()) }
     }
 
     @Test
     @TestWithMockUser
     fun `Given a template create request, when service reports path predicate not found, then status is 404 NOT FOUND`() {
         val exception = PredicateNotFound("P123")
-        every { templateService.create(any()) } throws exception
+        every { templateService.create(any<CreateTemplateUseCase.CreateCommand>()) } throws exception
 
         post("/api/templates")
             .content(createTemplateRequest())
@@ -503,14 +505,14 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             .andExpect(jsonPath("$.path").value("/api/templates"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { templateService.create(any()) }
+        verify(exactly = 1) { templateService.create(any<CreateTemplateUseCase.CreateCommand>()) }
     }
 
     @Test
     @TestWithMockUser
     fun `Given a template create request, when service reports organization not found, then status is 404 NOT FOUND`() {
         val exception = OrganizationNotFound(OrganizationId(UUID.randomUUID()))
-        every { templateService.create(any()) } throws exception
+        every { templateService.create(any<CreateTemplateUseCase.CreateCommand>()) } throws exception
 
         post("/api/templates")
             .content(createTemplateRequest())
@@ -522,14 +524,14 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             .andExpect(jsonPath("$.path").value("/api/templates"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { templateService.create(any()) }
+        verify(exactly = 1) { templateService.create(any<CreateTemplateUseCase.CreateCommand>()) }
     }
 
     @Test
     @TestWithMockUser
     fun `Given a template create request, when service reports observatory not found, then status is 404 NOT FOUND`() {
         val exception = ObservatoryNotFound(ObservatoryId(UUID.randomUUID()))
-        every { templateService.create(any()) } throws exception
+        every { templateService.create(any<CreateTemplateUseCase.CreateCommand>()) } throws exception
 
         post("/api/templates")
             .content(createTemplateRequest())
@@ -541,7 +543,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             .andExpect(jsonPath("$.path").value("/api/templates"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { templateService.create(any()) }
+        verify(exactly = 1) { templateService.create(any<CreateTemplateUseCase.CreateCommand>()) }
     }
 
     @Test
@@ -549,7 +551,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
     @DisplayName("Given a template update request, when service succeeds, it updates the template")
     fun update() {
         val id = ThingId("R123")
-        every { templateService.update(any()) } just runs
+        every { templateService.update(any<UpdateTemplateUseCase.UpdateCommand>()) } just runs
 
         documentedPutRequestTo("/api/templates/{id}", id)
             .content(updateTemplateRequest())
@@ -586,16 +588,16 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { templateService.update(any()) }
+        verify(exactly = 1) { templateService.update(any<UpdateTemplateUseCase.UpdateCommand>()) }
     }
 
-    private inline fun <reified T : CreateCommand> createProperty(
+    private inline fun <reified T : CreateTemplatePropertyUseCase.CreateCommand> createProperty(
         request: TemplatePropertyRequest,
         additionalRequestFieldDescriptors: List<FieldDescriptor> = emptyList()
     ) {
         val templateId = ThingId("R3541")
         val id = ThingId("R123")
-        every { templateService.createTemplateProperty(any()) } returns id
+        every { templateService.create(any<T>()) } returns id
 
         documentedPostRequestTo("/api/templates/{id}/properties", templateId)
             .content(request)
@@ -625,7 +627,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) {
-            templateService.createTemplateProperty(withArg {
+            templateService.create(withArg<T> {
                 it.shouldBeInstanceOf<T>()
             })
         }
@@ -687,7 +689,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
     ) {
         val templateId = ThingId("R123")
         val exception = ClassNotFound.withThingId(ThingId("invalid"))
-        every { templateService.createTemplateProperty(any()) } throws exception
+        every { templateService.create(any<CreateTemplatePropertyUseCase.CreateCommand>()) } throws exception
 
         post("/api/templates/{id}/properties", templateId)
             .content(request)
@@ -699,7 +701,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             .andExpect(jsonPath("$.path").value("/api/templates/$templateId/properties"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { templateService.createTemplateProperty(any()) }
+        verify(exactly = 1) { templateService.create(any<CreateTemplatePropertyUseCase.CreateCommand>()) }
     }
 
     @ParameterizedTest
@@ -710,7 +712,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
     ) {
         val templateId = ThingId("R123")
         val exception = InvalidMinCount(-1)
-        every { templateService.createTemplateProperty(any()) } throws exception
+        every { templateService.create(any<CreateTemplatePropertyUseCase.CreateCommand>()) } throws exception
 
         post("/api/templates/{id}/properties", templateId)
             .content(request)
@@ -722,7 +724,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             .andExpect(jsonPath("$.path").value("/api/templates/$templateId/properties"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { templateService.createTemplateProperty(any()) }
+        verify(exactly = 1) { templateService.create(any<CreateTemplatePropertyUseCase.CreateCommand>()) }
     }
 
     @ParameterizedTest
@@ -733,7 +735,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
     ) {
         val templateId = ThingId("R123")
         val exception = InvalidMaxCount(-1)
-        every { templateService.createTemplateProperty(any()) } throws exception
+        every { templateService.create(any<CreateTemplatePropertyUseCase.CreateCommand>()) } throws exception
 
         post("/api/templates/{id}/properties", templateId)
             .content(request)
@@ -745,7 +747,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             .andExpect(jsonPath("$.path").value("/api/templates/$templateId/properties"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { templateService.createTemplateProperty(any()) }
+        verify(exactly = 1) { templateService.create(any<CreateTemplatePropertyUseCase.CreateCommand>()) }
     }
 
     @ParameterizedTest
@@ -756,7 +758,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
     ) {
         val templateId = ThingId("R123")
         val exception = InvalidCardinality(5, 1)
-        every { templateService.createTemplateProperty(any()) } throws exception
+        every { templateService.create(any<CreateTemplatePropertyUseCase.CreateCommand>()) } throws exception
 
         post("/api/templates/{id}/properties", templateId)
             .content(request)
@@ -768,7 +770,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             .andExpect(jsonPath("$.path").value("/api/templates/$templateId/properties"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { templateService.createTemplateProperty(any()) }
+        verify(exactly = 1) { templateService.create(any<CreateTemplatePropertyUseCase.CreateCommand>()) }
     }
 
     @ParameterizedTest
@@ -779,7 +781,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
     ) {
         val templateId = ThingId("R123")
         val exception = InvalidRegexPattern("\\", PatternSyntaxException("Invalid regex pattern", "\\", 1))
-        every { templateService.createTemplateProperty(any()) } throws exception
+        every { templateService.create(any<CreateTemplatePropertyUseCase.CreateCommand>()) } throws exception
 
         post("/api/templates/{id}/properties", templateId)
             .content(request)
@@ -791,7 +793,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             .andExpect(jsonPath("$.path").value("/api/templates/$templateId/properties"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { templateService.createTemplateProperty(any()) }
+        verify(exactly = 1) { templateService.create(any<CreateTemplatePropertyUseCase.CreateCommand>()) }
     }
 
     @ParameterizedTest
@@ -802,7 +804,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
     ) {
         val templateId = ThingId("R123")
         val exception = PredicateNotFound("P123")
-        every { templateService.createTemplateProperty(any()) } throws exception
+        every { templateService.create(any<CreateTemplatePropertyUseCase.CreateCommand>()) } throws exception
 
         post("/api/templates/{id}/properties", templateId)
             .content(request)
@@ -814,7 +816,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             .andExpect(jsonPath("$.path").value("/api/templates/$templateId/properties"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { templateService.createTemplateProperty(any()) }
+        verify(exactly = 1) { templateService.create(any<CreateTemplatePropertyUseCase.CreateCommand>()) }
     }
 
     @ParameterizedTest
@@ -825,7 +827,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
     ) {
         val templateId = ThingId("R123")
         val exception = TemplateClosed(ThingId("P123"))
-        every { templateService.createTemplateProperty(any()) } throws exception
+        every { templateService.create(any<CreateTemplatePropertyUseCase.CreateCommand>()) } throws exception
 
         post("/api/templates/{id}/properties", templateId)
             .content(request)
@@ -837,16 +839,16 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             .andExpect(jsonPath("$.path").value("/api/templates/$templateId/properties"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { templateService.createTemplateProperty(any()) }
+        verify(exactly = 1) { templateService.create(any<CreateTemplatePropertyUseCase.CreateCommand>()) }
     }
 
-    private inline fun <reified T : UpdateCommand> updateProperty(
+    private inline fun <reified T : UpdateTemplatePropertyUseCase.UpdateCommand> updateProperty(
         request: TemplatePropertyRequest,
         additionalRequestFieldDescriptors: List<FieldDescriptor> = emptyList()
     ) {
         val id = ThingId("R3541")
         val propertyId = ThingId("R123")
-        every { templateService.updateTemplateProperty(any()) } just runs
+        every { templateService.update(any<T>()) } just runs
 
         documentedPutRequestTo("/api/templates/{id}/properties/{propertyId}", id, propertyId)
             .content(request)
@@ -877,7 +879,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) {
-            templateService.updateTemplateProperty(withArg {
+            templateService.update(withArg<T> {
                 it.shouldBeInstanceOf<T>()
             })
         }

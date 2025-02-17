@@ -19,7 +19,7 @@ class PaperVersionHistoryUpdater(
         val hasPreviousVersionStatements = state.statements[command.id].orEmpty()
             .wherePredicate(Predicates.hasPreviousVersion)
         if (hasPreviousVersionStatements.isNotEmpty()) {
-            statementService.delete(hasPreviousVersionStatements.map { it.id }.toSet())
+            statementService.deleteAllById(hasPreviousVersionStatements.map { it.id }.toSet())
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,

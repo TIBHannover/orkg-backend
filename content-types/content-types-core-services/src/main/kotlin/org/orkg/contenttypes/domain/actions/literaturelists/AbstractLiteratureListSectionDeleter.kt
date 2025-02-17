@@ -43,7 +43,7 @@ class AbstractLiteratureListSectionDeleter(
                 entryNodes.flatMap { node -> statements[node]?.map { it.id }.orEmpty() } +
                 incomingStatements.map { it.id }
             if (toRemove.isNotEmpty()) {
-                statementService.delete(toRemove.toSet())
+                statementService.deleteAllById(toRemove.toSet())
             }
             entryNodes.forEach { resourceService.tryDelete(it, contributorId) }
             resourceService.tryDelete(section.id, contributorId)
@@ -59,7 +59,7 @@ class AbstractLiteratureListSectionDeleter(
         contentTypePartDeleter.delete(literatureListId, section.id) { incomingStatements ->
             val toRemove = statements[section.id]?.map { it.id }.orEmpty() + incomingStatements.map { it.id }
             if (toRemove.isNotEmpty()) {
-                statementService.delete(toRemove.toSet())
+                statementService.deleteAllById(toRemove.toSet())
             }
             resourceService.tryDelete(section.id, contributorId)
         }

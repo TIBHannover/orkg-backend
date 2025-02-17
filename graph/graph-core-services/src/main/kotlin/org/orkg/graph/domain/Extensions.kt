@@ -38,7 +38,7 @@ fun GeneralStatement.apply(
     objectValidator: (Thing) -> Unit = {},
 ): GeneralStatement = copy(
     subject = command.subjectId?.takeIf { id -> id != subject.id }
-        ?.let { id -> thingRepository.findByThingId(id).orElseThrow { StatementSubjectNotFound(id) } }
+        ?.let { id -> thingRepository.findById(id).orElseThrow { StatementSubjectNotFound(id) } }
         ?.also(subjectValidator)
         ?: subject,
     predicate = command.predicateId?.takeIf { id -> id != predicate.id }
@@ -46,7 +46,7 @@ fun GeneralStatement.apply(
         ?.also(predicateValidator)
         ?: predicate,
     `object` = command.objectId?.takeIf { id -> id != `object`.id }
-        ?.let { id -> thingRepository.findByThingId(id).orElseThrow { StatementObjectNotFound(id) } }
+        ?.let { id -> thingRepository.findById(id).orElseThrow { StatementObjectNotFound(id) } }
         ?.also(objectValidator)
         ?: `object`,
     modifiable = command.modifiable ?: modifiable,

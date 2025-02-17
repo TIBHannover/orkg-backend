@@ -327,8 +327,8 @@ internal class ListControllerUnitTest : MockMvcBaseTest("lists") {
         )
 
         every { listService.findAllElementsById(id, any()) } returns PageImpl(elements)
-        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
-        every { statementService.findAllDescriptions(any()) } returns emptyMap()
+        every { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) } returns emptyMap()
+        every { statementService.findAllDescriptionsById(any()) } returns emptyMap()
 
         documentedGetRequestTo("/api/lists/{id}/elements", id)
             .perform()
@@ -352,8 +352,8 @@ internal class ListControllerUnitTest : MockMvcBaseTest("lists") {
 
         verify(exactly = 1) {
             listService.findAllElementsById(id, any())
-            statementService.countIncomingStatements(any<Set<ThingId>>())
-            statementService.findAllDescriptions(any())
+            statementService.countAllIncomingStatementsById(any<Set<ThingId>>())
+            statementService.findAllDescriptionsById(any())
         }
     }
 

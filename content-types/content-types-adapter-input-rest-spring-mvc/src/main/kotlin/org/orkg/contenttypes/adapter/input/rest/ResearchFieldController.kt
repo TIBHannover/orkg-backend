@@ -47,14 +47,14 @@ class ResearchFieldController(
      * sub-research fields
      */
     @GetMapping("/{id}/problems")
-    fun getResearchProblemsOfField(
+    fun findAllPaperCountsPerResearchProblem(
         @PathVariable id: ThingId,
         pageable: Pageable,
         capabilities: MediaTypeCapabilities
     ): Page<PaperCountPerResearchProblemRepresentation> {
         resourceService.findById(id)
             .orElseThrow { ResourceNotFound.withId(id) }
-        return service.getResearchProblemsOfField(id, pageable)
+        return service.findAllPaperCountsPerResearchProblem(id, pageable)
             .mapToPaperCountPerResearchProblemRepresentation(capabilities)
     }
 
@@ -64,7 +64,7 @@ class ResearchFieldController(
      * that includes the sub-research fields
      */
     @GetMapping("/{id}/subfields/research-problems")
-    fun getResearchProblemsIncludingSubFields(
+    fun findAllResearchProblemsByResearchFieldIncludingSubfields(
         @PathVariable id: ThingId,
         @RequestParam("featured", required = false, defaultValue = "false")
         featured: Boolean,
@@ -92,12 +92,12 @@ class ResearchFieldController(
      * that includes the sub-research fields
      */
     @GetMapping("/{id}/subfields/contributors")
-    fun getContributorsIncludingSubFields(
+    fun findAllContributorsIncludingSubFields(
         @PathVariable id: ThingId,
         pageable: Pageable
     ): ResponseEntity<Page<Contributor>> {
         resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
-        return ok(service.getContributorsIncludingSubFields(id, pageable))
+        return ok(service.findAllContributorsIncludingSubFields(id, pageable))
     }
 
     /**
@@ -107,7 +107,7 @@ class ResearchFieldController(
      */
     @Deprecated(message = "For removal", replaceWith = ReplaceWith("/api/comparisons?research_field={id}"))
     @GetMapping("/{id}/subfields/comparisons")
-    fun getComparisonsIncludingSubFields(
+    fun findAllComparisonsIncludingSubFields(
         @PathVariable id: ThingId,
         @RequestParam("featured", required = false, defaultValue = "false")
         featured: Boolean,
@@ -133,7 +133,7 @@ class ResearchFieldController(
      * that includes the sub-research fields
      */
     @GetMapping("/{id}/subfields/papers")
-    fun getPapersIncludingSubFields(
+    fun findAllPapersIncludingSubFields(
         @PathVariable id: ThingId,
         @RequestParam("featured", required = false, defaultValue = "false")
         featured: Boolean,
@@ -159,7 +159,7 @@ class ResearchFieldController(
      * that excludes the sub-research fields
      */
     @GetMapping("/{id}/papers")
-    fun getPapersExcludingSubFields(
+    fun findAllPapersExcludingSubFields(
         @PathVariable id: ThingId,
         @RequestParam("featured", required = false, defaultValue = "false")
         featured: Boolean,
@@ -186,7 +186,7 @@ class ResearchFieldController(
      */
     @Deprecated(message = "For removal", replaceWith = ReplaceWith("/api/comparisons?research_field={id}"))
     @GetMapping("/{id}/comparisons")
-    fun getComparisonsExcludingSubFields(
+    fun findAllComparisonsExcludingSubFields(
         @PathVariable id: ThingId,
         @RequestParam("featured", required = false, defaultValue = "false")
         featured: Boolean,
@@ -212,14 +212,14 @@ class ResearchFieldController(
      * that excludes the sub-research fields
      */
     @GetMapping("/{id}/contributors")
-    fun getContributorsExcludingSubFields(
+    fun findAllContributorsExcludingSubFields(
         @PathVariable id: ThingId,
         @RequestParam("featured")
         featured: Optional<Boolean>,
         pageable: Pageable
     ): ResponseEntity<Page<Contributor>> {
         resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
-        return ok(service.getContributorsExcludingSubFields(id, pageable))
+        return ok(service.findAllContributorsExcludingSubFields(id, pageable))
     }
 
     /**
@@ -227,7 +227,7 @@ class ResearchFieldController(
      * based on a research field {id}
      */
     @GetMapping("/{id}/research-problems")
-    fun getResearchProblemsExcludingSubFields(
+    fun findAllResearchProblemsByResearchFieldExcludingSubfields(
         @PathVariable id: ThingId,
         @RequestParam("featured", required = false, defaultValue = "false")
         featured: Boolean,
@@ -252,7 +252,7 @@ class ResearchFieldController(
      *
      */
     @GetMapping("/{id}/subfields")
-    fun getEntitiesBasedOnClassesIncludingSubFields(
+    fun findAllEntitiesBasedOnClassesByResearchFieldIncludingSubFields(
         @PathVariable id: ThingId,
         @RequestParam("featured", required = false, defaultValue = "false")
         featured: Boolean,
@@ -278,7 +278,7 @@ class ResearchFieldController(
      *
      */
     @GetMapping("/{id}")
-    fun getEntitiesBasedOnClassesExcludingSubFields(
+    fun findAllEntitiesBasedOnClassesByResearchFieldExcludingSubFields(
         @PathVariable id: ThingId,
         @RequestParam("featured", required = false, defaultValue = "false")
         featured: Boolean,

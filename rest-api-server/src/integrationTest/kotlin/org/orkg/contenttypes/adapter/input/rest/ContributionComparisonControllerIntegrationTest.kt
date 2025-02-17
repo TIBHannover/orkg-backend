@@ -48,10 +48,10 @@ internal class ContributionComparisonControllerIntegrationTest : MockMvcBaseTest
     fun setup() {
         val tempPageable = PageRequest.of(0, 10)
 
-        resourceService.removeAll()
-        predicateService.removeAll()
-        statementService.removeAll()
-        classService.removeAll()
+        resourceService.deleteAll()
+        predicateService.deleteAll()
+        statementService.deleteAll()
+        classService.deleteAll()
 
         assertThat(resourceService.findAll(tempPageable)).hasSize(0)
         assertThat(predicateService.findAll(tempPageable)).hasSize(0)

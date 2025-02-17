@@ -61,7 +61,7 @@ class ConferenceSeriesController(
 
     @GetMapping
     fun listConferenceSeries(pageable: Pageable): Page<ConferenceSeries> =
-        service.listConferenceSeries(pageable)
+        service.findAll(pageable)
 
     @GetMapping("/{id}")
     fun findById(@PathVariable id: String): ConferenceSeries {
@@ -79,7 +79,7 @@ class ConferenceSeriesController(
 
     @GetMapping("/{id}/series")
     fun findSeriesByConference(@PathVariable id: OrganizationId, pageable: Pageable): Page<ConferenceSeries> {
-        return service.findSeriesByConference(id, pageable)
+        return service.findAllByOrganizationId(id, pageable)
     }
     fun String.isValidUUID(id: String): Boolean = try { UUID.fromString(id) != null } catch (e: IllegalArgumentException) { false }
 

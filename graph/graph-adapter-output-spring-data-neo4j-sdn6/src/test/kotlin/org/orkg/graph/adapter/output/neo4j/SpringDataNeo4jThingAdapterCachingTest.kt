@@ -87,20 +87,20 @@ internal class SpringDataNeo4jThingAdapterCachingTest : MockkBaseTest {
     fun `fetching a thing by ID should be cached`() {
         val thingId = ThingId("R1")
         val resource = createResource(thingId)
-        every { mock.findByThingId(thingId) } returns Optional.of(resource) andThenAnswer {
+        every { mock.findById(thingId) } returns Optional.of(resource) andThenAnswer {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
 
         // Obtain resource from repository
-        assertThat(adapter.findByThingId(thingId).get()).isEqualTo(resource)
+        assertThat(adapter.findById(thingId).get()).isEqualTo(resource)
         // Verify the loading happened
-        verify(exactly = 1) { mock.findByThingId(thingId) }
+        verify(exactly = 1) { mock.findById(thingId) }
 
         // Obtain the same resource again for several times
-        assertThat(adapter.findByThingId(thingId).get()).isEqualTo(resource)
-        assertThat(adapter.findByThingId(thingId).get()).isEqualTo(resource)
+        assertThat(adapter.findById(thingId).get()).isEqualTo(resource)
+        assertThat(adapter.findById(thingId).get()).isEqualTo(resource)
 
-        verify(exactly = 1) { mock.findByThingId(thingId) }
+        verify(exactly = 1) { mock.findById(thingId) }
     }
 
     @Test
@@ -108,25 +108,25 @@ internal class SpringDataNeo4jThingAdapterCachingTest : MockkBaseTest {
         val thingId = ThingId("R1")
         val `class` = createClass(thingId)
         val modified = `class`.copy(label = "new label")
-        every { mock.findByThingId(thingId) } returns Optional.of(`class`) andThen Optional.of(modified) andThenAnswer {
+        every { mock.findById(thingId) } returns Optional.of(`class`) andThen Optional.of(modified) andThenAnswer {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
         every { classMock.save(modified) } returns Unit
 
         // Obtain class from Thing repository
-        assertThat(adapter.findByThingId(thingId).get()).isEqualTo(`class`)
+        assertThat(adapter.findById(thingId).get()).isEqualTo(`class`)
         // Verify the loading happened
-        verify(exactly = 1) { mock.findByThingId(thingId) }
+        verify(exactly = 1) { mock.findById(thingId) }
 
         // Save a modified version
         classAdapter.save(modified)
         verify { classAdapter.save(modified) } // required because of confirmVerified()
 
         // Obtaining the class again
-        assertThat(adapter.findByThingId(thingId).get()).`as`("obtaining the updated version from the repository")
+        assertThat(adapter.findById(thingId).get()).`as`("obtaining the updated version from the repository")
             .isEqualTo(modified)
         // Verify the loading happened (again)
-        verify(exactly = 2) { mock.findByThingId(thingId) }
+        verify(exactly = 2) { mock.findById(thingId) }
     }
 
     @Test
@@ -134,25 +134,25 @@ internal class SpringDataNeo4jThingAdapterCachingTest : MockkBaseTest {
         val thingId = ThingId("R1")
         val literal = createLiteral(thingId)
         val modified = literal.copy(label = "new label")
-        every { mock.findByThingId(thingId) } returns Optional.of(literal) andThen Optional.of(modified) andThenAnswer {
+        every { mock.findById(thingId) } returns Optional.of(literal) andThen Optional.of(modified) andThenAnswer {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
         every { literalMock.save(modified) } returns Unit
 
         // Obtain literal from Thing repository
-        assertThat(adapter.findByThingId(thingId).get()).isEqualTo(literal)
+        assertThat(adapter.findById(thingId).get()).isEqualTo(literal)
         // Verify the loading happened
-        verify(exactly = 1) { mock.findByThingId(thingId) }
+        verify(exactly = 1) { mock.findById(thingId) }
 
         // Save a modified version
         literalAdapter.save(modified)
         verify { literalAdapter.save(modified) } // required because of confirmVerified()
 
         // Obtaining the literal again
-        assertThat(adapter.findByThingId(thingId).get()).`as`("obtaining the updated version from the repository")
+        assertThat(adapter.findById(thingId).get()).`as`("obtaining the updated version from the repository")
             .isEqualTo(modified)
         // Verify the loading happened (again)
-        verify(exactly = 2) { mock.findByThingId(thingId) }
+        verify(exactly = 2) { mock.findById(thingId) }
     }
 
     @Test
@@ -160,25 +160,25 @@ internal class SpringDataNeo4jThingAdapterCachingTest : MockkBaseTest {
         val thingId = ThingId("R1")
         val predicate = createPredicate(thingId)
         val modified = predicate.copy(label = "new label")
-        every { mock.findByThingId(thingId) } returns Optional.of(predicate) andThen Optional.of(modified) andThenAnswer {
+        every { mock.findById(thingId) } returns Optional.of(predicate) andThen Optional.of(modified) andThenAnswer {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
         every { predicateMock.save(modified) } returns Unit
 
         // Obtain predicate from Thing repository
-        assertThat(adapter.findByThingId(thingId).get()).isEqualTo(predicate)
+        assertThat(adapter.findById(thingId).get()).isEqualTo(predicate)
         // Verify the loading happened
-        verify(exactly = 1) { mock.findByThingId(thingId) }
+        verify(exactly = 1) { mock.findById(thingId) }
 
         // Save a modified version
         predicateAdapter.save(modified)
         verify { predicateAdapter.save(modified) } // required because of confirmVerified()
 
         // Obtaining the predicate again
-        assertThat(adapter.findByThingId(thingId).get()).`as`("obtaining the updated version from the repository")
+        assertThat(adapter.findById(thingId).get()).`as`("obtaining the updated version from the repository")
             .isEqualTo(modified)
         // Verify the loading happened (again)
-        verify(exactly = 2) { mock.findByThingId(thingId) }
+        verify(exactly = 2) { mock.findById(thingId) }
     }
 
     @Test
@@ -186,46 +186,46 @@ internal class SpringDataNeo4jThingAdapterCachingTest : MockkBaseTest {
         val thingId = ThingId("R1")
         val resource = createResource(thingId)
         val modified = resource.copy(label = "new label")
-        every { mock.findByThingId(thingId) } returns Optional.of(resource) andThen Optional.of(modified) andThenAnswer {
+        every { mock.findById(thingId) } returns Optional.of(resource) andThen Optional.of(modified) andThenAnswer {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
         every { resourceMock.save(modified) } returns Unit
 
         // Obtain resource from Thing repository
-        assertThat(adapter.findByThingId(thingId).get()).isEqualTo(resource)
+        assertThat(adapter.findById(thingId).get()).isEqualTo(resource)
         // Verify the loading happened
-        verify(exactly = 1) { mock.findByThingId(thingId) }
+        verify(exactly = 1) { mock.findById(thingId) }
 
         // Save a modified version
         resourceAdapter.save(modified)
         verify { resourceAdapter.save(modified) } // required because of confirmVerified()
 
         // Obtaining the resource again
-        assertThat(adapter.findByThingId(thingId).get())
+        assertThat(adapter.findById(thingId).get())
             .`as`("obtaining the updated version from the repository")
             .isEqualTo(modified)
         // Verify the loading happened (again)
-        verify(exactly = 2) { mock.findByThingId(thingId) }
+        verify(exactly = 2) { mock.findById(thingId) }
     }
 
     @Test
     fun `deleting a predicate should evict it from the thing cache`() {
         val thingId = ThingId("R1")
         val predicate = createPredicate(thingId)
-        every { mock.findByThingId(thingId) } returns Optional.of(predicate) andThen Optional.of(predicate) andThenAnswer {
+        every { mock.findById(thingId) } returns Optional.of(predicate) andThen Optional.of(predicate) andThenAnswer {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
         every { predicateMock.deleteById(predicate.id) } returns Unit
 
         // Obtain predicate from Thing repository
-        assertThat(adapter.findByThingId(thingId).get()).isEqualTo(predicate)
+        assertThat(adapter.findById(thingId).get()).isEqualTo(predicate)
         // Verify the loading happened
-        verify(exactly = 1) { mock.findByThingId(thingId) }
+        verify(exactly = 1) { mock.findById(thingId) }
 
         // Obtain the same predicate again for several times
-        assertThat(adapter.findByThingId(thingId).get()).isEqualTo(predicate)
-        assertThat(adapter.findByThingId(thingId).get()).isEqualTo(predicate)
-        verify(exactly = 1) { mock.findByThingId(thingId) }
+        assertThat(adapter.findById(thingId).get()).isEqualTo(predicate)
+        assertThat(adapter.findById(thingId).get()).isEqualTo(predicate)
+        verify(exactly = 1) { mock.findById(thingId) }
 
         // Delete predicate from repository
         predicateAdapter.deleteById(predicate.id)
@@ -233,28 +233,28 @@ internal class SpringDataNeo4jThingAdapterCachingTest : MockkBaseTest {
         verify(exactly = 1) { predicateMock.deleteById(predicate.id) }
 
         // Verify that the cache was evicted
-        assertThat(adapter.findByThingId(thingId).get()).isEqualTo(predicate)
-        verify(exactly = 2) { mock.findByThingId(thingId) }
+        assertThat(adapter.findById(thingId).get()).isEqualTo(predicate)
+        verify(exactly = 2) { mock.findById(thingId) }
     }
 
     @Test
     fun `deleting a resource should evict it from the thing cache`() {
         val thingId = ThingId("R1")
         val resource = createResource(thingId)
-        every { mock.findByThingId(thingId) } returns Optional.of(resource) andThen Optional.of(resource) andThenAnswer {
+        every { mock.findById(thingId) } returns Optional.of(resource) andThen Optional.of(resource) andThenAnswer {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
         every { resourceMock.deleteById(resource.id) } returns Unit
 
         // Obtain resource from Thing repository
-        assertThat(adapter.findByThingId(thingId).get()).isEqualTo(resource)
+        assertThat(adapter.findById(thingId).get()).isEqualTo(resource)
         // Verify the loading happened
-        verify(exactly = 1) { mock.findByThingId(thingId) }
+        verify(exactly = 1) { mock.findById(thingId) }
 
         // Obtain the same predicate again for several times
-        assertThat(adapter.findByThingId(thingId).get()).isEqualTo(resource)
-        assertThat(adapter.findByThingId(thingId).get()).isEqualTo(resource)
-        verify(exactly = 1) { mock.findByThingId(thingId) }
+        assertThat(adapter.findById(thingId).get()).isEqualTo(resource)
+        assertThat(adapter.findById(thingId).get()).isEqualTo(resource)
+        verify(exactly = 1) { mock.findById(thingId) }
 
         // Delete predicate from repository
         resourceAdapter.deleteById(resource.id)
@@ -262,8 +262,8 @@ internal class SpringDataNeo4jThingAdapterCachingTest : MockkBaseTest {
         verify(exactly = 1) { resourceMock.deleteById(resource.id) }
 
         // Verify that the cache was evicted
-        assertThat(adapter.findByThingId(thingId).get()).isEqualTo(resource)
-        verify(exactly = 2) { mock.findByThingId(thingId) }
+        assertThat(adapter.findById(thingId).get()).isEqualTo(resource)
+        verify(exactly = 2) { mock.findById(thingId) }
     }
 
     @Configuration

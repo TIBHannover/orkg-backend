@@ -25,8 +25,8 @@ internal class ResourceServiceIntegrationTest {
 
     @BeforeEach
     fun setup() {
-        service.removeAll()
-        classService.removeAll()
+        service.deleteAll()
+        classService.deleteAll()
 
         assertThat(service.findAll(PageRequest.of(0, 10))).hasSize(0)
         assertThat(service.findAll(PageRequest.of(0, 10))).hasSize(0)

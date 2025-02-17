@@ -36,9 +36,9 @@ class ContributorFromUserAdapter(
     override fun findById(id: ContributorId): Optional<Contributor> =
         postgresContributorRepository.findById(id.value).map(ContributorEntity::toContributor)
 
-    override fun findAllByIds(ids: List<ContributorId>): List<Contributor> = ids.mapNotNull {
-        postgresContributorRepository.findById(it.value).map(ContributorEntity::toContributor).orElse(null)
-    }
+    override fun findAllById(ids: List<ContributorId>): List<Contributor> =
+        postgresContributorRepository.findAllById(ids.map { it.value })
+            .map(ContributorEntity::toContributor)
 
     override fun save(contributor: Contributor) {
         postgresContributorRepository.save(
@@ -55,7 +55,7 @@ class ContributorFromUserAdapter(
         )
     }
 
-    override fun countActiveUsers(): Long = postgresContributorRepository.count()
+    override fun count(): Long = postgresContributorRepository.count()
 
     override fun deleteById(contributorId: ContributorId) {
         postgresContributorRepository.deleteById(contributorId.value)

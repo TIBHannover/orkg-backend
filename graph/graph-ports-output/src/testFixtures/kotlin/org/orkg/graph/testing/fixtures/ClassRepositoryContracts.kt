@@ -333,16 +333,16 @@ fun <
         it("returns true when all classes exist") {
             val ids = (1..3).map { ThingId("$it") }.onEach { repository.save(createClass(id = it, uri = null)) }
 
-            repository.existsAll(ids.toSet()) shouldBe true
+            repository.existsAllById(ids.toSet()) shouldBe true
         }
         it("returns false when at least one class does not exist") {
             val ids = (1..3).map { ThingId("$it") }.onEach { repository.save(createClass(id = it, uri = null)) }
                 .plus(listOf(ThingId("9")))
 
-            repository.existsAll(ids.toSet()) shouldBe false
+            repository.existsAllById(ids.toSet()) shouldBe false
         }
         it("returns false when the set of IDs is empty") {
-            repository.existsAll(emptySet()) shouldBe false
+            repository.existsAllById(emptySet()) shouldBe false
         }
     }
 

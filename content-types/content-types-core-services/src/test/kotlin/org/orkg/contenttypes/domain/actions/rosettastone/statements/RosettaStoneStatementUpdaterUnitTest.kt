@@ -78,11 +78,11 @@ internal class RosettaStoneStatementUpdaterUnitTest : MockkBaseTest {
         val temp5 = createClass(ThingId("Temp5"))
 
         every { rosettaStoneStatementRepository.nextIdentity() } returns rosettaStoneStatementVersionId
-        every { thingRepository.findByThingId(ThingId("Temp1")) } returns Optional.of(temp1)
-        every { thingRepository.findByThingId(ThingId("Temp2")) } returns Optional.of(temp2)
-        every { thingRepository.findByThingId(ThingId("Temp3")) } returns Optional.of(temp3)
-        every { thingRepository.findByThingId(ThingId("Temp4")) } returns Optional.of(temp4)
-        every { thingRepository.findByThingId(ThingId("Temp5")) } returns Optional.of(temp5)
+        every { thingRepository.findById(ThingId("Temp1")) } returns Optional.of(temp1)
+        every { thingRepository.findById(ThingId("Temp2")) } returns Optional.of(temp2)
+        every { thingRepository.findById(ThingId("Temp3")) } returns Optional.of(temp3)
+        every { thingRepository.findById(ThingId("Temp4")) } returns Optional.of(temp4)
+        every { thingRepository.findById(ThingId("Temp5")) } returns Optional.of(temp5)
         every { rosettaStoneStatementRepository.save(any()) } just runs
 
         val result = rosettaStoneStatementUpdater(command, state)
@@ -97,11 +97,11 @@ internal class RosettaStoneStatementUpdaterUnitTest : MockkBaseTest {
         }
 
         verify(exactly = 1) { rosettaStoneStatementRepository.nextIdentity() }
-        verify(exactly = 1) { thingRepository.findByThingId(ThingId("Temp1")) }
-        verify(exactly = 1) { thingRepository.findByThingId(ThingId("Temp2")) }
-        verify(exactly = 1) { thingRepository.findByThingId(ThingId("Temp3")) }
-        verify(exactly = 1) { thingRepository.findByThingId(ThingId("Temp4")) }
-        verify(exactly = 1) { thingRepository.findByThingId(ThingId("Temp5")) }
+        verify(exactly = 1) { thingRepository.findById(ThingId("Temp1")) }
+        verify(exactly = 1) { thingRepository.findById(ThingId("Temp2")) }
+        verify(exactly = 1) { thingRepository.findById(ThingId("Temp3")) }
+        verify(exactly = 1) { thingRepository.findById(ThingId("Temp4")) }
+        verify(exactly = 1) { thingRepository.findById(ThingId("Temp5")) }
         verify(exactly = 1) {
             rosettaStoneStatementRepository.save(
                 withArg {

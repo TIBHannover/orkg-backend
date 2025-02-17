@@ -33,7 +33,7 @@ class BulkStatementController(
 ) : StatementRepresentationAdapter {
 
     @GetMapping("/subjects")
-    fun findBySubjects(
+    fun findAllBySubjectId(
         @RequestParam("ids") resourceIds: List<ThingId>,
         pageable: Pageable,
         capabilities: MediaTypeCapabilities
@@ -47,7 +47,7 @@ class BulkStatementController(
         }
 
     @GetMapping("/objects")
-    fun findByObjects(
+    fun findAllByObjectId(
         @RequestParam("ids") resourceIds: List<ThingId>,
         pageable: Pageable,
         capabilities: MediaTypeCapabilities
@@ -65,13 +65,13 @@ class BulkStatementController(
     fun delete(
         @RequestParam("ids") statementsIds: Set<StatementId>
     ): ResponseEntity<Unit> {
-        statementService.delete(statementsIds)
+        statementService.deleteAllById(statementsIds)
         return noContent().build()
     }
 
     @RequireLogin
     @PutMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])
-    fun edit(
+    fun update(
         @RequestParam("ids") statementsIds: List<StatementId>,
         @RequestBody(required = true) statementEditRequest: BulkStatementEditRequest,
         currentUser: Authentication?,

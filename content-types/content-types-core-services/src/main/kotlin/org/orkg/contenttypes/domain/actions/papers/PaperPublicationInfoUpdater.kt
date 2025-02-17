@@ -68,7 +68,7 @@ class PaperPublicationInfoUpdater(
         subjectId: ThingId
     ) {
         if (statements.isNotEmpty()) {
-            statementService.delete(statements.ids)
+            statementService.deleteAllById(statements.ids)
         }
 
         if (newMonth != null) {
@@ -83,7 +83,7 @@ class PaperPublicationInfoUpdater(
         subjectId: ThingId
     ) {
         if (statements.isNotEmpty()) {
-            statementService.delete(statements.ids)
+            statementService.deleteAllById(statements.ids)
         }
 
         if (newYear != null) {
@@ -98,7 +98,7 @@ class PaperPublicationInfoUpdater(
         subjectId: ThingId
     ) {
         if (statements.isNotEmpty()) {
-            statementService.delete(statements.ids)
+            statementService.deleteAllById(statements.ids)
         }
 
         if (newVenue != null) {
@@ -113,7 +113,7 @@ class PaperPublicationInfoUpdater(
         subjectId: ThingId
     ) {
         if (statements.isNotEmpty()) {
-            statementService.delete(statements.ids)
+            statementService.deleteAllById(statements.ids)
         }
 
         if (newUrl != null) {

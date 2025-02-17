@@ -155,7 +155,7 @@ class PaperController(
         currentUser: Authentication?,
     ): ResponseEntity<ContributionRepresentation> {
         val userId = currentUser.contributorId()
-        val id = service.createContribution(request.toCreateCommand(userId, paperId))
+        val id = service.create(request.toCreateCommand(userId, paperId))
         val location = uriComponentsBuilder
             .path("/api/contributions/{id}")
             .buildAndExpand(id)

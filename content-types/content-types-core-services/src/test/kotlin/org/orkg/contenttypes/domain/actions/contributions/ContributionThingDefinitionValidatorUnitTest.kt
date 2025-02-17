@@ -36,7 +36,7 @@ internal class ContributionThingDefinitionValidatorUnitTest : MockkBaseTest {
 
         val `class` = createClass(ThingId("R2000"))
 
-        every { thingRepository.findByThingId(`class`.id) } returns Optional.of(`class`)
+        every { thingRepository.findById(`class`.id) } returns Optional.of(`class`)
 
         val result = contributionThingDefinitionValidator(command, state)
 
@@ -47,7 +47,7 @@ internal class ContributionThingDefinitionValidatorUnitTest : MockkBaseTest {
             it.contributionId shouldBe null
         }
 
-        verify(exactly = 1) { thingRepository.findByThingId(`class`.id) }
+        verify(exactly = 1) { thingRepository.findById(`class`.id) }
     }
 
     @Test

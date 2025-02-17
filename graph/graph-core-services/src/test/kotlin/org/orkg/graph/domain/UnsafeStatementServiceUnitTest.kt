@@ -43,16 +43,16 @@ internal class UnsafeStatementServiceUnitTest : MockkBaseTest {
         val predicate = createPredicate(command.predicateId)
         val `object` = createLiteral(command.objectId)
 
-        every { thingRepository.findByThingId(command.subjectId) } returns Optional.of(subject)
+        every { thingRepository.findById(command.subjectId) } returns Optional.of(subject)
         every { predicateRepository.findById(command.predicateId) } returns Optional.of(predicate)
-        every { thingRepository.findByThingId(command.objectId) } returns Optional.of(`object`)
+        every { thingRepository.findById(command.objectId) } returns Optional.of(`object`)
         every { statementRepository.save(any()) } just runs
 
         service.create(command) shouldBe command.id
 
-        verify(exactly = 1) { thingRepository.findByThingId(command.subjectId) }
+        verify(exactly = 1) { thingRepository.findById(command.subjectId) }
         verify(exactly = 1) { predicateRepository.findById(command.predicateId) }
-        verify(exactly = 1) { thingRepository.findByThingId(command.objectId) }
+        verify(exactly = 1) { thingRepository.findById(command.objectId) }
         verify(exactly = 1) {
             statementRepository.save(withArg {
                 it.id shouldBe command.id
@@ -74,17 +74,17 @@ internal class UnsafeStatementServiceUnitTest : MockkBaseTest {
         val predicate = createPredicate(command.predicateId)
         val `object` = createLiteral(command.objectId)
 
-        every { thingRepository.findByThingId(command.subjectId) } returns Optional.of(subject)
+        every { thingRepository.findById(command.subjectId) } returns Optional.of(subject)
         every { predicateRepository.findById(command.predicateId) } returns Optional.of(predicate)
-        every { thingRepository.findByThingId(command.objectId) } returns Optional.of(`object`)
+        every { thingRepository.findById(command.objectId) } returns Optional.of(`object`)
         every { statementRepository.nextIdentity() } returns id
         every { statementRepository.save(any()) } just runs
 
         service.create(command) shouldBe id
 
-        verify(exactly = 1) { thingRepository.findByThingId(command.subjectId) }
+        verify(exactly = 1) { thingRepository.findById(command.subjectId) }
         verify(exactly = 1) { predicateRepository.findById(command.predicateId) }
-        verify(exactly = 1) { thingRepository.findByThingId(command.objectId) }
+        verify(exactly = 1) { thingRepository.findById(command.objectId) }
         verify(exactly = 1) { statementRepository.nextIdentity() }
         verify(exactly = 1) {
             statementRepository.save(withArg {
@@ -103,11 +103,11 @@ internal class UnsafeStatementServiceUnitTest : MockkBaseTest {
     fun `Given a statement create command, when subject cannot be found, it throws an exception`() {
         val command = createStatementCommand()
 
-        every { thingRepository.findByThingId(command.subjectId) } returns Optional.empty()
+        every { thingRepository.findById(command.subjectId) } returns Optional.empty()
 
         shouldThrow<StatementSubjectNotFound> { service.create(command) }
 
-        verify(exactly = 1) { thingRepository.findByThingId(command.subjectId) }
+        verify(exactly = 1) { thingRepository.findById(command.subjectId) }
     }
 
     @Test
@@ -115,12 +115,12 @@ internal class UnsafeStatementServiceUnitTest : MockkBaseTest {
         val command = createStatementCommand()
         val subject = createResource(command.subjectId)
 
-        every { thingRepository.findByThingId(command.subjectId) } returns Optional.of(subject)
+        every { thingRepository.findById(command.subjectId) } returns Optional.of(subject)
         every { predicateRepository.findById(command.predicateId) } returns Optional.empty()
 
         shouldThrow<StatementPredicateNotFound> { service.create(command) }
 
-        verify(exactly = 1) { thingRepository.findByThingId(command.subjectId) }
+        verify(exactly = 1) { thingRepository.findById(command.subjectId) }
         verify(exactly = 1) { predicateRepository.findById(command.predicateId) }
     }
 
@@ -130,15 +130,15 @@ internal class UnsafeStatementServiceUnitTest : MockkBaseTest {
         val subject = createResource(command.subjectId)
         val predicate = createPredicate(command.predicateId)
 
-        every { thingRepository.findByThingId(command.subjectId) } returns Optional.of(subject)
+        every { thingRepository.findById(command.subjectId) } returns Optional.of(subject)
         every { predicateRepository.findById(command.predicateId) } returns Optional.of(predicate)
-        every { thingRepository.findByThingId(command.objectId) } returns Optional.empty()
+        every { thingRepository.findById(command.objectId) } returns Optional.empty()
 
         shouldThrow<StatementObjectNotFound> { service.create(command) }
 
-        verify(exactly = 1) { thingRepository.findByThingId(command.subjectId) }
+        verify(exactly = 1) { thingRepository.findById(command.subjectId) }
         verify(exactly = 1) { predicateRepository.findById(command.predicateId) }
-        verify(exactly = 1) { thingRepository.findByThingId(command.objectId) }
+        verify(exactly = 1) { thingRepository.findById(command.objectId) }
     }
 
     @Test
@@ -155,18 +155,18 @@ internal class UnsafeStatementServiceUnitTest : MockkBaseTest {
         val `object` = createLiteral(command.objectId!!)
 
         every { statementRepository.findByStatementId(command.statementId) } returns Optional.of(statement)
-        every { thingRepository.findByThingId(command.subjectId!!) } returns Optional.of(subject)
+        every { thingRepository.findById(command.subjectId!!) } returns Optional.of(subject)
         every { predicateRepository.findById(command.predicateId!!) } returns Optional.of(predicate)
-        every { thingRepository.findByThingId(command.objectId!!) } returns Optional.of(`object`)
+        every { thingRepository.findById(command.objectId!!) } returns Optional.of(`object`)
         every { statementRepository.deleteByStatementId(command.statementId) } just runs
         every { statementRepository.save(any()) } just runs
 
         service.update(command)
 
         verify(exactly = 1) { statementRepository.findByStatementId(command.statementId) }
-        verify(exactly = 1) { thingRepository.findByThingId(command.subjectId!!) }
+        verify(exactly = 1) { thingRepository.findById(command.subjectId!!) }
         verify(exactly = 1) { predicateRepository.findById(command.predicateId!!) }
-        verify(exactly = 1) { thingRepository.findByThingId(command.objectId!!) }
+        verify(exactly = 1) { thingRepository.findById(command.objectId!!) }
         verify(exactly = 1) { statementRepository.deleteByStatementId(command.statementId) }
         verify(exactly = 1) {
             statementRepository.save(withArg {
@@ -193,7 +193,7 @@ internal class UnsafeStatementServiceUnitTest : MockkBaseTest {
         val statement = createStatement(command.statementId).copy(`object` = `object`)
 
         every { statementRepository.findByStatementId(command.statementId) } returns Optional.of(statement)
-        every { thingRepository.findByThingId(command.subjectId!!) } returns Optional.of(subject)
+        every { thingRepository.findById(command.subjectId!!) } returns Optional.of(subject)
         every { predicateRepository.findById(command.predicateId!!) } returns Optional.of(predicate)
         every { statementRepository.deleteByStatementId(command.statementId) } just runs
         every { literalRepository.save(`object`) } just runs
@@ -202,7 +202,7 @@ internal class UnsafeStatementServiceUnitTest : MockkBaseTest {
         service.update(command)
 
         verify(exactly = 1) { statementRepository.findByStatementId(command.statementId) }
-        verify(exactly = 1) { thingRepository.findByThingId(command.subjectId!!) }
+        verify(exactly = 1) { thingRepository.findById(command.subjectId!!) }
         verify(exactly = 1) { predicateRepository.findById(command.predicateId!!) }
         verify(exactly = 1) { statementRepository.deleteByStatementId(command.statementId) }
         verify(exactly = 1) { literalRepository.save(`object`) }
@@ -267,12 +267,12 @@ internal class UnsafeStatementServiceUnitTest : MockkBaseTest {
         val statement = createStatement(command.statementId)
 
         every { statementRepository.findByStatementId(command.statementId) } returns Optional.of(statement)
-        every { thingRepository.findByThingId(command.subjectId!!) } returns Optional.empty()
+        every { thingRepository.findById(command.subjectId!!) } returns Optional.empty()
 
         shouldThrow<StatementSubjectNotFound> { service.update(command) }
 
         verify(exactly = 1) { statementRepository.findByStatementId(command.statementId) }
-        verify(exactly = 1) { thingRepository.findByThingId(command.subjectId!!) }
+        verify(exactly = 1) { thingRepository.findById(command.subjectId!!) }
     }
 
     @Test
@@ -285,13 +285,13 @@ internal class UnsafeStatementServiceUnitTest : MockkBaseTest {
         val subject = createResource(command.subjectId!!)
 
         every { statementRepository.findByStatementId(command.statementId) } returns Optional.of(statement)
-        every { thingRepository.findByThingId(command.subjectId!!) } returns Optional.of(subject)
+        every { thingRepository.findById(command.subjectId!!) } returns Optional.of(subject)
         every { predicateRepository.findById(command.predicateId!!) } returns Optional.empty()
 
         shouldThrow<StatementPredicateNotFound> { service.update(command) }
 
         verify(exactly = 1) { statementRepository.findByStatementId(command.statementId) }
-        verify(exactly = 1) { thingRepository.findByThingId(command.subjectId!!) }
+        verify(exactly = 1) { thingRepository.findById(command.subjectId!!) }
         verify(exactly = 1) { predicateRepository.findById(command.predicateId!!) }
     }
 
@@ -307,16 +307,16 @@ internal class UnsafeStatementServiceUnitTest : MockkBaseTest {
         val predicate = createPredicate(command.predicateId!!)
 
         every { statementRepository.findByStatementId(command.statementId) } returns Optional.of(statement)
-        every { thingRepository.findByThingId(command.subjectId!!) } returns Optional.of(subject)
+        every { thingRepository.findById(command.subjectId!!) } returns Optional.of(subject)
         every { predicateRepository.findById(command.predicateId!!) } returns Optional.of(predicate)
-        every { thingRepository.findByThingId(command.objectId!!) } returns Optional.empty()
+        every { thingRepository.findById(command.objectId!!) } returns Optional.empty()
 
         shouldThrow<StatementObjectNotFound> { service.update(command) }
 
         verify(exactly = 1) { statementRepository.findByStatementId(command.statementId) }
-        verify(exactly = 1) { thingRepository.findByThingId(command.subjectId!!) }
+        verify(exactly = 1) { thingRepository.findById(command.subjectId!!) }
         verify(exactly = 1) { predicateRepository.findById(command.predicateId!!) }
-        verify(exactly = 1) { thingRepository.findByThingId(command.objectId!!) }
+        verify(exactly = 1) { thingRepository.findById(command.objectId!!) }
     }
 
     @Test
@@ -325,7 +325,7 @@ internal class UnsafeStatementServiceUnitTest : MockkBaseTest {
 
         every { statementRepository.deleteByStatementId(id) } just runs
 
-        service.delete(id)
+        service.deleteById(id)
 
         verify(exactly = 1) { statementRepository.deleteByStatementId(id) }
     }
@@ -336,7 +336,7 @@ internal class UnsafeStatementServiceUnitTest : MockkBaseTest {
 
         every { statementRepository.deleteByStatementIds(ids) } just runs
 
-        service.delete(ids)
+        service.deleteAllById(ids)
 
         verify(exactly = 1) { statementRepository.deleteByStatementIds(ids) }
     }

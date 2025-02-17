@@ -31,11 +31,11 @@ interface ResearchProblemRepository {
     fun findAllListedVisualizationsByProblem(id: ThingId, pageable: Pageable): Page<Resource>
     fun findAllVisualizationsByProblemAndVisibility(id: ThingId, visibility: Visibility, pageable: Pageable): Page<Resource>
 
-    fun findResearchFieldsPerProblem(problemId: ThingId): Iterable<FieldWithFreq>
+    fun findAllResearchFieldsWithPaperCountByProblemId(problemId: ThingId): Iterable<FieldWithFreq>
     fun findTopResearchProblemsGoingBack(months: Int): Iterable<Resource>
     fun findTopResearchProblemsAllTime(): Iterable<Resource>
-    fun findContributorsLeaderboardPerProblem(problemId: ThingId, pageable: Pageable): Page<ContributorPerProblem>
-    fun findResearchProblemForDataset(datasetId: ThingId, pageable: Pageable): Page<Resource>
+    fun findAllContributorsPerProblem(problemId: ThingId, pageable: Pageable): Page<ContributorPerProblem>
+    fun findAllByDatasetId(datasetId: ThingId, pageable: Pageable): Page<Resource>
     fun findAllListedProblems(pageable: Pageable): Page<Resource>
     fun findAllProblemsByVisibility(visibility: Visibility, pageable: Pageable): Page<Resource>
 }

@@ -85,7 +85,7 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
     fun getSingle() {
         val resource = createResource()
         every { resourceService.findById(any()) } returns Optional.of(resource)
-        every { statementService.countIncomingStatements(resource.id) } returns 23
+        every { statementService.countIncomingStatementsById(resource.id) } returns 23
 
         documentedGetRequestTo("/api/resources/{id}", resource.id)
             .perform()
@@ -102,7 +102,7 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { resourceService.findById(any()) }
-        verify(exactly = 1) { statementService.countIncomingStatements(resource.id) }
+        verify(exactly = 1) { statementService.countIncomingStatementsById(resource.id) }
     }
 
     @Test
@@ -220,7 +220,7 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
     @DisplayName("Given several resources, when filtering by no parameters, then status is 200 OK and resources are returned")
     fun getPaged() {
         every { resourceService.findAll(any()) } returns pageOf(createResource())
-        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
+        every { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) } returns emptyMap()
 
         documentedGetRequestTo("/api/resources")
             .perform()
@@ -230,14 +230,14 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { resourceService.findAll(any()) }
-        verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
+        verify(exactly = 1) { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) }
     }
 
     @Test
     @DisplayName("Given several resources, when they are fetched with all possible filtering parameters, then status is 200 OK and resources are returned")
     fun getPagedWithParameters() {
         every { resourceService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns pageOf(createResource())
-        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
+        every { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) } returns emptyMap()
 
         val label = "label"
         val exact = true
@@ -303,7 +303,7 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
                 organizationId = organizationId
             )
         }
-        verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
+        verify(exactly = 1) { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) }
     }
 
     @Test
@@ -350,7 +350,7 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
 
         every { resourceService.update(command) } just runs
         every { resourceService.findById(any()) } returns Optional.of(resource)
-        every { statementService.countIncomingStatements(resource.id) } returns 0
+        every { statementService.countIncomingStatementsById(resource.id) } returns 0
 
         documentedPutRequestTo("/api/resources/{id}", resource.id)
             .content(request)
@@ -381,7 +381,7 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
 
         verify(exactly = 1) { resourceService.update(command) }
         verify(exactly = 1) { resourceService.findById(any()) }
-        verify(exactly = 1) { statementService.countIncomingStatements(resource.id) }
+        verify(exactly = 1) { statementService.countIncomingStatementsById(resource.id) }
     }
 
     @Test

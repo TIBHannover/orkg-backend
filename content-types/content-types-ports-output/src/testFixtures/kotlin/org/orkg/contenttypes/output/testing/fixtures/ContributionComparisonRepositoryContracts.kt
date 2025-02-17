@@ -156,7 +156,7 @@ fun <
     describe("fetching contribution information") {
         val expected = createSubgraphWithYearAsLiteral()
         val ids = expected.map { ThingId(it.id.value) }
-        val actual = repository.findContributionsDetailsById(ids, pageable)
+        val actual = repository.findAllContributionDetailsById(ids, pageable)
 
         it("fetches a non-empty set of results") {
             actual.isEmpty shouldBe false
@@ -183,7 +183,7 @@ fun <
     describe("fetching contribution buggy information") {
         val expected = createSubgraphWithYearAsResource()
         val ids = expected.map { ThingId(it.id.value) }
-        val actual = repository.findContributionsDetailsById(ids, pageable)
+        val actual = repository.findAllContributionDetailsById(ids, pageable)
 
         it("fetches a non-empty set of results") {
             actual.isEmpty shouldBe false
@@ -209,7 +209,7 @@ fun <
     describe("fetching contribution with missing information") {
         val expected = createSubgraphWithoutYear()
         val ids = expected.map { ThingId(it.id.value) }
-        val actual = repository.findContributionsDetailsById(ids, pageable)
+        val actual = repository.findAllContributionDetailsById(ids, pageable)
 
         it("fetches a non-empty set of results") {
             actual.isEmpty shouldBe false

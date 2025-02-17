@@ -70,7 +70,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
     @DisplayName("Given several classes, when filtering by no parameters, then status is 200 OK and classes are returned")
     fun getPaged() {
         every { classService.findAll(any()) } returns pageOf(createClass())
-        every { statementService.findAllDescriptions(any<Set<ThingId>>()) } returns emptyMap()
+        every { statementService.findAllDescriptionsById(any<Set<ThingId>>()) } returns emptyMap()
 
         documentedGetRequestTo("/api/classes")
             .perform()
@@ -80,14 +80,14 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { classService.findAll(any()) }
-        verify(exactly = 1) { statementService.findAllDescriptions(any<Set<ThingId>>()) }
+        verify(exactly = 1) { statementService.findAllDescriptionsById(any<Set<ThingId>>()) }
     }
 
     @Test
     @DisplayName("Given several classes, when they are fetched with all possible filtering parameters, then status is 200 OK and classes are returned")
     fun getPagedWithParameters() {
         every { classService.findAll(any(), any(), any(), any(), any()) } returns pageOf(createClass())
-        every { statementService.findAllDescriptions(any<Set<ThingId>>()) } returns emptyMap()
+        every { statementService.findAllDescriptionsById(any<Set<ThingId>>()) } returns emptyMap()
 
         val label = "label"
         val exact = true
@@ -129,7 +129,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
                 createdAtEnd = createdAtEnd
             )
         }
-        verify(exactly = 1) { statementService.findAllDescriptions(any<Set<ThingId>>()) }
+        verify(exactly = 1) { statementService.findAllDescriptionsById(any<Set<ThingId>>()) }
     }
 
     @Test

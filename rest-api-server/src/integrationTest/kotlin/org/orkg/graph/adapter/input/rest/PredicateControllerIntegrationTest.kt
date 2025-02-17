@@ -41,7 +41,7 @@ internal class PredicateControllerIntegrationTest : MockMvcBaseTest("predicates"
 
     @BeforeEach
     fun setup() {
-        service.removeAll()
+        service.deleteAll()
 
         assertThat(service.findAll(PageRequest.of(0, 10))).hasSize(0)
     }

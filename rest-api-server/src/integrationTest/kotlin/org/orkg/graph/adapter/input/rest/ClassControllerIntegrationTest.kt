@@ -29,7 +29,7 @@ internal class ClassControllerIntegrationTest : MockMvcBaseTest("classes") {
     fun setup() {
         val tempPageable = PageRequest.of(0, 10)
 
-        service.removeAll()
+        service.deleteAll()
 
         assertThat(service.findAll(tempPageable)).hasSize(0)
     }

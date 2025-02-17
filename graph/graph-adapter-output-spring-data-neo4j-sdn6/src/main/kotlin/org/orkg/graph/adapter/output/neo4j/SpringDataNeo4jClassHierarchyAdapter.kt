@@ -128,7 +128,7 @@ class SpringDataNeo4jClassHierarchyAdapter(
             .run()
     }
 
-    override fun findChildren(id: ThingId, pageable: Pageable): Page<ChildClass> = cypherQueryBuilderFactory.newBuilder()
+    override fun findAllChildrenByAncestorId(id: ThingId, pageable: Pageable): Page<ChildClass> = cypherQueryBuilderFactory.newBuilder()
         .withCommonQuery {
             match(
                 node("Class")
@@ -154,7 +154,7 @@ class SpringDataNeo4jClassHierarchyAdapter(
         .mappedBy { _, record -> ChildClass(record["c"].asNode().toClass(), record["childCount"].asLong()) }
         .fetch(pageable)
 
-    override fun findParent(id: ThingId): Optional<Class> = cypherQueryBuilderFactory.newBuilder()
+    override fun findParentByChildId(id: ThingId): Optional<Class> = cypherQueryBuilderFactory.newBuilder()
         .withQuery {
             val p = name("p")
             match(
@@ -167,7 +167,7 @@ class SpringDataNeo4jClassHierarchyAdapter(
         .mappedBy(ClassMapper("p"))
         .one()
 
-    override fun findRoot(id: ThingId): Optional<Class> = cypherQueryBuilderFactory.newBuilder()
+    override fun findRootByDescendantId(id: ThingId): Optional<Class> = cypherQueryBuilderFactory.newBuilder()
         .withQuery {
             val r = name("r")
             val root = anyNode("Class")

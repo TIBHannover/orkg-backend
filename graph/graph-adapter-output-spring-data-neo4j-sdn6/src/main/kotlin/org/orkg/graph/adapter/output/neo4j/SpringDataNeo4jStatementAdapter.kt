@@ -84,7 +84,7 @@ class SpringDataNeo4jStatementAdapter(
         var id: StatementId
         do {
             id = neo4jStatementIdGenerator.nextIdentity()
-        } while (exists(id))
+        } while (existsById(id))
         return id
     }
 
@@ -258,7 +258,7 @@ class SpringDataNeo4jStatementAdapter(
             objectLabel = null
         )
 
-    override fun countIncomingStatements(id: ThingId): Long = cypherQueryBuilderFactory.newBuilder()
+    override fun countIncomingStatementsById(id: ThingId): Long = cypherQueryBuilderFactory.newBuilder()
         .withQuery {
             val r = name("rel")
             val subject = node("Thing")
@@ -274,7 +274,7 @@ class SpringDataNeo4jStatementAdapter(
         .one()
         .orElse(0)
 
-    override fun countIncomingStatements(ids: Set<ThingId>): Map<ThingId, Long> =
+    override fun countAllIncomingStatementsById(ids: Set<ThingId>): Map<ThingId, Long> =
         cypherQueryBuilderFactory.newBuilder()
             .withQuery {
                 val r = name("rel")
@@ -294,7 +294,7 @@ class SpringDataNeo4jStatementAdapter(
             .all()
             .toMap()
 
-    override fun findAllDescriptions(ids: Set<ThingId>): Map<ThingId, String> =
+    override fun findAllDescriptionsById(ids: Set<ThingId>): Map<ThingId, String> =
         cypherQueryBuilderFactory.newBuilder()
             .withQuery {
                 val id = name("id")
@@ -453,7 +453,7 @@ class SpringDataNeo4jStatementAdapter(
             .mappedBy(StatementMapper(predicateRepository))
             .fetch(pageable)
 
-    override fun countByIdRecursive(id: ThingId): Long = cypherQueryBuilderFactory.newBuilder()
+    override fun countStatementsInPaperSubgraph(id: ThingId): Long = cypherQueryBuilderFactory.newBuilder()
         .withQuery {
             val apocConfiguration = mapOf<String, Any>(
                 "relationshipFilter" to ">",
@@ -523,7 +523,7 @@ class SpringDataNeo4jStatementAdapter(
             .mappedBy(StatementMapper(predicateRepository))
             .all()
 
-    override fun exists(id: StatementId): Boolean = cypherQueryBuilderFactory.newBuilder()
+    override fun existsById(id: StatementId): Boolean = cypherQueryBuilderFactory.newBuilder()
         .withQuery {
             returning(
                 exists(

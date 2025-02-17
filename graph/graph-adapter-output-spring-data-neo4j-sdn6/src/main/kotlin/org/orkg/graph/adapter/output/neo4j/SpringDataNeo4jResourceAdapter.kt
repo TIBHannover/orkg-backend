@@ -223,7 +223,7 @@ class SpringDataNeo4jResourceAdapter(
         )
 
     @Cacheable(key = "#id", cacheNames = [RESOURCE_ID_TO_RESOURCE_EXISTS_CACHE])
-    override fun exists(id: ThingId): Boolean = neo4jRepository.existsById(id)
+    override fun existsById(id: ThingId): Boolean = neo4jRepository.existsById(id)
 
     @Cacheable(key = "#id", cacheNames = [RESOURCE_ID_TO_RESOURCE_CACHE])
     override fun findById(id: ThingId): Optional<Resource> =

@@ -76,7 +76,7 @@ internal class SpringDataNeo4jClassAdapterCachingTest : MockkBaseTest {
         every { mock.findById(ThingId("C1")) } returns Optional.of(`class`) andThen Optional.of(modified) andThenAnswer {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
-        every { mock.exists(ThingId("C1")) } returns true andThenAnswer {
+        every { mock.existsById(ThingId("C1")) } returns true andThenAnswer {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
         every { mock.save(modified) } returns Unit
@@ -87,9 +87,9 @@ internal class SpringDataNeo4jClassAdapterCachingTest : MockkBaseTest {
         verify(exactly = 1) { mock.findById(ThingId("C1")) }
 
         // Check class existence in repository
-        assertThat(adapter.exists(ThingId("C1"))).isTrue
+        assertThat(adapter.existsById(ThingId("C1"))).isTrue
         // Verify the loading happened
-        verify(exactly = 1) { mock.exists(ThingId("C1")) }
+        verify(exactly = 1) { mock.existsById(ThingId("C1")) }
 
         // Save a modified version
         adapter.save(modified)
@@ -103,27 +103,27 @@ internal class SpringDataNeo4jClassAdapterCachingTest : MockkBaseTest {
         verify(exactly = 2) { mock.findById(ThingId("C1")) }
 
         // Check class existence again
-        assertThat(adapter.exists(ThingId("C1"))).isTrue
+        assertThat(adapter.existsById(ThingId("C1"))).isTrue
         // Verify the loading did not happen again
-        verify(exactly = 1) { mock.exists(ThingId("C1")) }
+        verify(exactly = 1) { mock.existsById(ThingId("C1")) }
     }
 
     @Test
     fun `exists check of a class by ID should be cached`() {
-        every { mock.exists(ThingId("C1")) } returns true andThenAnswer {
+        every { mock.existsById(ThingId("C1")) } returns true andThenAnswer {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
 
         // Check class existence in repository
-        assertThat(adapter.exists(ThingId("C1"))).isTrue
+        assertThat(adapter.existsById(ThingId("C1"))).isTrue
         // Verify the loading happened
-        verify(exactly = 1) { mock.exists(ThingId("C1")) }
+        verify(exactly = 1) { mock.existsById(ThingId("C1")) }
 
         // Check existence of class again for several times
-        assertThat(adapter.exists(ThingId("C1"))).isTrue
-        assertThat(adapter.exists(ThingId("C1"))).isTrue
+        assertThat(adapter.existsById(ThingId("C1"))).isTrue
+        assertThat(adapter.existsById(ThingId("C1"))).isTrue
 
-        verify(exactly = 1) { mock.exists(ThingId("C1")) }
+        verify(exactly = 1) { mock.existsById(ThingId("C1")) }
     }
 
     @Configuration

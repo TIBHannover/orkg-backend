@@ -22,7 +22,7 @@ class AbstractTemplatePropertyDeleter(
                 subjectId = propertyId,
                 pageable = PageRequests.ALL
             )
-            statementService.delete(outgoingStatements.map { it.id }.toSet() + incomingStatements.single().id)
+            statementService.deleteAllById(outgoingStatements.map { it.id }.toSet() + incomingStatements.single().id)
             resourceService.tryDelete(propertyId, contributorId)
         }
 }

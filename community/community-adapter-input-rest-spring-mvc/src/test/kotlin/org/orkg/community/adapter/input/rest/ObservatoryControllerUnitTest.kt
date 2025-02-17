@@ -210,7 +210,7 @@ internal class ObservatoryControllerUnitTest : MockMvcBaseTest("observatories") 
         val pageable: Pageable = PageRequest.of(0, 10)
         val page: Page<Observatory> = pageOf(observatory1, observatory2, pageable = pageable)
 
-        every { observatoryUseCases.findAllByResearchField(observatory1.researchField!!, any()) } returns page
+        every { observatoryUseCases.findAllByResearchFieldId(observatory1.researchField!!, any()) } returns page
         every { resourceUseCases.findById(any()) } returns Optional.empty()
 
         get("/api/observatories")
@@ -218,7 +218,7 @@ internal class ObservatoryControllerUnitTest : MockMvcBaseTest("observatories") 
             .perform()
             .andExpect(status().isOk)
 
-        verify(exactly = 1) { observatoryUseCases.findAllByResearchField(observatory1.researchField!!, any()) }
+        verify(exactly = 1) { observatoryUseCases.findAllByResearchFieldId(observatory1.researchField!!, any()) }
         verify(exactly = 2) { resourceUseCases.findById(any()) }
     }
 

@@ -307,7 +307,7 @@ class Metrics {
         name = "contributors-count",
         description = "Number of contributors.",
         group = "community",
-        supplier = { contributorRepository.countActiveUsers() }
+        supplier = { contributorRepository.count() }
     )
 
     @Bean

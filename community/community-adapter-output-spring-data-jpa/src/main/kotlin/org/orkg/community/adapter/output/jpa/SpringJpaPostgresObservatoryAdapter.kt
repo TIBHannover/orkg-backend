@@ -62,7 +62,7 @@ class SpringJpaPostgresObservatoryAdapter(
 
     override fun deleteAll() = postgresRepository.deleteAll()
 
-    override fun allMembers(id: ObservatoryId, pageable: Pageable): Page<Contributor> =
+    override fun findAllMembersByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Contributor> =
         postgresContributorRepository.findAllByObservatoryId(id.value, pageable).map(ContributorEntity::toContributor)
 
     override fun count(): Long = postgresRepository.count()

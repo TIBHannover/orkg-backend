@@ -18,12 +18,12 @@ class ContributionComparisonController(
     private val retrieveContributionComparisons: RetrieveComparisonContributionsUseCase,
 ) {
     @GetMapping("/api/contribution-comparisons/contributions")
-    fun getContributionsDetails(
+    fun findAllContributionDetailsById(
         @RequestParam("ids") contributionIds: List<ThingId>,
         pageable: Pageable
     ): Page<ContributionInfo> {
         if (contributionIds.size < 2)
             throw TooFewIDsError(contributionIds)
-        return retrieveContributionComparisons.findContributionsDetailsById(contributionIds, pageable)
+        return retrieveContributionComparisons.findAllContributionDetailsById(contributionIds, pageable)
     }
 }

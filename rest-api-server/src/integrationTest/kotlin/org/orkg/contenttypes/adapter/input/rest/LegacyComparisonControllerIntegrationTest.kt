@@ -53,11 +53,11 @@ internal class LegacyComparisonControllerIntegrationTest : MockMvcBaseTest("comp
 
     @BeforeEach
     fun setup() {
-        statementService.removeAll()
-        predicateService.removeAll()
-        resourceService.removeAll()
-        classService.removeAll()
-        literalService.removeAll()
+        statementService.deleteAll()
+        predicateService.deleteAll()
+        resourceService.deleteAll()
+        classService.deleteAll()
+        literalService.deleteAll()
 
         // Init classes
         classService.createClasses("Author", "Paper", "Contribution", "Comparison")

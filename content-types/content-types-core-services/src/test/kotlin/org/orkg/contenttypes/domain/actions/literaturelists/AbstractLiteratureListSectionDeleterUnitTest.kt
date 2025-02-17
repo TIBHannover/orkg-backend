@@ -50,7 +50,7 @@ internal class AbstractLiteratureListSectionDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         } returns pageOf(literatureListHasSectionStatement)
-        every { statementService.delete(any<Set<StatementId>>()) } just runs
+        every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
         every { resourceService.delete(any(), contributorId) } just runs
 
         abstractLiteratureListSectionDeleter.delete(contributorId, literatureListId, section, statements)
@@ -62,7 +62,7 @@ internal class AbstractLiteratureListSectionDeleterUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.delete(setOf(
+            statementService.deleteAllById(setOf(
                 StatementId("S0"),
                 StatementId("S1"),
                 StatementId("S0_2"),
@@ -101,7 +101,7 @@ internal class AbstractLiteratureListSectionDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         } returns pageOf(literatureListHasSectionStatement, otherStatementAboutListSection)
-        every { statementService.delete(setOf(literatureListHasSectionStatement.id)) } just runs
+        every { statementService.deleteAllById(setOf(literatureListHasSectionStatement.id)) } just runs
 
         abstractLiteratureListSectionDeleter.delete(contributorId, literatureListId, section, statements)
 
@@ -111,7 +111,7 @@ internal class AbstractLiteratureListSectionDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(setOf(literatureListHasSectionStatement.id)) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(literatureListHasSectionStatement.id)) }
     }
 
     @Test
@@ -133,7 +133,7 @@ internal class AbstractLiteratureListSectionDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         } returns pageOf(literatureListHasSectionStatement)
-        every { statementService.delete(any<Set<StatementId>>()) } just runs
+        every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
         every { resourceService.delete(any(), contributorId) } throws NeitherOwnerNorCurator(contributorId)
 
         assertDoesNotThrow {
@@ -147,7 +147,7 @@ internal class AbstractLiteratureListSectionDeleterUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.delete(setOf(
+            statementService.deleteAllById(setOf(
                 StatementId("S0"),
                 StatementId("S1"),
                 StatementId("S0_2"),
@@ -180,7 +180,7 @@ internal class AbstractLiteratureListSectionDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         } returns pageOf(literatureListHasSectionStatement)
-        every { statementService.delete(any<Set<StatementId>>()) } just runs
+        every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
         every { resourceService.delete(any(), contributorId) } just runs
 
         abstractLiteratureListSectionDeleter.delete(contributorId, literatureListId, section, statements)
@@ -191,7 +191,7 @@ internal class AbstractLiteratureListSectionDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(setOf(StatementId("S1"), StatementId("S2"), literatureListHasSectionStatement.id)) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S1"), StatementId("S2"), literatureListHasSectionStatement.id)) }
         verify(exactly = 1) { resourceService.delete(section.id, contributorId) }
     }
 
@@ -220,7 +220,7 @@ internal class AbstractLiteratureListSectionDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         } returns pageOf(literatureListHasSectionStatement, otherStatementAboutTextSection)
-        every { statementService.delete(setOf(literatureListHasSectionStatement.id)) } just runs
+        every { statementService.deleteAllById(setOf(literatureListHasSectionStatement.id)) } just runs
 
         abstractLiteratureListSectionDeleter.delete(contributorId, literatureListId, section, statements)
 
@@ -230,7 +230,7 @@ internal class AbstractLiteratureListSectionDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(setOf(literatureListHasSectionStatement.id)) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(literatureListHasSectionStatement.id)) }
     }
 
     @Test
@@ -252,7 +252,7 @@ internal class AbstractLiteratureListSectionDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         } returns pageOf(literatureListHasSectionStatement)
-        every { statementService.delete(any<Set<StatementId>>()) } just runs
+        every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
         every { resourceService.delete(any(), contributorId) } throws NeitherOwnerNorCurator(contributorId)
 
         assertDoesNotThrow {
@@ -265,7 +265,7 @@ internal class AbstractLiteratureListSectionDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(setOf(StatementId("S1"), StatementId("S2"), literatureListHasSectionStatement.id)) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S1"), StatementId("S2"), literatureListHasSectionStatement.id)) }
         verify(exactly = 1) { resourceService.delete(section.id, contributorId) }
     }
 }

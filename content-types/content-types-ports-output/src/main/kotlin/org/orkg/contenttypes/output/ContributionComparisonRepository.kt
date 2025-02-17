@@ -6,5 +6,5 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 interface ContributionComparisonRepository {
-    fun findContributionsDetailsById(ids: List<ThingId>, pageable: Pageable): Page<ContributionInfo>
+    fun findAllContributionDetailsById(ids: List<ThingId>, pageable: Pageable): Page<ContributionInfo>
 }

@@ -46,5 +46,5 @@ class RosettaStoneStatementUpdater(
     // FIXME: Fetching thing instances that are effectively not needed by the repository should be avoided.
     //        Only the ids are needed in order to save the statement.
     private fun State.mapToThing(id: String) =
-        validatedIds[id]!!.mapLeft { thingRepository.findByThingId(tempId2Thing[it]!!).get() }.merge()
+        validatedIds[id]!!.mapLeft { thingRepository.findById(tempId2Thing[it]!!).get() }.merge()
 }

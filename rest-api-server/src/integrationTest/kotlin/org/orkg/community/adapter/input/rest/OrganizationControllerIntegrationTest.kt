@@ -53,7 +53,7 @@ internal class OrganizationControllerIntegrationTest : MockMvcBaseTest("organiza
 
     @BeforeEach
     fun setup() {
-        assertThat(service.listOrganizations()).hasSize(0)
+        assertThat(service.findAll()).hasSize(0)
         assertThat(observatoryService.findAll(PageRequest.of(0, 10))).hasSize(0)
         assertThat(resourceService.findAll(PageRequest.of(0, 10))).hasSize(0)
         assertThat(classService.findAll(PageRequest.of(0, 10))).hasSize(0)
@@ -63,11 +63,11 @@ internal class OrganizationControllerIntegrationTest : MockMvcBaseTest("organiza
 
     @AfterEach
     fun cleanup() {
-        observatoryService.removeAll()
-        service.removeAll()
+        observatoryService.deleteAll()
+        service.deleteAll()
         contributorService.deleteAll()
-        resourceService.removeAll()
-        classService.removeAll()
+        resourceService.deleteAll()
+        classService.deleteAll()
     }
 
     @Test

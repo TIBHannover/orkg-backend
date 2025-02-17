@@ -7,6 +7,6 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 interface RetrieveBenchmarkUseCase {
-    fun summariesForResearchField(id: ThingId, pageable: Pageable): Optional<Page<BenchmarkSummary>>
-    fun summary(pageable: Pageable): Optional<Page<BenchmarkSummary>>
+    fun findAllBenchmarkSummariesByResearchFieldId(id: ThingId, pageable: Pageable): Optional<Page<BenchmarkSummary>>
+    fun findAllBenchmarkSummaries(pageable: Pageable): Optional<Page<BenchmarkSummary>>
 }

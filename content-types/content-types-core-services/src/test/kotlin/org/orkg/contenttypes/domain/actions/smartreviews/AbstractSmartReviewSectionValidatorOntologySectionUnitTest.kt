@@ -22,14 +22,14 @@ internal class AbstractSmartReviewSectionValidatorOntologySectionUnitTest : Abst
         val validIds = mutableSetOf<ThingId>()
         val predicate = createPredicate(section.predicates.single())
 
-        every { thingRepository.existsAll(section.entities.toSet()) } returns true
+        every { thingRepository.existsAllById(section.entities.toSet()) } returns true
         every { predicateRepository.findById(predicate.id) } returns Optional.of(predicate)
 
         abstractSmartReviewSectionValidator.validate(section, validIds)
 
         validIds shouldBe (section.entities union section.predicates)
 
-        verify(exactly = 1) { thingRepository.existsAll(section.entities.toSet()) }
+        verify(exactly = 1) { thingRepository.existsAllById(section.entities.toSet()) }
         verify(exactly = 1) { predicateRepository.findById(predicate.id) }
     }
 
@@ -53,13 +53,13 @@ internal class AbstractSmartReviewSectionValidatorOntologySectionUnitTest : Abst
         val section = smartReviewOntologySectionDefinition().copy(predicates = emptyList())
         val validIds = mutableSetOf<ThingId>()
 
-        every { thingRepository.existsAll(section.entities.toSet()) } returns true
+        every { thingRepository.existsAllById(section.entities.toSet()) } returns true
 
         abstractSmartReviewSectionValidator.validate(section, validIds)
 
         validIds shouldBe (section.entities union section.predicates)
 
-        verify(exactly = 1) { thingRepository.existsAll(section.entities.toSet()) }
+        verify(exactly = 1) { thingRepository.existsAllById(section.entities.toSet()) }
     }
 
     @Test
@@ -67,13 +67,13 @@ internal class AbstractSmartReviewSectionValidatorOntologySectionUnitTest : Abst
         val section = smartReviewOntologySectionDefinition()
         val validIds = mutableSetOf(ThingId("P1"))
 
-        every { thingRepository.existsAll(setOf(ThingId("R1"))) } returns true
+        every { thingRepository.existsAllById(setOf(ThingId("R1"))) } returns true
 
         abstractSmartReviewSectionValidator.validate(section, validIds)
 
         validIds shouldBe (section.entities union section.predicates)
 
-        verify(exactly = 1) { thingRepository.existsAll(setOf(ThingId("R1"))) }
+        verify(exactly = 1) { thingRepository.existsAllById(setOf(ThingId("R1"))) }
     }
 
     @Test
@@ -91,11 +91,11 @@ internal class AbstractSmartReviewSectionValidatorOntologySectionUnitTest : Abst
         val section = smartReviewOntologySectionDefinition()
         val validIds = mutableSetOf<ThingId>()
 
-        every { thingRepository.existsAll(any()) } returns false
+        every { thingRepository.existsAllById(any()) } returns false
 
         assertThrows<OntologyEntityNotFound> { abstractSmartReviewSectionValidator.validate(section, validIds) }
 
-        verify(exactly = 1) { thingRepository.existsAll(any()) }
+        verify(exactly = 1) { thingRepository.existsAllById(any()) }
     }
 
     @Test
@@ -103,12 +103,12 @@ internal class AbstractSmartReviewSectionValidatorOntologySectionUnitTest : Abst
         val section = smartReviewOntologySectionDefinition().copy(predicates = listOf(Predicates.employs))
         val validIds = mutableSetOf<ThingId>()
 
-        every { thingRepository.existsAll(any()) } returns true
+        every { thingRepository.existsAllById(any()) } returns true
         every { predicateRepository.findById(section.predicates.single()) } returns Optional.empty()
 
         assertThrows<PredicateNotFound> { abstractSmartReviewSectionValidator.validate(section, validIds) }
 
-        verify(exactly = 1) { thingRepository.existsAll(any()) }
+        verify(exactly = 1) { thingRepository.existsAllById(any()) }
         verify(exactly = 1) { predicateRepository.findById(section.predicates.single()) }
     }
 }

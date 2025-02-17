@@ -23,7 +23,7 @@ interface OrganizationUseCases : UpdateOrganizationUseCases {
         logoId: ImageId?
     ): OrganizationId
 
-    fun listOrganizations(): List<Organization>
+    fun findAll(): List<Organization>
 
     fun findById(id: OrganizationId): Optional<Organization>
 
@@ -31,16 +31,16 @@ interface OrganizationUseCases : UpdateOrganizationUseCases {
 
     fun findByDisplayId(name: String): Optional<Organization>
 
-    fun listConferences(): List<Organization>
+    fun findAllConferences(): List<Organization>
 
-    fun updateOrganization(organization: Organization)
+    fun update(organization: Organization)
 
-    fun findLogo(id: OrganizationId): Optional<Image>
+    fun findLogoById(id: OrganizationId): Optional<Image>
 
     fun updateLogo(id: OrganizationId, image: UpdateOrganizationUseCases.RawImage, contributor: ContributorId?)
 
     /**
      * Delete all organizations
      */
-    fun removeAll()
+    fun deleteAll()
 }

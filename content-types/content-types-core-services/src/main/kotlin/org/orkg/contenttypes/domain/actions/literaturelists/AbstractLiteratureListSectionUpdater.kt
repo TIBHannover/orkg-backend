@@ -120,7 +120,7 @@ class AbstractLiteratureListSectionUpdater(
             }
 
             if (statementsToRemove.isNotEmpty()) {
-                statementService.delete(statementsToRemove)
+                statementService.deleteAllById(statementsToRemove)
             }
             entryNodesToRemove.forEach { resourceService.tryDelete(it, contributorId) }
 

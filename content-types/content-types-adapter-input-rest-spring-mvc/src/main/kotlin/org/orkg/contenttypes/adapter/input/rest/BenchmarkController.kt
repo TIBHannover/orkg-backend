@@ -27,40 +27,40 @@ class BenchmarkController(
     private val retrieveProblems: RetrieveResearchProblemUseCase
 ) {
     @GetMapping("/api/research-fields/benchmarks")
-    fun getResearchFieldsWithBenchmarks(pageable: Pageable): Page<ResearchField> =
-        retrieveResearchField.withBenchmarks(pageable)
+    fun findAllWithBenchmarks(pageable: Pageable): Page<ResearchField> =
+        retrieveResearchField.findAllWithBenchmarks(pageable)
 
     @GetMapping("/api/benchmarks/summary/research-field/{id}")
-    fun getBenchmarkSummaryForResearchField(@PathVariable id: ThingId, pageable: Pageable): Page<BenchmarkSummary> =
+    fun findAllBenchmarkSummariesByResearchFieldId(@PathVariable id: ThingId, pageable: Pageable): Page<BenchmarkSummary> =
         retrieveBenchmarks
-            .summariesForResearchField(id, pageable)
+            .findAllBenchmarkSummariesByResearchFieldId(id, pageable)
             .orElseThrow { ResearchFieldNotFound(id) }
 
     @GetMapping("/api/benchmarks/summary")
-    fun getBenchmarkSummaries(pageable: Pageable): Page<BenchmarkSummary> =
+    fun findAllBenchmarkSummaries(pageable: Pageable): Page<BenchmarkSummary> =
         retrieveBenchmarks
-            .summary(pageable)
+            .findAllBenchmarkSummaries(pageable)
             .orElseThrow { RuntimeException() }
 
     @GetMapping("/api/datasets/research-problem/{id}")
-    fun getDatasetForResearchProblem(@PathVariable id: ThingId, pageable: Pageable): Page<Dataset> =
+    fun findAllDatasetsByResearchProblemId(@PathVariable id: ThingId, pageable: Pageable): Page<Dataset> =
         retrieveDatasets
-            .forResearchProblem(id, pageable)
+            .findAllDatasetsByResearchProblemId(id, pageable)
             .orElseThrow { ResearchProblemNotFound(id) }
 
     @GetMapping("/api/datasets/{id}/problems")
-    fun getResearchProblemsForDataset(@PathVariable id: ThingId, pageable: Pageable): Page<ResearchProblem> =
+    fun findAllByDatasetId(@PathVariable id: ThingId, pageable: Pageable): Page<ResearchProblem> =
         retrieveProblems
-            .forDataset(id, pageable)
+            .findAllByDatasetId(id, pageable)
             .orElseThrow { DatasetNotFound(id) }
 
     @GetMapping("/api/datasets/{id}/problem/{problemId}/summary")
-    fun getDatasetSummary(
+    fun findAllDatasetSummariesByIdAndResearchProblemId(
         @PathVariable id: ThingId,
         @PathVariable problemId: ThingId,
         pageable: Pageable
     ): Page<DatasetSummary> =
         retrieveDatasets
-            .summaryFor(id, problemId, pageable)
+            .findAllDatasetSummariesByIdAndResearchProblemId(id, problemId, pageable)
             .orElseThrow { DatasetNotFound(id) }
 }

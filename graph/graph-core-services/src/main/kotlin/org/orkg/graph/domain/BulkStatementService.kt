@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service
 class BulkStatementService(
     private val statementRepository: StatementRepository,
 ) : GetBulkStatementsQuery {
-    override fun getBulkStatementsBySubjects(
+    override fun findBulkStatementsBySubjects(
         subjects: List<ThingId>,
         pageable: Pageable
     ): Map<String, Iterable<GeneralStatement>> {
@@ -22,7 +22,7 @@ class BulkStatementService(
             .groupBy { (it.subject as Resource).id.value }
     }
 
-    override fun getBulkStatementsByObjects(
+    override fun findBulkStatementsByObjects(
         objects: List<ThingId>,
         pageable: Pageable
     ): Map<String, Iterable<GeneralStatement>> {

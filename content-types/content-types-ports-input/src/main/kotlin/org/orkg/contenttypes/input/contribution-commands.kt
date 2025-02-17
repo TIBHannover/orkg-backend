@@ -5,7 +5,7 @@ import org.orkg.common.ThingId
 import org.orkg.graph.domain.ExtractionMethod
 
 interface CreateContributionUseCase {
-    fun createContribution(command: CreateCommand): ThingId
+    fun create(command: CreateCommand): ThingId
 
     data class CreateCommand(
         val contributorId: ContributorId,

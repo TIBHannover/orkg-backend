@@ -59,11 +59,11 @@ internal class BenchmarkControllerIntegrationTest : MockMvcBaseTest("benchmarks"
     fun setup() {
         val tempPageable = PageRequest.of(0, 10)
 
-        resourceService.removeAll()
-        predicateService.removeAll()
-        literalService.removeAll()
-        statementService.removeAll()
-        classService.removeAll()
+        resourceService.deleteAll()
+        predicateService.deleteAll()
+        literalService.deleteAll()
+        statementService.deleteAll()
+        classService.deleteAll()
 
         assertThat(resourceService.findAll(tempPageable)).hasSize(0)
         assertThat(predicateService.findAll(tempPageable)).hasSize(0)

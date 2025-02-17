@@ -111,19 +111,19 @@ fun <
     context("exists") {
         it("returns the correct result") {
             val expected: List = fabricator.random()
-            repository.exists(expected.id) shouldBe false
+            repository.existsById(expected.id) shouldBe false
             expected.elements.forEach {
                 resourceRepository.save(createResource(id = it))
             }
             repository.save(expected, expected.createdBy)
-            repository.exists(expected.id) shouldBe true
+            repository.existsById(expected.id) shouldBe true
             resourceRepository.deleteAll()
-            repository.exists(expected.id) shouldBe false
+            repository.existsById(expected.id) shouldBe false
         }
         it("does not match non-list resources") {
             val resource: Resource = fabricator.random()
             resourceRepository.save(resource)
-            repository.exists(resource.id) shouldBe false
+            repository.existsById(resource.id) shouldBe false
         }
     }
 
@@ -187,14 +187,14 @@ fun <
                 repository.save(list, list.createdBy)
 
                 it("returns success") {
-                    repository.delete(list.id)
+                    repository.deleteById(list.id)
                     repository.findById(list.id).isPresent shouldBe false
                 }
             }
             it("does not delete non-list resources") {
                 val resource: Resource = fabricator.random()
                 resourceRepository.save(resource)
-                repository.delete(resource.id)
+                repository.deleteById(resource.id)
                 resourceRepository.findById(resource.id).isPresent shouldBe true
             }
         }

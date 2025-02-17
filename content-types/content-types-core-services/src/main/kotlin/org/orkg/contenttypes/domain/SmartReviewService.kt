@@ -203,7 +203,7 @@ class SmartReviewService(
         return steps.execute(command, CreateSmartReviewState()).smartReviewId!!
     }
 
-    override fun createSection(command: CreateSmartReviewSectionCommand): ThingId {
+    override fun create(command: CreateSmartReviewSectionCommand): ThingId {
         val steps = listOf<Action<CreateSmartReviewSectionCommand, CreateSmartReviewSectionState>>(
             SmartReviewSectionExistenceCreateValidator(statementRepository),
             SmartReviewSectionIndexValidator(statementRepository),
@@ -236,7 +236,7 @@ class SmartReviewService(
         steps.execute(command, UpdateSmartReviewState())
     }
 
-    override fun updateSection(command: UpdateSmartReviewSectionCommand) {
+    override fun update(command: UpdateSmartReviewSectionCommand) {
         val steps = listOf<Action<UpdateSmartReviewSectionCommand, UpdateSmartReviewSectionState>>(
             SmartReviewSectionExistenceUpdateValidator(this, resourceRepository),
             SmartReviewSectionUpdateValidator(resourceRepository, predicateRepository, thingRepository),
@@ -245,7 +245,7 @@ class SmartReviewService(
         steps.execute(command, UpdateSmartReviewSectionState())
     }
 
-    override fun deleteSection(command: DeleteSmartReviewSectionCommand) {
+    override fun delete(command: DeleteSmartReviewSectionCommand) {
         val steps = listOf<Action<DeleteSmartReviewSectionCommand, DeleteSmartReviewSectionState>>(
             SmartReviewSectionExistenceDeleteValidator(this, resourceRepository),
             SmartReviewSectionDeleter(statementService, resourceService)

@@ -30,7 +30,7 @@ interface ObservatoryRepository {
 
     fun deleteAll()
 
-    fun allMembers(id: ObservatoryId, pageable: Pageable): Page<Contributor>
+    fun findAllMembersByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Contributor>
 
     fun count(): Long
 

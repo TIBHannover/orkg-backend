@@ -51,7 +51,7 @@ internal class ObservatoryControllerIntegrationTest : MockMvcBaseTest("observato
     fun setup() {
         assertThat(observatoryService.findAll(PageRequest.of(0, 10))).hasSize(0)
         assertThat(resourceService.findAll(PageRequest.of(0, 10))).hasSize(0)
-        assertThat(service.listOrganizations()).hasSize(0)
+        assertThat(service.findAll()).hasSize(0)
         assertThat(classService.findAll(PageRequest.of(0, 10))).hasSize(0)
 
         classService.createClasses("ResearchField", "Paper", "Comparison", "Problem", "SomeClass")
@@ -59,10 +59,10 @@ internal class ObservatoryControllerIntegrationTest : MockMvcBaseTest("observato
 
     @AfterEach
     fun cleanup() {
-        observatoryService.removeAll()
-        resourceService.removeAll()
-        service.removeAll()
-        classService.removeAll()
+        observatoryService.deleteAll()
+        resourceService.deleteAll()
+        service.deleteAll()
+        classService.deleteAll()
         contributorService.deleteAll()
     }
 

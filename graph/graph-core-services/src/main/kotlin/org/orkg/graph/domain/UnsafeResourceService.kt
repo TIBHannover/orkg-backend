@@ -48,5 +48,5 @@ class UnsafeResourceService(
         repository.deleteById(id)
     }
 
-    override fun removeAll() = repository.deleteAll()
+    override fun deleteAll() = repository.deleteAll()
 }

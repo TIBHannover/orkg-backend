@@ -141,10 +141,10 @@ internal class AbstractTemplatePropertyUpdaterStringLiteralPropertyUnitTest : Ab
             )
         )
 
-        every { statementService.delete(setOf(statementToRemove)) } just runs
+        every { statementService.deleteAllById(setOf(statementToRemove)) } just runs
 
         abstractTemplatePropertyUpdater.update(statements, contributorId, 1, newProperty, oldProperty)
 
-        verify(exactly = 1) { statementService.delete(setOf(statementToRemove)) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(statementToRemove)) }
     }
 }

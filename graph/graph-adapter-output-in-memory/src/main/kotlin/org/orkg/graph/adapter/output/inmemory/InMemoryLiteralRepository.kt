@@ -20,8 +20,8 @@ class InMemoryLiteralRepository(inMemoryGraph: InMemoryGraph) :
             override val keys: Collection<ThingId> get() = inMemoryGraph.findAllLiterals().map { it.id }
             override val values: MutableCollection<Literal> get() = inMemoryGraph.findAllLiterals().toMutableSet()
 
-            override fun remove(key: ThingId): Literal? = get(key)?.also { inMemoryGraph.remove(it.id) }
-            override fun clear() = inMemoryGraph.findAllLiterals().forEach(inMemoryGraph::remove)
+            override fun remove(key: ThingId): Literal? = get(key)?.also { inMemoryGraph.delete(it.id) }
+            override fun clear() = inMemoryGraph.findAllLiterals().forEach(inMemoryGraph::delete)
 
             override fun get(key: ThingId): Literal? = inMemoryGraph.findLiteralById(key).getOrNull()
             override fun set(key: ThingId, value: Literal): Literal? =

@@ -32,7 +32,7 @@ class SpringJpaPostgresOrganizationAdapter(
 
     override fun deleteAll() = postgresOrganizationRepository.deleteAll()
 
-    override fun allMembers(id: OrganizationId, pageable: Pageable): Page<Contributor> =
+    override fun findAllMembersByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Contributor> =
         postgresContributorRepository.findAllByOrganizationId(id.value, pageable).map(ContributorEntity::toContributor)
 
     override fun findById(id: OrganizationId): Optional<Organization> =
@@ -44,7 +44,7 @@ class SpringJpaPostgresOrganizationAdapter(
     override fun findByName(name: String): Optional<Organization> =
         postgresOrganizationRepository.findByName(name).map(OrganizationEntity::toOrganization)
 
-    override fun findByType(type: OrganizationType): List<Organization> =
+    override fun findAllByType(type: OrganizationType): List<Organization> =
         postgresOrganizationRepository.findByType(type).map(OrganizationEntity::toOrganization)
 
     override fun count(): Long = postgresOrganizationRepository.count()

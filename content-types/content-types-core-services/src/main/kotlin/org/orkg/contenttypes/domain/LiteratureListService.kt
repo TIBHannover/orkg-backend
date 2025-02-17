@@ -172,7 +172,7 @@ class LiteratureListService(
         return steps.execute(command, CreateLiteratureListState()).literatureListId!!
     }
 
-    override fun createSection(command: CreateLiteratureListSectionCommand): ThingId {
+    override fun create(command: CreateLiteratureListSectionCommand): ThingId {
         val steps = listOf(
             LiteratureListSectionExistenceCreateValidator(resourceRepository),
             LiteratureListSectionIndexValidator(statementRepository),
@@ -182,7 +182,7 @@ class LiteratureListService(
         return steps.execute(command, CreateLiteratureListSectionState()).literatureListSectionId!!
     }
 
-    override fun updateSection(command: UpdateLiteratureListSectionCommand) {
+    override fun update(command: UpdateLiteratureListSectionCommand) {
         val steps = listOf(
             LiteratureListSectionExistenceUpdateValidator(this, resourceRepository),
             LiteratureListSectionUpdateValidator(resourceRepository),
@@ -191,7 +191,7 @@ class LiteratureListService(
         steps.execute(command, UpdateLiteratureListSectionState())
     }
 
-    override fun deleteSection(command: DeleteLiteratureListSectionCommand) {
+    override fun delete(command: DeleteLiteratureListSectionCommand) {
         val steps = listOf(
             LiteratureListSectionExistenceDeleteValidator(this, resourceRepository),
             LiteratureListSectionDeleter(statementService, resourceService)

@@ -28,7 +28,7 @@ interface CreateLiteratureListUseCase {
 }
 
 interface CreateLiteratureListSectionUseCase {
-    fun createSection(command: CreateCommand): ThingId
+    fun create(command: CreateCommand): ThingId
 
     sealed interface CreateCommand {
         val contributorId: ContributorId
@@ -72,7 +72,7 @@ interface UpdateLiteratureListUseCase {
 }
 
 interface UpdateLiteratureListSectionUseCase {
-    fun updateSection(command: UpdateCommand)
+    fun update(command: UpdateCommand)
 
     sealed interface UpdateCommand {
         val literatureListSectionId: ThingId
@@ -98,7 +98,7 @@ interface UpdateLiteratureListSectionUseCase {
 }
 
 interface DeleteLiteratureListSectionUseCase {
-    fun deleteSection(command: DeleteCommand)
+    fun delete(command: DeleteCommand)
 
     data class DeleteCommand(
         val literatureListId: ThingId,

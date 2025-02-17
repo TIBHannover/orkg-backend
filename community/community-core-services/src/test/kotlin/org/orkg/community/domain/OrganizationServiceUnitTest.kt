@@ -35,14 +35,14 @@ internal class OrganizationServiceUnitTest : MockkBaseTest {
         val id = organization.id!!
 
         every { repository.findById(id) } returns Optional.of(organization)
-        every { imageService.find(image.id) } returns Optional.of(image)
+        every { imageService.findById(image.id) } returns Optional.of(image)
 
-        val result = service.findLogo(id)
+        val result = service.findLogoById(id)
         result.isPresent shouldBe true
         result.get() shouldBe image
 
         verify(exactly = 1) { repository.findById(id) }
-        verify(exactly = 1) { imageService.find(image.id) }
+        verify(exactly = 1) { imageService.findById(image.id) }
     }
 
     @Test
@@ -52,11 +52,11 @@ internal class OrganizationServiceUnitTest : MockkBaseTest {
 
         every { repository.findById(id) } returns Optional.of(organization)
 
-        val result = service.findLogo(id)
+        val result = service.findLogoById(id)
         result.isPresent shouldBe false
 
         verify(exactly = 1) { repository.findById(id) }
-        verify(exactly = 0) { imageService.find(any()) }
+        verify(exactly = 0) { imageService.findById(any()) }
     }
 
     @Test
@@ -65,7 +65,7 @@ internal class OrganizationServiceUnitTest : MockkBaseTest {
         every { repository.findById(id) } throws OrganizationNotFound(id)
 
         assertThrows<OrganizationNotFound> {
-            service.findLogo(id)
+            service.findLogoById(id)
         }
 
         verify(exactly = 1) { repository.findById(id) }

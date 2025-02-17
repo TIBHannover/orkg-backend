@@ -5,11 +5,11 @@ import org.orkg.graph.domain.GeneralStatement
 import org.springframework.data.domain.Pageable
 
 interface GetBulkStatementsQuery {
-    fun getBulkStatementsBySubjects(
+    fun findBulkStatementsBySubjects(
         subjects: List<ThingId>,
         pageable: Pageable
     ): Map<String, Iterable<GeneralStatement>>
-    fun getBulkStatementsByObjects(
+    fun findBulkStatementsByObjects(
         objects: List<ThingId>,
         pageable: Pageable
     ): Map<String, Iterable<GeneralStatement>>

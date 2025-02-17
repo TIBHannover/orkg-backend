@@ -10,7 +10,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 interface LiteralRepository {
-    fun exists(id: ThingId): Boolean
+    fun existsById(id: ThingId): Boolean
     fun nextIdentity(): ThingId
     fun save(literal: Literal)
     fun deleteAll()

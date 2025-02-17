@@ -340,7 +340,7 @@ class StatementIdValueGenerator(
 class ContributorIdValueGenerator(
     private val contributorRepository: ContributorRepository
 ) : ValueGenerator<ContributorId> {
-    private val count: Int by lazy { contributorRepository.countActiveUsers().toInt() }
+    private val count: Int by lazy { contributorRepository.count().toInt() }
 
     override operator fun invoke(
         random: Random,

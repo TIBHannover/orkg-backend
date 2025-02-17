@@ -24,5 +24,5 @@ interface UpdateLiteralUseCase {
 
 interface DeleteLiteralUseCase {
     // legacy methods:
-    fun removeAll()
+    fun deleteAll()
 }

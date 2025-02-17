@@ -71,7 +71,7 @@ internal class OrganizationControllerUnitTest : MockMvcBaseTest("organizations")
         val id = OrganizationId(UUID.randomUUID())
         val image = loadImage(testImage)
 
-        every { organizationService.findLogo(id) } returns Optional.of(image)
+        every { organizationService.findLogoById(id) } returns Optional.of(image)
 
         get("/api/organizations/{id}/logo", id)
             .perform()
@@ -79,33 +79,33 @@ internal class OrganizationControllerUnitTest : MockMvcBaseTest("organizations")
             .andExpect(content().contentType(image.mimeType.toString()))
             .andExpect(content().bytes(image.data.bytes))
 
-        verify(exactly = 1) { organizationService.findLogo(id) }
+        verify(exactly = 1) { organizationService.findLogoById(id) }
     }
 
     @Test
     fun `Given a logo is fetched, when service reports logo not found, then status is 404 NOT FOUND`() {
         val id = OrganizationId(UUID.randomUUID())
 
-        every { organizationService.findLogo(id) } throws LogoNotFound(id)
+        every { organizationService.findLogoById(id) } throws LogoNotFound(id)
 
         get("/api/organizations/{id}/logo", id)
             .perform()
             .andExpect(status().isNotFound)
 
-        verify(exactly = 1) { organizationService.findLogo(id) }
+        verify(exactly = 1) { organizationService.findLogoById(id) }
     }
 
     @Test
     fun `Given a logo is fetched, when service reports organization not found, then status is 404 NOT FOUND`() {
         val id = OrganizationId(UUID.randomUUID())
 
-        every { organizationService.findLogo(id) } throws OrganizationNotFound(id)
+        every { organizationService.findLogoById(id) } throws OrganizationNotFound(id)
 
         get("/api/organizations/{id}/logo", id)
             .perform()
             .andExpect(status().isNotFound)
 
-        verify(exactly = 1) { organizationService.findLogo(id) }
+        verify(exactly = 1) { organizationService.findLogoById(id) }
     }
 
     @Test

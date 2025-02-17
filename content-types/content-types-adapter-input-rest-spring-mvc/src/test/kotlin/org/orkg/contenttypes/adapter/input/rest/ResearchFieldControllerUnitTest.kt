@@ -79,7 +79,7 @@ internal class ResearchFieldControllerUnitTest : MockMvcBaseTest("research-field
         } returns pageOf(listOf(paper, visualization))
         every {
             // The returned counts returned do not matter, we only need to satisfy the call.
-            statementService.countIncomingStatements(setOf(paper.id, visualization.id))
+            statementService.countAllIncomingStatementsById(setOf(paper.id, visualization.id))
         } returns mapOf(paper.id to 12, visualization.id to 3)
 
         documentedGetRequestTo("/api/research-fields/{id}", id)
@@ -109,7 +109,7 @@ internal class ResearchFieldControllerUnitTest : MockMvcBaseTest("research-field
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { useCases.findAllEntitiesBasedOnClassesByResearchField(id, any(), any(), any(), any()) }
-        verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
+        verify(exactly = 1) { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) }
     }
 
     @Test
@@ -123,7 +123,7 @@ internal class ResearchFieldControllerUnitTest : MockMvcBaseTest("research-field
         } returns pageOf(mockedResult)
         every {
             // The returned counts returned do not matter, we only need to satisfy the call.
-            statementService.countIncomingStatements(setOf(paper.id, visualization.id))
+            statementService.countAllIncomingStatementsById(setOf(paper.id, visualization.id))
         } returns mapOf(paper.id to 12, visualization.id to 3)
 
         get("/api/research-fields/{id}/subfields", id)
@@ -136,7 +136,7 @@ internal class ResearchFieldControllerUnitTest : MockMvcBaseTest("research-field
             .andExpectResource("$.content[0]") // only test the first element, this should be fine
 
         verify(exactly = 1) { useCases.findAllEntitiesBasedOnClassesByResearchField(id, any(), any(), any(), any()) }
-        verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
+        verify(exactly = 1) { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) }
     }
 
     @Test
@@ -146,7 +146,7 @@ internal class ResearchFieldControllerUnitTest : MockMvcBaseTest("research-field
         val problemResource = createResource(ThingId("RP234"), classes = setOf(Classes.problem))
 
         every { resourceService.findById(id) } returns Optional.of(fieldResource)
-        every { statementService.countIncomingStatements(setOf(problemResource.id)) } returns mapOf(id to 4)
+        every { statementService.countAllIncomingStatementsById(setOf(problemResource.id)) } returns mapOf(id to 4)
         every { useCases.findAllResearchProblemsByResearchField(id, any(), any(), any()) } returns pageOf(problemResource)
 
         documentedGetRequestTo("/api/research-fields/{id}/research-problems", id)
@@ -167,7 +167,7 @@ internal class ResearchFieldControllerUnitTest : MockMvcBaseTest("research-field
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { resourceService.findById(id) }
-        verify(exactly = 1) { statementService.countIncomingStatements(setOf(problemResource.id)) }
+        verify(exactly = 1) { statementService.countAllIncomingStatementsById(setOf(problemResource.id)) }
         verify(exactly = 1) { useCases.findAllResearchProblemsByResearchField(id, any(), any(), any()) }
     }
 
@@ -179,7 +179,7 @@ internal class ResearchFieldControllerUnitTest : MockMvcBaseTest("research-field
         val paper2 = createPaperResource(Predicates.employs, title = "Even more interesting title")
 
         every { resourceService.findById(fieldResource.id) } returns Optional.of(fieldResource)
-        every { statementService.countIncomingStatements(setOf(paper1.id, paper2.id)) } returns mapOf(paper1.id to 12, paper2.id to 13)
+        every { statementService.countAllIncomingStatementsById(setOf(paper1.id, paper2.id)) } returns mapOf(paper1.id to 12, paper2.id to 13)
         every { useCases.findAllPapersByResearchField(fieldResource.id, any(), any(), any()) } returns pageOf(paper1, paper2)
 
         documentedGetRequestTo("/api/research-fields/{id}/papers", id)
@@ -200,7 +200,7 @@ internal class ResearchFieldControllerUnitTest : MockMvcBaseTest("research-field
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { resourceService.findById(id) }
-        verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
+        verify(exactly = 1) { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) }
         verify(exactly = 1) { useCases.findAllPapersByResearchField(id, any(), any(), any()) }
     }
 
@@ -212,7 +212,7 @@ internal class ResearchFieldControllerUnitTest : MockMvcBaseTest("research-field
         val comparison2 = createComparisonResource(ThingId("P2"))
         every { resourceService.findById(id) } returns Optional.of(fieldResource)
         every {
-            statementService.countIncomingStatements(setOf(comparison1.id, comparison2.id))
+            statementService.countAllIncomingStatementsById(setOf(comparison1.id, comparison2.id))
         } returns mapOf(comparison1.id to 12, comparison2.id to 13)
         every {
             comparisonRepository.findAll(
@@ -241,7 +241,7 @@ internal class ResearchFieldControllerUnitTest : MockMvcBaseTest("research-field
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { resourceService.findById(id) }
-        verify(exactly = 1) { statementService.countIncomingStatements(setOf(comparison1.id, comparison2.id)) }
+        verify(exactly = 1) { statementService.countAllIncomingStatementsById(setOf(comparison1.id, comparison2.id)) }
         verify(exactly = 1) {
             comparisonRepository.findAll(
                 researchField = id,
@@ -265,7 +265,7 @@ internal class ResearchFieldControllerUnitTest : MockMvcBaseTest("research-field
             name = "Another One"
         )
         every { resourceService.findById(id) } returns Optional.of(fieldResource)
-        every { useCases.getContributorsExcludingSubFields(id, any()) } returns pageOf(contributor1, contributor2)
+        every { useCases.findAllContributorsExcludingSubFields(id, any()) } returns pageOf(contributor1, contributor2)
 
         documentedGetRequestTo("/api/research-fields/{id}/contributors", id)
             .perform()
@@ -285,6 +285,6 @@ internal class ResearchFieldControllerUnitTest : MockMvcBaseTest("research-field
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { resourceService.findById(id) }
-        verify(exactly = 1) { useCases.getContributorsExcludingSubFields(id, any()) }
+        verify(exactly = 1) { useCases.findAllContributorsExcludingSubFields(id, any()) }
     }
 }

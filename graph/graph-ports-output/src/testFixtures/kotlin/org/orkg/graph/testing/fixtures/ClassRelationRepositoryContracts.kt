@@ -41,7 +41,7 @@ fun <
                 OffsetDateTime.now(fixedClock),
                 ContributorId(UUID.randomUUID())
             ))
-            val result = hierarchyRepository.findParent(child.id)
+            val result = hierarchyRepository.findParentByChildId(child.id)
             result.isPresent shouldBe true
             result.get().id shouldBe parent.id
         }
@@ -71,10 +71,10 @@ fun <
                     )
                 )
             )
-            val result1 = hierarchyRepository.findParent(childOfRoot.id)
+            val result1 = hierarchyRepository.findParentByChildId(childOfRoot.id)
             result1.isPresent shouldBe true
             result1.get().id shouldBe root.id
-            val result2 = hierarchyRepository.findParent(childOfChild.id)
+            val result2 = hierarchyRepository.findParentByChildId(childOfChild.id)
             result2.isPresent shouldBe true
             result2.get().id shouldBe childOfRoot.id
         }
@@ -93,13 +93,13 @@ fun <
                     OffsetDateTime.now(fixedClock),
                     ContributorId(UUID.randomUUID())
                 ))
-                val precondition = hierarchyRepository.findParent(child.id)
+                val precondition = hierarchyRepository.findParentByChildId(child.id)
                 precondition.isPresent shouldBe true
                 precondition.get().id shouldBe parent.id
 
                 repository.deleteByChildId(child.id)
 
-                val result = hierarchyRepository.findParent(child.id)
+                val result = hierarchyRepository.findParentByChildId(child.id)
                 result.isPresent shouldBe false
             }
         }
@@ -122,7 +122,7 @@ fun <
             relations.add(relation)
         }
         relations.forEach {
-            val parent = hierarchyRepository.findParent(it.child.id)
+            val parent = hierarchyRepository.findParentByChildId(it.child.id)
             parent.isPresent shouldBe true
             parent.get().asClue { parentClass ->
                 parentClass.id shouldBe it.parent.id
@@ -132,7 +132,7 @@ fun <
         repository.deleteAll()
 
         relations.forEach {
-            val parent = hierarchyRepository.findParent(it.child.id)
+            val parent = hierarchyRepository.findParentByChildId(it.child.id)
             parent.isPresent shouldBe false
         }
     }

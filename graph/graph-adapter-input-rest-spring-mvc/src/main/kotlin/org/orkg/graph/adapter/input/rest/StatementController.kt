@@ -133,10 +133,10 @@ class StatementController(
 
     @RequireLogin
     @DeleteMapping("/{id}")
-    fun delete(
+    fun deleteById(
         @PathVariable id: StatementId
     ): ResponseEntity<Unit> {
-        statementService.delete(id)
+        statementService.deleteById(id)
         return ResponseEntity.noContent().build()
     }
 

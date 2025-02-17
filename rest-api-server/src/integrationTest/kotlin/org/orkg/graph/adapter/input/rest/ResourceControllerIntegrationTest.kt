@@ -67,11 +67,11 @@ internal class ResourceControllerIntegrationTest : MockMvcBaseTest("resources") 
     fun setup() {
         val tempPageable = PageRequest.of(0, 10)
 
-        service.removeAll()
-        classService.removeAll()
-        predicateService.removeAll()
-        statementService.removeAll()
-        literalService.removeAll()
+        service.deleteAll()
+        classService.deleteAll()
+        predicateService.deleteAll()
+        statementService.deleteAll()
+        literalService.deleteAll()
 
         assertThat(service.findAll(tempPageable)).hasSize(0)
         assertThat(classService.findAll(tempPageable)).hasSize(0)

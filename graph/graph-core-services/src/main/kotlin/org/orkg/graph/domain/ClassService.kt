@@ -53,7 +53,7 @@ class ClassService(
     }
 
     @TransactionalOnNeo4j(readOnly = true)
-    override fun exists(id: ThingId): Boolean = repository.exists(id)
+    override fun existsById(id: ThingId): Boolean = repository.existsById(id)
 
     override fun findAll(
         pageable: Pageable,
@@ -108,7 +108,7 @@ class ClassService(
         }
     }
 
-    override fun removeAll() = repository.deleteAll()
+    override fun deleteAll() = repository.deleteAll()
 
     override fun findByURI(uri: ParsedIRI): Optional<Class> =
         repository.findByUri(uri.toString())

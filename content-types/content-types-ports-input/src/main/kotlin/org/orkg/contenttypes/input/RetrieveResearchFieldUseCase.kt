@@ -13,10 +13,10 @@ import org.springframework.data.domain.Pageable
 interface RetrieveResearchFieldUseCase {
     fun findById(id: ThingId): Optional<Resource>
 
-    fun getResearchProblemsOfField(id: ThingId, pageable: Pageable): Page<PaperCountPerResearchProblem>
+    fun findAllPaperCountsPerResearchProblem(id: ThingId, pageable: Pageable): Page<PaperCountPerResearchProblem>
 
-    fun getContributorsIncludingSubFields(id: ThingId, pageable: Pageable): Page<Contributor>
-    fun getContributorsExcludingSubFields(id: ThingId, pageable: Pageable): Page<Contributor>
+    fun findAllContributorsIncludingSubFields(id: ThingId, pageable: Pageable): Page<Contributor>
+    fun findAllContributorsExcludingSubFields(id: ThingId, pageable: Pageable): Page<Contributor>
 
     fun findAllPapersByResearchField(
         id: ThingId,
@@ -61,5 +61,5 @@ interface RetrieveResearchFieldUseCase {
         pageable: Pageable
     ): Page<Resource>
 
-    fun withBenchmarks(pageable: Pageable): Page<ResearchField>
+    fun findAllWithBenchmarks(pageable: Pageable): Page<ResearchField>
 }

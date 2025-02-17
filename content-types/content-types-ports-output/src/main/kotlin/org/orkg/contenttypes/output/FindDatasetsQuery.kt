@@ -6,5 +6,5 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 interface FindDatasetsQuery {
-    fun forResearchProblem(id: ThingId, pageable: Pageable): Page<Dataset>
+    fun findAllDatasetsByResearchProblemId(id: ThingId, pageable: Pageable): Page<Dataset>
 }

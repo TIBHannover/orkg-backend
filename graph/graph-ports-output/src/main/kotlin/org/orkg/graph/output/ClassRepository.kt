@@ -31,5 +31,5 @@ interface ClassRepository : EntityRepository<Class, ThingId> {
      * @param ids The set of class IDs to be checked.
      * @return `true` if [ids] is non-empty and all classes exist, `false` otherwise.
      */
-    fun existsAll(ids: Set<ThingId>): Boolean
+    fun existsAllById(ids: Set<ThingId>): Boolean
 }

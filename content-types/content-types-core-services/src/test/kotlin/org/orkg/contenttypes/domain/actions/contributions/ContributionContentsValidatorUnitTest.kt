@@ -52,10 +52,10 @@ internal class ContributionContentsValidatorUnitTest : MockkBaseTest {
         val hasResearchProblem = createPredicate(Predicates.hasResearchProblem)
         val hasEvaluation = createPredicate(Predicates.hasEvaluation)
 
-        every { thingRepository.findByThingId(`class`.id) } returns Optional.of(`class`)
-        every { thingRepository.findByThingId(template.id) } returns Optional.of(template)
-        every { thingRepository.findByThingId(Predicates.hasResearchProblem) } returns Optional.of(hasResearchProblem)
-        every { thingRepository.findByThingId(Predicates.hasEvaluation) } returns Optional.of(hasEvaluation)
+        every { thingRepository.findById(`class`.id) } returns Optional.of(`class`)
+        every { thingRepository.findById(template.id) } returns Optional.of(template)
+        every { thingRepository.findById(Predicates.hasResearchProblem) } returns Optional.of(hasResearchProblem)
+        every { thingRepository.findById(Predicates.hasEvaluation) } returns Optional.of(hasEvaluation)
 
         val result = contributionContentsValidator(command, state)
 
@@ -83,10 +83,10 @@ internal class ContributionContentsValidatorUnitTest : MockkBaseTest {
             it.contributionId shouldBe null
         }
 
-        verify(exactly = 1) { thingRepository.findByThingId(`class`.id) }
-        verify(exactly = 1) { thingRepository.findByThingId(template.id) }
-        verify(exactly = 1) { thingRepository.findByThingId(Predicates.hasResearchProblem) }
-        verify(exactly = 1) { thingRepository.findByThingId(Predicates.hasEvaluation) }
+        verify(exactly = 1) { thingRepository.findById(`class`.id) }
+        verify(exactly = 1) { thingRepository.findById(template.id) }
+        verify(exactly = 1) { thingRepository.findById(Predicates.hasResearchProblem) }
+        verify(exactly = 1) { thingRepository.findById(Predicates.hasEvaluation) }
     }
 
     @Test
@@ -105,11 +105,11 @@ internal class ContributionContentsValidatorUnitTest : MockkBaseTest {
         )
         val template = createClass(ThingId("C123"))
 
-        every { thingRepository.findByThingId(template.id) } returns Optional.empty()
+        every { thingRepository.findById(template.id) } returns Optional.empty()
 
         assertThrows<ThingNotFound> { contributionContentsValidator(command, state) }
 
-        verify(exactly = 1) { thingRepository.findByThingId(template.id) }
+        verify(exactly = 1) { thingRepository.findById(template.id) }
     }
 
     @Test
@@ -128,11 +128,11 @@ internal class ContributionContentsValidatorUnitTest : MockkBaseTest {
         )
         val template = createResource(id = ThingId("C123"))
 
-        every { thingRepository.findByThingId(template.id) } returns Optional.of(template)
+        every { thingRepository.findById(template.id) } returns Optional.of(template)
 
         assertThrows<ThingIsNotAClass> { contributionContentsValidator(command, state) }
 
-        verify(exactly = 1) { thingRepository.findByThingId(template.id) }
+        verify(exactly = 1) { thingRepository.findById(template.id) }
     }
 
     @Test

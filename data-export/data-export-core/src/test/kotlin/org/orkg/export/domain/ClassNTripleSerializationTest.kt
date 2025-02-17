@@ -25,14 +25,14 @@ internal class ClassNTripleSerializationTest : MockkBaseTest {
         """.trimMargin()
         val `class` = createClass(id = ThingId("C100"), label = "some dummy label", uri = null)
 
-        every { classHierarchyRepository.findParent(`class`.id) } returns Optional.empty()
+        every { classHierarchyRepository.findParentByChildId(`class`.id) } returns Optional.empty()
 
         val writer = StringWriter()
         `class`.toNTriple(writer, classHierarchyRepository)
 
         assertThat(writer.toString()).isEqualTo(expectedOutput)
 
-        verify(exactly = 1) { classHierarchyRepository.findParent(`class`.id) }
+        verify(exactly = 1) { classHierarchyRepository.findParentByChildId(`class`.id) }
     }
 
     @Test
@@ -45,14 +45,14 @@ internal class ClassNTripleSerializationTest : MockkBaseTest {
         """.trimMargin()
         val `class` = createClass(id = ThingId("C100"), label = "some dummy label")
 
-        every { classHierarchyRepository.findParent(`class`.id) } returns Optional.empty()
+        every { classHierarchyRepository.findParentByChildId(`class`.id) } returns Optional.empty()
 
         val writer = StringWriter()
         `class`.toNTriple(writer, classHierarchyRepository)
 
         assertThat(writer.toString()).isEqualTo(expectedOutput)
 
-        verify(exactly = 1) { classHierarchyRepository.findParent(`class`.id) }
+        verify(exactly = 1) { classHierarchyRepository.findParentByChildId(`class`.id) }
     }
 
     @Test
@@ -67,13 +67,13 @@ internal class ClassNTripleSerializationTest : MockkBaseTest {
         val `class` = createClass(id = ThingId("C100"), label = "some dummy label")
         val parent = createClass(id = ThingId("C101"))
 
-        every { classHierarchyRepository.findParent(`class`.id) } returns Optional.of(parent)
+        every { classHierarchyRepository.findParentByChildId(`class`.id) } returns Optional.of(parent)
 
         val writer = StringWriter()
         `class`.toNTriple(writer, classHierarchyRepository)
 
         assertThat(writer.toString()).isEqualTo(expectedOutput)
 
-        verify(exactly = 1) { classHierarchyRepository.findParent(`class`.id) }
+        verify(exactly = 1) { classHierarchyRepository.findParentByChildId(`class`.id) }
     }
 }

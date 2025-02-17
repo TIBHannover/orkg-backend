@@ -13,6 +13,6 @@ interface ListRepository {
     fun findById(id: ThingId): Optional<List>
     fun findAllElementsById(id: ThingId, pageable: Pageable): Page<Thing>
     fun nextIdentity(): ThingId
-    fun exists(id: ThingId): Boolean
-    fun delete(id: ThingId)
+    fun existsById(id: ThingId): Boolean
+    fun deleteById(id: ThingId)
 }

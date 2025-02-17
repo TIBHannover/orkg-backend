@@ -6,6 +6,6 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 interface SummarizeBenchmarkQuery {
-    fun byResearchField(id: ThingId, pageable: Pageable): Page<BenchmarkSummary>
-    fun getAll(pageable: Pageable): Page<BenchmarkSummary>
+    fun findAllBenchmarkSummariesByResearchFieldId(id: ThingId, pageable: Pageable): Page<BenchmarkSummary>
+    fun findAllBenchmarkSummaries(pageable: Pageable): Page<BenchmarkSummary>
 }

@@ -376,6 +376,6 @@ class LegacyPaperService(
         }
     }
 
-    override fun findPapersRelatedToResource(related: ThingId, pageable: Pageable): Page<PaperResourceWithPath> =
+    override fun findAllPapersRelatedToResource(related: ThingId, pageable: Pageable): Page<PaperResourceWithPath> =
         repository.findAllPapersRelatedToResource(related, pageable)
 }

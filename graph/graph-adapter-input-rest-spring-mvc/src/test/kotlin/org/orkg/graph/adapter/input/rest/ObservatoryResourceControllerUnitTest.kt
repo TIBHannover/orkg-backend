@@ -62,7 +62,7 @@ internal class ObservatoryResourceControllerUnitTest : MockMvcBaseTest("observat
         every {
             resourceService.findAllPapersByObservatoryIdAndFilters(id, emptyList(), VisibilityFilter.ALL_LISTED, any())
         } returns PageImpl(listOf(paperResource))
-        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
+        every { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) } returns emptyMap()
 
         get("/api/observatories/{id}/papers", id)
             .perform()
@@ -73,7 +73,7 @@ internal class ObservatoryResourceControllerUnitTest : MockMvcBaseTest("observat
         verify(exactly = 1) {
             resourceService.findAllPapersByObservatoryIdAndFilters(id, emptyList(), VisibilityFilter.ALL_LISTED, any())
         }
-        verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
+        verify(exactly = 1) { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) }
     }
 
     @Test
@@ -87,7 +87,7 @@ internal class ObservatoryResourceControllerUnitTest : MockMvcBaseTest("observat
         every {
             resourceService.findAllPapersByObservatoryIdAndFilters(id, emptyList(), VisibilityFilter.FEATURED, any())
         } returns PageImpl(listOf(paperResource))
-        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
+        every { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) } returns emptyMap()
 
         get("/api/observatories/{id}/papers", id).param("visibility", "FEATURED")
             .perform()
@@ -98,7 +98,7 @@ internal class ObservatoryResourceControllerUnitTest : MockMvcBaseTest("observat
         verify(exactly = 1) {
             resourceService.findAllPapersByObservatoryIdAndFilters(id, emptyList(), VisibilityFilter.FEATURED, any())
         }
-        verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
+        verify(exactly = 1) { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) }
     }
 
     @Test
@@ -128,7 +128,7 @@ internal class ObservatoryResourceControllerUnitTest : MockMvcBaseTest("observat
         every {
             resourceService.findAllPapersByObservatoryIdAndFilters(id, filterConfig, VisibilityFilter.ALL_LISTED, any())
         } returns PageImpl(listOf(paperResource))
-        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
+        every { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) } returns emptyMap()
 
         get("/api/observatories/{id}/papers", id)
             .param("filter_config", encodedFilterConfig)
@@ -140,7 +140,7 @@ internal class ObservatoryResourceControllerUnitTest : MockMvcBaseTest("observat
         verify(exactly = 1) {
             resourceService.findAllPapersByObservatoryIdAndFilters(id, filterConfig, VisibilityFilter.ALL_LISTED, any())
         }
-        verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
+        verify(exactly = 1) { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) }
     }
 
     @Test
@@ -171,7 +171,7 @@ internal class ObservatoryResourceControllerUnitTest : MockMvcBaseTest("observat
         every {
             resourceService.findAllPapersByObservatoryIdAndFilters(id, filterConfig, VisibilityFilter.FEATURED, any())
         } returns PageImpl(listOf(paperResource))
-        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
+        every { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) } returns emptyMap()
 
         documentedGetRequestTo("/api/observatories/{id}/papers", id)
             .param("visibility", VisibilityFilter.FEATURED.name)
@@ -196,7 +196,7 @@ internal class ObservatoryResourceControllerUnitTest : MockMvcBaseTest("observat
         verify(exactly = 1) {
             resourceService.findAllPapersByObservatoryIdAndFilters(id, filterConfig, VisibilityFilter.FEATURED, any())
         }
-        verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
+        verify(exactly = 1) { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) }
     }
 
     @Test
@@ -226,7 +226,7 @@ internal class ObservatoryResourceControllerUnitTest : MockMvcBaseTest("observat
         every {
             resourceService.findAllProblemsByObservatoryId(id, any())
         } returns PageImpl(listOf(problemResource))
-        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
+        every { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) } returns emptyMap()
 
         get("/api/observatories/{id}/problems", id)
             .perform()
@@ -235,6 +235,6 @@ internal class ObservatoryResourceControllerUnitTest : MockMvcBaseTest("observat
             .andExpectResource("$.content[*]")
 
         verify(exactly = 1) { resourceService.findAllProblemsByObservatoryId(id, any()) }
-        verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
+        verify(exactly = 1) { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) }
     }
 }

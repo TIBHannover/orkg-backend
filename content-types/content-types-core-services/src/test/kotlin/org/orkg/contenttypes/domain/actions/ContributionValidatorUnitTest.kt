@@ -42,7 +42,7 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
             )
         )
 
-        every { thingRepository.findByThingId(Predicates.hasResearchProblem) } returns Optional.empty()
+        every { thingRepository.findById(Predicates.hasResearchProblem) } returns Optional.empty()
 
         assertThrows<ThingNotFound> {
             contributionValidator.bakeStatements(
@@ -56,7 +56,7 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
             )
         }
 
-        verify(exactly = 1) { thingRepository.findByThingId(Predicates.hasResearchProblem) }
+        verify(exactly = 1) { thingRepository.findById(Predicates.hasResearchProblem) }
     }
 
     @Test
@@ -75,7 +75,7 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
         )
         val resource = createResource(id = id)
 
-        every { thingRepository.findByThingId(id) } returns Optional.of(resource)
+        every { thingRepository.findById(id) } returns Optional.of(resource)
 
         assertThrows<ThingIsNotAPredicate> {
             contributionValidator.bakeStatements(
@@ -89,7 +89,7 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
             )
         }
 
-        verify(exactly = 1) { thingRepository.findByThingId(id) }
+        verify(exactly = 1) { thingRepository.findById(id) }
     }
 
     @Test
@@ -139,7 +139,7 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
         )
         val id = ThingId("R3003")
 
-        every { thingRepository.findByThingId(id) } returns Optional.empty()
+        every { thingRepository.findById(id) } returns Optional.empty()
 
         assertThrows<ThingNotFound> {
             contributionValidator.bakeStatements(
@@ -153,7 +153,7 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
             )
         }
 
-        verify(exactly = 1) { thingRepository.findByThingId(id) }
+        verify(exactly = 1) { thingRepository.findById(id) }
     }
 
     @Test

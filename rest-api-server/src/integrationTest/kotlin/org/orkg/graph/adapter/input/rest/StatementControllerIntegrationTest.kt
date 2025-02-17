@@ -44,10 +44,10 @@ internal class StatementControllerIntegrationTest : MockMvcBaseTest("statements"
     fun setup() {
         val tempPageable = PageRequest.of(0, 10)
 
-        statementService.removeAll()
-        resourceService.removeAll()
-        predicateService.removeAll()
-        literalService.removeAll()
+        statementService.deleteAll()
+        resourceService.deleteAll()
+        predicateService.deleteAll()
+        literalService.deleteAll()
 
         assertThat(statementService.findAll(tempPageable)).hasSize(0)
         assertThat(resourceService.findAll(tempPageable)).hasSize(0)

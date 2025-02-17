@@ -23,5 +23,5 @@ interface RetrieveObservatoryUseCase {
 
     fun findByDisplayId(id: String): Optional<Observatory>
 
-    fun findAllByResearchField(researchFieldId: ThingId, pageable: Pageable): Page<Observatory>
+    fun findAllByResearchFieldId(researchFieldId: ThingId, pageable: Pageable): Page<Observatory>
 }

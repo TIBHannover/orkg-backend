@@ -5,5 +5,5 @@ import org.orkg.mediastorage.domain.Image
 import org.orkg.mediastorage.domain.ImageId
 
 interface RetrieveImageUseCase {
-    fun find(id: ImageId): Optional<Image>
+    fun findById(id: ImageId): Optional<Image>
 }

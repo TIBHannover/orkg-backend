@@ -48,7 +48,7 @@ class LegacyStatisticsService(
         val fieldsCount = extractValue(labels, "ResearchField")
         val relationsTypes = metadata.first()["relTypesCount"] as Map<*, *>
         val statementsCount = extractValue(relationsTypes, "RELATED")
-        val userCount = contributorRepository.countActiveUsers()
+        val userCount = contributorRepository.count()
         val observatoriesCount = observatoryRepository.count()
         val organizationsCount = organizationRepository.count()
         val orphanedNodesCount = legacyStatisticsRepository.getOrphanedNodesCount()
@@ -131,7 +131,7 @@ class LegacyStatisticsService(
     private fun getChangeLogsWithProfile(changeLogs: Page<Resource>, pageable: Pageable): Page<ChangeLog> {
         val refinedChangeLog = mutableListOf<ChangeLog>()
         val userIdList = changeLogs.content.map { it.createdBy }
-        val mapValues = contributorRepository.findAllByIds(userIdList).groupBy(Contributor::id)
+        val mapValues = contributorRepository.findAllById(userIdList).groupBy(Contributor::id)
 
         changeLogs.forEach { changeLogResponse ->
             val contributor = mapValues[changeLogResponse.createdBy]?.first()

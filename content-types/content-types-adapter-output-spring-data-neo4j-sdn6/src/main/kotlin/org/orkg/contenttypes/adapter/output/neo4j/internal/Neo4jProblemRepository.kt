@@ -119,9 +119,9 @@ interface Neo4jProblemRepository :
     fun findAllVisualizationsByProblemAndVisibility(id: ThingId, visibility: Visibility, pageable: Pageable): Page<Neo4jResource>
 
     @Query("""MATCH (:Problem:Resource {id: $problemId})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution:Resource)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper:Resource)-[:RELATED {predicate_id: 'P30'}]->(field:ResearchField:Resource)
-                    RETURN field, COUNT(paper) AS freq
-                    ORDER BY freq DESC""")
-    fun findResearchFieldsPerProblem(problemId: ThingId): Iterable<Neo4jFieldPerProblem>
+                    RETURN field, COUNT(paper) AS paperCount
+                    ORDER BY paperCount DESC""")
+    fun findAllResearchFieldsWithPaperCountByProblemId(problemId: ThingId): Iterable<Neo4jResearchFieldWithPaperCount>
 
     @Query("""MATCH (problem:Problem:Resource)<-[:RELATED {predicate_id:'P32'}]-(cont:Contribution:Resource)
                     WITH problem, cont, datetime() AS now
@@ -147,13 +147,13 @@ interface Neo4jProblemRepository :
                     WHERE contribution.created_by IS NOT NULL AND contribution.created_by <> '00000000-0000-0000-0000-000000000000'
                     WITH contribution.created_by AS user, COUNT(contribution.created_by) AS freq
                     RETURN COUNT(user)""")
-    fun findContributorsLeaderboardPerProblem(problemId: ThingId, pageable: Pageable): Page<ContributorPerProblem>
+    fun findAllContributorsPerProblem(problemId: ThingId, pageable: Pageable): Page<ContributorPerProblem>
 
     @Query(value = """MATCH (ds:$DATASET_CLASS {id: $datasetId})<-[:RELATED {predicate_id: '$DATASET_PREDICATE'}]-(:$BENCHMARK_CLASS)<-[:RELATED {predicate_id: '$BENCHMARK_PREDICATE'}]-(:Contribution:Resource)-[:RELATED {predicate_id: 'P32'}]->(problem:Problem:Resource)
                     RETURN DISTINCT problem ORDER BY problem.id $PAGE_PARAMS""",
         countQuery = """MATCH (ds:$DATASET_CLASS {id: $datasetId})<-[:RELATED {predicate_id: '$DATASET_PREDICATE'}]-(:$BENCHMARK_CLASS)<-[:RELATED {predicate_id: '$BENCHMARK_PREDICATE'}]-(:Contribution:Resource)-[:RELATED {predicate_id: 'P32'}]->(problem:Problem:Resource)
                     RETURN COUNT(DISTINCT problem) as cnt""")
-    fun findResearchProblemForDataset(datasetId: ThingId, pageable: Pageable): Page<Neo4jResource>
+    fun findAllByDatasetId(datasetId: ThingId, pageable: Pageable): Page<Neo4jResource>
 
     @Query("""$MATCH_LISTED_PROBLEM $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE $PAGE_PARAMS""",
         countQuery = """$MATCH_LISTED_PROBLEM $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE_COUNT""")
@@ -164,9 +164,9 @@ interface Neo4jProblemRepository :
     fun findAllProblemsByVisibility(visibility: Visibility, pageable: Pageable): Page<Neo4jResource>
 }
 
-data class Neo4jFieldPerProblem(
+data class Neo4jResearchFieldWithPaperCount(
     val field: Neo4jResource,
-    val freq: Long
+    val paperCount: Long
 )
 
 data class Neo4jAuthorPerProblem(

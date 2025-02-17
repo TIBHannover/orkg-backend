@@ -105,7 +105,7 @@ class PostgresDummyDataSetup(
     private fun generateOrganizations(organizations: List<Organization>) {
         organizations.forEach { organization ->
             organizationService.findById(organization.id!!).ifPresentOrElse({
-                organizationService.updateOrganization(organization)
+                organizationService.update(organization)
             }, {
                 organizationService.create(
                     id = organization.id,

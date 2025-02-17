@@ -10,5 +10,5 @@ import org.springframework.data.domain.Pageable
 interface RetrieveListUseCase {
     fun findById(id: ThingId): Optional<List>
     fun findAllElementsById(id: ThingId, pageable: Pageable): Page<Thing>
-    fun exists(id: ThingId): Boolean
+    fun existsById(id: ThingId): Boolean
 }

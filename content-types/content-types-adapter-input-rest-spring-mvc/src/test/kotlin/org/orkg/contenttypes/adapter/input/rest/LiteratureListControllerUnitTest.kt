@@ -30,9 +30,11 @@ import org.orkg.contenttypes.domain.testing.fixtures.createLiteratureList
 import org.orkg.contenttypes.domain.testing.fixtures.createPaper
 import org.orkg.contenttypes.input.ContributionUseCases
 import org.orkg.contenttypes.input.CreateLiteratureListSectionUseCase
+import org.orkg.contenttypes.input.CreateLiteratureListUseCase
 import org.orkg.contenttypes.input.DeleteLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.LiteratureListUseCases
 import org.orkg.contenttypes.input.UpdateLiteratureListSectionUseCase
+import org.orkg.contenttypes.input.UpdateLiteratureListUseCase
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Visibility
@@ -276,7 +278,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
     @DisplayName("Given a literature list create request, when service succeeds, it creates the literature list")
     fun create() {
         val id = ThingId("R123")
-        every { literatureListService.create(any()) } returns id
+        every { literatureListService.create(any<CreateLiteratureListUseCase.CreateCommand>()) } returns id
 
         documentedPostRequestTo("/api/literature-lists")
             .content(createLiteratureListRequest())
@@ -303,7 +305,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { literatureListService.create(any()) }
+        verify(exactly = 1) { literatureListService.create(any<CreateLiteratureListUseCase.CreateCommand>()) }
     }
 
     @Test
@@ -318,7 +320,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
                 Entry(ThingId("R456"))
             )
         )
-        every { literatureListService.createSection(any()) } returns sectionId
+        every { literatureListService.create(any<CreateLiteratureListSectionUseCase.CreateListSectionCommand>()) } returns sectionId
 
         post("/api/literature-lists/{id}/sections", id)
             .content(request)
@@ -329,7 +331,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
             .andExpect(header().string("Location", endsWith("/api/literature-lists/$id")))
 
         verify(exactly = 1) {
-            literatureListService.createSection(withArg {
+            literatureListService.create(withArg<CreateLiteratureListSectionUseCase.CreateListSectionCommand> {
                 it.shouldBeInstanceOf<CreateLiteratureListSectionUseCase.CreateListSectionCommand>()
                 it.index shouldBe null
             })
@@ -349,7 +351,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
                 Entry(ThingId("R456"))
             )
         )
-        every { literatureListService.createSection(any()) } returns sectionId
+        every { literatureListService.create(any<CreateLiteratureListSectionUseCase.CreateListSectionCommand>()) } returns sectionId
 
         documentedPostRequestTo("/api/literature-lists/{id}/sections/{index}", id, index)
             .content(request)
@@ -377,7 +379,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) {
-            literatureListService.createSection(withArg {
+            literatureListService.create(withArg<CreateLiteratureListSectionUseCase.CreateListSectionCommand> {
                 it.shouldBeInstanceOf<CreateLiteratureListSectionUseCase.CreateListSectionCommand>()
                 it.index shouldBe index
             })
@@ -395,7 +397,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
             headingSize = 2,
             text = "text contents"
         )
-        every { literatureListService.createSection(any()) } returns sectionId
+        every { literatureListService.create(any<CreateLiteratureListSectionUseCase.CreateTextSectionCommand>()) } returns sectionId
 
         post("/api/literature-lists/{id}/sections", id)
             .content(request)
@@ -406,7 +408,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
             .andExpect(header().string("Location", endsWith("/api/literature-lists/$id")))
 
         verify(exactly = 1) {
-            literatureListService.createSection(withArg {
+            literatureListService.create(withArg<CreateLiteratureListSectionUseCase.CreateTextSectionCommand> {
                 it.shouldBeInstanceOf<CreateLiteratureListSectionUseCase.CreateTextSectionCommand>()
                 it.index shouldBe null
             })
@@ -425,7 +427,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
             headingSize = 2,
             text = "text contents"
         )
-        every { literatureListService.createSection(any()) } returns sectionId
+        every { literatureListService.create(any<CreateLiteratureListSectionUseCase.CreateTextSectionCommand>()) } returns sectionId
 
         documentedPostRequestTo("/api/literature-lists/{id}/sections/{index}", id, index)
             .content(request)
@@ -453,7 +455,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) {
-            literatureListService.createSection(withArg {
+            literatureListService.create(withArg<CreateLiteratureListSectionUseCase.CreateTextSectionCommand> {
                 it.shouldBeInstanceOf<CreateLiteratureListSectionUseCase.CreateTextSectionCommand>()
                 it.index shouldBe index
             })
@@ -465,7 +467,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
     @DisplayName("Given a literature list update request, when service succeeds, it updates the literature list")
     fun update() {
         val id = ThingId("R123")
-        every { literatureListService.update(any()) } just runs
+        every { literatureListService.update(any<UpdateLiteratureListUseCase.UpdateCommand>()) } just runs
 
         documentedPutRequestTo("/api/literature-lists/{id}", id)
             .content(updateLiteratureListRequest())
@@ -496,7 +498,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { literatureListService.update(any()) }
+        verify(exactly = 1) { literatureListService.update(any<UpdateLiteratureListUseCase.UpdateCommand>()) }
     }
 
     @Test
@@ -508,7 +510,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
         val request = LiteratureListController.LiteratureListListSectionRequest(
             entries = listOf(Entry(ThingId("R123")), Entry(ThingId("R456")))
         )
-        every { literatureListService.updateSection(any()) } just runs
+        every { literatureListService.update(any<UpdateLiteratureListSectionUseCase.UpdateCommand>()) } just runs
 
         documentedPutRequestTo("/api/literature-lists/{id}/sections/{sectionId}", id, sectionId)
             .content(request)
@@ -535,7 +537,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { literatureListService.updateSection(any<UpdateLiteratureListSectionUseCase.UpdateListSectionCommand>()) }
+        verify(exactly = 1) { literatureListService.update(any<UpdateLiteratureListSectionUseCase.UpdateListSectionCommand>()) }
     }
 
     @Test
@@ -574,7 +576,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
             headingSize = 3,
             text = "updated text contents"
         )
-        every { literatureListService.updateSection(any()) } just runs
+        every { literatureListService.update(any<UpdateLiteratureListSectionUseCase.UpdateCommand>()) } just runs
 
         documentedPutRequestTo("/api/literature-lists/{id}/sections/{sectionId}", id, sectionId)
             .content(request)
@@ -601,7 +603,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { literatureListService.updateSection(any<UpdateLiteratureListSectionUseCase.UpdateTextSectionCommand>()) }
+        verify(exactly = 1) { literatureListService.update(any<UpdateLiteratureListSectionUseCase.UpdateTextSectionCommand>()) }
     }
 
     @Test
@@ -613,7 +615,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
         val command = DeleteLiteratureListSectionUseCase.DeleteCommand(
             id, sectionId, ContributorId(MockUserId.USER)
         )
-        every { literatureListService.deleteSection(command) } just runs
+        every { literatureListService.delete(command) } just runs
 
         documentedDeleteRequestTo("/api/literature-lists/{id}/sections/{sectionId}", id, sectionId)
             .accept(LITERATURE_LIST_SECTION_JSON_V1)
@@ -633,7 +635,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { literatureListService.deleteSection(command) }
+        verify(exactly = 1) { literatureListService.delete(command) }
     }
 
     @Test

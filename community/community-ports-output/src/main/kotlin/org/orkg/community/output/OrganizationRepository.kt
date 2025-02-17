@@ -13,7 +13,7 @@ interface OrganizationRepository {
 
     fun deleteAll()
 
-    fun allMembers(id: OrganizationId, pageable: Pageable): Page<Contributor>
+    fun findAllMembersByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Contributor>
 
     fun findById(id: OrganizationId): Optional<Organization>
 
@@ -21,7 +21,7 @@ interface OrganizationRepository {
 
     fun findByName(name: String): Optional<Organization>
 
-    fun findByType(type: OrganizationType): List<Organization>
+    fun findAllByType(type: OrganizationType): List<Organization>
 
     fun count(): Long
 }

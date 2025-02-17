@@ -10,7 +10,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 interface RetrieveLiteralUseCase {
-    fun exists(id: ThingId): Boolean
+    fun existsById(id: ThingId): Boolean
     fun findById(id: ThingId): Optional<Literal>
     fun findAll(
         pageable: Pageable,

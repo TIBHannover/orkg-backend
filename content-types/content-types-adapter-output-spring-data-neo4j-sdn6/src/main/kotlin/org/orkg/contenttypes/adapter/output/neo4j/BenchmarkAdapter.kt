@@ -13,10 +13,10 @@ import org.springframework.stereotype.Component
 class BenchmarkAdapter(
     val benchmarkRepository: Neo4jBenchmarkRepository,
 ) : SummarizeBenchmarkQuery {
-    override fun byResearchField(id: ThingId, pageable: Pageable): Page<BenchmarkSummary> =
-        benchmarkRepository.summarizeBenchmarkByResearchField(id, pageable)
+    override fun findAllBenchmarkSummariesByResearchFieldId(id: ThingId, pageable: Pageable): Page<BenchmarkSummary> =
+        benchmarkRepository.findAllBenchmarkSummariesByResearchFieldId(id, pageable)
             .map(Neo4jBenchmarkSummary::toBenchmarkSummary)
 
-    override fun getAll(pageable: Pageable): Page<BenchmarkSummary> =
-        benchmarkRepository.summarizeBenchmarkGetAll(pageable).map(Neo4jBenchmarkSummary::toBenchmarkSummary)
+    override fun findAllBenchmarkSummaries(pageable: Pageable): Page<BenchmarkSummary> =
+        benchmarkRepository.findAllBenchmarkSummaries(pageable).map(Neo4jBenchmarkSummary::toBenchmarkSummary)
 }

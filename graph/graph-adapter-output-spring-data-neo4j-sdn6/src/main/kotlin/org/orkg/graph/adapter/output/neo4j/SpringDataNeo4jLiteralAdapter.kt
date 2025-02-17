@@ -148,7 +148,7 @@ class SpringDataNeo4jLiteralAdapter(
         neo4jRepository.findById(id).map(Neo4jLiteral::toLiteral)
 
     @Cacheable(key = "#id", cacheNames = [LITERAL_ID_TO_LITERAL_EXISTS_CACHE])
-    override fun exists(id: ThingId): Boolean = neo4jRepository.existsById(id)
+    override fun existsById(id: ThingId): Boolean = neo4jRepository.existsById(id)
 
     private fun Literal.toNeo4jLiteral() =
         neo4jRepository.findById(this.id).orElseGet(::Neo4jLiteral).apply {

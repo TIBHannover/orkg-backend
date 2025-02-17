@@ -27,7 +27,7 @@ class ResolveDOIService(
         }
         val totalStatements =
             if (Classes.paper in resource.classes)
-                statementService.countStatements(resource.id)
+                statementService.countStatementsInPaperSubgraph(resource.id)
             else
                 0
 

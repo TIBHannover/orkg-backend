@@ -27,7 +27,7 @@ class ContentTypePartDeleter(
     private fun unlinkContentType(incomingStatements: List<GeneralStatement>, contentTypeId: ThingId) {
         val toRemove = incomingStatements.filter { it.subject.id == contentTypeId }.map { it.id }
         if (toRemove.isNotEmpty()) {
-            statementService.delete(toRemove.toSet())
+            statementService.deleteAllById(toRemove.toSet())
         }
     }
 

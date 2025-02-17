@@ -12,8 +12,8 @@ import org.springframework.stereotype.Component
 class FindResearchProblemQueryAdapter(
     private val researchProblemRepository: ResearchProblemRepository
 ) : FindResearchProblemQuery {
-    override fun findResearchProblemForDataset(datasetId: ThingId, pageable: Pageable): Page<ResearchProblem> {
-        return researchProblemRepository.findResearchProblemForDataset(datasetId, pageable).map {
+    override fun findAllByDatasetId(datasetId: ThingId, pageable: Pageable): Page<ResearchProblem> {
+        return researchProblemRepository.findAllByDatasetId(datasetId, pageable).map {
             ResearchProblem(
                 it.id,
                 it.label

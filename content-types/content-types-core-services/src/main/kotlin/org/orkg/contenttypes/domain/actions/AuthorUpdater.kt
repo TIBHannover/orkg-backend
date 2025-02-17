@@ -33,7 +33,7 @@ open class AuthorUpdater(
         )
             .filter { it.`object` is Resource && Classes.list in (it.`object` as Resource).classes }
             .singleOrNull()
-            ?.let { listRepository.delete(it.`object`.id) }
+            ?.let { listRepository.deleteById(it.`object`.id) }
         // Create new authors list
         authorCreator.create(contributorId, authors, subjectId)
     }

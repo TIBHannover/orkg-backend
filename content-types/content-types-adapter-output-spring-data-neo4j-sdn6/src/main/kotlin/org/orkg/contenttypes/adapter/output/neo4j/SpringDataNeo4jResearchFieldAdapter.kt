@@ -20,20 +20,20 @@ class SpringDataNeo4jResearchFieldAdapter(
     override fun findById(id: ThingId): Optional<Resource> =
         neo4jRepository.findById(id).map { it.toResource() }
 
-    override fun getResearchProblemsOfField(fieldId: ThingId, pageable: Pageable): Page<PaperCountPerResearchProblem> =
-        neo4jRepository.getResearchProblemsOfField(fieldId, pageable).map { it.toPaperCountPerResearchProblem() }
+    override fun findAllPaperCountsPerResearchProblem(fieldId: ThingId, pageable: Pageable): Page<PaperCountPerResearchProblem> =
+        neo4jRepository.findAllPaperCountsPerResearchProblem(fieldId, pageable).map { it.toPaperCountPerResearchProblem() }
 
-    override fun getContributorIdsFromResearchFieldAndIncludeSubfields(
+    override fun findAllContributorIdsIncludingSubFields(
         id: ThingId,
         pageable: Pageable
     ): Page<ContributorId> =
-        neo4jRepository.getContributorIdsFromResearchFieldAndIncludeSubfields(id, pageable)
+        neo4jRepository.findAllContributorIdsIncludingSubFields(id, pageable)
 
-    override fun findResearchFieldsWithBenchmarks(pageable: Pageable): Page<Resource> =
-        neo4jRepository.findResearchFieldsWithBenchmarks(pageable).map { it.toResource() }
+    override fun findAllWithBenchmarks(pageable: Pageable): Page<Resource> =
+        neo4jRepository.findAllWithBenchmarks(pageable).map { it.toResource() }
 
-    override fun getContributorIdsExcludingSubFields(id: ThingId, pageable: Pageable): Page<ContributorId> =
-        neo4jRepository.getContributorIdsExcludingSubFields(id, pageable)
+    override fun findAllContributorIdsExcludingSubFields(id: ThingId, pageable: Pageable): Page<ContributorId> =
+        neo4jRepository.findAllContributorIdsExcludingSubFields(id, pageable)
 
     override fun findAllListedPapersByResearchField(
         id: ThingId,

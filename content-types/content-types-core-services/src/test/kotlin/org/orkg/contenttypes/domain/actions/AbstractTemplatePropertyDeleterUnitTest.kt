@@ -55,7 +55,7 @@ internal class AbstractTemplatePropertyDeleterUnitTest : MockkBaseTest {
             createStatement(StatementId("S456"))
         )
         every {
-            statementService.delete(setOf(templateHasPropertyStatement.id, StatementId("S123"), StatementId("S456")))
+            statementService.deleteAllById(setOf(templateHasPropertyStatement.id, StatementId("S123"), StatementId("S456")))
         } just runs
         every { resourceService.delete(propertyId, contributorId) } just runs
 
@@ -74,7 +74,7 @@ internal class AbstractTemplatePropertyDeleterUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.delete(setOf(templateHasPropertyStatement.id, StatementId("S123"), StatementId("S456")))
+            statementService.deleteAllById(setOf(templateHasPropertyStatement.id, StatementId("S123"), StatementId("S456")))
         }
         verify(exactly = 1) { resourceService.delete(propertyId, contributorId) }
     }
@@ -101,7 +101,7 @@ internal class AbstractTemplatePropertyDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         } returns pageOf(templateHasPropertyStatement, otherStatementAboutTemplateProperty)
-        every { statementService.delete(setOf(templateHasPropertyStatement.id)) } just runs
+        every { statementService.deleteAllById(setOf(templateHasPropertyStatement.id)) } just runs
 
         abstractTemplatePropertyDeleter.delete(contributorId, templateId, propertyId)
 
@@ -111,7 +111,7 @@ internal class AbstractTemplatePropertyDeleterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(setOf(templateHasPropertyStatement.id)) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(templateHasPropertyStatement.id)) }
     }
 
     @Test
@@ -141,7 +141,7 @@ internal class AbstractTemplatePropertyDeleterUnitTest : MockkBaseTest {
             createStatement(StatementId("S456"))
         )
         every {
-            statementService.delete(setOf(templateHasPropertyStatement.id, StatementId("S123"), StatementId("S456")))
+            statementService.deleteAllById(setOf(templateHasPropertyStatement.id, StatementId("S123"), StatementId("S456")))
         } just runs
         every { resourceService.delete(propertyId, contributorId) } throws NeitherOwnerNorCurator(contributorId)
 
@@ -160,7 +160,7 @@ internal class AbstractTemplatePropertyDeleterUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.delete(setOf(templateHasPropertyStatement.id, StatementId("S123"), StatementId("S456")))
+            statementService.deleteAllById(setOf(templateHasPropertyStatement.id, StatementId("S123"), StatementId("S456")))
         }
         verify(exactly = 1) { resourceService.delete(propertyId, contributorId) }
     }

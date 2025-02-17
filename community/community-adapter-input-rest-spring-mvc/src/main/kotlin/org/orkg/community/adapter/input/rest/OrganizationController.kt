@@ -92,7 +92,7 @@ class OrganizationController(
     }
 
     @GetMapping
-    fun findOrganizations(): List<Organization> = service.listOrganizations()
+    fun findOrganizations(): List<Organization> = service.findAll()
 
     @GetMapping("/{id}")
     fun findById(@PathVariable id: String): Organization = if (id.isValidUUID(id)) {
@@ -113,10 +113,10 @@ class OrganizationController(
 
     @GetMapping("/{id}/users")
     fun findUsersByOrganizationId(@PathVariable id: OrganizationId): Iterable<Contributor> =
-        organizationRepository.allMembers(id, PageRequest.of(0, Int.MAX_VALUE)).content
+        organizationRepository.findAllMembersByOrganizationId(id, PageRequest.of(0, Int.MAX_VALUE)).content
 
     @GetMapping("/conferences")
-    fun findOrganizationsConferences(): Iterable<Organization> = service.listConferences()
+    fun findOrganizationsConferences(): Iterable<Organization> = service.findAllConferences()
 
     @PatchMapping("{id}", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     @RequireCuratorRole
@@ -162,7 +162,7 @@ class OrganizationController(
     ): ResponseEntity<Any> {
         val response = findOrganization(id)
         response.name = name.value
-        service.updateOrganization(response)
+        service.update(response)
         return ok().body(response)
     }
 
@@ -174,7 +174,7 @@ class OrganizationController(
     ): ResponseEntity<Any> {
         val response = findOrganization(id)
         response.homepage = url.value
-        service.updateOrganization(response)
+        service.update(response)
         return ok().body(response)
     }
 
@@ -186,7 +186,7 @@ class OrganizationController(
     ): ResponseEntity<Any> {
         val response = findOrganization(id)
         response.type = OrganizationType.fromOrNull(type.value)!!
-        service.updateOrganization(response)
+        service.update(response)
         return ok().body(response)
     }
 
@@ -213,7 +213,7 @@ class OrganizationController(
         @PathVariable id: OrganizationId,
         response: HttpServletResponse
     ) {
-        val logo = service.findLogo(id).orElseThrow { LogoNotFound(id) }
+        val logo = service.findLogoById(id).orElseThrow { LogoNotFound(id) }
         response.contentType = logo.mimeType.toString()
         IOUtils.copy(ByteArrayInputStream(logo.data.bytes), response.outputStream)
     }

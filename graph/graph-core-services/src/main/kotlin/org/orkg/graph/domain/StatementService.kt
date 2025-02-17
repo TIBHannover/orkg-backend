@@ -33,7 +33,7 @@ class StatementService(
         statementRepository.findByStatementId(statementId)
 
     @TransactionalOnNeo4j(readOnly = true)
-    override fun exists(id: StatementId): Boolean = statementRepository.exists(id)
+    override fun existsById(id: StatementId): Boolean = statementRepository.existsById(id)
 
     override fun findAll(
         pageable: Pageable,
@@ -63,12 +63,12 @@ class StatementService(
         )
 
     override fun create(command: CreateStatementUseCase.CreateCommand): StatementId {
-        val subject = thingRepository.findByThingId(command.subjectId)
+        val subject = thingRepository.findById(command.subjectId)
             .orElseThrow { StatementSubjectNotFound(command.subjectId) }
         validateSubject(subject, command.predicateId)
         val predicate = predicateService.findById(command.predicateId)
             .orElseThrow { StatementPredicateNotFound(command.predicateId) }
-        val `object` = thingRepository.findByThingId(command.objectId)
+        val `object` = thingRepository.findById(command.objectId)
             .orElseThrow { StatementObjectNotFound(command.objectId) }
         val existing = statementRepository.findAll(
             subjectId = command.subjectId,
@@ -98,14 +98,14 @@ class StatementService(
         return id
     }
 
-    override fun totalNumberOfStatements(): Long = statementRepository.count()
+    override fun count(): Long = statementRepository.count()
 
     /**
      * Deletes a statement.
      *
      * @param statementId the ID of the statement to delete.
      */
-    override fun delete(statementId: StatementId) {
+    override fun deleteById(statementId: StatementId) {
         statementRepository.findByStatementId(statementId).ifPresent {
             if (!it.modifiable) throw StatementNotModifiable(it.id)
             if (it.predicate.id == Predicates.hasListElement && it.subject is Resource && Classes.list in (it.subject as Resource).classes) {
@@ -120,7 +120,7 @@ class StatementService(
      *
      * @param statementIds the set of IDs of the statements to delete.
      */
-    override fun delete(statementIds: Set<StatementId>) {
+    override fun deleteAllById(statementIds: Set<StatementId>) {
         statementRepository.findAllByStatementIdIn(statementIds, PageRequests.ALL).forEach {
             if (!it.modifiable) throw StatementNotModifiable(it.id)
             if (it.predicate.id == Predicates.hasListElement && it.subject is Resource && Classes.list in (it.subject as Resource).classes) {
@@ -159,7 +159,8 @@ class StatementService(
         }
     }
 
-    override fun countStatements(paperId: ThingId): Long = statementRepository.countByIdRecursive(paperId)
+    override fun countStatementsInPaperSubgraph(paperId: ThingId): Long =
+        statementRepository.countStatementsInPaperSubgraph(paperId)
 
     override fun fetchAsBundle(
         thingId: ThingId,
@@ -167,7 +168,7 @@ class StatementService(
         includeFirst: Boolean,
         sort: Sort
     ): Bundle {
-        if (thingRepository.findByThingId(thingId).isEmpty) {
+        if (thingRepository.findById(thingId).isEmpty) {
             throw ThingNotFound(thingId)
         }
         return when (includeFirst) {
@@ -179,14 +180,14 @@ class StatementService(
     override fun countPredicateUsage(pageable: Pageable) =
         statementRepository.countPredicateUsage(pageable)
 
-    override fun countIncomingStatements(id: ThingId) =
-        statementRepository.countIncomingStatements(id)
+    override fun countIncomingStatementsById(id: ThingId) =
+        statementRepository.countIncomingStatementsById(id)
 
-    override fun countIncomingStatements(ids: Set<ThingId>): Map<ThingId, Long> =
-        statementRepository.countIncomingStatements(ids)
+    override fun countAllIncomingStatementsById(ids: Set<ThingId>): Map<ThingId, Long> =
+        statementRepository.countAllIncomingStatementsById(ids)
 
-    override fun findAllDescriptions(ids: Set<ThingId>): Map<ThingId, String> =
-        statementRepository.findAllDescriptions(ids)
+    override fun findAllDescriptionsById(ids: Set<ThingId>): Map<ThingId, String> =
+        statementRepository.findAllDescriptionsById(ids)
 
     /**
      * Create a bundle where the first level is not included in the statements.
@@ -225,7 +226,7 @@ class StatementService(
             ), sort
         )
 
-    override fun removeAll() = statementRepository.deleteAll()
+    override fun deleteAll() = statementRepository.deleteAll()
 
     private fun validateSubject(subject: Thing, predicateId: ThingId) {
         if (subject is Resource) {

@@ -76,9 +76,9 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
         )
         context("when an id is given") {
             it("then it does not get a new id") {
-                every { thingRepository.findByThingId(subject.id) } returns Optional.of(subject)
+                every { thingRepository.findById(subject.id) } returns Optional.of(subject)
                 every { predicateRepository.findById(predicate.id) } returns Optional.of(predicate)
-                every { thingRepository.findByThingId(`object`.id) } returns Optional.of(`object`)
+                every { thingRepository.findById(`object`.id) } returns Optional.of(`object`)
                 every {
                     statementRepository.findAll(
                         subjectId = subject.id,
@@ -94,9 +94,9 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
                     service.create(command) shouldBe expectedId
                 }
 
-                verify(exactly = 1) { thingRepository.findByThingId(subject.id) }
+                verify(exactly = 1) { thingRepository.findById(subject.id) }
                 verify(exactly = 1) { predicateRepository.findById(predicate.id) }
-                verify(exactly = 1) { thingRepository.findByThingId(`object`.id) }
+                verify(exactly = 1) { thingRepository.findById(`object`.id) }
                 verify(exactly = 1) {
                     statementRepository.findAll(
                         subjectId = subject.id,
@@ -111,9 +111,9 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
         }
         context("when no id is given") {
             it("it gets an id from the repository") {
-                every { thingRepository.findByThingId(subject.id) } returns Optional.of(subject)
+                every { thingRepository.findById(subject.id) } returns Optional.of(subject)
                 every { predicateRepository.findById(predicate.id) } returns Optional.of(predicate)
-                every { thingRepository.findByThingId(`object`.id) } returns Optional.of(`object`)
+                every { thingRepository.findById(`object`.id) } returns Optional.of(`object`)
                 every {
                     statementRepository.findAll(
                         subjectId = subject.id,
@@ -129,9 +129,9 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
                     service.create(command.copy(id = null)) shouldBe expectedId
                 }
 
-                verify(exactly = 1) { thingRepository.findByThingId(subject.id) }
+                verify(exactly = 1) { thingRepository.findById(subject.id) }
                 verify(exactly = 1) { predicateRepository.findById(predicate.id) }
-                verify(exactly = 1) { thingRepository.findByThingId(`object`.id) }
+                verify(exactly = 1) { thingRepository.findById(`object`.id) }
                 verify(exactly = 1) {
                     statementRepository.findAll(
                         subjectId = subject.id,
@@ -146,9 +146,9 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
         }
         context("when an already existing id is given") {
             it("then an exception is thrown") {
-                every { thingRepository.findByThingId(subject.id) } returns Optional.of(subject)
+                every { thingRepository.findById(subject.id) } returns Optional.of(subject)
                 every { predicateRepository.findById(predicate.id) } returns Optional.of(predicate)
-                every { thingRepository.findByThingId(`object`.id) } returns Optional.of(`object`)
+                every { thingRepository.findById(`object`.id) } returns Optional.of(`object`)
                 every {
                     statementRepository.findAll(
                         subjectId = subject.id,
@@ -165,9 +165,9 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
                     }
                 }
 
-                verify(exactly = 1) { thingRepository.findByThingId(subject.id) }
+                verify(exactly = 1) { thingRepository.findById(subject.id) }
                 verify(exactly = 1) { predicateRepository.findById(predicate.id) }
-                verify(exactly = 1) { thingRepository.findByThingId(`object`.id) }
+                verify(exactly = 1) { thingRepository.findById(`object`.id) }
                 verify(exactly = 1) {
                     statementRepository.findAll(
                         subjectId = subject.id,
@@ -181,7 +181,7 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
         }
         context("when the subject cannot be found") {
             it("throws an exception") {
-                every { thingRepository.findByThingId(subject.id) } returns Optional.empty()
+                every { thingRepository.findById(subject.id) } returns Optional.empty()
 
                 withContext(Dispatchers.IO) {
                     shouldThrow<StatementSubjectNotFound> {
@@ -189,12 +189,12 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
                     }
                 }
 
-                verify(exactly = 1) { thingRepository.findByThingId(subject.id) }
+                verify(exactly = 1) { thingRepository.findById(subject.id) }
             }
         }
         context("when the predicate cannot be found") {
             it("throws an exception") {
-                every { thingRepository.findByThingId(subject.id) } returns Optional.of(subject)
+                every { thingRepository.findById(subject.id) } returns Optional.of(subject)
                 every { predicateRepository.findById(predicate.id) } returns Optional.empty()
 
                 withContext(Dispatchers.IO) {
@@ -203,15 +203,15 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
                     }
                 }
 
-                verify(exactly = 1) { thingRepository.findByThingId(subject.id) }
+                verify(exactly = 1) { thingRepository.findById(subject.id) }
                 verify(exactly = 1) { predicateRepository.findById(predicate.id) }
             }
         }
         context("when the object cannot be found") {
             it("throws an exception") {
-                every { thingRepository.findByThingId(subject.id) } returns Optional.of(subject)
+                every { thingRepository.findById(subject.id) } returns Optional.of(subject)
                 every { predicateRepository.findById(predicate.id) } returns Optional.of(predicate)
-                every { thingRepository.findByThingId(`object`.id) } returns Optional.empty()
+                every { thingRepository.findById(`object`.id) } returns Optional.empty()
 
                 withContext(Dispatchers.IO) {
                     shouldThrow<StatementObjectNotFound> {
@@ -219,9 +219,9 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
                     }
                 }
 
-                verify(exactly = 1) { thingRepository.findByThingId(subject.id) }
+                verify(exactly = 1) { thingRepository.findById(subject.id) }
                 verify(exactly = 1) { predicateRepository.findById(predicate.id) }
-                verify(exactly = 1) { thingRepository.findByThingId(`object`.id) }
+                verify(exactly = 1) { thingRepository.findById(`object`.id) }
             }
         }
         context("when a statement with the same subject, predicate and object already exists") {
@@ -229,9 +229,9 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
 
             context("and no id was provided") {
                 it("returns the id of the existing statement") {
-                    every { thingRepository.findByThingId(subject.id) } returns Optional.of(subject)
+                    every { thingRepository.findById(subject.id) } returns Optional.of(subject)
                     every { predicateRepository.findById(predicate.id) } returns Optional.of(predicate)
-                    every { thingRepository.findByThingId(`object`.id) } returns Optional.of(`object`)
+                    every { thingRepository.findById(`object`.id) } returns Optional.of(`object`)
                     every {
                         statementRepository.findAll(
                             subjectId = subject.id,
@@ -245,9 +245,9 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
                         service.create(command.copy(id = null)) shouldBe existingStatementId
                     }
 
-                    verify(exactly = 1) { thingRepository.findByThingId(subject.id) }
+                    verify(exactly = 1) { thingRepository.findById(subject.id) }
                     verify(exactly = 1) { predicateRepository.findById(predicate.id) }
-                    verify(exactly = 1) { thingRepository.findByThingId(`object`.id) }
+                    verify(exactly = 1) { thingRepository.findById(`object`.id) }
                     verify(exactly = 1) {
                         statementRepository.findAll(
                             subjectId = subject.id,
@@ -261,9 +261,9 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
             context("and an id was provided") {
                 context("that matches") {
                     it("returns the id of the existing statement") {
-                        every { thingRepository.findByThingId(subject.id) } returns Optional.of(subject)
+                        every { thingRepository.findById(subject.id) } returns Optional.of(subject)
                         every { predicateRepository.findById(predicate.id) } returns Optional.of(predicate)
-                        every { thingRepository.findByThingId(`object`.id) } returns Optional.of(`object`)
+                        every { thingRepository.findById(`object`.id) } returns Optional.of(`object`)
                         every {
                             statementRepository.findAll(
                                 subjectId = subject.id,
@@ -277,9 +277,9 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
                             service.create(command)
                         }
 
-                        verify(exactly = 1) { thingRepository.findByThingId(subject.id) }
+                        verify(exactly = 1) { thingRepository.findById(subject.id) }
                         verify(exactly = 1) { predicateRepository.findById(predicate.id) }
-                        verify(exactly = 1) { thingRepository.findByThingId(`object`.id) }
+                        verify(exactly = 1) { thingRepository.findById(`object`.id) }
                         verify(exactly = 1) {
                             statementRepository.findAll(
                                 subjectId = subject.id,
@@ -292,9 +292,9 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
                 }
                 context("that does not match") {
                     it("throws an exception") {
-                        every { thingRepository.findByThingId(subject.id) } returns Optional.of(subject)
+                        every { thingRepository.findById(subject.id) } returns Optional.of(subject)
                         every { predicateRepository.findById(predicate.id) } returns Optional.of(predicate)
-                        every { thingRepository.findByThingId(`object`.id) } returns Optional.of(`object`)
+                        every { thingRepository.findById(`object`.id) } returns Optional.of(`object`)
                         every {
                             statementRepository.findAll(
                                 subjectId = subject.id,
@@ -310,9 +310,9 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
                             }
                         }
 
-                        verify(exactly = 1) { thingRepository.findByThingId(subject.id) }
+                        verify(exactly = 1) { thingRepository.findById(subject.id) }
                         verify(exactly = 1) { predicateRepository.findById(predicate.id) }
-                        verify(exactly = 1) { thingRepository.findByThingId(`object`.id) }
+                        verify(exactly = 1) { thingRepository.findById(`object`.id) }
                         verify(exactly = 1) {
                             statementRepository.findAll(
                                 subjectId = subject.id,
@@ -329,7 +329,7 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
             it("throws an error") {
                 val listId = ThingId("L1")
 
-                every { thingRepository.findByThingId(listId) } returns Optional.of(
+                every { thingRepository.findById(listId) } returns Optional.of(
                     createResource(
                         id = listId,
                         label = "irrelevant",
@@ -350,14 +350,14 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
                     }
                 }
 
-                verify(exactly = 1) { thingRepository.findByThingId(listId) }
+                verify(exactly = 1) { thingRepository.findById(listId) }
             }
         }
         context("with a rosetta stone statement as a subject") {
             it("throws an error") {
                 val subjectId = ThingId("L1")
 
-                every { thingRepository.findByThingId(subjectId) } returns Optional.of(
+                every { thingRepository.findById(subjectId) } returns Optional.of(
                     createResource(
                         id = subjectId,
                         classes = setOf(Classes.rosettaStoneStatement)
@@ -377,14 +377,14 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
                     }
                 }
 
-                verify(exactly = 1) { thingRepository.findByThingId(subjectId) }
+                verify(exactly = 1) { thingRepository.findById(subjectId) }
             }
         }
         context("with a literal as a subject") {
             it("throws an error") {
                 val subjectId = ThingId("L1")
 
-                every { thingRepository.findByThingId(subjectId) } returns Optional.of(
+                every { thingRepository.findById(subjectId) } returns Optional.of(
                     createLiteral(subjectId)
                 )
 
@@ -401,7 +401,7 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
                     }
                 }
 
-                verify(exactly = 1) { thingRepository.findByThingId(subjectId) }
+                verify(exactly = 1) { thingRepository.findById(subjectId) }
             }
         }
     }
@@ -423,9 +423,9 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
                     objectId = newObject.id
                 )
                 every { statementRepository.findByStatementId(id) } returns Optional.of(statement)
-                every { thingRepository.findByThingId(command.subjectId!!) } returns Optional.of(newSubject)
+                every { thingRepository.findById(command.subjectId!!) } returns Optional.of(newSubject)
                 every { predicateRepository.findById(command.predicateId!!) } returns Optional.of(newPredicate)
-                every { thingRepository.findByThingId(command.objectId!!) } returns Optional.of(newObject)
+                every { thingRepository.findById(command.objectId!!) } returns Optional.of(newObject)
                 every { statementRepository.deleteByStatementId(command.statementId) } just runs
                 every { statementRepository.save(any()) } just runs
 
@@ -434,9 +434,9 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
                 }
 
                 verify(exactly = 1) { statementRepository.findByStatementId(id) }
-                verify(exactly = 1) { thingRepository.findByThingId(command.subjectId!!) }
+                verify(exactly = 1) { thingRepository.findById(command.subjectId!!) }
                 verify(exactly = 1) { predicateRepository.findById(command.predicateId!!) }
-                verify(exactly = 1) { thingRepository.findByThingId(command.objectId!!) }
+                verify(exactly = 1) { thingRepository.findById(command.objectId!!) }
                 verify(exactly = 1) { statementRepository.deleteByStatementId(command.statementId) }
                 verify(exactly = 1) {
                     statementRepository.save(withArg {
@@ -465,7 +465,7 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
                     predicateId = newPredicate.id,
                 )
                 every { statementRepository.findByStatementId(id) } returns Optional.of(statement)
-                every { thingRepository.findByThingId(command.subjectId!!) } returns Optional.of(newSubject)
+                every { thingRepository.findById(command.subjectId!!) } returns Optional.of(newSubject)
                 every { predicateRepository.findById(command.predicateId!!) } returns Optional.of(newPredicate)
                 every { statementRepository.deleteByStatementId(command.statementId) } just runs
                 every { statementRepository.save(any()) } just runs
@@ -476,7 +476,7 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
                 }
 
                 verify(exactly = 1) { statementRepository.findByStatementId(id) }
-                verify(exactly = 1) { thingRepository.findByThingId(command.subjectId!!) }
+                verify(exactly = 1) { thingRepository.findById(command.subjectId!!) }
                 verify(exactly = 1) { predicateRepository.findById(command.predicateId!!) }
                 verify(exactly = 1) { statementRepository.deleteByStatementId(command.statementId) }
                 verify(exactly = 1) {
@@ -590,7 +590,7 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
                     subjectId = ThingId("missing")
                 )
                 every { statementRepository.findByStatementId(id) } returns Optional.of(statement)
-                every { thingRepository.findByThingId(command.subjectId!!) } returns Optional.empty()
+                every { thingRepository.findById(command.subjectId!!) } returns Optional.empty()
 
                 withContext(Dispatchers.IO) {
                     shouldThrow<StatementSubjectNotFound> {
@@ -599,7 +599,7 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
                 }
 
                 verify(exactly = 1) { statementRepository.findByStatementId(id) }
-                verify(exactly = 1) { thingRepository.findByThingId(command.subjectId!!) }
+                verify(exactly = 1) { thingRepository.findById(command.subjectId!!) }
             }
         }
         context("with a list resource as a subject and hasListElement as a predicate") {
@@ -626,7 +626,7 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
                 )
 
                 every { statementRepository.findByStatementId(id) } returns Optional.of(existingStatement)
-                every { thingRepository.findByThingId(listId) } returns Optional.of(list)
+                every { thingRepository.findById(listId) } returns Optional.of(list)
 
                 withContext(Dispatchers.IO) {
                     shouldThrow<InvalidStatement> {
@@ -636,7 +636,7 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
 
                 verify(exactly = 1) {
                     statementRepository.findByStatementId(id)
-                    thingRepository.findByThingId(listId)
+                    thingRepository.findById(listId)
                 }
             }
         }
@@ -647,7 +647,7 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
                 val subjectId = ThingId("L1")
 
                 every { statementRepository.findByStatementId(id) } returns Optional.of(fakeStatement)
-                every { thingRepository.findByThingId(subjectId) } returns Optional.of(
+                every { thingRepository.findById(subjectId) } returns Optional.of(
                     createResource(subjectId, classes = setOf(Classes.rosettaStoneStatement))
                 )
 
@@ -667,7 +667,7 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
 
                 verify(exactly = 1) {
                     statementRepository.findByStatementId(id)
-                    thingRepository.findByThingId(subjectId)
+                    thingRepository.findById(subjectId)
                 }
             }
         }
@@ -703,7 +703,7 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
                     objectId = ThingId("missing")
                 )
                 every { statementRepository.findByStatementId(id) } returns Optional.of(statement)
-                every { thingRepository.findByThingId(command.objectId!!) } returns Optional.empty()
+                every { thingRepository.findById(command.objectId!!) } returns Optional.empty()
 
                 withContext(Dispatchers.IO) {
                     shouldThrow<StatementObjectNotFound> {
@@ -712,7 +712,7 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
                 }
 
                 verify(exactly = 1) { statementRepository.findByStatementId(id) }
-                verify(exactly = 1) { thingRepository.findByThingId(command.objectId!!) }
+                verify(exactly = 1) { thingRepository.findById(command.objectId!!) }
             }
         }
     }
@@ -790,7 +790,7 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
 
                 withContext(Dispatchers.IO) {
                     shouldThrow<ForbiddenStatementDeletion> {
-                        service.delete(id)
+                        service.deleteById(id)
                     }
                 }
 
@@ -811,7 +811,7 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
                 every { statementRepository.deleteByStatementId(id) } just runs
 
                 withContext(Dispatchers.IO) {
-                    service.delete(id)
+                    service.deleteById(id)
                 }
 
                 verify(exactly = 1) { statementRepository.findByStatementId(any()) }
@@ -826,7 +826,7 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
                 every { statementRepository.findByStatementId(id) } returns Optional.of(fakeStatement)
 
                 withContext(Dispatchers.IO) {
-                    shouldThrow<StatementNotModifiable> { service.delete(id) }
+                    shouldThrow<StatementNotModifiable> { service.deleteById(id) }
                 }
 
                 verify(exactly = 1) { statementRepository.findByStatementId(any()) }
@@ -900,7 +900,7 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
 
                 withContext(Dispatchers.IO) {
                     shouldThrow<ForbiddenStatementDeletion> {
-                        service.delete(ids)
+                        service.deleteAllById(ids)
                     }
                 }
 
@@ -917,7 +917,7 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
 
                 withContext(Dispatchers.IO) {
                     shouldThrow<StatementNotModifiable> {
-                        service.delete(ids)
+                        service.deleteAllById(ids)
                     }
                 }
 
@@ -932,13 +932,13 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
                 val configuration = BundleConfiguration.firstLevelConf()
 
                 it("throws an exception") {
-                    every { thingRepository.findByThingId(id) } returns Optional.empty()
+                    every { thingRepository.findById(id) } returns Optional.empty()
 
                     assertThrows<ThingNotFound> {
                         service.fetchAsBundle(id, configuration, false, Sort.unsorted())
                     }
 
-                    verify(exactly = 1) { thingRepository.findByThingId(id) }
+                    verify(exactly = 1) { thingRepository.findById(id) }
                 }
             }
         }

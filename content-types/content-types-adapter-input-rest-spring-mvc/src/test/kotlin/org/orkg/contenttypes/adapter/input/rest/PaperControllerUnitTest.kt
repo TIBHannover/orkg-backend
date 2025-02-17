@@ -48,6 +48,8 @@ import org.orkg.contenttypes.domain.ThingNotDefined
 import org.orkg.contenttypes.domain.identifiers.DOI
 import org.orkg.contenttypes.domain.testing.fixtures.createPaper
 import org.orkg.contenttypes.input.ContributionUseCases
+import org.orkg.contenttypes.input.CreateContributionUseCase
+import org.orkg.contenttypes.input.CreatePaperUseCase
 import org.orkg.contenttypes.input.PaperUseCases
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
@@ -468,7 +470,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
     @DisplayName("Given a paper create request, when service succeeds, it creates and returns the paper")
     fun create() {
         val id = ThingId("R123")
-        every { paperService.create(any()) } returns id
+        every { paperService.create(any<CreatePaperUseCase.CreateCommand>()) } returns id
 
         documentedPostRequestTo("/api/papers")
             .content(createPaperRequest())
@@ -519,14 +521,14 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { paperService.create(any()) }
+        verify(exactly = 1) { paperService.create(any<CreatePaperUseCase.CreateCommand>()) }
     }
 
     @Test
     @TestWithMockUser
     fun `Given a paper create request, when service reports only one research field allowed, then status is 400 BAD REQUEST`() {
         val exception = OnlyOneResearchFieldAllowed()
-        every { paperService.create(any()) } throws exception
+        every { paperService.create(any<CreatePaperUseCase.CreateCommand>()) } throws exception
 
         post("/api/papers")
             .content(createPaperRequest())
@@ -538,14 +540,14 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .andExpect(jsonPath("$.path").value("/api/papers"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { paperService.create(any()) }
+        verify(exactly = 1) { paperService.create(any<CreatePaperUseCase.CreateCommand>()) }
     }
 
     @Test
     @TestWithMockUser
     fun `Given a paper create request, when service reports only one organization allowed, then status is 400 BAD REQUEST`() {
         val exception = OnlyOneOrganizationAllowed()
-        every { paperService.create(any()) } throws exception
+        every { paperService.create(any<CreatePaperUseCase.CreateCommand>()) } throws exception
 
         post("/api/papers")
             .content(createPaperRequest())
@@ -557,14 +559,14 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .andExpect(jsonPath("$.path").value("/api/papers"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { paperService.create(any()) }
+        verify(exactly = 1) { paperService.create(any<CreatePaperUseCase.CreateCommand>()) }
     }
 
     @Test
     @TestWithMockUser
     fun `Given a paper create request, when service reports only one observatory allowed, then status is 400 BAD REQUEST`() {
         val exception = OnlyOneObservatoryAllowed()
-        every { paperService.create(any()) } throws exception
+        every { paperService.create(any<CreatePaperUseCase.CreateCommand>()) } throws exception
 
         post("/api/papers")
             .content(createPaperRequest())
@@ -576,14 +578,14 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .andExpect(jsonPath("$.path").value("/api/papers"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { paperService.create(any()) }
+        verify(exactly = 1) { paperService.create(any<CreatePaperUseCase.CreateCommand>()) }
     }
 
     @Test
     @TestWithMockUser
     fun `Given a paper create request, when service reports thing not defined, then status is 400 BAD REQUEST`() {
         val exception = ThingNotDefined("R123")
-        every { paperService.create(any()) } throws exception
+        every { paperService.create(any<CreatePaperUseCase.CreateCommand>()) } throws exception
 
         post("/api/papers")
             .content(createPaperRequest())
@@ -595,14 +597,14 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .andExpect(jsonPath("$.path").value("/api/papers"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { paperService.create(any()) }
+        verify(exactly = 1) { paperService.create(any<CreatePaperUseCase.CreateCommand>()) }
     }
 
     @Test
     @TestWithMockUser
     fun `Given a paper create request, when service reports author not found, then status is 404 NOT FOUND`() {
         val exception = AuthorNotFound(ThingId("R123"))
-        every { paperService.create(any()) } throws exception
+        every { paperService.create(any<CreatePaperUseCase.CreateCommand>()) } throws exception
 
         post("/api/papers")
             .content(createPaperRequest())
@@ -614,14 +616,14 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .andExpect(jsonPath("$.path").value("/api/papers"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { paperService.create(any()) }
+        verify(exactly = 1) { paperService.create(any<CreatePaperUseCase.CreateCommand>()) }
     }
 
     @Test
     @TestWithMockUser
     fun `Given a paper create request, when service reports duplicate temp ids, then status is 400 BAD REQUEST`() {
         val exception = DuplicateTempIds(mapOf("#temp1" to 2))
-        every { paperService.create(any()) } throws exception
+        every { paperService.create(any<CreatePaperUseCase.CreateCommand>()) } throws exception
 
         post("/api/papers")
             .content(createPaperRequest())
@@ -633,14 +635,14 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .andExpect(jsonPath("$.path").value("/api/papers"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { paperService.create(any()) }
+        verify(exactly = 1) { paperService.create(any<CreatePaperUseCase.CreateCommand>()) }
     }
 
     @Test
     @TestWithMockUser
     fun `Given a paper create request, when service reports invalid temp id, then status is 400 BAD REQUEST`() {
         val exception = InvalidTempId("invalid")
-        every { paperService.create(any()) } throws exception
+        every { paperService.create(any<CreatePaperUseCase.CreateCommand>()) } throws exception
 
         post("/api/papers")
             .content(createPaperRequest())
@@ -652,14 +654,14 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .andExpect(jsonPath("$.path").value("/api/papers"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { paperService.create(any()) }
+        verify(exactly = 1) { paperService.create(any<CreatePaperUseCase.CreateCommand>()) }
     }
 
     @Test
     @TestWithMockUser
     fun `Given a paper create request, when service reports paper already exists with title, then status is 400 BAD REQUEST`() {
         val exception = PaperAlreadyExists.withTitle("paper title")
-        every { paperService.create(any()) } throws exception
+        every { paperService.create(any<CreatePaperUseCase.CreateCommand>()) } throws exception
 
         post("/api/papers")
             .content(createPaperRequest())
@@ -671,14 +673,14 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .andExpect(jsonPath("$.path").value("/api/papers"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { paperService.create(any()) }
+        verify(exactly = 1) { paperService.create(any<CreatePaperUseCase.CreateCommand>()) }
     }
 
     @Test
     @TestWithMockUser
     fun `Given a paper create request, when service reports paper already exists with identifier, then status is 400 BAD REQUEST`() {
         val exception = PaperAlreadyExists.withIdentifier("paper title")
-        every { paperService.create(any()) } throws exception
+        every { paperService.create(any<CreatePaperUseCase.CreateCommand>()) } throws exception
 
         post("/api/papers")
             .content(createPaperRequest())
@@ -690,7 +692,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .andExpect(jsonPath("$.path").value("/api/papers"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { paperService.create(any()) }
+        verify(exactly = 1) { paperService.create(any<CreatePaperUseCase.CreateCommand>()) }
     }
 
     @Test
@@ -703,7 +705,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
                 identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333"))
             )
         )
-        every { paperService.create(any()) } throws exception
+        every { paperService.create(any<CreatePaperUseCase.CreateCommand>()) } throws exception
 
         post("/api/papers")
             .content(createPaperRequest())
@@ -715,14 +717,14 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .andExpect(jsonPath("$.path").value("/api/papers"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { paperService.create(any()) }
+        verify(exactly = 1) { paperService.create(any<CreatePaperUseCase.CreateCommand>()) }
     }
 
     @Test
     @TestWithMockUser
     fun `Given a paper create request, when service reports thing id is not a class, then status is 400 BAD REQUEST`() {
         val exception = ThingIsNotAClass(ThingId("R123"))
-        every { paperService.create(any()) } throws exception
+        every { paperService.create(any<CreatePaperUseCase.CreateCommand>()) } throws exception
 
         post("/api/papers")
             .content(createPaperRequest())
@@ -734,14 +736,14 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .andExpect(jsonPath("$.path").value("/api/papers"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { paperService.create(any()) }
+        verify(exactly = 1) { paperService.create(any<CreatePaperUseCase.CreateCommand>()) }
     }
 
     @Test
     @TestWithMockUser
     fun `Given a paper create request, when service reports thing id is not a predicate, then status is 400 BAD REQUEST`() {
         val exception = ThingIsNotAPredicate("R123")
-        every { paperService.create(any()) } throws exception
+        every { paperService.create(any<CreatePaperUseCase.CreateCommand>()) } throws exception
 
         post("/api/papers")
             .content(createPaperRequest())
@@ -753,14 +755,14 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .andExpect(jsonPath("$.path").value("/api/papers"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { paperService.create(any()) }
+        verify(exactly = 1) { paperService.create(any<CreatePaperUseCase.CreateCommand>()) }
     }
 
     @Test
     @TestWithMockUser
     fun `Given a paper create request, when service reports invalid statement subject, then status is 400 BAD REQUEST`() {
         val exception = InvalidStatementSubject("R123")
-        every { paperService.create(any()) } throws exception
+        every { paperService.create(any<CreatePaperUseCase.CreateCommand>()) } throws exception
 
         post("/api/papers")
             .content(createPaperRequest())
@@ -772,14 +774,14 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .andExpect(jsonPath("$.path").value("/api/papers"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { paperService.create(any()) }
+        verify(exactly = 1) { paperService.create(any<CreatePaperUseCase.CreateCommand>()) }
     }
 
     @Test
     @TestWithMockUser
     fun `Given a paper create request, when service reports thing not found, then status is 404 NOT FOUND`() {
         val exception = ThingNotFound("R123")
-        every { paperService.create(any()) } throws exception
+        every { paperService.create(any<CreatePaperUseCase.CreateCommand>()) } throws exception
 
         post("/api/papers")
             .content(createPaperRequest())
@@ -791,14 +793,14 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .andExpect(jsonPath("$.path").value("/api/papers"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { paperService.create(any()) }
+        verify(exactly = 1) { paperService.create(any<CreatePaperUseCase.CreateCommand>()) }
     }
 
     @Test
     @TestWithMockUser
     fun `Given a paper create request, when service reports empty contributions, then status is 400 BAD REQUEST`() {
         val exception = EmptyContribution(0)
-        every { paperService.create(any()) } throws exception
+        every { paperService.create(any<CreatePaperUseCase.CreateCommand>()) } throws exception
 
         post("/api/papers")
             .content(createPaperRequest())
@@ -810,7 +812,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .andExpect(jsonPath("$.path").value("/api/papers"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { paperService.create(any()) }
+        verify(exactly = 1) { paperService.create(any<CreatePaperUseCase.CreateCommand>()) }
     }
 
     @Test
@@ -1030,7 +1032,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
     fun createContribution() {
         val paperId = ThingId("R3541")
         val contributionId = ThingId("R123")
-        every { paperService.createContribution(any()) } returns contributionId
+        every { paperService.create(any<CreateContributionUseCase.CreateCommand>()) } returns contributionId
 
         documentedPostRequestTo("/api/papers/{id}/contributions", paperId)
             .content(createContributionRequest())
@@ -1068,7 +1070,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { paperService.createContribution(any()) }
+        verify(exactly = 1) { paperService.create(any<CreateContributionUseCase.CreateCommand>()) }
     }
 
     @Test
@@ -1076,7 +1078,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
     fun `Given a contribution request, when service reports invalid temp id, then status is 400 BAD REQUEST`() {
         val paperId = ThingId("R123")
         val exception = InvalidTempId("invalid")
-        every { paperService.createContribution(any()) } throws exception
+        every { paperService.create(any<CreateContributionUseCase.CreateCommand>()) } throws exception
 
         post("/api/papers/{id}/contributions", paperId)
             .content(createContributionRequest())
@@ -1088,7 +1090,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .andExpect(jsonPath("$.path").value("/api/papers/$paperId/contributions"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { paperService.createContribution(any()) }
+        verify(exactly = 1) { paperService.create(any<CreateContributionUseCase.CreateCommand>()) }
     }
 
     @Test
@@ -1096,7 +1098,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
     fun `Given a contribution request, when service reports duplicate temp ids, then status is 400 BAD REQUEST`() {
         val paperId = ThingId("R123")
         val exception = DuplicateTempIds(mapOf("#temp1" to 2))
-        every { paperService.createContribution(any()) } throws exception
+        every { paperService.create(any<CreateContributionUseCase.CreateCommand>()) } throws exception
 
         post("/api/papers/{id}/contributions", paperId)
             .content(createContributionRequest())
@@ -1108,7 +1110,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .andExpect(jsonPath("$.path").value("/api/papers/$paperId/contributions"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { paperService.createContribution(any()) }
+        verify(exactly = 1) { paperService.create(any<CreateContributionUseCase.CreateCommand>()) }
     }
 
     @Test
@@ -1116,7 +1118,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
     fun `Given a contribution request, when service reports paper not found, then status is 404 NOT FOUND`() {
         val paperId = ThingId("R123")
         val exception = PaperNotFound(ThingId("R123"))
-        every { paperService.createContribution(any()) } throws exception
+        every { paperService.create(any<CreateContributionUseCase.CreateCommand>()) } throws exception
 
         post("/api/papers/{id}/contributions", paperId)
             .content(createContributionRequest())
@@ -1128,7 +1130,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .andExpect(jsonPath("$.path").value("/api/papers/$paperId/contributions"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { paperService.createContribution(any()) }
+        verify(exactly = 1) { paperService.create(any<CreateContributionUseCase.CreateCommand>()) }
     }
 
     @Test
@@ -1136,7 +1138,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
     fun `Given a contribution request, when service reports thing not defined, then status is 400 BAD REQUEST`() {
         val paperId = ThingId("R123")
         val exception = ThingNotDefined("R123")
-        every { paperService.createContribution(any()) } throws exception
+        every { paperService.create(any<CreateContributionUseCase.CreateCommand>()) } throws exception
 
         post("/api/papers/{id}/contributions", paperId)
             .content(createContributionRequest())
@@ -1148,7 +1150,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .andExpect(jsonPath("$.path").value("/api/papers/$paperId/contributions"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { paperService.createContribution(any()) }
+        verify(exactly = 1) { paperService.create(any<CreateContributionUseCase.CreateCommand>()) }
     }
 
     @Test
@@ -1156,7 +1158,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
     fun `Given a contribution request, when service reports thing not found, then status is 404 NOT FOUND`() {
         val paperId = ThingId("R123")
         val exception = ThingNotFound("R123")
-        every { paperService.createContribution(any()) } throws exception
+        every { paperService.create(any<CreateContributionUseCase.CreateCommand>()) } throws exception
 
         post("/api/papers/{id}/contributions", paperId)
             .content(createContributionRequest())
@@ -1168,7 +1170,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .andExpect(jsonPath("$.path").value("/api/papers/$paperId/contributions"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { paperService.createContribution(any()) }
+        verify(exactly = 1) { paperService.create(any<CreateContributionUseCase.CreateCommand>()) }
     }
 
     @Test
@@ -1176,7 +1178,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
     fun `Given a contribution request, when service reports thing id is not a class, then status is 400 BAD REQUEST`() {
         val paperId = ThingId("R123")
         val exception = ThingIsNotAClass(ThingId("R123"))
-        every { paperService.createContribution(any()) } throws exception
+        every { paperService.create(any<CreateContributionUseCase.CreateCommand>()) } throws exception
 
         post("/api/papers/{id}/contributions", paperId)
             .content(createContributionRequest())
@@ -1188,7 +1190,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .andExpect(jsonPath("$.path").value("/api/papers/$paperId/contributions"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { paperService.createContribution(any()) }
+        verify(exactly = 1) { paperService.create(any<CreateContributionUseCase.CreateCommand>()) }
     }
 
     @Test
@@ -1196,7 +1198,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
     fun `Given a contribution request, when service reports thing id is not a predicate, then status is 400 BAD REQUEST`() {
         val paperId = ThingId("R123")
         val exception = ThingIsNotAPredicate("R123")
-        every { paperService.createContribution(any()) } throws exception
+        every { paperService.create(any<CreateContributionUseCase.CreateCommand>()) } throws exception
 
         post("/api/papers/{id}/contributions", paperId)
             .content(createContributionRequest())
@@ -1208,7 +1210,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .andExpect(jsonPath("$.path").value("/api/papers/$paperId/contributions"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { paperService.createContribution(any()) }
+        verify(exactly = 1) { paperService.create(any<CreateContributionUseCase.CreateCommand>()) }
     }
 
     @Test
@@ -1216,7 +1218,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
     fun `Given a contribution request, when service reports invalid statement subject, then status is 400 BAD REQUEST`() {
         val paperId = ThingId("R123")
         val exception = InvalidStatementSubject("R123")
-        every { paperService.createContribution(any()) } throws exception
+        every { paperService.create(any<CreateContributionUseCase.CreateCommand>()) } throws exception
 
         post("/api/papers/{id}/contributions", paperId)
             .content(createContributionRequest())
@@ -1228,7 +1230,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .andExpect(jsonPath("$.path").value("/api/papers/$paperId/contributions"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { paperService.createContribution(any()) }
+        verify(exactly = 1) { paperService.create(any<CreateContributionUseCase.CreateCommand>()) }
     }
 
     @Test
@@ -1236,7 +1238,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
     fun `Given a contribution request, when service reports empty contribution, then status is 400 BAD REQUEST`() {
         val paperId = ThingId("R123")
         val exception = EmptyContribution()
-        every { paperService.createContribution(any()) } throws exception
+        every { paperService.create(any<CreateContributionUseCase.CreateCommand>()) } throws exception
 
         post("/api/papers/{id}/contributions", paperId)
             .content(createContributionRequest())
@@ -1248,7 +1250,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .andExpect(jsonPath("$.path").value("/api/papers/$paperId/contributions"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { paperService.createContribution(any()) }
+        verify(exactly = 1) { paperService.create(any<CreateContributionUseCase.CreateCommand>()) }
     }
 
     @Test

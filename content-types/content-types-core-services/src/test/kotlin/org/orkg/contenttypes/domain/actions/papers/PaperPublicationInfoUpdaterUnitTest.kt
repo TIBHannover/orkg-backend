@@ -125,7 +125,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
         ).groupBy { it.subject.id }
         val state = UpdatePaperState(paper, statements)
 
-        every { statementService.delete(setOf(statementId)) } just runs
+        every { statementService.deleteAllById(setOf(statementId)) } just runs
 
         val result = paperPublicationInfoUpdater(command, state)
 
@@ -134,7 +134,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             it.authors.size shouldBe 0
         }
 
-        verify(exactly = 1) { statementService.delete(setOf(statementId)) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(statementId)) }
     }
 
     @Test
@@ -241,7 +241,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
         ).groupBy { it.subject.id }
         val state = UpdatePaperState(paper, statements)
 
-        every { statementService.delete(setOf(statementId)) } just runs
+        every { statementService.deleteAllById(setOf(statementId)) } just runs
         every {
             literalService.create(
                 CreateLiteralUseCase.CreateCommand(
@@ -269,7 +269,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             it.authors.size shouldBe 0
         }
 
-        verify(exactly = 1) { statementService.delete(setOf(statementId)) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(statementId)) }
         verify(exactly = 1) {
             literalService.create(
                 CreateLiteralUseCase.CreateCommand(
@@ -345,7 +345,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
         ).groupBy { it.subject.id }
         val state = UpdatePaperState(paper, statements)
 
-        every { statementService.delete(setOf(statementId)) } just runs
+        every { statementService.deleteAllById(setOf(statementId)) } just runs
 
         val result = paperPublicationInfoUpdater(command, state)
 
@@ -354,7 +354,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             it.authors.size shouldBe 0
         }
 
-        verify(exactly = 1) { statementService.delete(setOf(statementId)) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(statementId)) }
     }
 
     @Test
@@ -461,7 +461,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
         ).groupBy { it.subject.id }
         val state = UpdatePaperState(paper, statements)
 
-        every { statementService.delete(setOf(statementId)) } just runs
+        every { statementService.deleteAllById(setOf(statementId)) } just runs
         every {
             literalService.create(
                 CreateLiteralUseCase.CreateCommand(
@@ -489,7 +489,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             it.authors.size shouldBe 0
         }
 
-        verify(exactly = 1) { statementService.delete(setOf(statementId)) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(statementId)) }
         verify(exactly = 1) {
             literalService.create(
                 CreateLiteralUseCase.CreateCommand(
@@ -568,7 +568,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
         ).groupBy { it.subject.id }
         val state = UpdatePaperState(paper, statements)
 
-        every { statementService.delete(setOf(statementId)) } just runs
+        every { statementService.deleteAllById(setOf(statementId)) } just runs
 
         val result = paperPublicationInfoUpdater(command, state)
 
@@ -577,7 +577,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             it.authors.size shouldBe 0
         }
 
-        verify(exactly = 1) { statementService.delete(setOf(statementId)) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(statementId)) }
     }
 
     @Test
@@ -792,7 +792,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
         ).groupBy { it.subject.id }
         val state = UpdatePaperState(paper, statements)
 
-        every { statementService.delete(setOf(statementId)) } just runs
+        every { statementService.deleteAllById(setOf(statementId)) } just runs
 
         val result = paperPublicationInfoUpdater(command, state)
 
@@ -801,7 +801,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             it.authors.size shouldBe 0
         }
 
-        verify(exactly = 1) { statementService.delete(setOf(statementId)) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(statementId)) }
     }
 
     @Test
@@ -908,7 +908,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
         ).groupBy { it.subject.id }
         val state = UpdatePaperState(paper, statements)
 
-        every { statementService.delete(setOf(statementId)) } just runs
+        every { statementService.deleteAllById(setOf(statementId)) } just runs
         every {
             literalService.create(
                 CreateLiteralUseCase.CreateCommand(
@@ -936,7 +936,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             it.authors.size shouldBe 0
         }
 
-        verify(exactly = 1) { statementService.delete(setOf(statementId)) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(statementId)) }
         verify(exactly = 1) {
             literalService.create(
                 CreateLiteralUseCase.CreateCommand(

@@ -103,7 +103,7 @@ internal class AuthorUpdaterUnitTest : MockkBaseTest {
                 `object` = createResource(authorListId, classes = setOf(Classes.list))
             )
         )
-        every { listRepository.delete(authorListId) } just runs
+        every { listRepository.deleteById(authorListId) } just runs
         every { authorCreator.create(contributorId, authors, subjectId) } just runs
 
         authorUpdater.update(contributorId, authors, subjectId)
@@ -115,7 +115,7 @@ internal class AuthorUpdaterUnitTest : MockkBaseTest {
                 pageable = PageRequests.SINGLE
             )
         }
-        verify(exactly = 1) { listRepository.delete(authorListId) }
+        verify(exactly = 1) { listRepository.deleteById(authorListId) }
         verify(exactly = 1) { authorCreator.create(contributorId, authors, subjectId) }
     }
 }

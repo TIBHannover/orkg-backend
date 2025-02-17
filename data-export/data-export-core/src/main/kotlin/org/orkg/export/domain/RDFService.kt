@@ -121,7 +121,7 @@ fun Class.toNTriple(writer: Writer, classHierarchyRepository: ClassHierarchyRepo
         writer.write("<$cPrefix${this.id}> <${OWL.EQUIVALENTCLASS}> <$uri> .\n")
     }
     writer.write("<$cPrefix${this.id}> <http://www.w3.org/2000/01/rdf-schema#label> \"${escapeLiteral(label)}\"^^<http://www.w3.org/2001/XMLSchema#string> .\n")
-    classHierarchyRepository.findParent(id).ifPresent {
+    classHierarchyRepository.findParentByChildId(id).ifPresent {
         writer.write("<$cPrefix${this.id}> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <$cPrefix${it.id}> .\n")
     }
 }

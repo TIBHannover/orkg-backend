@@ -82,7 +82,7 @@ internal class ObservatoryServiceUnitTest : MockkBaseTest {
         every { resourceRepository.findById(researchFieldId) } returns Optional.of(researchField)
         every { repository.findAllByResearchField(researchFieldId, pageRequest) } returns page
 
-        service.findAllByResearchField(researchFieldId, pageRequest)
+        service.findAllByResearchFieldId(researchFieldId, pageRequest)
 
         verify(exactly = 1) { resourceRepository.findById(researchFieldId) }
         verify(exactly = 1) { repository.findAllByResearchField(researchFieldId, pageRequest) }

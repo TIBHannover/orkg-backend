@@ -75,7 +75,7 @@ fun <
         it("saves a new relation") {
             relationRepository.save(createRelation(ThingId("1"), ThingId("4")))
 
-            val result = repository.findParent(ThingId("4"))
+            val result = repository.findParentByChildId(ThingId("4"))
             result.isPresent shouldBe true
             result.get().id shouldBe ThingId("1")
         }
@@ -83,7 +83,7 @@ fun <
 
     describe("finding the child-classes of a class") {
         context("when no children exist") {
-            val result = repository.findChildren(ThingId("4"), PageRequest.of(0, 5))
+            val result = repository.findAllChildrenByAncestorId(ThingId("4"), PageRequest.of(0, 5))
 
             it("returns the correct result") {
                 result shouldNotBe null
@@ -104,7 +104,7 @@ fun <
         }
         describe("when several children exist") {
             createTree()
-            val result = repository.findChildren(ThingId("1"), PageRequest.of(0, 5))
+            val result = repository.findAllChildrenByAncestorId(ThingId("1"), PageRequest.of(0, 5))
 
             it("returns the correct result") {
                 result shouldNotBe null
@@ -133,7 +133,7 @@ fun <
         context("when a parent class exists") {
             it("returns the correct result") {
                 createTree()
-                val result = repository.findParent(ThingId("2"))
+                val result = repository.findParentByChildId(ThingId("2"))
                 result.isPresent shouldBe true
                 result.get().id shouldBe ThingId("1")
             }
@@ -141,7 +141,7 @@ fun <
         context("when no parent class exists") {
             it("returns the correct result") {
                 createTree()
-                val result = repository.findParent(ThingId("4"))
+                val result = repository.findParentByChildId(ThingId("4"))
                 result.isPresent shouldBe false
             }
         }
@@ -151,7 +151,7 @@ fun <
         context("when only one hop is required") {
             it("returns the correct result") {
                 createTree()
-                val result = repository.findRoot(ThingId("3"))
+                val result = repository.findRootByDescendantId(ThingId("3"))
                 result.isPresent shouldBe true
                 result.get().id shouldBe ThingId("1")
             }
@@ -159,7 +159,7 @@ fun <
         context("when several hops are required") {
             it("returns the correct result") {
                 createTree()
-                val result = repository.findRoot(ThingId("6"))
+                val result = repository.findRootByDescendantId(ThingId("6"))
                 result.isPresent shouldBe true
                 result.get().id shouldBe ThingId("1")
             }
@@ -167,7 +167,7 @@ fun <
         context("when no root class exists") {
             it("returns the correct result") {
                 createTree()
-                val result = repository.findRoot(ThingId("4"))
+                val result = repository.findRootByDescendantId(ThingId("4"))
                 result.isPresent shouldBe false
             }
         }

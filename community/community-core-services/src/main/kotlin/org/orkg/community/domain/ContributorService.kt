@@ -16,8 +16,8 @@ class ContributorService(
     override fun findById(id: ContributorId): Optional<Contributor> =
         repository.findById(id)
 
-    override fun findAllByIds(ids: List<ContributorId>): List<Contributor> =
-        repository.findAllByIds(ids)
+    override fun findAllById(ids: List<ContributorId>): List<Contributor> =
+        repository.findAllById(ids)
 
     override fun create(command: CreateCommand): ContributorId {
         repository.findById(command.id).ifPresent { throw ContributorAlreadyExists(command.id) }

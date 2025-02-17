@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component
 class SpringDataNeo4jContributionComparisonAdapter(
     val contributionComparisonRepository: Neo4jContributionComparisonRepository,
 ) : ContributionComparisonRepository {
-    override fun findContributionsDetailsById(ids: List<ThingId>, pageable: Pageable): Page<ContributionInfo> =
-        contributionComparisonRepository.findContributionsDetailsById(ids, pageable)
+    override fun findAllContributionDetailsById(ids: List<ThingId>, pageable: Pageable): Page<ContributionInfo> =
+        contributionComparisonRepository.findAllContributionDetailsById(ids, pageable)
             .map(Neo4jContributionInfo::toContributionInfo)
 }

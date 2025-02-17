@@ -53,9 +53,9 @@ internal class LegacyPaperControllerIntegrationTest : MockMvcBaseTest("papers") 
     fun setup() {
         val tempPageable = PageRequest.of(0, 10)
 
-        predicateService.removeAll()
-        resourceService.removeAll()
-        classService.removeAll()
+        predicateService.deleteAll()
+        resourceService.deleteAll()
+        classService.deleteAll()
 
         assertThat(predicateService.findAll(tempPageable)).hasSize(0)
         assertThat(resourceService.findAll(tempPageable)).hasSize(0)

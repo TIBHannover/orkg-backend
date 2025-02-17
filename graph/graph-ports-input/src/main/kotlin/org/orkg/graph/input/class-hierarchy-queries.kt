@@ -9,16 +9,15 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 interface RetrieveClassHierarchyUseCase {
-    fun findChildren(id: ThingId, pageable: Pageable): Page<ChildClass>
+    fun findAllChildrenByAncestorId(id: ThingId, pageable: Pageable): Page<ChildClass>
 
-    fun findParent(id: ThingId): Optional<Class>
+    fun findParentByChildId(id: ThingId): Optional<Class>
 
-    fun findRoot(id: ThingId): Optional<Class>
+    fun findRootByDescendantId(id: ThingId): Optional<Class>
 
     fun findAllRoots(pageable: Pageable): Page<Class>
 
     fun findClassHierarchy(id: ThingId, pageable: Pageable): Page<ClassHierarchyEntry>
 
     fun countClassInstances(id: ThingId): Long
-
 }

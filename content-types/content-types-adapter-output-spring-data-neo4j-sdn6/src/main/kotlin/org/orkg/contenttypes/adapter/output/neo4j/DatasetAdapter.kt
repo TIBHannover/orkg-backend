@@ -17,15 +17,15 @@ class DatasetAdapter(
     val datasetRepository: Neo4jDatasetRepository
 ) : FindDatasetsQuery, SummarizeDatasetQuery {
 
-    override fun forResearchProblem(id: ThingId, pageable: Pageable): Page<Dataset> =
-        datasetRepository.findDatasetsByResearchProblem(id, pageable)
+    override fun findAllDatasetsByResearchProblemId(id: ThingId, pageable: Pageable): Page<Dataset> =
+        datasetRepository.findAllDatasetsByResearchProblemId(id, pageable)
             .map(Neo4jDataset::toDataset)
 
     override fun by(id: ThingId, pageable: Pageable): Page<DatasetSummary> =
         datasetRepository.summarizeDatasetQueryById(id, pageable)
             .map(Neo4jDatasetSummary::toDatasetSummary)
 
-    override fun byAndProblem(id: ThingId, problemId: ThingId, pageable: Pageable): Page<DatasetSummary> =
-        datasetRepository.summarizeDatasetQueryByIdAndProblemId(id, problemId, pageable)
+    override fun findAllDatasetSummariesByIdAndResearchProblemId(id: ThingId, problemId: ThingId, pageable: Pageable): Page<DatasetSummary> =
+        datasetRepository.findAllDatasetSummariesByIdAndResearchProblemId(id, problemId, pageable)
             .map(Neo4jDatasetSummary::toDatasetSummary)
 }

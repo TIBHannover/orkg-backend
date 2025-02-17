@@ -172,7 +172,7 @@ class ComparisonService(
             .let { Optional.ofNullable(it) }
             .map { (it.`object` as Resource).toComparisonRelatedResource() }
 
-    override fun findAllRelatedResources(comparisonId: ThingId, pageable: Pageable): Page<ComparisonRelatedResource> =
+    override fun findAllRelatedResourcesById(comparisonId: ThingId, pageable: Pageable): Page<ComparisonRelatedResource> =
         statementRepository.findAll(subjectId = comparisonId, predicateId = Predicates.hasRelatedResource, pageable = pageable)
             .map { (it.`object` as Resource).toComparisonRelatedResource() }
 
@@ -188,7 +188,7 @@ class ComparisonService(
             .let { Optional.ofNullable(it) }
             .map { (it.`object` as Resource).toComparisonRelatedFigure() }
 
-    override fun findAllRelatedFigures(comparisonId: ThingId, pageable: Pageable): Page<ComparisonRelatedFigure> =
+    override fun findAllRelatedFiguresById(comparisonId: ThingId, pageable: Pageable): Page<ComparisonRelatedFigure> =
         statementRepository.findAll(subjectId = comparisonId, predicateId = Predicates.hasRelatedFigure, pageable = pageable)
             .map { (it.`object` as Resource).toComparisonRelatedFigure() }
 
@@ -196,8 +196,8 @@ class ComparisonService(
         comparisonRepository.findAllCurrentAndListedAndUnpublishedComparisons(pageable)
             .map { it.toComparison() }
 
-    override fun findContributionsDetailsById(ids: List<ThingId>, pageable: Pageable): Page<ContributionInfo> =
-        repository.findContributionsDetailsById(ids, pageable)
+    override fun findAllContributionDetailsById(ids: List<ThingId>, pageable: Pageable): Page<ContributionInfo> =
+        repository.findAllContributionDetailsById(ids, pageable)
 
     override fun create(command: CreateComparisonCommand): ThingId {
         val steps = listOf(

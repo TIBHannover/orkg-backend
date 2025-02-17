@@ -28,30 +28,30 @@ class ResearchFieldHierarchyController(
     ResearchFieldWithChildCountRepresentationAdapter {
 
     @GetMapping("/{id}/children")
-    fun findChildren(
+    fun findAllChildrenByAncestorId(
         @PathVariable id: ThingId,
         pageable: Pageable,
         capabilities: MediaTypeCapabilities
     ): Page<ResearchFieldWithChildCountRepresentation> =
-        service.findChildren(id, pageable)
+        service.findAllChildrenByAncestorId(id, pageable)
             .mapToResearchFieldWithChildCountRepresentation(capabilities)
 
     @GetMapping("/{id}/parents")
-    fun findParent(
+    fun findAllParentsByChildId(
         @PathVariable id: ThingId,
         pageable: Pageable,
         capabilities: MediaTypeCapabilities
     ): Page<ResourceRepresentation> =
-        service.findParents(id, pageable)
+        service.findAllParentsByChildId(id, pageable)
             .mapToResourceRepresentation(capabilities)
 
     @GetMapping("/{id}/roots")
-    fun findRoots(
+    fun findAllRootsByDescendantId(
         @PathVariable id: ThingId,
         pageable: Pageable,
         capabilities: MediaTypeCapabilities
     ): Page<ResourceRepresentation> =
-        service.findRoots(id, pageable)
+        service.findAllRootsByDescendantId(id, pageable)
             .mapToResourceRepresentation(capabilities)
 
     @GetMapping("/roots")
@@ -63,11 +63,11 @@ class ResearchFieldHierarchyController(
             .mapToResourceRepresentation(capabilities)
 
     @GetMapping("/{id}/hierarchy")
-    fun findResearchFieldHierarchy(
+    fun findResearchFieldHierarchyByResearchFieldId(
         @PathVariable id: ThingId,
         pageable: Pageable,
         capabilities: MediaTypeCapabilities
     ): Page<ResearchFieldHierarchyEntryRepresentation> =
-        service.findResearchFieldHierarchy(id, pageable)
+        service.findResearchFieldHierarchyByResearchFieldId(id, pageable)
             .mapToResearchFieldHierarchyEntryRepresentation(capabilities)
 }

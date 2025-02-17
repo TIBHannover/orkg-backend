@@ -25,8 +25,8 @@ class InMemoryResourceRepository(private val inMemoryGraph: InMemoryGraph) :
             override val keys: Collection<ThingId> get() = inMemoryGraph.findAllResources().map { it.id }
             override val values: MutableCollection<Resource> get() = inMemoryGraph.findAllResources().toMutableSet()
 
-            override fun remove(key: ThingId): Resource? = get(key)?.also { inMemoryGraph.remove(it.id) }
-            override fun clear() = inMemoryGraph.findAllResources().forEach(inMemoryGraph::remove)
+            override fun remove(key: ThingId): Resource? = get(key)?.also { inMemoryGraph.delete(it.id) }
+            override fun clear() = inMemoryGraph.findAllResources().forEach(inMemoryGraph::delete)
 
             override fun get(key: ThingId): Resource? = inMemoryGraph.findResourceById(key).getOrNull()
             override fun set(key: ThingId, value: Resource): Resource? =

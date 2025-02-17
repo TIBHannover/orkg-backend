@@ -8,6 +8,6 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 interface RetrieveDatasetUseCase {
-    fun forResearchProblem(id: ThingId, pageable: Pageable): Optional<Page<Dataset>>
-    fun summaryFor(id: ThingId, problemId: ThingId, pageable: Pageable): Optional<Page<DatasetSummary>>
+    fun findAllDatasetsByResearchProblemId(id: ThingId, pageable: Pageable): Optional<Page<Dataset>>
+    fun findAllDatasetSummariesByIdAndResearchProblemId(id: ThingId, problemId: ThingId, pageable: Pageable): Optional<Page<DatasetSummary>>
 }

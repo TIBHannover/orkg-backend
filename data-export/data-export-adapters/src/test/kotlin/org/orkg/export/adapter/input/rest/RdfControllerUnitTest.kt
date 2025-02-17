@@ -85,7 +85,7 @@ internal class RdfControllerUnitTest : MockMvcBaseTest("rdf-hints") {
             createResource(id = someId, label = "Resource 1234")
         )
 
-        every { statementService.countIncomingStatements(setOf(someId)) } returns mapOf(someId to 5L)
+        every { statementService.countAllIncomingStatementsById(setOf(someId)) } returns mapOf(someId to 5L)
 
         // TODO: tests else-branch, not ideal
         documentedGetRequestTo(HINTS_ENDPOINT)
@@ -105,7 +105,7 @@ internal class RdfControllerUnitTest : MockMvcBaseTest("rdf-hints") {
                 )
             )
 
-        verify(exactly = 1) { statementService.countIncomingStatements(setOf(someId)) }
+        verify(exactly = 1) { statementService.countAllIncomingStatementsById(setOf(someId)) }
         verify(exactly = 1) {
             resourceRepository.findAll(
                 label = withArg { searchString -> searchString.shouldBeInstanceOf<FuzzySearchString> { it.input shouldBe "1" } },
@@ -124,7 +124,7 @@ internal class RdfControllerUnitTest : MockMvcBaseTest("rdf-hints") {
         } returns PageImpl(
             listOf(createClass(id = ThingId("C1234"), label = "Class 1234"))
         )
-        every { statementService.findAllDescriptions(any()) } returns emptyMap()
+        every { statementService.findAllDescriptionsById(any()) } returns emptyMap()
 
         get(HINTS_ENDPOINT)
             .param("q", "1234")
@@ -133,7 +133,7 @@ internal class RdfControllerUnitTest : MockMvcBaseTest("rdf-hints") {
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content[0].label", `is`("Class 1234")))
 
-        verify(exactly = 1) { statementService.findAllDescriptions(any()) }
+        verify(exactly = 1) { statementService.findAllDescriptionsById(any()) }
         verify(exactly = 1) {
             classRepository.findAll(
                 label = withArg { searchString -> searchString.shouldBeInstanceOf<FuzzySearchString> { it.input shouldBe "1234" } },
@@ -152,7 +152,7 @@ internal class RdfControllerUnitTest : MockMvcBaseTest("rdf-hints") {
         } returns pageOf(
             listOf(createPredicate(id = ThingId("P1234"), label = "Predicate 1234"))
         )
-        every { statementService.findAllDescriptions(any()) } returns emptyMap()
+        every { statementService.findAllDescriptionsById(any()) } returns emptyMap()
 
         get(HINTS_ENDPOINT)
             .param("q", "1234")
@@ -161,7 +161,7 @@ internal class RdfControllerUnitTest : MockMvcBaseTest("rdf-hints") {
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content[0].label", `is`("Predicate 1234")))
 
-        verify(exactly = 1) { statementService.findAllDescriptions(any()) }
+        verify(exactly = 1) { statementService.findAllDescriptionsById(any()) }
         verify(exactly = 1) {
             predicateRepository.findAll(
                 label = withArg { searchString -> searchString.shouldBeInstanceOf<FuzzySearchString> { it.input shouldBe "1234" } },

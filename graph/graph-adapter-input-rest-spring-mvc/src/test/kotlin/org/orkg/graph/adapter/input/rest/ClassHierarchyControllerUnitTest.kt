@@ -73,8 +73,8 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
         val childId = ThingId("childId")
         val response = ChildClass(createClass(id = childId), 1)
 
-        every { classHierarchyService.findChildren(parentId, any()) } returns PageImpl(listOf(response))
-        every { statementService.findAllDescriptions(any()) } returns emptyMap()
+        every { classHierarchyService.findAllChildrenByAncestorId(parentId, any()) } returns PageImpl(listOf(response))
+        every { statementService.findAllDescriptionsById(any()) } returns emptyMap()
 
         documentedGetRequestTo("/api/classes/{id}/children", parentId)
             .perform()
@@ -97,21 +97,21 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { classHierarchyService.findChildren(parentId, any()) }
-        verify(exactly = 1) { statementService.findAllDescriptions(any()) }
+        verify(exactly = 1) { classHierarchyService.findAllChildrenByAncestorId(parentId, any()) }
+        verify(exactly = 1) { statementService.findAllDescriptionsById(any()) }
     }
 
     @Test
     fun `Given a parent class id, when service reports the parent class cannot be found while searching for its children, then status is 404 NOT FOUND`() {
         val parentId = ThingId("parentId")
 
-        every { classHierarchyService.findChildren(parentId, any()) } throws ClassNotFound.withThingId(parentId)
+        every { classHierarchyService.findAllChildrenByAncestorId(parentId, any()) } throws ClassNotFound.withThingId(parentId)
 
         get("/api/classes/{id}/children", parentId)
             .perform()
             .andExpect(status().isNotFound)
 
-        verify(exactly = 1) { classHierarchyService.findChildren(parentId, any()) }
+        verify(exactly = 1) { classHierarchyService.findAllChildrenByAncestorId(parentId, any()) }
     }
 
     @Test
@@ -120,7 +120,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
         val parentId = ThingId("parentId")
         val childId = ThingId("childId")
 
-        every { classHierarchyService.findParent(childId) } returns Optional.of(createClass(id = parentId))
+        every { classHierarchyService.findParentByChildId(childId) } returns Optional.of(createClass(id = parentId))
         every {
             statementService.findAll(
                 pageable = PageRequests.SINGLE,
@@ -144,7 +144,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { classHierarchyService.findParent(childId) }
+        verify(exactly = 1) { classHierarchyService.findParentByChildId(childId) }
         verify(exactly = 1) {
             statementService.findAll(
                 pageable = PageRequests.SINGLE,
@@ -159,26 +159,26 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
     fun `Given a child class id, when service reports the child class cannot be found while searching for its parent, then status is 404 NOT FOUND`() {
         val childId = ThingId("childId")
 
-        every { classHierarchyService.findParent(childId) } throws ClassNotFound.withThingId(childId)
+        every { classHierarchyService.findParentByChildId(childId) } throws ClassNotFound.withThingId(childId)
 
         get("/api/classes/{id}/parent", childId)
             .perform()
             .andExpect(status().isNotFound)
 
-        verify(exactly = 1) { classHierarchyService.findParent(childId) }
+        verify(exactly = 1) { classHierarchyService.findParentByChildId(childId) }
     }
 
     @Test
     fun `Given a child class id, when the parent class cannot be found, then status is 204 NO CONTENT`() {
         val childId = ThingId("childId")
 
-        every { classHierarchyService.findParent(childId) } returns Optional.empty()
+        every { classHierarchyService.findParentByChildId(childId) } returns Optional.empty()
 
         get("/api/classes/{id}/parent", childId)
             .perform()
             .andExpect(status().isNoContent)
 
-        verify(exactly = 1) { classHierarchyService.findParent(childId) }
+        verify(exactly = 1) { classHierarchyService.findParentByChildId(childId) }
     }
 
     @Test
@@ -187,7 +187,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
         val rootId = ThingId("root")
         val childId = ThingId("childId")
 
-        every { classHierarchyService.findRoot(childId) } returns Optional.of(createClass(id = rootId))
+        every { classHierarchyService.findRootByDescendantId(childId) } returns Optional.of(createClass(id = rootId))
         every {
             statementService.findAll(
                 pageable = PageRequests.SINGLE,
@@ -211,7 +211,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { classHierarchyService.findRoot(childId) }
+        verify(exactly = 1) { classHierarchyService.findRootByDescendantId(childId) }
         verify(exactly = 1) {
             statementService.findAll(
                 pageable = PageRequests.SINGLE,
@@ -226,26 +226,26 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
     fun `Given a child class id, when service reports the child class cannot be found while searching for its root, then status is 404 NOT FOUND`() {
         val childId = ThingId("childId")
 
-        every { classHierarchyService.findRoot(childId) } throws ClassNotFound.withThingId(childId)
+        every { classHierarchyService.findRootByDescendantId(childId) } throws ClassNotFound.withThingId(childId)
 
         get("/api/classes/{id}/root", childId)
             .perform()
             .andExpect(status().isNotFound)
 
-        verify(exactly = 1) { classHierarchyService.findRoot(childId) }
+        verify(exactly = 1) { classHierarchyService.findRootByDescendantId(childId) }
     }
 
     @Test
     fun `Given a child class id, when searched for its root but it has no parent class, then status is 204 NO CONTENT`() {
         val childId = ThingId("childId")
 
-        every { classHierarchyService.findRoot(childId) } returns Optional.empty()
+        every { classHierarchyService.findRootByDescendantId(childId) } returns Optional.empty()
 
         get("/api/classes/{id}/root", childId)
             .perform()
             .andExpect(status().isNoContent)
 
-        verify(exactly = 1) { classHierarchyService.findRoot(childId) }
+        verify(exactly = 1) { classHierarchyService.findRootByDescendantId(childId) }
     }
 
     @Test
@@ -441,7 +441,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
     fun deleteParentRelation() {
         val childId = ThingId("childId")
 
-        every { classHierarchyService.delete(childId) } returns Unit
+        every { classHierarchyService.deleteByChildId(childId) } returns Unit
 
         documentedDeleteRequestTo("/api/classes/{id}/parent", childId)
             .perform()
@@ -456,7 +456,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { classHierarchyService.delete(childId) }
+        verify(exactly = 1) { classHierarchyService.deleteByChildId(childId) }
     }
 
     @Test
@@ -464,13 +464,13 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
     fun `Given a child class id, when service reports input class does not exist while deleting its subclass relation, then status is 404 NOT FOUND`() {
         val childId = ThingId("childId")
 
-        every { classHierarchyService.delete(childId) } throws ClassNotFound.withThingId(childId)
+        every { classHierarchyService.deleteByChildId(childId) } throws ClassNotFound.withThingId(childId)
 
         delete("/api/classes/{id}/parent", childId)
             .perform()
             .andExpect(status().isNotFound)
 
-        verify(exactly = 1) { classHierarchyService.delete(childId) }
+        verify(exactly = 1) { classHierarchyService.deleteByChildId(childId) }
     }
 
     @Test
@@ -614,7 +614,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
                 ClassHierarchyEntry(childClass, parentId)
             )
         )
-        every { statementService.findAllDescriptions(any()) } returns emptyMap()
+        every { statementService.findAllDescriptionsById(any()) } returns emptyMap()
 
         documentedGetRequestTo("/api/classes/{id}/hierarchy", childId)
             .perform()
@@ -638,7 +638,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { classHierarchyService.findClassHierarchy(childId, any()) }
-        verify(exactly = 1) { statementService.findAllDescriptions(any()) }
+        verify(exactly = 1) { statementService.findAllDescriptionsById(any()) }
     }
 
     @Test
@@ -660,7 +660,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
         val rootId = ThingId("root")
 
         every { classHierarchyService.findAllRoots(any()) } returns pageOf(createClass(id = rootId))
-        every { statementService.findAllDescriptions(setOf(rootId)) } returns mapOf()
+        every { statementService.findAllDescriptionsById(setOf(rootId)) } returns mapOf()
 
         documentedGetRequestTo("/api/classes/roots")
             .perform()
@@ -669,6 +669,6 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { classHierarchyService.findAllRoots(any()) }
-        verify(exactly = 1) { statementService.findAllDescriptions(setOf(rootId)) }
+        verify(exactly = 1) { statementService.findAllDescriptionsById(setOf(rootId)) }
     }
 }

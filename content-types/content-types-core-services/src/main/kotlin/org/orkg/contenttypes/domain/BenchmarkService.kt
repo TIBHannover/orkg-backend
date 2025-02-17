@@ -14,15 +14,15 @@ class BenchmarkService(
     private val summarizeBenchmark: SummarizeBenchmarkQuery,
     private val researchFieldService: RetrieveResearchFieldUseCase,
 ) : RetrieveBenchmarkUseCase {
-    override fun summariesForResearchField(id: ThingId, pageable: Pageable): Optional<Page<BenchmarkSummary>> {
+    override fun findAllBenchmarkSummariesByResearchFieldId(id: ThingId, pageable: Pageable): Optional<Page<BenchmarkSummary>> {
         val researchField = researchFieldService.findById(id)
         if (!researchField.isPresent)
             return Optional.empty()
         return Optional.of(
-            summarizeBenchmark.byResearchField(researchField.get().id, pageable)
+            summarizeBenchmark.findAllBenchmarkSummariesByResearchFieldId(researchField.get().id, pageable)
         )
     }
 
-    override fun summary(pageable: Pageable): Optional<Page<BenchmarkSummary>> =
-        Optional.of(summarizeBenchmark.getAll(pageable))
+    override fun findAllBenchmarkSummaries(pageable: Pageable): Optional<Page<BenchmarkSummary>> =
+        Optional.of(summarizeBenchmark.findAllBenchmarkSummaries(pageable))
 }

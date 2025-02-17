@@ -15,21 +15,21 @@ import org.springframework.stereotype.Component
 class SpringDataNeo4jResearchFieldHierarchyAdapter(
     private val neo4jRepository: Neo4jResearchFieldHierarchyRepository
 ) : ResearchFieldHierarchyRepository {
-    override fun findChildren(id: ThingId, pageable: Pageable): Page<ResearchFieldWithChildCount> =
-        neo4jRepository.findChildren(id, pageable)
+    override fun findAllChildrenByAncestorId(id: ThingId, pageable: Pageable): Page<ResearchFieldWithChildCount> =
+        neo4jRepository.findAllChildrenByAncestorId(id, pageable)
             .map { ResearchFieldWithChildCount(it.resource.toResource(), it.childCount) }
 
-    override fun findParents(id: ThingId, pageable: Pageable): Page<Resource> =
-        neo4jRepository.findParents(id, pageable).map(Neo4jResource::toResource)
+    override fun findAllParentsByChildId(id: ThingId, pageable: Pageable): Page<Resource> =
+        neo4jRepository.findAllParentsByChildId(id, pageable).map(Neo4jResource::toResource)
 
-    override fun findRoots(id: ThingId, pageable: Pageable): Page<Resource> =
-        neo4jRepository.findRoots(id, pageable).map(Neo4jResource::toResource)
+    override fun findAllRootsByDescendantId(id: ThingId, pageable: Pageable): Page<Resource> =
+        neo4jRepository.findAllRootsByDescendantId(id, pageable).map(Neo4jResource::toResource)
 
     override fun findAllRoots(pageable: Pageable): Page<Resource> =
         neo4jRepository.findAllRoots(pageable).map(Neo4jResource::toResource)
 
-    override fun findResearchFieldHierarchy(id: ThingId, pageable: Pageable): Page<ResearchFieldHierarchyEntry> =
-        neo4jRepository.findResearchFieldHierarchy(id, pageable)
+    override fun findResearchFieldHierarchyByResearchFieldId(id: ThingId, pageable: Pageable): Page<ResearchFieldHierarchyEntry> =
+        neo4jRepository.findResearchFieldHierarchyByResearchFieldId(id, pageable)
             .map {
                 ResearchFieldHierarchyEntry(
                     it.resource.toResource(),

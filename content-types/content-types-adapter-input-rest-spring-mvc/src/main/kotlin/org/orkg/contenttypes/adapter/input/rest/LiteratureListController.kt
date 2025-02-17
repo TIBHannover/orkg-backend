@@ -162,7 +162,7 @@ class LiteratureListController(
         currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
-        service.createSection(request.toCreateCommand(userId, id, index))
+        service.create(request.toCreateCommand(userId, id, index))
         val location = uriComponentsBuilder
             .path("/api/literature-lists/{id}")
             .buildAndExpand(id)
@@ -180,7 +180,7 @@ class LiteratureListController(
         currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
-        service.updateSection(request.toUpdateCommand(sectionId, userId, id))
+        service.update(request.toUpdateCommand(sectionId, userId, id))
         val location = uriComponentsBuilder
             .path("/api/literature-lists/{id}")
             .buildAndExpand(id)
@@ -197,7 +197,7 @@ class LiteratureListController(
         currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
-        service.deleteSection(DeleteLiteratureListSectionUseCase.DeleteCommand(id, sectionId, userId))
+        service.delete(DeleteLiteratureListSectionUseCase.DeleteCommand(id, sectionId, userId))
         val location = uriComponentsBuilder
             .path("/api/literature-lists/{id}")
             .buildAndExpand(id)

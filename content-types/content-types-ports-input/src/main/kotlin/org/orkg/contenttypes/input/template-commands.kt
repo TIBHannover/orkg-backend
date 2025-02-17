@@ -34,7 +34,7 @@ interface CreateTemplateUseCase {
 }
 
 interface CreateTemplatePropertyUseCase {
-    fun createTemplateProperty(command: CreateCommand): ThingId
+    fun create(command: CreateCommand): ThingId
 
     sealed interface CreateCommand : TemplatePropertyDefinition {
         val contributorId: ContributorId
@@ -125,7 +125,7 @@ interface UpdateTemplateUseCase {
 }
 
 interface UpdateTemplatePropertyUseCase {
-    fun updateTemplateProperty(command: UpdateCommand)
+    fun update(command: UpdateCommand)
 
     sealed interface UpdateCommand : TemplatePropertyDefinition {
         val templatePropertyId: ThingId

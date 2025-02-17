@@ -161,7 +161,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
             )
         )
         every { literalService.update(updatedLiteral) } just runs
-        every { statementService.delete(setOf(StatementId("S456"))) } just runs
+        every { statementService.deleteAllById(setOf(StatementId("S456"))) } just runs
 
         singleStatementPropertyUpdater.updateRequiredProperty(
             contributorId = contributorId,
@@ -180,7 +180,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) { literalService.update(updatedLiteral) }
-        verify(exactly = 1) { statementService.delete(setOf(StatementId("S456"))) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S456"))) }
     }
 
     @Test
@@ -274,7 +274,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
         )
 
         every { literalService.update(updatedLiteral) } just runs
-        every { statementService.delete(setOf(StatementId("S456"))) } just runs
+        every { statementService.deleteAllById(setOf(StatementId("S456"))) } just runs
 
         singleStatementPropertyUpdater.updateRequiredProperty(
             statements = statements,
@@ -286,7 +286,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
         )
 
         verify(exactly = 1) { literalService.update(updatedLiteral) }
-        verify(exactly = 1) { statementService.delete(setOf(StatementId("S456"))) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S456"))) }
     }
 
     @Test
@@ -364,12 +364,12 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
         )
 
         every { literalService.update(updatedLiteral) } just runs
-        every { statementService.delete(setOf(StatementId("S456"))) } just runs
+        every { statementService.deleteAllById(setOf(StatementId("S456"))) } just runs
 
         singleStatementPropertyUpdater.updateOptionalProperty(statements, contributorId, subjectId, Predicates.description, description)
 
         verify(exactly = 1) { literalService.update(updatedLiteral) }
-        verify(exactly = 1) { statementService.delete(setOf(StatementId("S456"))) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S456"))) }
     }
 
     @Test
@@ -385,11 +385,11 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
             )
         )
 
-        every { statementService.delete(setOf(StatementId("S456"))) } just runs
+        every { statementService.deleteAllById(setOf(StatementId("S456"))) } just runs
 
         singleStatementPropertyUpdater.updateOptionalProperty(statements, contributorId, subjectId, Predicates.description, null as String?)
 
-        verify(exactly = 1) { statementService.delete(setOf(StatementId("S456"))) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S456"))) }
     }
 
     @Test
@@ -442,7 +442,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
             createStatement(StatementId("S357"), predicate = createPredicate(Predicates.hasContribution))
         )
 
-        every { statementService.delete(setOf(StatementId("S357"))) } just runs
+        every { statementService.deleteAllById(setOf(StatementId("S357"))) } just runs
         every {
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
@@ -456,7 +456,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
 
         singleStatementPropertyUpdater.updateRequiredProperty(statements, contributorId, subjectId, Predicates.hasContribution, contributionId)
 
-        verify(exactly = 1) { statementService.delete(setOf(StatementId("S357"))) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S357"))) }
         verify(exactly = 1) {
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
@@ -511,7 +511,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
             createStatement(StatementId("S357"), predicate = createPredicate(Predicates.hasContribution))
         )
 
-        every { statementService.delete(setOf(StatementId("S357"))) } just runs
+        every { statementService.deleteAllById(setOf(StatementId("S357"))) } just runs
         every {
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
@@ -525,7 +525,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
 
         singleStatementPropertyUpdater.updateOptionalProperty(statements, contributorId, subjectId, Predicates.hasContribution, objectId)
 
-        verify(exactly = 1) { statementService.delete(setOf(StatementId("S357"))) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S357"))) }
         verify(exactly = 1) {
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
@@ -548,10 +548,10 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
             createStatement(StatementId("S357"), predicate = createPredicate(Predicates.hasContribution))
         )
 
-        every { statementService.delete(setOf(StatementId("S357"))) } just runs
+        every { statementService.deleteAllById(setOf(StatementId("S357"))) } just runs
 
         singleStatementPropertyUpdater.updateOptionalProperty(statements, contributorId, subjectId, Predicates.hasContribution, objectId as ThingId?)
 
-        verify(exactly = 1) { statementService.delete(setOf(StatementId("S357"))) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S357"))) }
     }
 }

@@ -49,6 +49,6 @@ internal class ContributorAdapterIdempotencyTest {
             adapter.notify(message)
         }
 
-        assertThat(adapter.countActiveUsers()).isEqualTo(1)
+        assertThat(adapter.count()).isEqualTo(1)
     }
 }

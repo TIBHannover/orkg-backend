@@ -134,9 +134,9 @@ class SpringDataNeo4jClassAdapter(
         .fetch(pageable, false)
 
     @Cacheable(key = "#id", cacheNames = [CLASS_ID_TO_CLASS_EXISTS_CACHE])
-    override fun exists(id: ThingId): Boolean = neo4jRepository.existsById(id)
+    override fun existsById(id: ThingId): Boolean = neo4jRepository.existsById(id)
 
-    override fun existsAll(ids: Set<ThingId>): Boolean = neo4jRepository.existsAllById(ids)
+    override fun existsAllById(ids: Set<ThingId>): Boolean = neo4jRepository.existsAllById(ids)
 
     @Cacheable(key = "#id", cacheNames = [CLASS_ID_TO_CLASS_CACHE])
     override fun findById(id: ThingId): Optional<Class> =

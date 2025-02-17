@@ -33,7 +33,7 @@ class ClassHierarchyService(
             if (childId == parentId) throw InvalidSubclassRelation(childId, parentId)
             val child = classRepository.findById(childId)
                 .orElseThrow { ClassNotFound.withThingId(childId) }
-            val currentParent = repository.findParent(childId)
+            val currentParent = repository.findParentByChildId(childId)
             if (currentParent.isPresent) throw ParentClassAlreadyExists(childId, parentId)
             if (repository.existsChild(childId, parentId)) throw InvalidSubclassRelation(childId, parentId)
 
@@ -48,19 +48,19 @@ class ClassHierarchyService(
         relationRepository.saveAll(classRelations)
     }
 
-    override fun findChildren(id: ThingId, pageable: Pageable): Page<ChildClass> =
+    override fun findAllChildrenByAncestorId(id: ThingId, pageable: Pageable): Page<ChildClass> =
         classRepository.findById(id)
-            .map { repository.findChildren(id, pageable) }
+            .map { repository.findAllChildrenByAncestorId(id, pageable) }
             .orElseThrow { ClassNotFound.withThingId(id) }
 
-    override fun findParent(id: ThingId): Optional<Class> =
+    override fun findParentByChildId(id: ThingId): Optional<Class> =
         classRepository.findById(id)
-            .map { repository.findParent(id) }
+            .map { repository.findParentByChildId(id) }
             .orElseThrow { ClassNotFound.withThingId(id) }
 
-    override fun findRoot(id: ThingId): Optional<Class> =
+    override fun findRootByDescendantId(id: ThingId): Optional<Class> =
         classRepository.findById(id)
-            .map { repository.findRoot(id) }
+            .map { repository.findRootByDescendantId(id) }
             .orElseThrow { ClassNotFound.withThingId(id) }
 
     override fun findAllRoots(pageable: Pageable): Page<Class> =
@@ -76,7 +76,7 @@ class ClassHierarchyService(
             .map { repository.countClassInstances(id) }
             .orElseThrow { ClassNotFound.withThingId(id) }
 
-    override fun delete(childId: ThingId) {
+    override fun deleteByChildId(childId: ThingId) {
         classRepository.findById(childId)
             .map { relationRepository.deleteByChildId(childId) }
             .orElseThrow { ClassNotFound.withThingId(childId) }

@@ -33,9 +33,9 @@ interface RetrieveComparisonUseCase {
     ): Page<Comparison>
     fun findById(id: ThingId): Optional<Comparison>
     fun findRelatedResourceById(comparisonId: ThingId, id: ThingId): Optional<ComparisonRelatedResource>
-    fun findAllRelatedResources(comparisonId: ThingId, pageable: Pageable): Page<ComparisonRelatedResource>
+    fun findAllRelatedResourcesById(comparisonId: ThingId, pageable: Pageable): Page<ComparisonRelatedResource>
     fun findRelatedFigureById(comparisonId: ThingId, id: ThingId): Optional<ComparisonRelatedFigure>
-    fun findAllRelatedFigures(comparisonId: ThingId, pageable: Pageable): Page<ComparisonRelatedFigure>
+    fun findAllRelatedFiguresById(comparisonId: ThingId, pageable: Pageable): Page<ComparisonRelatedFigure>
     /* An unpublished comparison is a comparison that does not have a DOI and is not a draft comparison (ComparisonDraft) */
     fun findAllCurrentAndListedAndUnpublishedComparisons(pageable: Pageable): Page<Comparison>
 }

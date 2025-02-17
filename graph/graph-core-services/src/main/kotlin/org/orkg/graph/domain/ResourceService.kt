@@ -40,7 +40,7 @@ class ResourceService(
     private val organizationRepository: OrganizationRepository
 ) : ResourceUseCases {
     @TransactionalOnNeo4j(readOnly = true)
-    override fun exists(id: ThingId): Boolean = repository.exists(id)
+    override fun existsById(id: ThingId): Boolean = repository.existsById(id)
 
     override fun create(command: CreateResourceUseCase.CreateCommand): ThingId {
         Label.ofOrNull(command.label) ?: throw InvalidLabel()
@@ -180,7 +180,7 @@ class ResourceService(
         unsafeResourceUseCases.delete(id, contributorId)
     }
 
-    override fun removeAll() = repository.deleteAll()
+    override fun deleteAll() = repository.deleteAll()
 
     override fun findAllByClassInAndVisibility(
         classes: Set<ThingId>,
@@ -259,7 +259,7 @@ class ResourceService(
             if (reserved.isNotEmpty()) {
                 throw ReservedClass(reserved.first())
             }
-            if (!classRepository.existsAll(classes - reservedClassIds)) {
+            if (!classRepository.existsAllById(classes - reservedClassIds)) {
                 throw InvalidClassCollection(classes)
             }
         }

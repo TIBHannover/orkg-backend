@@ -14,7 +14,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 
 interface RetrieveStatementUseCase {
-    fun exists(id: StatementId): Boolean
+    fun existsById(id: StatementId): Boolean
     fun findAll(
         pageable: Pageable,
         subjectClasses: Set<ThingId> = emptySet(),
@@ -29,16 +29,16 @@ interface RetrieveStatementUseCase {
         objectLabel: String? = null
     ): Page<GeneralStatement>
     fun findById(statementId: StatementId): Optional<GeneralStatement>
-    fun totalNumberOfStatements(): Long
-    fun countStatements(paperId: ThingId): Long
+    fun count(): Long
+    fun countStatementsInPaperSubgraph(paperId: ThingId): Long
 
     fun fetchAsBundle(thingId: ThingId, configuration: BundleConfiguration, includeFirst: Boolean, sort: Sort): Bundle
 
     fun countPredicateUsage(pageable: Pageable): Page<PredicateUsageCount>
 
-    fun countIncomingStatements(id: ThingId): Long
+    fun countIncomingStatementsById(id: ThingId): Long
 
-    fun countIncomingStatements(ids: Set<ThingId>): Map<ThingId, Long>
+    fun countAllIncomingStatementsById(ids: Set<ThingId>): Map<ThingId, Long>
 
-    fun findAllDescriptions(ids: Set<ThingId>): Map<ThingId, String>
+    fun findAllDescriptionsById(ids: Set<ThingId>): Map<ThingId, String>
 }

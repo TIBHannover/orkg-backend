@@ -73,13 +73,13 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
         )
 
         every { repository.findById(id) } returns Optional.empty()
-        every { classRepository.existsAll(command.classes) } returns true
+        every { classRepository.existsAllById(command.classes) } returns true
         every { unsafeResourceUseCases.create(command) } returns id
 
         service.create(command) shouldBe id
 
         verify(exactly = 1) { repository.findById(id) }
-        verify(exactly = 1) { classRepository.existsAll(command.classes) }
+        verify(exactly = 1) { classRepository.existsAllById(command.classes) }
         verify(exactly = 1) { unsafeResourceUseCases.create(command) }
     }
 
@@ -126,11 +126,11 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
             classes = setOf(Classes.paper)
         )
 
-        every { classRepository.existsAll(command.classes) } returns false
+        every { classRepository.existsAllById(command.classes) } returns false
 
         assertThrows<InvalidClassCollection> { service.create(command) }
 
-        verify(exactly = 1) { classRepository.existsAll(command.classes) }
+        verify(exactly = 1) { classRepository.existsAllById(command.classes) }
     }
 
     @Test
@@ -652,7 +652,7 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
         val verified = true
 
         every { repository.findById(resource.id) } returns Optional.of(resource)
-        every { classRepository.existsAll(classes) } returns true
+        every { classRepository.existsAllById(classes) } returns true
         every { contributorRepository.findById(contributorId) } returns Optional.of(contributor)
         every { observatoryRepository.existsById(observatoryId) } returns true
         every { organizationRepository.findById(organizationId) } returns Optional.of(createOrganization(organizationId))
@@ -674,7 +674,7 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
         )
 
         verify(exactly = 1) { repository.findById(resource.id) }
-        verify(exactly = 1) { classRepository.existsAll(classes) }
+        verify(exactly = 1) { classRepository.existsAllById(classes) }
         verify(exactly = 1) { contributorRepository.findById(contributorId) }
         verify(exactly = 1) { observatoryRepository.existsById(observatoryId) }
         verify(exactly = 1) { organizationRepository.findById(organizationId) }

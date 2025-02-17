@@ -115,7 +115,7 @@ class AbstractTemplatePropertyUpdater(
         } else if (oldProperty is StringLiteralTemplateProperty) {
             val toRemove = statements.wherePredicate(Predicates.shPattern)
             if (toRemove.isNotEmpty()) {
-                statementService.delete(toRemove.map { it.id }.toSet())
+                statementService.deleteAllById(toRemove.map { it.id }.toSet())
             }
         }
 
@@ -147,7 +147,7 @@ class AbstractTemplatePropertyUpdater(
         } else if (oldProperty is NumberLiteralTemplateProperty) {
             val toRemove = statements.filter { it.predicate.id == Predicates.shMinInclusive || it.predicate.id == Predicates.shMaxInclusive }
             if (toRemove.isNotEmpty()) {
-                statementService.delete(toRemove.map { it.id }.toSet())
+                statementService.deleteAllById(toRemove.map { it.id }.toSet())
             }
         }
 
@@ -155,7 +155,7 @@ class AbstractTemplatePropertyUpdater(
             if (oldProperty is LiteralTemplateProperty && newProperty.datatype != oldProperty.datatype.id || oldProperty !is LiteralTemplateProperty) {
                 val toRemove = statements.filter { it.predicate.id == Predicates.shDatatype || it.predicate.id == Predicates.shClass }
                 if (toRemove.isNotEmpty()) {
-                    statementService.delete(toRemove.map { it.id }.toSet())
+                    statementService.deleteAllById(toRemove.map { it.id }.toSet())
                 }
                 unsafeStatementUseCases.create(
                     CreateCommand(
@@ -170,7 +170,7 @@ class AbstractTemplatePropertyUpdater(
             if (oldProperty is ResourceTemplateProperty && newProperty.`class` != oldProperty.`class`.id || oldProperty !is ResourceTemplateProperty) {
                 val toRemove = statements.filter { it.predicate.id == Predicates.shDatatype || it.predicate.id == Predicates.shClass }
                 if (toRemove.isNotEmpty()) {
-                    statementService.delete(toRemove.map { it.id }.toSet())
+                    statementService.deleteAllById(toRemove.map { it.id }.toSet())
                 }
                 unsafeStatementUseCases.create(
                     CreateCommand(
@@ -184,7 +184,7 @@ class AbstractTemplatePropertyUpdater(
         } else if (newProperty is UntypedPropertyDefinition && oldProperty !is UntypedTemplateProperty) {
             val toRemove = statements.filter { it.predicate.id == Predicates.shDatatype || it.predicate.id == Predicates.shClass }
             if (toRemove.isNotEmpty()) {
-                statementService.delete(toRemove.map { it.id }.toSet())
+                statementService.deleteAllById(toRemove.map { it.id }.toSet())
             }
         }
 

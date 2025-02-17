@@ -117,14 +117,14 @@ class ObservatoryService(
     override fun findByDisplayId(id: String): Optional<Observatory> =
         postgresObservatoryRepository.findByDisplayId(id)
 
-    override fun findAllByResearchField(researchFieldId: ThingId, pageable: Pageable): Page<Observatory> {
+    override fun findAllByResearchFieldId(researchFieldId: ThingId, pageable: Pageable): Page<Observatory> {
         resourceRepository.findById(researchFieldId)
             .filter { resource -> Classes.researchField in resource.classes }
             .orElseThrow { ResearchFieldNotFound(researchFieldId) }
         return postgresObservatoryRepository.findAllByResearchField(researchFieldId, pageable)
     }
 
-    override fun removeAll() = postgresObservatoryRepository.deleteAll()
+    override fun deleteAll() = postgresObservatoryRepository.deleteAll()
 
     override fun changeName(id: ObservatoryId, name: String) {
         val observatory = postgresObservatoryRepository.findById(id)

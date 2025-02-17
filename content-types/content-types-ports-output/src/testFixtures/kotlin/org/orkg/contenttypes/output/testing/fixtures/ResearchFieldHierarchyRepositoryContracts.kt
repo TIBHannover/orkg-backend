@@ -80,7 +80,7 @@ fun <
 
     describe("finding the subfields of a research field") {
         context("when no children exist") {
-            val result = repository.findChildren(ThingId("4"), PageRequest.of(0, 5))
+            val result = repository.findAllChildrenByAncestorId(ThingId("4"), PageRequest.of(0, 5))
 
             it("returns the correct result") {
                 result shouldNotBe null
@@ -101,7 +101,7 @@ fun <
         }
         describe("when several children exist") {
             createTree()
-            val result = repository.findChildren(ThingId("1"), PageRequest.of(0, 5))
+            val result = repository.findAllChildrenByAncestorId(ThingId("1"), PageRequest.of(0, 5))
 
             it("returns the correct result") {
                 result shouldNotBe null
@@ -129,7 +129,7 @@ fun <
     describe("finding the parent research field of a research field") {
         context("when a parent research field exists") {
             createTree()
-            val result = repository.findParents(ThingId("2"), PageRequest.of(0, 5))
+            val result = repository.findAllParentsByChildId(ThingId("2"), PageRequest.of(0, 5))
 
             it("returns the correct result") {
                 result shouldNotBe null
@@ -153,7 +153,7 @@ fun <
         }
         context("when no parent research field exists") {
             createTree()
-            val result = repository.findParents(ThingId("4"), PageRequest.of(0, 5))
+            val result = repository.findAllParentsByChildId(ThingId("4"), PageRequest.of(0, 5))
 
             it("returns the correct result") {
                 result shouldNotBe null
@@ -172,7 +172,7 @@ fun <
     describe("finding the root research fields of a research field") {
         context("when only one hop is required") {
             createTree()
-            val result = repository.findRoots(ThingId("3"), PageRequest.of(0, 5))
+            val result = repository.findAllRootsByDescendantId(ThingId("3"), PageRequest.of(0, 5))
 
             it("returns the correct result") {
                 result shouldNotBe null
@@ -196,7 +196,7 @@ fun <
         }
         context("when several hops are required") {
             createTree()
-            val result = repository.findRoots(ThingId("6"), PageRequest.of(0, 5))
+            val result = repository.findAllRootsByDescendantId(ThingId("6"), PageRequest.of(0, 5))
 
             it("returns the correct result") {
                 result shouldNotBe null
@@ -220,7 +220,7 @@ fun <
         }
         context("when no root research field exists") {
             createTree()
-            val result = repository.findRoots(ThingId("4"), PageRequest.of(0, 5))
+            val result = repository.findAllRootsByDescendantId(ThingId("4"), PageRequest.of(0, 5))
 
             it("returns the correct result") {
                 result shouldNotBe null
@@ -262,7 +262,7 @@ fun <
     describe("finding the research field hierarchy of a research field") {
         context("for a root research field") {
             createTree()
-            val result = repository.findResearchFieldHierarchy(ThingId("1"), PageRequest.of(0, 5))
+            val result = repository.findResearchFieldHierarchyByResearchFieldId(ThingId("1"), PageRequest.of(0, 5))
 
             it("returns the correct result") {
                 result shouldNotBe null
@@ -286,7 +286,7 @@ fun <
         }
         context("for a subfield") {
             createTree()
-            val result = repository.findResearchFieldHierarchy(ThingId("3"), PageRequest.of(0, 5))
+            val result = repository.findResearchFieldHierarchyByResearchFieldId(ThingId("3"), PageRequest.of(0, 5))
 
             it("returns the correct result") {
                 result shouldNotBe null
@@ -311,7 +311,7 @@ fun <
         }
         context("for an orphan research field") {
             createTree()
-            val result = repository.findResearchFieldHierarchy(ThingId("4"), PageRequest.of(0, 5))
+            val result = repository.findResearchFieldHierarchyByResearchFieldId(ThingId("4"), PageRequest.of(0, 5))
 
             it("returns the correct result") {
                 result shouldNotBe null

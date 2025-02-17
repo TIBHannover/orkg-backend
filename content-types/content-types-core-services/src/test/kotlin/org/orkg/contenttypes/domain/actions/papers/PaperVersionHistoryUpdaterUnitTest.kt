@@ -103,7 +103,7 @@ internal class PaperVersionHistoryUpdaterUnitTest : MockkBaseTest {
             paperVersionId = paperVersionId
         )
 
-        every { statementService.delete(setOf(statementId)) } just runs
+        every { statementService.deleteAllById(setOf(statementId)) } just runs
         every {
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
@@ -131,7 +131,7 @@ internal class PaperVersionHistoryUpdaterUnitTest : MockkBaseTest {
             it.paperVersionId shouldBe paperVersionId
         }
 
-        verify(exactly = 1) { statementService.delete(setOf(statementId)) }
+        verify(exactly = 1) { statementService.deleteAllById(setOf(statementId)) }
         verify(exactly = 1) {
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(

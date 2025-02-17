@@ -8,5 +8,5 @@ interface CreateClassHierarchyUseCase {
 }
 
 interface DeleteClassHierarchyUseCase {
-    fun delete(childId: ThingId)
+    fun deleteByChildId(childId: ThingId)
 }

@@ -8,5 +8,5 @@ import org.springframework.data.domain.Pageable
 
 interface AuthorRepository {
     fun findTopAuthorsOfComparison(id: ThingId, pageable: Pageable): Page<ComparisonAuthor>
-    fun findAuthorsLeaderboardPerProblem(problemId: ThingId, pageable: Pageable): Page<PaperAuthor>
+    fun findAllByProblemId(problemId: ThingId, pageable: Pageable): Page<PaperAuthor>
 }

@@ -18,7 +18,7 @@ OPTIONAL MATCH (p)-[:RELATED {predicate_id: 'P29'}]->(year:Thing)
 WITH cont.id AS contributionId, cont.label AS label, p.label AS title, year.label AS year, p.id AS paperId
 RETURN contributionId, label, title, year, paperId $PAGE_PARAMS""",
         countQuery = """UNWIND $ids AS id MATCH (r:Resource {id: id}) RETURN COUNT(r) AS cnt""")
-    fun findContributionsDetailsById(ids: List<ThingId>, pageable: Pageable): Page<Neo4jContributionInfo>
+    fun findAllContributionDetailsById(ids: List<ThingId>, pageable: Pageable): Page<Neo4jContributionInfo>
 }
 
 data class Neo4jContributionInfo(

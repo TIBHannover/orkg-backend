@@ -1,9 +1,9 @@
 package org.orkg.contenttypes.adapter.output.neo4j
 
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.adapter.output.neo4j.internal.Neo4jDatasetSummary
 import org.orkg.contenttypes.adapter.output.neo4j.internal.Neo4jDataset
 import org.orkg.contenttypes.adapter.output.neo4j.internal.Neo4jDatasetRepository
+import org.orkg.contenttypes.adapter.output.neo4j.internal.Neo4jDatasetSummary
 import org.orkg.contenttypes.domain.Dataset
 import org.orkg.contenttypes.domain.DatasetSummary
 import org.orkg.contenttypes.output.FindDatasetsQuery
@@ -20,10 +20,6 @@ class DatasetAdapter(
     override fun findAllDatasetsByResearchProblemId(id: ThingId, pageable: Pageable): Page<Dataset> =
         datasetRepository.findAllDatasetsByResearchProblemId(id, pageable)
             .map(Neo4jDataset::toDataset)
-
-    override fun by(id: ThingId, pageable: Pageable): Page<DatasetSummary> =
-        datasetRepository.summarizeDatasetQueryById(id, pageable)
-            .map(Neo4jDatasetSummary::toDatasetSummary)
 
     override fun findAllDatasetSummariesByIdAndResearchProblemId(id: ThingId, problemId: ThingId, pageable: Pageable): Page<DatasetSummary> =
         datasetRepository.findAllDatasetSummariesByIdAndResearchProblemId(id, problemId, pageable)

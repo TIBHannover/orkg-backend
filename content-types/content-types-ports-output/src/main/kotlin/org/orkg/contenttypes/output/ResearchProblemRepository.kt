@@ -36,6 +36,4 @@ interface ResearchProblemRepository {
     fun findTopResearchProblemsAllTime(): Iterable<Resource>
     fun findAllContributorsPerProblem(problemId: ThingId, pageable: Pageable): Page<ContributorPerProblem>
     fun findAllByDatasetId(datasetId: ThingId, pageable: Pageable): Page<Resource>
-    fun findAllListedProblems(pageable: Pageable): Page<Resource>
-    fun findAllProblemsByVisibility(visibility: Visibility, pageable: Pageable): Page<Resource>
 }

@@ -2,8 +2,8 @@ package org.orkg.contenttypes.adapter.output.neo4j
 
 import java.util.*
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.adapter.output.neo4j.internal.Neo4jResearchFieldWithPaperCount
 import org.orkg.contenttypes.adapter.output.neo4j.internal.Neo4jProblemRepository
+import org.orkg.contenttypes.adapter.output.neo4j.internal.Neo4jResearchFieldWithPaperCount
 import org.orkg.contenttypes.output.ResearchProblemRepository
 import org.orkg.graph.domain.ContributorPerProblem
 import org.orkg.graph.domain.FieldWithFreq
@@ -103,12 +103,6 @@ class SpringDataNeo4jResearchProblemAdapter(
 
     override fun findAllByDatasetId(datasetId: ThingId, pageable: Pageable): Page<Resource> =
         neo4jRepository.findAllByDatasetId(datasetId, pageable).map { it.toResource() }
-
-    override fun findAllListedProblems(pageable: Pageable): Page<Resource> =
-        neo4jRepository.findAllListedProblems(pageable).map { it.toResource() }
-
-    override fun findAllProblemsByVisibility(visibility: Visibility, pageable: Pageable): Page<Resource> =
-        neo4jRepository.findAllProblemsByVisibility(visibility, pageable).map { it.toResource() }
 
     fun Neo4jResearchFieldWithPaperCount.toFieldWithFreq() =
         FieldWithFreq(

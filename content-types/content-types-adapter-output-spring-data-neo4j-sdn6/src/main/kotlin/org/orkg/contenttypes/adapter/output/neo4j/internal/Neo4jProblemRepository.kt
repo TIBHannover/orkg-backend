@@ -154,14 +154,6 @@ interface Neo4jProblemRepository :
         countQuery = """MATCH (ds:$DATASET_CLASS {id: $datasetId})<-[:RELATED {predicate_id: '$DATASET_PREDICATE'}]-(:$BENCHMARK_CLASS)<-[:RELATED {predicate_id: '$BENCHMARK_PREDICATE'}]-(:Contribution:Resource)-[:RELATED {predicate_id: 'P32'}]->(problem:Problem:Resource)
                     RETURN COUNT(DISTINCT problem) as cnt""")
     fun findAllByDatasetId(datasetId: ThingId, pageable: Pageable): Page<Neo4jResource>
-
-    @Query("""$MATCH_LISTED_PROBLEM $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE $PAGE_PARAMS""",
-        countQuery = """$MATCH_LISTED_PROBLEM $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE_COUNT""")
-    fun findAllListedProblems(pageable: Pageable): Page<Neo4jResource>
-
-    @Query("""$MATCH_PROBLEM $WHERE_VISIBILITY $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE $PAGE_PARAMS""",
-        countQuery = """$MATCH_PROBLEM $WHERE_VISIBILITY $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE_COUNT""")
-    fun findAllProblemsByVisibility(visibility: Visibility, pageable: Pageable): Page<Neo4jResource>
 }
 
 data class Neo4jResearchFieldWithPaperCount(

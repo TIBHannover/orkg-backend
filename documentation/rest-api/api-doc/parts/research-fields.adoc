@@ -13,6 +13,8 @@ NOTE: In the following sections, the response fields of the page object are omit
 A `GET` request for a given research field returns a <<sorting-and-pagination,paged>> list of content type <<resources,resources>> that belong to the given research field.
 The endpoint supports <<visibility-filtering-legacy>>.
 
+IMPORTANT: **Deprecated.** Replace with <<content-types-list,Listing Content-Types>>.
+
 operation::research-fields-get-paged[snippets='path-parameters,path-parameters,query-parameters,curl-request']
 
 [[research-fields-fetch-with-subfields]]
@@ -22,6 +24,7 @@ A `GET` request to `/api/research-fields/{id}/subfields` returns a <<sorting-and
 
 All path, request and response parameters are exactly the same as on the <<research-fields-fetch,endpoint without subfields>>.
 
+IMPORTANT: **Deprecated.** Replace with <<content-types-list,Listing Content-Types>>.
 
 == Research Fields and Research Problems
 
@@ -67,6 +70,8 @@ All path and request parameters are exactly the same as on the <<research-fields
 
 A `GET` request returns a <<sorting-and-pagination,paged>> list of paper <<resources,resources>> belonging to a given research field.
 
+IMPORTANT: **Deprecated.** Replace with <<papers-list,Listing Papers>>.
+
 operation::research-fields-get-papers-per-field[snippets='path-parameters,curl-request']
 
 
@@ -77,6 +82,8 @@ A `GET` request to `/api/research-fields/\{id}/subfields/papers` returns a <<sor
 
 All path and request parameters are exactly the same as on the <<research-fields-list-papers,endpoint without subfields>>.
 
+IMPORTANT: **Deprecated.** Replace with <<papers-list,Listing Papers>>.
+
 
 == Research Fields and Comparisons
 
@@ -84,6 +91,8 @@ All path and request parameters are exactly the same as on the <<research-fields
 === Listing Comparisons of Research Fields
 
 A `GET` request returns a <<sorting-and-pagination,paged>> list of comparison <<resources,resources>> belonging to a given research field.
+
+IMPORTANT: **Deprecated.** Replace with <<comparisons-list,Listing Comparisons>>.
 
 operation::research-fields-get-comparisons-per-field[snippets='path-parameters,curl-request']
 
@@ -93,6 +102,8 @@ operation::research-fields-get-comparisons-per-field[snippets='path-parameters,c
 A `GET` request to `/api/research-fields/{id}/subfields/comparisons` returns a <<sorting-and-pagination,paged>> list of comparison <<resources,resources>> belonging to a given research field and its subfields.
 
 All path and request parameters are exactly the same as on the <<research-fields-list-comparisons,endpoint without subfields>>.
+
+IMPORTANT: **Deprecated.** Replace with <<comparisons-list,Listing Comparisons>>.
 
 [[research-fields-list-children]]
 == Listing Subfields
@@ -137,5 +148,7 @@ include::{snippets}/research-fields-research-field-hierarchy-entry/response-fiel
 == Listing Statistics about Research Fields
 
 A `GET` request lists statistics about a research field. Optionally accounts for subfields.
+
+IMPORTANT: **Deprecated.** Replace with <<statistics-fetch-metric,Fetching Metrics>>.
 
 operation::stats-research-fields[snippets='path-parameters,query-parameters,curl-request,http-response,response-fields']

@@ -9,11 +9,11 @@ import org.springframework.data.neo4j.repository.query.Query
 private const val id = "${'$'}id"
 private const val ids = "${'$'}ids"
 
-private const val PAGE_PARAMS = ":#{orderBy(#pageable)} SKIP ${'$'}skip LIMIT ${'$'}limit"
+private const val ORDER_BY_PAGE_PARAMS = ":#{orderBy(#pageable)} SKIP ${'$'}skip LIMIT ${'$'}limit"
 
 interface Neo4jThingRepository : Neo4jRepository<Neo4jThing, ThingId> {
 
-    @Query("""MATCH (n:Thing) OPTIONAL MATCH (n)-[r:RELATED]->(m:Thing) RETURN n, COLLECT(r) AS relations, COLLECT(m) AS relatedNodes $PAGE_PARAMS""",
+    @Query("""MATCH (n:Thing) RETURN n $ORDER_BY_PAGE_PARAMS""",
         countQuery = """MATCH (n:Thing) RETURN COUNT(n)""")
     override fun findAll(pageable: Pageable): Page<Neo4jThing>
 

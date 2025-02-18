@@ -14,8 +14,7 @@ private const val PAGE_PARAMS = ":#{orderBy(#pageable)} SKIP ${'$'}skip LIMIT ${
 interface Neo4jResearchFieldHierarchyRepository : Neo4jRepository<Neo4jResource, ThingId> {
     @Query("""
 MATCH (p:ResearchField {id: $id})-[:RELATED {predicate_id: "P36"}]->(c:ResearchField)
-OPTIONAL MATCH (c)-[:RELATED {predicate_id: "P36"}]->(g:ResearchField)
-WITH c AS resource, COUNT(g) AS childCount
+WITH c AS resource, COUNT { MATCH (c)-[:RELATED {predicate_id: "P36"}]->(:ResearchField) } AS childCount
 ORDER BY resource.id ASC
 RETURN resource, childCount $PAGE_PARAMS""",
         countQuery = """
@@ -57,11 +56,8 @@ RETURN COUNT(r) AS cnt""")
 
     @Query("""
 MATCH (c:ResearchField {id: $id})<-[:RELATED*0.. {predicate_id: "P36"}]-(p:ResearchField)
-WITH COLLECT(p) + COLLECT(c) AS researchFields
-UNWIND researchFields AS researchField
-WITH DISTINCT researchField
-OPTIONAL MATCH (researchField)<-[:RELATED {predicate_id: "P36"}]-(p:ResearchField)
-WITH researchField, COLLECT(p.id) AS parentIds
+WITH DISTINCT p AS researchField
+WITH researchField, COLLECT { MATCH (researchField)<-[:RELATED {predicate_id: "P36"}]-(p:ResearchField) RETURN p.id } AS parentIds
 ORDER BY researchField.id ASC
 RETURN researchField AS resource, parentIds $PAGE_PARAMS""",
         countQuery = """

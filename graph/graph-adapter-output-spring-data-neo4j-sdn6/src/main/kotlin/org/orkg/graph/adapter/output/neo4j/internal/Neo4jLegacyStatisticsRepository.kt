@@ -20,7 +20,7 @@ private const val ORDER_BY_PAGE_PARAMS = ":#{orderBy(#pageable)} $PAGE_PARAMS"
 
 interface Neo4jLegacyStatisticsRepository : Neo4jRepository<Neo4jResource, ThingId> {
 
-    @Query("""MATCH (n:ResearchField) WITH n OPTIONAL MATCH (n)-[:RELATED*0..3 {predicate_id: 'P36'}]->(r:ResearchField) OPTIONAL MATCH (r)<-[:RELATED {predicate_id: 'P30'}]-(p:Paper) RETURN n.id AS fieldId, n.label AS field, COUNT(p) AS papers""")
+    @Query("""MATCH (n:ResearchField) RETURN n.id AS fieldId, n.label AS field, COUNT { MATCH (n)-[:RELATED*0..3 {predicate_id: 'P36'}]->(r:ResearchField)<-[:RELATED {predicate_id: 'P30'}]-(p:Paper) RETURN p } AS papers""")
     fun getResearchFieldsPapersCount(): Iterable<FieldsStats>
 
     @Query("""MATCH (n:Paper {observatory_id: $id}) RETURN COUNT(n) As totalPapers""")
@@ -30,19 +30,30 @@ interface Neo4jLegacyStatisticsRepository : Neo4jRepository<Neo4jResource, Thing
     fun getObservatoryComparisonsCount(id: ObservatoryId): Long
 
     @Query("""
-MATCH (n:Paper)
-WHERE n.observatory_id <> '00000000-0000-0000-0000-000000000000'
-WITH n.observatory_id AS observatoryId, COUNT(n) AS papers
-OPTIONAL MATCH (c:ComparisonPublished:LatestVersion)
-WHERE c.observatory_id <> '00000000-0000-0000-0000-000000000000' AND c.observatory_id = observatoryId
-WITH observatoryId, COUNT(c) AS comparisons, papers
+CALL () {
+    MATCH (n:Paper)
+    WHERE n.observatory_id <> '00000000-0000-0000-0000-000000000000'
+    RETURN n.observatory_id AS observatoryId, COUNT(n) AS papers, 0 AS comparisons
+    UNION
+    MATCH (c:ComparisonPublished:LatestVersion)
+    WHERE c.observatory_id <> '00000000-0000-0000-0000-000000000000'
+    RETURN c.observatory_id AS observatoryId, 0 AS papers, COUNT(c) AS comparisons
+}
+WITH observatoryId, SUM(comparisons) AS comparisons, SUM(papers) AS papers
 WITH observatoryId, comparisons, papers, comparisons + papers AS total
 ORDER BY total DESC
 RETURN observatoryId, papers, comparisons, total $ORDER_BY_PAGE_PARAMS""",
     countQuery = """
-MATCH (n:Paper)
-WHERE n.observatory_id <> '00000000-0000-0000-0000-000000000000'
-RETURN COUNT(DISTINCT(n.observatory_id))""")
+CALL () {
+    MATCH (n:Paper)
+    WHERE n.observatory_id <> '00000000-0000-0000-0000-000000000000'
+    RETURN n.observatory_id AS observatoryId, COUNT(n) AS papers, 0 AS comparisons
+    UNION
+    MATCH (c:ComparisonPublished:LatestVersion)
+    WHERE c.observatory_id <> '00000000-0000-0000-0000-000000000000'
+    RETURN c.observatory_id AS observatoryId, 0 AS papers, COUNT(c) AS comparisons
+}
+RETURN COUNT(DISTINCT observatoryId)""")
     fun findAllObservatoryStats(pageable: Pageable): Page<ObservatoryStats>
 
     @Query("""
@@ -90,13 +101,15 @@ RETURN $id AS id, papers, comparisons, (papers + comparisons) AS total""")
     fun findResearchFieldStatsByIdIncludingSubfields(id: ThingId): Optional<ResearchFieldStats>
 
     @Query("""
-OPTIONAL MATCH (n:Paper {observatory_id: $id})
-WITH n.observatory_id AS observatoryId, COUNT(n) AS papers
-OPTIONAL MATCH (c:ComparisonPublished:LatestVersion {observatory_id: $id})
-WITH observatoryId, COUNT(c) AS comparisons, papers
-WITH observatoryId, comparisons, papers, comparisons + papers AS total
-ORDER BY total DESC
-RETURN $id AS observatoryId, papers, comparisons, total""")
+CALL () {
+    MATCH (n:Paper {observatory_id: $id})
+    RETURN COUNT(n) AS papers
+}
+CALL () {
+    MATCH (n:ComparisonPublished:LatestVersion {observatory_id: $id})
+    RETURN COUNT(n) AS comparisons
+}
+RETURN $id AS observatoryId, comparisons, papers, comparisons + papers AS total""")
     fun findObservatoryStatsById(id: ObservatoryId): Optional<ObservatoryStats>
 
     @Query("""

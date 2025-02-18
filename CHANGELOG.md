@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Fixed updating of observatory and organization ids for resources.
+  (See: [!1218](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1218))
 
 ## [0.77.3] - 2025-02-13
 ### Fixed

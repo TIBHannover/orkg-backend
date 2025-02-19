@@ -27,7 +27,7 @@ dependencies.constraints {
     api("dev.iurysouza:modulegraph:0.10.1")
 
     api("com.google.cloud.tools:jib-gradle-plugin:3.4.0")
-    api("com.diffplug.spotless:spotless-plugin-gradle:6.2.1")
+    api("com.diffplug.spotless:spotless-plugin-gradle:7.0.0")
     //api("com.diffplug.spotless:spotless-plugin-gradle:6.23.3")
     api("com.diffplug.spotless-changelog:spotless-changelog-plugin-gradle:2.4.0")
     //api("com.diffplug.spotless-changelog:spotless-changelog-plugin-gradle:3.0.2")

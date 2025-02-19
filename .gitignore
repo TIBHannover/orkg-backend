@@ -17,8 +17,8 @@ gradle-app.setting
 
 ### IntelliJ IDEA / JetBrains products
 .idea/*
-!.idea/codeStyles
-!.idea/codeStyles/*
+#!.idea/codeStyles     # Recommended by Ktlint
+#!.idea/codeStyles/*   # Recommended by Ktlint
 !.idea/runConfigurations
 !.idea/runConfigurations/*
 

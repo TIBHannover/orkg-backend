@@ -40,7 +40,7 @@ include(
     "graph:graph-ports-output",
     "graph:graph-adapter-input-rest-spring-mvc",
     "graph:graph-adapter-input-representations",
-    "graph:graph-adapter-output-spring-data-neo4j-sdn6",
+    "graph:graph-adapter-output-spring-data-neo4j",
     "graph:graph-adapter-output-in-memory",
     "graph:graph-adapter-output-web",
 )
@@ -53,7 +53,7 @@ include(
     "content-types:content-types-adapter-input-representations",
     "content-types:content-types-adapter-output-web",
     "content-types:content-types-adapter-output-simcomp",
-    "content-types:content-types-adapter-output-spring-data-neo4j-sdn6",
+    "content-types:content-types-adapter-output-spring-data-neo4j",
 )
 include(
     "community:community-core-services",
@@ -95,7 +95,7 @@ include(
     "profiling:profiling-core-services",
     "profiling:profiling-ports-output",
     "profiling:profiling-adapter-output",
-    "profiling:profiling-adapter-output-spring-data-neo4j-sdn6",
+    "profiling:profiling-adapter-output-spring-data-neo4j",
 )
 include(
     "statistics:statistics-core-model",
@@ -104,14 +104,14 @@ include(
     "statistics:statistics-ports-output",
     "statistics:statistics-adapter-input-rest-spring-mvc",
     "statistics:statistics-adapter-input-representations",
-    "statistics:statistics-adapter-output-spring-data-neo4j-sdn6",
+    "statistics:statistics-adapter-output-spring-data-neo4j",
 )
 include(
     "curation:curation-core-services",
     "curation:curation-ports-input",
     "curation:curation-ports-output",
     "curation:curation-adapter-input-rest-spring-mvc",
-    "curation:curation-adapter-output-spring-data-neo4j-sdn6",
+    "curation:curation-adapter-output-spring-data-neo4j",
 )
 include("widget")
 include("rest-api-server")

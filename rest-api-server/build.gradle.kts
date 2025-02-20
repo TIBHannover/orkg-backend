@@ -113,7 +113,7 @@ dependencies {
 
     runtimeOnly(project(":content-types:content-types-adapter-input-rest-spring-mvc"))
     implementation(project(":content-types:content-types-adapter-output-simcomp"))
-    runtimeOnly(project(":content-types:content-types-adapter-output-spring-data-neo4j-sdn6"))
+    runtimeOnly(project(":content-types:content-types-adapter-output-spring-data-neo4j"))
     runtimeOnly(project(":content-types:content-types-adapter-output-web"))
     runtimeOnly(project(":content-types:content-types-core-model"))
     runtimeOnly(project(":content-types:content-types-core-services"))
@@ -127,7 +127,7 @@ dependencies {
     runtimeOnly(project(":eventbus"))
 
     runtimeOnly(project(":graph:graph-adapter-input-rest-spring-mvc"))
-    implementation(project(":graph:graph-adapter-output-spring-data-neo4j-sdn6"))
+    implementation(project(":graph:graph-adapter-output-spring-data-neo4j"))
     runtimeOnly(project(":graph:graph-adapter-output-web"))
     implementation(project(":graph:graph-core-constants"))
     implementation(project(":graph:graph-core-model"))
@@ -141,11 +141,11 @@ dependencies {
     runtimeOnly(project(":licenses:licenses-core-services"))
 
     runtimeOnly(project(":statistics:statistics-adapter-input-rest-spring-mvc"))
-    runtimeOnly(project(":statistics:statistics-adapter-output-spring-data-neo4j-sdn6"))
+    runtimeOnly(project(":statistics:statistics-adapter-output-spring-data-neo4j"))
     runtimeOnly(project(":statistics:statistics-core-services"))
 
     runtimeOnly(project(":curation:curation-adapter-input-rest-spring-mvc"))
-    runtimeOnly(project(":curation:curation-adapter-output-spring-data-neo4j-sdn6"))
+    runtimeOnly(project(":curation:curation-adapter-output-spring-data-neo4j"))
     runtimeOnly(project(":curation:curation-core-services"))
 
     runtimeOnly(project(":media-storage:media-storage-adapter-input-serialization"))
@@ -156,7 +156,7 @@ dependencies {
     runtimeOnly(project(":media-storage:media-storage-core-services"))
 
     runtimeOnly(project(":profiling:profiling-adapter-output"))
-    runtimeOnly(project(":profiling:profiling-adapter-output-spring-data-neo4j-sdn6"))
+    runtimeOnly(project(":profiling:profiling-adapter-output-spring-data-neo4j"))
     runtimeOnly(project(":profiling:profiling-core-model"))
     runtimeOnly(project(":profiling:profiling-core-services"))
     runtimeOnly(project(":profiling:profiling-ports-output"))

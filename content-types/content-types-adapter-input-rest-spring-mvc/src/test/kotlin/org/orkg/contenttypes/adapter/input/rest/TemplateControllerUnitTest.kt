@@ -27,6 +27,7 @@ import org.orkg.contenttypes.domain.InvalidCardinality
 import org.orkg.contenttypes.domain.InvalidMaxCount
 import org.orkg.contenttypes.domain.InvalidMinCount
 import org.orkg.contenttypes.domain.InvalidRegexPattern
+import org.orkg.contenttypes.domain.ResearchProblemNotFound
 import org.orkg.contenttypes.domain.TemplateAlreadyExistsForClass
 import org.orkg.contenttypes.domain.TemplateClosed
 import org.orkg.contenttypes.domain.TemplateNotFound
@@ -56,7 +57,6 @@ import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.PredicateNotFound
 import org.orkg.graph.domain.ResearchFieldNotFound
-import org.orkg.graph.domain.ResearchProblemNotFound
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.testing.asciidoc.allowedVisibilityValues

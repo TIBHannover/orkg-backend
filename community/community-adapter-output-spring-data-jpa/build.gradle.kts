@@ -21,7 +21,6 @@ dependencies {
     api("org.springframework:spring-beans")
     runtimeOnly("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("jakarta.validation:jakarta.validation-api")
-    implementation(project(":graph:graph-core-model"))
     implementation(project(":media-storage:media-storage-core-model"))
 }
 

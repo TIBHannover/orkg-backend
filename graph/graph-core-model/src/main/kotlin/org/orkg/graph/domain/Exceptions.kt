@@ -7,8 +7,6 @@ import org.orkg.common.exceptions.ForbiddenOperationException
 import org.orkg.common.exceptions.PropertyValidationException
 import org.orkg.common.exceptions.SimpleMessageException
 import org.springframework.http.HttpStatus
-import java.util.UUID
-import kotlin.collections.List
 
 class ResourceNotFound private constructor(
     override val message: String,
@@ -87,18 +85,6 @@ class ResearchFieldNotFound(id: ThingId) :
     SimpleMessageException(
         HttpStatus.NOT_FOUND,
         """Research field "$id" not found."""
-    )
-
-class ResearchProblemNotFound(id: ThingId) :
-    SimpleMessageException(
-        HttpStatus.NOT_FOUND,
-        """Research problem "$id" not found."""
-    )
-
-class DatasetNotFound(id: ThingId) :
-    SimpleMessageException(
-        HttpStatus.NOT_FOUND,
-        """Dataset "$id" not found."""
     )
 
 class ResourceInUse(id: ThingId) :
@@ -248,18 +234,6 @@ class InvalidLiteralDatatype :
         "A literal datatype must be a URI or a \"xsd:\"-prefixed type"
     )
 
-class UserNotFound(userId: UUID) :
-    SimpleMessageException(
-        HttpStatus.BAD_REQUEST,
-        """User "$userId" not found."""
-    )
-
-class OrphanOrcidValue(orcid: String) :
-    SimpleMessageException(
-        HttpStatus.BAD_REQUEST,
-        """The ORCID "$orcid" is not attached to any author."""
-    )
-
 class CannotResetURI(id: ThingId) :
     ForbiddenOperationException(
         "uri",
@@ -311,12 +285,6 @@ class ForbiddenStatementDeletion private constructor(
         )
     }
 }
-
-class TooFewIDsError(ids: List<ThingId>) :
-    SimpleMessageException(
-        HttpStatus.BAD_REQUEST,
-        """Too few ids: At least two ids are required. Got only "${ids.size}"."""
-    )
 
 class ListElementNotFound :
     PropertyValidationException(

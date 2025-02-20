@@ -12,7 +12,7 @@ import org.orkg.community.domain.Observatory
 import org.orkg.community.domain.ObservatoryNotFound
 import org.orkg.community.domain.Organization
 import org.orkg.community.domain.OrganizationNotFound
-import org.orkg.graph.domain.UserNotFound
+import org.orkg.community.domain.UserNotFound
 
 internal fun PostgresObservatoryRepository.toObservatoryEntity(
     observatory: Observatory,

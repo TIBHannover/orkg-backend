@@ -5,6 +5,7 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.exceptions.SimpleMessageException
 import org.springframework.http.HttpStatus
+import java.util.UUID
 
 class ObservatoryNotFound(id: ObservatoryId) :
     SimpleMessageException(
@@ -140,4 +141,10 @@ class ObservatoryFilterAlreadyExists(id: ObservatoryFilterId) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
         """Observatory filter "$id" already exists."""
+    )
+
+class UserNotFound(userId: UUID) :
+    SimpleMessageException(
+        HttpStatus.BAD_REQUEST,
+        """User "$userId" not found."""
     )

@@ -12,7 +12,6 @@ import org.orkg.contenttypes.input.LegacyPaperUseCases
 import org.orkg.contenttypes.output.PaperRepository
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
-import org.orkg.graph.domain.OrphanOrcidValue
 import org.orkg.graph.domain.PaperResourceWithPath
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource

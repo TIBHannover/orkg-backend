@@ -813,3 +813,27 @@ class InvalidIdentifier(
         name,
         cause.message!!
     )
+
+class ResearchProblemNotFound(id: ThingId) :
+    SimpleMessageException(
+        HttpStatus.NOT_FOUND,
+        """Research problem "$id" not found."""
+    )
+
+class DatasetNotFound(id: ThingId) :
+    SimpleMessageException(
+        HttpStatus.NOT_FOUND,
+        """Dataset "$id" not found."""
+    )
+
+class OrphanOrcidValue(orcid: String) :
+    SimpleMessageException(
+        HttpStatus.BAD_REQUEST,
+        """The ORCID "$orcid" is not attached to any author."""
+    )
+
+class TooFewIDsError(ids: List<ThingId>) :
+    SimpleMessageException(
+        HttpStatus.BAD_REQUEST,
+        """Too few ids: At least two ids are required. Got only "${ids.size}"."""
+    )

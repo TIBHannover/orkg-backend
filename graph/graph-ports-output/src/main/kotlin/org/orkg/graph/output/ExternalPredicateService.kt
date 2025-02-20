@@ -5,7 +5,10 @@ import org.orkg.graph.domain.ExternalThing
 
 interface ExternalPredicateService {
     fun findPredicateByShortForm(ontologyId: String, shortForm: String): ExternalThing?
+
     fun findPredicateByURI(ontologyId: String, uri: ParsedIRI): ExternalThing?
+
     fun supportsOntology(ontologyId: String): Boolean
+
     fun supportsMultipleOntologies(): Boolean
 }

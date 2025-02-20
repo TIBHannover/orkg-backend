@@ -6,11 +6,10 @@ import com.fasterxml.jackson.databind.SerializerProvider
 import org.orkg.graph.domain.StatementId
 
 class StatementIdSerializer : JsonSerializer<StatementId>() {
-
     override fun serialize(
         value: StatementId?,
         gen: JsonGenerator?,
-        serializers: SerializerProvider?
+        serializers: SerializerProvider?,
     ) {
         gen?.writeString(value.toString())
     }

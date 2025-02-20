@@ -1,6 +1,5 @@
 package org.orkg.contenttypes.domain.testing.fixtures
 
-import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -12,6 +11,7 @@ import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.testing.fixtures.createResource
+import java.time.OffsetDateTime
 
 fun createRosettaStoneStatement() = RosettaStoneStatement(
     id = ThingId("R123"),

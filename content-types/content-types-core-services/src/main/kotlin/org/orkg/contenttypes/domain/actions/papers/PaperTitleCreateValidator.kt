@@ -9,7 +9,7 @@ import org.orkg.graph.domain.Label
 import org.orkg.graph.input.ResourceUseCases
 
 class PaperTitleCreateValidator(
-    private val resourceService: ResourceUseCases
+    private val resourceService: ResourceUseCases,
 ) : CreatePaperAction {
     override fun invoke(command: CreatePaperCommand, state: CreatePaperState): CreatePaperState {
         Label.ofOrNull(command.title) ?: throw InvalidLabel("title")

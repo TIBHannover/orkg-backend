@@ -4,7 +4,6 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.util.*
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.testing.fixtures.MockkBaseTest
@@ -12,6 +11,7 @@ import org.orkg.community.output.ContributorRepository
 import org.orkg.community.testing.fixtures.createContributor
 import org.orkg.graph.domain.NotACurator
 import org.orkg.testing.MockUserId
+import java.util.Optional
 
 internal class VerifiedValidatorUnitTest : MockkBaseTest {
     private val contributorRepository: ContributorRepository = mockk()

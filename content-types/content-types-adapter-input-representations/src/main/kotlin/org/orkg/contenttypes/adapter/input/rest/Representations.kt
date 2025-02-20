@@ -12,7 +12,6 @@ import jakarta.validation.constraints.Max
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
-import java.time.OffsetDateTime
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
@@ -34,6 +33,7 @@ import org.orkg.graph.adapter.input.rest.StatementRepresentation
 import org.orkg.graph.adapter.input.rest.ThingRepresentation
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Visibility
+import java.time.OffsetDateTime
 
 sealed interface ContentTypeRepresentation {
     @get:JsonProperty("_class")
@@ -69,7 +69,7 @@ data class PaperRepresentation(
     @get:JsonInclude(Include.NON_NULL)
     @get:JsonProperty("unlisted_by")
     val unlistedBy: ContributorId?,
-    override val jsonClass: String = "paper"
+    override val jsonClass: String = "paper",
 ) : ContentTypeRepresentation
 
 data class PublicationInfoRepresentation(
@@ -79,19 +79,19 @@ data class PublicationInfoRepresentation(
     val publishedYear: Long?,
     @get:JsonProperty("published_in")
     val publishedIn: ObjectIdAndLabel?,
-    val url: ParsedIRI?
+    val url: ParsedIRI?,
 )
 
 data class AuthorRepresentation(
     val id: ThingId?,
     val name: String,
     val identifiers: Map<String, List<String>>,
-    val homepage: ParsedIRI?
+    val homepage: ParsedIRI?,
 )
 
 data class LabeledObjectRepresentation(
     val id: ThingId,
-    val label: String
+    val label: String,
 )
 
 data class ContributionRepresentation(
@@ -108,7 +108,7 @@ data class ContributionRepresentation(
     val visibility: Visibility,
     @get:JsonInclude(Include.NON_NULL)
     @get:JsonProperty("unlisted_by")
-    val unlistedBy: ContributorId?
+    val unlistedBy: ContributorId?,
 )
 
 data class ComparisonRepresentation(
@@ -149,7 +149,7 @@ data class ComparisonRepresentation(
     @get:JsonProperty("unlisted_by")
     val unlistedBy: ContributorId?,
     val published: Boolean,
-    override val jsonClass: String = "comparison"
+    override val jsonClass: String = "comparison",
 ) : ContentTypeRepresentation
 
 data class ComparisonRelatedResourceRepresentation(
@@ -161,7 +161,7 @@ data class ComparisonRelatedResourceRepresentation(
     @get:JsonProperty("created_at")
     val createdAt: OffsetDateTime,
     @get:JsonProperty("created_by")
-    val createdBy: ContributorId
+    val createdBy: ContributorId,
 )
 
 data class ComparisonRelatedFigureRepresentation(
@@ -172,12 +172,12 @@ data class ComparisonRelatedFigureRepresentation(
     @get:JsonProperty("created_at")
     val createdAt: OffsetDateTime,
     @get:JsonProperty("created_by")
-    val createdBy: ContributorId
+    val createdBy: ContributorId,
 )
 
 data class VersionInfoRepresentation(
     val head: HeadVersionRepresentation,
-    val published: List<PublishedVersionRepresentation>
+    val published: List<PublishedVersionRepresentation>,
 )
 
 data class HeadVersionRepresentation(
@@ -196,7 +196,7 @@ data class PublishedVersionRepresentation(
     val createdAt: OffsetDateTime,
     @get:JsonProperty("created_by")
     val createdBy: ContributorId,
-    val changelog: String?
+    val changelog: String?,
 )
 
 data class VisualizationRepresentation(
@@ -216,7 +216,7 @@ data class VisualizationRepresentation(
     @get:JsonInclude(Include.NON_NULL)
     @get:JsonProperty("unlisted_by")
     val unlistedBy: ContributorId?,
-    override val jsonClass: String = "visualization"
+    override val jsonClass: String = "visualization",
 ) : ContentTypeRepresentation
 
 data class AuthorDTO(
@@ -225,7 +225,7 @@ data class AuthorDTO(
     val name: String,
     @field:Valid
     val identifiers: IdentifierMapDTO?,
-    val homepage: ParsedIRI?
+    val homepage: ParsedIRI?,
 ) {
     fun toAuthor(): Author =
         Author(
@@ -246,7 +246,7 @@ data class PublicationInfoDTO(
     @field:Size(min = 1)
     @JsonProperty("published_in")
     val publishedIn: String?,
-    val url: ParsedIRI?
+    val url: ParsedIRI?,
 ) {
     fun toPublicationInfoDefinition(): PublicationInfoDefinition =
         PublicationInfoDefinition(
@@ -281,7 +281,7 @@ data class TemplateRepresentation(
     @get:JsonInclude(Include.NON_NULL)
     @get:JsonProperty("unlisted_by")
     val unlistedBy: ContributorId?,
-    override val jsonClass: String = "template"
+    override val jsonClass: String = "template",
 ) : ContentTypeRepresentation
 
 data class TemplateRelationRepresentation(
@@ -298,13 +298,17 @@ sealed interface TemplatePropertyRepresentation {
     val placeholder: String?
     val description: String?
     val order: Long
+
     @get:JsonProperty("min_count")
     val minCount: Int?
+
     @get:JsonProperty("max_count")
     val maxCount: Int?
     val path: ObjectIdAndLabel
+
     @get:JsonProperty("created_at")
     val createdAt: OffsetDateTime
+
     @get:JsonProperty("created_by")
     val createdBy: ContributorId
 }
@@ -319,7 +323,7 @@ data class UntypedTemplatePropertyRepresentation(
     override val maxCount: Int?,
     override val path: ObjectIdAndLabel,
     override val createdAt: OffsetDateTime,
-    override val createdBy: ContributorId
+    override val createdBy: ContributorId,
 ) : TemplatePropertyRepresentation
 
 sealed interface LiteralTemplatePropertyRepresentation : TemplatePropertyRepresentation {
@@ -356,7 +360,7 @@ data class NumberLiteralTemplatePropertyRepresentation(
     override val path: ObjectIdAndLabel,
     override val createdAt: OffsetDateTime,
     override val createdBy: ContributorId,
-    override val datatype: ClassReferenceRepresentation
+    override val datatype: ClassReferenceRepresentation,
 ) : LiteralTemplatePropertyRepresentation
 
 data class OtherLiteralTemplatePropertyRepresentation(
@@ -370,7 +374,7 @@ data class OtherLiteralTemplatePropertyRepresentation(
     override val path: ObjectIdAndLabel,
     override val createdAt: OffsetDateTime,
     override val createdBy: ContributorId,
-    override val datatype: ClassReferenceRepresentation
+    override val datatype: ClassReferenceRepresentation,
 ) : LiteralTemplatePropertyRepresentation
 
 data class ResourceTemplatePropertyRepresentation(
@@ -384,7 +388,7 @@ data class ResourceTemplatePropertyRepresentation(
     override val path: ObjectIdAndLabel,
     override val createdAt: OffsetDateTime,
     override val createdBy: ContributorId,
-    val `class`: ObjectIdAndLabel
+    val `class`: ObjectIdAndLabel,
 ) : TemplatePropertyRepresentation
 
 data class RosettaStoneTemplateRepresentation(
@@ -408,12 +412,12 @@ data class RosettaStoneTemplateRepresentation(
     @get:JsonInclude(Include.NON_NULL)
     @get:JsonProperty("unlisted_by")
     val unlistedBy: ContributorId?,
-    val modifiable: Boolean
+    val modifiable: Boolean,
 )
 
 data class TemplateInstanceRepresentation(
     val root: ResourceRepresentation,
-    val statements: Map<ThingId, List<EmbeddedStatementRepresentation>>
+    val statements: Map<ThingId, List<EmbeddedStatementRepresentation>>,
 )
 
 data class EmbeddedStatementRepresentation(
@@ -422,7 +426,7 @@ data class EmbeddedStatementRepresentation(
     val createdAt: OffsetDateTime,
     @get:JsonProperty("created_by")
     val createdBy: ContributorId,
-    val statements: Map<ThingId, List<EmbeddedStatementRepresentation>>
+    val statements: Map<ThingId, List<EmbeddedStatementRepresentation>>,
 )
 
 data class LiteratureListRepresentation(
@@ -449,7 +453,7 @@ data class LiteratureListRepresentation(
     val published: Boolean,
     val sections: List<LiteratureListSectionRepresentation>,
     val acknowledgements: Map<ContributorId, Double>,
-    override val jsonClass: String = "literature-list"
+    override val jsonClass: String = "literature-list",
 ) : ContentTypeRepresentation
 
 @JsonTypeInfo(
@@ -457,10 +461,12 @@ data class LiteratureListRepresentation(
     include = JsonTypeInfo.As.PROPERTY,
     property = "type"
 )
-@JsonSubTypes(value = [
-    JsonSubTypes.Type(ListSectionRepresentation::class),
-    JsonSubTypes.Type(TextSectionRepresentation::class)
-])
+@JsonSubTypes(
+    value = [
+        JsonSubTypes.Type(ListSectionRepresentation::class),
+        JsonSubTypes.Type(TextSectionRepresentation::class)
+    ]
+)
 sealed interface LiteratureListSectionRepresentation {
     val id: ThingId
 }
@@ -468,11 +474,11 @@ sealed interface LiteratureListSectionRepresentation {
 @JsonTypeName("list")
 data class ListSectionRepresentation(
     override val id: ThingId,
-    val entries: List<EntryRepresentation>
+    val entries: List<EntryRepresentation>,
 ) : LiteratureListSectionRepresentation {
     data class EntryRepresentation(
         val value: ResourceReferenceRepresentation,
-        val description: String?
+        val description: String?,
     )
 }
 
@@ -482,7 +488,7 @@ data class TextSectionRepresentation(
     val heading: String,
     @get:JsonProperty("heading_size")
     val headingSize: Int,
-    val text: String
+    val text: String,
 ) : LiteratureListSectionRepresentation
 
 data class SmartReviewRepresentation(
@@ -511,7 +517,7 @@ data class SmartReviewRepresentation(
     val sections: List<SmartReviewSectionRepresentation>,
     val references: List<String>,
     val acknowledgements: Map<ContributorId, Double>,
-    override val jsonClass: String = "smart-review"
+    override val jsonClass: String = "smart-review",
 ) : ContentTypeRepresentation
 
 @JsonTypeInfo(
@@ -519,14 +525,16 @@ data class SmartReviewRepresentation(
     include = JsonTypeInfo.As.PROPERTY,
     property = "type"
 )
-@JsonSubTypes(value = [
-    JsonSubTypes.Type(SmartReviewComparisonSectionRepresentation::class),
-    JsonSubTypes.Type(SmartReviewVisualizationSectionRepresentation::class),
-    JsonSubTypes.Type(SmartReviewResourceSectionRepresentation::class),
-    JsonSubTypes.Type(SmartReviewPredicateSectionRepresentation::class),
-    JsonSubTypes.Type(SmartReviewOntologySectionRepresentation::class),
-    JsonSubTypes.Type(SmartReviewTextSectionRepresentation::class)
-])
+@JsonSubTypes(
+    value = [
+        JsonSubTypes.Type(SmartReviewComparisonSectionRepresentation::class),
+        JsonSubTypes.Type(SmartReviewVisualizationSectionRepresentation::class),
+        JsonSubTypes.Type(SmartReviewResourceSectionRepresentation::class),
+        JsonSubTypes.Type(SmartReviewPredicateSectionRepresentation::class),
+        JsonSubTypes.Type(SmartReviewOntologySectionRepresentation::class),
+        JsonSubTypes.Type(SmartReviewTextSectionRepresentation::class)
+    ]
+)
 sealed interface SmartReviewSectionRepresentation {
     val id: ThingId
     val heading: String
@@ -536,28 +544,28 @@ sealed interface SmartReviewSectionRepresentation {
 data class SmartReviewComparisonSectionRepresentation(
     override val id: ThingId,
     override val heading: String,
-    val comparison: ResourceReferenceRepresentation?
+    val comparison: ResourceReferenceRepresentation?,
 ) : SmartReviewSectionRepresentation
 
 @JsonTypeName("visualization")
 data class SmartReviewVisualizationSectionRepresentation(
     override val id: ThingId,
     override val heading: String,
-    val visualization: ResourceReferenceRepresentation?
+    val visualization: ResourceReferenceRepresentation?,
 ) : SmartReviewSectionRepresentation
 
 @JsonTypeName("resource")
 data class SmartReviewResourceSectionRepresentation(
     override val id: ThingId,
     override val heading: String,
-    val resource: ResourceReferenceRepresentation?
+    val resource: ResourceReferenceRepresentation?,
 ) : SmartReviewSectionRepresentation
 
 @JsonTypeName("property")
 data class SmartReviewPredicateSectionRepresentation(
     override val id: ThingId,
     override val heading: String,
-    val predicate: PredicateReferenceRepresentation?
+    val predicate: PredicateReferenceRepresentation?,
 ) : SmartReviewSectionRepresentation
 
 @JsonTypeName("ontology")
@@ -565,7 +573,7 @@ data class SmartReviewOntologySectionRepresentation(
     override val id: ThingId,
     override val heading: String,
     val entities: List<ThingReferenceRepresentation>,
-    val predicates: List<PredicateReferenceRepresentation>
+    val predicates: List<PredicateReferenceRepresentation>,
 ) : SmartReviewSectionRepresentation
 
 @JsonTypeName("text")
@@ -573,7 +581,7 @@ data class SmartReviewTextSectionRepresentation(
     override val id: ThingId,
     override val heading: String,
     val classes: Set<ThingId>,
-    val text: String
+    val text: String,
 ) : SmartReviewSectionRepresentation
 
 data class RosettaStoneStatementRepresentation(
@@ -612,7 +620,7 @@ data class RosettaStoneStatementRepresentation(
     val deletedBy: ContributorId?,
     @get:JsonInclude(Include.NON_NULL)
     @get:JsonProperty("deleted_at")
-    val deletedAt: OffsetDateTime?
+    val deletedAt: OffsetDateTime?,
 )
 
 @JsonTypeInfo(
@@ -620,12 +628,14 @@ data class RosettaStoneStatementRepresentation(
     include = JsonTypeInfo.As.PROPERTY,
     property = "_class"
 )
-@JsonSubTypes(value = [
-    JsonSubTypes.Type(PredicateReference::class),
-    JsonSubTypes.Type(ClassReference::class),
-    JsonSubTypes.Type(LiteralReference::class),
-    JsonSubTypes.Type(ResourceReference::class),
-])
+@JsonSubTypes(
+    value = [
+        JsonSubTypes.Type(PredicateReference::class),
+        JsonSubTypes.Type(ClassReference::class),
+        JsonSubTypes.Type(LiteralReference::class),
+        JsonSubTypes.Type(ResourceReference::class),
+    ]
+)
 sealed interface ThingReferenceRepresentation {
     val id: ThingId?
     val label: String
@@ -635,27 +645,27 @@ sealed interface ThingReferenceRepresentation {
 data class ResourceReferenceRepresentation(
     override val id: ThingId,
     override val label: String,
-    val classes: Set<ThingId>
+    val classes: Set<ThingId>,
 ) : ThingReferenceRepresentation
 
 @JsonTypeName("predicate_ref")
 data class PredicateReferenceRepresentation(
     override val id: ThingId,
-    override val label: String
+    override val label: String,
 ) : ThingReferenceRepresentation
 
 @JsonTypeName("class_ref")
 data class ClassReferenceRepresentation(
     override val id: ThingId,
     override val label: String,
-    val uri: ParsedIRI?
+    val uri: ParsedIRI?,
 ) : ThingReferenceRepresentation
 
 @JsonTypeName("literal_ref")
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class LiteralReferenceRepresentation(
     override val label: String,
-    val datatype: String
+    val datatype: String,
 ) : ThingReferenceRepresentation {
     override val id: ThingId? get() = null
 }
@@ -679,10 +689,10 @@ data class TableRepresentation(
     val createdBy: ContributorId,
     val visibility: Visibility,
     @get:JsonProperty("unlisted_by")
-    val unlistedBy: ContributorId? = null
+    val unlistedBy: ContributorId? = null,
 ) {
     data class RowRepresentation(
         val label: String?,
-        val data: List<ThingReferenceRepresentation?>
+        val data: List<ThingReferenceRepresentation?>,
     )
 }

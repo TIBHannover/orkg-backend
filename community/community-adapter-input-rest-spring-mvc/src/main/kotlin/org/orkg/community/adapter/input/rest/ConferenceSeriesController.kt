@@ -1,8 +1,6 @@
 package org.orkg.community.adapter.input.rest
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import java.time.LocalDate
-import java.util.*
 import jakarta.validation.Valid
 import org.orkg.common.OrganizationId
 import org.orkg.community.domain.BadPeerReviewType
@@ -24,16 +22,18 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
+import java.time.LocalDate
+import java.util.UUID
 
 @RestController
 @RequestMapping("/api/conference-series", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ConferenceSeriesController(
-    private val service: ConferenceSeriesUseCases
+    private val service: ConferenceSeriesUseCases,
 ) {
     @RequestMapping(method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun addConferenceSeries(
         @RequestBody @Valid conference: ConferenceSeriesRequest,
-        uriComponentsBuilder: UriComponentsBuilder
+        uriComponentsBuilder: UriComponentsBuilder,
     ): ResponseEntity<Any> {
         if (service.findByName(conference.name).isPresent) {
             throw ConferenceAlreadyExists.withName(conference.name)
@@ -53,9 +53,9 @@ class ConferenceSeriesController(
             )
         )
         val location = uriComponentsBuilder
-           .path("/api/conference-series/{id}")
-           .buildAndExpand(response.id)
-           .toUri()
+            .path("/api/conference-series/{id}")
+            .buildAndExpand(response.id)
+            .toUri()
         return ResponseEntity.created(location).body(service.findById(response.id).get())
     }
 
@@ -64,7 +64,9 @@ class ConferenceSeriesController(
         service.findAll(pageable)
 
     @GetMapping("/{id}")
-    fun findById(@PathVariable id: String): ConferenceSeries {
+    fun findById(
+        @PathVariable id: String,
+    ): ConferenceSeries {
         val response: ConferenceSeries = if (id.isValidUUID(id)) {
             service
                 .findById(ConferenceSeriesId(id))
@@ -78,10 +80,16 @@ class ConferenceSeriesController(
     }
 
     @GetMapping("/{id}/series")
-    fun findSeriesByConference(@PathVariable id: OrganizationId, pageable: Pageable): Page<ConferenceSeries> {
-        return service.findAllByOrganizationId(id, pageable)
+    fun findSeriesByConference(
+        @PathVariable id: OrganizationId,
+        pageable: Pageable,
+    ): Page<ConferenceSeries> = service.findAllByOrganizationId(id, pageable)
+
+    fun String.isValidUUID(id: String): Boolean = try {
+        UUID.fromString(id) != null
+    } catch (e: IllegalArgumentException) {
+        false
     }
-    fun String.isValidUUID(id: String): Boolean = try { UUID.fromString(id) != null } catch (e: IllegalArgumentException) { false }
 
     data class ConferenceSeriesRequest(
         @JsonProperty("organization_id")
@@ -90,7 +98,7 @@ class ConferenceSeriesController(
         @JsonProperty("display_id")
         val displayId: String,
         val url: String,
-        val metadata: MetadataDTO
+        val metadata: MetadataDTO,
     )
 
     data class MetadataDTO(
@@ -98,6 +106,6 @@ class ConferenceSeriesController(
         @JsonProperty("start_date")
         val startDate: LocalDate,
         @JsonProperty("review_type")
-        val reviewType: String
+        val reviewType: String,
     )
 }

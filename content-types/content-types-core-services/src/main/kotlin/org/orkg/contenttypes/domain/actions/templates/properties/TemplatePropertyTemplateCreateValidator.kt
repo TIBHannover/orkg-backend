@@ -10,12 +10,13 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.output.StatementRepository
 
 class TemplatePropertyTemplateCreateValidator(
-    private val statementRepository: StatementRepository
+    private val statementRepository: StatementRepository,
 ) : CreateTemplatePropertyAction {
     override fun invoke(command: CreateTemplatePropertyCommand, state: State): State {
         val statements = statementRepository.findAll(subjectId = command.templateId, pageable = PageRequests.ALL)
         statements.firstOrNull {
-            it.predicate.id == Predicates.shClosed && it.`object` is Literal &&
+            it.predicate.id == Predicates.shClosed &&
+                it.`object` is Literal &&
                 (it.`object` as Literal).datatype == Literals.XSD.BOOLEAN.prefixedUri &&
                 it.`object`.label.equals("true", ignoreCase = true)
         }?.let { throw TemplateClosed(command.templateId) }

@@ -8,11 +8,11 @@ import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
 class ComparisonSDGCreator(
-    private val statementCollectionPropertyCreator: StatementCollectionPropertyCreator
+    private val statementCollectionPropertyCreator: StatementCollectionPropertyCreator,
 ) : CreateComparisonAction {
     constructor(
         literalUseCases: LiteralUseCases,
-        unsafeStatementUseCases: UnsafeStatementUseCases
+        unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(StatementCollectionPropertyCreator(literalUseCases, unsafeStatementUseCases))
 
     override operator fun invoke(command: CreateComparisonCommand, state: CreateComparisonState): CreateComparisonState =

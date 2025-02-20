@@ -10,7 +10,7 @@ import org.orkg.graph.output.ResourceRepository
 
 class RosettaStoneTemplateExistenceValidator(
     private val rosettaStoneTemplateService: RosettaStoneTemplateService,
-    private val resourceRepository: ResourceRepository
+    private val resourceRepository: ResourceRepository,
 ) : UpdateRosettaStoneTemplateAction {
     override fun invoke(command: UpdateRosettaStoneTemplateCommand, state: State): State {
         val resource = resourceRepository.findById(command.templateId)

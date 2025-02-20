@@ -39,7 +39,6 @@ import org.springframework.web.context.WebApplicationContext
 @ExtendWith(RestDocumentationExtension::class)
 @TestPropertySource(properties = ["spring.jackson.mapper.sort-properties-alphabetically=true"])
 abstract class MockMvcBaseTest(val prefix: String) : MockkBaseTest {
-
     @Autowired
     protected lateinit var objectMapper: ObjectMapper
 
@@ -86,7 +85,7 @@ abstract class MockMvcBaseTest(val prefix: String) : MockkBaseTest {
     protected fun MockMultipartHttpServletRequestBuilder.json(
         name: String,
         data: Map<String, Any>,
-        originalFileName: String = "$name.json"
+        originalFileName: String = "$name.json",
     ): MockMultipartHttpServletRequestBuilder =
         file(MockMultipartFile(name, originalFileName, MediaType.APPLICATION_JSON_VALUE, data.toContent().toByteArray()))
 

@@ -1,11 +1,11 @@
 package org.orkg.common
 
-import java.util.*
 import org.orkg.common.exceptions.MalformedMediaTypeCapability
 import org.springframework.http.MediaType
+import java.util.Locale
 
 class MediaTypeCapabilities private constructor(
-    private val capabilities: Map<MediaTypeCapability<*>, Any>
+    private val capabilities: Map<MediaTypeCapability<*>, Any>,
 ) {
     val keys: Set<MediaTypeCapability<*>> get() = capabilities.keys
 

@@ -17,18 +17,23 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/papers", produces = [MediaType.APPLICATION_JSON_VALUE])
 class PaperUnlistedCommandController(
-    private val service: MarkAsUnlistedService
+    private val service: MarkAsUnlistedService,
 ) {
     @PutMapping("/{id}/metadata/unlisted")
     @RequireCuratorRole
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun markUnlisted(@PathVariable id: ThingId, currentUser: Authentication?) {
+    fun markUnlisted(
+        @PathVariable id: ThingId,
+        currentUser: Authentication?,
+    ) {
         service.markAsUnlisted(id, currentUser.contributorId())
     }
 
     @DeleteMapping("/{id}/metadata/unlisted")
     @RequireCuratorRole
-    fun markListed(@PathVariable id: ThingId) {
+    fun markListed(
+        @PathVariable id: ThingId,
+    ) {
         service.markAsListed(id)
     }
 }

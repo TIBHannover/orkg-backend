@@ -3,7 +3,6 @@ package org.orkg.graph.adapter.input.rest
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonInclude.Include
 import com.fasterxml.jackson.annotation.JsonProperty
-import java.time.OffsetDateTime
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
@@ -13,6 +12,7 @@ import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.Visibility
+import java.time.OffsetDateTime
 
 typealias PathRepresentation = List<List<ThingRepresentation>>
 
@@ -40,10 +40,12 @@ interface ContentTypeFlags {
     // TODO: split into separate representations, content types only
     @Deprecated(message = "Superseded by visibility field")
     val featured: Boolean
+
     @Deprecated(message = "Superseded by visibility field")
     val unlisted: Boolean
     val verified: Boolean
     val visibility: Visibility
+
     @get:JsonInclude(Include.NON_NULL)
     @get:JsonProperty("unlisted_by")
     val unlistedBy: ContributorId?
@@ -58,8 +60,9 @@ data class LiteralRepresentation(
     val modifiable: Boolean,
     // This is added to replace @JsonTypeInfo on the Thing data class
     @get:JsonProperty("_class")
-    val jsonClass: String = "literal"
-) : ThingRepresentation, ProvenanceMetadata
+    val jsonClass: String = "literal",
+) : ThingRepresentation,
+    ProvenanceMetadata
 
 data class ClassRepresentation(
     override val id: ThingId,
@@ -71,8 +74,9 @@ data class ClassRepresentation(
     val modifiable: Boolean,
     // This is added to replace @JsonTypeInfo on the Thing data class
     @get:JsonProperty("_class")
-    val jsonClass: String = "class"
-) : ThingRepresentation, ProvenanceMetadata
+    val jsonClass: String = "class",
+) : ThingRepresentation,
+    ProvenanceMetadata
 
 data class PredicateRepresentation(
     override val id: ThingId,
@@ -83,8 +87,9 @@ data class PredicateRepresentation(
     val modifiable: Boolean,
     // This is added to replace @JsonTypeInfo on the Thing data class
     @get:JsonProperty("_class")
-    val jsonClass: String = "predicate"
-) : ThingRepresentation, ProvenanceMetadata
+    val jsonClass: String = "predicate",
+) : ThingRepresentation,
+    ProvenanceMetadata
 
 data class ResourceRepresentation(
     override val id: ThingId,
@@ -109,8 +114,10 @@ data class ResourceRepresentation(
     // This is added to replace @JsonTypeInfo on the Thing data class
     @get:JsonProperty("_class")
     val jsonClass: String = "resource",
-    val modifiable: Boolean
-) : ThingRepresentation, ResourceProvenanceMetadata, ContentTypeFlags
+    val modifiable: Boolean,
+) : ThingRepresentation,
+    ResourceProvenanceMetadata,
+    ContentTypeFlags
 
 data class StatementRepresentation(
     val id: StatementId,
@@ -121,7 +128,7 @@ data class StatementRepresentation(
     override val createdBy: ContributorId,
     val modifiable: Boolean,
     @get:JsonInclude(Include.NON_NULL)
-    val index: Int?
+    val index: Int?,
 ) : ProvenanceMetadata
 
 data class ListRepresentation(
@@ -132,7 +139,7 @@ data class ListRepresentation(
     override val createdBy: ContributorId,
     val modifiable: Boolean,
     @get:JsonProperty("_class")
-    val jsonClass: String = "list"
+    val jsonClass: String = "list",
 ) : ProvenanceMetadata
 
 // TODO: Replace with data class that has two fields:
@@ -161,61 +168,63 @@ data class PaperResourceWithPathRepresentation(
     val extractionMethod: ExtractionMethod,
     // This is added to replace @JsonTypeInfo on the Thing data class
     @get:JsonProperty("_class")
-    val jsonClass: String = "resource"
-) : ThingRepresentation, ResourceProvenanceMetadata, ContentTypeFlags
+    val jsonClass: String = "resource",
+) : ThingRepresentation,
+    ResourceProvenanceMetadata,
+    ContentTypeFlags
 
 data class BundleRepresentation(
     @JsonProperty("root")
     val rootId: ThingId,
     @JsonProperty("statements")
-    val bundle: List<StatementRepresentation>
+    val bundle: List<StatementRepresentation>,
 )
 
 sealed interface AuthorRepresentation {
     data class ResourceAuthorRepresentation(
-        val value: ResourceRepresentation
+        val value: ResourceRepresentation,
     ) : AuthorRepresentation
 
     data class LiteralAuthorRepresentation(
-        val value: String
+        val value: String,
     ) : AuthorRepresentation
 }
 
 data class PaperAuthorRepresentation(
     val author: AuthorRepresentation,
-    val papers: Int
+    val papers: Int,
 )
 
 data class PaperCountPerResearchProblemRepresentation(
     val problem: ResourceRepresentation,
-    val papers: Long
+    val papers: Long,
 )
 
 data class FieldWithFreqRepresentation(
     val field: ResourceRepresentation,
-    val freq: Long
+    val freq: Long,
 )
 
 data class ChildClassRepresentation(
     val `class`: ClassRepresentation,
     @JsonProperty("child_count")
-    val childCount: Long
+    val childCount: Long,
 )
 
 data class ClassHierarchyEntryRepresentation(
     val `class`: ClassRepresentation,
     @JsonProperty("parent_id")
-    val parentId: ThingId?
+    val parentId: ThingId?,
 )
 
 data class ResearchFieldWithChildCountRepresentation(
     val resource: ResourceRepresentation,
     @JsonProperty("child_count")
-    val childCount: Long
+    val childCount: Long,
 )
 
 data class ResearchFieldHierarchyEntryRepresentation(
     val resource: ResourceRepresentation,
     @JsonProperty("parent_ids")
-    val parentIds: Set<ThingId>
+    val parentIds: Set<ThingId>,
 )

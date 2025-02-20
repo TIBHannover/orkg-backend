@@ -18,7 +18,7 @@ private val bundleConfiguration = BundleConfiguration(
 
 class SmartReviewVersionArchiver(
     private val statementService: StatementUseCases,
-    private val smartReviewPublishedRepository: SmartReviewPublishedRepository
+    private val smartReviewPublishedRepository: SmartReviewPublishedRepository,
 ) : PublishSmartReviewAction {
     override fun invoke(command: PublishSmartReviewCommand, state: State): State {
         val statementsToPersist = statementService.fetchAsBundle(

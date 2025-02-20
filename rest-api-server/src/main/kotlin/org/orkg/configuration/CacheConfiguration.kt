@@ -23,10 +23,13 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 
 private val cacheNames = setOf(
-    CLASS_ID_TO_CLASS_CACHE, CLASS_ID_TO_CLASS_EXISTS_CACHE,
-    LITERAL_ID_TO_LITERAL_CACHE, LITERAL_ID_TO_LITERAL_EXISTS_CACHE,
+    CLASS_ID_TO_CLASS_CACHE,
+    CLASS_ID_TO_CLASS_EXISTS_CACHE,
+    LITERAL_ID_TO_LITERAL_CACHE,
+    LITERAL_ID_TO_LITERAL_EXISTS_CACHE,
     PREDICATE_ID_TO_PREDICATE_CACHE,
-    RESOURCE_ID_TO_RESOURCE_CACHE, RESOURCE_ID_TO_RESOURCE_EXISTS_CACHE,
+    RESOURCE_ID_TO_RESOURCE_CACHE,
+    RESOURCE_ID_TO_RESOURCE_EXISTS_CACHE,
     THING_ID_TO_THING_CACHE,
     THING_ID_TO_PUBLISHED_LITERATURE_LIST_CACHE,
     THING_ID_TO_PUBLISHED_SMART_REVIEW_CACHE,
@@ -43,7 +46,7 @@ class CacheConfiguration {
     @Bean
     fun cacheManagerCustomizer(
         cacheProperties: CacheProperties,
-        caffeineConfig: CaffeineConfig
+        caffeineConfig: CaffeineConfig,
     ): CacheManagerCustomizer<CaffeineCacheManager> =
         CacheManagerCustomizer<CaffeineCacheManager> { cacheManager ->
             cacheNames.forEach { cacheName ->
@@ -62,7 +65,13 @@ class CacheConfiguration {
     private fun mergeSpecs(vararg specs: String): String =
         specs.map(::splitSpec)
             .fold(mutableMapOf<String, String>()) { acc, spec -> acc.apply { putAll(spec) } }.entries
-            .joinToString(",") { (key, value) -> if (value.isEmpty()) { key } else "$key=$value" }
+            .joinToString(",") { (key, value) ->
+                if (value.isEmpty()) {
+                    key
+                } else {
+                    "$key=$value"
+                }
+            }
 
     private fun splitSpec(spec: String): Map<String, String> =
         spec.split(",")
@@ -86,5 +95,5 @@ class CacheConfiguration {
 
 @ConfigurationProperties(prefix = "spring.cache.caffeine")
 data class CaffeineConfig(
-    val overrides: Map<String, String>?
+    val overrides: Map<String, String>?,
 )

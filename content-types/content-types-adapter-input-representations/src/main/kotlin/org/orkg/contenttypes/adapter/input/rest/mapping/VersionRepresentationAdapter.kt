@@ -1,16 +1,15 @@
 package org.orkg.contenttypes.adapter.input.rest.mapping
 
-import java.util.*
-import org.orkg.contenttypes.adapter.input.rest.VersionInfoRepresentation
 import org.orkg.contenttypes.adapter.input.rest.HeadVersionRepresentation
 import org.orkg.contenttypes.adapter.input.rest.PublishedVersionRepresentation
-import org.orkg.contenttypes.domain.VersionInfo
+import org.orkg.contenttypes.adapter.input.rest.VersionInfoRepresentation
 import org.orkg.contenttypes.domain.HeadVersion
 import org.orkg.contenttypes.domain.PublishedVersion
+import org.orkg.contenttypes.domain.VersionInfo
 import org.springframework.data.domain.Page
+import java.util.Optional
 
 interface VersionRepresentationAdapter {
-
     fun Optional<VersionInfo>.mapToVersionInfoRepresentation(): Optional<VersionInfoRepresentation> =
         map { it.toVersionInfoRepresentation() }
 

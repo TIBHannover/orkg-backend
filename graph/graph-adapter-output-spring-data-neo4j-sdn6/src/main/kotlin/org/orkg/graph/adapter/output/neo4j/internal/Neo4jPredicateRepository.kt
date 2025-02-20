@@ -4,23 +4,25 @@ import org.orkg.common.ThingId
 import org.springframework.data.neo4j.repository.Neo4jRepository
 import org.springframework.data.neo4j.repository.query.Query
 
-private const val id = "${'$'}id"
+private const val ID = "${'$'}id"
 
 interface Neo4jPredicateRepository : Neo4jRepository<Neo4jPredicate, ThingId> {
     override fun deleteById(id: ThingId)
 
-    @Query("""
+    @Query(
+        """
 CALL () {
-    MATCH (:Predicate {id: $id})<-[r:RELATED]-()
+    MATCH (:Predicate {id: $ID})<-[r:RELATED]-()
     RETURN r
     UNION ALL
-    MATCH (:Predicate {id: $id})<-[r:VALUE]-()
+    MATCH (:Predicate {id: $ID})<-[r:VALUE]-()
     RETURN r
     UNION ALL
-    MATCH ()-[r:RELATED {predicate_id: $id}]-()
+    MATCH ()-[r:RELATED {predicate_id: $ID}]-()
     RETURN r
 }
 WITH r
-RETURN COUNT(r) > 0 AS count""")
+RETURN COUNT(r) > 0 AS count"""
+    )
     fun isInUse(id: ThingId): Boolean
 }

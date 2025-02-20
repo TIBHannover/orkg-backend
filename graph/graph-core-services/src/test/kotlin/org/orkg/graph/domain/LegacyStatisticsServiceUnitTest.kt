@@ -3,7 +3,6 @@ package org.orkg.graph.domain
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.util.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ThingId
@@ -15,9 +14,9 @@ import org.orkg.community.output.OrganizationRepository
 import org.orkg.graph.output.LegacyStatisticsRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
+import java.util.Optional
 
 internal class LegacyStatisticsServiceUnitTest : MockkBaseTest {
-
     private val legacyStatisticsRepository: LegacyStatisticsRepository = mockk()
     private val contributorRepository: ContributorRepository = mockk()
     private val observatoryRepository: ObservatoryRepository = mockk()

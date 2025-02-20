@@ -1,7 +1,5 @@
 package org.orkg.community.adapter.output.jpa.internal
 
-import java.time.LocalDate
-import java.util.*
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -17,11 +15,12 @@ import org.orkg.community.domain.ConferenceSeries
 import org.orkg.community.domain.ConferenceSeriesId
 import org.orkg.community.domain.Metadata
 import org.orkg.community.domain.PeerReviewType
+import java.time.LocalDate
+import java.util.UUID
 
 @Entity
 @Table(name = "conferences_series")
 class ConferenceSeriesEntity {
-
     @Id
     var id: UUID? = null
 

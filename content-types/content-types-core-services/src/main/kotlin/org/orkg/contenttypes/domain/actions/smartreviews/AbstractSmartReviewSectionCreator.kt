@@ -26,11 +26,11 @@ class AbstractSmartReviewSectionCreator(
     private val statementCollectionPropertyCreator: StatementCollectionPropertyCreator = StatementCollectionPropertyCreator(
         literalService,
         unsafeStatementUseCases
-    )
+    ),
 ) {
     internal fun create(
         contributorId: ContributorId,
-        section: SmartReviewSectionDefinition
+        section: SmartReviewSectionDefinition,
     ): ThingId =
         when (section) {
             is SmartReviewComparisonSectionDefinition -> createComparisonSection(contributorId, section)
@@ -43,7 +43,7 @@ class AbstractSmartReviewSectionCreator(
 
     private fun createComparisonSection(
         contributorId: ContributorId,
-        section: SmartReviewComparisonSectionDefinition
+        section: SmartReviewComparisonSectionDefinition,
     ): ThingId {
         val sectionId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
@@ -67,7 +67,7 @@ class AbstractSmartReviewSectionCreator(
 
     private fun createVisualizationSection(
         contributorId: ContributorId,
-        section: SmartReviewVisualizationSectionDefinition
+        section: SmartReviewVisualizationSectionDefinition,
     ): ThingId {
         val sectionId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
@@ -91,7 +91,7 @@ class AbstractSmartReviewSectionCreator(
 
     private fun createResourceSection(
         contributorId: ContributorId,
-        section: SmartReviewResourceSectionDefinition
+        section: SmartReviewResourceSectionDefinition,
     ): ThingId {
         val sectionId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
@@ -115,7 +115,7 @@ class AbstractSmartReviewSectionCreator(
 
     private fun createPredicateSection(
         contributorId: ContributorId,
-        section: SmartReviewPredicateSectionDefinition
+        section: SmartReviewPredicateSectionDefinition,
     ): ThingId {
         val sectionId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
@@ -139,7 +139,7 @@ class AbstractSmartReviewSectionCreator(
 
     private fun createOntologySection(
         contributorId: ContributorId,
-        section: SmartReviewOntologySectionDefinition
+        section: SmartReviewOntologySectionDefinition,
     ): ThingId {
         val sectionId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
@@ -165,7 +165,7 @@ class AbstractSmartReviewSectionCreator(
 
     private fun createTextSection(
         contributorId: ContributorId,
-        section: SmartReviewTextSectionDefinition
+        section: SmartReviewTextSectionDefinition,
     ): ThingId {
         val sectionId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(

@@ -1,5 +1,5 @@
 plugins {
-    id("org.orkg.gradle.kotlin")
+    kotlin("jvm")
     id("com.github.gmazzo.buildconfig") version "5.5.1"
 }
 

@@ -1,7 +1,5 @@
 package org.orkg.graph.domain
 
-import java.time.Clock
-import java.time.OffsetDateTime
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.input.UpdateStatementUseCase
@@ -10,6 +8,8 @@ import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.output.ThingRepository
 import org.springframework.stereotype.Service
+import java.time.Clock
+import java.time.OffsetDateTime
 
 @Service
 class UnsafeStatementService(
@@ -19,7 +19,6 @@ class UnsafeStatementService(
     private val literalRepository: LiteralRepository,
     private val clock: Clock,
 ) : UnsafeStatementUseCases {
-
     override fun create(command: CreateStatementUseCase.CreateCommand): StatementId {
         val subject = thingRepository.findById(command.subjectId)
             .orElseThrow { StatementSubjectNotFound(command.subjectId) }

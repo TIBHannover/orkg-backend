@@ -7,7 +7,6 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import java.net.URI
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
@@ -19,6 +18,7 @@ import org.orkg.contenttypes.input.testing.fixtures.publishPaperCommand
 import org.orkg.contenttypes.output.DoiService
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
+import java.net.URI
 
 internal class PaperVersionDoiPublisherUnitTest : MockkBaseTest {
     private val singleStatementPropertyCreator: SingleStatementPropertyCreator = mockk()
@@ -50,17 +50,19 @@ internal class PaperVersionDoiPublisherUnitTest : MockkBaseTest {
         }
 
         verify(exactly = 1) {
-            doiService.register(withArg {
-                it.suffix shouldBe paperVersionId.value
-                it.title shouldBe paper.title
-                it.subject shouldBe command.subject
-                it.description shouldBe command.description
-                it.url shouldBe URI.create("https://orkg.org/paper/${paperVersionId.value}")
-                it.creators shouldBe paper.authors
-                it.resourceType shouldBe Classes.paper.value
-                it.resourceTypeGeneral shouldBe "Dataset"
-                it.relatedIdentifiers shouldBe emptyList()
-            })
+            doiService.register(
+                withArg {
+                    it.suffix shouldBe paperVersionId.value
+                    it.title shouldBe paper.title
+                    it.subject shouldBe command.subject
+                    it.description shouldBe command.description
+                    it.url shouldBe URI.create("https://orkg.org/paper/${paperVersionId.value}")
+                    it.creators shouldBe paper.authors
+                    it.resourceType shouldBe Classes.paper.value
+                    it.resourceTypeGeneral shouldBe "Dataset"
+                    it.relatedIdentifiers shouldBe emptyList()
+                }
+            )
         }
         verify(exactly = 1) {
             singleStatementPropertyCreator.create(

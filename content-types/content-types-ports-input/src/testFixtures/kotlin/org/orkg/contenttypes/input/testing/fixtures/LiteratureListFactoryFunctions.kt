@@ -1,6 +1,5 @@
 package org.orkg.contenttypes.input.testing.fixtures
 
-import java.util.*
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
@@ -22,6 +21,7 @@ import org.orkg.contenttypes.input.UpdateLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.UpdateLiteratureListUseCase
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Visibility
+import java.util.UUID
 
 fun createLiteratureListCommand() = CreateLiteratureListUseCase.CreateCommand(
     contributorId = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),

@@ -2,7 +2,6 @@ package org.orkg.community.adapter.input.rest
 
 import com.fasterxml.jackson.annotation.JsonAlias
 import com.fasterxml.jackson.annotation.JsonProperty
-import java.util.*
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Pattern
@@ -37,6 +36,7 @@ import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
+import java.util.UUID
 
 @RestController
 @RequestMapping("/api/observatories", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -49,7 +49,7 @@ class ObservatoryController(
     @RequireCuratorRole
     fun create(
         @RequestBody @Valid request: CreateObservatoryRequest,
-        uriComponentsBuilder: UriComponentsBuilder
+        uriComponentsBuilder: UriComponentsBuilder,
     ): ResponseEntity<ObservatoryRepresentation> {
         val id = service.create(request.toCreateCommand())
         val location = uriComponentsBuilder
@@ -60,25 +60,25 @@ class ObservatoryController(
     }
 
     @GetMapping("/{id}")
-    fun findById(@PathVariable id: String): ObservatoryRepresentation {
-        return if (isValidUUID(id)) {
-            service
-                .findById(ObservatoryId(UUID.fromString(id)))
-                .mapToObservatoryRepresentation()
-                .orElseThrow { ObservatoryNotFound(ObservatoryId(UUID.fromString(id))) }
-        } else {
-            service
-                .findByDisplayId(id)
-                .mapToObservatoryRepresentation()
-                .orElseThrow { ObservatoryURLNotFound(id) }
-        }
+    fun findById(
+        @PathVariable id: String,
+    ): ObservatoryRepresentation = if (isValidUUID(id)) {
+        service
+            .findById(ObservatoryId(UUID.fromString(id)))
+            .mapToObservatoryRepresentation()
+            .orElseThrow { ObservatoryNotFound(ObservatoryId(UUID.fromString(id))) }
+    } else {
+        service
+            .findByDisplayId(id)
+            .mapToObservatoryRepresentation()
+            .orElseThrow { ObservatoryURLNotFound(id) }
     }
 
     @GetMapping
     fun findAll(
         @RequestParam(value = "q", required = false) name: String?,
         @RequestParam(value = "research_field", required = false) researchField: ThingId?,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<ObservatoryRepresentation> {
         if (name != null && researchField != null) {
             throw TooManyParameters.atMostOneOf("q", "research_field")
@@ -92,14 +92,14 @@ class ObservatoryController(
 
     @GetMapping("/research-fields")
     fun findAllResearchFields(
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<ResearchFieldRepresentation> =
         service.findAllResearchFields(pageable).mapToResearchFieldRepresentation()
 
     @GetMapping("/{id}/users")
     fun findAllUsersByObservatoryId(
         @PathVariable id: ObservatoryId,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<Contributor> =
         observatoryRepository.findAllMembersByObservatoryId(id, pageable)
 
@@ -108,7 +108,7 @@ class ObservatoryController(
     fun update(
         @PathVariable id: ObservatoryId,
         @RequestBody @Valid request: UpdateObservatoryRequest,
-        uriComponentsBuilder: UriComponentsBuilder
+        uriComponentsBuilder: UriComponentsBuilder,
     ): ResponseEntity<Any> {
         service.update(request.toUpdateCommand(id))
         val location = uriComponentsBuilder.path("/api/observatories/{id}")
@@ -119,7 +119,10 @@ class ObservatoryController(
 
     @RequestMapping("/{id}/name", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
     @RequireCuratorRole
-    fun updateObservatoryName(@PathVariable id: ObservatoryId, @RequestBody @Valid name: UpdateRequest): ObservatoryRepresentation {
+    fun updateObservatoryName(
+        @PathVariable id: ObservatoryId,
+        @RequestBody @Valid name: UpdateRequest,
+    ): ObservatoryRepresentation {
         service.changeName(id, name.value)
         return service.findById(id).mapToObservatoryRepresentation().get()
     }
@@ -128,7 +131,7 @@ class ObservatoryController(
     @RequireCuratorRole
     fun updateObservatoryDescription(
         @PathVariable id: ObservatoryId,
-        @RequestBody @Valid description: UpdateRequest
+        @RequestBody @Valid description: UpdateRequest,
     ): ObservatoryRepresentation {
         service.changeDescription(id, description.value)
         return service.findById(id).mapToObservatoryRepresentation().get()
@@ -138,7 +141,7 @@ class ObservatoryController(
     @RequireCuratorRole
     fun updateObservatoryResearchField(
         @PathVariable id: ObservatoryId,
-        @RequestBody @Valid request: UpdateRequest
+        @RequestBody @Valid request: UpdateRequest,
     ): ObservatoryRepresentation {
         service.changeResearchField(id, ThingId(request.value))
         return service.findById(id).mapToObservatoryRepresentation().get()
@@ -148,7 +151,7 @@ class ObservatoryController(
     @RequireCuratorRole
     fun addObservatoryOrganization(
         @PathVariable id: ObservatoryId,
-        @RequestBody organizationRequest: UpdateOrganizationRequest
+        @RequestBody organizationRequest: UpdateOrganizationRequest,
     ): ObservatoryRepresentation {
         service.addOrganization(id, organizationRequest.organizationId)
         return service.findById(id).mapToObservatoryRepresentation().get()
@@ -158,18 +161,16 @@ class ObservatoryController(
     @RequireCuratorRole
     fun deleteObservatoryOrganization(
         @PathVariable id: ObservatoryId,
-        @RequestBody organizationRequest: UpdateOrganizationRequest
+        @RequestBody organizationRequest: UpdateOrganizationRequest,
     ): ObservatoryRepresentation {
         service.deleteOrganization(id, organizationRequest.organizationId)
         return service.findById(id).mapToObservatoryRepresentation().get()
     }
 
-    fun isValidUUID(id: String): Boolean {
-        return try {
-            UUID.fromString(id) != null
-        } catch (e: IllegalArgumentException) {
-            false
-        }
+    fun isValidUUID(id: String): Boolean = try {
+        UUID.fromString(id) != null
+    } catch (e: IllegalArgumentException) {
+        false
     }
 
     data class CreateObservatoryRequest(
@@ -189,7 +190,7 @@ class ObservatoryController(
         val displayId: String,
         @field:Valid
         @JsonProperty("sdgs")
-        val sustainableDevelopmentGoals: Set<ThingId>?
+        val sustainableDevelopmentGoals: Set<ThingId>?,
     ) {
         fun toCreateCommand() = CreateCommand(
             name = name,
@@ -211,7 +212,7 @@ class ObservatoryController(
         @JsonProperty("research_field")
         val researchField: ThingId?,
         @JsonProperty("sdgs")
-        val sustainableDevelopmentGoals: Set<ThingId>?
+        val sustainableDevelopmentGoals: Set<ThingId>?,
     ) {
         fun toUpdateCommand(id: ObservatoryId) = UpdateCommand(
             id = id,
@@ -225,11 +226,11 @@ class ObservatoryController(
 
     data class UpdateRequest(
         @field:NotBlank
-        val value: String
+        val value: String,
     )
 
     data class UpdateOrganizationRequest(
         @JsonProperty("organization_id")
-        val organizationId: OrganizationId
+        val organizationId: OrganizationId,
     )
 }

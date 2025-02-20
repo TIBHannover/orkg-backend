@@ -46,7 +46,7 @@ object Literals {
         fragment: String,
         val `class`: ThingId,
         val isNumber: Boolean,
-        private val predicate: (String) -> Boolean
+        private val predicate: (String) -> Boolean,
     ) {
         STRING("string", Classes.string, false, { true }),
         INT("integer", Classes.integer, true, { it.isValidInteger() }),
@@ -83,7 +83,8 @@ object Literals {
         POSITIVE_INTEGER("positiveInteger", Classes.positiveInteger, true, { it.isValidPositiveInteger() }),
         YEAR_MONTH_DURATION("yearMonthDuration", Classes.yearMonthDuration, false, { it.isValidYearMonthDuration() }),
         DAY_TIME_DURATION("dayTimeDuration", Classes.dayTimeDuration, false, { it.isValidDayTimeDuration() }),
-        DATE_TIME_STAMP("dateTimeStamp", Classes.dateTimeStamp, false, { it.isValidDateTimeStamp() });
+        DATE_TIME_STAMP("dateTimeStamp", Classes.dateTimeStamp, false, { it.isValidDateTimeStamp() }),
+        ;
 
         val prefixedUri: String = "xsd:$fragment"
         val uri: String = "http://www.w3.org/2001/XMLSchema#$fragment"

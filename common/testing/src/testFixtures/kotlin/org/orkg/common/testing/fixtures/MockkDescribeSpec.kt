@@ -7,15 +7,17 @@ import io.mockk.clearAllMocks
 import io.mockk.confirmVerified
 
 abstract class MockkDescribeSpec(
-    body: DescribeSpec.() -> Unit = {}
+    body: DescribeSpec.() -> Unit = {},
 ) : DescribeSpec({
-    isolationMode = IsolationMode.InstancePerLeaf
-    body()
-    beforeSpec { // mocks are reset before each context block
-        clearAllMocks()
-    }
-    afterEach { // mocks are verified after every it block
-        checkUnnecessaryStub()
-        confirmVerified()
-    }
-})
+        isolationMode = IsolationMode.InstancePerLeaf
+        body()
+        beforeSpec {
+            // mocks are reset before each context block
+            clearAllMocks()
+        }
+        afterEach {
+            // mocks are verified after every it block
+            checkUnnecessaryStub()
+            confirmVerified()
+        }
+    })

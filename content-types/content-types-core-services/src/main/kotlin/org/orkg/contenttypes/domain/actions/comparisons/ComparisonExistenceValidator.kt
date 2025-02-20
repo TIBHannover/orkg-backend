@@ -6,7 +6,7 @@ import org.orkg.contenttypes.domain.actions.UpdateComparisonState
 import org.orkg.contenttypes.input.ComparisonUseCases
 
 class ComparisonExistenceValidator(
-    private val comparisonService: ComparisonUseCases
+    private val comparisonService: ComparisonUseCases,
 ) : UpdateComparisonAction {
     override fun invoke(command: UpdateComparisonCommand, state: UpdateComparisonState): UpdateComparisonState {
         val comparison = comparisonService.findById(command.comparisonId)

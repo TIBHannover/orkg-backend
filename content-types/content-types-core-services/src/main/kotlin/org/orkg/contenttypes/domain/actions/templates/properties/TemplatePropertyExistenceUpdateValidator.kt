@@ -10,7 +10,7 @@ import org.orkg.graph.output.ResourceRepository
 
 class TemplatePropertyExistenceUpdateValidator(
     private val templateService: TemplateService,
-    private val resourceRepository: ResourceRepository
+    private val resourceRepository: ResourceRepository,
 ) : UpdateTemplatePropertyAction {
     override fun invoke(command: UpdateTemplatePropertyCommand, state: State): State {
         val resource = resourceRepository.findById(command.templateId)

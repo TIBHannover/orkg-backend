@@ -40,7 +40,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @ContextConfiguration(classes = [RdfController::class, ExceptionHandler::class, FixedClockConfig::class, WebMvcConfiguration::class])
 @WebMvcTest(controllers = [RdfController::class])
 internal class RdfControllerUnitTest : MockMvcBaseTest("rdf-hints") {
-
     @MockkBean
     private lateinit var resourceRepository: ResourceRepository
 

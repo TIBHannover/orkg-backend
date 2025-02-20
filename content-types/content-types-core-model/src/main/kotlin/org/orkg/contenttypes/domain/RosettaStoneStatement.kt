@@ -1,6 +1,5 @@
 package org.orkg.contenttypes.domain
 
-import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -9,6 +8,7 @@ import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.domain.Visibility
+import java.time.OffsetDateTime
 
 data class RosettaStoneStatement(
     val id: ThingId,
@@ -22,7 +22,7 @@ data class RosettaStoneStatement(
     val extractionMethod: ExtractionMethod,
     val visibility: Visibility,
     val modifiable: Boolean,
-    val unlistedBy: ContributorId? = null
+    val unlistedBy: ContributorId? = null,
 ) {
     init {
         require(versions.isNotEmpty()) { "Must have at least one version." }
@@ -59,7 +59,7 @@ data class RosettaStoneStatementVersion(
     val modifiable: Boolean,
     val unlistedBy: ContributorId? = null,
     val deletedBy: ContributorId? = null,
-    val deletedAt: OffsetDateTime? = null
+    val deletedAt: OffsetDateTime? = null,
 ) {
     init {
         require(subjects.isNotEmpty()) { "Must have at least one subject." }
@@ -73,5 +73,5 @@ data class RosettaStoneStatementVersion(
 enum class Certainty {
     LOW,
     MODERATE,
-    HIGH
+    HIGH,
 }

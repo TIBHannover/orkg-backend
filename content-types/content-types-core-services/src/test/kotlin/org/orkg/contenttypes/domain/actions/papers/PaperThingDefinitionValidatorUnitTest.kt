@@ -5,7 +5,6 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.util.*
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.orkg.common.Either
@@ -17,6 +16,7 @@ import org.orkg.contenttypes.input.testing.fixtures.createPaperCommand
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ThingRepository
 import org.orkg.graph.testing.fixtures.createClass
+import java.util.Optional
 
 @Nested
 internal class PaperThingDefinitionValidatorUnitTest : MockkBaseTest {

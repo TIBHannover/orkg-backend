@@ -8,7 +8,7 @@ import org.orkg.contenttypes.domain.OnlyOneObservatoryAllowed
 class ObservatoryValidator<T, S>(
     private val observatoryRepository: ObservatoryRepository,
     private val newValueSelector: (T) -> List<ObservatoryId>?,
-    private val oldValueSelector: (S) -> List<ObservatoryId> = { emptyList() }
+    private val oldValueSelector: (S) -> List<ObservatoryId> = { emptyList() },
 ) : Action<T, S> {
     override fun invoke(command: T, state: S): S {
         val newObservatories = newValueSelector(command)

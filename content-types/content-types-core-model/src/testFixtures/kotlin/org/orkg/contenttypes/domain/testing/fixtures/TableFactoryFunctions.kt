@@ -1,6 +1,5 @@
 package org.orkg.contenttypes.domain.testing.fixtures
 
-import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -12,6 +11,7 @@ import org.orkg.graph.domain.Visibility
 import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createResource
+import java.time.OffsetDateTime
 
 fun createTable() = Table(
     id = ThingId("R4517"),
@@ -48,5 +48,5 @@ fun createTableRow(
         createClass(),
         createLiteral(),
         createResource()
-    )
+    ),
 ) = Table.Row(label, data)

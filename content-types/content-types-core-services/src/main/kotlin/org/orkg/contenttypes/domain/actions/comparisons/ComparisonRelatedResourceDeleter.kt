@@ -20,7 +20,7 @@ class ComparisonRelatedResourceDeleter(
 ) {
     constructor(
         statementService: StatementUseCases,
-        resourceService: ResourceUseCases
+        resourceService: ResourceUseCases,
     ) : this(
         statementService,
         resourceService,

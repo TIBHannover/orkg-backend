@@ -7,7 +7,5 @@ import org.orkg.common.PageableRepresentation
  * Analogue class to org.springframework.data.web.config.SpringDataJacksonConfiguration.UnpagedAsInstanceSerializer
  */
 class UnpagedPageableRepresentationSerializer : ToStringSerializerBase(PageableRepresentation::class.java) {
-    override fun valueToString(value: Any?): String {
-        return "INSTANCE"
-    }
+    override fun valueToString(value: Any?): String = "INSTANCE"
 }

@@ -8,8 +8,9 @@ import org.orkg.graph.output.ThingRepository
 
 class ContributionThingDefinitionValidator(
     thingRepository: ThingRepository,
-    classRepository: ClassRepository
-) : ThingDefinitionValidator(thingRepository, classRepository), ContributionAction {
+    classRepository: ClassRepository,
+) : ThingDefinitionValidator(thingRepository, classRepository),
+    ContributionAction {
     override operator fun invoke(command: CreateContributionCommand, state: ContributionState): ContributionState {
         val validatedIds = state.validatedIds.toMutableMap()
         validateThingDefinitionsInPlace(command, state.tempIds, validatedIds)

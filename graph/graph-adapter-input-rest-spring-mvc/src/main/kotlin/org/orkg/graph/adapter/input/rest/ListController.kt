@@ -35,17 +35,19 @@ class ListController(
     private val service: ListUseCases,
     override val statementService: StatementUseCases,
     override val formattedLabelService: FormattedLabelUseCases,
-) : ListRepresentationAdapter, ThingRepresentationAdapter {
-
+) : ListRepresentationAdapter,
+    ThingRepresentationAdapter {
     @GetMapping("/{id}")
-    fun findById(@PathVariable id: ThingId): ListRepresentation =
+    fun findById(
+        @PathVariable id: ThingId,
+    ): ListRepresentation =
         service.findById(id).mapToListRepresentation().orElseThrow { ListNotFound(id) }
 
     @GetMapping("/{id}/elements")
     fun findAllElementsById(
         @PathVariable id: ThingId,
         pageable: Pageable,
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): Page<ThingRepresentation> =
         service.findAllElementsById(id, pageable)
             .mapToThingRepresentation(capabilities)
@@ -70,7 +72,7 @@ class ListController(
         @PathVariable id: ThingId,
         @RequestBody request: UpdateRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        currentUser: Authentication?
+        currentUser: Authentication?,
     ): ResponseEntity<Any> {
         service.update(request.toUpdateCommand(id, currentUser.contributorId()))
         val location = uriComponentsBuilder.path("/api/lists/{id}")
@@ -81,7 +83,7 @@ class ListController(
 
     data class CreateListRequest(
         val label: String,
-        val elements: List<ThingId>
+        val elements: List<ThingId>,
     ) {
         fun toCreateCommand(contributorId: ContributorId): CreateCommand =
             CreateCommand(contributorId, label, elements)
@@ -89,7 +91,7 @@ class ListController(
 
     data class UpdateRequest(
         val label: String? = null,
-        val elements: List<ThingId>? = null
+        val elements: List<ThingId>? = null,
     ) {
         fun toUpdateCommand(id: ThingId, contributorId: ContributorId): UpdateCommand =
             UpdateCommand(id, contributorId, label, elements)

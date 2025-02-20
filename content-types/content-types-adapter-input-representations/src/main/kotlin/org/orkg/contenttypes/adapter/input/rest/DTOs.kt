@@ -22,7 +22,7 @@ import org.orkg.graph.domain.Literals
 data class ListDefinitionDTO(
     @field:NotBlank
     val label: String,
-    val elements: List<String>
+    val elements: List<String>,
 ) {
     fun toCreateCommand(): ListDefinition =
         ListDefinition(
@@ -35,7 +35,7 @@ data class LiteralDefinitionDTO(
     @field:NotBlank
     val label: String,
     @JsonProperty("data_type")
-    val dataType: String?
+    val dataType: String?,
 ) {
     fun toCreateCommand(): LiteralDefinition =
         LiteralDefinition(
@@ -48,7 +48,7 @@ data class PredicateDefinitionDTO(
     @field:NotBlank
     val label: String,
     @field:NotBlank
-    val description: String?
+    val description: String?,
 ) {
     fun toCreateCommand(): PredicateDefinition =
         PredicateDefinition(
@@ -60,7 +60,7 @@ data class PredicateDefinitionDTO(
 data class ResourceDefinitionDTO(
     @field:NotBlank
     val label: String,
-    val classes: Set<ThingId>?
+    val classes: Set<ThingId>?,
 ) {
     fun toCreateCommand(): ResourceDefinition =
         ResourceDefinition(
@@ -72,7 +72,7 @@ data class ResourceDefinitionDTO(
 data class ClassDefinitionDTO(
     @field:NotBlank
     val label: String,
-    val uri: ParsedIRI? = null
+    val uri: ParsedIRI? = null,
 ) {
     fun toCreateCommand(): ClassDefinition =
         ClassDefinition(
@@ -102,7 +102,7 @@ data class UntypedPropertyRequest(
     @field:PositiveOrZero
     @JsonProperty("max_count")
     override val maxCount: Int?,
-    override val path: ThingId
+    override val path: ThingId,
 ) : TemplatePropertyRequest {
     override fun toTemplatePropertyDefinition(): TemplatePropertyDefinition =
         UntypedPropertyDefinition(label, placeholder, description, minCount, maxCount, path)
@@ -120,7 +120,7 @@ data class StringLiteralPropertyRequest(
     override val maxCount: Int?,
     val pattern: String?,
     override val path: ThingId,
-    val datatype: ThingId
+    val datatype: ThingId,
 ) : TemplatePropertyRequest {
     override fun toTemplatePropertyDefinition(): TemplatePropertyDefinition =
         StringLiteralPropertyDefinition(label, placeholder, description, minCount, maxCount, pattern, path, datatype)
@@ -141,7 +141,7 @@ data class NumberLiteralPropertyRequest(
     @JsonProperty("max_inclusive")
     val maxInclusive: RealNumber?,
     override val path: ThingId,
-    val datatype: ThingId
+    val datatype: ThingId,
 ) : TemplatePropertyRequest {
     override fun toTemplatePropertyDefinition(): TemplatePropertyDefinition =
         NumberLiteralPropertyDefinition(label, placeholder, description, minCount, maxCount, minInclusive, maxInclusive, path, datatype)
@@ -158,7 +158,7 @@ data class OtherLiteralPropertyRequest(
     @JsonProperty("max_count")
     override val maxCount: Int?,
     override val path: ThingId,
-    val datatype: ThingId
+    val datatype: ThingId,
 ) : TemplatePropertyRequest {
     override fun toTemplatePropertyDefinition(): TemplatePropertyDefinition =
         OtherLiteralPropertyDefinition(label, placeholder, description, minCount, maxCount, path, datatype)
@@ -175,12 +175,12 @@ data class ResourcePropertyRequest(
     @JsonProperty("max_count")
     override val maxCount: Int?,
     override val path: ThingId,
-    val `class`: ThingId
+    val `class`: ThingId,
 ) : TemplatePropertyRequest {
     override fun toTemplatePropertyDefinition(): TemplatePropertyDefinition =
         ResourcePropertyDefinition(label, placeholder, description, minCount, maxCount, path, `class`)
 }
 
 data class IdentifierMapDTO(
-    val values: Map<String, List<String>>
+    val values: Map<String, List<String>>,
 )

@@ -15,19 +15,23 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/papers", produces = [MediaType.APPLICATION_JSON_VALUE])
 class PaperVerificationCommandController(
-    private val service: MarkAsVerifiedUseCase
+    private val service: MarkAsVerifiedUseCase,
 ) {
     @PutMapping("/{id}/metadata/verified")
     @RequireCuratorRole
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun markVerified(@PathVariable id: ThingId) {
+    fun markVerified(
+        @PathVariable id: ThingId,
+    ) {
         service.markAsVerified(id)
     }
 
     @DeleteMapping("/{id}/metadata/verified")
     @RequireCuratorRole
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun unmarkVerified(@PathVariable id: ThingId) {
+    fun unmarkVerified(
+        @PathVariable id: ThingId,
+    ) {
         service.markAsUnverified(id)
     }
 }

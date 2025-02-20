@@ -7,16 +7,16 @@ import org.orkg.contenttypes.domain.actions.literaturelists.AbstractLiteratureLi
 import org.orkg.graph.output.ResourceRepository
 
 class LiteratureListSectionExistenceUpdateValidator(
-    private val abstractLiteratureListExistenceValidator: AbstractLiteratureListExistenceValidator
+    private val abstractLiteratureListExistenceValidator: AbstractLiteratureListExistenceValidator,
 ) : UpdateLiteratureListSectionAction {
     constructor(
         literatureListService: LiteratureListService,
-        resourceRepository: ResourceRepository
+        resourceRepository: ResourceRepository,
     ) : this(AbstractLiteratureListExistenceValidator(literatureListService, resourceRepository))
 
     override fun invoke(
         command: UpdateLiteratureListSectionCommand,
-        state: UpdateLiteratureListSectionState
+        state: UpdateLiteratureListSectionState,
     ): UpdateLiteratureListSectionState =
         abstractLiteratureListExistenceValidator.findUnpublishedLiteratureListById(command.literatureListId)
             .let { state.copy(literatureList = it.first, statements = it.second) }

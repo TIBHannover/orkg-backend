@@ -1,17 +1,17 @@
 package org.orkg.graph.domain
 
 import dev.forkhandles.values.ofOrNull
-import kotlin.collections.List
 import org.orkg.common.ThingId
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.output.FormattedLabelRepository
 import org.orkg.spring.data.annotations.TransactionalOnNeo4j
 import org.springframework.stereotype.Service
+import kotlin.collections.List
 
 @Service
 @TransactionalOnNeo4j
 class FormattedLabelService(
-    private val repository: FormattedLabelRepository
+    private val repository: FormattedLabelRepository,
 ) : FormattedLabelUseCases {
     override fun findFormattedLabels(resources: List<Resource>): Map<ThingId, FormattedLabel?> {
         val resourceIdToTemplateTargetClass = resources.filter { it.classes.isNotEmpty() }

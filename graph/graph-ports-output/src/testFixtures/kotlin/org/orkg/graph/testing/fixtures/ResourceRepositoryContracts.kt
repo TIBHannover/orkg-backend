@@ -11,8 +11,6 @@ import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldNotMatch
-import java.time.OffsetDateTime
-import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -29,11 +27,13 @@ import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ResourceRepository
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
+import java.time.OffsetDateTime
+import java.util.UUID
 
 fun <
     R : ResourceRepository,
     C : ClassRepository,
-    CR : ClassRelationRepository
+    CR : ClassRelationRepository,
 > resourceRepositoryContract(
     repository: R,
     classRepository: C,
@@ -243,9 +243,11 @@ fun <
                     resources.forEach(repository::save)
 
                     val expected = resources.filter {
-                        it.visibility == visibility && it.observatoryId == observatoryId && it.classes.any { `class` ->
-                            `class` in classes
-                        }
+                        it.visibility == visibility &&
+                            it.observatoryId == observatoryId &&
+                            it.classes.any { `class` ->
+                                `class` in classes
+                            }
                     }
                     expected.size shouldBe 2
                     val result = repository.findAllByClassInAndVisibilityAndObservatoryId(
@@ -295,7 +297,8 @@ fun <
 
             val expected = resources.filter {
                 (it.visibility == Visibility.DEFAULT || it.visibility == Visibility.FEATURED) &&
-                    it.observatoryId == observatoryId && it.classes.any { `class` ->
+                    it.observatoryId == observatoryId &&
+                    it.classes.any { `class` ->
                         `class` in classes
                     }
             }

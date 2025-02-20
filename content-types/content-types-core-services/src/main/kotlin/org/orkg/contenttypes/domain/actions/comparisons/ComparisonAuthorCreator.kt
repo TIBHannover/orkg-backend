@@ -12,8 +12,9 @@ class ComparisonAuthorCreator(
     unsafeResourceUseCases: UnsafeResourceUseCases,
     unsafeStatementUseCases: UnsafeStatementUseCases,
     literalService: LiteralUseCases,
-    listService: ListUseCases
-) : AuthorCreator(unsafeResourceUseCases, unsafeStatementUseCases, literalService, listService), CreateComparisonAction {
+    listService: ListUseCases,
+) : AuthorCreator(unsafeResourceUseCases, unsafeStatementUseCases, literalService, listService),
+    CreateComparisonAction {
     override operator fun invoke(command: CreateComparisonCommand, state: State): State =
         state.apply { create(command.contributorId, state.authors, state.comparisonId!!) }
 }

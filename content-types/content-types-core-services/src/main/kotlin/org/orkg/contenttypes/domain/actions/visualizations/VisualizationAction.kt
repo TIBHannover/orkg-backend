@@ -9,6 +9,6 @@ import org.orkg.contenttypes.domain.actions.visualizations.VisualizationAction.S
 interface VisualizationAction : Action<CreateVisualizationCommand, State> {
     data class State(
         val authors: List<Author> = emptyList(),
-        val visualizationId: ThingId? = null
+        val visualizationId: ThingId? = null,
     )
 }

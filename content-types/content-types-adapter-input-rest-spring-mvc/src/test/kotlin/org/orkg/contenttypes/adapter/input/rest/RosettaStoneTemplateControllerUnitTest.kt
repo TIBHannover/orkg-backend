@@ -6,10 +6,6 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.runs
 import io.mockk.verify
-import java.time.Clock
-import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
-import java.util.*
 import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -30,11 +26,11 @@ import org.orkg.contenttypes.input.testing.fixtures.stringLiteralTemplatePropert
 import org.orkg.contenttypes.input.testing.fixtures.untypedTemplatePropertyRequest
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.VisibilityFilter
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectRosettaStoneTemplate
 import org.orkg.testing.annotations.TestWithMockUser
+import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
@@ -54,6 +50,10 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.time.Clock
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
+import java.util.Optional
 
 @ContextConfiguration(
     classes = [
@@ -66,7 +66,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 )
 @WebMvcTest(controllers = [RosettaStoneTemplateController::class])
 internal class RosettaStoneTemplateControllerUnitTest : MockMvcBaseTest("rosetta-stone-templates") {
-
     @MockkBean
     private lateinit var templateService: RosettaStoneTemplateUseCases
 

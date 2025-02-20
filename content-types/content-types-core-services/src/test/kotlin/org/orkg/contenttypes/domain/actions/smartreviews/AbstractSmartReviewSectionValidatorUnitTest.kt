@@ -12,6 +12,8 @@ abstract class AbstractSmartReviewSectionValidatorUnitTest : MockkBaseTest {
     protected val thingRepository: ThingRepository = mockk()
 
     protected val abstractSmartReviewSectionValidator = AbstractSmartReviewSectionValidator(
-        resourceRepository, predicateRepository, thingRepository
+        resourceRepository,
+        predicateRepository,
+        thingRepository
     )
 }

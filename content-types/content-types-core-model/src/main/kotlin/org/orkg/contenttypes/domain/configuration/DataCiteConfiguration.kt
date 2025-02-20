@@ -1,8 +1,8 @@
 package org.orkg.contenttypes.domain.configuration
 
-import java.util.*
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Configuration
+import java.util.Base64
 
 @Configuration
 @ConfigurationProperties(prefix = "orkg.datacite")

@@ -26,12 +26,11 @@ class ResearchFieldHierarchyController(
     override val formattedLabelService: FormattedLabelUseCases,
 ) : ResearchFieldHierarchyEntryRepresentationAdapter,
     ResearchFieldWithChildCountRepresentationAdapter {
-
     @GetMapping("/{id}/children")
     fun findAllChildrenByAncestorId(
         @PathVariable id: ThingId,
         pageable: Pageable,
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): Page<ResearchFieldWithChildCountRepresentation> =
         service.findAllChildrenByAncestorId(id, pageable)
             .mapToResearchFieldWithChildCountRepresentation(capabilities)
@@ -40,7 +39,7 @@ class ResearchFieldHierarchyController(
     fun findAllParentsByChildId(
         @PathVariable id: ThingId,
         pageable: Pageable,
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): Page<ResourceRepresentation> =
         service.findAllParentsByChildId(id, pageable)
             .mapToResourceRepresentation(capabilities)
@@ -49,7 +48,7 @@ class ResearchFieldHierarchyController(
     fun findAllRootsByDescendantId(
         @PathVariable id: ThingId,
         pageable: Pageable,
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): Page<ResourceRepresentation> =
         service.findAllRootsByDescendantId(id, pageable)
             .mapToResourceRepresentation(capabilities)
@@ -57,7 +56,7 @@ class ResearchFieldHierarchyController(
     @GetMapping("/roots")
     fun findAllRoots(
         pageable: Pageable,
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): Page<ResourceRepresentation> =
         service.findAllRoots(pageable)
             .mapToResourceRepresentation(capabilities)
@@ -66,7 +65,7 @@ class ResearchFieldHierarchyController(
     fun findResearchFieldHierarchyByResearchFieldId(
         @PathVariable id: ThingId,
         pageable: Pageable,
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): Page<ResearchFieldHierarchyEntryRepresentation> =
         service.findResearchFieldHierarchyByResearchFieldId(id, pageable)
             .mapToResearchFieldHierarchyEntryRepresentation(capabilities)

@@ -1,6 +1,5 @@
 package org.orkg.contenttypes.domain.testing.fixtures
 
-import java.time.OffsetDateTime
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
@@ -22,6 +21,7 @@ import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Visibility
+import java.time.OffsetDateTime
 
 fun createTemplate() = Template(
     id = ThingId("R54631"),

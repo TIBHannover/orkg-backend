@@ -22,12 +22,12 @@ import org.orkg.graph.output.ThingRepository
 
 open class ThingDefinitionValidator(
     override val thingRepository: ThingRepository,
-    private val classRepository: ClassRepository
+    private val classRepository: ClassRepository,
 ) : ThingIdValidator {
     internal fun validateThingDefinitionsInPlace(
         thingDefinitions: ThingDefinitions,
         tempIds: Set<String>,
-        validatedIds: MutableMap<String, Either<String, Thing>>
+        validatedIds: MutableMap<String, Either<String, Thing>>,
     ) {
         validateIds(thingDefinitions, tempIds, validatedIds)
         validateLabels(thingDefinitions)
@@ -37,7 +37,7 @@ open class ThingDefinitionValidator(
     internal fun validateThingDefinitions(
         thingDefinitions: ThingDefinitions,
         tempIds: Set<String>,
-        validatedIds: Map<String, Either<String, Thing>>
+        validatedIds: Map<String, Either<String, Thing>>,
     ): Map<String, Either<String, Thing>> {
         val result = validatedIds.toMutableMap()
         validateThingDefinitionsInPlace(thingDefinitions, tempIds, result)
@@ -47,7 +47,7 @@ open class ThingDefinitionValidator(
     private fun validateIds(
         thingDefinitions: ThingDefinitions,
         tempIds: Set<String>,
-        validatedIds: MutableMap<String, Either<String, Thing>>
+        validatedIds: MutableMap<String, Either<String, Thing>>,
     ) {
         thingDefinitions.lists.values
             .flatMap { it.elements }

@@ -3,7 +3,7 @@ package org.orkg.contenttypes.domain.actions
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Author
-import org.orkg.contenttypes.domain.Identifiers
+import org.orkg.contenttypes.domain.identifiers.Identifiers
 import org.orkg.contenttypes.domain.identifiers.parse
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
@@ -21,7 +21,7 @@ abstract class AuthorCreator(
     protected val unsafeResourceUseCases: UnsafeResourceUseCases,
     protected val unsafeStatementUseCases: UnsafeStatementUseCases,
     protected val literalService: LiteralUseCases,
-    protected val listService: ListUseCases
+    protected val listService: ListUseCases,
 ) {
     internal fun create(contributorId: ContributorId, authors: List<Author>, subjectId: ThingId) {
         val authorIds = authors.map { author ->
@@ -101,7 +101,7 @@ abstract class AuthorCreator(
     private fun createIdentifiers(
         authorId: ThingId,
         missingIdentifiers: Map<String, List<String>>,
-        contributorId: ContributorId
+        contributorId: ContributorId,
     ) {
         val identifiers = Identifiers.author.parse(missingIdentifiers, validate = false)
         identifiers.forEach { (identifier, values) ->

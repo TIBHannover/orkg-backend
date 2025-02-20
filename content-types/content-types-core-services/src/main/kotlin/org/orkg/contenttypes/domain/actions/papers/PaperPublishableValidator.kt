@@ -10,7 +10,7 @@ import org.orkg.graph.output.ResourceRepository
 
 class PaperPublishableValidator(
     private val paperService: PaperService,
-    private val resourceRepository: ResourceRepository
+    private val resourceRepository: ResourceRepository,
 ) : PublishPaperAction {
     override fun invoke(command: PublishPaperCommand, state: State): State {
         val resource = resourceRepository.findById(command.id)

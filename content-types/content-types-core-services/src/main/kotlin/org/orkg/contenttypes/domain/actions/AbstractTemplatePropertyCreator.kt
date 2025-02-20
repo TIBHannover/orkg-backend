@@ -26,7 +26,7 @@ class AbstractTemplatePropertyCreator(
         contributorId: ContributorId,
         templateId: ThingId,
         order: Int,
-        property: TemplatePropertyDefinition
+        property: TemplatePropertyDefinition,
     ): ThingId {
         val propertyId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(

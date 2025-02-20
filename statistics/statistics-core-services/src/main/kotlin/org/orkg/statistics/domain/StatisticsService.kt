@@ -1,10 +1,10 @@
 package org.orkg.statistics.domain
 
-import org.orkg.statistics.input.RetrieveStatisticsUseCase
+import org.orkg.statistics.input.StatisticsUseCases
 import org.springframework.stereotype.Service
 
 @Service
-class StatisticsService(metrics: List<Metric>) : RetrieveStatisticsUseCase {
+class StatisticsService(metrics: List<Metric>) : StatisticsUseCases {
     private val metrics: Map<String, List<Metric>> = metrics
         .groupBy { it.group }
         .mapValues { (_, value) -> value.sortedBy { it.name } }

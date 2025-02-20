@@ -9,5 +9,5 @@ import org.orkg.common.ThingId
 data class FieldsStats(
     val fieldId: ThingId,
     val field: String,
-    val papers: Long
+    val papers: Long,
 )

@@ -9,7 +9,7 @@ import org.orkg.graph.output.ResourceRepository
 class ResearchFieldValidator<T, S>(
     private val resourceRepository: ResourceRepository,
     private val newValueSelector: (T) -> List<ThingId>?,
-    private val oldValueSelector: (S) -> List<ThingId> = { emptyList() }
+    private val oldValueSelector: (S) -> List<ThingId> = { emptyList() },
 ) : Action<T, S> {
     override fun invoke(command: T, state: S): S {
         val newResearchFields = newValueSelector(command)

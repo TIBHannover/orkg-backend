@@ -9,7 +9,6 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import java.util.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ContributorId
@@ -35,9 +34,10 @@ import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.MockUserId
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
+import java.util.Optional
+import java.util.UUID
 
 internal class ResourceServiceUnitTest : MockkBaseTest {
-
     private val repository: ResourceRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
     private val classRepository: ClassRepository = mockk()
@@ -679,20 +679,22 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
         verify(exactly = 1) { observatoryRepository.existsById(observatoryId) }
         verify(exactly = 1) { organizationRepository.findById(organizationId) }
         verify(exactly = 1) {
-            repository.save(withArg {
-                it.id shouldBe resource.id
-                it.label shouldBe label
-                it.createdAt shouldBe resource.createdAt
-                it.classes shouldBe classes
-                it.createdBy shouldBe resource.createdBy
-                it.observatoryId shouldBe observatoryId
-                it.extractionMethod shouldBe extractionMethod
-                it.organizationId shouldBe organizationId
-                it.visibility shouldBe visibility
-                it.verified shouldBe verified
-                it.unlistedBy shouldBe resource.unlistedBy
-                it.modifiable shouldBe modifiable
-            })
+            repository.save(
+                withArg {
+                    it.id shouldBe resource.id
+                    it.label shouldBe label
+                    it.createdAt shouldBe resource.createdAt
+                    it.classes shouldBe classes
+                    it.createdBy shouldBe resource.createdBy
+                    it.observatoryId shouldBe observatoryId
+                    it.extractionMethod shouldBe extractionMethod
+                    it.organizationId shouldBe organizationId
+                    it.visibility shouldBe visibility
+                    it.verified shouldBe verified
+                    it.unlistedBy shouldBe resource.unlistedBy
+                    it.modifiable shouldBe modifiable
+                }
+            )
         }
     }
 }

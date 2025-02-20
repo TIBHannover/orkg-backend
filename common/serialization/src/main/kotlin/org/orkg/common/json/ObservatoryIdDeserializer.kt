@@ -3,16 +3,14 @@ package org.orkg.common.json
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonDeserializer
-import java.util.*
 import org.orkg.common.ObservatoryId
 import org.orkg.common.exceptions.InvalidUUID
+import java.util.UUID
 
-class ObservatoryIdDeserializer :
-    JsonDeserializer<ObservatoryId>() {
-
+class ObservatoryIdDeserializer : JsonDeserializer<ObservatoryId>() {
     override fun deserialize(
         p: JsonParser?,
-        ctxt: DeserializationContext?
+        ctxt: DeserializationContext?,
     ): ObservatoryId? =
         p?.valueAsString?.let {
             try {

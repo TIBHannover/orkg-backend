@@ -18,7 +18,8 @@ internal class SmartReviewSectionsCreatorUnitTest : MockkBaseTest {
     private val abstractSmartReviewSectionCreator: AbstractSmartReviewSectionCreator = mockk()
 
     private val smartReviewSectionsCreator = SmartReviewSectionsCreator(
-        unsafeStatementUseCases, abstractSmartReviewSectionCreator
+        unsafeStatementUseCases,
+        abstractSmartReviewSectionCreator
     )
 
     @Test

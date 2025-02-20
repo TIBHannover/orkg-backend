@@ -9,10 +9,6 @@ import io.kotest.matchers.shouldNotBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.net.URI
-import java.net.http.HttpClient
-import java.net.http.HttpResponse
-import java.util.stream.Stream
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
@@ -24,6 +20,10 @@ import org.orkg.common.testing.fixtures.Assets.responseJson
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.graph.adapter.input.rest.json.GraphJacksonModule
 import org.orkg.graph.domain.ExternalThing
+import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpResponse
+import java.util.stream.Stream
 
 internal class GeoNamesRepositoryAdapterUnitTest : MockkBaseTest {
     private val geoNamesHostUrl = "https://example.org/geonames"
@@ -42,7 +42,7 @@ internal class GeoNamesRepositoryAdapterUnitTest : MockkBaseTest {
         userInput: T,
         methodInvoker: (GeoNamesServiceAdapter, String, T) -> ExternalThing?,
         successResponse: String,
-        expectedResult: ExternalThing
+        expectedResult: ExternalThing,
     ) {
         // Mock HttpClient dsl
         val response = mockk<HttpResponse<String>>()
@@ -56,12 +56,15 @@ internal class GeoNamesRepositoryAdapterUnitTest : MockkBaseTest {
         result shouldBe expectedResult
 
         verify(exactly = 1) {
-            httpClient.send(withArg {
-                it.uri() shouldBe URI.create("$geoNamesHostUrl/get?geonameId=$entityId&username=$geoNamesUser")
-                it.headers().map() shouldContainAll mapOf(
-                    "Accept" to listOf("application/json")
-                )
-            }, any<HttpResponse.BodyHandler<String>>())
+            httpClient.send(
+                withArg {
+                    it.uri() shouldBe URI.create("$geoNamesHostUrl/get?geonameId=$entityId&username=$geoNamesUser")
+                    it.headers().map() shouldContainAll mapOf(
+                        "Accept" to listOf("application/json")
+                    )
+                },
+                any<HttpResponse.BodyHandler<String>>()
+            )
         }
         verify(exactly = 1) { response.statusCode() }
         verify(exactly = 1) { response.body() }
@@ -86,12 +89,15 @@ internal class GeoNamesRepositoryAdapterUnitTest : MockkBaseTest {
         result shouldBe null
 
         verify(exactly = 1) {
-            httpClient.send(withArg {
-                it.uri() shouldBe URI.create("$geoNamesHostUrl/get?geonameId=$entityId&username=$geoNamesUser")
-                it.headers().map() shouldContainAll mapOf(
-                    "Accept" to listOf("application/json")
-                )
-            }, any<HttpResponse.BodyHandler<String>>())
+            httpClient.send(
+                withArg {
+                    it.uri() shouldBe URI.create("$geoNamesHostUrl/get?geonameId=$entityId&username=$geoNamesUser")
+                    it.headers().map() shouldContainAll mapOf(
+                        "Accept" to listOf("application/json")
+                    )
+                },
+                any<HttpResponse.BodyHandler<String>>()
+            )
         }
         verify(exactly = 1) { response.statusCode() }
     }
@@ -101,7 +107,7 @@ internal class GeoNamesRepositoryAdapterUnitTest : MockkBaseTest {
     fun <T> `Given an ontology id and user input, when geonames service is not available, it throws an exception`(
         entityId: String,
         userInput: T,
-        methodInvoker: (GeoNamesServiceAdapter, String, T) -> ExternalThing?
+        methodInvoker: (GeoNamesServiceAdapter, String, T) -> ExternalThing?,
     ) {
         // Mock HttpClient dsl
         val response = mockk<HttpResponse<String>>()
@@ -116,12 +122,15 @@ internal class GeoNamesRepositoryAdapterUnitTest : MockkBaseTest {
         }
 
         verify(exactly = 1) {
-            httpClient.send(withArg {
-                it.uri() shouldBe URI.create("$geoNamesHostUrl/get?geonameId=$entityId&username=$geoNamesUser")
-                it.headers().map() shouldContainAll mapOf(
-                    "Accept" to listOf("application/json")
-                )
-            }, any<HttpResponse.BodyHandler<String>>())
+            httpClient.send(
+                withArg {
+                    it.uri() shouldBe URI.create("$geoNamesHostUrl/get?geonameId=$entityId&username=$geoNamesUser")
+                    it.headers().map() shouldContainAll mapOf(
+                        "Accept" to listOf("application/json")
+                    )
+                },
+                any<HttpResponse.BodyHandler<String>>()
+            )
         }
         verify(exactly = 2) { response.statusCode() }
         verify(exactly = 1) { response.body() }
@@ -133,7 +142,7 @@ internal class GeoNamesRepositoryAdapterUnitTest : MockkBaseTest {
     fun <T> `Given an ontology id and user input, when ontology is invalid, it returns null`(
         entityId: String,
         userInput: T,
-        methodInvoker: (GeoNamesServiceAdapter, String, T) -> ExternalThing?
+        methodInvoker: (GeoNamesServiceAdapter, String, T) -> ExternalThing?,
     ) {
         val result = methodInvoker(repository, "not geonames", userInput)
         result shouldBe null
@@ -143,7 +152,7 @@ internal class GeoNamesRepositoryAdapterUnitTest : MockkBaseTest {
     @MethodSource("invalidInputs")
     fun <T> `Given an ontology id and user input, when input is invalid, it returns null`(
         userInput: T,
-        methodInvoker: (GeoNamesServiceAdapter, String, T) -> ExternalThing?
+        methodInvoker: (GeoNamesServiceAdapter, String, T) -> ExternalThing?,
     ) {
         val result = methodInvoker(repository, "geonames", userInput)
         result shouldBe null

@@ -20,14 +20,14 @@ class SingleStatementPropertyUpdater(
     private val singleStatementPropertyCreator: SingleStatementPropertyCreator = SingleStatementPropertyCreator(
         literalService,
         unsafeStatementUseCases
-    )
+    ),
 ) {
     internal fun updateRequiredProperty(
         contributorId: ContributorId,
         subjectId: ThingId,
         predicateId: ThingId,
         label: String,
-        datatype: String = Literals.XSD.STRING.prefixedUri
+        datatype: String = Literals.XSD.STRING.prefixedUri,
     ) = updateRequiredProperty(
         statements = statementService.findAll(
             subjectId = subjectId,
@@ -48,7 +48,7 @@ class SingleStatementPropertyUpdater(
         subjectId: ThingId,
         predicateId: ThingId,
         label: String?,
-        datatype: String = Literals.XSD.STRING.prefixedUri
+        datatype: String = Literals.XSD.STRING.prefixedUri,
     ) {
         if (label != null) {
             val toRemove = statements.wherePredicate(predicateId)
@@ -76,7 +76,7 @@ class SingleStatementPropertyUpdater(
         subjectId: ThingId,
         predicateId: ThingId,
         label: String?,
-        datatype: String = Literals.XSD.STRING.prefixedUri
+        datatype: String = Literals.XSD.STRING.prefixedUri,
     ) = updateOptionalProperty(
         statements = statementService.findAll(
             subjectId = subjectId,
@@ -97,7 +97,7 @@ class SingleStatementPropertyUpdater(
         subjectId: ThingId,
         predicateId: ThingId,
         label: String?,
-        datatype: String = Literals.XSD.STRING.prefixedUri
+        datatype: String = Literals.XSD.STRING.prefixedUri,
     ) {
         if (label == null) {
             val toRemove = statements.wherePredicate(predicateId)
@@ -118,7 +118,7 @@ class SingleStatementPropertyUpdater(
         contributorId: ContributorId,
         subjectId: ThingId,
         predicateId: ThingId,
-        objectId: ThingId
+        objectId: ThingId,
     ) {
         val toRemove = statements.wherePredicate(predicateId).toMutableSet()
         if (toRemove.isNotEmpty()) {
@@ -139,7 +139,7 @@ class SingleStatementPropertyUpdater(
         contributorId: ContributorId,
         subjectId: ThingId,
         predicateId: ThingId,
-        objectId: ThingId?
+        objectId: ThingId?,
     ) {
         val toRemove = statements.wherePredicate(predicateId).toMutableSet()
         if (toRemove.isNotEmpty()) {

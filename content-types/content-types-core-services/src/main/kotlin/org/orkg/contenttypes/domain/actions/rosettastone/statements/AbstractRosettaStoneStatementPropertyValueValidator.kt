@@ -1,6 +1,5 @@
 package org.orkg.contenttypes.domain.actions.rosettastone.statements
 
-import kotlin.math.absoluteValue
 import org.orkg.common.Either
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.LabelDoesNotMatchPattern
@@ -35,18 +34,19 @@ import org.orkg.graph.domain.Thing
 import org.orkg.graph.output.ClassHierarchyRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.output.ThingRepository
+import kotlin.math.absoluteValue
 
 class AbstractRosettaStoneStatementPropertyValueValidator(
     override val thingRepository: ThingRepository,
     private val statementRepository: StatementRepository,
     private val rosettaStoneStatementService: RosettaStoneStatementUseCases,
-    private val abstractTemplatePropertyValueValidator: AbstractTemplatePropertyValueValidator
+    private val abstractTemplatePropertyValueValidator: AbstractTemplatePropertyValueValidator,
 ) : ThingIdValidator {
     constructor(
         thingRepository: ThingRepository,
         statementRepository: StatementRepository,
         rosettaStoneStatementService: RosettaStoneStatementUseCases,
-        classHierarchyRepository: ClassHierarchyRepository
+        classHierarchyRepository: ClassHierarchyRepository,
     ) : this(
         thingRepository,
         statementRepository,
@@ -61,7 +61,7 @@ class AbstractRosettaStoneStatementPropertyValueValidator(
         tempIds: Set<String>,
         templateId: ThingId,
         subjects: List<String>,
-        objects: List<List<String>>
+        objects: List<List<String>>,
     ): Map<String, Either<String, Thing>> {
         val validatedIds = validatedIdsIn.toMutableMap()
         validateInputPositionCount(templateId, objects, templateProperties)

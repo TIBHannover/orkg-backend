@@ -18,14 +18,14 @@ import org.orkg.graph.domain.Thing
 import org.orkg.graph.output.ThingRepository
 
 abstract class ContributionValidator(
-    override val thingRepository: ThingRepository
+    override val thingRepository: ThingRepository,
 ) : ThingIdValidator {
     internal fun validate(
         bakedStatements: MutableSet<BakedStatement>,
         validatedIds: MutableMap<String, Either<String, Thing>>,
         tempIds: Set<String>,
         thingDefinitions: ThingDefinitions,
-        contributionDefinitions: List<ContributionDefinition>
+        contributionDefinitions: List<ContributionDefinition>,
     ) {
         contributionDefinitions.forEachIndexed { index, contribution ->
             Label.ofOrNull(contribution.label) ?: throw InvalidLabel()
@@ -62,7 +62,7 @@ abstract class ContributionValidator(
         thingDefinitions: ThingDefinitions,
         contributionDefinitions: List<ContributionDefinition>,
         validatedIds: MutableMap<String, Either<String, Thing>>,
-        destination: MutableSet<BakedStatement>
+        destination: MutableSet<BakedStatement>,
     ) {
         definitions.forEach {
             val validatedPredicate = validateId(it.key, tempIds, validatedIds)

@@ -7,6 +7,8 @@ typealias LicenseInformationProviderId = String
 interface LicenseInformationProvider {
     val id: LicenseInformationProviderId
     val description: String
+
     fun canProcess(uri: URI): Boolean
+
     fun determineLicense(from: URI): LicenseInformation?
 }

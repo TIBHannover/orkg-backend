@@ -24,7 +24,7 @@ import org.orkg.graph.output.PredicateRepository
 
 class AbstractTemplatePropertyValidator(
     private val predicateRepository: PredicateRepository,
-    private val classRepository: ClassRepository
+    private val classRepository: ClassRepository,
 ) {
     internal fun validate(property: TemplatePropertyDefinition) {
         Label.ofOrNull(property.label) ?: throw InvalidLabel()

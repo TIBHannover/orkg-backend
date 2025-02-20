@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test
 // All hashes have been pre-computed on the command line with `echo -n INPUT | md5 -`.
 @DisplayName("A Gravatar ID")
 internal class GravatarIdTest {
-
     @Test
     @DisplayName("should remove trailing whitespaces")
     fun shouldRemoveTrailingWhitespaces() {

@@ -8,6 +8,6 @@ interface DummyDataUseCases {
     fun updateOrganizationAndObservatory(
         contributorId: ContributorId,
         organizationId: OrganizationId,
-        observatoryId: ObservatoryId
+        observatoryId: ObservatoryId,
     )
 }

@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RestController
 @WebMvcTest
 @ContextConfiguration(classes = [TestController::class, ExceptionHandler::class, FixedClockConfig::class])
 internal class PredicateExceptionUnitTest : MockMvcBaseTest("exceptions") {
-
     @Test
     fun predicateNotModifiable() {
         val id = ThingId("R123")
@@ -60,13 +59,14 @@ internal class PredicateExceptionUnitTest : MockMvcBaseTest("exceptions") {
     @RestController
     internal class TestController {
         @GetMapping("/predicate-not-modifiable")
-        fun predicateNotModifiable(@RequestParam id: ThingId) {
-            throw PredicateNotModifiable(id)
-        }
+        fun predicateNotModifiable(
+            @RequestParam id: ThingId,
+        ): Unit = throw PredicateNotModifiable(id)
 
         @GetMapping("/external-predicate-not-found")
-        fun externalPredicateNotFound(@RequestParam ontologyId: String, @RequestParam id: String) {
-            throw ExternalPredicateNotFound(ontologyId, id)
-        }
+        fun externalPredicateNotFound(
+            @RequestParam ontologyId: String,
+            @RequestParam id: String,
+        ): Unit = throw ExternalPredicateNotFound(ontologyId, id)
     }
 }

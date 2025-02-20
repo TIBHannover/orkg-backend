@@ -1,6 +1,5 @@
 package org.orkg.contenttypes.input.testing.fixtures
 
-import java.util.*
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
@@ -30,6 +29,7 @@ import org.orkg.contenttypes.input.UpdateSmartReviewUseCase
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Visibility
+import java.util.UUID
 
 fun createSmartReviewCommand() = CreateSmartReviewUseCase.CreateCommand(
     contributorId = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),

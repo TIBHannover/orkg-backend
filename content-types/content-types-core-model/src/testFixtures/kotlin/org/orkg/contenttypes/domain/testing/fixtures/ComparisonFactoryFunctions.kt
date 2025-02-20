@@ -1,6 +1,5 @@
 package org.orkg.contenttypes.domain.testing.fixtures
 
-import java.time.OffsetDateTime
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
@@ -20,13 +19,14 @@ import org.orkg.contenttypes.domain.ConfiguredComparisonTargetCell
 import org.orkg.contenttypes.domain.HeadVersion
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.domain.PublicationInfo
+import org.orkg.contenttypes.domain.PublishedComparison
 import org.orkg.contenttypes.domain.PublishedVersion
 import org.orkg.contenttypes.domain.VersionInfo
-import org.orkg.contenttypes.domain.PublishedComparison
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Visibility
+import java.time.OffsetDateTime
 
 fun createComparison() = Comparison(
     id = ThingId("R8186"),

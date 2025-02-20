@@ -12,7 +12,6 @@ import org.orkg.graph.output.FormattedLabelRepository
 import org.orkg.graph.testing.fixtures.createResource
 
 internal class FormattedLabelServiceUnitTest : MockkBaseTest {
-
     private val repository: FormattedLabelRepository = mockk()
     private val service = FormattedLabelService(repository)
 

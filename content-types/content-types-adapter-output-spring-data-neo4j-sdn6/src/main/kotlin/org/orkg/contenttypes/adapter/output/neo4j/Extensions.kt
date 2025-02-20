@@ -1,8 +1,5 @@
 package org.orkg.contenttypes.adapter.output.neo4j
 
-import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
-import java.util.function.BiFunction
 import org.neo4j.cypherdsl.core.Cypher.call
 import org.neo4j.cypherdsl.core.Cypher.node
 import org.neo4j.cypherdsl.core.Cypher.unionAll
@@ -23,6 +20,9 @@ import org.orkg.graph.adapter.output.neo4j.toThingId
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.Thing
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
+import java.util.function.BiFunction
 
 private const val RELATED = "RELATED"
 private val reservedRosettaStoneStatementLabels = setOf(
@@ -42,7 +42,7 @@ data class RosettaStoneStatementMapper(
         latest: SymbolicName,
         templateId: SymbolicName,
         context: SymbolicName,
-        versions: SymbolicName
+        versions: SymbolicName,
     ) : this(latest.value, templateId.value, context.value, versions.value)
 
     override fun apply(typeSystem: TypeSystem, record: Record): RosettaStoneStatement {
@@ -110,20 +110,20 @@ data class RosettaStoneStatementMapper(
 
     data class SubjectNode(
         val thing: Thing,
-        val index: Int
+        val index: Int,
     )
 
     data class ObjectNode(
         val thing: Thing,
         val index: Int,
-        val position: Int
+        val position: Int,
     )
 }
 
 internal fun matchLiteratureList(
     node: SymbolicName,
     patternGenerator: (Node) -> Collection<RelationshipPattern>,
-    published: Boolean? = null
+    published: Boolean? = null,
 ): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere =
     when (published) {
         true -> matchPublishedLiteratureLists(node, patternGenerator)
@@ -138,20 +138,20 @@ internal fun matchLiteratureList(
 
 private fun matchPublishedLiteratureLists(
     symbolicName: SymbolicName,
-    patternGenerator: (Node) -> Collection<RelationshipPattern>
+    patternGenerator: (Node) -> Collection<RelationshipPattern>,
 ): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere =
     matchDistinct(node("LiteratureListPublished", "LatestVersion").named(symbolicName), patternGenerator)
 
 private fun matchUnpublishedLiteratureLists(
     symbolicName: SymbolicName,
-    patternGenerator: (Node) -> Collection<RelationshipPattern>
+    patternGenerator: (Node) -> Collection<RelationshipPattern>,
 ): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere =
     matchDistinct(node("LiteratureList").named(symbolicName), patternGenerator)
 
 internal fun matchSmartReview(
     node: SymbolicName,
     patternGenerator: (Node) -> Collection<RelationshipPattern>,
-    published: Boolean? = null
+    published: Boolean? = null,
 ): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere =
     when (published) {
         true -> matchPublishedSmartReviews(node, patternGenerator)
@@ -166,20 +166,20 @@ internal fun matchSmartReview(
 
 private fun matchPublishedSmartReviews(
     symbolicName: SymbolicName,
-    patternGenerator: (Node) -> Collection<RelationshipPattern>
+    patternGenerator: (Node) -> Collection<RelationshipPattern>,
 ): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere =
     matchDistinct(node("SmartReviewPublished", "LatestVersion").named(symbolicName), patternGenerator)
 
 private fun matchUnpublishedSmartReviews(
     symbolicName: SymbolicName,
-    patternGenerator: (Node) -> Collection<RelationshipPattern>
+    patternGenerator: (Node) -> Collection<RelationshipPattern>,
 ): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere =
     matchDistinct(node("SmartReview").named(symbolicName), patternGenerator)
 
 internal fun matchComparison(
     node: SymbolicName,
     patternGenerator: (Node) -> Collection<RelationshipPattern>,
-    published: Boolean? = null
+    published: Boolean? = null,
 ): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere =
     when (published) {
         true -> matchPublishedComparisons(node, patternGenerator)
@@ -194,12 +194,12 @@ internal fun matchComparison(
 
 private fun matchPublishedComparisons(
     symbolicName: SymbolicName,
-    patternGenerator: (Node) -> Collection<RelationshipPattern>
+    patternGenerator: (Node) -> Collection<RelationshipPattern>,
 ): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere =
     matchDistinct(node("ComparisonPublished", "LatestVersion").named(symbolicName), patternGenerator)
 
 private fun matchUnpublishedComparisons(
     symbolicName: SymbolicName,
-    patternGenerator: (Node) -> Collection<RelationshipPattern>
+    patternGenerator: (Node) -> Collection<RelationshipPattern>,
 ): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere =
     matchDistinct(node("Comparison").named(symbolicName), patternGenerator)

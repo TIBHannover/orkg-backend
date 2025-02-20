@@ -10,7 +10,7 @@ import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
 class RosettaStoneTemplatePropertiesUpdater(
-    private val abstractRosettaStoneTemplatePropertiesUpdater: AbstractTemplatePropertiesUpdater
+    private val abstractRosettaStoneTemplatePropertiesUpdater: AbstractTemplatePropertiesUpdater,
 ) : UpdateRosettaStoneTemplateAction {
     constructor(
         literalService: LiteralUseCases,

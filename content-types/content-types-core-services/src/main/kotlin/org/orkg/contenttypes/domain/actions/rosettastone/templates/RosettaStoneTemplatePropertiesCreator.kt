@@ -8,17 +8,17 @@ import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
 class RosettaStoneTemplatePropertiesCreator(
-    private val abstractTemplatePropertyCreator: AbstractTemplatePropertyCreator
+    private val abstractTemplatePropertyCreator: AbstractTemplatePropertyCreator,
 ) : CreateRosettaStoneTemplateAction {
     constructor(
         unsafeResourceUseCases: UnsafeResourceUseCases,
         literalService: LiteralUseCases,
-        unsafeStatementUseCases: UnsafeStatementUseCases
+        unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(AbstractTemplatePropertyCreator(unsafeResourceUseCases, literalService, unsafeStatementUseCases))
 
     override fun invoke(
         command: CreateRosettaStoneTemplateCommand,
-        state: CreateRosettaStoneTemplateState
+        state: CreateRosettaStoneTemplateState,
     ): CreateRosettaStoneTemplateState {
         command.properties.forEachIndexed { index, property ->
             abstractTemplatePropertyCreator.create(command.contributorId, state.rosettaStoneTemplateId!!, index, property)

@@ -1,6 +1,5 @@
 package org.orkg.community.adapter.output.jpa
 
-import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -19,13 +18,16 @@ import org.springframework.beans.factory.InitializingBean
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
+import java.util.Optional
 
 @Component
 @TransactionalOnJPA
 class ContributorFromUserAdapter(
     private val eventBus: EventBus,
     private val postgresContributorRepository: PostgresContributorRepository,
-) : ContributorRepository, Listener, InitializingBean {
+) : ContributorRepository,
+    Listener,
+    InitializingBean {
     override fun afterPropertiesSet() {
         eventBus.register(this)
     }
@@ -72,7 +74,7 @@ class ContributorFromUserAdapter(
                 entity.displayName = event.displayName
                 postgresContributorRepository.save(entity)
             }
-            else -> { /* silently ignore unknown events */
+            else -> { // silently ignore unknown events
             }
         }
     }

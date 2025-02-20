@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RestController
 @WebMvcTest
 @ContextConfiguration(classes = [TestController::class, ExceptionHandler::class, FixedClockConfig::class])
 internal class CommonExceptionUnitTest : MockMvcBaseTest("exceptions") {
-
     @Test
     fun invalidMonth() {
         get("/invalid-month")
@@ -70,18 +69,18 @@ internal class CommonExceptionUnitTest : MockMvcBaseTest("exceptions") {
     @RestController
     internal class TestController {
         @GetMapping("/invalid-month")
-        fun invalidMonth(@RequestParam month: Int) {
-            throw InvalidMonth(month)
-        }
+        fun invalidMonth(
+            @RequestParam month: Int,
+        ): Unit = throw InvalidMonth(month)
 
         @GetMapping("/sustainable-development-goal-not-found")
-        fun sustainableDevelopmentGoalNotFound(@RequestParam sdgId: ThingId) {
-            throw SustainableDevelopmentGoalNotFound(sdgId)
-        }
+        fun sustainableDevelopmentGoalNotFound(
+            @RequestParam sdgId: ThingId,
+        ): Unit = throw SustainableDevelopmentGoalNotFound(sdgId)
 
         @GetMapping("/invalid-bibtex-reference")
-        fun invalidBibTeXReference(@RequestParam reference: String) {
-            throw InvalidBibTeXReference(reference)
-        }
+        fun invalidBibTeXReference(
+            @RequestParam reference: String,
+        ): Unit = throw InvalidBibTeXReference(reference)
     }
 }

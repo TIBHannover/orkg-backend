@@ -15,7 +15,7 @@ import org.orkg.graph.domain.Literals
 class TemplatePropertyRepresentationDeserializer : JsonDeserializer<TemplatePropertyRepresentation>() {
     override fun deserialize(
         p: JsonParser?,
-        ctxt: DeserializationContext?
+        ctxt: DeserializationContext?,
     ): TemplatePropertyRepresentation = with(p!!.codec) {
         val node = readTree<JsonNode>(p)
         when {
@@ -33,7 +33,8 @@ class TemplatePropertyRepresentationDeserializer : JsonDeserializer<TemplateProp
         node.has("pattern") || node.get("datatype").asText() == Literals.XSD.STRING.`class`.value
 
     private fun isNumberLiteralNode(node: JsonNode): Boolean =
-        node.has("min_inclusive") || node.has("max_inclusive") ||
+        node.has("min_inclusive") ||
+            node.has("max_inclusive") ||
             node.get("datatype").asText() == Literals.XSD.DECIMAL.`class`.value ||
             node.get("datatype").asText() == Literals.XSD.FLOAT.`class`.value ||
             node.get("datatype").asText() == Literals.XSD.INT.`class`.value

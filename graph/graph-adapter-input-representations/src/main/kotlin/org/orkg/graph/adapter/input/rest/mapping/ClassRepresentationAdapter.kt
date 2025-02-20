@@ -1,6 +1,5 @@
 package org.orkg.graph.adapter.input.rest.mapping
 
-import java.util.*
 import org.orkg.common.PageRequests
 import org.orkg.graph.adapter.input.rest.ClassRepresentation
 import org.orkg.graph.domain.Class
@@ -8,6 +7,7 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.StatementUseCases
 import org.springframework.data.domain.Page
+import java.util.Optional
 
 interface ClassRepresentationAdapter {
     val statementService: StatementUseCases
@@ -36,7 +36,7 @@ interface ClassRepresentationAdapter {
     }
 
     fun Class.toClassRepresentation(
-        description: String?
+        description: String?,
     ): ClassRepresentation =
         ClassRepresentation(id, label, uri, description, createdAt, createdBy, modifiable)
 }

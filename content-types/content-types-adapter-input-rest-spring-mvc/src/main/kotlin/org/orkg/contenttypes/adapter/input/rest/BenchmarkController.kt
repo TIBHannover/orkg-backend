@@ -6,10 +6,10 @@ import org.orkg.contenttypes.domain.Dataset
 import org.orkg.contenttypes.domain.DatasetSummary
 import org.orkg.contenttypes.domain.ResearchField
 import org.orkg.contenttypes.domain.ResearchProblem
-import org.orkg.contenttypes.input.RetrieveBenchmarkUseCase
-import org.orkg.contenttypes.input.RetrieveDatasetUseCase
-import org.orkg.contenttypes.input.RetrieveResearchFieldUseCase
-import org.orkg.contenttypes.input.RetrieveResearchProblemUseCase
+import org.orkg.contenttypes.input.BenchmarkUseCases
+import org.orkg.contenttypes.input.DatasetUseCases
+import org.orkg.contenttypes.input.ResearchFieldUseCases
+import org.orkg.contenttypes.input.ResearchProblemUseCases
 import org.orkg.graph.domain.DatasetNotFound
 import org.orkg.graph.domain.ResearchFieldNotFound
 import org.orkg.graph.domain.ResearchProblemNotFound
@@ -21,17 +21,20 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class BenchmarkController(
-    private val retrieveResearchField: RetrieveResearchFieldUseCase,
-    private val retrieveBenchmarks: RetrieveBenchmarkUseCase,
-    private val retrieveDatasets: RetrieveDatasetUseCase,
-    private val retrieveProblems: RetrieveResearchProblemUseCase
+    private val retrieveResearchField: ResearchFieldUseCases,
+    private val retrieveBenchmarks: BenchmarkUseCases,
+    private val retrieveDatasets: DatasetUseCases,
+    private val retrieveProblems: ResearchProblemUseCases,
 ) {
     @GetMapping("/api/research-fields/benchmarks")
     fun findAllWithBenchmarks(pageable: Pageable): Page<ResearchField> =
         retrieveResearchField.findAllWithBenchmarks(pageable)
 
     @GetMapping("/api/benchmarks/summary/research-field/{id}")
-    fun findAllBenchmarkSummariesByResearchFieldId(@PathVariable id: ThingId, pageable: Pageable): Page<BenchmarkSummary> =
+    fun findAllBenchmarkSummariesByResearchFieldId(
+        @PathVariable id: ThingId,
+        pageable: Pageable,
+    ): Page<BenchmarkSummary> =
         retrieveBenchmarks
             .findAllBenchmarkSummariesByResearchFieldId(id, pageable)
             .orElseThrow { ResearchFieldNotFound(id) }
@@ -43,13 +46,19 @@ class BenchmarkController(
             .orElseThrow { RuntimeException() }
 
     @GetMapping("/api/datasets/research-problem/{id}")
-    fun findAllDatasetsByResearchProblemId(@PathVariable id: ThingId, pageable: Pageable): Page<Dataset> =
+    fun findAllDatasetsByResearchProblemId(
+        @PathVariable id: ThingId,
+        pageable: Pageable,
+    ): Page<Dataset> =
         retrieveDatasets
             .findAllDatasetsByResearchProblemId(id, pageable)
             .orElseThrow { ResearchProblemNotFound(id) }
 
     @GetMapping("/api/datasets/{id}/problems")
-    fun findAllByDatasetId(@PathVariable id: ThingId, pageable: Pageable): Page<ResearchProblem> =
+    fun findAllByDatasetId(
+        @PathVariable id: ThingId,
+        pageable: Pageable,
+    ): Page<ResearchProblem> =
         retrieveProblems
             .findAllByDatasetId(id, pageable)
             .orElseThrow { DatasetNotFound(id) }
@@ -58,7 +67,7 @@ class BenchmarkController(
     fun findAllDatasetSummariesByIdAndResearchProblemId(
         @PathVariable id: ThingId,
         @PathVariable problemId: ThingId,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<DatasetSummary> =
         retrieveDatasets
             .findAllDatasetSummariesByIdAndResearchProblemId(id, problemId, pageable)

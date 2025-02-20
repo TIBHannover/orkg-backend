@@ -1,14 +1,14 @@
 package org.orkg.graph.domain
 
 import com.redfin.contractual.EqualsContract
-import java.time.OffsetDateTime
-import java.util.*
-import java.util.function.Supplier
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
+import java.time.OffsetDateTime
+import java.util.UUID
+import java.util.function.Supplier
 
 internal class StatementEqualsContractTest : EqualsContract<GeneralStatement> {
     private val equalID = "SOME_ID"

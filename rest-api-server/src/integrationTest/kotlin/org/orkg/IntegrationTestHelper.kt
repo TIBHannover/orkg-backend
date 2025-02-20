@@ -1,6 +1,5 @@
 package org.orkg
 
-import java.time.OffsetDateTime
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
@@ -27,6 +26,7 @@ import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.mediastorage.domain.ImageId
 import org.orkg.testing.MockUserId
+import java.time.OffsetDateTime
 
 // Classes
 
@@ -45,7 +45,7 @@ fun CreateClassUseCase.createClass(
     id: String? = null,
     contributorId: ContributorId? = null,
     uri: ParsedIRI? = null,
-    modifiable: Boolean = true
+    modifiable: Boolean = true,
 ): ThingId =
     create(CreateClassUseCase.CreateCommand(label, id?.let(::ThingId), contributorId, uri, modifiable))
 
@@ -55,7 +55,7 @@ fun CreatePredicateUseCase.createPredicate(
     id: ThingId? = null,
     label: String = "label",
     contributorId: ContributorId = ContributorId.UNKNOWN,
-    modifiable: Boolean = true
+    modifiable: Boolean = true,
 ): ThingId = create(
     CreatePredicateUseCase.CreateCommand(
         id = id,
@@ -75,7 +75,7 @@ fun CreateResourceUseCase.createResource(
     userId: ContributorId = ContributorId.UNKNOWN,
     observatoryId: ObservatoryId = ObservatoryId.UNKNOWN,
     organizationId: OrganizationId = OrganizationId.UNKNOWN,
-    modifiable: Boolean = true
+    modifiable: Boolean = true,
 ): ThingId = create(
     CreateResourceUseCase.CreateCommand(
         id = id?.let(::ThingId),
@@ -96,7 +96,7 @@ fun CreateLiteralUseCase.createLiteral(
     label: String = "label",
     datatype: String = Literals.XSD.STRING.prefixedUri,
     contributorId: ContributorId = ContributorId.UNKNOWN,
-    modifiable: Boolean = true
+    modifiable: Boolean = true,
 ): ThingId = create(CreateLiteralUseCase.CreateCommand(id, contributorId, label, datatype, modifiable))
 
 // Contributors
@@ -122,7 +122,7 @@ fun OrganizationUseCases.createOrganization(
     displayId: String = organizationName.toDisplayId(),
     type: OrganizationType = OrganizationType.GENERAL,
     id: OrganizationId? = null,
-    logoId: ImageId? = null
+    logoId: ImageId? = null,
 ) = this.create(id, organizationName, createdBy, url, displayId, type, logoId)
 
 // Observatories
@@ -134,7 +134,7 @@ fun ObservatoryUseCases.createObservatory(
     organizations: Set<OrganizationId> = emptySet(),
     researchField: ThingId = ThingId("R123"),
     displayId: String = name.toDisplayId(),
-    sustainableDevelopmentGoals: Set<ThingId> = emptySet()
+    sustainableDevelopmentGoals: Set<ThingId> = emptySet(),
 ) = this.create(
     CreateObservatoryUseCase.CreateCommand(
         id = id,
@@ -168,7 +168,7 @@ fun ListUseCases.createList(
 fun StatementUseCases.createStatement(
     subject: ThingId,
     predicate: ThingId,
-    `object`: ThingId
+    `object`: ThingId,
 ): StatementId = create(
     CreateCommand(
         contributorId = ContributorId.UNKNOWN,

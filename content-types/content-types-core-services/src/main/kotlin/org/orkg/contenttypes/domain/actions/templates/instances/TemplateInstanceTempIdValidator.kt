@@ -5,11 +5,11 @@ import org.orkg.contenttypes.domain.actions.UpdateTemplateInstanceCommand
 import org.orkg.contenttypes.domain.actions.UpdateTemplateInstanceState
 
 class TemplateInstanceTempIdValidator(
-    private val tempIdValidator: TempIdValidator = TempIdValidator()
+    private val tempIdValidator: TempIdValidator = TempIdValidator(),
 ) : UpdateTemplateInstanceAction {
     override operator fun invoke(
         command: UpdateTemplateInstanceCommand,
-        state: UpdateTemplateInstanceState
+        state: UpdateTemplateInstanceState,
     ): UpdateTemplateInstanceState {
         val ids = tempIdValidator.run { command.tempIds() }
         if (ids.isNotEmpty()) {

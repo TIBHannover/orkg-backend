@@ -16,6 +16,6 @@ class WidgetController(
     @GetMapping
     fun searchDoi(
         @RequestParam(required = false) doi: String?,
-        @RequestParam(required = false) title: String?
+        @RequestParam(required = false) title: String?,
     ): WidgetInfo = resolveDOIUseCase.resolveDOI(doi, title)
 }

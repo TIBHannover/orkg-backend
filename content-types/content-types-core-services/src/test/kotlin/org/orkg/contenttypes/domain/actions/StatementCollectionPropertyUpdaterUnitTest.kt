@@ -5,8 +5,6 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import java.time.OffsetDateTime
-import java.util.*
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.PageRequests
@@ -28,6 +26,8 @@ import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.pageOf
+import java.time.OffsetDateTime
+import java.util.UUID
 
 internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
     private val literalService: LiteralUseCases = mockk()
@@ -35,7 +35,9 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
     private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
 
     private val statementCollectionPropertyUpdater = StatementCollectionPropertyUpdater(
-        literalService, statementService, unsafeStatementUseCases
+        literalService,
+        statementService,
+        unsafeStatementUseCases
     )
 
     @Test

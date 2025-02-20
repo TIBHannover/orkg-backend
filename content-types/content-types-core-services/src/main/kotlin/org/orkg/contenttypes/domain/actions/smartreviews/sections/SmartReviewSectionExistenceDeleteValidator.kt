@@ -7,11 +7,11 @@ import org.orkg.contenttypes.domain.actions.smartreviews.sections.DeleteSmartRev
 import org.orkg.graph.output.ResourceRepository
 
 class SmartReviewSectionExistenceDeleteValidator(
-    private val abstractSmartReviewExistenceValidator: AbstractSmartReviewExistenceValidator
+    private val abstractSmartReviewExistenceValidator: AbstractSmartReviewExistenceValidator,
 ) : DeleteSmartReviewSectionAction {
     constructor(
         smartReviewService: SmartReviewService,
-        resourceRepository: ResourceRepository
+        resourceRepository: ResourceRepository,
     ) : this(AbstractSmartReviewExistenceValidator(smartReviewService, resourceRepository))
 
     override fun invoke(command: DeleteSmartReviewSectionCommand, state: State): State =

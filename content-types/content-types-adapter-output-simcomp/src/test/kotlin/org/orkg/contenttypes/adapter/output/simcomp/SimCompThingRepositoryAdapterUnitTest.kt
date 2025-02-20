@@ -9,13 +9,6 @@ import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.io.IOException
-import java.net.URI
-import java.net.http.HttpClient
-import java.net.http.HttpResponse
-import java.time.LocalDateTime
-import java.time.OffsetDateTime
-import java.util.*
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
@@ -44,6 +37,13 @@ import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.testing.fixtures.createStatement
+import java.io.IOException
+import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpResponse
+import java.time.LocalDateTime
+import java.time.OffsetDateTime
+import java.util.UUID
 
 internal class SimCompThingRepositoryAdapterUnitTest : MockkBaseTest {
     private val simCompHostUrl = "https://example.org/simcomp"
@@ -140,9 +140,12 @@ internal class SimCompThingRepositoryAdapterUnitTest : MockkBaseTest {
         }
 
         verify(exactly = 1) {
-            httpClient.send(withArg {
-                it.uri() shouldBe URI.create("$simCompHostUrl/thing/?thing_type=LIST&thing_key=$id")
-            }, any<HttpResponse.BodyHandler<String>>())
+            httpClient.send(
+                withArg {
+                    it.uri() shouldBe URI.create("$simCompHostUrl/thing/?thing_type=LIST&thing_key=$id")
+                },
+                any<HttpResponse.BodyHandler<String>>()
+            )
         }
         verify(exactly = 1) { response.statusCode() }
         verify(exactly = 1) { response.body() }
@@ -161,9 +164,12 @@ internal class SimCompThingRepositoryAdapterUnitTest : MockkBaseTest {
         result.isPresent shouldBe false
 
         verify(exactly = 1) {
-            httpClient.send(withArg {
-                it.uri() shouldBe URI.create("$simCompHostUrl/thing/?thing_type=LIST&thing_key=$id")
-            }, any<HttpResponse.BodyHandler<String>>())
+            httpClient.send(
+                withArg {
+                    it.uri() shouldBe URI.create("$simCompHostUrl/thing/?thing_type=LIST&thing_key=$id")
+                },
+                any<HttpResponse.BodyHandler<String>>()
+            )
         }
         verify { response.statusCode() }
     }
@@ -184,9 +190,12 @@ internal class SimCompThingRepositoryAdapterUnitTest : MockkBaseTest {
         }
 
         verify(exactly = 1) {
-            httpClient.send(withArg {
-                it.uri() shouldBe URI.create("$simCompHostUrl/thing/?thing_type=LIST&thing_key=$id")
-            }, any<HttpResponse.BodyHandler<String>>())
+            httpClient.send(
+                withArg {
+                    it.uri() shouldBe URI.create("$simCompHostUrl/thing/?thing_type=LIST&thing_key=$id")
+                },
+                any<HttpResponse.BodyHandler<String>>()
+            )
         }
         verify { response.statusCode() }
         verify { response.body() }
@@ -232,14 +241,17 @@ internal class SimCompThingRepositoryAdapterUnitTest : MockkBaseTest {
         adapter.save(id, type, data, config)
 
         verify(exactly = 1) {
-            httpClient.send(withArg {
-                it.uri() shouldBe URI.create("$simCompHostUrl/thing/")
-                it.headers().map()["Content-Type"]!!.single() shouldBe "application/json"
-                it.bodyPublisher().isPresent shouldBe true
-                it.bodyPublisher().get().shouldBeInstanceOf<TestBodyPublisher>().asClue { bodyPublisher ->
-                    bodyPublisher.content shouldBe objectMapper.writeValueAsString(request)
-                }
-            }, any<HttpResponse.BodyHandler<String>>())
+            httpClient.send(
+                withArg {
+                    it.uri() shouldBe URI.create("$simCompHostUrl/thing/")
+                    it.headers().map()["Content-Type"]!!.single() shouldBe "application/json"
+                    it.bodyPublisher().isPresent shouldBe true
+                    it.bodyPublisher().get().shouldBeInstanceOf<TestBodyPublisher>().asClue { bodyPublisher ->
+                        bodyPublisher.content shouldBe objectMapper.writeValueAsString(request)
+                    }
+                },
+                any<HttpResponse.BodyHandler<String>>()
+            )
         }
         verify { response.statusCode() }
     }
@@ -322,15 +334,18 @@ internal class SimCompThingRepositoryAdapterUnitTest : MockkBaseTest {
         adapter.update(id, type, data, config)
 
         verify(exactly = 1) {
-            httpClient.send(withArg {
-                it.uri() shouldBe URI.create("$simCompHostUrl/thing/")
-                it.headers().map()["Content-Type"]!!.single() shouldBe "application/json"
-                it.headers().map()["X-API-KEY"]!!.single() shouldBe simCompApiKey
-                it.bodyPublisher().isPresent shouldBe true
-                it.bodyPublisher().get().shouldBeInstanceOf<TestBodyPublisher>().asClue { bodyPublisher ->
-                    bodyPublisher.content shouldBe objectMapper.writeValueAsString(request)
-                }
-            }, any<HttpResponse.BodyHandler<String>>())
+            httpClient.send(
+                withArg {
+                    it.uri() shouldBe URI.create("$simCompHostUrl/thing/")
+                    it.headers().map()["Content-Type"]!!.single() shouldBe "application/json"
+                    it.headers().map()["X-API-KEY"]!!.single() shouldBe simCompApiKey
+                    it.bodyPublisher().isPresent shouldBe true
+                    it.bodyPublisher().get().shouldBeInstanceOf<TestBodyPublisher>().asClue { bodyPublisher ->
+                        bodyPublisher.content shouldBe objectMapper.writeValueAsString(request)
+                    }
+                },
+                any<HttpResponse.BodyHandler<String>>()
+            )
         }
         verify { response.statusCode() }
     }

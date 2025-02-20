@@ -1,8 +1,6 @@
 package org.orkg.export.domain
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import java.io.Writer
-import java.net.URI
 import org.orkg.contenttypes.domain.Comparison
 import org.orkg.contenttypes.input.ComparisonUseCases
 import org.orkg.contenttypes.output.ComparisonRepository
@@ -23,6 +21,8 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import java.io.Writer
+import java.net.URI
 
 private const val DEFAULT_FILE_NAME = "comparisons.jsonl"
 
@@ -33,9 +33,8 @@ class ExportComparisonService(
     private val fileExportService: FileExportService,
     private val objectMapper: ObjectMapper,
     @Value("\${orkg.publishing.base-url.comparison}")
-    private val comparisonPublishBaseUri: String = "http://localhost/comparison/"
+    private val comparisonPublishBaseUri: String = "http://localhost/comparison/",
 ) : ExportUnpublishedComparisonUseCase {
-
     override fun export(writer: Writer) {
         comparisonService::findAllCurrentAndListedAndUnpublishedComparisons.forEachChunked { comparison ->
             writer.appendLine(objectMapper.writeValueAsString(comparison.toDataCiteJson()))

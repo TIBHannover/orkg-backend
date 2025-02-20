@@ -26,7 +26,6 @@ import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.domain.ResourceReference
 import org.orkg.contenttypes.domain.VersionInfo
 import org.orkg.contenttypes.input.LiteratureListUseCases
-import org.orkg.createStatement
 import org.orkg.createClasses
 import org.orkg.createContributor
 import org.orkg.createLiteral
@@ -34,6 +33,7 @@ import org.orkg.createObservatory
 import org.orkg.createOrganization
 import org.orkg.createPredicate
 import org.orkg.createResource
+import org.orkg.createStatement
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates

@@ -12,7 +12,7 @@ interface CreateSmartReviewSectionAction : Action<CreateSmartReviewSectionComman
     data class State(
         val smartReviewSectionId: ThingId? = null,
         val contributionId: ThingId? = null,
-        val statements: Map<ThingId, List<GeneralStatement>> = emptyMap()
+        val statements: Map<ThingId, List<GeneralStatement>> = emptyMap(),
     )
 }
 

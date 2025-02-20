@@ -9,7 +9,7 @@ class ObservatoryFilterIdSerializer : JsonSerializer<ObservatoryFilterId>() {
     override fun serialize(
         value: ObservatoryFilterId?,
         gen: JsonGenerator?,
-        serializers: SerializerProvider?
+        serializers: SerializerProvider?,
     ) {
         gen?.writeString(value.toString())
     }

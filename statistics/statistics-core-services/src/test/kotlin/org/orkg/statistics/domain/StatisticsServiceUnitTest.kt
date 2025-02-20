@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test
 import org.orkg.statistics.testing.fixtures.createMetrics
 
 internal class StatisticsServiceUnitTest {
-
     private val metrics = createMetrics()
     private val service = StatisticsService(metrics)
 

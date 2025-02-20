@@ -1,7 +1,5 @@
 package org.orkg.contenttypes.domain
 
-import java.time.OffsetDateTime
-import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -39,6 +37,8 @@ import org.orkg.graph.output.ThingRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
+import java.time.OffsetDateTime
+import java.util.Optional
 
 @Component
 class TemplateInstanceService(
@@ -54,9 +54,8 @@ class TemplateInstanceService(
     private val listService: ListUseCases,
     private val statementRepository: StatementRepository,
     private val classRepository: ClassRepository,
-    private val classHierarchyRepository: ClassHierarchyRepository
+    private val classHierarchyRepository: ClassHierarchyRepository,
 ) : TemplateInstanceUseCases {
-
     override fun findById(templateId: ThingId, id: ThingId, nested: Boolean): Optional<TemplateInstance> {
         val template = templateService.findById(templateId)
             .orElseThrow { TemplateNotFound(templateId) }
@@ -78,7 +77,7 @@ class TemplateInstanceService(
         createdAtStart: OffsetDateTime?,
         createdAtEnd: OffsetDateTime?,
         observatoryId: ObservatoryId?,
-        organizationId: OrganizationId?
+        organizationId: OrganizationId?,
     ): Page<TemplateInstance> {
         val template = templateService.findById(templateId)
             .orElseThrow { TemplateNotFound(templateId) }
@@ -131,7 +130,7 @@ class TemplateInstanceService(
 
     private fun associateTemplatePropertiesToStatements(
         template: Template,
-        statements: Iterable<GeneralStatement>
+        statements: Iterable<GeneralStatement>,
     ): Map<ThingId, List<EmbeddedStatement>> =
         template.properties.associateBy(
             keySelector = { it.path.id },
@@ -145,7 +144,7 @@ class TemplateInstanceService(
         template: Template,
         statements: Map<ThingId, List<EmbeddedStatement>>,
         visitedThings: MutableSet<ThingId>,
-        visitedTemplates: MutableMap<ThingId, Template?>
+        visitedTemplates: MutableMap<ThingId, Template?>,
     ): Map<ThingId, List<EmbeddedStatement>> =
         template.properties.associateBy(
             keySelector = { it.path.id },

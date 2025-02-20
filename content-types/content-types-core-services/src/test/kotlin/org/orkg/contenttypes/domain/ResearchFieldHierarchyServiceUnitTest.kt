@@ -3,7 +3,6 @@ package org.orkg.contenttypes.domain
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.util.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -17,6 +16,7 @@ import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.pageOf
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
+import java.util.Optional
 
 internal class ResearchFieldHierarchyServiceUnitTest : MockkBaseTest {
     private val repository: ResearchFieldHierarchyRepository = mockk()

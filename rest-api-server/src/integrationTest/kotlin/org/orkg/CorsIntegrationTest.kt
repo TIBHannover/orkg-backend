@@ -1,8 +1,6 @@
 package org.orkg
 
 import com.ninjasquad.springmockk.MockkBean
-import java.time.OffsetDateTime
-import java.util.stream.Stream
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -46,12 +44,13 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
+import java.time.OffsetDateTime
+import java.util.stream.Stream
 
 @SpringBootTest
 @Import(CorsIntegrationTest.FakeController::class)
 @Suppress("HttpUrlsUsage")
 internal class CorsIntegrationTest : MockMvcBaseTest("cors") {
-
     @Autowired
     private lateinit var repository: ResourceRepository
 
@@ -149,7 +148,7 @@ internal class CorsIntegrationTest : MockMvcBaseTest("cors") {
                 excludeClasses: Set<ThingId>,
                 baseClass: ThingId?,
                 observatoryId: ObservatoryId?,
-                organizationId: OrganizationId?
+                organizationId: OrganizationId?,
             ): Page<Resource> = Page.empty(pageable)
         }
     }

@@ -12,7 +12,7 @@ class IdentifierMapDTODeserializer : JsonDeserializer<IdentifierMapDTO>() {
 
     override fun deserialize(
         p: JsonParser,
-        ctxt: DeserializationContext
+        ctxt: DeserializationContext,
     ): IdentifierMapDTO {
         val value = p.codec.readValue(p, typeReference).mapValues { (key, value) ->
             value.mapIndexed { index, it ->

@@ -511,7 +511,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
         }
     }
 
-@Test
+    @Test
     fun `Given a paper update command, when updating publication venue with the same value, it does nothing`() {
         val publicationInfo = PublicationInfo(
             publishedMonth = null,

@@ -1,11 +1,11 @@
 package org.orkg.contenttypes.domain.identifiers
 
 import io.kotest.matchers.shouldBe
-import java.util.stream.Stream
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
+import java.util.stream.Stream
 
 internal class ISSNTest {
     @ParameterizedTest

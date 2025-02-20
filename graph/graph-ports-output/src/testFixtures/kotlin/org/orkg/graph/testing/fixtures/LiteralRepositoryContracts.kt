@@ -10,8 +10,6 @@ import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldNotMatch
-import java.time.OffsetDateTime
-import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.fixedClock
@@ -20,9 +18,11 @@ import org.orkg.graph.domain.SearchString
 import org.orkg.graph.output.LiteralRepository
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
+import java.time.OffsetDateTime
+import java.util.UUID
 
 fun <R : LiteralRepository> literalRepositoryContract(
-    repository: R
+    repository: R,
 ) = describeSpec {
     beforeTest {
         repository.deleteAll()

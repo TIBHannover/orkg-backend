@@ -41,6 +41,6 @@ internal class JsonDeserializationTest {
 
     data class JsonObject(
         val field: String,
-        val list: List<String>
+        val list: List<String>,
     )
 }

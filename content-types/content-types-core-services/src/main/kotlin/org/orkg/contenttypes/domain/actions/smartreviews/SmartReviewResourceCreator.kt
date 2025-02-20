@@ -7,7 +7,7 @@ import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.UnsafeResourceUseCases
 
 class SmartReviewResourceCreator(
-    private val unsafeResourceUseCases: UnsafeResourceUseCases
+    private val unsafeResourceUseCases: UnsafeResourceUseCases,
 ) : CreateSmartReviewAction {
     override fun invoke(command: CreateSmartReviewCommand, state: State): State {
         val smartReviewId = unsafeResourceUseCases.create(

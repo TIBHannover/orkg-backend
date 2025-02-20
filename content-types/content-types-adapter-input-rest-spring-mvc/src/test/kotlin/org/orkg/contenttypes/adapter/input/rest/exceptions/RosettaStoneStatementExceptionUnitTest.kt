@@ -34,7 +34,6 @@ import org.springframework.web.bind.annotation.RestController
 @WebMvcTest
 @ContextConfiguration(classes = [TestController::class, ExceptionHandler::class, FixedClockConfig::class])
 internal class RosettaStoneStatementExceptionUnitTest : MockMvcBaseTest("rosetta-stone-statements") {
-
     @Test
     fun tooManyInputPositions() {
         val exceptedCount = "5"
@@ -259,84 +258,80 @@ internal class RosettaStoneStatementExceptionUnitTest : MockMvcBaseTest("rosetta
     @RestController
     internal class TestController {
         @GetMapping("/too-many-input-positions")
-        fun tooManyInputPositions(@RequestParam exceptedCount: Int, @RequestParam templateId: ThingId) {
-            throw TooManyInputPositions(exceptedCount, templateId)
-        }
+        fun tooManyInputPositions(
+            @RequestParam exceptedCount: Int,
+            @RequestParam templateId: ThingId,
+        ): Unit = throw TooManyInputPositions(exceptedCount, templateId)
 
         @GetMapping("/missing-input-positions")
         fun tooManyInputPositions(
             @RequestParam exceptedCount: Int,
             @RequestParam templateId: ThingId,
-            @RequestParam missingCount: Int
-        ) {
-            throw MissingInputPositions(exceptedCount, templateId, missingCount)
-        }
+            @RequestParam missingCount: Int,
+        ): Unit = throw MissingInputPositions(exceptedCount, templateId, missingCount)
 
         @GetMapping("/rosetta-stone-statement-not-modifiable")
-        fun rosettaStoneStatementNotModifiable(@RequestParam id: ThingId) {
-            throw RosettaStoneStatementNotModifiable(id)
-        }
+        fun rosettaStoneStatementNotModifiable(
+            @RequestParam id: ThingId,
+        ): Unit = throw RosettaStoneStatementNotModifiable(id)
 
         @GetMapping("/cannot-delete-individual-rosetta-stone-statement-version")
-        fun cannotDeleteIndividualRosettaStoneStatementVersion() {
-            throw CannotDeleteIndividualRosettaStoneStatementVersion()
-        }
+        fun cannotDeleteIndividualRosettaStoneStatementVersion(): Unit = throw CannotDeleteIndividualRosettaStoneStatementVersion()
 
         @GetMapping("/rosetta-stone-statement-in-use")
-        fun rosettaStoneStatementInUse(@RequestParam id: ThingId) {
-            throw RosettaStoneStatementInUse(id)
-        }
+        fun rosettaStoneStatementInUse(
+            @RequestParam id: ThingId,
+        ): Unit = throw RosettaStoneStatementInUse(id)
 
         @GetMapping("/nested-rosetta-stone-statement")
-        fun nestedRosettaStoneStatement(@RequestParam id: ThingId, @RequestParam index: Int) {
-            throw NestedRosettaStoneStatement(id, index)
-        }
+        fun nestedRosettaStoneStatement(
+            @RequestParam id: ThingId,
+            @RequestParam index: Int,
+        ): Unit = throw NestedRosettaStoneStatement(id, index)
 
         @GetMapping("/missing-subject-position-value")
-        fun missingSubjectPositionValue(@RequestParam positionPlaceholder: String, @RequestParam min: Int) {
-            throw MissingSubjectPositionValue(positionPlaceholder, min)
-        }
+        fun missingSubjectPositionValue(
+            @RequestParam positionPlaceholder: String,
+            @RequestParam min: Int,
+        ): Unit = throw MissingSubjectPositionValue(positionPlaceholder, min)
 
         @GetMapping("/missing-object-position-value")
-        fun missingObjectPositionValue(@RequestParam positionPlaceholder: String, @RequestParam min: Int) {
-            throw MissingObjectPositionValue(positionPlaceholder, min)
-        }
+        fun missingObjectPositionValue(
+            @RequestParam positionPlaceholder: String,
+            @RequestParam min: Int,
+        ): Unit = throw MissingObjectPositionValue(positionPlaceholder, min)
 
         @GetMapping("/too-many-subject-position-values")
-        fun tooManySubjectPositionValues(@RequestParam positionPlaceholder: String, @RequestParam max: Int) {
-            throw TooManySubjectPositionValues(positionPlaceholder, max)
-        }
+        fun tooManySubjectPositionValues(
+            @RequestParam positionPlaceholder: String,
+            @RequestParam max: Int,
+        ): Unit = throw TooManySubjectPositionValues(positionPlaceholder, max)
 
         @GetMapping("/too-many-object-position-values")
-        fun tooManyObjectPositionValues(@RequestParam positionPlaceholder: String, @RequestParam max: Int) {
-            throw TooManyObjectPositionValues(positionPlaceholder, max)
-        }
+        fun tooManyObjectPositionValues(
+            @RequestParam positionPlaceholder: String,
+            @RequestParam max: Int,
+        ): Unit = throw TooManyObjectPositionValues(positionPlaceholder, max)
 
         @GetMapping("/object-position-value-does-not-match-pattern")
         fun objectPositionValueDoesNotMatchPattern(
             @RequestParam positionPlaceholder: String,
             @RequestParam label: String,
-            @RequestParam pattern: String
-        ) {
-            throw ObjectPositionValueDoesNotMatchPattern(positionPlaceholder, label, pattern)
-        }
+            @RequestParam pattern: String,
+        ): Unit = throw ObjectPositionValueDoesNotMatchPattern(positionPlaceholder, label, pattern)
 
         @GetMapping("/object-position-value-too-low")
         fun objectPositionValueTooLow(
             @RequestParam positionPlaceholder: String,
             @RequestParam label: String,
-            @RequestParam minInclusive: Number
-        ) {
-            throw ObjectPositionValueTooLow(positionPlaceholder, label, minInclusive)
-        }
+            @RequestParam minInclusive: Number,
+        ): Unit = throw ObjectPositionValueTooLow(positionPlaceholder, label, minInclusive)
 
         @GetMapping("/object-position-value-too-high")
         fun objectPositionValueTooHigh(
             @RequestParam positionPlaceholder: String,
             @RequestParam label: String,
-            @RequestParam maxInclusive: Number
-        ) {
-            throw ObjectPositionValueTooHigh(positionPlaceholder, label, maxInclusive)
-        }
+            @RequestParam maxInclusive: Number,
+        ): Unit = throw ObjectPositionValueTooHigh(positionPlaceholder, label, maxInclusive)
     }
 }

@@ -1,6 +1,5 @@
 package org.orkg.contenttypes.domain.actions.comparisons
 
-import java.net.URI
 import org.orkg.contenttypes.domain.actions.PublishComparisonCommand
 import org.orkg.contenttypes.domain.actions.SingleStatementPropertyCreator
 import org.orkg.contenttypes.domain.actions.comparisons.PublishComparisonAction.State
@@ -10,19 +9,20 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
+import java.net.URI
 
 class ComparisonVersionDoiPublisher(
     private val singleStatementPropertyCreator: SingleStatementPropertyCreator,
     private val comparisonRepository: ComparisonRepository,
     private val doiService: DoiService,
-    private val comparisonPublishBaseUri: String
+    private val comparisonPublishBaseUri: String,
 ) : PublishComparisonAction {
     constructor(
         unsafeStatementUseCases: UnsafeStatementUseCases,
         literalService: LiteralUseCases,
         comparisonRepository: ComparisonRepository,
         doiService: DoiService,
-        comparisonPublishBaseUri: String
+        comparisonPublishBaseUri: String,
     ) : this(
         SingleStatementPropertyCreator(literalService, unsafeStatementUseCases),
         comparisonRepository,

@@ -15,9 +15,8 @@ import org.springframework.stereotype.Service
 @TransactionalOnNeo4j
 class ResearchFieldHierarchyService(
     private val repository: ResearchFieldHierarchyRepository,
-    private val researchFieldRepository: ResearchFieldRepository
+    private val researchFieldRepository: ResearchFieldRepository,
 ) : ResearchFieldHierarchyUseCases {
-
     override fun findAllChildrenByAncestorId(id: ThingId, pageable: Pageable): Page<ResearchFieldWithChildCount> =
         researchFieldRepository.findById(id)
             .map { repository.findAllChildrenByAncestorId(id, pageable) }

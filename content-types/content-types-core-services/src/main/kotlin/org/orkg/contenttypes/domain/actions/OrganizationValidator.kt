@@ -8,7 +8,7 @@ import org.orkg.contenttypes.domain.OnlyOneOrganizationAllowed
 class OrganizationValidator<T, S>(
     private val organizationRepository: OrganizationRepository,
     private val newValueSelector: (T) -> List<OrganizationId>?,
-    private val oldValueSelector: (S) -> List<OrganizationId> = { emptyList() }
+    private val oldValueSelector: (S) -> List<OrganizationId> = { emptyList() },
 ) : Action<T, S> {
     override fun invoke(command: T, state: S): S {
         val newOrganizations = newValueSelector(command)

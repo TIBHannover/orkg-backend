@@ -1,5 +1,6 @@
 package org.orkg.common
 
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import java.time.MonthDay
 import java.time.YearMonth
 import java.time.chrono.IsoChronology
@@ -8,9 +9,8 @@ import java.time.format.DateTimeFormatterBuilder
 import java.time.format.ResolverStyle
 import java.time.format.SignStyle
 import java.time.temporal.ChronoField
-import java.util.*
+import java.util.Locale
 import java.util.regex.Pattern
-import org.eclipse.rdf4j.common.net.ParsedIRI
 
 /**
  * Checks whether the given string is a [RFC 3987](https://www.ietf.org/rfc/rfc3987.txt) compliant IRI.

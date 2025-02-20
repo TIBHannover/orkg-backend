@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component
 @Component
 @Profile("production")
 class RdfDumper(
-    private val rdfService: ExportRDFUseCase
+    private val rdfService: ExportRDFUseCase,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java.name)
 

@@ -1,7 +1,7 @@
 package org.orkg.eventbus.events
 
-import java.util.UUID
 import org.orkg.eventbus.Event
+import java.util.UUID
 
 data class DisplayNameUpdated(
     val id: UUID,

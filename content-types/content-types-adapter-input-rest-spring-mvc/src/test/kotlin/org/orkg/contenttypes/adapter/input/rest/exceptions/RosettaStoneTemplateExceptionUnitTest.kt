@@ -39,7 +39,6 @@ import org.springframework.web.bind.annotation.RestController
 @WebMvcTest
 @ContextConfiguration(classes = [TestController::class, ExceptionHandler::class, FixedClockConfig::class])
 internal class RosettaStoneTemplateExceptionUnitTest : MockMvcBaseTest("rosetta-stone-templates") {
-
     @Test
     fun invalidSubjectPositionPath() {
         get("/invalid-subject-position-path")
@@ -301,98 +300,79 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcBaseTest("rosetta-
     @RestController
     internal class TestController {
         @GetMapping("/invalid-subject-position-path")
-        fun invalidSubjectPositionPath() {
-            throw InvalidSubjectPositionPath()
-        }
+        fun invalidSubjectPositionPath(): Unit = throw InvalidSubjectPositionPath()
 
         @GetMapping("/invalid-object-position-path")
-        fun invalidObjectPositionPath(@RequestParam index: Int) {
-            throw InvalidObjectPositionPath(index)
-        }
+        fun invalidObjectPositionPath(
+            @RequestParam index: Int,
+        ): Unit = throw InvalidObjectPositionPath(index)
 
         @GetMapping("/rosetta-stone-template-not-modifiable")
-        fun rosettaStoneTemplateNotModifiable(@RequestParam id: ThingId) {
-            throw RosettaStoneTemplateNotModifiable(id)
-        }
+        fun rosettaStoneTemplateNotModifiable(
+            @RequestParam id: ThingId,
+        ): Unit = throw RosettaStoneTemplateNotModifiable(id)
 
         @GetMapping("/rosetta-stone-template-property-not-modifiable")
-        fun rosettaStoneTemplatePropertyNotModifiable(@RequestParam id: ThingId) {
-            throw RosettaStoneTemplatePropertyNotModifiable(id)
-        }
+        fun rosettaStoneTemplatePropertyNotModifiable(
+            @RequestParam id: ThingId,
+        ): Unit = throw RosettaStoneTemplatePropertyNotModifiable(id)
 
         @GetMapping("/rosetta-stone-template-in-use-cant-be-deleted")
-        fun rosettaStoneTemplateInUseCantBeDeleted(@RequestParam id: ThingId) {
-            throw RosettaStoneTemplateInUse.cantBeDeleted(id)
-        }
+        fun rosettaStoneTemplateInUseCantBeDeleted(
+            @RequestParam id: ThingId,
+        ): Unit = throw RosettaStoneTemplateInUse.cantBeDeleted(id)
 
         @GetMapping("/rosetta-stone-template-in-use-cant-update-property")
-        fun rosettaStoneTemplateInUseCantUpdateProperty(@RequestParam id: ThingId, @RequestParam property: String) {
-            throw RosettaStoneTemplateInUse.cantUpdateProperty(id, property)
-        }
+        fun rosettaStoneTemplateInUseCantUpdateProperty(
+            @RequestParam id: ThingId,
+            @RequestParam property: String,
+        ): Unit = throw RosettaStoneTemplateInUse.cantUpdateProperty(id, property)
 
         @GetMapping("/missing-formatted-label-placeholder-index")
-        fun missingFormattedLabelPlaceholderIndex(@RequestParam index: Int) {
-            throw MissingFormattedLabelPlaceholder(index)
-        }
+        fun missingFormattedLabelPlaceholderIndex(
+            @RequestParam index: Int,
+        ): Unit = throw MissingFormattedLabelPlaceholder(index)
 
         @GetMapping("/missing-formatted-label-placeholder-placeholder")
-        fun missingFormattedLabelPlaceholderPlaceholder(@RequestParam placeholder: String) {
-            throw MissingFormattedLabelPlaceholder(placeholder)
-        }
+        fun missingFormattedLabelPlaceholderPlaceholder(
+            @RequestParam placeholder: String,
+        ): Unit = throw MissingFormattedLabelPlaceholder(placeholder)
 
         @GetMapping("/rosetta-stone-template-label-must-start-with-previous-version")
-        fun rosettaStoneTemplateLabelMustStartWithPreviousVersion() {
-            throw RosettaStoneTemplateLabelMustStartWithPreviousVersion()
-        }
+        fun rosettaStoneTemplateLabelMustStartWithPreviousVersion(): Unit = throw RosettaStoneTemplateLabelMustStartWithPreviousVersion()
 
         @GetMapping("/too-many-new-rosetta-stone-template-label-sections")
-        fun tooManyNewRosettaStoneTemplateLabelSections() {
-            throw TooManyNewRosettaStoneTemplateLabelSections()
-        }
+        fun tooManyNewRosettaStoneTemplateLabelSections(): Unit = throw TooManyNewRosettaStoneTemplateLabelSections()
 
         @GetMapping("/rosetta-stone-template-label-update-requires-new-template-properties")
-        fun rosettaStoneTemplateLabelUpdateRequiresNewTemplateProperties() {
-            throw RosettaStoneTemplateLabelUpdateRequiresNewTemplateProperties()
-        }
+        fun rosettaStoneTemplateLabelUpdateRequiresNewTemplateProperties(): Unit = throw RosettaStoneTemplateLabelUpdateRequiresNewTemplateProperties()
 
         @GetMapping("/new-rosetta-stone-template-label-sections-must-be-optional")
-        fun newRosettaStoneTemplateLabelSectionsMustBeOptional() {
-            throw NewRosettaStoneTemplateLabelSectionsMustBeOptional()
-        }
+        fun newRosettaStoneTemplateLabelSectionsMustBeOptional(): Unit = throw NewRosettaStoneTemplateLabelSectionsMustBeOptional()
 
         @GetMapping("/rosetta-stone-template-label-must-be-updated")
-        fun rosettaStoneTemplateLabelMustBeUpdated() {
-            throw RosettaStoneTemplateLabelMustBeUpdated()
-        }
+        fun rosettaStoneTemplateLabelMustBeUpdated(): Unit = throw RosettaStoneTemplateLabelMustBeUpdated()
 
         @GetMapping("/new-rosetta-stone-template-example-usage-must-start-with-previous-example-usage")
-        fun newRosettaStoneTemplateExampleUsageMustStartWithPreviousExampleUsage() {
-            throw NewRosettaStoneTemplateExampleUsageMustStartWithPreviousExampleUsage()
-        }
+        fun newRosettaStoneTemplateExampleUsageMustStartWithPreviousExampleUsage(): Unit = throw NewRosettaStoneTemplateExampleUsageMustStartWithPreviousExampleUsage()
 
         @GetMapping("/new-rosetta-stone-template-property-must-be-optional")
-        fun newRosettaStoneTemplatePropertyMustBeOptional(@RequestParam placeholder: String) {
-            throw NewRosettaStoneTemplatePropertyMustBeOptional(placeholder)
-        }
+        fun newRosettaStoneTemplatePropertyMustBeOptional(
+            @RequestParam placeholder: String,
+        ): Unit = throw NewRosettaStoneTemplatePropertyMustBeOptional(placeholder)
 
         @GetMapping("/invalid-subject-position-cardinality")
-        fun invalidSubjectPositionCardinality() {
-            throw InvalidSubjectPositionCardinality()
-        }
+        fun invalidSubjectPositionCardinality(): Unit = throw InvalidSubjectPositionCardinality()
 
         @GetMapping("/invalid-subject-position-type")
-        fun invalidSubjectPositionType() {
-            throw InvalidSubjectPositionType()
-        }
+        fun invalidSubjectPositionType(): Unit = throw InvalidSubjectPositionType()
 
         @GetMapping("/missing-subject-position")
-        fun missingSubjectPosition() {
-            throw MissingSubjectPosition()
-        }
+        fun missingSubjectPosition(): Unit = throw MissingSubjectPosition()
 
         @GetMapping("/missing-property-placeholder")
-        fun missingPropertyPlaceholder(@RequestParam index: Int) {
-            throw MissingPropertyPlaceholder(index)
-        }
+        fun missingPropertyPlaceholder(
+            @RequestParam index: Int,
+        ): Unit = throw MissingPropertyPlaceholder(index)
     }
 }

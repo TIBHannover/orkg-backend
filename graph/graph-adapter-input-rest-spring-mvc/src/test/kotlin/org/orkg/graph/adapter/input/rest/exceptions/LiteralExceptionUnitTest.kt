@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RestController
 @WebMvcTest
 @ContextConfiguration(classes = [TestController::class, ExceptionHandler::class, FixedClockConfig::class])
 internal class LiteralExceptionUnitTest : MockMvcBaseTest("exceptions") {
-
     @Test
     fun literalNotModifiable() {
         val id = ThingId("R123")
@@ -77,18 +76,17 @@ internal class LiteralExceptionUnitTest : MockMvcBaseTest("exceptions") {
     @RestController
     internal class TestController {
         @GetMapping("/literal-not-modifiable")
-        fun literalNotModifiable(@RequestParam id: ThingId) {
-            throw LiteralNotModifiable(id)
-        }
+        fun literalNotModifiable(
+            @RequestParam id: ThingId,
+        ): Unit = throw LiteralNotModifiable(id)
 
         @GetMapping("/invalid-literal-label-too-long")
-        fun invalidLiteralLabelTooLong() {
-            throw InvalidLiteralLabel()
-        }
+        fun invalidLiteralLabelTooLong(): Unit = throw InvalidLiteralLabel()
 
         @GetMapping("/invalid-literal-label-constraint-violation")
-        fun invalidLiteralLabelConstraintViolation(@RequestParam label: String, @RequestParam datatype: String) {
-            throw InvalidLiteralLabel(label, datatype)
-        }
+        fun invalidLiteralLabelConstraintViolation(
+            @RequestParam label: String,
+            @RequestParam datatype: String,
+        ): Unit = throw InvalidLiteralLabel(label, datatype)
     }
 }

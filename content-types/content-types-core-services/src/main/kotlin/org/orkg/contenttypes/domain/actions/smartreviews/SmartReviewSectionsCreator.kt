@@ -10,12 +10,12 @@ import org.orkg.graph.input.UnsafeStatementUseCases
 
 class SmartReviewSectionsCreator(
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
-    private val abstractSmartReviewSectionCreator: AbstractSmartReviewSectionCreator
+    private val abstractSmartReviewSectionCreator: AbstractSmartReviewSectionCreator,
 ) : CreateSmartReviewAction {
     constructor(
         literalService: LiteralUseCases,
         unsafeResourceUseCases: UnsafeResourceUseCases,
-        unsafeStatementUseCases: UnsafeStatementUseCases
+        unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(unsafeStatementUseCases, AbstractSmartReviewSectionCreator(unsafeStatementUseCases, unsafeResourceUseCases, literalService))
 
     override fun invoke(command: CreateSmartReviewCommand, state: State): State {

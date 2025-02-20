@@ -5,11 +5,11 @@ import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.createStatement
 import org.orkg.createClasses
 import org.orkg.createLiteral
 import org.orkg.createPredicate
 import org.orkg.createResource
+import org.orkg.createStatement
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.LiteralUseCases
@@ -28,7 +28,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @Neo4jContainerIntegrationTest
 internal class ContributionComparisonControllerIntegrationTest : MockMvcBaseTest("contribution-comparison") {
-
     @Autowired
     private lateinit var statementService: StatementUseCases
 

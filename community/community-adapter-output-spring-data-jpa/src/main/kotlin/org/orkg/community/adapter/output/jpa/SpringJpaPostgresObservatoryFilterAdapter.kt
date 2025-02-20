@@ -1,22 +1,23 @@
 package org.orkg.community.adapter.output.jpa
 
+import org.orkg.common.ObservatoryId
 import org.orkg.community.adapter.output.jpa.internal.ObservatoryFilterEntity
 import org.orkg.community.adapter.output.jpa.internal.PostgresObservatoryFilterRepository
 import org.orkg.community.adapter.output.jpa.internal.toObservatoryFilter
 import org.orkg.community.domain.ObservatoryFilter
-import org.orkg.community.output.ObservatoryFilterRepository
-import java.util.*
-import org.orkg.common.ObservatoryId
 import org.orkg.community.domain.ObservatoryFilterId
+import org.orkg.community.output.ObservatoryFilterRepository
 import org.orkg.spring.data.annotations.TransactionalOnJPA
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
+import java.util.Optional
+import java.util.UUID
 
 @Component
 @TransactionalOnJPA
 class SpringJpaPostgresObservatoryFilterAdapter(
-    private val postgresRepository: PostgresObservatoryFilterRepository
+    private val postgresRepository: PostgresObservatoryFilterRepository,
 ) : ObservatoryFilterRepository {
     override fun save(observatoryFilter: ObservatoryFilter) {
         postgresRepository.save(observatoryFilter.toObservatoryFilterEntity())

@@ -8,11 +8,11 @@ import org.orkg.graph.output.ResourceRepository
 
 class TemplateInstanceSubjectValidator(
     private val resourceRepository: ResourceRepository,
-    private val templateInstanceService: TemplateInstanceService
+    private val templateInstanceService: TemplateInstanceService,
 ) : UpdateTemplateInstanceAction {
     override fun invoke(
         command: UpdateTemplateInstanceCommand,
-        state: UpdateTemplateInstanceState
+        state: UpdateTemplateInstanceState,
     ): UpdateTemplateInstanceState {
         val subject = resourceRepository.findById(command.subject)
             .orElseThrow { ResourceNotFound.withId(command.subject) }

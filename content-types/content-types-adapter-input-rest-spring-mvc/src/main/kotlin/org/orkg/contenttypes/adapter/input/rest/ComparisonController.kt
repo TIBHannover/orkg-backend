@@ -1,7 +1,6 @@
 package org.orkg.contenttypes.adapter.input.rest
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import java.time.OffsetDateTime
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
@@ -47,19 +46,20 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
+import java.time.OffsetDateTime
 
 const val COMPARISON_JSON_V2 = "application/vnd.orkg.comparison.v2+json"
 
 @RestController
 @RequestMapping("/api/comparisons", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ComparisonController(
-    private val service: ComparisonUseCases
-) : ComparisonRepresentationAdapter, ComparisonRelatedResourceRepresentationAdapter,
+    private val service: ComparisonUseCases,
+) : ComparisonRepresentationAdapter,
+    ComparisonRelatedResourceRepresentationAdapter,
     ComparisonRelatedFigureRepresentationAdapter {
-
     @GetMapping("/{id}", produces = [COMPARISON_JSON_V2])
     fun findById(
-        @PathVariable id: ThingId
+        @PathVariable id: ThingId,
     ): ComparisonRepresentation =
         service.findById(id)
             .mapToComparisonRepresentation()
@@ -82,7 +82,7 @@ class ComparisonController(
         @RequestParam("sdg", required = false) sustainableDevelopmentGoal: ThingId?,
         @RequestParam("published", required = false) published: Boolean?,
         @RequestParam("research_problem", required = false) researchProblem: ThingId?,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<ComparisonRepresentation> =
         service.findAll(
             pageable = pageable,
@@ -137,7 +137,7 @@ class ComparisonController(
     @GetMapping("/{id}/related-resources/{comparisonRelatedResourceId}", produces = [COMPARISON_JSON_V2])
     fun findRelatedResourceById(
         @PathVariable id: ThingId,
-        @PathVariable comparisonRelatedResourceId: ThingId
+        @PathVariable comparisonRelatedResourceId: ThingId,
     ): ComparisonRelatedResourceRepresentation =
         service.findRelatedResourceById(id, comparisonRelatedResourceId)
             .mapToComparisonRelatedResourceRepresentation()
@@ -146,7 +146,7 @@ class ComparisonController(
     @GetMapping("/{id}/related-resources", produces = [COMPARISON_JSON_V2])
     fun findAllRelatedResourcesById(
         @PathVariable id: ThingId,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<ComparisonRelatedResourceRepresentation> =
         service.findAllRelatedResourcesById(id, pageable)
             .mapToComparisonRelatedResourceRepresentation()
@@ -206,7 +206,7 @@ class ComparisonController(
     @GetMapping("/{id}/related-figures/{comparisonRelatedFigureId}", produces = [COMPARISON_JSON_V2])
     fun findRelatedFigureById(
         @PathVariable id: ThingId,
-        @PathVariable comparisonRelatedFigureId: ThingId
+        @PathVariable comparisonRelatedFigureId: ThingId,
     ): ComparisonRelatedFigureRepresentation =
         service.findRelatedFigureById(id, comparisonRelatedFigureId)
             .mapToComparisonRelatedFigureRepresentation()
@@ -215,7 +215,7 @@ class ComparisonController(
     @GetMapping("/{id}/related-figures", produces = [COMPARISON_JSON_V2])
     fun findAllRelatedFiguresById(
         @PathVariable id: ThingId,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<ComparisonRelatedFigureRepresentation> =
         service.findAllRelatedFiguresById(id, pageable)
             .mapToComparisonRelatedFigureRepresentation()
@@ -312,7 +312,7 @@ class ComparisonController(
         @JsonProperty("is_anonymized")
         val isAnonymized: Boolean,
         @JsonProperty("extraction_method")
-        val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN
+        val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     ) {
         fun toCreateCommand(contributorId: ContributorId): CreateComparisonUseCase.CreateCommand =
             CreateComparisonUseCase.CreateCommand(
@@ -357,7 +357,7 @@ class ComparisonController(
         val isAnonymized: Boolean?,
         @JsonProperty("extraction_method")
         val extractionMethod: ExtractionMethod?,
-        val visibility: Visibility?
+        val visibility: Visibility?,
     ) {
         fun toUpdateCommand(comparisonId: ThingId, contributorId: ContributorId): UpdateComparisonUseCase.UpdateCommand =
             UpdateComparisonUseCase.UpdateCommand(
@@ -387,7 +387,7 @@ class ComparisonController(
         @field:NullableNotBlank
         val url: String?,
         @field:NullableNotBlank
-        val description: String?
+        val description: String?,
     ) {
         fun toCreateCommand(comparisonId: ThingId, contributorId: ContributorId) =
             CreateComparisonUseCase.CreateComparisonRelatedResourceCommand(
@@ -407,11 +407,17 @@ class ComparisonController(
         @field:NullableNotBlank
         val url: String?,
         @field:NullableNotBlank
-        val description: String?
+        val description: String?,
     ) {
         fun toUpdateCommand(comparisonId: ThingId, comparisonRelatedResourceId: ThingId, contributorId: ContributorId) =
             UpdateComparisonUseCase.UpdateComparisonRelatedResourceCommand(
-                comparisonId, comparisonRelatedResourceId, contributorId, label, image, url, description
+                comparisonId,
+                comparisonRelatedResourceId,
+                contributorId,
+                label,
+                image,
+                url,
+                description
             )
     }
 
@@ -420,7 +426,7 @@ class ComparisonController(
         @field:NullableNotBlank
         val image: String?,
         @field:NullableNotBlank
-        val description: String?
+        val description: String?,
     ) {
         fun toCreateCommand(comparisonId: ThingId, contributorId: ContributorId) =
             CreateComparisonUseCase.CreateComparisonRelatedFigureCommand(
@@ -437,11 +443,16 @@ class ComparisonController(
         @field:NotBlank
         val image: String,
         @field:NotBlank
-        val description: String
+        val description: String,
     ) {
         fun toUpdateCommand(comparisonId: ThingId, comparisonRelatedFigureId: ThingId, contributorId: ContributorId) =
             UpdateComparisonUseCase.UpdateComparisonRelatedFigureCommand(
-                comparisonId, comparisonRelatedFigureId, contributorId, label, image, description
+                comparisonId,
+                comparisonRelatedFigureId,
+                contributorId,
+                label,
+                image,
+                description
             )
     }
 
@@ -454,7 +465,7 @@ class ComparisonController(
         @field:Size(min = 1)
         val authors: List<AuthorDTO>,
         @JsonProperty("assign_doi")
-        val assignDOI: Boolean
+        val assignDOI: Boolean,
     ) {
         fun toPublishCommand(id: ThingId, contributorId: ContributorId): PublishComparisonUseCase.PublishCommand =
             PublishComparisonUseCase.PublishCommand(

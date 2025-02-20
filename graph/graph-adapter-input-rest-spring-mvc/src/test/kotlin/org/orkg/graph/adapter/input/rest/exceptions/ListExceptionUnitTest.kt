@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController
 @WebMvcTest
 @ContextConfiguration(classes = [TestController::class, ExceptionHandler::class, FixedClockConfig::class])
 internal class ListExceptionUnitTest : MockMvcBaseTest("exceptions") {
-
     @Test
     fun listInUse() {
         val id = "R123"
@@ -42,8 +41,8 @@ internal class ListExceptionUnitTest : MockMvcBaseTest("exceptions") {
     @RestController
     internal class TestController {
         @GetMapping("/list-in-use")
-        fun listInUse(@RequestParam id: ThingId) {
-            throw ListInUse(id)
-        }
+        fun listInUse(
+            @RequestParam id: ThingId,
+        ): Unit = throw ListInUse(id)
     }
 }

@@ -5,7 +5,6 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.util.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ThingId
@@ -24,6 +23,7 @@ import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
+import java.util.Optional
 
 internal class TemplateRelationsUpdateValidatorUnitTest : MockkBaseTest {
     private val resourceRepository: ResourceRepository = mockk()
@@ -146,14 +146,16 @@ internal class TemplateRelationsUpdateValidatorUnitTest : MockkBaseTest {
                 researchFields = listOf(ThingId("R123"), ThingId("R789"))
             )
         )
-        val state = UpdateTemplateState(template = createTemplate().copy(
-            relations = TemplateRelations(
-                researchFields = listOf(
-                    ObjectIdAndLabel(ThingId("R123"), "irrelevant"),
-                    ObjectIdAndLabel(ThingId("R456"), "irrelevant")
+        val state = UpdateTemplateState(
+            template = createTemplate().copy(
+                relations = TemplateRelations(
+                    researchFields = listOf(
+                        ObjectIdAndLabel(ThingId("R123"), "irrelevant"),
+                        ObjectIdAndLabel(ThingId("R456"), "irrelevant")
+                    )
                 )
             )
-        ))
+        )
 
         every {
             resourceRepository.findById(ThingId("R789"))
@@ -175,14 +177,16 @@ internal class TemplateRelationsUpdateValidatorUnitTest : MockkBaseTest {
                 researchProblems = listOf(ThingId("R123"), ThingId("R789"))
             )
         )
-        val state = UpdateTemplateState(template = createTemplate().copy(
-            relations = TemplateRelations(
-                researchProblems = listOf(
-                    ObjectIdAndLabel(ThingId("R123"), "irrelevant"),
-                    ObjectIdAndLabel(ThingId("R456"), "irrelevant")
+        val state = UpdateTemplateState(
+            template = createTemplate().copy(
+                relations = TemplateRelations(
+                    researchProblems = listOf(
+                        ObjectIdAndLabel(ThingId("R123"), "irrelevant"),
+                        ObjectIdAndLabel(ThingId("R456"), "irrelevant")
+                    )
                 )
             )
-        ))
+        )
 
         every {
             resourceRepository.findById(ThingId("R789"))
@@ -204,11 +208,13 @@ internal class TemplateRelationsUpdateValidatorUnitTest : MockkBaseTest {
                 predicate = ThingId("R123")
             )
         )
-        val state = UpdateTemplateState(template = createTemplate().copy(
-            relations = TemplateRelations(
-                predicate = ObjectIdAndLabel(ThingId("R123"), "irrelevant")
+        val state = UpdateTemplateState(
+            template = createTemplate().copy(
+                relations = TemplateRelations(
+                    predicate = ObjectIdAndLabel(ThingId("R123"), "irrelevant")
+                )
             )
-        ))
+        )
 
         val result = templateRelationsUpdateValidator(command, state)
 

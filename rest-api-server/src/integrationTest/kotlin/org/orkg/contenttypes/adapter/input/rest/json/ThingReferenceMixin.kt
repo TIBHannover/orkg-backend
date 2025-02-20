@@ -8,10 +8,12 @@ import org.orkg.contenttypes.domain.PredicateReference
 import org.orkg.contenttypes.domain.ResourceReference
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
-@JsonSubTypes(value = [
-    JsonSubTypes.Type(ResourceReference::class),
-    JsonSubTypes.Type(LiteralReference::class),
-    JsonSubTypes.Type(PredicateReference::class),
-    JsonSubTypes.Type(ClassReference::class)
-])
+@JsonSubTypes(
+    value = [
+        JsonSubTypes.Type(ResourceReference::class),
+        JsonSubTypes.Type(LiteralReference::class),
+        JsonSubTypes.Type(PredicateReference::class),
+        JsonSubTypes.Type(ClassReference::class)
+    ]
+)
 class ThingReferenceMixin

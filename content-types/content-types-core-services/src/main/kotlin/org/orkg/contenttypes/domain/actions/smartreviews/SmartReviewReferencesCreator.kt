@@ -8,11 +8,11 @@ import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
 class SmartReviewReferencesCreator(
-    private val statementCollectionPropertyCreator: StatementCollectionPropertyCreator
+    private val statementCollectionPropertyCreator: StatementCollectionPropertyCreator,
 ) : CreateSmartReviewAction {
     constructor(
         literalService: LiteralUseCases,
-        unsafeStatementUseCases: UnsafeStatementUseCases
+        unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(StatementCollectionPropertyCreator(literalService, unsafeStatementUseCases))
 
     override fun invoke(command: CreateSmartReviewCommand, state: State): State {

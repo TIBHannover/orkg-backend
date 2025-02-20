@@ -10,12 +10,12 @@ import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
 class SmartReviewResearchFieldUpdater(
-    private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater
+    private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater,
 ) : UpdateSmartReviewAction {
     constructor(
         literalService: LiteralUseCases,
         statementService: StatementUseCases,
-        unsafeStatementUseCases: UnsafeStatementUseCases
+        unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(StatementCollectionPropertyUpdater(literalService, statementService, unsafeStatementUseCases))
 
     override fun invoke(command: UpdateSmartReviewCommand, state: State): State {

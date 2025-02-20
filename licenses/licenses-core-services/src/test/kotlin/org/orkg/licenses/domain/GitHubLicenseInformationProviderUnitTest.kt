@@ -4,18 +4,17 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.io.IOException
-import java.net.URI
-import java.net.http.HttpClient
-import java.net.http.HttpResponse
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import org.orkg.common.testing.fixtures.MockkBaseTest
+import java.io.IOException
+import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpResponse
 
 internal class GitHubLicenseInformationProviderUnitTest : MockkBaseTest {
-
     private val httpClient: HttpClient = mockk()
     private val provider: GitHubLicenseInformationProvider = GitHubLicenseInformationProvider(ObjectMapper(), httpClient)
 
@@ -25,20 +24,24 @@ internal class GitHubLicenseInformationProviderUnitTest : MockkBaseTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = [
-        "https://github.com/github/docs",
-        "https://github.com/github/docs/"
-    ])
+    @ValueSource(
+        strings = [
+            "https://github.com/github/docs",
+            "https://github.com/github/docs/"
+        ]
+    )
     fun `can process github repository uris`(uri: String) {
         assertThat(provider.canProcess(URI.create(uri))).isTrue()
     }
 
     @ParameterizedTest
-    @ValueSource(strings = [
-        "https://github.com/github/docs/blob/main/README.md",
-        "https://github.com/github",
-        "https://orkg.org"
-    ])
+    @ValueSource(
+        strings = [
+            "https://github.com/github/docs/blob/main/README.md",
+            "https://github.com/github",
+            "https://orkg.org"
+        ]
+    )
     fun `cannot process other uris`(uri: String) {
         assertThat(provider.canProcess(URI.create(uri))).isFalse()
     }
@@ -79,7 +82,7 @@ internal class GitHubLicenseInformationProviderUnitTest : MockkBaseTest {
 
         every { httpClient.send(any(), any<HttpResponse.BodyHandler<String>>()) } returns mockResponse
         every { mockResponse.statusCode() } returns 200
-        every { mockResponse.body() } returns successfulApiResponse
+        every { mockResponse.body() } returns SUCCESSFUL_API_RESPONSE
 
         val expected = LicenseInformation("github", "CC-BY-4.0")
 
@@ -107,7 +110,7 @@ internal class GitHubLicenseInformationProviderUnitTest : MockkBaseTest {
     }
 }
 
-const val successfulApiResponse = """{
+const val SUCCESSFUL_API_RESPONSE = """{
   "name": "LICENSE",
   "path": "LICENSE",
   "sha": "9238c8f9388066fe7cb3b308de35104bb3c9596b",

@@ -8,7 +8,7 @@ import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 
 class LiteratureListResourceUpdater(
-    private val unsafeResourceUseCases: UnsafeResourceUseCases
+    private val unsafeResourceUseCases: UnsafeResourceUseCases,
 ) : UpdateLiteratureListAction {
     override fun invoke(command: UpdateLiteratureListCommand, state: State): State {
         unsafeResourceUseCases.update(

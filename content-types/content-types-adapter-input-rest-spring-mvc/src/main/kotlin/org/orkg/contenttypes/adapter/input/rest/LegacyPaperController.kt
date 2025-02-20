@@ -5,10 +5,10 @@ import org.orkg.common.ThingId
 import org.orkg.common.contributorId
 import org.orkg.contenttypes.input.LegacyCreatePaperUseCase
 import org.orkg.contenttypes.input.LegacyPaperUseCases
-import org.orkg.graph.adapter.input.rest.mapping.PaperResourceWithPathRepresentationAdapter
-import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.PaperResourceWithPathRepresentation
 import org.orkg.graph.adapter.input.rest.ResourceRepresentation
+import org.orkg.graph.adapter.input.rest.mapping.PaperResourceWithPathRepresentationAdapter
+import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
@@ -35,8 +35,8 @@ class LegacyPaperController(
     private val resourceService: ResourceUseCases,
     override val statementService: StatementUseCases,
     override val formattedLabelService: FormattedLabelUseCases,
-) : PaperResourceWithPathRepresentationAdapter, ResourceRepresentationAdapter {
-
+) : PaperResourceWithPathRepresentationAdapter,
+    ResourceRepresentationAdapter {
     @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.CREATED)
     fun create(
@@ -44,7 +44,7 @@ class LegacyPaperController(
         uriComponentsBuilder: UriComponentsBuilder,
         @RequestParam("mergeIfExists", required = false, defaultValue = "false") mergeIfExists: Boolean,
         currentUser: Authentication?,
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): ResponseEntity<ResourceRepresentation> {
         val id = service.addPaperContent(paper, mergeIfExists, currentUser.contributorId().value)
         val location = uriComponentsBuilder
@@ -59,7 +59,7 @@ class LegacyPaperController(
     fun findAllPapersRelatedToResource(
         @RequestParam("linkedTo", required = true) id: ThingId,
         pageable: Pageable,
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): Page<PaperResourceWithPathRepresentation> =
         service.findAllPapersRelatedToResource(id, pageable)
             .mapToPaperResourceWithPathRepresentation(capabilities)

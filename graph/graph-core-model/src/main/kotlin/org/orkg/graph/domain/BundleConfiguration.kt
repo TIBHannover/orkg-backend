@@ -2,7 +2,6 @@ package org.orkg.graph.domain
 
 import org.orkg.common.ThingId
 
-
 /**
  * A Bundle configuration class containing the min and max levels to be fetched
  * Also the list of classes to be white-listed or black-listed during the fetch
@@ -15,7 +14,7 @@ data class BundleConfiguration(
     val minLevel: Int?,
     val maxLevel: Int?,
     val blacklist: kotlin.collections.List<ThingId>,
-    val whitelist: kotlin.collections.List<ThingId>
+    val whitelist: kotlin.collections.List<ThingId>,
 ) {
     companion object Factory {
         fun firstLevelConf(): BundleConfiguration =

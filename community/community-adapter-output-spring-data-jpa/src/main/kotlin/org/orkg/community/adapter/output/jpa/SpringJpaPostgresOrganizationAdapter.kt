@@ -1,6 +1,5 @@
 package org.orkg.community.adapter.output.jpa
 
-import java.util.*
 import org.orkg.common.OrganizationId
 import org.orkg.community.adapter.output.jpa.internal.ContributorEntity
 import org.orkg.community.adapter.output.jpa.internal.OrganizationEntity
@@ -16,6 +15,7 @@ import org.orkg.spring.data.annotations.TransactionalOnJPA
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
+import java.util.Optional
 
 @Component
 @TransactionalOnJPA

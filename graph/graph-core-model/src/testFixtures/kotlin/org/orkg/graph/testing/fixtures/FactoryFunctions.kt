@@ -1,6 +1,5 @@
 package org.orkg.graph.testing.fixtures
 
-import java.time.OffsetDateTime
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
@@ -17,6 +16,7 @@ import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.domain.Visibility
+import java.time.OffsetDateTime
 
 typealias KotlinList<T> = kotlin.collections.List<T>
 
@@ -57,7 +57,7 @@ fun createClass(
     createdAt: OffsetDateTime = OffsetDateTime.parse("2023-10-05T12:29:15.3155145+01:00"),
     uri: ParsedIRI? = ParsedIRI("https://example.org/OK"),
     createdBy: ContributorId = ContributorId("dc8b2055-c14a-4e9f-9fcd-e0b79cf1f834"),
-    modifiable: Boolean = true
+    modifiable: Boolean = true,
 ): Class = Class(id, label, uri, createdAt, createdBy, modifiable)
 
 fun createClassWithoutURI(): Class = createClass(uri = null)
@@ -67,7 +67,7 @@ fun createPredicate(
     label: String = "some predicate label",
     createdAt: OffsetDateTime = OffsetDateTime.parse("2023-10-04T13:30:16.931457+01:00"),
     createdBy: ContributorId = ContributorId("a56cfd65-8d29-4eae-a252-1b806fe88d3c"),
-    modifiable: Boolean = true
+    modifiable: Boolean = true,
 ) = Predicate(id, label, createdAt, createdBy, modifiable)
 
 fun createLiteral(
@@ -76,7 +76,7 @@ fun createLiteral(
     createdAt: OffsetDateTime = OffsetDateTime.parse("2023-10-03T14:31:17.365491+01:00"),
     createdBy: ContributorId = ContributorId("679ad2bd-ceb3-4f26-80ec-b6eab7a5e8c1"),
     datatype: String = "xsd:string",
-    modifiable: Boolean = true
+    modifiable: Boolean = true,
 ) = Literal(id, label, datatype, createdAt, createdBy, modifiable)
 
 fun createStatement(
@@ -86,7 +86,7 @@ fun createStatement(
     `object`: Thing = createClass(),
     createdAt: OffsetDateTime = OffsetDateTime.parse("2023-10-02T15:32:18.753961+01:00"),
     createdBy: ContributorId = ContributorId("34da5516-7901-4b0d-94c5-b062082e11a7"),
-    modifiable: Boolean = true
+    modifiable: Boolean = true,
 ) = GeneralStatement(id, subject, predicate, `object`, createdAt, createdBy, modifiable)
 
 fun createList(
@@ -95,7 +95,7 @@ fun createList(
     elements: KotlinList<ThingId> = emptyList(),
     createdAt: OffsetDateTime = OffsetDateTime.parse("2023-10-01T16:33:19.156943+01:00"),
     createdBy: ContributorId = ContributorId.UNKNOWN,
-    modifiable: Boolean = true
+    modifiable: Boolean = true,
 ) = List(id, label, elements, createdAt, createdBy, modifiable)
 
 fun createPaperResource(

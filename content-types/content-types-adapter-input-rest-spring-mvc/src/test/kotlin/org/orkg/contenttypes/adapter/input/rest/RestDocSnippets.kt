@@ -1,7 +1,7 @@
 package org.orkg.contenttypes.adapter.input.rest
 
 import org.springframework.restdocs.payload.FieldDescriptor
-import org.springframework.restdocs.payload.PayloadDocumentation.*
+import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 
 fun authorListFields(type: String, path: String = "authors"): List<FieldDescriptor> = listOf(
     fieldWithPath(path).description("The list of authors that originally contributed to the $type."),

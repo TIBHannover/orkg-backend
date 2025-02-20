@@ -1,7 +1,5 @@
 package org.orkg.contenttypes.domain.actions.rosettastone.statements
 
-import java.time.Clock
-import java.time.OffsetDateTime
 import org.orkg.common.Either.Companion.merge
 import org.orkg.contenttypes.domain.RosettaStoneStatement
 import org.orkg.contenttypes.domain.RosettaStoneStatementVersion
@@ -9,11 +7,13 @@ import org.orkg.contenttypes.domain.actions.CreateRosettaStoneStatementCommand
 import org.orkg.contenttypes.domain.actions.rosettastone.statements.CreateRosettaStoneStatementAction.State
 import org.orkg.contenttypes.output.RosettaStoneStatementRepository
 import org.orkg.graph.output.ThingRepository
+import java.time.Clock
+import java.time.OffsetDateTime
 
 class RosettaStoneStatementCreator(
     private val rosettaStoneStatementRepository: RosettaStoneStatementRepository,
     private val thingRepository: ThingRepository,
-    private val clock: Clock = Clock.systemDefaultZone()
+    private val clock: Clock = Clock.systemDefaultZone(),
 ) : CreateRosettaStoneStatementAction {
     override fun invoke(command: CreateRosettaStoneStatementCommand, state: State): State {
         val version = RosettaStoneStatementVersion(

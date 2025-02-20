@@ -2,9 +2,9 @@ package org.orkg.contenttypes.adapter.output.simcomp.internal
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.JsonNode
-import java.time.LocalDateTime
-import java.util.*
 import org.orkg.common.ThingId
+import java.time.LocalDateTime
+import java.util.UUID
 
 data class BaseThing(
     val id: UUID,
@@ -17,5 +17,5 @@ data class BaseThing(
     @JsonProperty("thing_key")
     val thingKey: ThingId,
     val config: JsonNode,
-    val data: JsonNode
+    val data: JsonNode,
 )

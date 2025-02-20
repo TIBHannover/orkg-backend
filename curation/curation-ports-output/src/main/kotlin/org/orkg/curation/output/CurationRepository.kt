@@ -7,5 +7,6 @@ import org.springframework.data.domain.Pageable
 
 interface CurationRepository {
     fun findAllPredicatesWithoutDescriptions(pageable: Pageable): Page<Predicate>
+
     fun findAllClassesWithoutDescriptions(pageable: Pageable): Page<Class>
 }

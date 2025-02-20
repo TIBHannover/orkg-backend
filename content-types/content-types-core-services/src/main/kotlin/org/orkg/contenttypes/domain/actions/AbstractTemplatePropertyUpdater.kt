@@ -28,7 +28,7 @@ class AbstractTemplatePropertyUpdater(
     private val statementService: StatementUseCases,
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
     private val unsafeResourceUseCases: UnsafeResourceUseCases,
-    private val singleStatementPropertyUpdater: SingleStatementPropertyUpdater
+    private val singleStatementPropertyUpdater: SingleStatementPropertyUpdater,
 ) {
     constructor(
         literalService: LiteralUseCases,
@@ -47,7 +47,7 @@ class AbstractTemplatePropertyUpdater(
         contributorId: ContributorId,
         order: Int,
         newProperty: TemplatePropertyDefinition,
-        oldProperty: TemplateProperty
+        oldProperty: TemplateProperty,
     ) {
         if (newProperty.label != oldProperty.label) {
             unsafeResourceUseCases.update(

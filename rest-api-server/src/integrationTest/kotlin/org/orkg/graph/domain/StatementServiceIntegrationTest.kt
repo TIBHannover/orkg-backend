@@ -4,9 +4,9 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.orkg.createStatement
 import org.orkg.createPredicate
 import org.orkg.createResource
+import org.orkg.createStatement
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
@@ -15,7 +15,6 @@ import org.springframework.data.domain.PageRequest
 
 @Neo4jContainerIntegrationTest
 internal class StatementServiceIntegrationTest {
-
     @Autowired
     private lateinit var resourceService: ResourceUseCases
 

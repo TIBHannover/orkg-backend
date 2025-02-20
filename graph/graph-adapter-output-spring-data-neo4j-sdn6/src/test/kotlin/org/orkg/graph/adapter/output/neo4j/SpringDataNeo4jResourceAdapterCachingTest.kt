@@ -3,7 +3,6 @@ package org.orkg.graph.adapter.output.neo4j
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.util.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -21,6 +20,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.util.AopTestUtils
+import java.util.Optional
 
 private val allCacheNames: Array<out String> = arrayOf(
     RESOURCE_ID_TO_RESOURCE_CACHE,
@@ -31,7 +31,6 @@ private val allCacheNames: Array<out String> = arrayOf(
 @ContextConfiguration
 @ExtendWith(SpringExtension::class)
 internal class SpringDataNeo4jResourceAdapterCachingTest : MockkBaseTest {
-
     private lateinit var mock: ResourceRepository
 
     @Autowired

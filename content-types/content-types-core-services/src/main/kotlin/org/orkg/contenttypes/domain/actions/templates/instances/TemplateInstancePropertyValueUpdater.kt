@@ -16,9 +16,8 @@ import org.orkg.graph.output.StatementRepository
 
 class TemplateInstancePropertyValueUpdater(
     private val subgraphCreator: SubgraphCreator,
-    private val statementService: StatementUseCases
+    private val statementService: StatementUseCases,
 ) : UpdateTemplateInstanceAction {
-
     constructor(
         classService: ClassUseCases,
         unsafeResourceUseCases: UnsafeResourceUseCases,
@@ -27,7 +26,7 @@ class TemplateInstancePropertyValueUpdater(
         literalService: LiteralUseCases,
         predicateService: PredicateUseCases,
         statementRepository: StatementRepository,
-        listService: ListUseCases
+        listService: ListUseCases,
     ) : this(
         SubgraphCreator(
             classService = classService,
@@ -43,7 +42,7 @@ class TemplateInstancePropertyValueUpdater(
 
     override fun invoke(
         command: UpdateTemplateInstanceCommand,
-        state: UpdateTemplateInstanceState
+        state: UpdateTemplateInstanceState,
     ): UpdateTemplateInstanceState =
         state.apply {
             if (statementsToRemove.isNotEmpty()) {

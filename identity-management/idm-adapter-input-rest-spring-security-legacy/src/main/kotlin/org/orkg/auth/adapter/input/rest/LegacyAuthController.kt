@@ -3,13 +3,6 @@ package org.orkg.auth.adapter.input.rest
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.ObjectMapper
-import java.net.URI
-import java.net.URLEncoder
-import java.net.http.HttpClient
-import java.net.http.HttpRequest
-import java.net.http.HttpRequest.BodyPublishers
-import java.net.http.HttpResponse
-import java.util.*
 import org.orkg.common.exceptions.ServiceUnavailable
 import org.orkg.common.exceptions.Unauthorized
 import org.springframework.beans.factory.annotation.Value
@@ -22,6 +15,13 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.net.URI
+import java.net.URLEncoder
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpRequest.BodyPublishers
+import java.net.http.HttpResponse
+import java.util.Base64
 
 private const val GRANT_TYPE = "grant_type"
 private const val BASIC_TYPE = "Basic"
@@ -38,7 +38,7 @@ class LegacyAuthController(
     @Value("\${orkg.oauth.token-endpoint}")
     private val tokenEndpoint: String,
     @Value("\${orkg.oauth.registration-endpoint}")
-    private val registrationEndpoint: String
+    private val registrationEndpoint: String,
 ) {
     @PostMapping("/api/auth/register", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun register(): ResponseEntity<Any> =
@@ -49,7 +49,7 @@ class LegacyAuthController(
     @PostMapping("/oauth/token")
     fun accessToken(
         @RequestHeader httpHeaders: HttpHeaders,
-        @RequestParam request: MutableMap<String, String>
+        @RequestParam request: MutableMap<String, String>,
     ): ResponseEntity<Any> {
         val grantType = request[GRANT_TYPE]
         when {
@@ -96,7 +96,7 @@ class LegacyAuthController(
 
     data class BasicAuthorizationToken(
         val username: String,
-        val secret: String
+        val secret: String,
     ) {
         companion object {
             fun parse(token: String): BasicAuthorizationToken {
@@ -115,7 +115,7 @@ class LegacyAuthController(
 
     data class OAuth2Exception(
         val errorCode: String,
-        override val message: String
+        override val message: String,
     ) : Exception(message)
 
     @ExceptionHandler(OAuth2Exception::class)

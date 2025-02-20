@@ -7,7 +7,7 @@ import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.Label
 
 class PublicationInfoValidator<T, S>(
-    private val valueSelector: (T) -> PublicationInfoDefinition?
+    private val valueSelector: (T) -> PublicationInfoDefinition?,
 ) : Action<T, S> {
     override fun invoke(command: T, state: S): S {
         valueSelector(command)?.also { publicationInfo ->

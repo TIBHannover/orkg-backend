@@ -1,6 +1,5 @@
 package org.orkg.contenttypes.adapter.input.rest.mapping
 
-import java.util.*
 import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.adapter.input.rest.TemplateInstanceRepresentation
@@ -13,16 +12,18 @@ import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.StatementCounts
 import org.orkg.graph.domain.Thing
 import org.springframework.data.domain.Page
+import java.util.Optional
 
-interface TemplateInstanceRepresentationAdapter : ThingRepresentationAdapter, EmbeddedStatementRepresentationAdapter {
-
+interface TemplateInstanceRepresentationAdapter :
+    ThingRepresentationAdapter,
+    EmbeddedStatementRepresentationAdapter {
     fun Optional<TemplateInstance>.mapToTemplateInstanceRepresentation(
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): Optional<TemplateInstanceRepresentation> =
         map { it.toTemplateInstanceRepresentation(capabilities) }
 
     fun Page<TemplateInstance>.mapToTemplateInstanceRepresentation(
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): Page<TemplateInstanceRepresentation> {
         val resources = content.flatMap { it.resources() }
         val statementCounts = countIncomingStatements(resources)
@@ -32,7 +33,7 @@ interface TemplateInstanceRepresentationAdapter : ThingRepresentationAdapter, Em
     }
 
     private fun TemplateInstance.toTemplateInstanceRepresentation(
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): TemplateInstanceRepresentation {
         val resources = resources()
         val counts = countIncomingStatements(resources)
@@ -44,7 +45,7 @@ interface TemplateInstanceRepresentationAdapter : ThingRepresentationAdapter, Em
     private fun TemplateInstance.toTemplateInstanceRepresentation(
         statementCounts: StatementCounts,
         formattedLabels: FormattedLabels,
-        descriptions: Map<ThingId, String>
+        descriptions: Map<ThingId, String>,
     ): TemplateInstanceRepresentation =
         TemplateInstanceRepresentation(
             root = root.toResourceRepresentation(statementCounts, formattedLabels),

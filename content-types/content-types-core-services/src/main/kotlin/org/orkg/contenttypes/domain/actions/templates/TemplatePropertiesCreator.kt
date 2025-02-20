@@ -8,12 +8,12 @@ import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
 class TemplatePropertiesCreator(
-    private val abstractTemplatePropertyCreator: AbstractTemplatePropertyCreator
+    private val abstractTemplatePropertyCreator: AbstractTemplatePropertyCreator,
 ) : CreateTemplateAction {
     constructor(
         unsafeResourceUseCases: UnsafeResourceUseCases,
         literalService: LiteralUseCases,
-        unsafeStatementUseCases: UnsafeStatementUseCases
+        unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(AbstractTemplatePropertyCreator(unsafeResourceUseCases, literalService, unsafeStatementUseCases))
 
     override fun invoke(command: CreateTemplateCommand, state: State): State {

@@ -8,7 +8,7 @@ import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 
 class RosettaStoneTemplateResourceUpdater(
-    private val unsafeResourceUseCases: UnsafeResourceUseCases
+    private val unsafeResourceUseCases: UnsafeResourceUseCases,
 ) : UpdateRosettaStoneTemplateAction {
     override fun invoke(command: UpdateRosettaStoneTemplateCommand, state: State): State {
         unsafeResourceUseCases.update(

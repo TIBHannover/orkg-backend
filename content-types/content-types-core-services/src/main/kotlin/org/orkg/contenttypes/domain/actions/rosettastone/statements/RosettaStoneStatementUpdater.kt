@@ -1,18 +1,18 @@
 package org.orkg.contenttypes.domain.actions.rosettastone.statements
 
-import java.time.Clock
-import java.time.OffsetDateTime
 import org.orkg.common.Either.Companion.merge
 import org.orkg.contenttypes.domain.RosettaStoneStatementVersion
 import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneStatementCommand
 import org.orkg.contenttypes.domain.actions.rosettastone.statements.UpdateRosettaStoneStatementAction.State
 import org.orkg.contenttypes.output.RosettaStoneStatementRepository
 import org.orkg.graph.output.ThingRepository
+import java.time.Clock
+import java.time.OffsetDateTime
 
 class RosettaStoneStatementUpdater(
     private val rosettaStoneStatementRepository: RosettaStoneStatementRepository,
     private val thingRepository: ThingRepository,
-    private val clock: Clock = Clock.systemDefaultZone()
+    private val clock: Clock = Clock.systemDefaultZone(),
 ) : UpdateRosettaStoneStatementAction {
     override fun invoke(command: UpdateRosettaStoneStatementCommand, state: State): State {
         val version = RosettaStoneStatementVersion(

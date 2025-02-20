@@ -5,7 +5,7 @@ import org.orkg.common.ThingId
 data class ComparisonData(
     val contributions: List<ComparisonHeaderCell>,
     val predicates: List<ComparisonIndexCell>,
-    val data: Map<String, List<List<ComparisonTargetCell>>>
+    val data: Map<String, List<List<ComparisonTargetCell>>>,
 )
 
 data class ComparisonHeaderCell(
@@ -14,7 +14,7 @@ data class ComparisonHeaderCell(
     val paperId: String,
     val paperLabel: String,
     val paperYear: Int?,
-    val active: Boolean?
+    val active: Boolean?,
 )
 
 data class ComparisonIndexCell(
@@ -22,7 +22,7 @@ data class ComparisonIndexCell(
     val label: String,
     val contributionAmount: Int,
     val active: Boolean,
-    val similarPredicates: List<String>
+    val similarPredicates: List<String>,
 )
 
 sealed interface ComparisonTargetCell
@@ -35,5 +35,5 @@ data class ConfiguredComparisonTargetCell(
     val classes: List<ThingId>,
     val path: List<ThingId>,
     val pathLabels: List<String>,
-    val `class`: String
+    val `class`: String,
 ) : ComparisonTargetCell

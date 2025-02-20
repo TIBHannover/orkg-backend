@@ -1,13 +1,15 @@
 package org.orkg.contenttypes.adapter.input.rest.mapping
 
-import java.util.*
 import org.orkg.contenttypes.adapter.input.rest.ComparisonRepresentation
 import org.orkg.contenttypes.domain.Comparison
 import org.springframework.data.domain.Page
+import java.util.Optional
 
-interface ComparisonRepresentationAdapter : AuthorRepresentationAdapter, LabeledObjectRepresentationAdapter,
-    PublicationInfoRepresentationAdapter, VersionRepresentationAdapter {
-
+interface ComparisonRepresentationAdapter :
+    AuthorRepresentationAdapter,
+    LabeledObjectRepresentationAdapter,
+    PublicationInfoRepresentationAdapter,
+    VersionRepresentationAdapter {
     fun Optional<Comparison>.mapToComparisonRepresentation(): Optional<ComparisonRepresentation> =
         map { it.toComparisonRepresentation() }
 

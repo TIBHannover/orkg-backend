@@ -1,6 +1,5 @@
 package org.orkg.community.adapter.output.jpa
 
-import java.util.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -9,10 +8,10 @@ import org.orkg.common.OrganizationId
 import org.orkg.community.adapter.output.jpa.internal.ObservatoryEntity
 import org.orkg.community.adapter.output.jpa.internal.OrganizationEntity
 import org.orkg.community.adapter.output.jpa.internal.toObservatory
+import java.util.UUID
 
 @DisplayName("Given a ObservatoryEntity")
 internal class ObservatoryEntityTest {
-
     @Nested
     @DisplayName("that has several organizations")
     inner class ThatHasSeveralOrganizations {

@@ -1,7 +1,7 @@
 package org.orkg.eventbus.events
 
-import java.time.LocalDateTime
 import org.orkg.eventbus.Event
+import java.time.LocalDateTime
 
 /**
  * An integration event describing that a user registered.
@@ -18,7 +18,8 @@ data class UserRegistered(
 ) : Event {
     enum class Role {
         CURATOR,
-        ADMIN;
+        ADMIN,
+        ;
 
         companion object {
             fun from(s: String): Role = entries.find { it.name == s }

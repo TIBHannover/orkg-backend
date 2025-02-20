@@ -16,12 +16,12 @@ import org.orkg.contenttypes.domain.testing.fixtures.createResourceTemplatePrope
 import org.orkg.contenttypes.domain.testing.fixtures.createStringLiteralTemplateProperty
 import org.orkg.contenttypes.domain.testing.fixtures.createUntypedTemplateProperty
 import org.orkg.contenttypes.input.TemplatePropertyDefinition
+import org.orkg.contenttypes.input.testing.fixtures.toTemplatePropertyDefinition
 import org.orkg.contenttypes.input.testing.fixtures.updateNumberLiteralTemplatePropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.updateOtherLiteralTemplatePropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.updateResourceTemplatePropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.updateStringLiteralTemplatePropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.updateUntypedTemplatePropertyCommand
-import org.orkg.contenttypes.input.testing.fixtures.toTemplatePropertyDefinition
 
 internal class TemplatePropertiesValidatorUnitTest : MockkBaseTest {
     private val abstractTemplatePropertyValidator: AbstractTemplatePropertyValidator = mockk()

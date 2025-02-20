@@ -1,7 +1,6 @@
 package org.orkg.contenttypes.adapter.input.rest
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import java.time.OffsetDateTime
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Size
 import org.orkg.common.ContributorId
@@ -36,18 +35,18 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
+import java.time.OffsetDateTime
 
 const val ROSETTA_STONE_STATEMENT_JSON_V1 = "application/vnd.orkg.rosetta-stone-statement.v1+json"
 
 @RestController
 @RequestMapping("/api/rosetta-stone/statements", produces = [ROSETTA_STONE_STATEMENT_JSON_V1])
 class RosettaStoneStatementController(
-    private val service: RosettaStoneStatementUseCases
+    private val service: RosettaStoneStatementUseCases,
 ) : RosettaStoneStatementRepresentationAdapter {
-
     @GetMapping("/{id}")
     fun findById(
-        @PathVariable id: ThingId
+        @PathVariable id: ThingId,
     ): RosettaStoneStatementRepresentation =
         service.findByIdOrVersionId(id)
             .mapToRosettaStoneStatementRepresentation(id)
@@ -55,7 +54,7 @@ class RosettaStoneStatementController(
 
     @GetMapping("/{id}/versions")
     fun findAllVersionsById(
-        @PathVariable id: ThingId
+        @PathVariable id: ThingId,
     ): List<RosettaStoneStatementRepresentation> =
         service.findByIdOrVersionId(id)
             .mapToRosettaStoneStatementRepresentation()
@@ -72,7 +71,7 @@ class RosettaStoneStatementController(
         @RequestParam("created_at_end", required = false) @DateTimeFormat(iso = ISO.DATE_TIME) createdAtEnd: OffsetDateTime?,
         @RequestParam("observatory_id", required = false) observatoryId: ObservatoryId?,
         @RequestParam("organization_id", required = false) organizationId: OrganizationId?,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<RosettaStoneStatementRepresentation> =
         service.findAll(
             pageable = pageable,
@@ -167,7 +166,7 @@ class RosettaStoneStatementController(
         @field:Size(max = 1)
         val organizations: List<OrganizationId>,
         @JsonProperty("extraction_method")
-        val extractionMethod: ExtractionMethod
+        val extractionMethod: ExtractionMethod,
     ) {
         fun toCreateCommand(contributorId: ContributorId): CreateRosettaStoneStatementUseCase.CreateCommand =
             CreateRosettaStoneStatementUseCase.CreateCommand(
@@ -211,7 +210,7 @@ class RosettaStoneStatementController(
         @field:Size(max = 1)
         val organizations: List<OrganizationId>,
         @JsonProperty("extraction_method")
-        val extractionMethod: ExtractionMethod
+        val extractionMethod: ExtractionMethod,
     ) {
         fun toUpdateCommand(id: ThingId, contributorId: ContributorId): UpdateRosettaStoneStatementUseCase.UpdateCommand =
             UpdateRosettaStoneStatementUseCase.UpdateCommand(

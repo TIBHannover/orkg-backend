@@ -9,8 +9,6 @@ import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.comparables.shouldBeLessThanOrEqualTo
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import java.time.OffsetDateTime
-import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -39,6 +37,8 @@ import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.withGraphMappings
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
+import java.time.OffsetDateTime
+import java.util.UUID
 
 fun <
     CT : ContentTypeRepository,
@@ -46,14 +46,14 @@ fun <
     C : ClassRepository,
     L : LiteralRepository,
     R : ResourceRepository,
-    P : PredicateRepository
+    P : PredicateRepository,
 > contentTypeRepositoryContract(
     repository: CT,
     statementRepository: S,
     classRepository: C,
     literalRepository: L,
     resourceRepository: R,
-    predicateRepository: P
+    predicateRepository: P,
 ) = describeSpec {
     beforeTest {
         statementRepository.deleteAll()
@@ -91,7 +91,7 @@ fun <
     data class TestGraph(
         val resources: List<Resource>,
         val statements: Set<GeneralStatement>,
-        val ignored: Set<Resource>
+        val ignored: Set<Resource>,
     ) {
         val expected: List<Resource> get() = (resources - ignored)
 
@@ -783,7 +783,7 @@ fun <
                     includeSubfields = true,
                     sustainableDevelopmentGoal = ThingId("SDG_1"),
                     authorId = ThingId("R102354")
-                    /* authorName filter is not compatible with authorId in neo4j adapter */
+                    // authorName filter is not compatible with authorId in neo4j adapter
                 )
 
                 it("returns the correct result") {
@@ -806,11 +806,11 @@ fun <
             }
             it("sorts the results by multiple properties") {
                 createTestGraph { index, resource ->
-                  if (index < 2) {
-                      resource.copy(label = "label")
-                  } else {
-                      resource
-                  }
+                    if (index < 2) {
+                        resource.copy(label = "label")
+                    } else {
+                        resource
+                    }
                 }.save()
                 val sort = Sort.by("label").ascending().and(Sort.by("created_at").descending())
                 val result = repository.findAll(PageRequest.of(0, 12, sort))

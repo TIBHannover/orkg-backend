@@ -9,13 +9,13 @@ import org.orkg.graph.domain.GeneralStatement
 
 interface CreateTemplateAction : Action<CreateTemplateCommand, CreateTemplateAction.State> {
     data class State(
-        val templateId: ThingId? = null
+        val templateId: ThingId? = null,
     )
 }
 
 interface UpdateTemplateAction : Action<UpdateTemplateCommand, UpdateTemplateAction.State> {
     data class State(
         val template: Template? = null,
-        val statements: Map<ThingId, List<GeneralStatement>> = emptyMap()
+        val statements: Map<ThingId, List<GeneralStatement>> = emptyMap(),
     )
 }

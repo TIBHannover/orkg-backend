@@ -1,11 +1,11 @@
 package org.orkg.community.output
 
-import java.util.*
 import org.orkg.common.OrganizationId
 import org.orkg.community.domain.ConferenceSeries
 import org.orkg.community.domain.ConferenceSeriesId
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import java.util.Optional
 
 interface ConferenceSeriesRepository {
     fun save(conferenceSeries: ConferenceSeries)

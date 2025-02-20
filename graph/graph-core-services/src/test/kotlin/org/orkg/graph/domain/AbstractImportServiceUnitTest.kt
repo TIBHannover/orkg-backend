@@ -49,7 +49,7 @@ abstract class AbstractImportServiceUnitTest : MockkBaseTest {
     protected fun mockDescriptionCreation(
         contributorId: ContributorId,
         externalThing: ExternalThing,
-        subjectId: ThingId
+        subjectId: ThingId,
     ) {
         externalThing.description?.let { description ->
             val descriptionId = ThingId("newDescriptionId")
@@ -78,7 +78,7 @@ abstract class AbstractImportServiceUnitTest : MockkBaseTest {
     protected fun verifyDescriptionCreation(
         contributorId: ContributorId,
         externalThing: ExternalThing,
-        subjectId: ThingId
+        subjectId: ThingId,
     ) {
         externalThing.description?.let { description ->
             verify(exactly = 1) {
@@ -105,7 +105,7 @@ abstract class AbstractImportServiceUnitTest : MockkBaseTest {
     protected fun mockSameAsLiteralCreation(
         contributorId: ContributorId,
         externalThing: ExternalThing,
-        subjectId: ThingId
+        subjectId: ThingId,
     ) {
         val sameAsLiteralId = ThingId("newSameAsLiteralId")
         val statementId = StatementId("SsameAsLiteralId")
@@ -133,7 +133,7 @@ abstract class AbstractImportServiceUnitTest : MockkBaseTest {
     protected fun verifySameAsLiteralCreation(
         contributorId: ContributorId,
         externalThing: ExternalThing,
-        subjectId: ThingId
+        subjectId: ThingId,
     ) {
         verify(exactly = 1) {
             literalService.create(

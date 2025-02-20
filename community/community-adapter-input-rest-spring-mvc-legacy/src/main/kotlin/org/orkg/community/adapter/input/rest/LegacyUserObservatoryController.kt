@@ -27,7 +27,9 @@ class LegacyUserObservatoryController(
 ) {
     @RequireCuratorRole
     @PutMapping("/observatory", consumes = [MediaType.APPLICATION_JSON_VALUE])
-    fun updateUserObservatoryLegacy(@RequestBody @Valid request: UserObservatoryRequest): Contributor =
+    fun updateUserObservatoryLegacy(
+        @RequestBody @Valid request: UserObservatoryRequest,
+    ): Contributor =
         observatoryAuthUseCases.addUserObservatory(
             observatoryId = request.observatoryId,
             organizationId = request.organizationId,
@@ -36,7 +38,9 @@ class LegacyUserObservatoryController(
 
     @RequireCuratorRole
     @DeleteMapping("/{id}/observatory")
-    fun deleteUserObservatory(@PathVariable id: ContributorId) {
+    fun deleteUserObservatory(
+        @PathVariable id: ContributorId,
+    ) {
         observatoryAuthUseCases.deleteUserObservatory(id)
     }
 
@@ -46,6 +50,6 @@ class LegacyUserObservatoryController(
         @JsonProperty("observatory_id")
         val observatoryId: ObservatoryId,
         @JsonProperty("organization_id")
-        val organizationId: OrganizationId
+        val organizationId: OrganizationId,
     )
 }

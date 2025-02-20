@@ -1,7 +1,5 @@
 package org.orkg.graph.adapter.input.rest
 
-import java.time.OffsetDateTime
-import java.time.ZoneOffset
 import org.assertj.core.api.Assertions.assertThat
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.Test
@@ -14,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.json.JsonTest
 import org.springframework.boot.test.json.JacksonTester
 import org.springframework.test.context.ContextConfiguration
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 
 /**
  * Test the JSON serialization of a [Class].
@@ -21,7 +21,6 @@ import org.springframework.test.context.ContextConfiguration
 @JsonTest
 @ContextConfiguration(classes = [ClassRepresentationAdapter::class, CommonJacksonModule::class])
 internal class ClassRepresentationJsonTest {
-
     @Autowired
     private lateinit var json: JacksonTester<ClassRepresentation>
 

@@ -23,7 +23,7 @@ class StatementCollectionPropertyUpdater(
         contributorId: ContributorId,
         subjectId: ThingId,
         predicateId: ThingId,
-        objects: Set<ThingId>
+        objects: Set<ThingId>,
     ) = update(
         statements = statementService.findAll(
             subjectId = subjectId,
@@ -41,7 +41,7 @@ class StatementCollectionPropertyUpdater(
         contributorId: ContributorId,
         subjectId: ThingId,
         predicateId: ThingId,
-        objects: Set<ThingId>
+        objects: Set<ThingId>,
     ) {
         // Find out what already exists and what needs to be created or removed
         val objectId2statementId = statements.wherePredicate(predicateId)
@@ -71,7 +71,7 @@ class StatementCollectionPropertyUpdater(
         contributorId: ContributorId,
         subjectId: ThingId,
         predicateId: ThingId,
-        objects: List<ThingId>
+        objects: List<ThingId>,
     ) = update(
         statements = statementService.findAll(
             subjectId = subjectId,
@@ -89,7 +89,7 @@ class StatementCollectionPropertyUpdater(
         contributorId: ContributorId,
         subjectId: ThingId,
         predicateId: ThingId,
-        objects: List<ThingId>
+        objects: List<ThingId>,
     ) {
         val statementsIterator = statements.wherePredicate(predicateId)
             .sortedBy { it.createdAt }
@@ -134,7 +134,7 @@ class StatementCollectionPropertyUpdater(
         subjectId: ThingId,
         predicateId: ThingId,
         literals: Set<String>,
-        datatype: String = Literals.XSD.STRING.prefixedUri
+        datatype: String = Literals.XSD.STRING.prefixedUri,
     ) = update(
         statements = statementService.findAll(
             subjectId = subjectId,
@@ -155,7 +155,7 @@ class StatementCollectionPropertyUpdater(
         subjectId: ThingId,
         predicateId: ThingId,
         literals: Set<String>,
-        datatype: String = Literals.XSD.STRING.prefixedUri
+        datatype: String = Literals.XSD.STRING.prefixedUri,
     ) {
         // Find out what already exists and what needs to be created or removed
         val objectId2statementId = statements.wherePredicate(predicateId)
@@ -194,7 +194,7 @@ class StatementCollectionPropertyUpdater(
         subjectId: ThingId,
         predicateId: ThingId,
         literals: List<String>,
-        datatype: String = Literals.XSD.STRING.prefixedUri
+        datatype: String = Literals.XSD.STRING.prefixedUri,
     ) {
         val statementsIterator = statements.wherePredicate(predicateId)
             .sortedBy { it.createdAt }

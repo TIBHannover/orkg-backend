@@ -7,11 +7,11 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.output.StatementRepository
 
 class LiteratureListSectionIndexValidator(
-    private val statementRepository: StatementRepository
+    private val statementRepository: StatementRepository,
 ) : CreateLiteratureListSectionAction {
     override fun invoke(
         command: CreateLiteratureListSectionCommand,
-        state: CreateLiteratureListSectionState
+        state: CreateLiteratureListSectionState,
     ): CreateLiteratureListSectionState {
         if (command.index != null && command.index!! >= 0) {
             val statements = statementRepository.findAll(

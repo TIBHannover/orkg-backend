@@ -4,7 +4,6 @@ import org.orkg.contenttypes.adapter.input.rest.LabeledObjectRepresentation
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
 
 interface LabeledObjectRepresentationAdapter {
-
     fun List<ObjectIdAndLabel>.mapToLabeledObjectRepresentation(): List<LabeledObjectRepresentation> =
         map { it.toLabeledObjectRepresentation() }
 

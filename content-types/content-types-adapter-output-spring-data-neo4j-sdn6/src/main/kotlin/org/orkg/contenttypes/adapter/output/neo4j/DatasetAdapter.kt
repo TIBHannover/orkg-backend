@@ -14,9 +14,9 @@ import org.springframework.stereotype.Component
 
 @Component
 class DatasetAdapter(
-    val datasetRepository: Neo4jDatasetRepository
-) : FindDatasetsQuery, SummarizeDatasetQuery {
-
+    val datasetRepository: Neo4jDatasetRepository,
+) : FindDatasetsQuery,
+    SummarizeDatasetQuery {
     override fun findAllDatasetsByResearchProblemId(id: ThingId, pageable: Pageable): Page<Dataset> =
         datasetRepository.findAllDatasetsByResearchProblemId(id, pageable)
             .map(Neo4jDataset::toDataset)

@@ -18,7 +18,8 @@ internal class LiteratureListSectionsCreatorUnitTest : MockkBaseTest {
     private val abstractLiteratureListSectionCreator: AbstractLiteratureListSectionCreator = mockk()
 
     private val literatureListSectionsCreator = LiteratureListSectionsCreator(
-        unsafeStatementUseCases, abstractLiteratureListSectionCreator
+        unsafeStatementUseCases,
+        abstractLiteratureListSectionCreator
     )
 
     @Test

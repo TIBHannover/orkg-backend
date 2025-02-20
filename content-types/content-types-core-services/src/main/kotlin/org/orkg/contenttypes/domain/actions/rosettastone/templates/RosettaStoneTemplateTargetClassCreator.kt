@@ -13,11 +13,11 @@ import org.orkg.graph.input.UnsafeStatementUseCases
 class RosettaStoneTemplateTargetClassCreator(
     private val classService: ClassUseCases,
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
-    private val literalService: LiteralUseCases
+    private val literalService: LiteralUseCases,
 ) : CreateRosettaStoneTemplateAction {
     override fun invoke(
         command: CreateRosettaStoneTemplateCommand,
-        state: CreateRosettaStoneTemplateState
+        state: CreateRosettaStoneTemplateState,
     ): CreateRosettaStoneTemplateState =
         state.apply {
             val classId = classService.create(

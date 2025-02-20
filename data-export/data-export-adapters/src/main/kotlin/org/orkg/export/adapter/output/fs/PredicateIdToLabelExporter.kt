@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component
 @Component
 @Profile("production")
 class PredicateIdToLabelExporter(
-    private val service: ExportPredicateIdToLabelUseCase
+    private val service: ExportPredicateIdToLabelUseCase,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java.name)
 

@@ -11,10 +11,6 @@ import io.kotest.matchers.shouldNotBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.net.URI
-import java.net.http.HttpClient
-import java.net.http.HttpResponse
-import java.util.stream.Stream
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
@@ -27,6 +23,10 @@ import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.graph.adapter.input.rest.json.GraphJacksonModule
 import org.orkg.graph.domain.ExternalThing
 import org.springframework.web.util.UriComponentsBuilder
+import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpResponse
+import java.util.stream.Stream
 
 internal class OLSRepositoryAdapterUnitTest : MockkBaseTest {
     private val olsHostUrl = "https://example.org/ols"
@@ -45,7 +45,7 @@ internal class OLSRepositoryAdapterUnitTest : MockkBaseTest {
         ontologyId: String,
         methodInvoker: (OLSServiceAdapter, String, T) -> ExternalThing?,
         successResponse: String,
-        expectedResult: ExternalThing
+        expectedResult: ExternalThing,
     ) {
         // Mock HttpClient dsl
         val response = mockk<HttpResponse<String>>()
@@ -59,12 +59,15 @@ internal class OLSRepositoryAdapterUnitTest : MockkBaseTest {
         result shouldBe expectedResult
 
         verify(exactly = 1) {
-            httpClient.send(withArg {
-                it.uri() shouldBe userInput.toUri(ontologyId, entityType)
-                it.headers().map() shouldContainAll mapOf(
-                    "Accept" to listOf("application/json")
-                )
-            }, any<HttpResponse.BodyHandler<String>>())
+            httpClient.send(
+                withArg {
+                    it.uri() shouldBe userInput.toUri(ontologyId, entityType)
+                    it.headers().map() shouldContainAll mapOf(
+                        "Accept" to listOf("application/json")
+                    )
+                },
+                any<HttpResponse.BodyHandler<String>>()
+            )
         }
         verify(exactly = 1) { response.statusCode() }
         verify(exactly = 1) { response.body() }
@@ -90,12 +93,15 @@ internal class OLSRepositoryAdapterUnitTest : MockkBaseTest {
         result shouldBe null
 
         verify(exactly = 1) {
-            httpClient.send(withArg {
-                it.uri() shouldBe userInput.toUri(ontologyId, entityType)
-                it.headers().map() shouldContainAll mapOf(
-                    "Accept" to listOf("application/json")
-                )
-            }, any<HttpResponse.BodyHandler<String>>())
+            httpClient.send(
+                withArg {
+                    it.uri() shouldBe userInput.toUri(ontologyId, entityType)
+                    it.headers().map() shouldContainAll mapOf(
+                        "Accept" to listOf("application/json")
+                    )
+                },
+                any<HttpResponse.BodyHandler<String>>()
+            )
         }
         verify(exactly = 1) { response.statusCode() }
     }
@@ -106,7 +112,7 @@ internal class OLSRepositoryAdapterUnitTest : MockkBaseTest {
         entityType: String,
         userInput: T,
         ontologyId: String,
-        methodInvoker: (OLSServiceAdapter, String, T) -> ExternalThing?
+        methodInvoker: (OLSServiceAdapter, String, T) -> ExternalThing?,
     ) {
         // Mock HttpClient dsl
         val response = mockk<HttpResponse<String>>()
@@ -121,12 +127,15 @@ internal class OLSRepositoryAdapterUnitTest : MockkBaseTest {
         }
 
         verify(exactly = 1) {
-            httpClient.send(withArg {
-                it.uri() shouldBe userInput.toUri(ontologyId, entityType)
-                it.headers().map() shouldContainAll mapOf(
-                    "Accept" to listOf("application/json")
-                )
-            }, any<HttpResponse.BodyHandler<String>>())
+            httpClient.send(
+                withArg {
+                    it.uri() shouldBe userInput.toUri(ontologyId, entityType)
+                    it.headers().map() shouldContainAll mapOf(
+                        "Accept" to listOf("application/json")
+                    )
+                },
+                any<HttpResponse.BodyHandler<String>>()
+            )
         }
         verify(exactly = 2) { response.statusCode() }
         verify(exactly = 1) { response.body() }
@@ -137,7 +146,7 @@ internal class OLSRepositoryAdapterUnitTest : MockkBaseTest {
     fun <T> `Given an ontology id and user input, when input is invalid, it returns null`(
         userInput: T,
         ontologyId: String,
-        methodInvoker: (OLSServiceAdapter, String, T) -> ExternalThing?
+        methodInvoker: (OLSServiceAdapter, String, T) -> ExternalThing?,
     ) {
         val result = methodInvoker(repository, ontologyId, userInput)
         result shouldBe null

@@ -9,8 +9,10 @@ data class Dataset(
     val label: String, // Name of the resource
     override val totalModels: Int,
     override val totalPapers: Int,
-    override val totalCodes: Int
-) : PaperTotal, CodeTotal, ModelTotal
+    override val totalCodes: Int,
+) : PaperTotal,
+    CodeTotal,
+    ModelTotal
 
 data class DatasetSummary(
     @JsonProperty("model_name")
@@ -28,5 +30,5 @@ data class DatasetSummary(
     @JsonProperty("paper_year")
     val paperYear: Int?,
     @JsonProperty("code_urls")
-    val codeURLs: List<String>
+    val codeURLs: List<String>,
 )

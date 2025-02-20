@@ -6,5 +6,5 @@ abstract class PageMetadataMixin(
     @field:JsonProperty("total_elements")
     val totalElements: Long,
     @field:JsonProperty("total_pages")
-    val totalPages: Long
+    val totalPages: Long,
 )

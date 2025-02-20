@@ -14,5 +14,5 @@ class FeatureFlagConfig
 @ConfigurationProperties(prefix = "orkg.features")
 data class FeatureFlags(
     /** Enable cache warmup during application startup. */
-    val cacheWarmup: Boolean = true
+    val cacheWarmup: Boolean = true,
 )

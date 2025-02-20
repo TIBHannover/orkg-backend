@@ -5,9 +5,6 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.runs
 import io.mockk.verify
-import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter
-import java.util.*
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.DisplayName
@@ -51,6 +48,9 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Optional
 
 @ContextConfiguration(
     classes = [
@@ -63,7 +63,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 )
 @WebMvcTest(controllers = [RosettaStoneStatementController::class])
 internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosetta-stone-statements") {
-
     @MockkBean
     private lateinit var statementService: RosettaStoneStatementUseCases
 

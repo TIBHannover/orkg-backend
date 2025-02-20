@@ -3,7 +3,6 @@ package org.orkg.licenses.adapter.input.rest
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
-import java.net.URI
 import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -22,11 +21,11 @@ import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.net.URI
 
 @ContextConfiguration(classes = [LicenseInformationController::class, ExceptionHandler::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [LicenseInformationController::class])
 internal class LicenseControllerUnitTest : MockMvcBaseTest("licenses") {
-
     @MockkBean
     private lateinit var licenseService: RetrieveLicenseInformationUseCase
 

@@ -1,12 +1,12 @@
 package org.orkg.graph.output
 
-import java.util.*
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.ChildClass
 import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.ClassHierarchyEntry
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import java.util.Optional
 
 interface ClassHierarchyRepository {
     fun findAllChildrenByAncestorId(id: ThingId, pageable: Pageable): Page<ChildClass>

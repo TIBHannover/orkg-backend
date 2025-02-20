@@ -1,6 +1,5 @@
 package org.orkg.contenttypes.domain
 
-import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -11,6 +10,7 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.domain.Visibility
+import java.time.OffsetDateTime
 
 data class Table(
     val id: ThingId,
@@ -22,11 +22,11 @@ data class Table(
     val createdAt: OffsetDateTime,
     val createdBy: ContributorId,
     val visibility: Visibility,
-    val unlistedBy: ContributorId? = null
+    val unlistedBy: ContributorId? = null,
 ) {
     data class Row(
         val label: String?,
-        val data: List<Thing?>
+        val data: List<Thing?>,
     )
 
     companion object {

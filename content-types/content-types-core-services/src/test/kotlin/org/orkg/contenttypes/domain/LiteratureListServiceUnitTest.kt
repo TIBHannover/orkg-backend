@@ -7,8 +7,6 @@ import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.time.OffsetDateTime
-import java.util.*
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -44,6 +42,9 @@ import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.pageOf
 import org.springframework.data.domain.Sort
+import java.time.OffsetDateTime
+import java.util.Optional
+import java.util.UUID
 
 internal class LiteratureListServiceUnitTest : MockkBaseTest {
     private val resourceRepository: ResourceRepository = mockk()
@@ -291,7 +292,8 @@ internal class LiteratureListServiceUnitTest : MockkBaseTest {
             it.sections shouldBe listOf(
                 LiteratureListTextSection(textSection.id, textSection.label, 4, textContent),
                 LiteratureListListSection(
-                    listSection.id, listOf(
+                    listSection.id,
+                    listOf(
                         LiteratureListListSection.Entry(ResourceReference(paper), paperEntryDescription),
                         LiteratureListListSection.Entry(ResourceReference(comparison))
                     )

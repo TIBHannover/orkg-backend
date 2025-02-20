@@ -1,9 +1,5 @@
 package org.orkg.contenttypes.adapter.output.neo4j
 
-import java.time.Clock
-import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
-import java.util.*
 import org.neo4j.cypherdsl.core.Condition
 import org.neo4j.cypherdsl.core.Cypher.anonParameter
 import org.neo4j.cypherdsl.core.Cypher.collect
@@ -36,13 +32,18 @@ import org.springframework.data.domain.Sort
 import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.data.neo4j.core.fetchAs
 import org.springframework.stereotype.Component
+import java.time.Clock
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
+import java.util.Optional
+import java.util.UUID
 
 @Component
 class SpringDataNeo4jRosettaStoneStatementAdapter(
     private val neo4jRepository: Neo4jResourceRepository,
     private val neo4jClient: Neo4jClient,
     private val cypherQueryBuilderFactory: CypherQueryBuilderFactory,
-    private val clock: Clock = Clock.systemDefaultZone()
+    private val clock: Clock = Clock.systemDefaultZone(),
 ) : RosettaStoneStatementRepository {
     override fun nextIdentity(): ThingId {
         // IDs could exist already by manual creation. We need to find the next available one.
@@ -53,33 +54,33 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
         return id
     }
 
-    override fun findByIdOrVersionId(id: ThingId): Optional<RosettaStoneStatement> {
-        return neo4jClient.query("""
-            CALL () {
-                MATCH (latest:RosettaStoneStatement:LatestVersion {id: ${'$'}id})
-                RETURN latest
-                UNION
-                MATCH (latest:RosettaStoneStatement:LatestVersion)-[:VERSION]->(:RosettaStoneStatement:Version {id: ${'$'}id})
-                RETURN latest
-            }
-            WITH latest
-            OPTIONAL MATCH (latest)-[:CONTEXT]->(context:Thing)
-            MATCH (latest)-[:VERSION]->(version:RosettaStoneStatement:Version)-[:METADATA]->(metadata:RosettaStoneStatementMetadata),
-                  (latest)-[:TEMPLATE]->(template:RosettaNodeShape)
-            MATCH (version)-[:SUBJECT]->(subjectNode:SubjectNode)-[:VALUE]->(subject:Thing)
-            WITH latest, context.id AS contextId, template.id AS templateId, metadata, version, COLLECT([subject, subjectNode.index]) AS subjects
-            CALL (version) {
-                MATCH (version)-[:OBJECT]->(objectNode:ObjectNode)-[:VALUE]->(object:Thing)
-                RETURN COLLECT([object, objectNode.index, objectNode.position]) AS objects
-            }
-            WITH latest, contextId, templateId, COLLECT([version, metadata, subjects, objects]) AS versions
-            RETURN latest, contextId, templateId, versions""".trimIndent()
-        )
-            .bindAll(mapOf("id" to id.value))
-            .fetchAs(RosettaStoneStatement::class.java)
-            .mappedBy(RosettaStoneStatementMapper())
-            .one()
-    }
+    override fun findByIdOrVersionId(id: ThingId): Optional<RosettaStoneStatement> = neo4jClient.query(
+        """
+        CALL () {
+            MATCH (latest:RosettaStoneStatement:LatestVersion {id: ${'$'}id})
+            RETURN latest
+            UNION
+            MATCH (latest:RosettaStoneStatement:LatestVersion)-[:VERSION]->(:RosettaStoneStatement:Version {id: ${'$'}id})
+            RETURN latest
+        }
+        WITH latest
+        OPTIONAL MATCH (latest)-[:CONTEXT]->(context:Thing)
+        MATCH (latest)-[:VERSION]->(version:RosettaStoneStatement:Version)-[:METADATA]->(metadata:RosettaStoneStatementMetadata),
+              (latest)-[:TEMPLATE]->(template:RosettaNodeShape)
+        MATCH (version)-[:SUBJECT]->(subjectNode:SubjectNode)-[:VALUE]->(subject:Thing)
+        WITH latest, context.id AS contextId, template.id AS templateId, metadata, version, COLLECT([subject, subjectNode.index]) AS subjects
+        CALL (version) {
+            MATCH (version)-[:OBJECT]->(objectNode:ObjectNode)-[:VALUE]->(object:Thing)
+            RETURN COLLECT([object, objectNode.index, objectNode.position]) AS objects
+        }
+        WITH latest, contextId, templateId, COLLECT([version, metadata, subjects, objects]) AS versions
+        RETURN latest, contextId, templateId, versions
+        """.trimIndent()
+    )
+        .bindAll(mapOf("id" to id.value))
+        .fetchAs(RosettaStoneStatement::class.java)
+        .mappedBy(RosettaStoneStatementMapper())
+        .one()
 
     override fun findAll(
         pageable: Pageable,
@@ -91,7 +92,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
         createdAtStart: OffsetDateTime?,
         createdAtEnd: OffsetDateTime?,
         observatoryId: ObservatoryId?,
-        organizationId: OrganizationId?
+        organizationId: OrganizationId?,
     ): Page<RosettaStoneStatement> = cypherQueryBuilderFactory.newBuilder(QueryCache.Uncached)
         .withCommonQuery {
             match(node("RosettaStoneStatement", "LatestVersion").named("latest"))
@@ -225,16 +226,19 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
         .fetch(pageable, false)
 
     override fun save(statement: RosettaStoneStatement) {
-        val versionInfo = neo4jClient.query("""
+        val versionInfo = neo4jClient.query(
+            """
             MATCH (latest:RosettaStoneStatement:LatestVersion {id: ${'$'}id})
             OPTIONAL MATCH (latest)-[:VERSION]->(version:RosettaStoneStatement:Version)
-            RETURN latest.version AS latestVersion, COUNT(version) AS versionCount""".trimIndent()
+            RETURN latest.version AS latestVersion, COUNT(version) AS versionCount
+            """.trimIndent()
         )
             .bindAll(mapOf("id" to statement.id.value))
             .fetchAs<Pair<Long, Long>>()
             .mappedBy { _, record -> record["latestVersion"].asLong() to record["versionCount"].asLong() }
             .one()
-        neo4jClient.query("""
+        neo4jClient.query(
+            """
             OPTIONAL MATCH (hlp:RosettaStoneStatement)
             WHERE hlp.id = ${'$'}__id__
             WITH hlp
@@ -334,7 +338,8 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
                 }
                 RETURN COUNT(latest) AS version_subquery_update
             }
-            RETURN latest""".trimIndent()
+            RETURN latest
+            """.trimIndent()
         )
             .bindAll(
                 mapOf(
@@ -405,26 +410,30 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
     }
 
     override fun deleteAll() {
-        neo4jClient.query("""
+        neo4jClient.query(
+            """
             MATCH (latest:RosettaStoneStatement:LatestVersion)
             OPTIONAL MATCH (latest)-[:CONTEXT]->(context:Thing)
             MATCH (latest)-[:VERSION]->(version:RosettaStoneStatement:Version)-[:METADATA]->(metadata:RosettaStoneStatementMetadata),
                   (latest)-[:TEMPLATE]->(template:RosettaNodeShape)
             MATCH (version)-[:SUBJECT]->(subjectNode:SubjectNode)-[:VALUE]->(subject:Thing)
             OPTIONAL MATCH (version)-[:OBJECT]->(objectNode:ObjectNode)-[:VALUE]->(object:Thing)
-            DETACH DELETE latest, version, metadata, subject, subjectNode, object, objectNode""".trimIndent()
+            DETACH DELETE latest, version, metadata, subject, subjectNode, object, objectNode
+            """.trimIndent()
         ).run()
     }
 
     override fun softDelete(id: ThingId, contributorId: ContributorId) {
-        neo4jClient.query("""
+        neo4jClient.query(
+            """
             MATCH (latest:RosettaStoneStatement:LatestVersion {id: ${'$'}id}),
                   (latest)-[:VERSION]->(version:RosettaStoneStatement:Version)-[:METADATA]->(metadata:RosettaStoneStatementMetadata),
                   (latest)-[:TEMPLATE]->(template:RosettaNodeShape)
             SET latest.visibility = 'DELETED',
                 version.visibility = 'DELETED',
                 metadata.deleted_by = ${'$'}deleted_by,
-                metadata.deleted_at = ${'$'}deleted_at""".trimIndent()
+                metadata.deleted_at = ${'$'}deleted_at
+            """.trimIndent()
         )
             .bindAll(
                 mapOf(
@@ -437,21 +446,24 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
     }
 
     override fun delete(id: ThingId) {
-        neo4jClient.query("""
+        neo4jClient.query(
+            """
             MATCH (latest:RosettaStoneStatement:LatestVersion {id: ${'$'}id})
             OPTIONAL MATCH (latest)-[:CONTEXT]->(context:Thing)
             MATCH (latest)-[:VERSION]->(version:RosettaStoneStatement:Version)-[:METADATA]->(metadata:RosettaStoneStatementMetadata),
                   (latest)-[:TEMPLATE]->(template:RosettaNodeShape)
             MATCH (version)-[:SUBJECT]->(subjectNode:SubjectNode)-[:VALUE]->(Thing)
             OPTIONAL MATCH (version)-[:OBJECT]->(objectNode:ObjectNode)-[:VALUE]->(Thing)
-            DETACH DELETE latest, version, metadata, subjectNode, objectNode""".trimIndent()
+            DETACH DELETE latest, version, metadata, subjectNode, objectNode
+            """.trimIndent()
         )
             .bindAll(mapOf("id" to id.value))
             .run()
     }
 
     override fun isUsedAsObject(id: ThingId): Boolean =
-        neo4jClient.query("""
+        neo4jClient.query(
+            """
             CALL () {
                 MATCH (latest:RosettaStoneStatement:LatestVersion {id: ${'$'}id})
                 RETURN latest
@@ -471,7 +483,8 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
                 RETURN r
             }
             WITH r
-            RETURN COUNT(r) > 0 AS count""".trimIndent()
+            RETURN COUNT(r) > 0 AS count
+            """.trimIndent()
         )
             .bindAll(mapOf("id" to id.value))
             .fetchAs<Boolean>()

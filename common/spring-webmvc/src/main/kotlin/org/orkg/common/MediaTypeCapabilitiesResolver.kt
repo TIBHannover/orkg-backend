@@ -13,7 +13,7 @@ import org.springframework.web.method.support.ModelAndViewContainer
 
 class MediaTypeCapabilitiesResolver(
     private val mediaTypeCapabilityRegistry: MediaTypeCapabilityRegistry,
-    private val contentNegotiationManager: ContentNegotiationManager = ContentNegotiationManager()
+    private val contentNegotiationManager: ContentNegotiationManager = ContentNegotiationManager(),
 ) : HandlerMethodArgumentResolver {
     override fun supportsParameter(methodParameter: MethodParameter): Boolean =
         MediaTypeCapabilities::class.java == methodParameter.parameterType
@@ -22,7 +22,7 @@ class MediaTypeCapabilitiesResolver(
         methodParameter: MethodParameter,
         modelAndViewContainer: ModelAndViewContainer?,
         nativeWebRequest: NativeWebRequest,
-        webDataBinderFactory: WebDataBinderFactory?
+        webDataBinderFactory: WebDataBinderFactory?,
     ): MediaTypeCapabilities {
         // find producible declarations analogue to RequestMappingHandlerMapping.createRequestMappingInfo
         val producibleTypes =

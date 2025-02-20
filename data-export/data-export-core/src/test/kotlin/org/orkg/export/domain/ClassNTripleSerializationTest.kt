@@ -3,14 +3,14 @@ package org.orkg.export.domain
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.io.StringWriter
-import java.util.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.graph.output.ClassHierarchyRepository
 import org.orkg.graph.testing.fixtures.createClass
+import java.io.StringWriter
+import java.util.Optional
 
 @Suppress("HttpUrlsUsage")
 internal class ClassNTripleSerializationTest : MockkBaseTest {

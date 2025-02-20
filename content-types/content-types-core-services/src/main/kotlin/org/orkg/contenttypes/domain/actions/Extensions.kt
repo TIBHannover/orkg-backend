@@ -27,8 +27,11 @@ internal fun <T, S> List<Action<T, S>>.execute(command: T, initialState: S) =
 internal fun Thing.toThingDefinition(statementRepository: StatementRepository? = null): ThingDefinition =
     when (this) {
         is Resource ->
-            if (Classes.list in classes) ListDefinition(label, emptyList())
-            else ResourceDefinition(label, classes)
+            if (Classes.list in classes) {
+                ListDefinition(label, emptyList())
+            } else {
+                ResourceDefinition(label, classes)
+            }
         is Class -> ClassDefinition(label, uri)
         is Predicate -> PredicateDefinition(
             label = label,

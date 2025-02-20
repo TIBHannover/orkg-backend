@@ -7,7 +7,7 @@ import org.orkg.graph.output.ResourceRepository
 class ResourceValidator<T, S>(
     private val resourceRepository: ResourceRepository,
     private val newValueSelector: (T) -> Set<ThingId>?,
-    private val oldValueSelector: (S) -> Set<ThingId> = { emptySet() }
+    private val oldValueSelector: (S) -> Set<ThingId> = { emptySet() },
 ) : Action<T, S> {
     override fun invoke(command: T, state: S): S {
         val newResources = newValueSelector(command)

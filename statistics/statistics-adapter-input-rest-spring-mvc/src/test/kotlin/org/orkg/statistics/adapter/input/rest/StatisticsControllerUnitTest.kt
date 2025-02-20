@@ -10,7 +10,7 @@ import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.statistics.domain.ParameterSpec
 import org.orkg.statistics.domain.SimpleMetric
-import org.orkg.statistics.input.RetrieveStatisticsUseCase
+import org.orkg.statistics.input.StatisticsUseCases
 import org.orkg.statistics.testing.fixtures.createMetrics
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcBaseTest
@@ -24,12 +24,13 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@ContextConfiguration(classes = [StatisticsController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(
+    classes = [StatisticsController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class]
+)
 @WebMvcTest(controllers = [StatisticsController::class])
 internal class StatisticsControllerUnitTest : MockMvcBaseTest("statistics") {
-
     @MockkBean
-    private lateinit var service: RetrieveStatisticsUseCase
+    private lateinit var service: StatisticsUseCases
 
     @Test
     @DisplayName("Given several metrics, when fetching all groups, then status is 200 OK and groups are returned")

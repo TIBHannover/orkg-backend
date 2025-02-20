@@ -1,10 +1,10 @@
 package org.orkg.community.domain
 
-import java.time.LocalDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.PredicatePath
+import java.time.LocalDateTime
 
 data class ObservatoryFilter(
     val id: ObservatoryFilterId,
@@ -15,5 +15,5 @@ data class ObservatoryFilter(
     val path: PredicatePath,
     val range: ThingId,
     val exact: Boolean,
-    val featured: Boolean = false
+    val featured: Boolean = false,
 )

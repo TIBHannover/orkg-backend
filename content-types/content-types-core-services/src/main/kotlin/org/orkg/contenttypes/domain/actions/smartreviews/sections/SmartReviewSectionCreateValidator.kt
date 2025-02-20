@@ -9,7 +9,7 @@ import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.ThingRepository
 
 class SmartReviewSectionCreateValidator(
-    private val abstractSmartReviewSectionValidator: AbstractSmartReviewSectionValidator
+    private val abstractSmartReviewSectionValidator: AbstractSmartReviewSectionValidator,
 ) : CreateSmartReviewSectionAction {
     constructor(
         resourceRepository: ResourceRepository,

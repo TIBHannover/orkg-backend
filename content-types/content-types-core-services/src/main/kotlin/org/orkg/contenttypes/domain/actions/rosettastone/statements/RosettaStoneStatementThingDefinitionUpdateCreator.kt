@@ -13,7 +13,7 @@ import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.StatementRepository
 
 class RosettaStoneStatementThingDefinitionUpdateCreator(
-    private val subgraphCreator: SubgraphCreator
+    private val subgraphCreator: SubgraphCreator,
 ) : UpdateRosettaStoneStatementAction {
     constructor(
         classService: ClassUseCases,
@@ -22,7 +22,7 @@ class RosettaStoneStatementThingDefinitionUpdateCreator(
         literalService: LiteralUseCases,
         predicateService: PredicateUseCases,
         statementRepository: StatementRepository,
-        listService: ListUseCases
+        listService: ListUseCases,
     ) : this(
         SubgraphCreator(
             classService,

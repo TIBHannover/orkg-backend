@@ -1,6 +1,5 @@
 package org.orkg.contenttypes.adapter.input.rest
 
-import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -19,17 +18,18 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.time.OffsetDateTime
 
 const val TABLE_JSON_V1 = "application/vnd.orkg.table.v1+json"
 
 @RestController
 @RequestMapping("/api/tables", produces = [TABLE_JSON_V1])
 class TableController(
-    private val service: TableUseCases
+    private val service: TableUseCases,
 ) : TableRepresentationAdapter {
     @GetMapping("/{id}")
     fun findById(
-        @PathVariable id: ThingId
+        @PathVariable id: ThingId,
     ): TableRepresentation = service.findById(id)
         .mapToTableRepresentation()
         .orElseThrow { TableNotFound(id) }
@@ -44,7 +44,7 @@ class TableController(
         @RequestParam("created_at_end", required = false) @DateTimeFormat(iso = ISO.DATE_TIME) createdAtEnd: OffsetDateTime?,
         @RequestParam("observatory_id", required = false) observatoryId: ObservatoryId?,
         @RequestParam("organization_id", required = false) organizationId: OrganizationId?,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<TableRepresentation> =
         service.findAll(
             pageable = pageable,

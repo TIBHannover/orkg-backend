@@ -1,9 +1,6 @@
 package org.orkg.graph.adapter.output.web
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import java.net.http.HttpClient
-import java.net.http.HttpRequest
-import java.util.regex.Pattern
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.send
 import org.orkg.graph.domain.ExternalThing
@@ -12,6 +9,9 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.util.UriComponentsBuilder
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.util.regex.Pattern
 
 @Component
 class GeoNamesServiceAdapter(
@@ -20,7 +20,7 @@ class GeoNamesServiceAdapter(
     @Value("\${orkg.external-services.geonames.host}")
     private val host: String,
     @Value("\${orkg.external-services.geonames.username}")
-    private val username: String
+    private val username: String,
 ) : ExternalResourceService {
     private val pattern = Pattern.compile("""https?://(?:sws\.|www\.|)geonames\.org/([0-9]+)(?:/\S*\.html|/)?""")
 

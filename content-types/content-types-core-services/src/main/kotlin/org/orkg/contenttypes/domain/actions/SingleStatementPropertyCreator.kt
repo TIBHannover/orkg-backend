@@ -17,7 +17,7 @@ class SingleStatementPropertyCreator(
         subjectId: ThingId,
         predicateId: ThingId,
         label: String,
-        datatype: String = Literals.XSD.STRING.prefixedUri
+        datatype: String = Literals.XSD.STRING.prefixedUri,
     ) {
         val literal = literalService.create(
             CreateLiteralUseCase.CreateCommand(

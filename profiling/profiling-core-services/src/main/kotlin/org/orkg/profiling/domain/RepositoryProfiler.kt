@@ -1,5 +1,11 @@
 package org.orkg.profiling.domain
 
+import org.orkg.profiling.output.ProfilingResultWriterFactory
+import org.orkg.profiling.output.ValueGenerator
+import org.slf4j.LoggerFactory
+import org.springframework.boot.ApplicationArguments
+import org.springframework.boot.ApplicationRunner
+import org.springframework.context.ConfigurableApplicationContext
 import java.io.File
 import java.time.Clock
 import java.time.OffsetDateTime
@@ -11,14 +17,8 @@ import kotlin.reflect.KType
 import kotlin.reflect.full.allSupertypes
 import kotlin.reflect.full.functions
 import kotlin.system.measureTimeMillis
-import org.orkg.profiling.output.ProfilingResultWriterFactory
-import org.orkg.profiling.output.ValueGenerator
-import org.slf4j.LoggerFactory
-import org.springframework.boot.ApplicationArguments
-import org.springframework.boot.ApplicationRunner
-import org.springframework.context.ConfigurableApplicationContext
 
-private const val repetitions = 3
+private const val REPETITIONS = 3
 
 abstract class RepositoryProfiler(
     private val context: ConfigurableApplicationContext,
@@ -26,7 +26,6 @@ abstract class RepositoryProfiler(
     private val clock: Clock,
     valueGenerators: List<ValueGenerator<*>>,
 ) : ApplicationRunner {
-
     private val logger = LoggerFactory.getLogger(this::class.java.name)
 
     private val generators = valueGenerators.associateBy { valueGenerator ->
@@ -63,7 +62,7 @@ abstract class RepositoryProfiler(
             .allCombinations()
         clearQueryCache()
         val measurements = combinations.map { parameters ->
-            val millis = (0 until repetitions).map {
+            val millis = (0 until REPETITIONS).map {
                 measureTimeMillis {
                     function.call(adapter, *parameters.values.toTypedArray())
                 }

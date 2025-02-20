@@ -18,7 +18,7 @@ import org.orkg.graph.output.ResourceRepository
 private val allowedListSectionEntryClasses = setOf(Classes.paper, Classes.dataset, Classes.software)
 
 class AbstractLiteratureListSectionValidator(
-    private val resourceRepository: ResourceRepository
+    private val resourceRepository: ResourceRepository,
 ) {
     internal fun validate(section: LiteratureListSectionDefinition, validIds: MutableSet<ThingId>) {
         if (section is LiteratureListListSectionDefinition) {

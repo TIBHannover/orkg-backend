@@ -11,12 +11,12 @@ import org.orkg.graph.input.UnsafeStatementUseCases
 
 class TemplateRelationsUpdater(
     private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater,
-    private val singleStatementPropertyUpdater: SingleStatementPropertyUpdater
+    private val singleStatementPropertyUpdater: SingleStatementPropertyUpdater,
 ) : UpdateTemplateAction {
     constructor(
         literalService: LiteralUseCases,
         statementService: StatementUseCases,
-        unsafeStatementUseCases: UnsafeStatementUseCases
+        unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
         StatementCollectionPropertyUpdater(literalService, statementService, unsafeStatementUseCases),
         SingleStatementPropertyUpdater(literalService, statementService, unsafeStatementUseCases)

@@ -11,7 +11,7 @@ import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ListRepository
 
 class LiteratureListAuthorUpdater(
-    private val authorUpdater: AuthorUpdater
+    private val authorUpdater: AuthorUpdater,
 ) : UpdateLiteratureListAction {
     constructor(
         unsafeResourceUseCases: UnsafeResourceUseCases,
@@ -19,7 +19,7 @@ class LiteratureListAuthorUpdater(
         unsafeStatementUseCases: UnsafeStatementUseCases,
         literalService: LiteralUseCases,
         listService: ListUseCases,
-        listRepository: ListRepository
+        listRepository: ListRepository,
     ) : this(
         AuthorUpdater(
             unsafeResourceUseCases,

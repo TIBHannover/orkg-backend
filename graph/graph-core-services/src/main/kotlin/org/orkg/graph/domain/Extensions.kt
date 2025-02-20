@@ -6,8 +6,14 @@ import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ThingRepository
 
 fun UpdateResourceUseCase.UpdateCommand.hasNoContents(): Boolean =
-    label == null && classes == null && observatoryId == null && organizationId == null &&
-        extractionMethod == null && modifiable == null && visibility == null && verified == null
+    label == null &&
+        classes == null &&
+        observatoryId == null &&
+        organizationId == null &&
+        extractionMethod == null &&
+        modifiable == null &&
+        visibility == null &&
+        verified == null
 
 fun Resource.apply(command: UpdateResourceUseCase.UpdateCommand): Resource =
     copy(

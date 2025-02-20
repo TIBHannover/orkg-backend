@@ -1,7 +1,5 @@
 package org.orkg.contenttypes.domain
 
-import java.time.OffsetDateTime
-import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.Either
 import org.orkg.common.ObservatoryId
@@ -95,6 +93,8 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
+import java.time.OffsetDateTime
+import java.util.Optional
 
 @Service
 class SmartReviewService(
@@ -117,7 +117,7 @@ class SmartReviewService(
     private val contributorRepository: ContributorRepository,
     private val doiService: DoiService,
     @Value("\${orkg.publishing.base-url.smart-review}")
-    private val smartReviewPublishBaseUri: String = "http://localhost/review/"
+    private val smartReviewPublishBaseUri: String = "http://localhost/review/",
 ) : SmartReviewUseCases {
     override fun findById(id: ThingId): Optional<SmartReview> =
         resourceRepository.findById(id)
@@ -136,7 +136,7 @@ class SmartReviewService(
         researchField: ThingId?,
         includeSubfields: Boolean,
         published: Boolean?,
-        sustainableDevelopmentGoal: ThingId?
+        sustainableDevelopmentGoal: ThingId?,
     ): Page<SmartReview> =
         smartReviewRepository.findAll(
             pageable = pageable,
@@ -155,7 +155,7 @@ class SmartReviewService(
 
     override fun findPublishedContentById(
         smartReviewId: ThingId,
-        contentId: ThingId
+        contentId: ThingId,
     ): Either<ContentType, List<GeneralStatement>> {
         val smartReview = resourceRepository.findById(smartReviewId)
             .filter { Classes.smartReviewPublished in it.classes }
@@ -163,8 +163,10 @@ class SmartReviewService(
         val statements = findSubgraph(smartReview).statements
         val content = statements.values.flatten()
             .firstOrNull { statement ->
-                statement.subject is Resource && SmartReviewSection.types.intersect((statement.subject as Resource).classes).isNotEmpty() &&
-                    statement.`object`.id == contentId && statement.predicate.isAboutSmartReviewSection()
+                statement.subject is Resource &&
+                    SmartReviewSection.types.intersect((statement.subject as Resource).classes).isNotEmpty() &&
+                    statement.`object`.id == contentId &&
+                    statement.predicate.isAboutSmartReviewSection()
             }
             ?.`object`
             ?: throw PublishedSmartReviewContentNotFound(smartReviewId, contentId)

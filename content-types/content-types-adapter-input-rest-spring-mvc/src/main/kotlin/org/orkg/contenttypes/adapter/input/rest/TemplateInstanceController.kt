@@ -1,7 +1,6 @@
 package org.orkg.contenttypes.adapter.input.rest
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import java.time.OffsetDateTime
 import jakarta.validation.Valid
 import org.orkg.common.ContributorId
 import org.orkg.common.MediaTypeCapabilities
@@ -34,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
+import java.time.OffsetDateTime
 
 const val TEMPLATE_INSTANCE_JSON_V1 = "application/vnd.orkg.template-instance.v1+json"
 
@@ -44,12 +44,11 @@ class TemplateInstanceController(
     override val statementService: StatementUseCases,
     override val formattedLabelService: FormattedLabelUseCases,
 ) : TemplateInstanceRepresentationAdapter {
-
     @GetMapping("/{instanceId}")
     fun findById(
         @PathVariable id: ThingId,
         @PathVariable instanceId: ThingId,
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): TemplateInstanceRepresentation =
         service.findById(id, instanceId)
             .mapToTemplateInstanceRepresentation(capabilities)
@@ -67,7 +66,7 @@ class TemplateInstanceController(
         @RequestParam("observatory_id", required = false) observatoryId: ObservatoryId?,
         @RequestParam("organization_id", required = false) organizationId: OrganizationId?,
         pageable: Pageable,
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): Page<TemplateInstanceRepresentation> =
         service.findAll(
             templateId = id,
@@ -113,12 +112,12 @@ class TemplateInstanceController(
         @field:Valid
         val lists: Map<String, ListDefinitionDTO>?,
         @JsonProperty("extraction_method")
-        val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN
+        val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     ) {
         fun toUpdateCommand(
             contributorId: ContributorId,
             templateId: ThingId,
-            id: ThingId
+            id: ThingId,
         ): UpdateTemplateInstanceUseCase.UpdateCommand =
             UpdateTemplateInstanceUseCase.UpdateCommand(
                 subject = id,

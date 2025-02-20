@@ -1,8 +1,5 @@
 package org.orkg.mediastorage.adapter.output.jpa.internal
 
-import org.springframework.util.MimeType
-import java.time.OffsetDateTime
-import java.util.*
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
@@ -13,6 +10,9 @@ import org.orkg.common.ContributorId
 import org.orkg.mediastorage.domain.Image
 import org.orkg.mediastorage.domain.ImageData
 import org.orkg.mediastorage.domain.ImageId
+import org.springframework.util.MimeType
+import java.time.OffsetDateTime
+import java.util.UUID
 
 @Entity
 @Table(name = "images")

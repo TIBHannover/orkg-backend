@@ -1,8 +1,5 @@
 package org.orkg.graph.adapter.output.inmemory
 
-import java.time.OffsetDateTime
-import java.util.*
-import kotlin.jvm.optionals.getOrNull
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -16,19 +13,25 @@ import org.orkg.graph.output.ResourceRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
+import java.time.OffsetDateTime
+import java.util.LinkedList
+import java.util.Optional
+import kotlin.jvm.optionals.getOrNull
 
 class InMemoryResourceRepository(private val inMemoryGraph: InMemoryGraph) :
-    InMemoryRepository<ThingId, Resource>(compareBy(Resource::createdAt)), ResourceRepository {
-
+    InMemoryRepository<ThingId, Resource>(compareBy(Resource::createdAt)),
+    ResourceRepository {
     override val entities: InMemoryEntityAdapter<ThingId, Resource> =
         object : InMemoryEntityAdapter<ThingId, Resource> {
             override val keys: Collection<ThingId> get() = inMemoryGraph.findAllResources().map { it.id }
             override val values: MutableCollection<Resource> get() = inMemoryGraph.findAllResources().toMutableSet()
 
             override fun remove(key: ThingId): Resource? = get(key)?.also { inMemoryGraph.delete(it.id) }
+
             override fun clear() = inMemoryGraph.findAllResources().forEach(inMemoryGraph::delete)
 
             override fun get(key: ThingId): Resource? = inMemoryGraph.findResourceById(key).getOrNull()
+
             override fun set(key: ThingId, value: Resource): Resource? =
                 get(key).also { inMemoryGraph.add(value) }
         }
@@ -82,7 +85,7 @@ class InMemoryResourceRepository(private val inMemoryGraph: InMemoryGraph) :
         excludeClasses: Set<ThingId>,
         baseClass: ThingId?,
         observatoryId: ObservatoryId?,
-        organizationId: OrganizationId?
+        organizationId: OrganizationId?,
     ): Page<Resource> =
         findAllFilteredAndPaged(
             pageable = pageable,
@@ -125,19 +128,24 @@ class InMemoryResourceRepository(private val inMemoryGraph: InMemoryGraph) :
     override fun findAllPapersByLabel(label: String) =
         entities.values.filter {
             it.label.equals(label, ignoreCase = true) &&
-                Classes.paper in it.classes && Classes.paperDeleted !in it.classes
+                Classes.paper in it.classes &&
+                Classes.paperDeleted !in it.classes
         }
 
     override fun findPaperByLabel(label: String) =
-        Optional.ofNullable(entities.values.firstOrNull {
-            it.label.equals(label, ignoreCase = true) && Classes.paper in it.classes
-        })
+        Optional.ofNullable(
+            entities.values.firstOrNull {
+                it.label.equals(label, ignoreCase = true) && Classes.paper in it.classes
+            }
+        )
 
     // TODO: Create a method with class parameter (and possibly unlisted, featured and verified flags)
     override fun findPaperById(id: ThingId) =
-        Optional.ofNullable(entities.values.firstOrNull {
-            it.id == id && Classes.paper in it.classes
-        })
+        Optional.ofNullable(
+            entities.values.firstOrNull {
+                it.id == id && Classes.paper in it.classes
+            }
+        )
 
     override fun findAllContributorIds(pageable: Pageable) =
         entities.values
@@ -150,14 +158,14 @@ class InMemoryResourceRepository(private val inMemoryGraph: InMemoryGraph) :
     override fun findAllByClassInAndVisibility(
         classes: Set<ThingId>,
         visibility: Visibility,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<Resource> = findAllFilteredAndPaged(pageable) {
         it.visibility == visibility && it.classes.any { `class` -> `class` in classes }
     }
 
     override fun findAllListedByClassIn(
         classes: Set<ThingId>,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<Resource> = findAllFilteredAndPaged(pageable) {
         (it.visibility == Visibility.DEFAULT || it.visibility == Visibility.FEATURED) && it.classes.any { `class` -> `class` in classes }
     }
@@ -166,7 +174,7 @@ class InMemoryResourceRepository(private val inMemoryGraph: InMemoryGraph) :
         classes: Set<ThingId>,
         visibility: Visibility,
         id: ObservatoryId,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<Resource> = findAllFilteredAndPaged(pageable) {
         it.visibility == visibility && it.observatoryId == id && it.classes.any { `class` -> `class` in classes }
     }
@@ -174,9 +182,10 @@ class InMemoryResourceRepository(private val inMemoryGraph: InMemoryGraph) :
     override fun findAllListedByClassInAndObservatoryId(
         classes: Set<ThingId>,
         id: ObservatoryId,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<Resource> = findAllFilteredAndPaged(pageable) {
-        (it.visibility == Visibility.DEFAULT || it.visibility == Visibility.FEATURED) && it.observatoryId == id &&
+        (it.visibility == Visibility.DEFAULT || it.visibility == Visibility.FEATURED) &&
+            it.observatoryId == id &&
             it.classes.any { `class` -> `class` in classes }
     }
 }

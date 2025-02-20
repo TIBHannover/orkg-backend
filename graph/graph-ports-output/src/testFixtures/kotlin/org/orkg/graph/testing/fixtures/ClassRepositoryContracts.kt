@@ -10,8 +10,6 @@ import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldNotMatch
-import java.time.OffsetDateTime
-import java.util.*
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
@@ -21,9 +19,11 @@ import org.orkg.graph.domain.SearchString
 import org.orkg.graph.output.ClassRepository
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
+import java.time.OffsetDateTime
+import java.util.UUID
 
 fun <
-    C : ClassRepository
+    C : ClassRepository,
 > classRepositoryContract(
     repository: C,
 ) = describeSpec {

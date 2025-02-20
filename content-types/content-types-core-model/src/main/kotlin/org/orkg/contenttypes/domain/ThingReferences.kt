@@ -26,14 +26,14 @@ sealed interface ThingReference {
 data class ResourceReference(
     override val id: ThingId,
     override val label: String,
-    val classes: Set<ThingId>
+    val classes: Set<ThingId>,
 ) : ThingReference {
     constructor(resource: Resource) : this(resource.id, resource.label, resource.classes)
 }
 
 data class PredicateReference(
     override val id: ThingId,
-    override val label: String
+    override val label: String,
 ) : ThingReference {
     constructor(predicate: Predicate) : this(predicate.id, predicate.label)
 }
@@ -41,14 +41,14 @@ data class PredicateReference(
 data class ClassReference(
     override val id: ThingId,
     override val label: String,
-    val uri: ParsedIRI?
+    val uri: ParsedIRI?,
 ) : ThingReference {
     constructor(`class`: Class) : this(`class`.id, `class`.label, `class`.uri)
 }
 
 data class LiteralReference(
     override val label: String,
-    val datatype: String
+    val datatype: String,
 ) : ThingReference {
     constructor(literal: Literal) : this(literal.label, literal.datatype)
 

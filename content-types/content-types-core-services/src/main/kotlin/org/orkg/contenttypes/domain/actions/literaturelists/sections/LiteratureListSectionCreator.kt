@@ -15,7 +15,7 @@ import org.orkg.graph.input.UnsafeStatementUseCases
 class LiteratureListSectionCreator(
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
     private val abstractLiteratureListSectionCreator: AbstractLiteratureListSectionCreator,
-    private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater
+    private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater,
 ) : CreateLiteratureListSectionAction {
     constructor(
         literalService: LiteralUseCases,
@@ -30,7 +30,7 @@ class LiteratureListSectionCreator(
 
     override fun invoke(
         command: CreateLiteratureListSectionCommand,
-        state: CreateLiteratureListSectionState
+        state: CreateLiteratureListSectionState,
     ): CreateLiteratureListSectionState {
         val sectionId = abstractLiteratureListSectionCreator.create(
             contributorId = command.contributorId,

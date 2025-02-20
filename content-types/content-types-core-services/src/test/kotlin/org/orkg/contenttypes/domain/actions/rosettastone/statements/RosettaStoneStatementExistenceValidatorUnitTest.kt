@@ -6,7 +6,6 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.util.*
 import org.junit.jupiter.api.Test
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.RosettaStoneStatementNotFound
@@ -14,6 +13,7 @@ import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneStatementState
 import org.orkg.contenttypes.domain.testing.fixtures.createRosettaStoneStatement
 import org.orkg.contenttypes.input.RosettaStoneStatementUseCases
 import org.orkg.contenttypes.input.testing.fixtures.updateRosettaStoneStatementCommand
+import java.util.Optional
 
 internal class RosettaStoneStatementExistenceValidatorUnitTest : MockkBaseTest {
     private val rosettaStoneStatementService: RosettaStoneStatementUseCases = mockk()

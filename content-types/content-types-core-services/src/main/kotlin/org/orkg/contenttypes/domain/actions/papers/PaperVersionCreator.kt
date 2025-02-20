@@ -20,7 +20,7 @@ class PaperVersionCreator(
     private val unsafeResourceUseCases: UnsafeResourceUseCases,
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
     private val literalService: LiteralUseCases,
-    private val listService: ListUseCases
+    private val listService: ListUseCases,
 ) : PublishPaperAction {
     override fun invoke(command: PublishPaperCommand, state: State): State {
         val paper = state.paper!!

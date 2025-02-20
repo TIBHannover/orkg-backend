@@ -11,7 +11,7 @@ import org.orkg.graph.domain.GeneralStatement
 interface CreateTemplatePropertyAction : Action<CreateTemplatePropertyCommand, CreateTemplatePropertyAction.State> {
     data class State(
         val templatePropertyId: ThingId? = null,
-        val propertyCount: Int? = null
+        val propertyCount: Int? = null,
     )
 }
 
@@ -19,6 +19,6 @@ interface UpdateTemplatePropertyAction : Action<UpdateTemplatePropertyCommand, U
     data class State(
         val template: Template? = null,
         val templateProperty: TemplateProperty? = null,
-        val statements: Map<ThingId, List<GeneralStatement>> = emptyMap()
+        val statements: Map<ThingId, List<GeneralStatement>> = emptyMap(),
     )
 }

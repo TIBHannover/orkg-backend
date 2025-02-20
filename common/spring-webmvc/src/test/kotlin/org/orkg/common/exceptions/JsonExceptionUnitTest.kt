@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController
 @WebMvcTest
 @ContextConfiguration(classes = [ExceptionHandler::class, TestController::class, CommonSpringConfig::class, FixedClockConfig::class])
 internal class JsonExceptionUnitTest : MockMvcBaseTest("errors") {
-
     @Test
     fun jsonMissingFieldException() {
         post("/errors/json")
@@ -123,17 +122,19 @@ internal class JsonExceptionUnitTest : MockMvcBaseTest("errors") {
     @RestController
     internal class TestController {
         @PostMapping("/errors/json")
-        fun json(@RequestBody request: JsonRequest): Nothing = throw NotImplementedError()
+        fun json(
+            @RequestBody request: JsonRequest,
+        ): Nothing = throw NotImplementedError()
 
         @Suppress("ArrayInDataClass")
         data class JsonRequest(
             val field: String,
             val nested: Nested,
-            val array: Array<Nested>
+            val array: Array<Nested>,
         ) {
             data class Nested(
                 val field: String,
-                val list: List<String>
+                val list: List<String>,
             )
         }
     }

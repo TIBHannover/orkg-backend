@@ -16,7 +16,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @SpringBootTest
 internal class ContributorControllerIntegrationTest : MockMvcBaseTest("contributors") {
-
     @Autowired
     private lateinit var repository: ContributorRepository
 

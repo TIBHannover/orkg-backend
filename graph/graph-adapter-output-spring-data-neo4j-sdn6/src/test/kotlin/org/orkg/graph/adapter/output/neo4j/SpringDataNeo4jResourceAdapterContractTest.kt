@@ -34,25 +34,25 @@ internal class SpringDataNeo4jResourceAdapterContractTests(
     @Autowired private val springDataNeo4jResourceAdapter: ResourceRepository,
     @Autowired private val springDataNeo4jClassAdapter: ClassRepository,
     @Autowired private val springDataNeo4jClassRelationAdapter: ClassRelationRepository,
-    @Autowired private val neo4jClient: Neo4jClient
+    @Autowired private val neo4jClient: Neo4jClient,
 ) : DescribeSpec({
-    include(
-        resourceRepositoryContract(
-            springDataNeo4jResourceAdapter,
-            springDataNeo4jClassAdapter,
-            springDataNeo4jClassRelationAdapter
+        include(
+            resourceRepositoryContract(
+                springDataNeo4jResourceAdapter,
+                springDataNeo4jClassAdapter,
+                springDataNeo4jClassRelationAdapter
+            )
         )
-    )
-    include(neo4jResourceRepositoryContract(springDataNeo4jResourceAdapter, neo4jClient))
+        include(neo4jResourceRepositoryContract(springDataNeo4jResourceAdapter, neo4jClient))
 
-    finalizeSpec {
-        springDataNeo4jResourceAdapter.deleteAll()
-    }
-})
+        finalizeSpec {
+            springDataNeo4jResourceAdapter.deleteAll()
+        }
+    })
 
 fun <R : ResourceRepository, C : Neo4jClient> neo4jResourceRepositoryContract(
     repository: R,
-    neo4jClient: C
+    neo4jClient: C,
 ) = describeSpec {
     beforeTest {
         repository.deleteAll()

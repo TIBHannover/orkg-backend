@@ -10,13 +10,13 @@ private val illegalCharRanges = arrayOf(
     IntRange(0x00110000, 0x7FFFFFFF), // range not allowed by XML
 )
 
-private const val backslashCodepoint = '\\'.code
-private const val horizontalTabCodepoint = '\t'.code
-private const val backspaceCodepoint = '\u0008'.code
-private const val newLineCodepoint = '\n'.code
-private const val carriageReturnCodepoint = '\r'.code
-private const val formFeedCodepoint = '\u000C'.code
-private const val doubleQuotesCodepoint = '\"'.code
+private const val BACKSLASH_CODEPOINT = '\\'.code
+private const val HORIZONTAL_TAB_CODEPOINT = '\t'.code
+private const val BACKSPACE_CODEPOINT = '\u0008'.code
+private const val NEW_LINE_CODEPOINT = '\n'.code
+private const val CARRIAGE_RETURN_CODEPOINT = '\r'.code
+private const val FORM_FEED_CODEPOINT = '\u000C'.code
+private const val DOUBLE_QUOTES_CODEPOINT = '\"'.code
 
 /**
  * This method escapes a given string following the rules of the
@@ -26,13 +26,13 @@ private const val doubleQuotesCodepoint = '\"'.code
 internal fun escapeLiteral(literal: String): String = buildString(literal.length) {
     literal.codePoints().forEach { codePoint ->
         when (codePoint) {
-            backslashCodepoint -> append("""\\""")
-            horizontalTabCodepoint -> append("""\t""")
-            backspaceCodepoint -> append("""\b""")
-            newLineCodepoint -> append("""\n""")
-            carriageReturnCodepoint -> append("""\r""")
-            formFeedCodepoint -> append("""\f""")
-            doubleQuotesCodepoint -> append("""\"""")
+            BACKSLASH_CODEPOINT -> append("""\\""")
+            HORIZONTAL_TAB_CODEPOINT -> append("""\t""")
+            BACKSPACE_CODEPOINT -> append("""\b""")
+            NEW_LINE_CODEPOINT -> append("""\n""")
+            CARRIAGE_RETURN_CODEPOINT -> append("""\r""")
+            FORM_FEED_CODEPOINT -> append("""\f""")
+            DOUBLE_QUOTES_CODEPOINT -> append("""\"""")
             else -> {
                 val isIllegal = illegalCharRanges.any { codePoint in it }
                 if (isIllegal) {

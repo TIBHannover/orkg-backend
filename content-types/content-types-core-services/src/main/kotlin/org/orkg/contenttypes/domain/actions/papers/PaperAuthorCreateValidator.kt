@@ -7,11 +7,11 @@ import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 
 class PaperAuthorCreateValidator(
-    private val authorValidator: AuthorValidator
+    private val authorValidator: AuthorValidator,
 ) : CreatePaperAction {
     constructor(
         resourceRepository: ResourceRepository,
-        statementRepository: StatementRepository
+        statementRepository: StatementRepository,
     ) : this(AuthorValidator(resourceRepository, statementRepository))
 
     override operator fun invoke(command: CreatePaperCommand, state: CreatePaperState): CreatePaperState =

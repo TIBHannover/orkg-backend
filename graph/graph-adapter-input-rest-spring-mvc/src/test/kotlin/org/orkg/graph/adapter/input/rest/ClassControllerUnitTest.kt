@@ -7,10 +7,6 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.runs
 import io.mockk.verify
-import java.time.Clock
-import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
-import java.util.*
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.DisplayName
@@ -31,11 +27,11 @@ import org.orkg.graph.domain.toOptional
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.fixtures.createClass
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectClass
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.annotations.TestWithMockUser
+import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.beans.factory.annotation.Autowired
@@ -52,11 +48,14 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.time.Clock
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
+import java.util.Optional
 
 @ContextConfiguration(classes = [ClassController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [ClassController::class])
 internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
-
     @MockkBean
     private lateinit var classService: ClassUseCases
 
@@ -251,12 +250,14 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) {
-            classService.create(withArg {
-                it.id shouldBe id
-                it.label shouldBe label
-                it.uri shouldBe uri
-                it.contributorId.toString() shouldBe MockUserId.USER
-            })
+            classService.create(
+                withArg {
+                    it.id shouldBe id
+                    it.label shouldBe label
+                    it.uri shouldBe uri
+                    it.contributorId.toString() shouldBe MockUserId.USER
+                }
+            )
         }
         verify(exactly = 1) { classService.findById(id) }
         verify(exactly = 1) {
@@ -320,11 +321,13 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) {
-            classService.replace(withArg {
-                it.id shouldBe id
-                it.label shouldBe "new label"
-                it.uri shouldBe ParsedIRI("https://example.org/some/new#URI")
-            })
+            classService.replace(
+                withArg {
+                    it.id shouldBe id
+                    it.label shouldBe "new label"
+                    it.uri shouldBe ParsedIRI("https://example.org/some/new#URI")
+                }
+            )
         }
         verify(exactly = 1) { classService.findById(id) }
         verify(exactly = 1) {
@@ -367,11 +370,13 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) {
-            classService.update(withArg {
-                it.id shouldBe id
-                it.label shouldBe "some label"
-                it.uri shouldBe ParsedIRI("https://example.org/some/new#URI")
-            })
+            classService.update(
+                withArg {
+                    it.id shouldBe id
+                    it.label shouldBe "some label"
+                    it.uri shouldBe ParsedIRI("https://example.org/some/new#URI")
+                }
+            )
         }
     }
 
@@ -388,11 +393,13 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
             .andExpect(status().isOk)
 
         verify(exactly = 1) {
-            classService.update(withArg {
-                it.id shouldBe id
-                it.label shouldBe "some label"
-                it.uri shouldBe null
-            })
+            classService.update(
+                withArg {
+                    it.id shouldBe id
+                    it.label shouldBe "some label"
+                    it.uri shouldBe null
+                }
+            )
         }
     }
 
@@ -408,11 +415,13 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
             .perform()
             .andExpect(status().isOk)
         verify(exactly = 1) {
-            classService.update(withArg {
-                it.id shouldBe id
-                it.label shouldBe null
-                it.uri shouldBe ParsedIRI("https://example.org/some/new#URI")
-            })
+            classService.update(
+                withArg {
+                    it.id shouldBe id
+                    it.label shouldBe null
+                    it.uri shouldBe ParsedIRI("https://example.org/some/new#URI")
+                }
+            )
         }
     }
 

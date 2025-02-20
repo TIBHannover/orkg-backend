@@ -1,7 +1,5 @@
 package org.orkg.contenttypes.domain
 
-import java.time.OffsetDateTime
-import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -93,6 +91,8 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
+import java.time.OffsetDateTime
+import java.util.Optional
 
 @Service
 class PaperService(
@@ -116,14 +116,11 @@ class PaperService(
     private val contributorRepository: ContributorRepository,
     private val paperPublishedRepository: PaperPublishedRepository,
     @Value("\${orkg.publishing.base-url.paper}")
-    private val paperPublishBaseUri: String = "http://localhost/paper/"
+    private val paperPublishBaseUri: String = "http://localhost/paper/",
 ) : PaperUseCases {
-
-    override fun countAllStatementsAboutPapers(pageable: Pageable): Page<PaperWithStatementCount> {
-        return paperRepository.findAll(pageable = pageable).pmap { paper ->
-            val totalStatementCount = statementRepository.countStatementsInPaperSubgraph(paper.id)
-            PaperWithStatementCount(paper.id, paper.label, totalStatementCount)
-        }
+    override fun countAllStatementsAboutPapers(pageable: Pageable): Page<PaperWithStatementCount> = paperRepository.findAll(pageable = pageable).pmap { paper ->
+        val totalStatementCount = statementRepository.countStatementsInPaperSubgraph(paper.id)
+        PaperWithStatementCount(paper.id, paper.label, totalStatementCount)
     }
 
     override fun findById(id: ThingId): Optional<Paper> =
@@ -145,7 +142,7 @@ class PaperService(
         researchField: ThingId?,
         includeSubfields: Boolean,
         sustainableDevelopmentGoal: ThingId?,
-        mentionings: Set<ThingId>?
+        mentionings: Set<ThingId>?,
     ): Page<Paper> =
         paperRepository.findAll(
             pageable = pageable,
@@ -278,7 +275,5 @@ class PaperService(
         )
     }
 
-    internal fun Resource.toPaper(): Paper {
-        return Paper.from(this, findSubgraph(this).statements)
-    }
+    internal fun Resource.toPaper(): Paper = Paper.from(this, findSubgraph(this).statements)
 }

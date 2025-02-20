@@ -5,7 +5,6 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import java.util.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.NullSource
@@ -32,6 +31,7 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
+import java.util.UUID
 
 internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
     private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
@@ -39,7 +39,9 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
     private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater = mockk()
 
     private val abstractSmartReviewSectionUpdater = AbstractSmartReviewSectionUpdater(
-        unsafeResourceUseCases, singleStatementPropertyUpdater, statementCollectionPropertyUpdater
+        unsafeResourceUseCases,
+        singleStatementPropertyUpdater,
+        statementCollectionPropertyUpdater
     )
 
     @Test

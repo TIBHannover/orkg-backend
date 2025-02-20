@@ -6,10 +6,9 @@ import com.fasterxml.jackson.databind.JsonDeserializer
 import org.orkg.common.ThingId
 
 class ThingIdDeserializer : JsonDeserializer<ThingId>() {
-
     override fun deserialize(
         p: JsonParser?,
-        ctxt: DeserializationContext?
+        ctxt: DeserializationContext?,
     ): ThingId? =
         p?.valueAsString?.let {
             ThingId(it)

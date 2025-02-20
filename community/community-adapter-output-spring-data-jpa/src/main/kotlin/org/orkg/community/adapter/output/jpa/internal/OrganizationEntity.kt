@@ -1,6 +1,5 @@
 package org.orkg.community.adapter.output.jpa.internal
 
-import java.util.*
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -18,11 +17,11 @@ import org.orkg.common.OrganizationId
 import org.orkg.community.domain.Organization
 import org.orkg.community.domain.OrganizationType
 import org.orkg.mediastorage.domain.ImageId
+import java.util.UUID
 
 @Entity
 @Table(name = "organizations")
 class OrganizationEntity() {
-
     constructor(id: UUID) : this() {
         this.id = id
     }

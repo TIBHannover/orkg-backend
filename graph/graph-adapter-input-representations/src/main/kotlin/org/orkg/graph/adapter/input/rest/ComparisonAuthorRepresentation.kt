@@ -4,5 +4,5 @@ import org.orkg.contenttypes.domain.ComparisonAuthorInfo
 
 data class ComparisonAuthorRepresentation(
     val author: AuthorRepresentation,
-    val info: Iterable<ComparisonAuthorInfo>
+    val info: Iterable<ComparisonAuthorInfo>,
 )

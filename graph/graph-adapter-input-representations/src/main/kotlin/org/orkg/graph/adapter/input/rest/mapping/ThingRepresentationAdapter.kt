@@ -1,6 +1,5 @@
 package org.orkg.graph.adapter.input.rest.mapping
 
-import java.util.*
 import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ThingId
 import org.orkg.graph.adapter.input.rest.ThingRepresentation
@@ -12,17 +11,21 @@ import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.StatementCounts
 import org.orkg.graph.domain.Thing
 import org.springframework.data.domain.Page
+import java.util.Optional
 
-interface ThingRepresentationAdapter : ResourceRepresentationAdapter, ClassRepresentationAdapter,
-    LiteralRepresentationAdapter, PredicateRepresentationAdapter, ListRepresentationAdapter {
-
+interface ThingRepresentationAdapter :
+    ResourceRepresentationAdapter,
+    ClassRepresentationAdapter,
+    LiteralRepresentationAdapter,
+    PredicateRepresentationAdapter,
+    ListRepresentationAdapter {
     fun Optional<Thing>.mapToThingRepresentation(
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): Optional<ThingRepresentation> =
         map { it.toThingRepresentation(capabilities) }
 
     fun Page<Thing>.mapToThingRepresentation(
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): Page<ThingRepresentation> {
         val resources = content.filterIsInstance<Resource>()
         val statementCounts = countIncomingStatements(resources)
@@ -32,7 +35,7 @@ interface ThingRepresentationAdapter : ResourceRepresentationAdapter, ClassRepre
     }
 
     private fun Thing.toThingRepresentation(
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): ThingRepresentation =
         when (this) {
             is Resource -> {
@@ -53,7 +56,7 @@ interface ThingRepresentationAdapter : ResourceRepresentationAdapter, ClassRepre
     fun Thing.toThingRepresentation(
         statementCounts: StatementCounts,
         formattedLabels: FormattedLabels,
-        description: String?
+        description: String?,
     ): ThingRepresentation =
         when (this) {
             is Resource -> toResourceRepresentation(statementCounts, formattedLabels)

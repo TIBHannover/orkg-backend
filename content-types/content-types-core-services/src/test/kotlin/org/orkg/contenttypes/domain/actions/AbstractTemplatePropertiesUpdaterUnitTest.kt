@@ -14,8 +14,8 @@ import org.orkg.contenttypes.domain.testing.fixtures.createStringLiteralTemplate
 import org.orkg.contenttypes.domain.testing.fixtures.createTemplate
 import org.orkg.contenttypes.domain.testing.fixtures.createUntypedTemplateProperty
 import org.orkg.contenttypes.input.testing.fixtures.createOtherLiteralTemplatePropertyCommand
-import org.orkg.contenttypes.input.testing.fixtures.updateResourceTemplatePropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.toTemplatePropertyDefinition
+import org.orkg.contenttypes.input.testing.fixtures.updateResourceTemplatePropertyCommand
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.MockUserId
@@ -26,7 +26,9 @@ internal class AbstractTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
     private val abstractTemplatePropertyDeleter: AbstractTemplatePropertyDeleter = mockk()
 
     private val abstractTemplatePropertiesUpdater = AbstractTemplatePropertiesUpdater(
-        abstractTemplatePropertyCreator, abstractTemplatePropertyUpdater, abstractTemplatePropertyDeleter
+        abstractTemplatePropertyCreator,
+        abstractTemplatePropertyUpdater,
+        abstractTemplatePropertyDeleter
     )
 
     @Test

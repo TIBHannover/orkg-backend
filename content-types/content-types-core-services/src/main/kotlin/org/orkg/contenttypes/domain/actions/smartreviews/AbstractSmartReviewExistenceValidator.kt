@@ -11,7 +11,7 @@ import org.orkg.graph.output.ResourceRepository
 
 class AbstractSmartReviewExistenceValidator(
     private val smartReviewService: SmartReviewService,
-    private val resourceRepository: ResourceRepository
+    private val resourceRepository: ResourceRepository,
 ) {
     internal fun findUnpublishedSmartReviewById(id: ThingId): Pair<SmartReview, Map<ThingId, List<GeneralStatement>>> {
         val resource = resourceRepository.findById(id)

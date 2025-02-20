@@ -14,7 +14,7 @@ import org.orkg.graph.domain.Thing
 class ThingDeserializer : JsonDeserializer<Thing>() {
     override fun deserialize(
         p: JsonParser?,
-        ctxt: DeserializationContext?
+        ctxt: DeserializationContext?,
     ): Thing = with(p!!.codec) {
         val node = readTree<JsonNode>(p)
         when (val type = node["_class"].asText()) {

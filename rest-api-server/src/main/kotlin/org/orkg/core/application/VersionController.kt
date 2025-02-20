@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/version", produces = [MediaType.APPLICATION_JSON_VALUE])
 class VersionController(
-    private val buildProperties: BuildProperties
+    private val buildProperties: BuildProperties,
 ) {
     @GetMapping
     fun version(): Map<String, String> = mapOf("version" to buildProperties.version)

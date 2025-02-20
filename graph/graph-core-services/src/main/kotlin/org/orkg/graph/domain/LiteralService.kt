@@ -1,8 +1,5 @@
 package org.orkg.graph.domain
 
-import java.time.Clock
-import java.time.OffsetDateTime
-import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.toIRIOrNull
@@ -14,6 +11,9 @@ import org.orkg.spring.data.annotations.TransactionalOnNeo4j
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import java.time.Clock
+import java.time.OffsetDateTime
+import java.util.Optional
 
 @Service
 @TransactionalOnNeo4j
@@ -57,7 +57,7 @@ class LiteralService(
         label: SearchString?,
         createdBy: ContributorId?,
         createdAtStart: OffsetDateTime?,
-        createdAtEnd: OffsetDateTime?
+        createdAtEnd: OffsetDateTime?,
     ): Page<Literal> =
         repository.findAll(pageable, label, createdBy, createdAtStart, createdAtEnd)
 
@@ -74,8 +74,9 @@ class LiteralService(
         // already checked by service
         var found = repository.findById(literal.id).get()
 
-        if (!found.modifiable)
+        if (!found.modifiable) {
             throw LiteralNotModifiable(found.id)
+        }
 
         // update all the properties
         found = found.copy(label = literal.label)

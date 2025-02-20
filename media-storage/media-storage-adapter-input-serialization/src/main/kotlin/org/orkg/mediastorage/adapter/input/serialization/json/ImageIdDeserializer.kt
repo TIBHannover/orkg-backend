@@ -3,14 +3,14 @@ package org.orkg.mediastorage.adapter.input.serialization.json
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonDeserializer
-import java.util.*
 import org.orkg.common.exceptions.InvalidUUID
 import org.orkg.mediastorage.domain.ImageId
+import java.util.UUID
 
 class ImageIdDeserializer : JsonDeserializer<ImageId>() {
     override fun deserialize(
         p: JsonParser?,
-        ctxt: DeserializationContext?
+        ctxt: DeserializationContext?,
     ): ImageId? =
         p?.valueAsString?.let {
             try {

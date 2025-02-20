@@ -1,7 +1,5 @@
 package org.orkg.graph.domain
 
-import java.time.Clock
-import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -11,6 +9,8 @@ import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UpdateResourceUseCase.UpdateCommand
 import org.orkg.graph.output.ResourceRepository
 import org.springframework.stereotype.Service
+import java.time.Clock
+import java.time.OffsetDateTime
 
 @Service
 class UnsafeResourceService(

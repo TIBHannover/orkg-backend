@@ -1,8 +1,8 @@
 package org.orkg.contenttypes.output
 
-import java.net.URI
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.identifiers.DOI
+import java.net.URI
 
 interface DoiService {
     fun register(command: RegisterCommand): DOI
@@ -16,6 +16,6 @@ interface DoiService {
         val creators: List<Author>,
         val resourceType: String,
         val resourceTypeGeneral: String,
-        val relatedIdentifiers: List<String>
+        val relatedIdentifiers: List<String>,
     )
 }

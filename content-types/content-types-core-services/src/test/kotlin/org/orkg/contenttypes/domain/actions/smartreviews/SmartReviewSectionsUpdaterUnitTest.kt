@@ -12,8 +12,8 @@ import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyUpdater
 import org.orkg.contenttypes.domain.actions.UpdateSmartReviewState
 import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
 import org.orkg.contenttypes.input.testing.fixtures.smartReviewTextSectionDefinition
-import org.orkg.contenttypes.input.testing.fixtures.updateSmartReviewCommand
 import org.orkg.contenttypes.input.testing.fixtures.toSmartReviewSectionDefinition
+import org.orkg.contenttypes.input.testing.fixtures.updateSmartReviewCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.testing.fixtures.createPredicate
@@ -26,7 +26,9 @@ internal class SmartReviewSectionsUpdaterUnitTest : MockkBaseTest {
     private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater = mockk()
 
     private val smartReviewSectionsUpdater = SmartReviewSectionsUpdater(
-        abstractSmartReviewSectionCreator, abstractSmartReviewSectionDeleter, statementCollectionPropertyUpdater
+        abstractSmartReviewSectionCreator,
+        abstractSmartReviewSectionDeleter,
+        statementCollectionPropertyUpdater
     )
 
     @Test

@@ -6,12 +6,12 @@ import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.input.StatementUseCases
 
 class ContentTypePartDeleter(
-    private val statementService: StatementUseCases
+    private val statementService: StatementUseCases,
 ) {
     internal fun delete(
         contentTypeId: ThingId,
         partId: ThingId,
-        delete: (List<GeneralStatement>) -> Unit
+        delete: (List<GeneralStatement>) -> Unit,
     ) {
         val incomingStatements = statementService.findAll(
             objectId = partId,

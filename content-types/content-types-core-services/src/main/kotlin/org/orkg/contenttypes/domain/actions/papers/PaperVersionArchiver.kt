@@ -18,7 +18,7 @@ private val bundleConfiguration = BundleConfiguration(
 
 class PaperVersionArchiver(
     private val statementService: StatementUseCases,
-    private val paperPublishedRepository: PaperPublishedRepository
+    private val paperPublishedRepository: PaperPublishedRepository,
 ) : PublishPaperAction {
     override fun invoke(command: PublishPaperCommand, state: State): State {
         val statementsToPersist = state.paper!!.contributions.flatMap { (id, _) ->

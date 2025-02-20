@@ -12,18 +12,18 @@ import org.orkg.graph.input.StatementUseCases
 class AbstractSmartReviewSectionDeleter(
     private val statementService: StatementUseCases,
     private val resourceService: ResourceUseCases,
-    private val contentTypePartDeleter: ContentTypePartDeleter
+    private val contentTypePartDeleter: ContentTypePartDeleter,
 ) {
     constructor(
         statementService: StatementUseCases,
-        resourceService: ResourceUseCases
+        resourceService: ResourceUseCases,
     ) : this(statementService, resourceService, ContentTypePartDeleter(statementService))
 
     internal fun delete(
         contributorId: ContributorId,
         contributionId: ThingId,
         section: SmartReviewSection,
-        statements: Map<ThingId, List<GeneralStatement>>
+        statements: Map<ThingId, List<GeneralStatement>>,
     ) {
         contentTypePartDeleter.delete(contributionId, section.id) { incomingStatements ->
             val toRemove = statements[section.id]?.map { it.id }.orEmpty() union incomingStatements.map { it.id }

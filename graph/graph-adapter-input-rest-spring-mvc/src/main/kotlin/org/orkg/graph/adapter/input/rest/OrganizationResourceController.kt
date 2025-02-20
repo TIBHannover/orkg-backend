@@ -25,7 +25,7 @@ class OrganizationResourceController(
     fun findProblemsByOrganizationId(
         @PathVariable id: OrganizationId,
         pageable: Pageable,
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): Page<ResourceRepresentation> =
         resourceService.findAllProblemsByOrganizationId(id, pageable)
             .mapToResourceRepresentation(capabilities)

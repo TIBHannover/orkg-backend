@@ -1,12 +1,12 @@
 package org.orkg.community.domain
 
-import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.community.input.ContributorUseCases
 import org.orkg.community.input.CreateContributorUseCase.CreateCommand
 import org.orkg.community.output.ContributorRepository
 import org.orkg.spring.data.annotations.TransactionalOnJPA
 import org.springframework.stereotype.Service
+import java.util.Optional
 
 @Service
 @TransactionalOnJPA

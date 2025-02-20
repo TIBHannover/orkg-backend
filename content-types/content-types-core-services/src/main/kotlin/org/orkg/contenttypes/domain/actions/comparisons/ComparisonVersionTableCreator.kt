@@ -6,7 +6,7 @@ import org.orkg.contenttypes.domain.actions.comparisons.CreateComparisonAction.S
 import org.orkg.contenttypes.output.ComparisonPublishedRepository
 
 class ComparisonVersionTableCreator(
-    private val comparisonPublishedRepository: ComparisonPublishedRepository
+    private val comparisonPublishedRepository: ComparisonPublishedRepository,
 ) : CreateComparisonAction {
     override fun invoke(command: CreateComparisonCommand, state: State): State {
         comparisonPublishedRepository.save(PublishedComparison(state.comparisonId!!, command.config, command.data))

@@ -1,8 +1,5 @@
 package org.orkg.common.neo4jdsl
 
-import java.util.*
-import java.util.function.BiFunction
-import kotlin.reflect.KClass
 import org.neo4j.cypherdsl.core.Cypher.count
 import org.neo4j.cypherdsl.core.Cypher.countDistinct
 import org.neo4j.cypherdsl.core.Cypher.name
@@ -21,6 +18,9 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.core.Neo4jClient
+import java.util.Optional
+import java.util.function.BiFunction
+import kotlin.reflect.KClass
 
 interface QueryCache {
     fun getOrPut(key: Any, valueSupplier: () -> ConfigurationAwareStatement): ConfigurationAwareStatement
@@ -51,10 +51,10 @@ data class CypherQueryBuilderFactory(
 data class CypherQueryBuilder(
     private val configuration: Configuration,
     private val neo4jClient: Neo4jClient,
-    private val queryCache: QueryCache
+    private val queryCache: QueryCache,
 ) {
     fun <T : Statement> withQuery(
-        query: () -> BuildableStatement<T>
+        query: () -> BuildableStatement<T>,
     ): SingleQueryBuilder.ExposesWithParameterAndFetchAsAndRun =
         SingleQueryBuilderImpl.WithParameterAndFetchAsAndRunBuilder(configuration, neo4jClient, queryCache, query)
 
@@ -78,9 +78,14 @@ object SingleQueryBuilder {
         fun <T : Any> fetchAs(targetClass: KClass<T>): ExposesMappedByAndFetch<T>
     }
 
-    interface ExposesWithParameterAndFetchAsAndRun : ExposesWithParameters, ExposesFetchAs, ExposesRun
+    interface ExposesWithParameterAndFetchAsAndRun :
+        ExposesWithParameters,
+        ExposesFetchAs,
+        ExposesRun
 
-    interface ExposesFetchAsAndRun : ExposesFetchAs, ExposesRun
+    interface ExposesFetchAsAndRun :
+        ExposesFetchAs,
+        ExposesRun
 
     interface ExposesMappedBy<T> {
         fun mappedBy(mappingFunction: (TypeSystem, Record) -> T): ExposesFetch<T>
@@ -99,7 +104,9 @@ object SingleQueryBuilder {
         fun all(): MutableCollection<T> = fetch().all()
     }
 
-    interface ExposesMappedByAndFetch<T> : ExposesMappedBy<T>, ExposesFetch<T>
+    interface ExposesMappedByAndFetch<T> :
+        ExposesMappedBy<T>,
+        ExposesFetch<T>
 
     inline fun <reified T : Any> ExposesFetchAs.fetchAs(): ExposesMappedByAndFetch<T> = fetchAs(T::class)
 
@@ -115,10 +122,10 @@ class SingleQueryBuilderImpl {
         private val configuration: Configuration,
         private val neo4jClient: Neo4jClient,
         private val queryCache: QueryCache,
-        private val query: () -> BuildableStatement<T>
+        private val query: () -> BuildableStatement<T>,
     ) : SingleQueryBuilder.ExposesWithParameterAndFetchAsAndRun {
         override fun withParameters(
-            parameters: Map<String, Any?>
+            parameters: Map<String, Any?>,
         ): SingleQueryBuilder.ExposesFetchAsAndRun =
             FetchAsAndRunBuilder(configuration, neo4jClient, queryCache, query, parameters)
 
@@ -134,7 +141,7 @@ class SingleQueryBuilderImpl {
         private val neo4jClient: Neo4jClient,
         private val queryCache: QueryCache,
         private val query: () -> BuildableStatement<T>,
-        private val parameters: Map<String, Any?>
+        private val parameters: Map<String, Any?>,
     ) : SingleQueryBuilder.ExposesFetchAsAndRun {
         override fun <T : Any> fetchAs(targetClass: KClass<T>): SingleQueryBuilder.ExposesMappedByAndFetch<T> =
             MappedByBuilderAndFetch(configuration, neo4jClient, queryCache, query, parameters, targetClass)
@@ -153,7 +160,7 @@ class SingleQueryBuilderImpl {
         private val queryCache: QueryCache,
         private val query: () -> BuildableStatement<T>,
         private val parameters: Map<String, Any?>,
-        private val targetClass: KClass<R>
+        private val targetClass: KClass<R>,
     ) : SingleQueryBuilder.ExposesMappedByAndFetch<R> {
         override fun mappedBy(mappingFunction: (TypeSystem, Record) -> R): SingleQueryBuilder.ExposesFetch<R> =
             FetchBuilder(configuration, neo4jClient, queryCache, query, parameters, targetClass, mappingFunction)
@@ -169,7 +176,7 @@ class SingleQueryBuilderImpl {
         private val query: () -> BuildableStatement<T>,
         private val parameters: Map<String, Any?>,
         private val targetClass: KClass<R>,
-        private val mappingFunction: ((TypeSystem, Record) -> R)? = null
+        private val mappingFunction: ((TypeSystem, Record) -> R)? = null,
     ) : SingleQueryBuilder.ExposesFetch<R> {
         override fun fetch(): Neo4jClient.RecordFetchSpec<R> =
             neo4jClient.query(queryCache.getOrPut(cacheKey()) { query().build(configuration) }.cypher)
@@ -188,7 +195,7 @@ object PagedQueryBuilder {
 
     interface ExposesPagedWithCountQuery<T> {
         fun withCountQuery(
-            countQuery: (T) -> BuildableStatement<ResultStatement>
+            countQuery: (T) -> BuildableStatement<ResultStatement>,
         ): ExposesPagedWithParametersAndFetchAs
     }
 
@@ -203,7 +210,9 @@ object PagedQueryBuilder {
         fun <T : Any> fetchAs(targetClass: KClass<T>): ExposesPagedMappedByAndFetch<T>
     }
 
-    interface ExposesPagedWithParametersAndFetchAs : ExposesPagedWithParameters, ExposesPagedFetchAs
+    interface ExposesPagedWithParametersAndFetchAs :
+        ExposesPagedWithParameters,
+        ExposesPagedFetchAs
 
     interface ExposesPagedMappedBy<T> {
         fun mappedBy(mappingFunction: (TypeSystem, Record) -> T): ExposesPagedFetchAndCount<T>
@@ -218,7 +227,9 @@ object PagedQueryBuilder {
         fun count(): Long
     }
 
-    interface ExposesPagedMappedByAndFetch<T : Any> : ExposesPagedMappedBy<T>, ExposesPagedFetchAndCount<T>
+    interface ExposesPagedMappedByAndFetch<T : Any> :
+        ExposesPagedMappedBy<T>,
+        ExposesPagedFetchAndCount<T>
 
     inline fun <reified T : Any> ExposesPagedFetchAs.fetchAs(): ExposesPagedMappedByAndFetch<T> = fetchAs(T::class)
 
@@ -240,10 +251,10 @@ class PagedQueryBuilderImpl {
         private val configuration: Configuration,
         private val neo4jClient: Neo4jClient,
         private val queryCache: QueryCache,
-        private val commonQuery: () -> T
+        private val commonQuery: () -> T,
     ) : PagedQueryBuilder.ExposesPagedWithQuery<T> {
         override fun withQuery(
-            query: (T) -> TerminalExposesSkip
+            query: (T) -> TerminalExposesSkip,
         ): PagedQueryBuilder.ExposesPagedWithCountQuery<T> =
             PagedWithCountQueryBuilder(configuration, neo4jClient, queryCache, commonQuery, query)
     }
@@ -253,10 +264,10 @@ class PagedQueryBuilderImpl {
         private val neo4jClient: Neo4jClient,
         private val queryCache: QueryCache,
         private val commonQuery: () -> T,
-        private val query: (T) -> TerminalExposesSkip
+        private val query: (T) -> TerminalExposesSkip,
     ) : PagedQueryBuilder.ExposesPagedWithCountQuery<T> {
         override fun withCountQuery(
-            countQuery: (T) -> BuildableStatement<ResultStatement>
+            countQuery: (T) -> BuildableStatement<ResultStatement>,
         ): PagedQueryBuilder.ExposesPagedWithParametersAndFetchAs =
             PagedWithParametersAndFetchAsBuilder(configuration, neo4jClient, queryCache, commonQuery, query, countQuery)
     }
@@ -267,15 +278,15 @@ class PagedQueryBuilderImpl {
         private val queryCache: QueryCache,
         private val commonQuery: () -> T,
         private val query: (T) -> TerminalExposesSkip,
-        private val countQuery: (T) -> BuildableStatement<ResultStatement>
+        private val countQuery: (T) -> BuildableStatement<ResultStatement>,
     ) : PagedQueryBuilder.ExposesPagedWithParametersAndFetchAs {
         override fun withParameters(
-            parameters: Map<String, Any?>
+            parameters: Map<String, Any?>,
         ): PagedQueryBuilder.ExposesPagedFetchAs =
             PagedFetchAsBuilder(configuration, neo4jClient, queryCache, commonQuery, query, countQuery, parameters)
 
         override fun <T : Any> fetchAs(
-            targetClass: KClass<T>
+            targetClass: KClass<T>,
         ): PagedQueryBuilder.ExposesPagedMappedByAndFetch<T> =
             withParameters(emptyMap()).fetchAs(targetClass)
     }
@@ -287,13 +298,20 @@ class PagedQueryBuilderImpl {
         private val commonQuery: () -> T,
         private val query: (T) -> TerminalExposesSkip,
         private val countQuery: (T) -> BuildableStatement<ResultStatement>,
-        private val parameters: Map<String, Any?>
+        private val parameters: Map<String, Any?>,
     ) : PagedQueryBuilder.ExposesPagedFetchAs {
         override fun <R : Any> fetchAs(
-            targetClass: KClass<R>
+            targetClass: KClass<R>,
         ): PagedQueryBuilder.ExposesPagedMappedByAndFetch<R> =
             PagedMappedByAndFetchBuilder(
-                configuration, neo4jClient, queryCache, commonQuery, query, countQuery, parameters, targetClass
+                configuration,
+                neo4jClient,
+                queryCache,
+                commonQuery,
+                query,
+                countQuery,
+                parameters,
+                targetClass
             )
     }
 
@@ -306,13 +324,21 @@ class PagedQueryBuilderImpl {
         private val countQuery: (T) -> BuildableStatement<ResultStatement>,
         private val parameters: Map<String, Any?>,
         private val targetClass: KClass<R>,
-        private val mappingFunction: ((TypeSystem, Record) -> R)? = null
+        private val mappingFunction: ((TypeSystem, Record) -> R)? = null,
     ) : PagedQueryBuilder.ExposesPagedMappedByAndFetch<R> {
         override fun mappedBy(
-            mappingFunction: (TypeSystem, Record) -> R
+            mappingFunction: (TypeSystem, Record) -> R,
         ): PagedQueryBuilder.ExposesPagedFetchAndCount<R> =
             PagedMappedByAndFetchBuilder(
-                configuration, neo4jClient, queryCache, commonQuery, query, countQuery, parameters, targetClass, mappingFunction
+                configuration,
+                neo4jClient,
+                queryCache,
+                commonQuery,
+                query,
+                countQuery,
+                parameters,
+                targetClass,
+                mappingFunction
             )
 
         override fun fetch(pageable: Pageable, appendSort: Boolean): Page<R> {
@@ -351,7 +377,7 @@ class PagedQueryBuilderImpl {
 
 data class ConfigurationAwareStatement(
     private val statement: Statement,
-    private val configuration: Configuration
+    private val configuration: Configuration,
 ) : Statement by statement {
     private val queryString by lazy { Renderer.getRenderer(configuration).render(statement) }
 

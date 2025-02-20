@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController
 @WebMvcTest
 @ContextConfiguration(classes = [TestController::class, ExceptionHandler::class, FixedClockConfig::class])
 internal class ContributorExceptionUnitTest : MockMvcBaseTest("exceptions") {
-
     @Test
     fun contributorAlreadyExists() {
         val id = ContributorId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")
@@ -42,8 +41,8 @@ internal class ContributorExceptionUnitTest : MockMvcBaseTest("exceptions") {
     @RestController
     internal class TestController {
         @GetMapping("/contributor-already-exists")
-        fun contributorAlreadyExists(@RequestParam id: ContributorId) {
-            throw ContributorAlreadyExists(id)
-        }
+        fun contributorAlreadyExists(
+            @RequestParam id: ContributorId,
+        ): Unit = throw ContributorAlreadyExists(id)
     }
 }

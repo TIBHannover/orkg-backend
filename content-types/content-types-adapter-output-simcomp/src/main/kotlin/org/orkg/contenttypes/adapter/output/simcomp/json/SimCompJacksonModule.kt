@@ -12,13 +12,15 @@ import org.orkg.graph.domain.Thing
 
 class SimCompJacksonModule : SimpleModule() {
     override fun setupModule(context: SetupContext?) {
-        context?.addDeserializers(SimpleDeserializers().apply {
-            addDeserializer(Thing::class.java, ThingDeserializer())
-            addDeserializer(Literal::class.java, LiteralDeserializer())
-            addDeserializer(Class::class.java, ClassDeserializer())
-            addDeserializer(Resource::class.java, ResourceDeserializer())
-            addDeserializer(Predicate::class.java, PredicateDeserializer())
-        })
+        context?.addDeserializers(
+            SimpleDeserializers().apply {
+                addDeserializer(Thing::class.java, ThingDeserializer())
+                addDeserializer(Literal::class.java, LiteralDeserializer())
+                addDeserializer(Class::class.java, ClassDeserializer())
+                addDeserializer(Resource::class.java, ResourceDeserializer())
+                addDeserializer(Predicate::class.java, PredicateDeserializer())
+            }
+        )
         context?.setMixInAnnotations(GeneralStatement::class.java, StatementMixin::class.java)
         context?.setMixInAnnotations(PublishedContentType::class.java, PublishedContentTypeMixin::class.java)
     }

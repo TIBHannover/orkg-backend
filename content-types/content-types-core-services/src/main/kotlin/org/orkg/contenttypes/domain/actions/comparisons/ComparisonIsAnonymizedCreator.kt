@@ -9,11 +9,11 @@ import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
 class ComparisonIsAnonymizedCreator(
-    private val singleStatementPropertyCreator: SingleStatementPropertyCreator
+    private val singleStatementPropertyCreator: SingleStatementPropertyCreator,
 ) : CreateComparisonAction {
     constructor(
         literalService: LiteralUseCases,
-        unsafeStatementUseCases: UnsafeStatementUseCases
+        unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(SingleStatementPropertyCreator(literalService, unsafeStatementUseCases))
 
     override fun invoke(command: CreateComparisonCommand, state: State): State {

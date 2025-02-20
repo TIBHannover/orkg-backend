@@ -1,11 +1,10 @@
 package org.orkg.graph.domain
 
 import com.redfin.contractual.EqualsContract
-import java.util.function.Supplier
 import org.orkg.common.ThingId
+import java.util.function.Supplier
 
 internal class ThingIdEqualsContractTest : EqualsContract<ThingId> {
-
     private val equalID = "SOME_ID"
     private val differentID = "another_id"
 

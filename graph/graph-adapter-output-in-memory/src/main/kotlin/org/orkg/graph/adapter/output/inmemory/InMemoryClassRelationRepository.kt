@@ -5,7 +5,7 @@ import org.orkg.graph.domain.ClassSubclassRelation
 import org.orkg.graph.output.ClassRelationRepository
 
 class InMemoryClassRelationRepository(
-    private val inMemoryGraph: InMemoryGraph
+    private val inMemoryGraph: InMemoryGraph,
 ) : ClassRelationRepository {
     override fun save(classRelation: ClassSubclassRelation) =
         inMemoryGraph.add(classRelation)

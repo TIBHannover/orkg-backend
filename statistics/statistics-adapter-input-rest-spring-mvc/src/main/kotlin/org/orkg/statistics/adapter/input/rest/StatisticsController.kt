@@ -1,7 +1,7 @@
 package org.orkg.statistics.adapter.input.rest
 
 import org.orkg.statistics.adapter.input.rest.mapping.MetricRepresentationAdapter
-import org.orkg.statistics.input.RetrieveStatisticsUseCase
+import org.orkg.statistics.input.StatisticsUseCases
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -12,7 +12,7 @@ import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
 @RequestMapping("/api/statistics", produces = [MediaType.APPLICATION_JSON_VALUE])
-class StatisticsController(private val service: RetrieveStatisticsUseCase) : MetricRepresentationAdapter {
+class StatisticsController(private val service: StatisticsUseCases) : MetricRepresentationAdapter {
     @GetMapping
     fun findAllGroups(uriComponentsBuilder: UriComponentsBuilder): Map<String, EndpointReference> =
         service.findAllGroups().associateWith {
@@ -27,7 +27,7 @@ class StatisticsController(private val service: RetrieveStatisticsUseCase) : Met
     @GetMapping("/{group}")
     fun findAllMetricsByGroup(
         @PathVariable group: String,
-        uriComponentsBuilder: UriComponentsBuilder
+        uriComponentsBuilder: UriComponentsBuilder,
     ): Map<String, EndpointReference> =
         service.findAllMetricsByGroup(group).associate {
             it.name to EndpointReference(
@@ -42,7 +42,7 @@ class StatisticsController(private val service: RetrieveStatisticsUseCase) : Met
     fun findMetricByGroupAndName(
         @PathVariable group: String,
         @PathVariable name: String,
-        @RequestParam parameters: Map<String, String>
+        @RequestParam parameters: Map<String, String>,
     ): MetricRepresentation =
         service.findMetricByGroupAndName(group, name)
             .let { metric -> metric.toMetricRepresentation(metric.value(parameters)) }

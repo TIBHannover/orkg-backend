@@ -31,18 +31,18 @@ internal class SpringDataNeo4jListAdapterContractTest(
     @Autowired private val springDataNeo4jPredicateAdapter: PredicateRepository,
     @Autowired private val springDataNeo4jStatementAdapter: StatementRepository,
 ) : DescribeSpec({
-    include(
-        listRepositoryContract(
-            listAdapter,
-            springDataNeo4jResourceAdapter,
-            springDataNeo4jPredicateAdapter,
-            springDataNeo4jStatementAdapter
+        include(
+            listRepositoryContract(
+                listAdapter,
+                springDataNeo4jResourceAdapter,
+                springDataNeo4jPredicateAdapter,
+                springDataNeo4jStatementAdapter
+            )
         )
-    )
 
-    finalizeSpec {
-        springDataNeo4jResourceAdapter.deleteAll()
-        springDataNeo4jStatementAdapter.deleteAll()
-        springDataNeo4jPredicateAdapter.deleteAll()
-    }
-})
+        finalizeSpec {
+            springDataNeo4jResourceAdapter.deleteAll()
+            springDataNeo4jStatementAdapter.deleteAll()
+            springDataNeo4jPredicateAdapter.deleteAll()
+        }
+    })

@@ -1,8 +1,10 @@
 package org.orkg.contenttypes.domain.identifiers
 
+import org.orkg.contenttypes.domain.InvalidIdentifier
+
 fun Set<Identifier>.parse(
     identifierToValues: Map<String, List<String>>,
-    validate: Boolean = true
+    validate: Boolean = true,
 ): Map<Identifier, List<String>> =
     mapNotNull { identifier ->
         if (identifier.id in identifierToValues) {

@@ -5,7 +5,6 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.util.*
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.Either
@@ -19,6 +18,7 @@ import org.orkg.contenttypes.input.ContributionDefinition
 import org.orkg.contenttypes.input.PredicateDefinition
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.testing.fixtures.createResource
+import java.util.UUID
 
 internal class ContributionContentsCreatorUnitTest : MockkBaseTest {
     private val contributionCreator: ContributionCreator = mockk()

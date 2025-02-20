@@ -3,7 +3,6 @@ package org.orkg.export.adapter.input.rest
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
-import java.util.*
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
@@ -30,11 +29,19 @@ import org.springframework.restdocs.request.RequestDocumentation.parameterWithNa
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.util.Optional
 
-@ContextConfiguration(classes = [VocabController::class, RdfConfiguration::class, ExceptionHandler::class, RDFService::class, FixedClockConfig::class])
+@ContextConfiguration(
+    classes = [
+        VocabController::class,
+        RdfConfiguration::class,
+        ExceptionHandler::class,
+        RDFService::class,
+        FixedClockConfig::class
+    ]
+)
 @WebMvcTest(VocabController::class)
 internal class VocabControllerUnitTest : MockMvcBaseTest("rdf-vocab") {
-
     @MockkBean
     private lateinit var classRepository: ClassRepository
 

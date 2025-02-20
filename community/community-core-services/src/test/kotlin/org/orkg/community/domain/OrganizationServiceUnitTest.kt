@@ -6,7 +6,6 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import java.util.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -22,6 +21,8 @@ import org.orkg.mediastorage.input.ImageUseCases
 import org.orkg.mediastorage.testing.fixtures.loadImage
 import org.orkg.mediastorage.testing.fixtures.loadRawImage
 import org.orkg.mediastorage.testing.fixtures.testImage
+import java.util.Optional
+import java.util.UUID
 
 internal class OrganizationServiceUnitTest : MockkBaseTest {
     private val repository: OrganizationRepository = mockk()
@@ -168,13 +169,15 @@ internal class OrganizationServiceUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { repository.findById(id) }
         verify(exactly = 1) {
-            repository.save(withArg {
-                assertEquals(organization.id, it.id)
-                assertEquals("newName", it.name)
-                assertEquals(organization.homepage, it.homepage)
-                assertEquals(organization.type, it.type)
-                assertEquals(organization.logoId, it.logoId)
-            })
+            repository.save(
+                withArg {
+                    assertEquals(organization.id, it.id)
+                    assertEquals("newName", it.name)
+                    assertEquals(organization.homepage, it.homepage)
+                    assertEquals(organization.type, it.type)
+                    assertEquals(organization.logoId, it.logoId)
+                }
+            )
         }
     }
 
@@ -198,13 +201,15 @@ internal class OrganizationServiceUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { repository.findById(id) }
         verify(exactly = 1) {
-            repository.save(withArg {
-                assertEquals(organization.id, it.id)
-                assertEquals(organization.name, it.name)
-                assertEquals("https://example.org", it.homepage)
-                assertEquals(organization.type, it.type)
-                assertEquals(organization.logoId, it.logoId)
-            })
+            repository.save(
+                withArg {
+                    assertEquals(organization.id, it.id)
+                    assertEquals(organization.name, it.name)
+                    assertEquals("https://example.org", it.homepage)
+                    assertEquals(organization.type, it.type)
+                    assertEquals(organization.logoId, it.logoId)
+                }
+            )
         }
     }
 
@@ -228,13 +233,15 @@ internal class OrganizationServiceUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { repository.findById(id) }
         verify(exactly = 1) {
-            repository.save(withArg {
-                assertEquals(organization.id, it.id)
-                assertEquals(organization.name, it.name)
-                assertEquals(organization.homepage, it.homepage)
-                assertEquals(OrganizationType.GENERAL, it.type)
-                assertEquals(organization.logoId, it.logoId)
-            })
+            repository.save(
+                withArg {
+                    assertEquals(organization.id, it.id)
+                    assertEquals(organization.name, it.name)
+                    assertEquals(organization.homepage, it.homepage)
+                    assertEquals(OrganizationType.GENERAL, it.type)
+                    assertEquals(organization.logoId, it.logoId)
+                }
+            )
         }
     }
 
@@ -262,13 +269,15 @@ internal class OrganizationServiceUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { repository.findById(id) }
         verify(exactly = 1) {
-            repository.save(withArg {
-                assertEquals(organization.id, it.id)
-                assertEquals(organization.name, it.name)
-                assertEquals(organization.homepage, it.homepage)
-                assertEquals(organization.type, it.type)
-                assertEquals(imageId, it.logoId)
-            })
+            repository.save(
+                withArg {
+                    assertEquals(organization.id, it.id)
+                    assertEquals(organization.name, it.name)
+                    assertEquals(organization.homepage, it.homepage)
+                    assertEquals(organization.type, it.type)
+                    assertEquals(imageId, it.logoId)
+                }
+            )
         }
         verify(exactly = 1) { imageService.create(createImageCommand) }
     }
@@ -296,13 +305,15 @@ internal class OrganizationServiceUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { repository.findById(id) }
         verify(exactly = 1) {
-            repository.save(withArg {
-                assertEquals(organization.id, it.id)
-                assertEquals("newName", it.name)
-                assertEquals("https://example.org", it.homepage)
-                assertEquals(OrganizationType.CONFERENCE, it.type)
-                assertEquals(imageId, it.logoId)
-            })
+            repository.save(
+                withArg {
+                    assertEquals(organization.id, it.id)
+                    assertEquals("newName", it.name)
+                    assertEquals("https://example.org", it.homepage)
+                    assertEquals(OrganizationType.CONFERENCE, it.type)
+                    assertEquals(imageId, it.logoId)
+                }
+            )
         }
         verify(exactly = 1) { imageService.create(CreateImageUseCase.CreateCommand(image.data, image.mimeType, contributorId)) }
     }
@@ -333,13 +344,15 @@ internal class OrganizationServiceUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { repository.findById(id) }
         verify(exactly = 1) {
-            repository.save(withArg {
-                assertEquals(organization.id, it.id)
-                assertEquals("newName", it.name)
-                assertEquals("https://example.org", it.homepage)
-                assertEquals(OrganizationType.CONFERENCE, it.type)
-                assertEquals(imageId, it.logoId)
-            })
+            repository.save(
+                withArg {
+                    assertEquals(organization.id, it.id)
+                    assertEquals("newName", it.name)
+                    assertEquals("https://example.org", it.homepage)
+                    assertEquals(OrganizationType.CONFERENCE, it.type)
+                    assertEquals(imageId, it.logoId)
+                }
+            )
         }
     }
 }

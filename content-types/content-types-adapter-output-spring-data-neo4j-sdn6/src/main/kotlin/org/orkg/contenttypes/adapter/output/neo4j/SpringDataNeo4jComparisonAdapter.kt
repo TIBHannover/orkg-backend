@@ -1,7 +1,5 @@
 package org.orkg.contenttypes.adapter.output.neo4j
 
-import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import org.neo4j.cypherdsl.core.Condition
 import org.neo4j.cypherdsl.core.Cypher.anonParameter
 import org.neo4j.cypherdsl.core.Cypher.anyNode
@@ -55,6 +53,8 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Component
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 
 private const val RELATED = "RELATED"
 private const val FULLTEXT_INDEX_FOR_LABEL = "fulltext_idx_for_resource_on_label"
@@ -62,7 +62,7 @@ private const val FULLTEXT_INDEX_FOR_LABEL = "fulltext_idx_for_resource_on_label
 @Component
 class SpringDataNeo4jComparisonAdapter(
     private val neo4jRepository: Neo4jComparisonRepository,
-    private val cypherQueryBuilderFactory: CypherQueryBuilderFactory
+    private val cypherQueryBuilderFactory: CypherQueryBuilderFactory,
 ) : ComparisonRepository {
     override fun findAll(
         pageable: Pageable,
@@ -78,7 +78,7 @@ class SpringDataNeo4jComparisonAdapter(
         includeSubfields: Boolean,
         published: Boolean?,
         sustainableDevelopmentGoal: ThingId?,
-        researchProblem: ThingId?
+        researchProblem: ThingId?,
     ): Page<Resource> =
         buildFindAllQuery(
             sort = pageable.sort.orElseGet { Sort.by("created_at") },
@@ -110,7 +110,7 @@ class SpringDataNeo4jComparisonAdapter(
         includeSubfields: Boolean,
         published: Boolean?,
         sustainableDevelopmentGoal: ThingId?,
-        researchProblem: ThingId?
+        researchProblem: ThingId?,
     ): Long =
         buildFindAllQuery(
             sort = Sort.unsorted(),
@@ -143,7 +143,7 @@ class SpringDataNeo4jComparisonAdapter(
         includeSubfields: Boolean,
         published: Boolean?,
         sustainableDevelopmentGoal: ThingId?,
-        researchProblem: ThingId?
+        researchProblem: ThingId?,
     ) = cypherQueryBuilderFactory.newBuilder(QueryCache.Uncached)
         .withCommonQuery {
             val patterns: (Node) -> Collection<RelationshipPattern> = { node ->

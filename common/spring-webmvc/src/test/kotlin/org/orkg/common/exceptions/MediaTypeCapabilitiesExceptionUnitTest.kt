@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RestController
 @WebMvcTest
 @ContextConfiguration(classes = [ExceptionHandler::class, TestController::class, CommonSpringConfig::class, FixedClockConfig::class])
 internal class MediaTypeCapabilitiesExceptionUnitTest : MockMvcBaseTest("errors") {
-
     @Test
     fun malformedMediaTypeCapability() {
         val name = "formatted-label"
@@ -74,13 +73,18 @@ internal class MediaTypeCapabilitiesExceptionUnitTest : MockMvcBaseTest("errors"
     @RestController
     internal class TestController {
         @GetMapping("/errors/malformed-media-type-capability")
-        fun malformedMediaTypeCapability(@RequestParam name: String, @RequestParam value: String): Nothing =
+        fun malformedMediaTypeCapability(
+            @RequestParam name: String,
+            @RequestParam value: String,
+        ): Nothing =
             throw MalformedMediaTypeCapability(name, value)
 
         @GetMapping("/errors/handle-http-media-type-not-acceptable", produces = ["application/json", "application/xml"])
         fun handleHttpMediaTypeNotAcceptable() = "response"
 
         @PostMapping("/errors/http-media-type-not-supported", consumes = ["application/json", "application/xml"])
-        fun httpMediaTypeNotSupported(@RequestBody body: String): Nothing = throw NotImplementedError()
+        fun httpMediaTypeNotSupported(
+            @RequestBody body: String,
+        ): Nothing = throw NotImplementedError()
     }
 }

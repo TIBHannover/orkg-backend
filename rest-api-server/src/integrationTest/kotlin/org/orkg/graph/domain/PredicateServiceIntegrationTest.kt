@@ -11,7 +11,6 @@ import org.springframework.data.domain.PageRequest
 
 @Neo4jContainerIntegrationTest
 internal class PredicateServiceIntegrationTest {
-
     @Autowired
     private lateinit var service: PredicateService
 

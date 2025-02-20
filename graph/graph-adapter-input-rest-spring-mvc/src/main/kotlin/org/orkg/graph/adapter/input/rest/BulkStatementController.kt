@@ -31,12 +31,11 @@ class BulkStatementController(
     override val statementService: StatementUseCases,
     override val formattedLabelService: FormattedLabelUseCases,
 ) : StatementRepresentationAdapter {
-
     @GetMapping("/subjects")
     fun findAllBySubjectId(
         @RequestParam("ids") resourceIds: List<ThingId>,
         pageable: Pageable,
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): List<BulkGetStatementsResponse> =
         resourceIds.pmap {
             BulkGetStatementsResponse(
@@ -50,7 +49,7 @@ class BulkStatementController(
     fun findAllByObjectId(
         @RequestParam("ids") resourceIds: List<ThingId>,
         pageable: Pageable,
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): List<BulkGetStatementsResponse> =
         resourceIds.pmap {
             BulkGetStatementsResponse(
@@ -63,7 +62,7 @@ class BulkStatementController(
     @RequireLogin
     @DeleteMapping
     fun delete(
-        @RequestParam("ids") statementsIds: Set<StatementId>
+        @RequestParam("ids") statementsIds: Set<StatementId>,
     ): ResponseEntity<Unit> {
         statementService.deleteAllById(statementsIds)
         return noContent().build()
@@ -75,7 +74,7 @@ class BulkStatementController(
         @RequestParam("ids") statementsIds: List<StatementId>,
         @RequestBody(required = true) statementEditRequest: BulkStatementEditRequest,
         currentUser: Authentication?,
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): Iterable<BulkPutStatementResponse> =
         statementsIds.map {
             statementService.update(
@@ -95,22 +94,20 @@ class BulkStatementController(
 
 data class BulkGetStatementsResponse(
     val id: ThingId,
-    val statements: Page<StatementRepresentation>
+    val statements: Page<StatementRepresentation>,
 )
 
 data class BulkPutStatementResponse(
     @JsonProperty("id")
     val statementId: StatementId,
-    val statement: StatementRepresentation
+    val statement: StatementRepresentation,
 )
 
 data class BulkStatementEditRequest(
     @JsonProperty("subject_id")
     val subjectId: ThingId? = null,
-
     @JsonProperty("predicate_id")
     val predicateId: ThingId? = null,
-
     @JsonProperty("object_id")
-    val objectId: ThingId? = null
+    val objectId: ThingId? = null,
 )

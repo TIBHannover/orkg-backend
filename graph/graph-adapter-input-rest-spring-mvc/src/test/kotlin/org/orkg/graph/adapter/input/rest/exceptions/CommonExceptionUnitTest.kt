@@ -28,7 +28,6 @@ import org.springframework.web.bind.annotation.RestController
 @WebMvcTest
 @ContextConfiguration(classes = [TestController::class, ExceptionHandler::class, FixedClockConfig::class])
 internal class CommonExceptionUnitTest : MockMvcBaseTest("exceptions") {
-
     @Test
     fun invalidLabel() {
         get("/invalid-label")
@@ -150,45 +149,40 @@ internal class CommonExceptionUnitTest : MockMvcBaseTest("exceptions") {
     @TestComponent
     @RestController
     internal class TestController {
-
         @GetMapping("/invalid-label")
-        fun invalidLabel() {
-            throw InvalidLabel()
-        }
+        fun invalidLabel(): Unit = throw InvalidLabel()
 
         @GetMapping("/invalid-label", params = ["property"])
-        fun invalidLabel(@RequestParam property: String) {
-            throw InvalidLabel(property)
-        }
+        fun invalidLabel(
+            @RequestParam property: String,
+        ): Unit = throw InvalidLabel(property)
 
         @GetMapping("/invalid-description")
-        fun invalidInvalidDescription() {
-            throw InvalidDescription()
-        }
+        fun invalidInvalidDescription(): Unit = throw InvalidDescription()
 
         @GetMapping("/invalid-description", params = ["property"])
-        fun invalidInvalidDescription(@RequestParam property: String) {
-            throw InvalidDescription(property)
-        }
+        fun invalidInvalidDescription(
+            @RequestParam property: String,
+        ): Unit = throw InvalidDescription(property)
 
         @GetMapping("/neither-owner-nor-creator-delete")
-        fun neitherOwnerNorCuratorDelete(@RequestParam contributorId: ContributorId) {
-            throw NeitherOwnerNorCurator(contributorId)
-        }
+        fun neitherOwnerNorCuratorDelete(
+            @RequestParam contributorId: ContributorId,
+        ): Unit = throw NeitherOwnerNorCurator(contributorId)
 
         @GetMapping("/neither-owner-nor-creator-visibility")
-        fun neitherOwnerNorCuratorVisibility(@RequestParam id: ThingId) {
-            throw NeitherOwnerNorCurator.cannotChangeVisibility(id)
-        }
+        fun neitherOwnerNorCuratorVisibility(
+            @RequestParam id: ThingId,
+        ): Unit = throw NeitherOwnerNorCurator.cannotChangeVisibility(id)
 
         @GetMapping("/not-a-curator")
-        fun notACurator(@RequestParam contributorId: ContributorId) {
-            throw NotACurator(contributorId)
-        }
+        fun notACurator(
+            @RequestParam contributorId: ContributorId,
+        ): Unit = throw NotACurator(contributorId)
 
         @GetMapping("/not-a-curator-cannot-change-verified-status")
-        fun notACuratorCannotChangeVerifiedStatus(@RequestParam contributorId: ContributorId) {
-            throw NotACurator.cannotChangeVerifiedStatus(contributorId)
-        }
+        fun notACuratorCannotChangeVerifiedStatus(
+            @RequestParam contributorId: ContributorId,
+        ): Unit = throw NotACurator.cannotChangeVerifiedStatus(contributorId)
     }
 }

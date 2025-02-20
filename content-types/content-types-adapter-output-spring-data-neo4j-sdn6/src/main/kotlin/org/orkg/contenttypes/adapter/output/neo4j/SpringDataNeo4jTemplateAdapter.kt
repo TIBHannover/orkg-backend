@@ -1,7 +1,5 @@
 package org.orkg.contenttypes.adapter.output.neo4j
 
-import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter
 import org.neo4j.cypherdsl.core.Condition
 import org.neo4j.cypherdsl.core.Cypher.anonParameter
 import org.neo4j.cypherdsl.core.Cypher.collect
@@ -42,13 +40,15 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Component
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 
 private const val RELATED = "RELATED"
 private const val FULLTEXT_INDEX_FOR_LABEL = "fulltext_idx_for_template_on_label"
 
 @Component
 class SpringDataNeo4jTemplateAdapter(
-    private val cypherQueryBuilderFactory: CypherQueryBuilderFactory
+    private val cypherQueryBuilderFactory: CypherQueryBuilderFactory,
 ) : TemplateRepository {
     override fun findAll(
         pageable: Pageable,

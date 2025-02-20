@@ -1,10 +1,6 @@
 package org.orkg.graph.adapter.output.web
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import java.net.URI
-import java.net.http.HttpClient
-import java.net.http.HttpRequest
-import java.util.regex.Pattern
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.send
 import org.orkg.graph.domain.ExternalThing
@@ -15,14 +11,20 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.util.UriComponentsBuilder
+import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.util.regex.Pattern
 
 @Component
 class OLSServiceAdapter(
     private val objectMapper: ObjectMapper,
     private val httpClient: HttpClient,
     @Value("\${orkg.external-services.ols.host}")
-    private val host: String
-) : ExternalResourceService, ExternalClassService, ExternalPredicateService {
+    private val host: String,
+) : ExternalResourceService,
+    ExternalClassService,
+    ExternalPredicateService {
     private val pattern = Pattern.compile("[a-zA-Z0-9_]+")
 
     override fun findClassByShortForm(ontologyId: String, shortForm: String): ExternalThing? =
@@ -104,6 +106,6 @@ class OLSServiceAdapter(
     private enum class Type(val endpointPath: String) {
         CLASS("classes"),
         PREDICATE("properties"),
-        RESOURCE("individuals")
+        RESOURCE("individuals"),
     }
 }

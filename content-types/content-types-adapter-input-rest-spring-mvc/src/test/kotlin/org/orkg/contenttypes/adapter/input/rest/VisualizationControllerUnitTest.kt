@@ -5,9 +5,6 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.every
 import io.mockk.verify
-import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter
-import java.util.*
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.DisplayName
@@ -53,11 +50,21 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Optional
 
-@ContextConfiguration(classes = [VisualizationController::class, ExceptionHandler::class, CommonJacksonModule::class, ContentTypeJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(
+    classes = [
+        VisualizationController::class,
+        ExceptionHandler::class,
+        CommonJacksonModule::class,
+        ContentTypeJacksonModule::class,
+        FixedClockConfig::class
+    ]
+)
 @WebMvcTest(controllers = [VisualizationController::class])
 internal class VisualizationControllerUnitTest : MockMvcBaseTest("visualizations") {
-
     @MockkBean
     private lateinit var visualizationService: VisualizationUseCases
 

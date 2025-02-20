@@ -13,9 +13,6 @@ import io.kotest.matchers.maps.shouldContainExactly
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldNotMatch
-import java.time.OffsetDateTime
-import java.time.ZoneOffset
-import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -47,19 +44,22 @@ import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
+import java.util.UUID
 
 fun <
     S : StatementRepository,
     C : ClassRepository,
     L : LiteralRepository,
     R : ResourceRepository,
-    P : PredicateRepository
+    P : PredicateRepository,
 > statementRepositoryContract(
     repository: S,
     classRepository: C,
     literalRepository: L,
     resourceRepository: R,
-    predicateRepository: P
+    predicateRepository: P,
 ) = describeSpec {
     beforeTest {
         repository.deleteAll()
@@ -152,8 +152,14 @@ fun <
                 { createResource(id = ThingId("R$id")) }
             }
             val graph = listOf(
-                1 to 2, 2 to 3, 2 to 4, 4 to 7,
-                7 to 3, 1 to 5, 6 to 1, 8 to 9
+                1 to 2,
+                2 to 3,
+                2 to 4,
+                4 to 7,
+                7 to 3,
+                1 to 5,
+                6 to 1,
+                8 to 9
             ).map {
                 val subject = resources.getOrPut(it.first, resourceFactory(it.first))
                 val `object` = resources.getOrPut(it.second, resourceFactory(it.second))
@@ -842,8 +848,9 @@ fun <
                 val id = ThingId("R$it")
                 val `object` = createResource(id = id)
                 statements[it] = statements[it].copy(`object` = `object`)
-                if (it == 1)
+                if (it == 1) {
                     statements[it + 1] = statements[it + 1].copy(`object` = `object`)
+                }
                 id
             }
             statements.forEach(saveStatement)

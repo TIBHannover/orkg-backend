@@ -12,47 +12,43 @@ import org.orkg.graph.domain.Predicate
 import org.orkg.graph.domain.Resource
 
 class RosettaStoneStatementVersionFabricator : Fabricator<RosettaStoneStatementVersion> {
-    override fun invoke(fabrikate: Fabrikate): RosettaStoneStatementVersion {
-        return RosettaStoneStatementVersion(
-            id = fabrikate.random(),
-            formattedLabel = FormattedLabel.of(fabrikate.random()),
-            subjects = listOf(fabrikate.random<Resource>(), fabrikate.random<Predicate>(), fabrikate.random<Class>()),
-            objects = listOf(
-                listOf(fabrikate.random<Resource>(), fabrikate.random<Predicate>(), fabrikate.random<Class>()),
-                listOf(fabrikate.random<Resource>(), fabrikate.random<Predicate>(), fabrikate.random<Class>()),
-                listOf(fabrikate.random<Resource>(), fabrikate.random<Predicate>(), fabrikate.random<Class>())
-            ),
-            createdAt = fabrikate.random(),
-            createdBy = fabrikate.random(),
-            certainty = fabrikate.random(),
-            negated = fabrikate.random(),
-            observatories = listOf(fabrikate.random()),
-            organizations = listOf(fabrikate.random()),
-            extractionMethod = fabrikate.random(),
-            visibility = fabrikate.random(),
-            unlistedBy = null,
-            modifiable = true
-        )
-    }
+    override fun invoke(fabrikate: Fabrikate): RosettaStoneStatementVersion = RosettaStoneStatementVersion(
+        id = fabrikate.random(),
+        formattedLabel = FormattedLabel.of(fabrikate.random()),
+        subjects = listOf(fabrikate.random<Resource>(), fabrikate.random<Predicate>(), fabrikate.random<Class>()),
+        objects = listOf(
+            listOf(fabrikate.random<Resource>(), fabrikate.random<Predicate>(), fabrikate.random<Class>()),
+            listOf(fabrikate.random<Resource>(), fabrikate.random<Predicate>(), fabrikate.random<Class>()),
+            listOf(fabrikate.random<Resource>(), fabrikate.random<Predicate>(), fabrikate.random<Class>())
+        ),
+        createdAt = fabrikate.random(),
+        createdBy = fabrikate.random(),
+        certainty = fabrikate.random(),
+        negated = fabrikate.random(),
+        observatories = listOf(fabrikate.random()),
+        organizations = listOf(fabrikate.random()),
+        extractionMethod = fabrikate.random(),
+        visibility = fabrikate.random(),
+        unlistedBy = null,
+        modifiable = true
+    )
 }
 
 class RosettaStoneStatementFabricator : Fabricator<RosettaStoneStatement> {
-    override fun invoke(fabrikate: Fabrikate): RosettaStoneStatement {
-        return RosettaStoneStatement(
-            id = fabrikate.random(),
-            contextId = fabrikate.random(),
-            templateId = fabrikate.random(),
-            templateTargetClassId = fabrikate.random(),
-            label = fabrikate.random(),
-            versions = listOf(fabrikate.random<RosettaStoneStatementVersion>()),
-            observatories = listOf(fabrikate.random()),
-            organizations = listOf(fabrikate.random()),
-            extractionMethod = fabrikate.random(),
-            visibility = fabrikate.random(),
-            unlistedBy = null,
-            modifiable = true
-        )
-    }
+    override fun invoke(fabrikate: Fabrikate): RosettaStoneStatement = RosettaStoneStatement(
+        id = fabrikate.random(),
+        contextId = fabrikate.random(),
+        templateId = fabrikate.random(),
+        templateTargetClassId = fabrikate.random(),
+        label = fabrikate.random(),
+        versions = listOf(fabrikate.random<RosettaStoneStatementVersion>()),
+        observatories = listOf(fabrikate.random()),
+        organizations = listOf(fabrikate.random()),
+        extractionMethod = fabrikate.random(),
+        visibility = fabrikate.random(),
+        unlistedBy = null,
+        modifiable = true
+    )
 }
 
 fun FabricatorConfig.withRosettaStoneStatementMappings(): FabricatorConfig = withMappings {

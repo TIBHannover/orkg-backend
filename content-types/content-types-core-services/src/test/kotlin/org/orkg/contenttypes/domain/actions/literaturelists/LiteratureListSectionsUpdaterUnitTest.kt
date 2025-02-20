@@ -12,8 +12,8 @@ import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyUpdater
 import org.orkg.contenttypes.domain.actions.UpdateLiteratureListState
 import org.orkg.contenttypes.domain.testing.fixtures.createLiteratureList
 import org.orkg.contenttypes.input.testing.fixtures.literatureListTextSectionDefinition
-import org.orkg.contenttypes.input.testing.fixtures.updateLiteratureListCommand
 import org.orkg.contenttypes.input.testing.fixtures.toLiteratureListSectionDefinition
+import org.orkg.contenttypes.input.testing.fixtures.updateLiteratureListCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
@@ -25,7 +25,9 @@ internal class LiteratureListSectionsUpdaterUnitTest : MockkBaseTest {
     private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater = mockk()
 
     private val literatureListSectionsUpdater = LiteratureListSectionsUpdater(
-        abstractLiteratureListSectionCreator, abstractLiteratureListSectionDeleter, statementCollectionPropertyUpdater
+        abstractLiteratureListSectionCreator,
+        abstractLiteratureListSectionDeleter,
+        statementCollectionPropertyUpdater
     )
 
     @Test

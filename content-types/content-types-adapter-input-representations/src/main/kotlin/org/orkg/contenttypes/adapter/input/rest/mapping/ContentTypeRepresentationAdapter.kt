@@ -1,6 +1,5 @@
 package org.orkg.contenttypes.adapter.input.rest.mapping
 
-import java.util.*
 import org.orkg.contenttypes.adapter.input.rest.ContentTypeRepresentation
 import org.orkg.contenttypes.domain.Comparison
 import org.orkg.contenttypes.domain.ContentType
@@ -10,11 +9,15 @@ import org.orkg.contenttypes.domain.SmartReview
 import org.orkg.contenttypes.domain.Template
 import org.orkg.contenttypes.domain.Visualization
 import org.springframework.data.domain.Page
+import java.util.Optional
 
-interface ContentTypeRepresentationAdapter : PaperRepresentationAdapter, ComparisonRepresentationAdapter,
-    VisualizationRepresentationAdapter, TemplateRepresentationAdapter, LiteratureListRepresentationAdapter,
+interface ContentTypeRepresentationAdapter :
+    PaperRepresentationAdapter,
+    ComparisonRepresentationAdapter,
+    VisualizationRepresentationAdapter,
+    TemplateRepresentationAdapter,
+    LiteratureListRepresentationAdapter,
     SmartReviewRepresentationAdapter {
-
     fun Optional<ContentType>.mapToContentTypeRepresentation(): Optional<ContentTypeRepresentation> =
         map { it.toContentTypeRepresentation() }
 

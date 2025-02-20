@@ -5,7 +5,6 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.util.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.testing.fixtures.MockkBaseTest
@@ -15,6 +14,7 @@ import org.orkg.contenttypes.domain.actions.PublishLiteratureListState
 import org.orkg.contenttypes.domain.testing.fixtures.createLiteratureList
 import org.orkg.contenttypes.input.LiteratureListUseCases
 import org.orkg.contenttypes.input.testing.fixtures.publishLiteratureListCommand
+import java.util.Optional
 
 internal class LiteratureListPublishableValidatorUnitTest : MockkBaseTest {
     private val literatureListService: LiteratureListUseCases = mockk()

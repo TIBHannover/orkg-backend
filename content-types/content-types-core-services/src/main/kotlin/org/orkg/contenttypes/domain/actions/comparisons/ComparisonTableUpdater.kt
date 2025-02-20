@@ -6,7 +6,7 @@ import org.orkg.contenttypes.domain.actions.comparisons.UpdateComparisonAction.S
 import org.orkg.contenttypes.output.ComparisonTableRepository
 
 class ComparisonTableUpdater(
-    private val comparisonTableRepository: ComparisonTableRepository
+    private val comparisonTableRepository: ComparisonTableRepository,
 ) : UpdateComparisonAction {
     override fun invoke(command: UpdateComparisonCommand, state: State): State {
         if (command.config != null && command.config != state.comparison!!.config || command.data != null && command.data != state.comparison!!.data) {

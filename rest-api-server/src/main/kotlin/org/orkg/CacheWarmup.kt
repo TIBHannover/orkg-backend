@@ -3,14 +3,14 @@ package org.orkg
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.configuration.FeatureFlags
-import org.orkg.contenttypes.input.RetrieveResearchFieldUseCase
+import org.orkg.contenttypes.input.ResearchFieldUseCases
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.VisibilityFilter
+import org.orkg.graph.input.LegacyStatisticsUseCases
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
-import org.orkg.graph.input.RetrieveLegacyStatisticsUseCase
 import org.orkg.graph.input.StatementUseCases
 import org.slf4j.LoggerFactory
 import org.springframework.boot.ApplicationArguments
@@ -25,8 +25,8 @@ class CacheWarmup(
     private val resourceService: ResourceUseCases,
     private val predicateService: PredicateUseCases,
     private val statementService: StatementUseCases,
-    private val statsService: RetrieveLegacyStatisticsUseCase,
-    private val researchFieldService: RetrieveResearchFieldUseCase,
+    private val statsService: LegacyStatisticsUseCases,
+    private val researchFieldService: ResearchFieldUseCases,
     private val flags: FeatureFlags,
 ) : ApplicationRunner {
     private val logger = LoggerFactory.getLogger(this::class.java.name)
@@ -135,8 +135,11 @@ class CacheWarmup(
     private fun fetchComparison(id: ThingId) {
         statementService.findAll(subjectId = id, pageable = PageRequests.ALL).forEach {
             val `object` = it.`object`
-            if (`object` is Resource && (Classes.comparisonRelatedFigure in `object`.classes ||
-                    it.predicate.id == Predicates.hasPreviousVersion)
+            if (`object` is Resource &&
+                (
+                    Classes.comparisonRelatedFigure in `object`.classes ||
+                        it.predicate.id == Predicates.hasPreviousVersion
+                )
             ) {
                 statementService.findAll(subjectId = `object`.id, pageable = PageRequests.ALL)
             }

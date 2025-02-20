@@ -1,8 +1,5 @@
 package org.orkg.graph.adapter.output.inmemory
 
-import java.time.OffsetDateTime
-import java.util.*
-import kotlin.jvm.optionals.getOrNull
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.Class
@@ -12,19 +9,24 @@ import org.orkg.graph.output.ClassRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
+import java.time.OffsetDateTime
+import java.util.Optional
+import kotlin.jvm.optionals.getOrNull
 
 class InMemoryClassRepository(inMemoryGraph: InMemoryGraph) :
-    InMemoryRepository<ThingId, Class>(compareBy(Class::createdAt)), ClassRepository {
-
+    InMemoryRepository<ThingId, Class>(compareBy(Class::createdAt)),
+    ClassRepository {
     override val entities: InMemoryEntityAdapter<ThingId, Class> =
         object : InMemoryEntityAdapter<ThingId, Class> {
             override val keys: Collection<ThingId> get() = inMemoryGraph.findAllClasses().map { it.id }
             override val values: MutableCollection<Class> get() = inMemoryGraph.findAllClasses().toMutableSet()
 
             override fun remove(key: ThingId): Class? = get(key)?.also { inMemoryGraph.delete(it.id) }
+
             override fun clear() = inMemoryGraph.findAllClasses().forEach(inMemoryGraph::delete)
 
             override fun get(key: ThingId): Class? = inMemoryGraph.findClassById(key).getOrNull()
+
             override fun set(key: ThingId, value: Class): Class? =
                 get(key).also { inMemoryGraph.add(value) }
         }
@@ -49,7 +51,7 @@ class InMemoryClassRepository(inMemoryGraph: InMemoryGraph) :
         label: SearchString?,
         createdBy: ContributorId?,
         createdAtStart: OffsetDateTime?,
-        createdAtEnd: OffsetDateTime?
+        createdAtEnd: OffsetDateTime?,
     ): Page<Class> =
         findAllFilteredAndPaged(
             pageable = pageable,

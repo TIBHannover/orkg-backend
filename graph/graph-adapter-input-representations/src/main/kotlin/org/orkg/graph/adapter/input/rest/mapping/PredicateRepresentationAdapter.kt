@@ -1,13 +1,13 @@
 package org.orkg.graph.adapter.input.rest.mapping
 
-import java.util.*
 import org.orkg.common.PageRequests
-import org.orkg.graph.domain.Predicate
 import org.orkg.graph.adapter.input.rest.PredicateRepresentation
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.Predicate
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.StatementUseCases
 import org.springframework.data.domain.Page
+import java.util.Optional
 
 interface PredicateRepresentationAdapter {
     val statementService: StatementUseCases
@@ -36,7 +36,7 @@ interface PredicateRepresentationAdapter {
     }
 
     fun Predicate.toPredicateRepresentation(
-        description: String?
+        description: String?,
     ): PredicateRepresentation =
         PredicateRepresentation(id, label, description, createdAt, createdBy, modifiable)
 }

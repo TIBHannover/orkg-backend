@@ -6,7 +6,6 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import java.util.*
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
@@ -21,6 +20,7 @@ import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
+import java.util.UUID
 
 internal class ContributionCreatorUnitTest : MockkBaseTest {
     private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
@@ -28,7 +28,9 @@ internal class ContributionCreatorUnitTest : MockkBaseTest {
     private val subgraphCreator: SubgraphCreator = mockk()
 
     private val contributionCreator = ContributionCreator(
-        unsafeResourceUseCases, unsafeStatementUseCases, subgraphCreator
+        unsafeResourceUseCases,
+        unsafeStatementUseCases,
+        subgraphCreator
     )
 
     @Test

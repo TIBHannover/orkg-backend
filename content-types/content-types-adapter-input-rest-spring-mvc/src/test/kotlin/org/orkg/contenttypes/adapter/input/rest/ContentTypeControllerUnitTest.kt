@@ -3,9 +3,6 @@ package org.orkg.contenttypes.adapter.input.rest
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
-import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter
-import java.util.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
@@ -42,11 +39,15 @@ import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
+import java.util.UUID
 
-@ContextConfiguration(classes = [ContentTypeController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(
+    classes = [ContentTypeController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class]
+)
 @WebMvcTest(controllers = [ContentTypeController::class])
 internal class ContentTypeControllerUnitTest : MockMvcBaseTest("content-types") {
-
     @MockkBean
     private lateinit var contentTypeService: ContentTypeUseCases
 

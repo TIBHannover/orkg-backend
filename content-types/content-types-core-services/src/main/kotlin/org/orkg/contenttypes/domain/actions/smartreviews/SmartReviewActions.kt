@@ -13,7 +13,7 @@ interface CreateSmartReviewAction : Action<CreateSmartReviewCommand, CreateSmart
     data class State(
         val smartReviewId: ThingId? = null,
         val contributionId: ThingId? = null,
-        val authors: List<Author> = emptyList()
+        val authors: List<Author> = emptyList(),
     )
 }
 
@@ -21,13 +21,13 @@ interface UpdateSmartReviewAction : Action<UpdateSmartReviewCommand, UpdateSmart
     data class State(
         val smartReview: SmartReview? = null,
         val statements: Map<ThingId, List<GeneralStatement>> = emptyMap(),
-        val authors: List<Author> = emptyList()
+        val authors: List<Author> = emptyList(),
     )
 }
 
 interface PublishSmartReviewAction : Action<PublishSmartReviewCommand, PublishSmartReviewAction.State> {
     data class State(
         val smartReview: SmartReview? = null,
-        val smartReviewVersionId: ThingId? = null
+        val smartReviewVersionId: ThingId? = null,
     )
 }

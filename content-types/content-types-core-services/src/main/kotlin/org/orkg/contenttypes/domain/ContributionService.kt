@@ -1,9 +1,8 @@
 package org.orkg.contenttypes.domain
 
-import java.util.*
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.input.ContributionUseCases
+import org.orkg.contenttypes.input.RetrieveContributionUseCase
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.output.ResourceRepository
@@ -11,12 +10,13 @@ import org.orkg.graph.output.StatementRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import java.util.Optional
 
 @Service
 class ContributionService(
     private val resourceRepository: ResourceRepository,
-    private val statementRepository: StatementRepository
-) : ContributionUseCases {
+    private val statementRepository: StatementRepository,
+) : RetrieveContributionUseCase {
     override fun findById(id: ThingId): Optional<Contribution> =
         resourceRepository.findById(id)
             .filter { Classes.contribution in it.classes }

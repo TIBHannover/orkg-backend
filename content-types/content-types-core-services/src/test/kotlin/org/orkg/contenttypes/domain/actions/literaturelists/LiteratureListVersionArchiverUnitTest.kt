@@ -70,11 +70,13 @@ internal class LiteratureListVersionArchiverUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            literatureListPublishedRepository.save(withArg {
-                it.id shouldBe state.literatureListVersionId!!
-                it.rootId shouldBe command.id
-                it.subgraph shouldBe listOf(createStatement())
-            })
+            literatureListPublishedRepository.save(
+                withArg {
+                    it.id shouldBe state.literatureListVersionId!!
+                    it.rootId shouldBe command.id
+                    it.subgraph shouldBe listOf(createStatement())
+                }
+            )
         }
     }
 }

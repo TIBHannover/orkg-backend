@@ -1,6 +1,5 @@
 package org.orkg.community.adapter.output.jpa
 
-import java.time.LocalDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.orkg.common.testing.fixtures.fixedClock
@@ -15,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestConstructor
+import java.time.LocalDateTime
 
 @DataJpaTest
 @ContextConfiguration(

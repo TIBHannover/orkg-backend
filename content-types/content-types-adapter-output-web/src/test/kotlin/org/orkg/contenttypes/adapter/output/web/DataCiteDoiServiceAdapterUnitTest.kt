@@ -10,11 +10,6 @@ import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.net.URI
-import java.net.http.HttpClient
-import java.net.http.HttpRequest
-import java.net.http.HttpResponse
-import java.util.*
 import org.junit.jupiter.api.Test
 import org.orkg.common.exceptions.ServiceUnavailable
 import org.orkg.common.testing.fixtures.Assets.requestJson
@@ -26,6 +21,11 @@ import org.orkg.contenttypes.domain.configuration.DataCiteConfiguration
 import org.orkg.contenttypes.domain.identifiers.DOI
 import org.orkg.contenttypes.output.testing.fixtures.dummyRegisterDoiCommand
 import org.springframework.http.MediaType
+import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
+import java.util.Base64
 
 internal class DataCiteDoiServiceAdapterUnitTest : MockkBaseTest {
     private val dataciteConfiguration: DataCiteConfiguration = mockk()

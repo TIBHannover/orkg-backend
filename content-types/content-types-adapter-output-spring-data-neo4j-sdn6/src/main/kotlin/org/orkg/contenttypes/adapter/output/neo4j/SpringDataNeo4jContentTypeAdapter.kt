@@ -1,7 +1,5 @@
 package org.orkg.contenttypes.adapter.output.neo4j
 
-import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter
 import org.neo4j.cypherdsl.core.Condition
 import org.neo4j.cypherdsl.core.Cypher.anonParameter
 import org.neo4j.cypherdsl.core.Cypher.call
@@ -40,12 +38,14 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Component
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 
 private const val RELATED = "RELATED"
 
 @Component
 class SpringDataNeo4jContentTypeAdapter(
-    private val cypherQueryBuilderFactory: CypherQueryBuilderFactory
+    private val cypherQueryBuilderFactory: CypherQueryBuilderFactory,
 ) : ContentTypeRepository {
     override fun findAll(
         pageable: Pageable,
@@ -60,7 +60,7 @@ class SpringDataNeo4jContentTypeAdapter(
         includeSubfields: Boolean,
         sustainableDevelopmentGoal: ThingId?,
         authorId: ThingId?,
-        authorName: String?
+        authorName: String?,
     ): Page<Resource> = cypherQueryBuilderFactory.newBuilder(QueryCache.Uncached)
         .withCommonQuery {
             val node = name("node")
@@ -117,11 +117,11 @@ class SpringDataNeo4jContentTypeAdapter(
             val node = name("node")
             val sort = pageable.sort.orElseGet { Sort.by("created_at") }
             commonQuery.orderBy(
-                    sort.toSortItems(
-                        node = node,
-                        knownProperties = arrayOf("id", "label", "created_at", "created_by", "visibility")
-                    )
+                sort.toSortItems(
+                    node = node,
+                    knownProperties = arrayOf("id", "label", "created_at", "created_by", "visibility")
                 )
+            )
                 .returningDistinct(node)
         }
         .countDistinctOver("node")
@@ -130,7 +130,7 @@ class SpringDataNeo4jContentTypeAdapter(
 
     private fun ContentTypeClass.match(
         node: SymbolicName,
-        patternGenerator: (Node) -> Collection<RelationshipPattern>
+        patternGenerator: (Node) -> Collection<RelationshipPattern>,
     ): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere =
         when (this) {
             ContentTypeClass.PAPER -> matchDistinct(node("Paper").named(node), patternGenerator)

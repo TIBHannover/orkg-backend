@@ -7,7 +7,7 @@ open class SimpleMetric(
     override val description: String,
     override val group: String = Metric.DEFAULT_GROUP,
     override val parameterSpecs: Map<String, ParameterSpec<Any>> = emptyMap(),
-    private val supplier: (parameters: ParameterMap) -> Number
+    private val supplier: (parameters: ParameterMap) -> Number,
 ) : Metric {
     override fun value(parameters: Map<String, String>): Number {
         val unknownParameters = parameters.keys - parameterSpecs.keys

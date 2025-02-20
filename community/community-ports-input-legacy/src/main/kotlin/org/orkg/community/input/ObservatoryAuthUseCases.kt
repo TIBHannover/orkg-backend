@@ -10,7 +10,8 @@ interface ObservatoryAuthUseCases {
     fun addUserObservatory(
         observatoryId: ObservatoryId,
         organizationId: OrganizationId,
-        contributorId: ContributorId
+        contributorId: ContributorId,
     ): Contributor
+
     fun deleteUserObservatory(contributorId: ContributorId)
 }

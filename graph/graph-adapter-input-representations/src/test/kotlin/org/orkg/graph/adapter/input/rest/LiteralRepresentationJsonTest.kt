@@ -1,7 +1,5 @@
 package org.orkg.graph.adapter.input.rest
 
-import java.time.OffsetDateTime
-import java.time.ZoneOffset
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -14,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.json.JsonTest
 import org.springframework.boot.test.json.JacksonTester
 import org.springframework.test.context.ContextConfiguration
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 
 /**
  * Test the JSON serialization of a [Literal].
@@ -21,7 +21,6 @@ import org.springframework.test.context.ContextConfiguration
 @JsonTest
 @ContextConfiguration(classes = [LiteralRepresentationAdapter::class, CommonJacksonModule::class])
 internal class LiteralRepresentationJsonTest {
-
     @Autowired
     private lateinit var json: JacksonTester<LiteralRepresentation>
 
@@ -30,7 +29,6 @@ internal class LiteralRepresentationJsonTest {
     @Nested
     @DisplayName("Given a Literal with default values")
     inner class GivenALiteralWithDefaultValues {
-
         private val serializedLiteral = createLiteral().serialize()
 
         @Test
@@ -62,7 +60,6 @@ internal class LiteralRepresentationJsonTest {
     @Nested
     @DisplayName("Given a Literal with provided values")
     inner class GivenALiteralWithProvidedValues {
-
         private val serializedLiteral = createLiteral(datatype = "xs:number").serialize()
 
         @Test

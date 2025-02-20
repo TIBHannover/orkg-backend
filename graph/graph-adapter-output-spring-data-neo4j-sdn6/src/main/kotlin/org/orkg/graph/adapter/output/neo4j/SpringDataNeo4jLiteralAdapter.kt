@@ -1,8 +1,5 @@
 package org.orkg.graph.adapter.output.neo4j
 
-import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
-import java.util.*
 import org.neo4j.cypherdsl.core.Cypher
 import org.neo4j.cypherdsl.core.Cypher.anonParameter
 import org.neo4j.cypherdsl.core.Cypher.call
@@ -32,6 +29,9 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Component
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
+import java.util.Optional
 
 const val LITERAL_ID_TO_LITERAL_CACHE = "literal-id-to-literal"
 const val LITERAL_ID_TO_LITERAL_EXISTS_CACHE = "literal-id-to-literal-exists"
@@ -80,7 +80,7 @@ class SpringDataNeo4jLiteralAdapter(
         label: SearchString?,
         createdBy: ContributorId?,
         createdAtStart: OffsetDateTime?,
-        createdAtEnd: OffsetDateTime?
+        createdAtEnd: OffsetDateTime?,
     ): Page<Literal> = cypherQueryBuilderFactory.newBuilder(Uncached)
         .withCommonQuery {
             val node = Cypher.node("Literal").named("node")

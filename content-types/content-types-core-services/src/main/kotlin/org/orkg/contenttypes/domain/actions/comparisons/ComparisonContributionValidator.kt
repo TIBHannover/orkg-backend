@@ -8,7 +8,7 @@ import org.orkg.graph.output.ResourceRepository
 
 class ComparisonContributionValidator<T, S>(
     private val resourceRepository: ResourceRepository,
-    private val valueSelector: (T) -> List<ThingId>?
+    private val valueSelector: (T) -> List<ThingId>?,
 ) : Action<T, S> {
     override fun invoke(command: T, state: S): S {
         valueSelector(command)?.let { contributions ->

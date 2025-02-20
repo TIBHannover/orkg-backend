@@ -3,7 +3,6 @@ package org.orkg.contenttypes.domain.actions.literaturelists
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.util.*
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
@@ -21,6 +20,7 @@ import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
+import java.util.UUID
 
 internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
     private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
@@ -28,7 +28,9 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
     private val literalService: LiteralUseCases = mockk()
 
     private val abstractLiteratureListSectionCreator = AbstractLiteratureListSectionCreator(
-        unsafeStatementUseCases, unsafeResourceUseCases, literalService
+        unsafeStatementUseCases,
+        unsafeResourceUseCases,
+        literalService
     )
 
     @Test

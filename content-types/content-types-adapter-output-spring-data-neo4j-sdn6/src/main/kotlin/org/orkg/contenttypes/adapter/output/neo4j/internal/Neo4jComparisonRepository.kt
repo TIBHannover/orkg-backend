@@ -7,18 +7,21 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.repository.Neo4jRepository
 import org.springframework.data.neo4j.repository.query.Query
 
-private const val id = "${'$'}id"
+private const val ID = "${'$'}id"
 private const val PAGE_PARAMS = "SKIP ${'$'}skip LIMIT ${'$'}limit"
 private const val ORDER_BY_PAGE_PARAMS = ":#{orderBy(#pageable)} $PAGE_PARAMS"
 
 interface Neo4jComparisonRepository : Neo4jRepository<Neo4jResource, ThingId> {
-    @Query("""
-MATCH (h:Comparison)-[:RELATED {predicate_id: "hasPublishedVersion"}]->(:ComparisonPublished {id: $id})
+    @Query(
+        """
+MATCH (h:Comparison)-[:RELATED {predicate_id: "hasPublishedVersion"}]->(:ComparisonPublished {id: $ID})
 MATCH (h)-[:RELATED {predicate_id: "hasPublishedVersion"}]->(p:ComparisonPublished)
-RETURN h AS head, COLLECT(p) AS published""")
+RETURN h AS head, COLLECT(p) AS published"""
+    )
     fun findVersionHistoryForPublishedComparison(id: ThingId): Neo4jVersionInfo
 
-    @Query("""
+    @Query(
+        """
 CALL () {
     MATCH (node:ComparisonPublished:LatestVersion)
     WHERE (node.visibility = 'DEFAULT' OR node.visibility = 'FEATURED') AND NOT EXISTS((node)-[:`RELATED` {predicate_id: 'P26'}]->(:`Literal`))
@@ -41,11 +44,12 @@ CALL () {
     RETURN node
 }
 WITH node
-RETURN COUNT(node)""")
+RETURN COUNT(node)"""
+    )
     fun findAllCurrentListedAndUnpublishedComparisons(pageable: Pageable): Page<Neo4jResource>
 }
 
 data class Neo4jVersionInfo(
     val head: Neo4jResource,
-    val published: List<Neo4jResource>
+    val published: List<Neo4jResource>,
 )

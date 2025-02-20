@@ -4,8 +4,6 @@ import com.ninjasquad.springmockk.MockkBean
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.verify
-import java.net.URI
-import java.util.*
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
@@ -25,11 +23,12 @@ import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.net.URI
+import java.util.Optional
 
 @ContextConfiguration(classes = [DOIController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [DOIController::class])
 internal class DOIControllerUnitTest : MockMvcBaseTest("dois") {
-
     @MockkBean
     private lateinit var doiService: DoiService
 
@@ -55,29 +54,32 @@ internal class DOIControllerUnitTest : MockMvcBaseTest("dois") {
         every { literalService.findDOIByContributionId(ThingId("R696002")) } returns Optional.empty()
         every { literalService.findDOIByContributionId(ThingId("R696003")) } returns Optional.empty()
 
-        val request = """{
-          "type": "Comparison",
-          "resource_type": "Dataset",
-          "resource_id": "R696006",
-          "title": "TEST",
-          "subject": "Machine Learning",
-          "description": "TEST",
-          "related_resources": [
-            "R696002",
-            "R696003"
-          ],
-          "authors":[
+        val request =
+            """
             {
-              "creator": "TEST",
-              "orcid": null
-            },
-            {
-              "creator": "TEST 2",
-              "orcid": null
+              "type": "Comparison",
+              "resource_type": "Dataset",
+              "resource_id": "R696006",
+              "title": "TEST",
+              "subject": "Machine Learning",
+              "description": "TEST",
+              "related_resources": [
+                "R696002",
+                "R696003"
+              ],
+              "authors":[
+                {
+                  "creator": "TEST",
+                  "orcid": null
+                },
+                {
+                  "creator": "TEST 2",
+                  "orcid": null
+                }
+              ],
+              "url": "http://localhost:3000/comparison/R696006/"
             }
-          ],
-          "url": "http://localhost:3000/comparison/R696006/"
-        }""".trimIndent()
+            """.trimIndent()
 
         post("/api/dois")
             .content(request)

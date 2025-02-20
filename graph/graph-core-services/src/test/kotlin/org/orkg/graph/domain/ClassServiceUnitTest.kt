@@ -4,8 +4,6 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.time.OffsetDateTime
-import java.util.*
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -19,9 +17,11 @@ import org.orkg.graph.input.UpdateClassUseCase.ReplaceCommand
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createClassWithoutURI
+import java.time.OffsetDateTime
+import java.util.Optional
+import java.util.UUID
 
 internal class ClassServiceUnitTest : MockkBaseTest {
-
     private val repository: ClassRepository = mockk()
     private val service = ClassService(repository, fixedClock)
 

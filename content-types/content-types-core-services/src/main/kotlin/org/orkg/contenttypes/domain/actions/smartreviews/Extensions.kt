@@ -8,6 +8,7 @@ import org.orkg.graph.domain.Resource
 
 fun Map<ThingId, List<GeneralStatement>>.findContributionId(smartReviewId: ThingId): ThingId? =
     this[smartReviewId]?.single {
-        it.predicate.id == Predicates.hasContribution && it.`object` is Resource &&
+        it.predicate.id == Predicates.hasContribution &&
+            it.`object` is Resource &&
             Classes.contributionSmartReview in (it.`object` as Resource).classes
     }?.`object`?.id

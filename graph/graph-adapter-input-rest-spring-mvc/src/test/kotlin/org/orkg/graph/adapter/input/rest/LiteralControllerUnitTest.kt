@@ -7,11 +7,6 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.runs
 import io.mockk.verify
-import java.time.Clock
-import java.time.OffsetDateTime
-import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
-import java.util.*
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.matchesPattern
 import org.junit.jupiter.api.DisplayName
@@ -31,11 +26,11 @@ import org.orkg.graph.domain.MAX_LABEL_LENGTH
 import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.testing.fixtures.createLiteral
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectLiteral
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.annotations.TestWithMockUser
+import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
@@ -51,11 +46,23 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.time.Clock
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
+import java.util.Optional
 
-@ContextConfiguration(classes = [LiteralController::class, ExceptionHandler::class, CommonJacksonModule::class, GraphJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(
+    classes = [
+        LiteralController::class,
+        ExceptionHandler::class,
+        CommonJacksonModule::class,
+        GraphJacksonModule::class,
+        FixedClockConfig::class
+    ]
+)
 @WebMvcTest(controllers = [LiteralController::class])
 internal class LiteralControllerUnitTest : MockMvcBaseTest("literals") {
-
     @MockkBean
     private lateinit var literalService: LiteralUseCases
 
@@ -356,12 +363,10 @@ internal class LiteralControllerUnitTest : MockMvcBaseTest("literals") {
     private fun createUpdateRequestWithBlankDatatype() =
         LiteralUpdateRequest(id = null, label = null, datatype = " ".repeat(5))
 
-    private fun createLiteral(): Literal {
-        return Literal(
-            id = ThingId("L1"),
-            label = "irrelevant",
-            datatype = "irrelevant",
-            createdAt = OffsetDateTime.now(clock)
-        )
-    }
+    private fun createLiteral(): Literal = Literal(
+        id = ThingId("L1"),
+        label = "irrelevant",
+        datatype = "irrelevant",
+        createdAt = OffsetDateTime.now(clock)
+    )
 }

@@ -7,7 +7,7 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.output.StatementRepository
 
 class SmartReviewSectionIndexValidator(
-    private val statementRepository: StatementRepository
+    private val statementRepository: StatementRepository,
 ) : CreateSmartReviewSectionAction {
     override fun invoke(command: CreateSmartReviewSectionCommand, state: State): State {
         if (command.index != null && command.index!! >= 0) {

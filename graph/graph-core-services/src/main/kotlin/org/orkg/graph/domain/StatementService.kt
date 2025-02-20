@@ -1,8 +1,5 @@
 package org.orkg.graph.domain
 
-import java.time.Clock
-import java.time.OffsetDateTime
-import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
@@ -18,6 +15,9 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
+import java.time.Clock
+import java.time.OffsetDateTime
+import java.util.Optional
 
 @Service
 @TransactionalOnNeo4j
@@ -28,7 +28,6 @@ class StatementService(
     private val literalRepository: LiteralRepository,
     private val clock: Clock,
 ) : StatementUseCases {
-
     override fun findById(statementId: StatementId): Optional<GeneralStatement> =
         statementRepository.findByStatementId(statementId)
 
@@ -46,7 +45,7 @@ class StatementService(
         createdAtEnd: OffsetDateTime?,
         objectClasses: Set<ThingId>,
         objectId: ThingId?,
-        objectLabel: String?
+        objectLabel: String?,
     ): Page<GeneralStatement> =
         statementRepository.findAll(
             pageable = pageable,
@@ -166,7 +165,7 @@ class StatementService(
         thingId: ThingId,
         configuration: BundleConfiguration,
         includeFirst: Boolean,
-        sort: Sort
+        sort: Sort,
     ): Bundle {
         if (thingRepository.findById(thingId).isEmpty) {
             throw ThingNotFound(thingId)
@@ -200,9 +199,10 @@ class StatementService(
     private fun createBundle(
         thingId: ThingId,
         configuration: BundleConfiguration,
-        sort: Sort
+        sort: Sort,
     ): Bundle = Bundle(
-        thingId, statementRepository.fetchAsBundle(thingId, configuration, sort).toMutableList()
+        thingId,
+        statementRepository.fetchAsBundle(thingId, configuration, sort).toMutableList()
     )
 
     /**
@@ -217,13 +217,14 @@ class StatementService(
     private fun createBundleFirstIncluded(
         thingId: ThingId,
         configuration: BundleConfiguration,
-        sort: Sort
+        sort: Sort,
     ): Bundle =
         createBundle(thingId, configuration, sort).merge(
             Bundle(
                 thingId,
                 statementRepository.fetchAsBundle(thingId, BundleConfiguration.firstLevelConf(), sort).toMutableList()
-            ), sort
+            ),
+            sort
         )
 
     override fun deleteAll() = statementRepository.deleteAll()

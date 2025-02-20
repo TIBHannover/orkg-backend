@@ -13,6 +13,6 @@ interface ContributionAction : Action<CreateContributionCommand, State> {
         val tempIds: Set<String> = emptySet(),
         val validatedIds: Map<String, Either<String, Thing>> = emptyMap(),
         val bakedStatements: Set<BakedStatement> = emptySet(),
-        val contributionId: ThingId? = null
+        val contributionId: ThingId? = null,
     )
 }

@@ -19,10 +19,10 @@ import org.orkg.graph.domain.ResearchFieldNotFound
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.fixtures.createResource
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectResearchFieldHierarchyEntry
 import org.orkg.testing.andExpectResource
+import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -33,10 +33,17 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@ContextConfiguration(classes = [ResearchFieldHierarchyController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class, WebMvcConfiguration::class])
+@ContextConfiguration(
+    classes = [
+        ResearchFieldHierarchyController::class,
+        ExceptionHandler::class,
+        CommonJacksonModule::class,
+        FixedClockConfig::class,
+        WebMvcConfiguration::class
+    ]
+)
 @WebMvcTest(controllers = [ResearchFieldHierarchyController::class])
 internal class ResearchFieldHierarchyControllerUnitTest : MockMvcBaseTest("research-fields") {
-
     @MockkBean
     private lateinit var statementService: StatementUseCases
 

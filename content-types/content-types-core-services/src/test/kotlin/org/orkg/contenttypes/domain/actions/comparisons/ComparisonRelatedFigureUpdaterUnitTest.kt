@@ -5,7 +5,6 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import java.util.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ContributorId
@@ -29,6 +28,7 @@ import org.orkg.graph.input.UpdateResourceUseCase
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.pageOf
+import java.util.Optional
 
 internal class ComparisonRelatedFigureUpdaterUnitTest : MockkBaseTest {
     private val comparisonService: ComparisonUseCases = mockk()
@@ -37,7 +37,10 @@ internal class ComparisonRelatedFigureUpdaterUnitTest : MockkBaseTest {
     private val singleStatementPropertyUpdater: SingleStatementPropertyUpdater = mockk()
 
     private val contributionCreator = ComparisonRelatedFigureUpdater(
-        comparisonService, resourceService, statementService, singleStatementPropertyUpdater
+        comparisonService,
+        resourceService,
+        statementService,
+        singleStatementPropertyUpdater
     )
 
     @Test

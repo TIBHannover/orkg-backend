@@ -7,16 +7,16 @@ import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 
 class LiteratureListSectionDeleter(
-    private val abstractLiteratureListSectionDeleter: AbstractLiteratureListSectionDeleter
+    private val abstractLiteratureListSectionDeleter: AbstractLiteratureListSectionDeleter,
 ) : DeleteLiteratureListSectionAction {
     constructor(
         statementService: StatementUseCases,
-        resourceService: ResourceUseCases
+        resourceService: ResourceUseCases,
     ) : this(AbstractLiteratureListSectionDeleter(statementService, resourceService))
 
     override fun invoke(
         command: DeleteLiteratureListSectionCommand,
-        state: DeleteLiteratureListSectionState
+        state: DeleteLiteratureListSectionState,
     ): DeleteLiteratureListSectionState {
         val section = state.literatureList!!.sections.find { it.id == command.sectionId }
         if (section != null) {

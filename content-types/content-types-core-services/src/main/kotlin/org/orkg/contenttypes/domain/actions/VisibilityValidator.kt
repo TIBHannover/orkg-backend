@@ -11,7 +11,7 @@ class VisibilityValidator<T, S>(
     private val contributorRepository: ContributorRepository,
     private val contributorSelector: (T) -> ContributorId,
     private val contentTypeExtractor: (S) -> ContentType,
-    private val newValueSelector: (T) -> Visibility?
+    private val newValueSelector: (T) -> Visibility?,
 ) : Action<T, S> {
     override fun invoke(command: T, state: S): S {
         val contentType = contentTypeExtractor(state)
@@ -31,6 +31,8 @@ class VisibilityValidator<T, S>(
     }
 
     private fun isAllowedVisibilityChangeByOwner(source: Visibility, target: Visibility) =
-        source == Visibility.DELETED && target == Visibility.DEFAULT || // allow restoring deleted resources
+        source == Visibility.DELETED &&
+            target == Visibility.DEFAULT ||
+            // allow restoring deleted resources
             target == Visibility.DELETED // allow deletion of resources from any state
 }

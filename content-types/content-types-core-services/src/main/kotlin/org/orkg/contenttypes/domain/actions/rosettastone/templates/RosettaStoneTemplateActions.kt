@@ -9,7 +9,7 @@ import org.orkg.graph.domain.GeneralStatement
 
 interface CreateRosettaStoneTemplateAction : Action<CreateRosettaStoneTemplateCommand, CreateRosettaStoneTemplateAction.State> {
     data class State(
-        val rosettaStoneTemplateId: ThingId? = null
+        val rosettaStoneTemplateId: ThingId? = null,
     )
 }
 
@@ -17,6 +17,6 @@ interface UpdateRosettaStoneTemplateAction : Action<UpdateRosettaStoneTemplateCo
     data class State(
         val rosettaStoneTemplate: RosettaStoneTemplate? = null,
         val isUsedInRosettaStoneStatement: Boolean = false,
-        val statements: Map<ThingId, List<GeneralStatement>> = emptyMap()
+        val statements: Map<ThingId, List<GeneralStatement>> = emptyMap(),
     )
 }

@@ -10,7 +10,7 @@ import org.orkg.graph.input.UnsafeStatementUseCases
 
 class LiteratureListSectionsCreator(
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
-    private val abstractLiteratureListSectionCreator: AbstractLiteratureListSectionCreator
+    private val abstractLiteratureListSectionCreator: AbstractLiteratureListSectionCreator,
 ) : CreateLiteratureListAction {
     constructor(
         literalService: LiteralUseCases,
@@ -23,7 +23,7 @@ class LiteratureListSectionsCreator(
 
     override fun invoke(
         command: CreateLiteratureListCommand,
-        state: CreateLiteratureListState
+        state: CreateLiteratureListState,
     ): CreateLiteratureListState {
         command.sections.forEach { section ->
             unsafeStatementUseCases.create(

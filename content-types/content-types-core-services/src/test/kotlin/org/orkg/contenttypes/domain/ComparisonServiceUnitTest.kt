@@ -7,8 +7,6 @@ import io.kotest.matchers.shouldNotBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.time.OffsetDateTime
-import java.util.*
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
@@ -54,6 +52,9 @@ import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.MockUserId
 import org.orkg.testing.pageOf
 import org.springframework.data.domain.Sort
+import java.time.OffsetDateTime
+import java.util.Optional
+import java.util.UUID
 
 internal class ComparisonServiceUnitTest : MockkBaseTest {
     private val contributionComparisonRepository: ContributionComparisonRepository = mockk()

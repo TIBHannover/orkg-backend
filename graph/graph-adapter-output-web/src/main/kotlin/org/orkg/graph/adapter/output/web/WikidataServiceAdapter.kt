@@ -2,10 +2,6 @@ package org.orkg.graph.adapter.output.web
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import java.net.http.HttpClient
-import java.net.http.HttpRequest
-import java.util.function.Predicate
-import java.util.regex.Pattern
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.exceptions.ServiceUnavailable
 import org.orkg.common.send
@@ -19,14 +15,20 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.util.UriComponentsBuilder
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.util.function.Predicate
+import java.util.regex.Pattern
 
 @Component
 class WikidataServiceAdapter(
     private val objectMapper: ObjectMapper,
     private val httpClient: HttpClient,
     @Value("\${orkg.external-services.wikidata.host}")
-    private val host: String
-) : ExternalResourceService, ExternalClassService, ExternalPredicateService {
+    private val host: String,
+) : ExternalResourceService,
+    ExternalClassService,
+    ExternalPredicateService {
     private val itemIdPattern = Pattern.compile("(Q[0-9]+)")
     private val propertyIdPattern = Pattern.compile("(P[0-9]+)")
     private val itemPattern = Pattern.compile("""https?://(?:www\.)?wikidata.org/entity/(Q[0-9]+)/?""")
@@ -50,19 +52,15 @@ class WikidataServiceAdapter(
     override fun findPredicateByURI(ontologyId: String, uri: ParsedIRI): ExternalThing? =
         fetch(ontologyId, uri.toString(), propertyPattern)
 
-    private fun isResource(claims: JsonNode): Boolean {
-        return claims.size() == 0 || claims.has("P31")
-    }
+    private fun isResource(claims: JsonNode): Boolean = claims.size() == 0 || claims.has("P31")
 
-    private fun isClass(claims: JsonNode): Boolean {
-        return claims.size() == 0 || claims.has("P279")
-    }
+    private fun isClass(claims: JsonNode): Boolean = claims.size() == 0 || claims.has("P279")
 
     private fun fetch(
         ontologyId: String,
         input: String,
         pattern: Pattern,
-        predicate: Predicate<JsonNode> = Predicates.isTrue()
+        predicate: Predicate<JsonNode> = Predicates.isTrue(),
     ): ExternalThing? {
         if (!supportsOntology(ontologyId)) return null
         val id = pattern.matchSingleGroupOrNull(input) ?: return null
@@ -102,9 +100,7 @@ class WikidataServiceAdapter(
         }
     }
 
-    override fun supportsOntology(ontologyId: String): Boolean {
-        return ontologyId == "wikidata"
-    }
+    override fun supportsOntology(ontologyId: String): Boolean = ontologyId == "wikidata"
 
     override fun supportsMultipleOntologies(): Boolean = false
 }

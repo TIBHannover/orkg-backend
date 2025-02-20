@@ -1,7 +1,5 @@
 package org.orkg.graph.adapter.output.neo4j
 
-import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
-import java.util.*
 import org.neo4j.cypherdsl.core.Cypher.anyNode
 import org.neo4j.cypherdsl.core.Cypher.collect
 import org.neo4j.cypherdsl.core.Cypher.count
@@ -30,6 +28,8 @@ import org.orkg.spring.data.annotations.TransactionalOnNeo4j
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
+import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
+import java.util.Optional
 
 private const val SUBCLASS_OF = "SUBCLASS_OF"
 private const val INSTANCE_OF = "INSTANCE_OF"
@@ -38,8 +38,8 @@ private const val INSTANCE_OF = "INSTANCE_OF"
 @TransactionalOnNeo4j
 class SpringDataNeo4jClassHierarchyAdapter(
     private val cypherQueryBuilderFactory: CypherQueryBuilderFactory,
-) : ClassHierarchyRepository, ClassRelationRepository {
-
+) : ClassHierarchyRepository,
+    ClassRelationRepository {
     override fun save(classRelation: ClassSubclassRelation) {
         cypherQueryBuilderFactory.newBuilder()
             .withQuery {
@@ -52,8 +52,10 @@ class SpringDataNeo4jClassHierarchyAdapter(
                         parent.property("id").eq(parameter("parentId"))
                     ).create(
                         child.relationshipTo(parent, SUBCLASS_OF).withProperties(
-                            "created_by", parameter("createdBy"),
-                            "created_at", parameter("createdAt")
+                            "created_by",
+                            parameter("createdBy"),
+                            "created_at",
+                            parameter("createdAt")
                         )
                     )
             }
@@ -82,8 +84,10 @@ class SpringDataNeo4jClassHierarchyAdapter(
                         parent.property("id").eq(row.property("parent_id"))
                     ).create(
                         r.withProperties(
-                            "created_by", row.property("created_by"),
-                            "created_at", row.property("created_at")
+                            "created_by",
+                            row.property("created_by"),
+                            "created_at",
+                            row.property("created_at")
                         )
                     ).returning(elementId(r))
             }

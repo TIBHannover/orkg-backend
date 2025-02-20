@@ -21,7 +21,7 @@ abstract class PublicationInfoCreator(
     protected val unsafeResourceUseCases: UnsafeResourceUseCases,
     protected val resourceRepository: ResourceRepository,
     protected val unsafeStatementUseCases: UnsafeStatementUseCases,
-    protected val literalService: LiteralUseCases
+    protected val literalService: LiteralUseCases,
 ) {
     internal fun create(contributorId: ContributorId, publicationInfo: PublicationInfoDefinition, subjectId: ThingId) {
         if (publicationInfo.publishedMonth != null) {
@@ -41,7 +41,7 @@ abstract class PublicationInfoCreator(
     protected fun linkPublicationMonth(
         contributorId: ContributorId,
         subjectId: ThingId,
-        publishedMonth: Int
+        publishedMonth: Int,
     ) {
         val monthLiteralId = literalService.create(
             CreateLiteralUseCase.CreateCommand(
@@ -63,7 +63,7 @@ abstract class PublicationInfoCreator(
     protected fun linkPublicationYear(
         contributorId: ContributorId,
         subjectId: ThingId,
-        publishedYear: Long
+        publishedYear: Long,
     ) {
         val yearLiteralId = literalService.create(
             CreateLiteralUseCase.CreateCommand(
@@ -85,7 +85,7 @@ abstract class PublicationInfoCreator(
     protected fun linkPublicationVenue(
         contributorId: ContributorId,
         subjectId: ThingId,
-        publishedIn: String
+        publishedIn: String,
     ) {
         val venueId = resourceRepository.findAll(
             includeClasses = setOf(Classes.venue),
@@ -111,7 +111,7 @@ abstract class PublicationInfoCreator(
     protected fun linkPublicationUrl(
         contributorId: ContributorId,
         subjectId: ThingId,
-        url: ParsedIRI
+        url: ParsedIRI,
     ) {
         val urlLiteralId = literalService.create(
             CreateLiteralUseCase.CreateCommand(

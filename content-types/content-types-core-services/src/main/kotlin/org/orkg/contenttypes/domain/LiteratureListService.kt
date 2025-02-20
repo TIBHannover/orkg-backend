@@ -1,7 +1,5 @@
 package org.orkg.contenttypes.domain
 
-import java.time.OffsetDateTime
-import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.Either
 import org.orkg.common.ObservatoryId
@@ -83,6 +81,8 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
+import java.time.OffsetDateTime
+import java.util.Optional
 
 @Service
 class LiteratureListService(
@@ -118,7 +118,7 @@ class LiteratureListService(
         researchField: ThingId?,
         includeSubfields: Boolean,
         published: Boolean?,
-        sustainableDevelopmentGoal: ThingId?
+        sustainableDevelopmentGoal: ThingId?,
     ): Page<LiteratureList> =
         literatureListRepository.findAll(
             pageable = pageable,
@@ -137,7 +137,7 @@ class LiteratureListService(
 
     override fun findPublishedContentById(
         literatureListId: ThingId,
-        contentId: ThingId
+        contentId: ThingId,
     ): Either<Paper, Resource> {
         val literatureList = resourceRepository.findById(literatureListId)
             .filter { Classes.literatureListPublished in it.classes }

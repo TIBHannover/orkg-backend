@@ -1,8 +1,5 @@
 package org.orkg.community.adapter.output.jpa.internal
 
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.util.*
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
@@ -16,6 +13,9 @@ import org.orkg.community.domain.internal.MD5Hash
 import org.orkg.eventbus.events.UserRegistered
 import org.orkg.eventbus.events.UserRegistered.Role.ADMIN
 import org.orkg.eventbus.events.UserRegistered.Role.CURATOR
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.util.UUID
 
 @Entity
 @Table(name = "contributors")

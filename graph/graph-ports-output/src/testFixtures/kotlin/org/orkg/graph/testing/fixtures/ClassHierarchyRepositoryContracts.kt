@@ -5,7 +5,6 @@ import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import java.time.OffsetDateTime
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.graph.domain.ChildClass
@@ -16,17 +15,18 @@ import org.orkg.graph.output.ClassRelationRepository
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ResourceRepository
 import org.springframework.data.domain.PageRequest
+import java.time.OffsetDateTime
 
 fun <
     H : ClassHierarchyRepository,
     C : ClassRepository,
     R : ClassRelationRepository,
-    S : ResourceRepository
+    S : ResourceRepository,
 > classHierarchyRepositoryContract(
     repository: H,
     classRepository: C,
     relationRepository: R,
-    resourceRepository: S
+    resourceRepository: S,
 ) = describeSpec {
     beforeTest {
         relationRepository.deleteAll()

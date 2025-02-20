@@ -3,8 +3,6 @@ package org.orkg
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import kotlin.reflect.KClass
-import kotlin.reflect.full.memberProperties
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Test
 import org.orkg.InitialDataSetup.RequiredClassDefinition
@@ -21,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.autoconfigure.json.JsonTest
 import org.springframework.test.context.ContextConfiguration
+import kotlin.reflect.KClass
+import kotlin.reflect.full.memberProperties
 
 @JsonTest // We need application.yaml loaded for @Value to work. This application context will do, as it is small.
 @ContextConfiguration(classes = [CommonJacksonModule::class])
@@ -59,7 +59,7 @@ internal class InitialDataJsonTest {
     private fun <T : Any> verifyEntityDeclarations(
         sourceClass: KClass<T>,
         entitiesFileName: String,
-        whiteList: Set<ThingId> = emptySet()
+        whiteList: Set<ThingId> = emptySet(),
     ) {
         val declaredEntities = readDataFile<List<JsonNode>>(entitiesFileName).map { ThingId(it.path("id").textValue()) }
         val sourceInstance = sourceClass.objectInstance!!
@@ -77,6 +77,8 @@ internal class InitialDataJsonTest {
     }
 
     private inline fun <reified T> readDataFile(entitiesFileName: String): T =
-        objectMapper.readValue<T>(this::class.java.classLoader.getResource("$directory/$entitiesFileName.json")
-            ?: throw IllegalStateException("Directory was configured, but file was not found"))
+        objectMapper.readValue<T>(
+            this::class.java.classLoader.getResource("$directory/$entitiesFileName.json")
+                ?: throw IllegalStateException("Directory was configured, but file was not found")
+        )
 }

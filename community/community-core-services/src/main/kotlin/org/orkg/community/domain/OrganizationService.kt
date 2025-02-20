@@ -1,6 +1,5 @@
 package org.orkg.community.domain
 
-import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.OrganizationId
 import org.orkg.community.input.OrganizationUseCases
@@ -12,12 +11,14 @@ import org.orkg.mediastorage.input.CreateImageUseCase
 import org.orkg.mediastorage.input.ImageUseCases
 import org.orkg.spring.data.annotations.TransactionalOnJPA
 import org.springframework.stereotype.Service
+import java.util.Optional
+import java.util.UUID
 
 @Service
 @TransactionalOnJPA
 class OrganizationService(
     private val postgresOrganizationRepository: OrganizationRepository,
-    private val imageService: ImageUseCases
+    private val imageService: ImageUseCases,
 ) : OrganizationUseCases {
     override fun create(
         id: OrganizationId?,
@@ -26,7 +27,7 @@ class OrganizationService(
         url: String,
         displayId: String,
         type: OrganizationType,
-        logoId: ImageId?
+        logoId: ImageId?,
     ): OrganizationId {
         val organizationId = id ?: OrganizationId(UUID.randomUUID())
         val newOrganization = Organization(
@@ -61,14 +62,17 @@ class OrganizationService(
         val found = postgresOrganizationRepository.findById(organization.id!!)
             .orElseThrow { OrganizationNotFound(organization.id!!) }
 
-        if (organization.name != found.name)
+        if (organization.name != found.name) {
             found.name = organization.name
+        }
 
-        if (organization.homepage != found.homepage)
+        if (organization.homepage != found.homepage) {
             found.homepage = organization.homepage
+        }
 
-        if (organization.type != found.type)
+        if (organization.type != found.type) {
             found.type = organization.type
+        }
 
         postgresOrganizationRepository.save(found)
     }
@@ -78,8 +82,11 @@ class OrganizationService(
     override fun findLogoById(id: OrganizationId): Optional<Image> {
         val organization = postgresOrganizationRepository.findById(id)
             .orElseThrow { OrganizationNotFound(id) }
-        return if (organization.logoId != null) imageService.findById(ImageId(organization.logoId!!.value))
-        else Optional.empty()
+        return if (organization.logoId != null) {
+            imageService.findById(ImageId(organization.logoId!!.value))
+        } else {
+            Optional.empty()
+        }
     }
 
     override fun updateLogo(id: OrganizationId, image: UpdateOrganizationUseCases.RawImage, contributor: ContributorId?) {
@@ -92,7 +99,7 @@ class OrganizationService(
 
     override fun update(
         contributorId: ContributorId,
-        command: UpdateOrganizationUseCases.UpdateOrganizationRequest
+        command: UpdateOrganizationUseCases.UpdateOrganizationRequest,
     ) {
         val organization = postgresOrganizationRepository.findById(command.id)
             .orElseThrow { OrganizationNotFound(command.id) }

@@ -7,16 +7,16 @@ data class MetricRepresentation(
     val description: String,
     val group: String,
     val value: Number,
-    val parameters: List<ParameterSpecRepresentation>
+    val parameters: List<ParameterSpecRepresentation>,
 )
 
 data class ParameterSpecRepresentation(
     val id: String,
     val name: String,
     val description: String,
-    val type: String
+    val type: String,
 )
 
 data class EndpointReference(
-    val href: URI
+    val href: URI,
 )

@@ -7,7 +7,7 @@ import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.UnsafeResourceUseCases
 
 class ComparisonVersionResourceCreator(
-    private val unsafeResourceUseCases: UnsafeResourceUseCases
+    private val unsafeResourceUseCases: UnsafeResourceUseCases,
 ) : CreateComparisonAction {
     override fun invoke(command: CreateComparisonCommand, state: State): State {
         val comparisonId = unsafeResourceUseCases.create(

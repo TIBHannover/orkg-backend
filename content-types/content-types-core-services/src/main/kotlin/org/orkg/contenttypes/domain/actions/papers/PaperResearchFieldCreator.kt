@@ -8,11 +8,11 @@ import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
 class PaperResearchFieldCreator(
-    private val statementCollectionPropertyCreator: StatementCollectionPropertyCreator
+    private val statementCollectionPropertyCreator: StatementCollectionPropertyCreator,
 ) : CreatePaperAction {
     constructor(
         literalService: LiteralUseCases,
-        unsafeStatementUseCases: UnsafeStatementUseCases
+        unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(StatementCollectionPropertyCreator(literalService, unsafeStatementUseCases))
 
     override operator fun invoke(command: CreatePaperCommand, state: CreatePaperState): CreatePaperState =

@@ -7,15 +7,15 @@ import org.orkg.contenttypes.input.LiteratureListSectionDefinition
 import org.orkg.graph.output.ResourceRepository
 
 class LiteratureListSectionCreateValidator(
-    private val abstractLiteratureListSectionValidator: AbstractLiteratureListSectionValidator
+    private val abstractLiteratureListSectionValidator: AbstractLiteratureListSectionValidator,
 ) : CreateLiteratureListSectionAction {
     constructor(
-        resourceRepository: ResourceRepository
+        resourceRepository: ResourceRepository,
     ) : this(AbstractLiteratureListSectionValidator(resourceRepository))
 
     override fun invoke(
         command: CreateLiteratureListSectionCommand,
-        state: CreateLiteratureListSectionState
+        state: CreateLiteratureListSectionState,
     ): CreateLiteratureListSectionState =
         state.also {
             abstractLiteratureListSectionValidator.validate(

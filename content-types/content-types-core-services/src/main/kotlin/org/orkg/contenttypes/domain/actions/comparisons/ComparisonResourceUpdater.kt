@@ -8,7 +8,7 @@ import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 
 class ComparisonResourceUpdater(
-    private val unsafeResourceUseCases: UnsafeResourceUseCases
+    private val unsafeResourceUseCases: UnsafeResourceUseCases,
 ) : UpdateComparisonAction {
     override fun invoke(command: UpdateComparisonCommand, state: State): State {
         unsafeResourceUseCases.update(

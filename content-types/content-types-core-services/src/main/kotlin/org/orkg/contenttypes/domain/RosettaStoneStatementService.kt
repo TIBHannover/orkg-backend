@@ -1,8 +1,5 @@
 package org.orkg.contenttypes.domain
 
-import java.time.Clock
-import java.time.OffsetDateTime
-import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -53,6 +50,9 @@ import org.orkg.graph.output.ThingRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
+import java.time.Clock
+import java.time.OffsetDateTime
+import java.util.Optional
 
 @Component
 class RosettaStoneStatementService(
@@ -72,7 +72,7 @@ class RosettaStoneStatementService(
     private val listService: ListUseCases,
     private val contributorRepository: ContributorRepository,
     private val classHierarchyRepository: ClassHierarchyRepository,
-    private val clock: Clock = Clock.systemDefaultZone()
+    private val clock: Clock = Clock.systemDefaultZone(),
 ) : RosettaStoneStatementUseCases {
     override fun findByIdOrVersionId(id: ThingId): Optional<RosettaStoneStatement> =
         repository.findByIdOrVersionId(id)
@@ -87,7 +87,7 @@ class RosettaStoneStatementService(
         createdAtStart: OffsetDateTime?,
         createdAtEnd: OffsetDateTime?,
         observatoryId: ObservatoryId?,
-        organizationId: OrganizationId?
+        organizationId: OrganizationId?,
     ): Page<RosettaStoneStatement> =
         repository.findAll(
             pageable = pageable,

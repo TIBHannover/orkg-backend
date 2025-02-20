@@ -1,8 +1,5 @@
 package org.orkg.community.adapter.output.jpa.internal
 
-import org.orkg.community.domain.ObservatoryFilter
-import java.time.LocalDateTime
-import java.util.*
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
@@ -10,7 +7,10 @@ import jakarta.persistence.Table
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.ThingId
+import org.orkg.community.domain.ObservatoryFilter
 import org.orkg.community.domain.ObservatoryFilterId
+import java.time.LocalDateTime
+import java.util.UUID
 
 @Entity
 @Table(name = "observatory_filters")

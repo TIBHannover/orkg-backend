@@ -10,7 +10,7 @@ import org.orkg.graph.output.ResourceRepository
 
 class PaperExistenceValidator(
     private val paperService: PaperService,
-    private val resourceRepository: ResourceRepository
+    private val resourceRepository: ResourceRepository,
 ) : UpdatePaperAction {
     override fun invoke(command: UpdatePaperCommand, state: UpdatePaperState): UpdatePaperState {
         val resource = resourceRepository.findById(command.paperId)

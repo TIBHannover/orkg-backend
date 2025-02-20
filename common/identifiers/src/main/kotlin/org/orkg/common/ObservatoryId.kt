@@ -1,9 +1,8 @@
 package org.orkg.common
 
-import java.util.*
+import java.util.UUID
 
 data class ObservatoryId(val value: UUID) {
-
     constructor(s: String) : this(UUID.fromString(s))
 
     companion object {

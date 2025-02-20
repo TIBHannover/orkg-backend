@@ -11,13 +11,13 @@ import org.orkg.graph.input.UnsafeStatementUseCases
 
 abstract class IdentifierCreator(
     protected val unsafeStatementUseCases: UnsafeStatementUseCases,
-    protected val literalService: LiteralUseCases
+    protected val literalService: LiteralUseCases,
 ) {
     internal fun create(
         contributorId: ContributorId,
         identifiers: Map<String, List<String>>,
         identifierDefinitions: Set<Identifier>,
-        subjectId: ThingId
+        subjectId: ThingId,
     ) {
         val parsedIdentifiers = identifierDefinitions.parse(identifiers, validate = false)
         parsedIdentifiers.forEach { (identifier, values) ->

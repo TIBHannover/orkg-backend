@@ -14,14 +14,18 @@ import org.orkg.contenttypes.domain.ConfiguredComparisonTargetCell
 
 class ContentTypeJacksonModule : SimpleModule() {
     override fun setupModule(context: SetupContext?) {
-        context?.addDeserializers(SimpleDeserializers().apply {
-            addDeserializer(IdentifierMapDTO::class.java, IdentifierMapDTODeserializer())
-            addDeserializer(TemplatePropertyRequest::class.java, TemplatePropertyRequestDeserializer())
-            addDeserializer(TemplatePropertyRepresentation::class.java, TemplatePropertyRepresentationDeserializer())
-        })
-        context?.addSerializers(SimpleSerializers().apply {
-            addSerializer(IdentifierMapDTO::class.java, IdentifierMapDTOSerializer())
-        })
+        context?.addDeserializers(
+            SimpleDeserializers().apply {
+                addDeserializer(IdentifierMapDTO::class.java, IdentifierMapDTODeserializer())
+                addDeserializer(TemplatePropertyRequest::class.java, TemplatePropertyRequestDeserializer())
+                addDeserializer(TemplatePropertyRepresentation::class.java, TemplatePropertyRepresentationDeserializer())
+            }
+        )
+        context?.addSerializers(
+            SimpleSerializers().apply {
+                addSerializer(IdentifierMapDTO::class.java, IdentifierMapDTOSerializer())
+            }
+        )
         context?.setMixInAnnotations(ComparisonConfig::class.java, ComparisonConfigMixin::class.java)
         context?.setMixInAnnotations(ComparisonHeaderCell::class.java, ComparisonHeaderCellMixin::class.java)
         context?.setMixInAnnotations(ComparisonIndexCell::class.java, ComparisonIndexCellMixin::class.java)

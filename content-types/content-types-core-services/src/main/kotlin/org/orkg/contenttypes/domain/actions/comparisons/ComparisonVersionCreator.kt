@@ -21,7 +21,7 @@ class ComparisonVersionCreator(
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
     private val literalService: LiteralUseCases,
     private val listService: ListUseCases,
-    private val comparisonPublishedRepository: ComparisonPublishedRepository
+    private val comparisonPublishedRepository: ComparisonPublishedRepository,
 ) : PublishComparisonAction {
     override fun invoke(command: PublishComparisonCommand, state: State): State {
         val comparison = state.comparison!!

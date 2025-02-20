@@ -3,7 +3,6 @@ package org.orkg.graph.adapter.input.rest
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
-import java.util.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ObservatoryId
@@ -35,11 +34,13 @@ import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.util.UUID
 
-@ContextConfiguration(classes = [ObservatoryResourceController::class, ExceptionHandler::class, FixedClockConfig::class, WebMvcConfiguration::class])
+@ContextConfiguration(
+    classes = [ObservatoryResourceController::class, ExceptionHandler::class, FixedClockConfig::class, WebMvcConfiguration::class]
+)
 @WebMvcTest(controllers = [ObservatoryResourceController::class])
 internal class ObservatoryResourceControllerUnitTest : MockMvcBaseTest("observatory-resources") {
-
     @MockkBean
     private lateinit var resourceService: ResourceUseCases
 

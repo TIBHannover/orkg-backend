@@ -16,7 +16,6 @@ import org.springframework.data.domain.PageRequest
 
 @Neo4jContainerIntegrationTest
 internal class ResourceServiceIntegrationTest {
-
     @Autowired
     private lateinit var service: ResourceUseCases
 

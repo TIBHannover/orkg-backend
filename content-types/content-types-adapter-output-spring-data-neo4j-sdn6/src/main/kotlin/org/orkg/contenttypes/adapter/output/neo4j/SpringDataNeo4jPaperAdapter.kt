@@ -1,7 +1,5 @@
 package org.orkg.contenttypes.adapter.output.neo4j
 
-import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import org.neo4j.cypherdsl.core.Condition
 import org.neo4j.cypherdsl.core.Cypher.anonParameter
 import org.neo4j.cypherdsl.core.Cypher.collect
@@ -49,6 +47,8 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Component
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 
 private const val RELATED = "RELATED"
 private const val FULLTEXT_INDEX_FOR_LABEL = "fulltext_idx_for_paper_on_label"
@@ -56,9 +56,8 @@ private const val FULLTEXT_INDEX_FOR_LABEL = "fulltext_idx_for_paper_on_label"
 @Component
 class SpringDataNeo4jPaperAdapter(
     private val neo4jRepository: Neo4jPaperRepository,
-    private val cypherQueryBuilderFactory: CypherQueryBuilderFactory
+    private val cypherQueryBuilderFactory: CypherQueryBuilderFactory,
 ) : PaperRepository {
-
     override fun findAllPapersRelatedToResource(id: ThingId, pageable: Pageable): Page<PaperResourceWithPath> =
         neo4jRepository.findAllPapersRelatedToResource(id, pageable)
             .map { it.toPaperResourceWithPath() }
@@ -78,7 +77,7 @@ class SpringDataNeo4jPaperAdapter(
         researchField: ThingId?,
         includeSubfields: Boolean,
         sustainableDevelopmentGoal: ThingId?,
-        mentionings: Set<ThingId>?
+        mentionings: Set<ThingId>?,
     ): Page<Resource> =
         buildFindAllQuery(
             sort = pageable.sort.orElseGet { Sort.by("created_at") },
@@ -112,7 +111,7 @@ class SpringDataNeo4jPaperAdapter(
         researchField: ThingId?,
         includeSubfields: Boolean,
         sustainableDevelopmentGoal: ThingId?,
-        mentionings: Set<ThingId>?
+        mentionings: Set<ThingId>?,
     ): Long =
         buildFindAllQuery(
             label = label,
@@ -146,7 +145,7 @@ class SpringDataNeo4jPaperAdapter(
         researchField: ThingId?,
         includeSubfields: Boolean,
         sustainableDevelopmentGoal: ThingId?,
-        mentionings: Set<ThingId>?
+        mentionings: Set<ThingId>?,
     ) = cypherQueryBuilderFactory.newBuilder(QueryCache.Uncached)
         .withCommonQuery {
             val node = node("Paper").named("node")
@@ -220,8 +219,11 @@ class SpringDataNeo4jPaperAdapter(
                         .reduceOrNull(Condition::or) ?: noCondition()
                 },
                 verified.toCondition {
-                    if (it) node.property("verified").eq(literalOf<Boolean>(true))
-                    else node.property("verified").eq(literalOf<Boolean>(false)).or(node.property("verified").isNull)
+                    if (it) {
+                        node.property("verified").eq(literalOf<Boolean>(true))
+                    } else {
+                        node.property("verified").eq(literalOf<Boolean>(false)).or(node.property("verified").isNull)
+                    }
                 },
                 createdBy.toCondition { node.property("created_by").eq(anonParameter(it.value.toString())) },
                 createdAtStart.toCondition { node.property("created_at").gte(anonParameter(it.format(ISO_OFFSET_DATE_TIME))) },

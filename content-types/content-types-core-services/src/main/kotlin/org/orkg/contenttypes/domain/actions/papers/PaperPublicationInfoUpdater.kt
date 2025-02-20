@@ -21,8 +21,9 @@ class PaperPublicationInfoUpdater(
     resourceRepository: ResourceRepository,
     private val statementService: StatementUseCases,
     unsafeStatementUseCases: UnsafeStatementUseCases,
-    literalService: LiteralUseCases
-) : PublicationInfoCreator(unsafeResourceUseCases, resourceRepository, unsafeStatementUseCases, literalService), UpdatePaperAction {
+    literalService: LiteralUseCases,
+) : PublicationInfoCreator(unsafeResourceUseCases, resourceRepository, unsafeStatementUseCases, literalService),
+    UpdatePaperAction {
     override fun invoke(command: UpdatePaperCommand, state: UpdatePaperState): UpdatePaperState {
         if (command.publicationInfo != null) {
             if (state.paper?.publicationInfo?.publishedMonth != command.publicationInfo!!.publishedMonth) {
@@ -65,7 +66,7 @@ class PaperPublicationInfoUpdater(
         statements: List<GeneralStatement>,
         newMonth: Int?,
         contributorId: ContributorId,
-        subjectId: ThingId
+        subjectId: ThingId,
     ) {
         if (statements.isNotEmpty()) {
             statementService.deleteAllById(statements.ids)
@@ -80,7 +81,7 @@ class PaperPublicationInfoUpdater(
         statements: List<GeneralStatement>,
         newYear: Long?,
         contributorId: ContributorId,
-        subjectId: ThingId
+        subjectId: ThingId,
     ) {
         if (statements.isNotEmpty()) {
             statementService.deleteAllById(statements.ids)
@@ -95,7 +96,7 @@ class PaperPublicationInfoUpdater(
         statements: List<GeneralStatement>,
         newVenue: String?,
         contributorId: ContributorId,
-        subjectId: ThingId
+        subjectId: ThingId,
     ) {
         if (statements.isNotEmpty()) {
             statementService.deleteAllById(statements.ids)
@@ -110,7 +111,7 @@ class PaperPublicationInfoUpdater(
         statements: List<GeneralStatement>,
         newUrl: ParsedIRI?,
         contributorId: ContributorId,
-        subjectId: ThingId
+        subjectId: ThingId,
     ) {
         if (statements.isNotEmpty()) {
             statementService.deleteAllById(statements.ids)

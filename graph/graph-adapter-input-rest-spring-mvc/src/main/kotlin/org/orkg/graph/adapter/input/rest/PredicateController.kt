@@ -1,6 +1,5 @@
 package org.orkg.graph.adapter.input.rest
 
-import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.RequireLogin
@@ -31,16 +30,18 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
+import java.time.OffsetDateTime
 
 @RestController
 @RequestMapping("/api/predicates", produces = [MediaType.APPLICATION_JSON_VALUE])
 class PredicateController(
     override val statementService: StatementUseCases,
-    private val service: PredicateUseCases
+    private val service: PredicateUseCases,
 ) : PredicateRepresentationAdapter {
-
     @GetMapping("/{id}")
-    fun findById(@PathVariable id: ThingId): PredicateRepresentation =
+    fun findById(
+        @PathVariable id: ThingId,
+    ): PredicateRepresentation =
         service.findById(id).mapToPredicateRepresentation().orElseThrow { PredicateNotFound(id) }
 
     @GetMapping
@@ -50,7 +51,7 @@ class PredicateController(
         @RequestParam("created_by", required = false) createdBy: ContributorId?,
         @RequestParam("created_at_start", required = false) @DateTimeFormat(iso = ISO.DATE_TIME) createdAtStart: OffsetDateTime?,
         @RequestParam("created_at_end", required = false) @DateTimeFormat(iso = ISO.DATE_TIME) createdAtEnd: OffsetDateTime?,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<PredicateRepresentation> =
         service.findAll(
             pageable = pageable,
@@ -103,14 +104,17 @@ class PredicateController(
 
     @DeleteMapping("/{id}")
     @RequireLogin
-    fun delete(@PathVariable id: ThingId, currentUser: Authentication?): ResponseEntity<Unit> {
+    fun delete(
+        @PathVariable id: ThingId,
+        currentUser: Authentication?,
+    ): ResponseEntity<Unit> {
         service.delete(id, currentUser.contributorId())
         return ResponseEntity.noContent().build()
     }
 
     data class CreatePredicateRequest(
         val id: ThingId?,
-        val label: String
+        val label: String,
     )
 
     data class ReplacePredicateRequest(

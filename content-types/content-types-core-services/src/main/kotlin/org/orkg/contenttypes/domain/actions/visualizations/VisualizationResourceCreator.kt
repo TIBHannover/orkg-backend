@@ -7,7 +7,7 @@ import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.UnsafeResourceUseCases
 
 class VisualizationResourceCreator(
-    private val unsafeResourceUseCases: UnsafeResourceUseCases
+    private val unsafeResourceUseCases: UnsafeResourceUseCases,
 ) : VisualizationAction {
     override operator fun invoke(command: CreateVisualizationCommand, state: State): State {
         val visualizationId = unsafeResourceUseCases.create(

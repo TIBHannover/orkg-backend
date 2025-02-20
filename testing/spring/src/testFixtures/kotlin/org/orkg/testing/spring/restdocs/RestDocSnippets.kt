@@ -1,10 +1,10 @@
 package org.orkg.testing.spring.restdocs
 
-import java.time.OffsetDateTime
 import org.springframework.restdocs.payload.FieldDescriptor
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.restdocs.snippet.AbstractDescriptor
+import java.time.OffsetDateTime
 
 fun pageableDetailedFieldParameters(): List<FieldDescriptor> = listOf(
     fieldWithPath("content").description("The result of the request as a (sorted) array."),
@@ -40,25 +40,27 @@ fun pageableDetailedFieldParameters(): List<FieldDescriptor> = listOf(
 
 fun ignorePageableFieldsExceptContent(): Array<FieldDescriptor> = arrayOf(
     subsectionWithPath("pageable").ignored(),
-    *(listOf(
-        "empty",
-        "first",
-        "last",
-        "number",
-        "numberOfElements",
-        "size",
-        "sort",
-        "sort.empty",
-        "sort.sorted",
-        "sort.unsorted",
-        "totalElements",
-        "totalPages",
-        "page",
-        "page.number",
-        "page.size",
-        "page.total_elements",
-        "page.total_pages",
-    ).map { fieldWithPath(it).ignored() }.toTypedArray())
+    *(
+        listOf(
+            "empty",
+            "first",
+            "last",
+            "number",
+            "numberOfElements",
+            "size",
+            "sort",
+            "sort.empty",
+            "sort.sorted",
+            "sort.unsorted",
+            "totalElements",
+            "totalPages",
+            "page",
+            "page.number",
+            "page.size",
+            "page.total_elements",
+            "page.total_pages",
+        ).map { fieldWithPath(it).ignored() }.toTypedArray()
+    )
 )
 
 /**
@@ -73,14 +75,10 @@ fun ignorePageableFieldsExceptContent(): Array<FieldDescriptor> = arrayOf(
 fun timestampFieldWithPath(path: String, suffix: String): FieldDescriptor = fieldWithPath(path)
     .description(
         "The <<timestamp-representation,timestamp>> when $suffix. " +
-        "(Also see https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/OffsetDateTime.html[JavaDoc])."
+            "(Also see https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/OffsetDateTime.html[JavaDoc])."
     )
     .type(OffsetDateTime::class.simpleName)
 
-fun <T : AbstractDescriptor<T>> AbstractDescriptor<T>.deprecated(): T {
-    return description("*Deprecated*. $description")
-}
+fun <T : AbstractDescriptor<T>> AbstractDescriptor<T>.deprecated(): T = description("*Deprecated*. $description")
 
-fun <T : AbstractDescriptor<T>> AbstractDescriptor<T>.deprecated(replaceWith: String): T {
-    return description("*Deprecated*. See `$replaceWith` for replacement. $description")
-}
+fun <T : AbstractDescriptor<T>> AbstractDescriptor<T>.deprecated(replaceWith: String): T = description("*Deprecated*. See `$replaceWith` for replacement. $description")

@@ -1,12 +1,12 @@
 package org.orkg.mediastorage.domain
 
-import java.time.Clock
-import java.time.OffsetDateTime
 import org.orkg.mediastorage.input.CreateImageUseCase
 import org.orkg.mediastorage.input.ImageUseCases
 import org.orkg.mediastorage.output.ImageRepository
 import org.orkg.spring.data.annotations.TransactionalOnJPA
 import org.springframework.stereotype.Service
+import java.time.Clock
+import java.time.OffsetDateTime
 
 @Service
 @TransactionalOnJPA

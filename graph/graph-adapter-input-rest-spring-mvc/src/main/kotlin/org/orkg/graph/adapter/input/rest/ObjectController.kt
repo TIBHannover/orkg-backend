@@ -6,9 +6,9 @@ import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
 import org.orkg.graph.domain.ResourceNotFound
-import org.orkg.graph.input.CreateObjectUseCase
 import org.orkg.graph.input.CreateObjectUseCase.CreateObjectRequest
 import org.orkg.graph.input.FormattedLabelUseCases
+import org.orkg.graph.input.ObjectUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.springframework.http.MediaType
@@ -27,18 +27,17 @@ import org.springframework.web.util.UriComponentsBuilder
 @RequestMapping("/api/objects", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ObjectController(
     private val resourceService: ResourceUseCases,
-    private val objectService: CreateObjectUseCase,
+    private val objectService: ObjectUseCases,
     override val statementService: StatementUseCases,
     override val formattedLabelService: FormattedLabelUseCases,
 ) : ResourceRepresentationAdapter {
-
     @RequireLogin
     @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun add(
         @RequestBody obj: CreateObjectRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         currentUser: Authentication?,
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): ResponseEntity<ResourceRepresentation> {
         val id = objectService.createObject(obj, null, currentUser.contributorId().value)
         val location = uriComponentsBuilder
@@ -55,7 +54,7 @@ class ObjectController(
         @RequestBody obj: CreateObjectRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         currentUser: Authentication?,
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): ResponseEntity<ResourceRepresentation> {
         resourceService
             .findById(id)

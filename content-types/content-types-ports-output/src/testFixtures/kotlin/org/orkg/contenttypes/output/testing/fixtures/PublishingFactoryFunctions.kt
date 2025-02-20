@@ -1,11 +1,11 @@
 package org.orkg.contenttypes.output.testing.fixtures
 
-import java.net.URI
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.output.DoiService
 import org.orkg.graph.domain.Classes
+import java.net.URI
 
 fun dummyRegisterDoiCommand(): DoiService.RegisterCommand =
     DoiService.RegisterCommand(

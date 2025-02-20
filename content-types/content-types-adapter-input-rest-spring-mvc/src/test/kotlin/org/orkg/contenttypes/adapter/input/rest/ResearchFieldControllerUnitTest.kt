@@ -3,7 +3,6 @@ package org.orkg.contenttypes.adapter.input.rest
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
-import java.util.*
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
@@ -11,7 +10,7 @@ import org.orkg.common.configuration.WebMvcConfiguration
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.community.testing.fixtures.createContributor
-import org.orkg.contenttypes.input.RetrieveResearchFieldUseCase
+import org.orkg.contenttypes.input.ResearchFieldUseCases
 import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
@@ -24,9 +23,9 @@ import org.orkg.graph.testing.fixtures.createComparisonResource
 import org.orkg.graph.testing.fixtures.createPaperResource
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createVisualizationResource
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectResource
+import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.restdocs.ignorePageableFieldsExceptContent
@@ -40,6 +39,8 @@ import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.util.Optional
+import java.util.UUID
 
 // TODO: Move to a different place
 val supportedClasses = setOf(
@@ -51,11 +52,19 @@ val supportedClasses = setOf(
     "SmartReviewPublished",
 ).sorted().toAsciidoc()
 
-@ContextConfiguration(classes = [ResearchFieldController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class, WebMvcConfiguration::class])
+@ContextConfiguration(
+    classes = [
+        ResearchFieldController::class,
+        ExceptionHandler::class,
+        CommonJacksonModule::class,
+        FixedClockConfig::class,
+        WebMvcConfiguration::class
+    ]
+)
 @WebMvcTest(controllers = [ResearchFieldController::class])
 internal class ResearchFieldControllerUnitTest : MockMvcBaseTest("research-fields") {
     @MockkBean
-    private lateinit var useCases: RetrieveResearchFieldUseCase
+    private lateinit var useCases: ResearchFieldUseCases
 
     @MockkBean
     private lateinit var resourceService: ResourceUseCases

@@ -1,6 +1,5 @@
 package org.orkg.contenttypes.domain.actions.smartreviews
 
-import java.net.URI
 import org.orkg.contenttypes.domain.actions.PublishSmartReviewCommand
 import org.orkg.contenttypes.domain.actions.SingleStatementPropertyCreator
 import org.orkg.contenttypes.domain.actions.smartreviews.PublishSmartReviewAction.State
@@ -8,17 +7,18 @@ import org.orkg.contenttypes.output.DoiService
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
+import java.net.URI
 
 class SmartReviewVersionDoiPublisher(
     private val singleStatementPropertyCreator: SingleStatementPropertyCreator,
     private val doiService: DoiService,
-    private val smartReviewPublishBaseUri: String
+    private val smartReviewPublishBaseUri: String,
 ) : PublishSmartReviewAction {
     constructor(
         unsafeStatementUseCases: UnsafeStatementUseCases,
         literalService: LiteralUseCases,
         doiService: DoiService,
-        smartReviewPublishBaseUri: String
+        smartReviewPublishBaseUri: String,
     ) : this(SingleStatementPropertyCreator(literalService, unsafeStatementUseCases), doiService, smartReviewPublishBaseUri)
 
     override fun invoke(command: PublishSmartReviewCommand, state: State): State {

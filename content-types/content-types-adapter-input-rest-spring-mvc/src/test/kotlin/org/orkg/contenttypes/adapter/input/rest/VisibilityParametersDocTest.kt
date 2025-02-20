@@ -1,9 +1,10 @@
 package org.orkg.contenttypes.adapter.input.rest
 
 import org.junit.jupiter.api.Test
+import org.orkg.contenttypes.adapter.input.rest.VisibilityParametersDocTest.VisibilityRequestParametersDummyController
 import org.orkg.graph.domain.VisibilityFilter
-import org.orkg.graph.testing.asciidoc.visibilityFilterRequestParameter
 import org.orkg.graph.testing.asciidoc.legacyVisibilityFilterRequestParameters
+import org.orkg.graph.testing.asciidoc.visibilityFilterRequestParameter
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus
@@ -16,8 +17,8 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
-@ContextConfiguration(classes = [VisibilityParametersDocTest.VisibilityRequestParametersDummyController::class])
-@WebMvcTest(controllers = [VisibilityParametersDocTest.VisibilityRequestParametersDummyController::class])
+@ContextConfiguration(classes = [VisibilityRequestParametersDummyController::class])
+@WebMvcTest(controllers = [VisibilityRequestParametersDummyController::class])
 internal class VisibilityParametersDocTest : MockMvcBaseTest("visibility") {
     @Test
     fun legacyRequestParams() {

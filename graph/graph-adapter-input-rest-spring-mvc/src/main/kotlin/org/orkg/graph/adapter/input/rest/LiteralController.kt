@@ -1,6 +1,5 @@
 package org.orkg.graph.adapter.input.rest
 
-import java.time.OffsetDateTime
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
 import org.orkg.common.ContributorId
@@ -31,15 +30,17 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
+import java.time.OffsetDateTime
 
 @RestController
 @RequestMapping("/api/literals", produces = [MediaType.APPLICATION_JSON_VALUE])
 class LiteralController(
-    private val service: LiteralUseCases
+    private val service: LiteralUseCases,
 ) : LiteralRepresentationAdapter {
-
     @GetMapping("/{id}")
-    fun findById(@PathVariable id: ThingId): LiteralRepresentation =
+    fun findById(
+        @PathVariable id: ThingId,
+    ): LiteralRepresentation =
         service.findById(id)
             .mapToLiteralRepresentation()
             .orElseThrow { LiteralNotFound(id) }
@@ -51,7 +52,7 @@ class LiteralController(
         @RequestParam("created_by", required = false) createdBy: ContributorId?,
         @RequestParam("created_at_start", required = false) @DateTimeFormat(iso = ISO.DATE_TIME) createdAtStart: OffsetDateTime?,
         @RequestParam("created_at_end", required = false) @DateTimeFormat(iso = ISO.DATE_TIME) createdAtEnd: OffsetDateTime?,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<LiteralRepresentation> =
         service.findAll(
             pageable = pageable,
@@ -111,12 +112,12 @@ class LiteralController(
         // No restriction, as we need to support empty values; at lease for strings. See TIBHannover/orkg/orkg-backend!152.
         val label: String,
         @field:NotBlank
-        val datatype: String = "xsd:string"
+        val datatype: String = "xsd:string",
     )
 
     data class LiteralUpdateRequest(
         val id: ThingId?,
         val label: String?,
-        val datatype: String?
+        val datatype: String?,
     )
 }

@@ -10,13 +10,13 @@ import org.orkg.graph.output.PredicateRepository
 class TemplatePropertiesValidator<T, S>(
     private val abstractTemplatePropertyValidator: AbstractTemplatePropertyValidator,
     private val newValueSelector: (T) -> List<TemplatePropertyDefinition>?,
-    private val oldValueSelector: (S) -> List<TemplateProperty>
+    private val oldValueSelector: (S) -> List<TemplateProperty>,
 ) : Action<T, S> {
     constructor(
         predicateRepository: PredicateRepository,
         classRepository: ClassRepository,
         newValueSelector: (T) -> List<TemplatePropertyDefinition>?,
-        oldValueSelector: (S) -> List<TemplateProperty> = { emptyList() }
+        oldValueSelector: (S) -> List<TemplateProperty> = { emptyList() },
     ) : this(
         AbstractTemplatePropertyValidator(predicateRepository, classRepository),
         newValueSelector,

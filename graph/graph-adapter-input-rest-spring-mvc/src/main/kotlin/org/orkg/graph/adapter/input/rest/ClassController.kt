@@ -1,7 +1,6 @@
 package org.orkg.graph.adapter.input.rest
 
 import jakarta.validation.Valid
-import java.time.OffsetDateTime
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
@@ -35,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
+import java.time.OffsetDateTime
 
 @RestController
 @RequestMapping("/api/classes", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -42,17 +42,23 @@ class ClassController(
     private val service: ClassUseCases,
     override val statementService: StatementUseCases,
 ) : ClassRepresentationAdapter {
-
     @GetMapping("/{id}")
-    fun findById(@PathVariable id: ThingId): ClassRepresentation =
+    fun findById(
+        @PathVariable id: ThingId,
+    ): ClassRepresentation =
         service.findById(id).mapToClassRepresentation().orElseThrow { ClassNotFound.withThingId(id) }
 
     @GetMapping(params = ["uri"])
-    fun findByURI(@RequestParam uri: ParsedIRI): ClassRepresentation =
+    fun findByURI(
+        @RequestParam uri: ParsedIRI,
+    ): ClassRepresentation =
         service.findByURI(uri).mapToClassRepresentation().orElseThrow { ClassNotFound.withURI(uri) }
 
     @GetMapping(params = ["ids"])
-    fun findByIds(@RequestParam ids: List<ThingId>, pageable: Pageable): Page<ClassRepresentation> =
+    fun findByIds(
+        @RequestParam ids: List<ThingId>,
+        pageable: Pageable,
+    ): Page<ClassRepresentation> =
         service.findAllById(ids, pageable).mapToClassRepresentation()
 
     @GetMapping
@@ -62,7 +68,7 @@ class ClassController(
         @RequestParam("created_by", required = false) createdBy: ContributorId?,
         @RequestParam("created_at_start", required = false) @DateTimeFormat(iso = ISO.DATE_TIME) createdAtStart: OffsetDateTime?,
         @RequestParam("created_at_end", required = false) @DateTimeFormat(iso = ISO.DATE_TIME) createdAtEnd: OffsetDateTime?,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<ClassRepresentation> =
         service.findAll(
             pageable = pageable,
@@ -100,7 +106,7 @@ class ClassController(
     fun replace(
         @PathVariable id: ThingId,
         @RequestBody request: ReplaceClassRequest,
-        uriComponentsBuilder: UriComponentsBuilder
+        uriComponentsBuilder: UriComponentsBuilder,
     ): ResponseEntity<ClassRepresentation> {
         service.replace(UpdateClassUseCase.ReplaceCommand(id, request.label, request.uri))
         val location = uriComponentsBuilder
@@ -115,7 +121,7 @@ class ClassController(
     fun update(
         @PathVariable id: ThingId,
         @Valid @RequestBody request: UpdateClassRequest,
-        uriComponentsBuilder: UriComponentsBuilder
+        uriComponentsBuilder: UriComponentsBuilder,
     ): ResponseEntity<Any> {
         service.update(UpdateClassUseCase.UpdateCommand(id, request.label, request.uri))
         val location = uriComponentsBuilder
@@ -128,7 +134,7 @@ class ClassController(
     data class CreateClassRequest(
         val id: ThingId?,
         val label: String,
-        val uri: ParsedIRI?
+        val uri: ParsedIRI?,
     )
 
     data class UpdateClassRequest(

@@ -2,12 +2,6 @@ package org.orkg
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
-import java.net.URI
-import java.net.http.HttpClient
-import java.net.http.HttpRequest
-import java.net.http.HttpResponse
-import java.time.OffsetDateTime
-import java.util.*
 import net.datafaker.Faker
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
@@ -34,6 +28,12 @@ import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.context.annotation.Profile
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Component
+import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
+import java.time.OffsetDateTime
+import java.util.Random
 
 @Component
 @Profile("datagen")
@@ -47,7 +47,6 @@ class PostgresDummyDataSetup(
     private val dummyDataUseCases: DummyDataUseCases,
     private val contributorRepository: ContributorRepository,
 ) : ApplicationRunner {
-
     @Autowired
     private lateinit var context: ConfigurableApplicationContext
 

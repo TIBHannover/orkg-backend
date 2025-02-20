@@ -4,8 +4,8 @@ import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import org.orkg.contenttypes.adapter.input.rest.ResearchFieldWithChildCountTest.FakeResearchFieldWithChildCountController
 import org.orkg.contenttypes.domain.ResearchFieldWithChildCount
-import org.orkg.graph.adapter.input.rest.mapping.ResearchFieldWithChildCountRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.ResearchFieldWithChildCountRepresentation
+import org.orkg.graph.adapter.input.rest.mapping.ResearchFieldWithChildCountRepresentationAdapter
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases

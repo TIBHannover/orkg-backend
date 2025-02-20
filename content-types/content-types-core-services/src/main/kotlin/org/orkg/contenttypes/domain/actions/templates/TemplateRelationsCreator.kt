@@ -23,7 +23,7 @@ class TemplateRelationsCreator(
     private fun linkResearchFields(
         contributorId: ContributorId,
         subjectId: ThingId,
-        researchFields: List<ThingId>
+        researchFields: List<ThingId>,
     ) {
         researchFields.forEach { researchFieldId ->
             unsafeStatementUseCases.create(
@@ -40,7 +40,7 @@ class TemplateRelationsCreator(
     private fun linkResearchProblems(
         contributorId: ContributorId,
         subjectId: ThingId,
-        researchProblems: List<ThingId>
+        researchProblems: List<ThingId>,
     ) {
         researchProblems.forEach { researchProblemId ->
             unsafeStatementUseCases.create(
@@ -57,7 +57,7 @@ class TemplateRelationsCreator(
     private fun linkPredicate(
         contributorId: ContributorId,
         subjectId: ThingId,
-        predicateId: ThingId
+        predicateId: ThingId,
     ) {
         unsafeStatementUseCases.create(
             CreateCommand(

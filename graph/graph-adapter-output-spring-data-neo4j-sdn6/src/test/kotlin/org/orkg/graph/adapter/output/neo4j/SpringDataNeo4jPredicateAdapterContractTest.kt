@@ -40,31 +40,31 @@ internal class SpringDataNeo4jPredicateAdapterContractTests(
     @Autowired private val springDataNeo4jClassAdapter: ClassRepository,
     @Autowired private val springDataNeo4jLiteralAdapter: LiteralRepository,
     @Autowired private val springDataNeo4jResourceAdapter: ResourceRepository,
-    @Autowired private val neo4jClient: Neo4jClient
+    @Autowired private val neo4jClient: Neo4jClient,
 ) : DescribeSpec({
-    include(
-        predicateRepositoryContract(
-            springDataNeo4jPredicateAdapter,
-            springDataNeo4jStatementAdapter,
-            springDataNeo4jClassAdapter,
-            springDataNeo4jLiteralAdapter,
-            springDataNeo4jResourceAdapter
+        include(
+            predicateRepositoryContract(
+                springDataNeo4jPredicateAdapter,
+                springDataNeo4jStatementAdapter,
+                springDataNeo4jClassAdapter,
+                springDataNeo4jLiteralAdapter,
+                springDataNeo4jResourceAdapter
+            )
         )
-    )
-    include(neo4jPredicateRepositoryContract(springDataNeo4jPredicateAdapter, neo4jClient))
+        include(neo4jPredicateRepositoryContract(springDataNeo4jPredicateAdapter, neo4jClient))
 
-    finalizeSpec {
-        springDataNeo4jStatementAdapter.deleteAll()
-        springDataNeo4jClassAdapter.deleteAll()
-        springDataNeo4jLiteralAdapter.deleteAll()
-        springDataNeo4jResourceAdapter.deleteAll()
-        springDataNeo4jPredicateAdapter.deleteAll()
-    }
-})
+        finalizeSpec {
+            springDataNeo4jStatementAdapter.deleteAll()
+            springDataNeo4jClassAdapter.deleteAll()
+            springDataNeo4jLiteralAdapter.deleteAll()
+            springDataNeo4jResourceAdapter.deleteAll()
+            springDataNeo4jPredicateAdapter.deleteAll()
+        }
+    })
 
 fun <R : PredicateRepository, C : Neo4jClient> neo4jPredicateRepositoryContract(
     repository: R,
-    neo4jClient: C
+    neo4jClient: C,
 ) = describeSpec {
     beforeTest {
         repository.deleteAll()

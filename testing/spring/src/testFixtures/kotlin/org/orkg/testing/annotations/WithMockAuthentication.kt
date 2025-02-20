@@ -1,7 +1,5 @@
 package org.orkg.testing.annotations
 
-import java.lang.annotation.Inherited
-import java.security.Principal
 import org.orkg.testing.MockUserId
 import org.springframework.core.annotation.AliasFor
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -12,6 +10,8 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.test.context.support.TestExecutionEvent
 import org.springframework.security.test.context.support.WithSecurityContext
 import org.springframework.security.test.context.support.WithSecurityContextFactory
+import java.lang.annotation.Inherited
+import java.security.Principal
 
 @Target(
     AnnotationTarget.FUNCTION,
@@ -30,7 +30,7 @@ annotation class WithMockAuthentication(
     vararg val value: String = [],
     val name: String = MockUserId.UNKNOWN,
     @get:AliasFor(annotation = WithSecurityContext::class)
-    val setupBefore: TestExecutionEvent = TestExecutionEvent.TEST_METHOD
+    val setupBefore: TestExecutionEvent = TestExecutionEvent.TEST_METHOD,
 ) {
     class Factory : WithSecurityContextFactory<WithMockAuthentication> {
         override fun createSecurityContext(annotation: WithMockAuthentication): SecurityContext =
@@ -38,12 +38,10 @@ annotation class WithMockAuthentication(
                 authentication = authentication(annotation)
             }
 
-        private fun authentication(annotation: WithMockAuthentication): Authentication {
-            return UsernamePasswordAuthenticationToken(
-                Principal { annotation.name },
-                "password",
-                annotation.authorities.map(::SimpleGrantedAuthority)
-            )
-        }
+        private fun authentication(annotation: WithMockAuthentication): Authentication = UsernamePasswordAuthenticationToken(
+            Principal { annotation.name },
+            "password",
+            annotation.authorities.map(::SimpleGrantedAuthority)
+        )
     }
 }

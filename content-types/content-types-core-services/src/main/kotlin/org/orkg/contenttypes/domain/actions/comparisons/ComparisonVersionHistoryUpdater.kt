@@ -11,7 +11,7 @@ import org.orkg.graph.input.UpdateResourceUseCase
 
 class ComparisonVersionHistoryUpdater(
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
-    private val unsafeResourceUseCases: UnsafeResourceUseCases
+    private val unsafeResourceUseCases: UnsafeResourceUseCases,
 ) : PublishComparisonAction {
     override fun invoke(command: PublishComparisonCommand, state: State): State {
         unsafeStatementUseCases.create(

@@ -4,16 +4,16 @@ import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonDeserializer
 import com.fasterxml.jackson.databind.JsonNode
-import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.toIRIOrNull
 import org.orkg.graph.domain.Class
+import java.time.OffsetDateTime
 
 class ClassDeserializer : JsonDeserializer<Class>() {
     override fun deserialize(
         p: JsonParser?,
-        ctxt: DeserializationContext?
+        ctxt: DeserializationContext?,
     ): Class = with(p!!.codec.readTree<JsonNode>(p)) {
         Class(
             id = ThingId(this["id"].asText()),

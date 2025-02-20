@@ -14,7 +14,7 @@ class TemplateTargetClassValidator<T, S>(
     private val classRepository: ClassRepository,
     private val statementRepository: StatementRepository,
     private val newValueSelector: (T) -> ThingId?,
-    private val oldValueSelector: (S) -> ThingId? = { null }
+    private val oldValueSelector: (S) -> ThingId? = { null },
 ) : Action<T, S> {
     override fun invoke(command: T, state: S): S {
         val newTargetClass = newValueSelector(command)

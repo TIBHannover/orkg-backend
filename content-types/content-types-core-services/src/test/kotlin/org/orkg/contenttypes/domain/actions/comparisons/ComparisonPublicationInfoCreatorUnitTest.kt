@@ -5,7 +5,6 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.time.OffsetDateTime
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
@@ -19,13 +18,16 @@ import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
+import java.time.OffsetDateTime
 
 internal class ComparisonPublicationInfoCreatorUnitTest : MockkBaseTest {
     private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()
 
     private val comparisonPublicationInfoCreator = ComparisonPublicationInfoCreator(
-        unsafeStatementUseCases, literalService, fixedClock
+        unsafeStatementUseCases,
+        literalService,
+        fixedClock
     )
 
     @Test

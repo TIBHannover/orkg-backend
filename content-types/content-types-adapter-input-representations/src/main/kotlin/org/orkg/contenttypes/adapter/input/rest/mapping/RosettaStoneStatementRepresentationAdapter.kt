@@ -1,17 +1,16 @@
 package org.orkg.contenttypes.adapter.input.rest.mapping
 
-import java.util.*
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.adapter.input.rest.RosettaStoneStatementRepresentation
 import org.orkg.contenttypes.domain.RosettaStoneStatement
 import org.orkg.contenttypes.domain.RosettaStoneStatementVersion
 import org.orkg.contenttypes.domain.RosettaStoneStatementVersionNotFound
 import org.springframework.data.domain.Page
+import java.util.Optional
 
 interface RosettaStoneStatementRepresentationAdapter : ThingReferenceRepresentationAdapter {
-
     fun Optional<RosettaStoneStatement>.mapToRosettaStoneStatementRepresentation(
-        versionId: ThingId
+        versionId: ThingId,
     ): Optional<RosettaStoneStatementRepresentation> = map { rosettaStoneStatement ->
         rosettaStoneStatement.findVersionById(versionId)
             ?.let { rosettaStoneStatement.toRosettaStoneStatementRepresentation(versionId, it) }
@@ -26,7 +25,7 @@ interface RosettaStoneStatementRepresentationAdapter : ThingReferenceRepresentat
 
     private fun RosettaStoneStatement.toRosettaStoneStatementRepresentation(
         requestedVersionId: ThingId,
-        version: RosettaStoneStatementVersion
+        version: RosettaStoneStatementVersion,
     ): RosettaStoneStatementRepresentation =
         RosettaStoneStatementRepresentation(
             id = requestedVersionId,

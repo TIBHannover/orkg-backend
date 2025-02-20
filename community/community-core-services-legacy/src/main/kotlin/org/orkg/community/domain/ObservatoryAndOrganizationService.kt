@@ -12,11 +12,12 @@ import org.springframework.stereotype.Component
 @Component
 class ObservatoryAndOrganizationService(
     private val repository: ContributorRepository,
-) : ObservatoryAuthUseCases, DummyDataUseCases {
+) : ObservatoryAuthUseCases,
+    DummyDataUseCases {
     override fun updateOrganizationAndObservatory(
         contributorId: ContributorId,
         organizationId: OrganizationId,
-        observatoryId: ObservatoryId
+        observatoryId: ObservatoryId,
     ) {
         var user = repository.findById(contributorId)
             .orElseThrow { ContributorNotFound(contributorId) }
@@ -27,7 +28,7 @@ class ObservatoryAndOrganizationService(
     override fun addUserObservatory(
         observatoryId: ObservatoryId,
         organizationId: OrganizationId,
-        contributorId: ContributorId
+        contributorId: ContributorId,
     ): Contributor {
         val contributor = repository.findById(contributorId)
             .orElseThrow { ContributorNotFound(contributorId) }

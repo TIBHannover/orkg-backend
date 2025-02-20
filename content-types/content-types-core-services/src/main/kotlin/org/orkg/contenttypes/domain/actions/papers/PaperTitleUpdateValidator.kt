@@ -9,7 +9,7 @@ import org.orkg.graph.domain.Label
 import org.orkg.graph.input.ResourceUseCases
 
 class PaperTitleUpdateValidator(
-    private val resourceService: ResourceUseCases
+    private val resourceService: ResourceUseCases,
 ) : UpdatePaperAction {
     override fun invoke(command: UpdatePaperCommand, state: UpdatePaperState): UpdatePaperState {
         if (command.title != null && command.title != state.paper!!.title) {

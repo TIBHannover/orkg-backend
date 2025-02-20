@@ -9,8 +9,6 @@ import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import java.time.OffsetDateTime
-import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -35,6 +33,8 @@ import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.withGraphMappings
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
+import java.time.OffsetDateTime
+import java.util.UUID
 
 fun <
     T : VisualizationRepository,
@@ -42,14 +42,14 @@ fun <
     P : PredicateRepository,
     C : ClassRepository,
     L : LiteralRepository,
-    S : StatementRepository
+    S : StatementRepository,
 > visualizationRepositoryContract(
     repository: T,
     resourceRepository: R,
     predicateRepository: P,
     classRepository: C,
     literalRepository: L,
-    statementRepository: S
+    statementRepository: S,
 ) = describeSpec {
     beforeTest {
         statementRepository.deleteAll()

@@ -8,7 +8,7 @@ import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 
 class TemplateResourceUpdater(
-    private val unsafeResourceUseCases: UnsafeResourceUseCases
+    private val unsafeResourceUseCases: UnsafeResourceUseCases,
 ) : UpdateTemplateAction {
     override fun invoke(command: UpdateTemplateCommand, state: State): State {
         unsafeResourceUseCases.update(

@@ -1,8 +1,6 @@
 package org.orkg.graph.adapter.input.rest
 
 import io.mockk.mockk
-import java.time.OffsetDateTime
-import java.time.ZoneOffset
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
@@ -14,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.json.JsonTest
 import org.springframework.boot.test.json.JacksonTester
 import org.springframework.test.context.ContextConfiguration
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 
 /**
  * Test the JSON serialization of a [Predicate].
@@ -21,7 +21,6 @@ import org.springframework.test.context.ContextConfiguration
 @JsonTest
 @ContextConfiguration(classes = [PredicateRepresentationAdapter::class, CommonJacksonModule::class])
 internal class PredicateRepresentationJsonTest {
-
     @Autowired
     private lateinit var json: JacksonTester<PredicateRepresentation>
 

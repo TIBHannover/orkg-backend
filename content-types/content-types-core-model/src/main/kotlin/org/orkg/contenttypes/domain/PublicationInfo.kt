@@ -9,7 +9,7 @@ data class PublicationInfo(
     val publishedMonth: Int?,
     val publishedYear: Long?,
     val publishedIn: ObjectIdAndLabel?,
-    val url: ParsedIRI?
+    val url: ParsedIRI?,
 ) {
     companion object {
         fun from(statements: Iterable<GeneralStatement>): PublicationInfo = PublicationInfo(

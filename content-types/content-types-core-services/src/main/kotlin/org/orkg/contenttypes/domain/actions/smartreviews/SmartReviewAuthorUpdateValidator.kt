@@ -7,11 +7,11 @@ import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 
 class SmartReviewAuthorUpdateValidator(
-    private val authorValidator: AuthorValidator
+    private val authorValidator: AuthorValidator,
 ) : UpdateSmartReviewAction {
     constructor(
         resourceRepository: ResourceRepository,
-        statementRepository: StatementRepository
+        statementRepository: StatementRepository,
     ) : this(AuthorValidator(resourceRepository, statementRepository))
 
     override fun invoke(command: UpdateSmartReviewCommand, state: State): State {

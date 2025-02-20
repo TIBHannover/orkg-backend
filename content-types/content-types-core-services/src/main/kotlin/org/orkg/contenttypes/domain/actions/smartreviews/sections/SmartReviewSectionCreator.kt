@@ -15,7 +15,7 @@ import org.orkg.graph.input.UnsafeStatementUseCases
 class SmartReviewSectionCreator(
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
     private val abstractSmartReviewSectionCreator: AbstractSmartReviewSectionCreator,
-    private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater
+    private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater,
 ) : CreateSmartReviewSectionAction {
     constructor(
         literalService: LiteralUseCases,

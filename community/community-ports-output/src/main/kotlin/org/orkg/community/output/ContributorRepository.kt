@@ -1,10 +1,10 @@
 package org.orkg.community.output
 
-import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.community.domain.Contributor
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import java.util.Optional
 
 interface ContributorRepository {
     fun findAll(pageable: Pageable): Page<Contributor>

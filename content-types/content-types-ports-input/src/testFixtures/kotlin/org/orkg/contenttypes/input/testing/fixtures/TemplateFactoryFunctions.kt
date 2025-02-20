@@ -1,6 +1,5 @@
 package org.orkg.contenttypes.input.testing.fixtures
 
-import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -28,6 +27,7 @@ import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Visibility
+import java.util.UUID
 
 fun createTemplateCommand() = CreateTemplateUseCase.CreateCommand(
     contributorId = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
@@ -213,7 +213,7 @@ fun updateResourceTemplatePropertyCommand() = UpdateTemplatePropertyUseCase.Upda
 fun createTemplateRelations(
     researchFields: List<ThingId> = listOf(ThingId("R20")),
     researchProblems: List<ThingId> = listOf(ThingId("R21")),
-    predicate: ThingId? = ThingId("P22")
+    predicate: ThingId? = ThingId("P22"),
 ): TemplateRelationsDefinition =
     TemplateRelationsDefinition(researchFields, researchProblems, predicate)
 

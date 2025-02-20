@@ -9,17 +9,17 @@ import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
 class ComparisonResearchFieldUpdater(
-    private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater
+    private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater,
 ) : UpdateComparisonAction {
     constructor(
         literalService: LiteralUseCases,
         statementService: StatementUseCases,
-        unsafeStatementUseCases: UnsafeStatementUseCases
+        unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(StatementCollectionPropertyUpdater(literalService, statementService, unsafeStatementUseCases))
 
     override operator fun invoke(
         command: UpdateComparisonCommand,
-        state: UpdateComparisonState
+        state: UpdateComparisonState,
     ): UpdateComparisonState {
         if (command.researchFields != null && command.researchFields != state.comparison!!.researchFields.map { it.id }) {
             statementCollectionPropertyUpdater.update(

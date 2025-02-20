@@ -98,20 +98,22 @@ class ImportController(
     }
 
     @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
-    @JsonSubTypes(value = [
-        JsonSubTypes.Type(ImportByURIRequest::class),
-        JsonSubTypes.Type(ImportByShortFormRequest::class)
-    ])
+    @JsonSubTypes(
+        value = [
+            JsonSubTypes.Type(ImportByURIRequest::class),
+            JsonSubTypes.Type(ImportByShortFormRequest::class)
+        ]
+    )
     sealed interface ImportRequest
 
     data class ImportByURIRequest(
         val uri: ParsedIRI,
-        val ontology: String
+        val ontology: String,
     ) : ImportRequest
 
     data class ImportByShortFormRequest(
         @JsonProperty("short_form")
         val shortForm: String,
-        val ontology: String
+        val ontology: String,
     ) : ImportRequest
 }

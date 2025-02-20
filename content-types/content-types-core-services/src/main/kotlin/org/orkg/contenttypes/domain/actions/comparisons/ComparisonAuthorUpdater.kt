@@ -11,7 +11,7 @@ import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ListRepository
 
 class ComparisonAuthorUpdater(
-    private val authorUpdater: AuthorUpdater
+    private val authorUpdater: AuthorUpdater,
 ) : UpdateComparisonAction {
     constructor(
         unsafeResourceUseCases: UnsafeResourceUseCases,
@@ -19,7 +19,7 @@ class ComparisonAuthorUpdater(
         unsafeStatementUseCases: UnsafeStatementUseCases,
         literalService: LiteralUseCases,
         listService: ListUseCases,
-        listRepository: ListRepository
+        listRepository: ListRepository,
     ) : this(
         AuthorUpdater(
             unsafeResourceUseCases,

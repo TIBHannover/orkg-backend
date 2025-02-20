@@ -41,7 +41,6 @@ import org.springframework.web.bind.annotation.RestController
 )
 @WebMvcTest
 internal class MediaTypeCapabilitiesControllerTest : MockMvcBaseTest("media-type-capabilities") {
-
     @Test
     fun `Given rest controller, when an endpoint produces a media type that supports capabilities, then media type capabilities are parsed correctly`() {
         val result = get("/capabilities")

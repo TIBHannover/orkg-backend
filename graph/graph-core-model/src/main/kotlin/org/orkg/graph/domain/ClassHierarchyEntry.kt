@@ -4,5 +4,5 @@ import org.orkg.common.ThingId
 
 data class ClassHierarchyEntry(
     val `class`: Class,
-    val parentId: ThingId?
+    val parentId: ThingId?,
 )

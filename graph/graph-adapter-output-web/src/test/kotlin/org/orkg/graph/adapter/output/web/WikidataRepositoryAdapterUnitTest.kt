@@ -9,10 +9,6 @@ import io.kotest.matchers.shouldNotBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.net.URI
-import java.net.http.HttpClient
-import java.net.http.HttpResponse
-import java.util.stream.Stream
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
@@ -24,6 +20,10 @@ import org.orkg.common.testing.fixtures.Assets.responseJson
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.graph.adapter.input.rest.json.GraphJacksonModule
 import org.orkg.graph.domain.ExternalThing
+import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpResponse
+import java.util.stream.Stream
 
 internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
     private val wikidataHostUrl = "https://example.org/wikidata"
@@ -43,7 +43,7 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
         methodInvoker: (WikidataServiceAdapter, String, T) -> ExternalThing?,
         successResponse: String,
         notFoundResponse: String,
-        expectedResult: ExternalThing
+        expectedResult: ExternalThing,
     ) {
         // Mock HttpClient dsl
         val response = mockk<HttpResponse<String>>()
@@ -57,12 +57,15 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
         result shouldBe expectedResult
 
         verify(exactly = 1) {
-            httpClient.send(withArg {
-                it.uri() shouldBe URI.create("$wikidataHostUrl/w/api.php?action=wbgetentities&ids=$entityId&format=json&languages=en&props=labels%7Cdescriptions%7Cdatatype%7Cclaims")
-                it.headers().map() shouldContainAll mapOf(
-                    "Accept" to listOf("application/json")
-                )
-            }, any<HttpResponse.BodyHandler<String>>())
+            httpClient.send(
+                withArg {
+                    it.uri() shouldBe URI.create("$wikidataHostUrl/w/api.php?action=wbgetentities&ids=$entityId&format=json&languages=en&props=labels%7Cdescriptions%7Cdatatype%7Cclaims")
+                    it.headers().map() shouldContainAll mapOf(
+                        "Accept" to listOf("application/json")
+                    )
+                },
+                any<HttpResponse.BodyHandler<String>>()
+            )
         }
         verify(exactly = 1) { response.statusCode() }
         verify(exactly = 1) { response.body() }
@@ -89,12 +92,15 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
         result shouldBe null
 
         verify(exactly = 1) {
-            httpClient.send(withArg {
-                it.uri() shouldBe URI.create("$wikidataHostUrl/w/api.php?action=wbgetentities&ids=$entityId&format=json&languages=en&props=labels%7Cdescriptions%7Cdatatype%7Cclaims")
-                it.headers().map() shouldContainAll mapOf(
-                    "Accept" to listOf("application/json")
-                )
-            }, any<HttpResponse.BodyHandler<String>>())
+            httpClient.send(
+                withArg {
+                    it.uri() shouldBe URI.create("$wikidataHostUrl/w/api.php?action=wbgetentities&ids=$entityId&format=json&languages=en&props=labels%7Cdescriptions%7Cdatatype%7Cclaims")
+                    it.headers().map() shouldContainAll mapOf(
+                        "Accept" to listOf("application/json")
+                    )
+                },
+                any<HttpResponse.BodyHandler<String>>()
+            )
         }
         verify(exactly = 1) { response.statusCode() }
         verify(exactly = 1) { response.body() }
@@ -105,7 +111,7 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
     fun <T> `Given an ontology id and user input, when wikidata service is not available, it throws an exception`(
         entityId: String,
         userInput: T,
-        methodInvoker: (WikidataServiceAdapter, String, T) -> ExternalThing?
+        methodInvoker: (WikidataServiceAdapter, String, T) -> ExternalThing?,
     ) {
         // Mock HttpClient dsl
         val response = mockk<HttpResponse<String>>()
@@ -120,12 +126,15 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
         }
 
         verify(exactly = 1) {
-            httpClient.send(withArg {
-                it.uri() shouldBe URI.create("$wikidataHostUrl/w/api.php?action=wbgetentities&ids=$entityId&format=json&languages=en&props=labels%7Cdescriptions%7Cdatatype%7Cclaims")
-                it.headers().map() shouldContainAll mapOf(
-                    "Accept" to listOf("application/json")
-                )
-            }, any<HttpResponse.BodyHandler<String>>())
+            httpClient.send(
+                withArg {
+                    it.uri() shouldBe URI.create("$wikidataHostUrl/w/api.php?action=wbgetentities&ids=$entityId&format=json&languages=en&props=labels%7Cdescriptions%7Cdatatype%7Cclaims")
+                    it.headers().map() shouldContainAll mapOf(
+                        "Accept" to listOf("application/json")
+                    )
+                },
+                any<HttpResponse.BodyHandler<String>>()
+            )
         }
         verify(exactly = 2) { response.statusCode() }
         verify(exactly = 1) { response.body() }
@@ -137,7 +146,7 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
     fun <T> `Given an ontology id and user input, when ontology is invalid, it returns null`(
         entityId: String,
         userInput: T,
-        methodInvoker: (WikidataServiceAdapter, String, T) -> ExternalThing?
+        methodInvoker: (WikidataServiceAdapter, String, T) -> ExternalThing?,
     ) {
         val result = methodInvoker(repository, "not wikidata", userInput)
         result shouldBe null
@@ -147,7 +156,7 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
     @MethodSource("invalidInputs")
     fun <T> `Given an ontology id and user input, when input is invalid, it returns null`(
         userInput: T,
-        methodInvoker: (WikidataServiceAdapter, String, T) -> ExternalThing?
+        methodInvoker: (WikidataServiceAdapter, String, T) -> ExternalThing?,
     ) {
         val result = methodInvoker(repository, "wikidata", userInput)
         result shouldBe null

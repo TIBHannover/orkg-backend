@@ -104,7 +104,7 @@ internal val Sort.literalComparator: Comparator<Literal>
         result
     }
 
-internal fun <T : Comparable<T>> Sort.Order.compare(a : T?, b: T?): Int {
+internal fun <T : Comparable<T>> Sort.Order.compare(a: T?, b: T?): Int {
     val result = when {
         a == null && b == null -> 0
         a == null -> 1

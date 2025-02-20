@@ -6,7 +6,7 @@ import org.orkg.graph.domain.Resources
 
 class SDGValidator<T, S>(
     private val newValueSelector: (T) -> Set<ThingId>?,
-    private val oldValueSelector: (S) -> Set<ThingId> = { emptySet() }
+    private val oldValueSelector: (S) -> Set<ThingId> = { emptySet() },
 ) : Action<T, S> {
     override fun invoke(command: T, state: S): S {
         val newSDGs = newValueSelector(command)

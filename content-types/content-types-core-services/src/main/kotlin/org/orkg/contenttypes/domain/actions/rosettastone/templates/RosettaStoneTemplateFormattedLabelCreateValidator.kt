@@ -7,7 +7,7 @@ import org.orkg.contenttypes.domain.actions.CreateRosettaStoneTemplateState
 class RosettaStoneTemplateFormattedLabelCreateValidator : CreateRosettaStoneTemplateAction {
     override fun invoke(
         command: CreateRosettaStoneTemplateCommand,
-        state: CreateRosettaStoneTemplateState
+        state: CreateRosettaStoneTemplateState,
     ): CreateRosettaStoneTemplateState {
         command.properties.forEachIndexed { index, _ ->
             if (!command.formattedLabel.value.contains("{$index}")) {

@@ -15,7 +15,7 @@ private const val RELATED = "RELATED"
 
 @Component
 class SpringDataNeo4jStatisticsAdapter(
-    private val cypherQueryBuilderFactory: CypherQueryBuilderFactory
+    private val cypherQueryBuilderFactory: CypherQueryBuilderFactory,
 ) : StatisticsRepository {
     override fun countNodes(label: String): Long =
         cypherQueryBuilderFactory.newBuilder(Uncached)

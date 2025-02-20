@@ -7,7 +7,7 @@ import org.orkg.contenttypes.domain.actions.UpdateLiteratureListState
 class LiteratureListModifiableValidator : UpdateLiteratureListAction {
     override fun invoke(
         command: UpdateLiteratureListCommand,
-        state: UpdateLiteratureListState
+        state: UpdateLiteratureListState,
     ): UpdateLiteratureListState = state.apply {
         if (literatureList!!.published) {
             throw LiteratureListNotModifiable(command.literatureListId)

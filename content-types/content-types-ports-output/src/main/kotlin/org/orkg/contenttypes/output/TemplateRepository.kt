@@ -1,6 +1,5 @@
 package org.orkg.contenttypes.output
 
-import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -10,6 +9,7 @@ import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import java.time.OffsetDateTime
 
 interface TemplateRepository {
     fun findAll(
@@ -24,8 +24,9 @@ interface TemplateRepository {
         researchField: ThingId? = null,
         includeSubfields: Boolean = false,
         researchProblem: ThingId? = null,
-        targetClassId: ThingId? = null
+        targetClassId: ThingId? = null,
     ): Page<Resource>
+
     fun count(
         label: SearchString? = null,
         visibility: VisibilityFilter? = null,
@@ -37,6 +38,6 @@ interface TemplateRepository {
         researchField: ThingId? = null,
         includeSubfields: Boolean = false,
         researchProblem: ThingId? = null,
-        targetClassId: ThingId? = null
+        targetClassId: ThingId? = null,
     ): Long
 }

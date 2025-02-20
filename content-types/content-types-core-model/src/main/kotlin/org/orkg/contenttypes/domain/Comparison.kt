@@ -1,10 +1,10 @@
 package org.orkg.contenttypes.domain
 
-import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.contenttypes.domain.identifiers.Identifiers
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.GeneralStatement
@@ -13,6 +13,7 @@ import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.Visibility
+import java.time.OffsetDateTime
 
 data class Comparison(
     override val id: ThingId,
@@ -39,14 +40,14 @@ data class Comparison(
     val isAnonymized: Boolean,
     override val visibility: Visibility,
     val published: Boolean,
-    override val unlistedBy: ContributorId? = null
+    override val unlistedBy: ContributorId? = null,
 ) : ContentType {
     companion object {
         fun from(
             resource: Resource,
             statements: Map<ThingId, List<GeneralStatement>>,
             table: ComparisonTable,
-            versionInfo: VersionInfo
+            versionInfo: VersionInfo,
         ): Comparison {
             val directStatements = statements[resource.id].orEmpty()
             val published = Classes.comparisonPublished in resource.classes
@@ -98,7 +99,7 @@ data class ComparisonRelatedResource(
     val url: String?,
     val description: String?,
     val createdAt: OffsetDateTime,
-    val createdBy: ContributorId
+    val createdBy: ContributorId,
 )
 
 data class ComparisonRelatedFigure(
@@ -107,5 +108,5 @@ data class ComparisonRelatedFigure(
     val image: String?,
     val description: String?,
     val createdAt: OffsetDateTime,
-    val createdBy: ContributorId
+    val createdBy: ContributorId,
 )

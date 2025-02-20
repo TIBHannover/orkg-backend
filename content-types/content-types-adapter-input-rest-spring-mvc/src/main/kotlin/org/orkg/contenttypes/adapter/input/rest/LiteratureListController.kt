@@ -3,8 +3,6 @@ package org.orkg.contenttypes.adapter.input.rest
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
-import java.time.OffsetDateTime
-import java.util.*
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Positive
@@ -59,6 +57,8 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
+import java.time.OffsetDateTime
+import java.util.Optional
 
 const val LITERATURE_LIST_JSON_V1 = "application/vnd.orkg.literature-list.v1+json"
 const val LITERATURE_LIST_SECTION_JSON_V1 = "application/vnd.orkg.literature-list-section.v1+json"
@@ -69,10 +69,12 @@ class LiteratureListController(
     private val service: LiteratureListUseCases,
     override val formattedLabelService: FormattedLabelUseCases,
     override val statementService: StatementUseCases,
-) : LiteratureListRepresentationAdapter, ResourceRepresentationAdapter, PaperRepresentationAdapter {
+) : LiteratureListRepresentationAdapter,
+    ResourceRepresentationAdapter,
+    PaperRepresentationAdapter {
     @GetMapping("/{id}")
     fun findById(
-        @PathVariable id: ThingId
+        @PathVariable id: ThingId,
     ): LiteratureListRepresentation = service.findById(id)
         .mapToLiteratureListRepresentation()
         .orElseThrow { LiteratureListNotFound(id) }
@@ -91,7 +93,7 @@ class LiteratureListController(
         @RequestParam("include_subfields", required = false) includeSubfields: Boolean = false,
         @RequestParam("published", required = false) published: Boolean?,
         @RequestParam("sdg", required = false) sustainableDevelopmentGoal: ThingId?,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<LiteratureListRepresentation> =
         service.findAll(
             pageable = pageable,
@@ -113,7 +115,7 @@ class LiteratureListController(
         @PathVariable id: ThingId,
         @PathVariable contentId: ThingId,
         pageable: Pageable,
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): ResponseEntity<Any> =
         service.findPublishedContentById(id, contentId)
             .fold({ it.toPaperRepresentation() }, { Optional.of(it).mapToResourceRepresentation(capabilities).get() })
@@ -239,7 +241,7 @@ class LiteratureListController(
         @JsonProperty("extraction_method")
         val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
         @field:Valid
-        val sections: List<LiteratureListSectionRequest>?
+        val sections: List<LiteratureListSectionRequest>?,
     ) {
         fun toCreateCommand(contributorId: ContributorId): CreateLiteratureListUseCase.CreateCommand =
             CreateLiteratureListUseCase.CreateCommand(
@@ -292,32 +294,34 @@ class LiteratureListController(
     }
 
     @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
-    @JsonSubTypes(value = [
-        JsonSubTypes.Type(LiteratureListListSectionRequest::class),
-        JsonSubTypes.Type(LiteratureListTextSectionRequest::class)
-    ])
+    @JsonSubTypes(
+        value = [
+            JsonSubTypes.Type(LiteratureListListSectionRequest::class),
+            JsonSubTypes.Type(LiteratureListTextSectionRequest::class)
+        ]
+    )
     sealed interface LiteratureListSectionRequest {
         fun toLiteratureListSectionDefinition(): LiteratureListSectionDefinition
 
         fun toCreateCommand(
             contributorId: ContributorId,
             literatureListId: ThingId,
-            index: Int?
+            index: Int?,
         ): CreateLiteratureListSectionUseCase.CreateCommand
 
         fun toUpdateCommand(
             literatureListSectionId: ThingId,
             contributorId: ContributorId,
-            literatureListId: ThingId
+            literatureListId: ThingId,
         ): UpdateLiteratureListSectionUseCase.UpdateCommand
     }
 
     data class LiteratureListListSectionRequest(
-        val entries: List<Entry>
+        val entries: List<Entry>,
     ) : LiteratureListSectionRequest {
         data class Entry(
             val id: ThingId,
-            val description: String? = null
+            val description: String? = null,
         ) {
             fun toDefinitionEntry(): LiteratureListListSectionDefinition.Entry =
                 LiteratureListListSectionDefinition.Entry(id, description)
@@ -329,19 +333,25 @@ class LiteratureListController(
         override fun toCreateCommand(
             contributorId: ContributorId,
             literatureListId: ThingId,
-            index: Int?
+            index: Int?,
         ): CreateLiteratureListSectionUseCase.CreateCommand =
             CreateLiteratureListSectionUseCase.CreateListSectionCommand(
-                contributorId, literatureListId, index, entries.map { it.toDefinitionEntry() }
+                contributorId,
+                literatureListId,
+                index,
+                entries.map { it.toDefinitionEntry() }
             )
 
         override fun toUpdateCommand(
             literatureListSectionId: ThingId,
             contributorId: ContributorId,
-            literatureListId: ThingId
+            literatureListId: ThingId,
         ): UpdateLiteratureListSectionUseCase.UpdateCommand =
             UpdateLiteratureListSectionUseCase.UpdateListSectionCommand(
-                literatureListSectionId, contributorId, literatureListId, entries.map { it.toDefinitionEntry() }
+                literatureListSectionId,
+                contributorId,
+                literatureListId,
+                entries.map { it.toDefinitionEntry() }
             )
     }
 
@@ -350,7 +360,7 @@ class LiteratureListController(
         @field:Positive
         @JsonProperty("heading_size")
         val headingSize: Int,
-        val text: String
+        val text: String,
     ) : LiteratureListSectionRequest {
         override fun toLiteratureListSectionDefinition(): LiteratureListSectionDefinition =
             LiteratureListTextSectionCommand(heading, headingSize, text)
@@ -358,25 +368,35 @@ class LiteratureListController(
         override fun toCreateCommand(
             contributorId: ContributorId,
             literatureListId: ThingId,
-            index: Int?
+            index: Int?,
         ): CreateLiteratureListSectionUseCase.CreateCommand =
             CreateLiteratureListSectionUseCase.CreateTextSectionCommand(
-                contributorId, literatureListId, index, heading, headingSize, text
+                contributorId,
+                literatureListId,
+                index,
+                heading,
+                headingSize,
+                text
             )
 
         override fun toUpdateCommand(
             literatureListSectionId: ThingId,
             contributorId: ContributorId,
-            literatureListId: ThingId
+            literatureListId: ThingId,
         ): UpdateLiteratureListSectionUseCase.UpdateCommand =
             UpdateLiteratureListSectionUseCase.UpdateTextSectionCommand(
-                literatureListSectionId, contributorId, literatureListId, heading, headingSize, text
+                literatureListSectionId,
+                contributorId,
+                literatureListId,
+                heading,
+                headingSize,
+                text
             )
     }
 
     data class PublishRequest(
         @field:NotBlank
-        val changelog: String
+        val changelog: String,
     ) {
         fun toPublishCommand(id: ThingId, contributorId: ContributorId): PublishLiteratureListUseCase.PublishCommand =
             PublishLiteratureListUseCase.PublishCommand(

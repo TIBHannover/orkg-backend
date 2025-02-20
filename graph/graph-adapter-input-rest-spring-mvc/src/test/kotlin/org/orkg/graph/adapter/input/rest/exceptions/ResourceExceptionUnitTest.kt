@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RestController
 @WebMvcTest
 @ContextConfiguration(classes = [TestController::class, ExceptionHandler::class, FixedClockConfig::class])
 internal class ResourceExceptionUnitTest : MockMvcBaseTest("exceptions") {
-
     @Test
     fun resourceNotModifiable() {
         val id = ThingId("R123")
@@ -60,13 +59,14 @@ internal class ResourceExceptionUnitTest : MockMvcBaseTest("exceptions") {
     @RestController
     internal class TestController {
         @GetMapping("/resource-not-modifiable")
-        fun resourceNotModifiable(@RequestParam id: ThingId) {
-            throw ResourceNotModifiable(id)
-        }
+        fun resourceNotModifiable(
+            @RequestParam id: ThingId,
+        ): Unit = throw ResourceNotModifiable(id)
 
         @GetMapping("/external-resource-not-found")
-        fun externalResourceNotFound(@RequestParam ontologyId: String, @RequestParam id: String) {
-            throw ExternalResourceNotFound(ontologyId, id)
-        }
+        fun externalResourceNotFound(
+            @RequestParam ontologyId: String,
+            @RequestParam id: String,
+        ): Unit = throw ExternalResourceNotFound(ontologyId, id)
     }
 }

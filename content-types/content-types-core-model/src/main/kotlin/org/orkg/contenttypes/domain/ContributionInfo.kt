@@ -12,5 +12,5 @@ data class ContributionInfo(
     @JsonProperty("paper_year")
     val paperYear: Int?,
     @JsonProperty("paper_id")
-    val paperId: ThingId
+    val paperId: ThingId,
 )

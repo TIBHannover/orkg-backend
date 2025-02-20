@@ -19,12 +19,12 @@ import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.ThingRepository
 
 class SmartReviewSectionUpdateValidator(
-    private val abstractSmartReviewSectionValidator: AbstractSmartReviewSectionValidator
+    private val abstractSmartReviewSectionValidator: AbstractSmartReviewSectionValidator,
 ) : UpdateSmartReviewSectionAction {
     constructor(
         resourceRepository: ResourceRepository,
         predicateRepository: PredicateRepository,
-        thingRepository: ThingRepository
+        thingRepository: ThingRepository,
     ) : this(AbstractSmartReviewSectionValidator(resourceRepository, predicateRepository, thingRepository))
 
     override fun invoke(command: UpdateSmartReviewSectionCommand, state: State): State {

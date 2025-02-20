@@ -5,8 +5,6 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import java.time.OffsetDateTime
-import java.util.*
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
@@ -44,6 +42,8 @@ import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.pageOf
+import java.time.OffsetDateTime
+import java.util.UUID
 
 internal class SubgraphCreatorUnitTest : MockkBaseTest {
     private val statementRepository: StatementRepository = mockk()

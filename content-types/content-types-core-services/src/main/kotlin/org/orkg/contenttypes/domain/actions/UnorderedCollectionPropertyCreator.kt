@@ -15,7 +15,7 @@ class UnorderedCollectionPropertyCreator(
         contributorId: ContributorId,
         subjectId: ThingId,
         predicateId: ThingId,
-        labels: Collection<String>
+        labels: Collection<String>,
     ) {
         labels.forEach { label ->
             val literal = literalService.create(

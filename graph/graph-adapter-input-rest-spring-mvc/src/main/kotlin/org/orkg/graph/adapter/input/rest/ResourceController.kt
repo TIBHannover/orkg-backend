@@ -1,7 +1,6 @@
 package org.orkg.graph.adapter.input.rest
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ObservatoryId
@@ -45,6 +44,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
+import java.time.OffsetDateTime
 
 @RestController
 @RequestMapping("/api/resources", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -54,9 +54,11 @@ class ResourceController(
     override val statementService: StatementUseCases,
     override val formattedLabelService: FormattedLabelUseCases,
 ) : ResourceRepresentationAdapter {
-
     @GetMapping("/{id}")
-    fun findById(@PathVariable id: ThingId, capabilities: MediaTypeCapabilities): ResourceRepresentation =
+    fun findById(
+        @PathVariable id: ThingId,
+        capabilities: MediaTypeCapabilities,
+    ): ResourceRepresentation =
         service.findById(id).mapToResourceRepresentation(capabilities).orElseThrow { ResourceNotFound.withId(id) }
 
     @GetMapping
@@ -73,7 +75,7 @@ class ResourceController(
         @RequestParam("observatory_id", required = false) observatoryId: ObservatoryId?,
         @RequestParam("organization_id", required = false) organizationId: OrganizationId?,
         pageable: Pageable,
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): Page<ResourceRepresentation> =
         service.findAll(
             pageable = pageable,
@@ -95,7 +97,7 @@ class ResourceController(
         @RequestBody request: CreateResourceRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         currentUser: Authentication?,
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): ResponseEntity<ResourceRepresentation> {
         val contributor = contributorService.findById(currentUser.contributorId())
         val id = service.create(
@@ -123,7 +125,7 @@ class ResourceController(
         @RequestBody request: UpdateResourceRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         capabilities: MediaTypeCapabilities,
-        currentUser: Authentication?
+        currentUser: Authentication?,
     ): ResponseEntity<ResourceRepresentation> {
         service.update(request.toUpdateCommand(id, currentUser.contributorId()))
         val location = uriComponentsBuilder
@@ -159,16 +161,25 @@ class ResourceController(
     )
 
     @GetMapping("/{id}/contributors")
-    fun findContributorsById(@PathVariable id: ThingId, pageable: Pageable): Page<ContributorId> =
+    fun findContributorsById(
+        @PathVariable id: ThingId,
+        pageable: Pageable,
+    ): Page<ContributorId> =
         service.findAllContributorsByResourceId(id, pageable)
 
     @GetMapping("/{id}/timeline")
-    fun findTimelineById(@PathVariable id: ThingId, pageable: Pageable): Page<ResourceContributor> =
+    fun findTimelineById(
+        @PathVariable id: ThingId,
+        pageable: Pageable,
+    ): Page<ResourceContributor> =
         service.findTimelineByResourceId(id, pageable)
 
     @DeleteMapping("/{id}")
     @RequireLogin
-    fun delete(@PathVariable id: ThingId, currentUser: Authentication?): ResponseEntity<Unit> {
+    fun delete(
+        @PathVariable id: ThingId,
+        currentUser: Authentication?,
+    ): ResponseEntity<Unit> {
         service.delete(id, currentUser.contributorId())
         return ResponseEntity.noContent().build()
     }
@@ -176,26 +187,35 @@ class ResourceController(
     @PutMapping("/{id}/metadata/featured")
     @ResponseStatus(HttpStatus.OK)
     @RequireCuratorRole
-    fun markFeatured(@PathVariable id: ThingId) {
+    fun markFeatured(
+        @PathVariable id: ThingId,
+    ) {
         service.markAsFeatured(id)
     }
 
     @DeleteMapping("/{id}/metadata/featured")
     @RequireCuratorRole
-    fun unmarkFeatured(@PathVariable id: ThingId) {
+    fun unmarkFeatured(
+        @PathVariable id: ThingId,
+    ) {
         service.markAsNonFeatured(id)
     }
 
     @PutMapping("/{id}/metadata/unlisted")
     @ResponseStatus(HttpStatus.OK)
     @RequireCuratorRole
-    fun markUnlisted(@PathVariable id: ThingId, currentUser: Authentication?) {
+    fun markUnlisted(
+        @PathVariable id: ThingId,
+        currentUser: Authentication?,
+    ) {
         service.markAsUnlisted(id, currentUser.contributorId())
     }
 
     @DeleteMapping("/{id}/metadata/unlisted")
     @RequireCuratorRole
-    fun unmarkUnlisted(@PathVariable id: ThingId) {
+    fun unmarkUnlisted(
+        @PathVariable id: ThingId,
+    ) {
         service.markAsListed(id)
     }
 
@@ -209,14 +229,12 @@ class ResourceController(
         @RequestParam("visibility", required = false)
         visibility: VisibilityFilter?,
         pageable: Pageable,
-        capabilities: MediaTypeCapabilities
-    ): Page<ResourceRepresentation> {
-        return service.findAllByClassInAndVisibility(
-            classes = classes,
-            visibility = visibility ?: VisibilityFilter.fromFlags(featured, unlisted),
-            pageable = pageable
-        ).mapToResourceRepresentation(capabilities)
-    }
+        capabilities: MediaTypeCapabilities,
+    ): Page<ResourceRepresentation> = service.findAllByClassInAndVisibility(
+        classes = classes,
+        visibility = visibility ?: VisibilityFilter.fromFlags(featured, unlisted),
+        pageable = pageable
+    ).mapToResourceRepresentation(capabilities)
 }
 
 data class CreateResourceRequest(
@@ -224,7 +242,7 @@ data class CreateResourceRequest(
     val label: String,
     val classes: Set<ThingId> = emptySet(),
     @JsonProperty("extraction_method")
-    val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN
+    val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
 )
 
 data class UpdateResourceRequest(
@@ -256,5 +274,5 @@ data class UpdateResourceObservatoryRequest(
     @JsonProperty("observatory_id")
     val observatoryId: ObservatoryId,
     @JsonProperty("organization_id")
-    val organizationId: OrganizationId
+    val organizationId: OrganizationId,
 )

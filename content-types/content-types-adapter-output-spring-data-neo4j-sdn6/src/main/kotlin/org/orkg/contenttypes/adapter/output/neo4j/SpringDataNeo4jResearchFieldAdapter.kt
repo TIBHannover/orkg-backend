@@ -1,6 +1,5 @@
 package org.orkg.contenttypes.adapter.output.neo4j
 
-import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.adapter.output.neo4j.internal.Neo4jProblemsPerField
@@ -12,6 +11,7 @@ import org.orkg.graph.domain.Visibility
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
+import java.util.Optional
 
 @Component
 class SpringDataNeo4jResearchFieldAdapter(
@@ -25,7 +25,7 @@ class SpringDataNeo4jResearchFieldAdapter(
 
     override fun findAllContributorIdsIncludingSubFields(
         id: ThingId,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<ContributorId> =
         neo4jRepository.findAllContributorIdsIncludingSubFields(id, pageable)
 
@@ -38,7 +38,7 @@ class SpringDataNeo4jResearchFieldAdapter(
     override fun findAllListedPapersByResearchField(
         id: ThingId,
         includeSubfields: Boolean,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<Resource> =
         when (includeSubfields) {
             true -> neo4jRepository.findAllListedPapersByResearchFieldIncludingSubFields(id, pageable)
@@ -49,7 +49,7 @@ class SpringDataNeo4jResearchFieldAdapter(
         id: ThingId,
         visibility: Visibility,
         includeSubfields: Boolean,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<Resource> =
         when (includeSubfields) {
             true -> neo4jRepository.findAllPapersByResearchFieldAndVisibilityIncludingSubFields(id, visibility, pageable)
@@ -59,7 +59,7 @@ class SpringDataNeo4jResearchFieldAdapter(
     override fun findAllListedProblemsByResearchField(
         id: ThingId,
         includeSubfields: Boolean,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<Resource> =
         when (includeSubfields) {
             true -> neo4jRepository.findAllListedProblemsByResearchFieldIncludingSubFields(id, pageable)
@@ -70,7 +70,7 @@ class SpringDataNeo4jResearchFieldAdapter(
         id: ThingId,
         visibility: Visibility,
         includeSubfields: Boolean,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<Resource> =
         when (includeSubfields) {
             true -> neo4jRepository.findAllProblemsByResearchFieldAndVisibilityIncludingSubFields(id, visibility, pageable)
@@ -80,7 +80,7 @@ class SpringDataNeo4jResearchFieldAdapter(
     override fun findAllListedVisualizationsByResearchField(
         id: ThingId,
         includeSubfields: Boolean,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<Resource> =
         when (includeSubfields) {
             true -> neo4jRepository.findAllListedVisualizationsByResearchFieldIncludingSubFields(id, pageable)
@@ -91,7 +91,7 @@ class SpringDataNeo4jResearchFieldAdapter(
         id: ThingId,
         visibility: Visibility,
         includeSubfields: Boolean,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<Resource> =
         when (includeSubfields) {
             true -> neo4jRepository.findAllVisualizationsByResearchFieldAndVisibilityIncludingSubFields(id, visibility, pageable)
@@ -101,7 +101,7 @@ class SpringDataNeo4jResearchFieldAdapter(
     override fun findAllListedSmartReviewsByResearchField(
         id: ThingId,
         includeSubfields: Boolean,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<Resource> =
         when (includeSubfields) {
             true -> neo4jRepository.findAllListedSmartReviewsByResearchFieldIncludingSubFields(id, pageable)
@@ -112,7 +112,7 @@ class SpringDataNeo4jResearchFieldAdapter(
         id: ThingId,
         visibility: Visibility,
         includeSubfields: Boolean,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<Resource> =
         when (includeSubfields) {
             true -> neo4jRepository.findAllSmartReviewsByResearchFieldAndVisibilityIncludingSubFields(id, visibility, pageable)
@@ -122,7 +122,7 @@ class SpringDataNeo4jResearchFieldAdapter(
     override fun findAllListedLiteratureListsByResearchField(
         id: ThingId,
         includeSubfields: Boolean,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<Resource> =
         when (includeSubfields) {
             true -> neo4jRepository.findAllListedLiteratureListsByResearchFieldIncludingSubFields(id, pageable)
@@ -133,7 +133,7 @@ class SpringDataNeo4jResearchFieldAdapter(
         id: ThingId,
         visibility: Visibility,
         includeSubfields: Boolean,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<Resource> =
         when (includeSubfields) {
             true -> neo4jRepository.findAllLiteratureListsByResearchFieldAndVisibilityIncludingSubFields(id, visibility, pageable)

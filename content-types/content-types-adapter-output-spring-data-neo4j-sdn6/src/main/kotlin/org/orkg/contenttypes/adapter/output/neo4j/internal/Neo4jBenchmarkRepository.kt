@@ -7,15 +7,15 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.repository.Neo4jRepository
 import org.springframework.data.neo4j.repository.query.Query
 
-private const val id = "${'$'}id"
+private const val ID = "${'$'}id"
 private const val PAGE_PARAMS = ":#{orderBy(#pageable)} SKIP ${'$'}skip LIMIT ${'$'}limit"
 
 interface Neo4jBenchmarkRepository : Neo4jRepository<Neo4jResource, ThingId> {
-
-    @Query("""
-MATCH (:ResearchField {id: $id})-[:RELATED* {predicate_id: 'P36'}]->(f:ResearchField)
+    @Query(
+        """
+MATCH (:ResearchField {id: $ID})-[:RELATED* {predicate_id: 'P36'}]->(f:ResearchField)
 WITH COLLECT(f) AS fields
-MATCH (f:ResearchField {id: $id})
+MATCH (f:ResearchField {id: $ID})
 WITH fields + f AS fields
 UNWIND fields AS field
 MATCH (field)<-[:RELATED {predicate_id: 'P30'}]-(p:Paper)-[:RELATED {predicate_id: 'P31'}]->(cont:Contribution)
@@ -25,19 +25,21 @@ MATCH (f:ResearchField)<-[:RELATED {predicate_id: 'P30'}]-(p)-[:RELATED {predica
 OPTIONAL MATCH (cont)-[:RELATED {predicate_id: '$SOURCE_CODE_PREDICATE'}]->(l:Literal)
 RETURN DISTINCT pr AS problem, COLLECT(DISTINCT f) AS fields, COUNT(DISTINCT p) AS totalPapers, COUNT(DISTINCT l) AS totalCodes, COUNT(DISTINCT ds) AS totalDatasets $PAGE_PARAMS""",
         countQuery = """
-MATCH (:ResearchField {id: $id})-[:RELATED* {predicate_id: 'P36'}]->(f:ResearchField)
+MATCH (:ResearchField {id: $ID})-[:RELATED* {predicate_id: 'P36'}]->(f:ResearchField)
 WITH COLLECT(f) AS fields
-MATCH (f:ResearchField {id: $id})
+MATCH (f:ResearchField {id: $ID})
 WITH fields + f AS fields
 UNWIND fields AS field
 MATCH (field)<-[:RELATED {predicate_id: 'P30'}]-(p:Paper)-[:RELATED {predicate_id: 'P31'}]->(cont:Contribution)
 MATCH (cont)-[:RELATED {predicate_id: '$BENCHMARK_PREDICATE'}]->(:$BENCHMARK_CLASS)-[:RELATED {predicate_id: '$DATASET_PREDICATE'}]->(ds:$DATASET_CLASS)
 MATCH (cont)-[:RELATED {predicate_id: 'P32'}]->(pr:Problem)
 MATCH (f:ResearchField)<-[:RELATED {predicate_id: 'P30'}]-(p)-[:RELATED {predicate_id: 'P31'}]->(cont)-[:RELATED {predicate_id: 'P32'}]->(pr)
-RETURN COUNT(DISTINCT pr) AS cnt""")
+RETURN COUNT(DISTINCT pr) AS cnt"""
+    )
     fun findAllBenchmarkSummariesByResearchFieldId(id: ThingId, pageable: Pageable): Page<Neo4jBenchmarkSummary>
 
-    @Query("""
+    @Query(
+        """
 MATCH (f:ResearchField)<-[:RELATED {predicate_id: 'P30'}]-(p:Paper)-[:RELATED {predicate_id: 'P31'}]->(cont:Contribution)
 MATCH (cont)-[:RELATED {predicate_id: '$BENCHMARK_PREDICATE'}]->(:$BENCHMARK_CLASS)-[:RELATED {predicate_id: '$DATASET_PREDICATE'}]->(ds:$DATASET_CLASS)
 MATCH (cont)-[:RELATED {predicate_id: 'P32'}]->(pr:Problem)
@@ -49,6 +51,7 @@ MATCH (f:ResearchField)<-[:RELATED {predicate_id: 'P30'}]-(p:Paper)-[:RELATED {p
 MATCH (cont)-[:RELATED {predicate_id: '$BENCHMARK_PREDICATE'}]->(:$BENCHMARK_CLASS)-[:RELATED {predicate_id: '$DATASET_PREDICATE'}]->(ds:$DATASET_CLASS)
 MATCH (cont)-[:RELATED {predicate_id: 'P32'}]->(pr:Problem)
 RETURN COUNT(DISTINCT pr) AS cnt
-    """)
+    """
+    )
     fun findAllBenchmarkSummaries(pageable: Pageable): Page<Neo4jBenchmarkSummary>
 }

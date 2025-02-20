@@ -1,8 +1,5 @@
 package org.orkg.graph.adapter.output.neo4j
 
-import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
-import java.util.*
 import org.neo4j.cypherdsl.core.Condition
 import org.neo4j.cypherdsl.core.Cypher.anonParameter
 import org.neo4j.cypherdsl.core.Cypher.call
@@ -49,6 +46,9 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.stereotype.Component
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
+import java.util.Optional
 import org.neo4j.cypherdsl.core.renderer.Configuration as CypherConfiguration
 
 const val RESOURCE_ID_TO_RESOURCE_CACHE = "resource-id-to-resource"
@@ -147,7 +147,8 @@ class SpringDataNeo4jResourceAdapter(
                         .create(neo4jResource.relationshipTo(c, INSTANCE_OF).named(created))
                         .returning(count(neo4jResource).`as`("add_instance_of_update_subquery")) // always return a value, so the outer query continues execution
                         .build(),
-                    neo4jResource, classIds
+                    neo4jResource,
+                    classIds
                 )
                 .call(
                     unwind(parameter("__labels_to_remove__")).`as`(label)
@@ -157,7 +158,8 @@ class SpringDataNeo4jResourceAdapter(
                         .delete(deleted)
                         .returning(count(neo4jResource).`as`("remove_instance_of_update_subquery")) // always return a value, so the outer query continues execution
                         .build(),
-                    neo4jResource, classIds
+                    neo4jResource,
+                    classIds
                 )
                 .returning(neo4jResource)
                 .build()
@@ -169,7 +171,10 @@ class SpringDataNeo4jResourceAdapter(
                     "__labels__" to resource.classes.map { it.value },
                     "__labels_to_add__" to labelsToAdd,
                     "__labels_to_remove__" to labelsToRemove,
-                    "__version__" to oldResource.map { @Suppress("DEPRECATION") it.version }.orElse(1L),
+                    "__version__" to oldResource.map {
+                        @Suppress("DEPRECATION")
+                        it.version
+                    }.orElse(1L),
                     "__properties__" to mapOf(
                         "id" to resource.id.value,
                         "label" to resource.label,
@@ -240,7 +245,7 @@ class SpringDataNeo4jResourceAdapter(
         excludeClasses: Set<ThingId>,
         baseClass: ThingId?,
         observatoryId: ObservatoryId?,
-        organizationId: OrganizationId?
+        organizationId: OrganizationId?,
     ): Page<Resource> = cypherQueryBuilderFactory.newBuilder(Uncached)
         .withCommonQuery {
             val node = node("Resource", includeClasses.map { it.value }).named("node")
@@ -332,7 +337,7 @@ class SpringDataNeo4jResourceAdapter(
     override fun findAllByClassInAndVisibility(
         classes: Set<ThingId>,
         visibility: Visibility,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<Resource> =
         neo4jRepository.findAllByClassInAndVisibility(classes, visibility, pageable)
             .map(Neo4jResource::toResource)
@@ -345,7 +350,7 @@ class SpringDataNeo4jResourceAdapter(
         classes: Set<ThingId>,
         visibility: Visibility,
         id: ObservatoryId,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<Resource> =
         neo4jRepository.findAllByClassInAndVisibilityAndObservatoryId(classes, visibility, id, pageable)
             .map(Neo4jResource::toResource)
@@ -353,7 +358,7 @@ class SpringDataNeo4jResourceAdapter(
     override fun findAllListedByClassInAndObservatoryId(
         classes: Set<ThingId>,
         id: ObservatoryId,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<Resource> =
         neo4jRepository.findAllListedByClassInAndObservatoryId(classes, id, pageable)
             .map(Neo4jResource::toResource)

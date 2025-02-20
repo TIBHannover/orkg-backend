@@ -21,7 +21,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @Neo4jContainerIntegrationTest
 internal class ClassControllerIntegrationTest : MockMvcBaseTest("classes") {
-
     @Autowired
     private lateinit var service: ClassUseCases
 
@@ -127,6 +126,8 @@ internal class ClassControllerIntegrationTest : MockMvcBaseTest("classes") {
 
     fun classListDetailedResponseFields(): ResponseFieldsSnippet =
         responseFields(pageableDetailedFieldParameters())
-            .andWithPrefix("content[].", classResponseFields()
-        ).andWithPrefix("")
+            .andWithPrefix(
+                "content[].",
+                classResponseFields()
+            ).andWithPrefix("")
 }

@@ -1,8 +1,7 @@
 package org.orkg.common.neo4jdsl
 
-import java.util.*
-import java.util.stream.Collectors
 import org.springframework.data.domain.Sort
+import java.util.stream.Collectors
 
 fun String.sortedWith(sort: Sort, index: Int = lastIndexOf("SKIP")): String =
     if (sort.isUnsorted) {

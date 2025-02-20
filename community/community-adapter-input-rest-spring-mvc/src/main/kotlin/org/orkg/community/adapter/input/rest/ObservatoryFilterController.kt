@@ -41,7 +41,7 @@ import org.springframework.web.util.UriComponentsBuilder
 class ObservatoryFilterController(
     private val observatoryService: ObservatoryUseCases,
     private val service: ObservatoryFilterUseCases,
-    private val contributorService: RetrieveContributorUseCase
+    private val contributorService: RetrieveContributorUseCase,
 ) : ObservatoryFilterRepresentationAdapter {
     @RequireLogin
     @PostMapping("/{id}/filters", consumes = [MediaType.APPLICATION_JSON_VALUE])
@@ -49,7 +49,7 @@ class ObservatoryFilterController(
         @PathVariable(name = "id") id: ObservatoryId,
         @RequestBody @Valid request: CreateObservatoryFilterRequest,
         currentUser: Authentication,
-        uriComponentsBuilder: UriComponentsBuilder
+        uriComponentsBuilder: UriComponentsBuilder,
     ): ResponseEntity<ObservatoryFilterRepresentation> {
         val contributorId = currentUser.contributorId()
         authorizeUser(contributorId, id)
@@ -68,7 +68,7 @@ class ObservatoryFilterController(
         @PathVariable(name = "filterId") filterId: ObservatoryFilterId,
         @RequestBody @Valid request: UpdateObservatoryFilterRequest,
         currentUser: Authentication,
-        uriComponentsBuilder: UriComponentsBuilder
+        uriComponentsBuilder: UriComponentsBuilder,
     ): ResponseEntity<Any> {
         observatoryService.findById(id)
             .orElseThrow { ObservatoryNotFound(id) }
@@ -84,7 +84,7 @@ class ObservatoryFilterController(
     @GetMapping("/{id}/filters/{filterId}")
     fun findById(
         @PathVariable(name = "id") id: ObservatoryId,
-        @PathVariable(name = "filterId") filterId: ObservatoryFilterId
+        @PathVariable(name = "filterId") filterId: ObservatoryFilterId,
     ): ObservatoryFilterRepresentation {
         observatoryService.findById(id)
             .orElseThrow { ObservatoryNotFound(id) }
@@ -96,7 +96,7 @@ class ObservatoryFilterController(
     @GetMapping("/{id}/filters")
     fun findAllByObservatoryId(
         @PathVariable(name = "id") id: ObservatoryId,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<ObservatoryFilterRepresentation> {
         observatoryService.findById(id)
             .orElseThrow { ObservatoryNotFound(id) }
@@ -133,7 +133,7 @@ class ObservatoryFilterController(
         val path: PredicatePath,
         val range: ThingId,
         val exact: Boolean,
-        val featured: Boolean = false
+        val featured: Boolean = false,
     ) {
         fun toCreateCommand(observatoryId: ObservatoryId, contributorId: ContributorId) =
             CreateCommand(
@@ -154,7 +154,7 @@ class ObservatoryFilterController(
         val path: PredicatePath?,
         val range: ThingId?,
         val exact: Boolean?,
-        val featured: Boolean?
+        val featured: Boolean?,
     ) {
         fun toUpdateCommand(id: ObservatoryFilterId) =
             UpdateObservatoryFilterUseCase.UpdateCommand(

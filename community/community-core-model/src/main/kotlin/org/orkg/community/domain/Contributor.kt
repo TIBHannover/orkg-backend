@@ -3,11 +3,11 @@ package org.orkg.community.domain
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
-import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.community.domain.internal.MD5Hash
+import java.time.OffsetDateTime
 
 /**
  * Class representing a user that contributes to the graph.
@@ -22,31 +22,26 @@ data class Contributor(
      * The user's ID.
      */
     val id: ContributorId,
-
     /**
      * The name the users wants to be displayed.
      */
     @get:JsonProperty("display_name")
     val name: String,
-
     /**
      * The date and time the user joined the project, i.e., the time the corresponding account was created.
      */
     @get:JsonProperty("joined_at")
     val joinedAt: OffsetDateTime,
-
     /**
      * The ID of the organization the user belongs to.
      */
     @get:JsonProperty("organization_id")
     val organizationId: OrganizationId = OrganizationId.UNKNOWN,
-
     /**
      * The ID of the observatory the user belongs to.
      */
     @get:JsonProperty("observatory_id")
     val observatoryId: ObservatoryId = ObservatoryId.UNKNOWN,
-
     /**
      * The MD5-hashed email address of the contributor.
      *
@@ -54,13 +49,11 @@ data class Contributor(
      */
     @JsonIgnore
     val emailMD5: MD5Hash,
-
     /**
      * Determines if the contributor is a curator.
      */
     @JsonIgnore
     val isCurator: Boolean = false,
-
     /**
      * Determines if the contributor is an admin.
      */

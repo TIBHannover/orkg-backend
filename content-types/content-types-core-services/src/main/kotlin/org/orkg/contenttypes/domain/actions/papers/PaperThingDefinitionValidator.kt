@@ -8,8 +8,9 @@ import org.orkg.graph.output.ThingRepository
 
 class PaperThingDefinitionValidator(
     thingRepository: ThingRepository,
-    classRepository: ClassRepository
-) : ThingDefinitionValidator(thingRepository, classRepository), CreatePaperAction {
+    classRepository: ClassRepository,
+) : ThingDefinitionValidator(thingRepository, classRepository),
+    CreatePaperAction {
     override operator fun invoke(command: CreatePaperCommand, state: CreatePaperState): CreatePaperState {
         val validatedIds = state.validatedIds.toMutableMap()
         if (command.contents != null) {

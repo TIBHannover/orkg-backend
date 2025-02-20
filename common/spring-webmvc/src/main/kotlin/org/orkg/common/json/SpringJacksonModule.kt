@@ -10,8 +10,10 @@ class SpringJacksonModule : SimpleModule() {
     override fun setupModule(context: SetupContext?) {
         context?.setMixInAnnotations(PageImpl::class.java, PageImplMixin::class.java)
         context?.setMixInAnnotations(PagedModel.PageMetadata::class.java, PageMetadataMixin::class.java)
-        context?.addSerializers(SimpleSerializers().apply {
-            addSerializer(UnpagedPageableRepresentation::class.java, UnpagedPageableRepresentationSerializer())
-        })
+        context?.addSerializers(
+            SimpleSerializers().apply {
+                addSerializer(UnpagedPageableRepresentation::class.java, UnpagedPageableRepresentationSerializer())
+            }
+        )
     }
 }

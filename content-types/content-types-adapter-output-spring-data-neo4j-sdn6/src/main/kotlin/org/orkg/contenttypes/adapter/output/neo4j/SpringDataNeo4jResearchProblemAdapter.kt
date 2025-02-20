@@ -1,6 +1,5 @@
 package org.orkg.contenttypes.adapter.output.neo4j
 
-import java.util.*
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.adapter.output.neo4j.internal.Neo4jProblemRepository
 import org.orkg.contenttypes.adapter.output.neo4j.internal.Neo4jResearchFieldWithPaperCount
@@ -12,10 +11,11 @@ import org.orkg.graph.domain.Visibility
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
+import java.util.Optional
 
 @Component
 class SpringDataNeo4jResearchProblemAdapter(
-    private val neo4jRepository: Neo4jProblemRepository
+    private val neo4jRepository: Neo4jProblemRepository,
 ) : ResearchProblemRepository {
     override fun findById(id: ThingId): Optional<Resource> =
         neo4jRepository.findById(id).map { it.toResource() }
@@ -26,7 +26,7 @@ class SpringDataNeo4jResearchProblemAdapter(
     override fun findAllContributionsByProblemAndVisibility(
         id: ThingId,
         visibility: Visibility,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<Resource> =
         neo4jRepository.findAllContributionsByProblemAndVisibility(id, visibility, pageable)
             .map { it.toResource() }
@@ -37,7 +37,7 @@ class SpringDataNeo4jResearchProblemAdapter(
     override fun findAllPapersByProblemAndVisibility(
         id: ThingId,
         visibility: Visibility,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<Resource> =
         neo4jRepository.findAllPapersByProblemAndVisibility(id, visibility, pageable)
             .map { it.toResource() }
@@ -48,7 +48,7 @@ class SpringDataNeo4jResearchProblemAdapter(
     override fun findAllResearchFieldsByProblemAndVisibility(
         id: ThingId,
         visibility: Visibility,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<Resource> =
         neo4jRepository.findAllResearchFieldsByProblemAndVisibility(id, visibility, pageable)
             .map { it.toResource() }
@@ -59,7 +59,7 @@ class SpringDataNeo4jResearchProblemAdapter(
     override fun findAllLiteratureListsByProblemAndVisibility(
         id: ThingId,
         visibility: Visibility,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<Resource> =
         neo4jRepository.findAllLiteratureListsByProblemAndVisibility(id, visibility, pageable)
             .map { it.toResource() }
@@ -70,7 +70,7 @@ class SpringDataNeo4jResearchProblemAdapter(
     override fun findAllSmartReviewsByProblemAndVisibility(
         id: ThingId,
         visibility: Visibility,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<Resource> =
         neo4jRepository.findAllSmartReviewsByProblemAndVisibility(id, visibility, pageable)
             .map { it.toResource() }
@@ -81,7 +81,7 @@ class SpringDataNeo4jResearchProblemAdapter(
     override fun findAllVisualizationsByProblemAndVisibility(
         id: ThingId,
         visibility: Visibility,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<Resource> =
         neo4jRepository.findAllVisualizationsByProblemAndVisibility(id, visibility, pageable)
             .map { it.toResource() }
@@ -97,7 +97,7 @@ class SpringDataNeo4jResearchProblemAdapter(
 
     override fun findAllContributorsPerProblem(
         problemId: ThingId,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<ContributorPerProblem> =
         neo4jRepository.findAllContributorsPerProblem(problemId, pageable)
 

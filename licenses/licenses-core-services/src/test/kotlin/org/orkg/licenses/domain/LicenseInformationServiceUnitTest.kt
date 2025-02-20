@@ -3,14 +3,13 @@ package org.orkg.licenses.domain
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.net.URI
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.testing.fixtures.MockkBaseTest
+import java.net.URI
 
 internal class LicenseInformationServiceUnitTest : MockkBaseTest {
-
     private val licenseProvider: LicenseInformationProvider = mockk {
         every { id } returns "dummy"
     }

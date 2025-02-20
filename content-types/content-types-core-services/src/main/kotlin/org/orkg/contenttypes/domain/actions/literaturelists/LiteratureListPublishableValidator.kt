@@ -7,7 +7,7 @@ import org.orkg.contenttypes.domain.actions.literaturelists.PublishLiteratureLis
 import org.orkg.contenttypes.input.LiteratureListUseCases
 
 class LiteratureListPublishableValidator(
-    private val literatureListService: LiteratureListUseCases
+    private val literatureListService: LiteratureListUseCases,
 ) : PublishLiteratureListAction {
     override fun invoke(command: PublishLiteratureListCommand, state: State): State {
         val literatureList = literatureListService.findById(command.id)

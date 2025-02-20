@@ -16,7 +16,7 @@ abstract class ComparisonHeaderCellMixin(
     @field:JsonProperty("paper_year")
     val paperYear: Int?,
     @field:JsonInclude(JsonInclude.Include.NON_NULL)
-    val active: Boolean?
+    val active: Boolean?,
 )
 
 abstract class ComparisonIndexCellMixin(
@@ -25,19 +25,21 @@ abstract class ComparisonIndexCellMixin(
     val contributionAmount: Int,
     @field:JsonAlias("similar")
     @field:JsonProperty("similar_predicates")
-    val similarPredicates: List<String>
+    val similarPredicates: List<String>,
 )
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
-@JsonSubTypes(value = [
-    JsonSubTypes.Type(EmptyComparisonTargetCell::class),
-    JsonSubTypes.Type(ConfiguredComparisonTargetCell::class)
-])
+@JsonSubTypes(
+    value = [
+        JsonSubTypes.Type(EmptyComparisonTargetCell::class),
+        JsonSubTypes.Type(ConfiguredComparisonTargetCell::class)
+    ]
+)
 abstract class ComparisonTargetCellMixin
 
 abstract class ConfiguredComparisonTargetCellMixin(
     @field:JsonProperty("path_labels")
     val pathLabels: List<String>,
     @field:JsonProperty("_class")
-    val `class`: String
+    val `class`: String,
 )

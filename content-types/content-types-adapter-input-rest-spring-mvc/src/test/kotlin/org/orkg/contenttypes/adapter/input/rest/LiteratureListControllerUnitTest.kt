@@ -7,9 +7,6 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.runs
 import io.mockk.verify
-import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter
-import java.util.*
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.DisplayName
@@ -28,7 +25,6 @@ import org.orkg.contenttypes.adapter.input.rest.LiteratureListController.Literat
 import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
 import org.orkg.contenttypes.domain.testing.fixtures.createLiteratureList
 import org.orkg.contenttypes.domain.testing.fixtures.createPaper
-import org.orkg.contenttypes.input.ContributionUseCases
 import org.orkg.contenttypes.input.CreateLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.CreateLiteratureListUseCase
 import org.orkg.contenttypes.input.DeleteLiteratureListSectionUseCase
@@ -65,16 +61,25 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Optional
+import java.util.UUID
 
-@ContextConfiguration(classes = [LiteratureListController::class, ExceptionHandler::class, CommonJacksonModule::class, ContentTypeJacksonModule::class, WebMvcConfiguration::class, FixedClockConfig::class])
+@ContextConfiguration(
+    classes = [
+        LiteratureListController::class,
+        ExceptionHandler::class,
+        CommonJacksonModule::class,
+        ContentTypeJacksonModule::class,
+        WebMvcConfiguration::class,
+        FixedClockConfig::class
+    ]
+)
 @WebMvcTest(controllers = [LiteratureListController::class])
 internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-lists") {
-
     @MockkBean
     private lateinit var literatureListService: LiteratureListUseCases
-
-    @MockkBean
-    private lateinit var contributionService: ContributionUseCases
 
     @MockkBean
     private lateinit var statementService: StatementUseCases
@@ -331,10 +336,12 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
             .andExpect(header().string("Location", endsWith("/api/literature-lists/$id")))
 
         verify(exactly = 1) {
-            literatureListService.create(withArg<CreateLiteratureListSectionUseCase.CreateListSectionCommand> {
-                it.shouldBeInstanceOf<CreateLiteratureListSectionUseCase.CreateListSectionCommand>()
-                it.index shouldBe null
-            })
+            literatureListService.create(
+                withArg<CreateLiteratureListSectionUseCase.CreateListSectionCommand> {
+                    it.shouldBeInstanceOf<CreateLiteratureListSectionUseCase.CreateListSectionCommand>()
+                    it.index shouldBe null
+                }
+            )
         }
     }
 
@@ -379,10 +386,12 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) {
-            literatureListService.create(withArg<CreateLiteratureListSectionUseCase.CreateListSectionCommand> {
-                it.shouldBeInstanceOf<CreateLiteratureListSectionUseCase.CreateListSectionCommand>()
-                it.index shouldBe index
-            })
+            literatureListService.create(
+                withArg<CreateLiteratureListSectionUseCase.CreateListSectionCommand> {
+                    it.shouldBeInstanceOf<CreateLiteratureListSectionUseCase.CreateListSectionCommand>()
+                    it.index shouldBe index
+                }
+            )
         }
     }
 
@@ -408,10 +417,12 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
             .andExpect(header().string("Location", endsWith("/api/literature-lists/$id")))
 
         verify(exactly = 1) {
-            literatureListService.create(withArg<CreateLiteratureListSectionUseCase.CreateTextSectionCommand> {
-                it.shouldBeInstanceOf<CreateLiteratureListSectionUseCase.CreateTextSectionCommand>()
-                it.index shouldBe null
-            })
+            literatureListService.create(
+                withArg<CreateLiteratureListSectionUseCase.CreateTextSectionCommand> {
+                    it.shouldBeInstanceOf<CreateLiteratureListSectionUseCase.CreateTextSectionCommand>()
+                    it.index shouldBe null
+                }
+            )
         }
     }
 
@@ -455,10 +466,12 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) {
-            literatureListService.create(withArg<CreateLiteratureListSectionUseCase.CreateTextSectionCommand> {
-                it.shouldBeInstanceOf<CreateLiteratureListSectionUseCase.CreateTextSectionCommand>()
-                it.index shouldBe index
-            })
+            literatureListService.create(
+                withArg<CreateLiteratureListSectionUseCase.CreateTextSectionCommand> {
+                    it.shouldBeInstanceOf<CreateLiteratureListSectionUseCase.CreateTextSectionCommand>()
+                    it.index shouldBe index
+                }
+            )
         }
     }
 
@@ -613,7 +626,9 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
         val id = ThingId("R3541")
         val sectionId = ThingId("R123")
         val command = DeleteLiteratureListSectionUseCase.DeleteCommand(
-            id, sectionId, ContributorId(MockUserId.USER)
+            id,
+            sectionId,
+            ContributorId(MockUserId.USER)
         )
         every { literatureListService.delete(command) } just runs
 

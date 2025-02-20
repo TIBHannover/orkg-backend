@@ -8,13 +8,13 @@ import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.output.ThingRepository
 
 class RosettaStoneStatementPropertyValueCreateValidator(
-    private val abstractRosettaStoneStatementPropertyValueValidator: AbstractRosettaStoneStatementPropertyValueValidator
+    private val abstractRosettaStoneStatementPropertyValueValidator: AbstractRosettaStoneStatementPropertyValueValidator,
 ) : CreateRosettaStoneStatementAction {
     constructor(
         thingRepository: ThingRepository,
         statementRepository: StatementRepository,
         classHierarchyRepository: ClassHierarchyRepository,
-        rosettaStoneStatementService: RosettaStoneStatementUseCases
+        rosettaStoneStatementService: RosettaStoneStatementUseCases,
     ) : this(
         AbstractRosettaStoneStatementPropertyValueValidator(
             thingRepository,

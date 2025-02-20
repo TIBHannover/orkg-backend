@@ -7,7 +7,7 @@ import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.UnsafeResourceUseCases
 
 class TemplateResourceCreator(
-    private val unsafeResourceUseCases: UnsafeResourceUseCases
+    private val unsafeResourceUseCases: UnsafeResourceUseCases,
 ) : CreateTemplateAction {
     override fun invoke(command: CreateTemplateCommand, state: State): State {
         val templateId = unsafeResourceUseCases.create(

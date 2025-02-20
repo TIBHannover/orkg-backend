@@ -5,7 +5,6 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.util.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.testing.fixtures.MockkBaseTest
@@ -15,6 +14,7 @@ import org.orkg.contenttypes.domain.actions.PublishSmartReviewState
 import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
 import org.orkg.contenttypes.input.SmartReviewUseCases
 import org.orkg.contenttypes.input.testing.fixtures.publishSmartReviewCommand
+import java.util.Optional
 
 internal class SmartReviewPublishableValidatorUnitTest : MockkBaseTest {
     private val smartReviewService: SmartReviewUseCases = mockk()

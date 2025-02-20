@@ -7,11 +7,11 @@ import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.UnsafeResourceUseCases
 
 class RosettaStoneTemplateResourceCreator(
-    private val unsafeResourceUseCases: UnsafeResourceUseCases
+    private val unsafeResourceUseCases: UnsafeResourceUseCases,
 ) : CreateRosettaStoneTemplateAction {
     override fun invoke(
         command: CreateRosettaStoneTemplateCommand,
-        state: CreateRosettaStoneTemplateState
+        state: CreateRosettaStoneTemplateState,
     ): CreateRosettaStoneTemplateState {
         val rosettaStoneTemplateId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(

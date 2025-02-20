@@ -30,7 +30,6 @@ import org.springframework.web.bind.annotation.RestController
 @WebMvcTest
 @ContextConfiguration(classes = [TestController::class, ExceptionHandler::class, FixedClockConfig::class])
 internal class ClassExceptionUnitTest : MockMvcBaseTest("exceptions") {
-
     @Test
     fun classNotModifiable() {
         val id = ThingId("R123")
@@ -150,38 +149,40 @@ internal class ClassExceptionUnitTest : MockMvcBaseTest("exceptions") {
     @RestController
     internal class TestController {
         @GetMapping("/class-not-modifiable")
-        fun classNotModifiable(@RequestParam id: ThingId) {
-            throw ClassNotModifiable(id)
-        }
+        fun classNotModifiable(
+            @RequestParam id: ThingId,
+        ): Unit = throw ClassNotModifiable(id)
 
         @GetMapping("/uri-already-in-use")
-        fun uriAlreadyInUse(@RequestParam id: ThingId, @RequestParam uri: ParsedIRI) {
-            throw URIAlreadyInUse(uri, id)
-        }
+        fun uriAlreadyInUse(
+            @RequestParam id: ThingId,
+            @RequestParam uri: ParsedIRI,
+        ): Unit = throw URIAlreadyInUse(uri, id)
 
         @GetMapping("/uri-not-absolute")
-        fun uriNotAbsolute(@RequestParam uri: ParsedIRI) {
-            throw URINotAbsolute(uri)
-        }
+        fun uriNotAbsolute(
+            @RequestParam uri: ParsedIRI,
+        ): Unit = throw URINotAbsolute(uri)
 
         @GetMapping("/class-not-allowed")
-        fun classNotAllowed(@RequestParam id: ThingId) {
-            throw ClassNotAllowed(id)
-        }
+        fun classNotAllowed(
+            @RequestParam id: ThingId,
+        ): Unit = throw ClassNotAllowed(id)
 
         @GetMapping("/class-already-exists")
-        fun classAlreadyExists(@RequestParam id: ThingId) {
-            throw ClassAlreadyExists(id)
-        }
+        fun classAlreadyExists(
+            @RequestParam id: ThingId,
+        ): Unit = throw ClassAlreadyExists(id)
 
         @GetMapping("/cannot-reset-uri")
-        fun cannotResetURI(@RequestParam id: ThingId) {
-            throw CannotResetURI(id)
-        }
+        fun cannotResetURI(
+            @RequestParam id: ThingId,
+        ): Unit = throw CannotResetURI(id)
 
         @GetMapping("/external-class-not-found")
-        fun externalClassNotFound(@RequestParam ontologyId: String, @RequestParam id: String) {
-            throw ExternalClassNotFound(ontologyId, id)
-        }
+        fun externalClassNotFound(
+            @RequestParam ontologyId: String,
+            @RequestParam id: String,
+        ): Unit = throw ExternalClassNotFound(ontologyId, id)
     }
 }

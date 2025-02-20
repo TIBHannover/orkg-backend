@@ -1,8 +1,5 @@
 package org.orkg.graph.adapter.output.inmemory
 
-import java.time.OffsetDateTime
-import java.util.*
-import kotlin.jvm.optionals.getOrNull
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.Predicate
@@ -11,19 +8,24 @@ import org.orkg.graph.output.PredicateRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
+import java.time.OffsetDateTime
+import java.util.Optional
+import kotlin.jvm.optionals.getOrNull
 
 class InMemoryPredicateRepository(val inMemoryGraph: InMemoryGraph) :
-    InMemoryRepository<ThingId, Predicate>(compareBy(Predicate::createdAt)), PredicateRepository {
-
+    InMemoryRepository<ThingId, Predicate>(compareBy(Predicate::createdAt)),
+    PredicateRepository {
     override val entities: InMemoryEntityAdapter<ThingId, Predicate> =
         object : InMemoryEntityAdapter<ThingId, Predicate> {
             override val keys: Collection<ThingId> get() = inMemoryGraph.findAllPredicates().map { it.id }
             override val values: MutableCollection<Predicate> get() = inMemoryGraph.findAllPredicates().toMutableSet()
 
             override fun remove(key: ThingId): Predicate? = get(key)?.also { inMemoryGraph.delete(it.id) }
+
             override fun clear() = inMemoryGraph.findAllPredicates().forEach(inMemoryGraph::delete)
 
             override fun get(key: ThingId): Predicate? = inMemoryGraph.findPredicateById(key).getOrNull()
+
             override fun set(key: ThingId, value: Predicate): Predicate? =
                 get(key).also { inMemoryGraph.add(value) }
         }
@@ -44,7 +46,7 @@ class InMemoryPredicateRepository(val inMemoryGraph: InMemoryGraph) :
         label: SearchString?,
         createdBy: ContributorId?,
         createdAtStart: OffsetDateTime?,
-        createdAtEnd: OffsetDateTime?
+        createdAtEnd: OffsetDateTime?,
     ): Page<Predicate> =
         findAllFilteredAndPaged(
             pageable = pageable,

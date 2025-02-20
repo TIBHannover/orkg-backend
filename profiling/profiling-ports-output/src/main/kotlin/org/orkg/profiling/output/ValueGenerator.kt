@@ -8,6 +8,6 @@ interface ValueGenerator<T : Any> {
         random: Random,
         name: String,
         type: KType,
-        randomInstances: (Random, String, KType) -> List<Any>
+        randomInstances: (Random, String, KType) -> List<Any>,
     ): List<T>
 }

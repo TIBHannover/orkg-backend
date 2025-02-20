@@ -1,13 +1,13 @@
 package org.orkg.community.adapter.input.rest
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import org.orkg.community.domain.ObservatoryFilterId
-import org.orkg.graph.domain.PredicatePath
-import java.time.LocalDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.community.domain.ObservatoryFilterId
+import org.orkg.graph.domain.PredicatePath
+import java.time.LocalDateTime
 
 data class ObservatoryRepresentation(
     val id: ObservatoryId,
@@ -21,12 +21,12 @@ data class ObservatoryRepresentation(
     @get:JsonProperty("display_id")
     val displayId: String,
     @get:JsonProperty("sdgs")
-    val sustainableDevelopmentGoals: Set<ThingId>
+    val sustainableDevelopmentGoals: Set<ThingId>,
 )
 
 data class ResearchFieldRepresentation(
     val id: ThingId?,
-    val label: String?
+    val label: String?,
 )
 
 data class ObservatoryFilterRepresentation(
@@ -41,5 +41,5 @@ data class ObservatoryFilterRepresentation(
     val path: PredicatePath,
     val range: ThingId,
     val exact: Boolean,
-    val featured: Boolean
+    val featured: Boolean,
 )

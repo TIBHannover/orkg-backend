@@ -32,7 +32,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 class SecurityConfiguration(
-    private val jwtAuthenticationConverterImpl: JwtAuthenticationConverter
+    private val jwtAuthenticationConverterImpl: JwtAuthenticationConverter,
 ) {
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
@@ -85,33 +85,31 @@ class JwtAuthenticationConverter : Converter<Jwt, AbstractAuthenticationToken> {
 @Configuration
 class CorsConfig {
     @Bean
-    fun corsConfigurationSource(): CorsConfigurationSource {
-        return UrlBasedCorsConfigurationSource().apply {
-            val configuration = CorsConfiguration()
-                .applyPermitDefaultValues()
-                .apply {
-                    allowedMethods = listOf("OPTIONS", "GET", "HEAD", "POST", "PUT", "PATCH", "DELETE")
-                    // Define safe header fields for clients. Safe-listed headers do not need to be included, see
-                    // https://developer.mozilla.org/en-US/docs/Glossary/CORS-safelisted_response_header.
-                    // (The defaults in Spring differ, see the documentation.)
-                    exposedHeaders = listOf(
-                        "Accept",
-                        "Access-Control-Allow-Origin",
-                        "Access-Control-Allow-Methods",
-                        "Access-Control-Allow-Headers",
-                        "Access-Control-Expose-Headers",
-                        "Access-Control-Allow-Credentials",
-                        "Access-Control-Max-Age",
-                        "Access-Control-Request-Headers",
-                        "Access-Control-Request-Method",
-                        "Authorization",
-                        "Location",
-                        "Origin",
-                        "Vary",
-                    )
-                }
-            registerCorsConfiguration("/**", configuration)
-        }
+    fun corsConfigurationSource(): CorsConfigurationSource = UrlBasedCorsConfigurationSource().apply {
+        val configuration = CorsConfiguration()
+            .applyPermitDefaultValues()
+            .apply {
+                allowedMethods = listOf("OPTIONS", "GET", "HEAD", "POST", "PUT", "PATCH", "DELETE")
+                // Define safe header fields for clients. Safe-listed headers do not need to be included, see
+                // https://developer.mozilla.org/en-US/docs/Glossary/CORS-safelisted_response_header.
+                // (The defaults in Spring differ, see the documentation.)
+                exposedHeaders = listOf(
+                    "Accept",
+                    "Access-Control-Allow-Origin",
+                    "Access-Control-Allow-Methods",
+                    "Access-Control-Allow-Headers",
+                    "Access-Control-Expose-Headers",
+                    "Access-Control-Allow-Credentials",
+                    "Access-Control-Max-Age",
+                    "Access-Control-Request-Headers",
+                    "Access-Control-Request-Method",
+                    "Authorization",
+                    "Location",
+                    "Origin",
+                    "Vary",
+                )
+            }
+        registerCorsConfiguration("/**", configuration)
     }
 }
 

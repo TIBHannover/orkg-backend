@@ -1,7 +1,7 @@
 package org.orkg.graph.domain
 
-import kotlin.collections.List
 import org.orkg.common.ThingId
+import kotlin.collections.List
 
 /**
  * Class representing the components to build the formatted label
@@ -37,7 +37,7 @@ data class TemplatedResource(
      * In the same order of the predicates list;
      * A list of values that corresponds to the labels of the objects of each predicate
      */
-    val values: List<String>
+    val values: List<String>,
 ) {
     /**
      * A map created from combining predicates and values; used for placeholder lookup
@@ -58,10 +58,14 @@ data class TemplatedResource(
                 startIndex = it.groups.first()!!.range.first + 1,
                 endIndex = it.groups.first()!!.range.last
             )
-            if (components.containsKey(predId))
+            if (components.containsKey(predId)) {
                 formattedString =
-                    formattedString.replaceFirst("{$predId}", components[predId]
-                        ?: error("Format pattern contains predicate {$predId}, that doesn't exists in the statements"))
+                    formattedString.replaceFirst(
+                        "{$predId}",
+                        components[predId]
+                            ?: error("Format pattern contains predicate {$predId}, that doesn't exists in the statements")
+                    )
+            }
         }
         return formattedString
     }

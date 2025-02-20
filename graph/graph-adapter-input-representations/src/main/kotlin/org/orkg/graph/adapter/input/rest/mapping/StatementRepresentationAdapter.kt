@@ -1,6 +1,5 @@
 package org.orkg.graph.adapter.input.rest.mapping
 
-import java.util.*
 import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ThingId
 import org.orkg.graph.adapter.input.rest.StatementRepresentation
@@ -11,16 +10,16 @@ import org.orkg.graph.domain.Predicate
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.StatementCounts
 import org.springframework.data.domain.Page
+import java.util.Optional
 
 interface StatementRepresentationAdapter : ThingRepresentationAdapter {
-
     fun Optional<GeneralStatement>.mapToStatementRepresentation(
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): Optional<StatementRepresentation> =
         map { it.toStatementRepresentation(capabilities) }
 
     fun Page<GeneralStatement>.mapToStatementRepresentation(
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): Page<StatementRepresentation> {
         val resources = content.resources()
         val statementCounts = countIncomingStatements(resources)
@@ -30,7 +29,7 @@ interface StatementRepresentationAdapter : ThingRepresentationAdapter {
     }
 
     fun Iterable<GeneralStatement>.mapToStatementRepresentation(
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): Iterable<StatementRepresentation> {
         val resources = resources()
         val statementCounts = countIncomingStatements(resources)
@@ -40,7 +39,7 @@ interface StatementRepresentationAdapter : ThingRepresentationAdapter {
     }
 
     private fun GeneralStatement.toStatementRepresentation(
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): StatementRepresentation {
         val statementAsList = listOf(this)
         val resources = statementAsList.resources()
@@ -53,7 +52,7 @@ interface StatementRepresentationAdapter : ThingRepresentationAdapter {
     private fun GeneralStatement.toRepresentation(
         statementCounts: StatementCounts,
         formattedLabels: FormattedLabels,
-        descriptions: Map<ThingId, String>
+        descriptions: Map<ThingId, String>,
     ): StatementRepresentation =
         StatementRepresentation(
             id = id,

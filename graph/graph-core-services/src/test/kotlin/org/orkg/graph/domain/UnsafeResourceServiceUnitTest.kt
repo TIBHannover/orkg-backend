@@ -6,8 +6,6 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import java.time.OffsetDateTime
-import java.util.*
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
@@ -20,9 +18,11 @@ import org.orkg.graph.input.UpdateResourceUseCase
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.MockUserId
+import java.time.OffsetDateTime
+import java.util.Optional
+import java.util.UUID
 
 internal class UnsafeResourceServiceUnitTest : MockkBaseTest {
-
     private val repository: ResourceRepository = mockk()
 
     private val service = UnsafeResourceService(repository, fixedClock)
@@ -46,20 +46,22 @@ internal class UnsafeResourceServiceUnitTest : MockkBaseTest {
         service.create(command) shouldBe id
 
         verify(exactly = 1) {
-            repository.save(withArg {
-                it.id shouldBe command.id
-                it.label shouldBe command.label
-                it.createdAt shouldBe OffsetDateTime.now(fixedClock)
-                it.classes shouldBe command.classes
-                it.createdBy shouldBe command.contributorId
-                it.observatoryId shouldBe command.observatoryId
-                it.extractionMethod shouldBe command.extractionMethod
-                it.organizationId shouldBe command.organizationId
-                it.visibility shouldBe Visibility.DEFAULT
-                it.verified shouldBe null
-                it.unlistedBy shouldBe null
-                it.modifiable shouldBe command.modifiable
-            })
+            repository.save(
+                withArg {
+                    it.id shouldBe command.id
+                    it.label shouldBe command.label
+                    it.createdAt shouldBe OffsetDateTime.now(fixedClock)
+                    it.classes shouldBe command.classes
+                    it.createdBy shouldBe command.contributorId
+                    it.observatoryId shouldBe command.observatoryId
+                    it.extractionMethod shouldBe command.extractionMethod
+                    it.organizationId shouldBe command.organizationId
+                    it.visibility shouldBe Visibility.DEFAULT
+                    it.verified shouldBe null
+                    it.unlistedBy shouldBe null
+                    it.modifiable shouldBe command.modifiable
+                }
+            )
         }
     }
 
@@ -77,20 +79,22 @@ internal class UnsafeResourceServiceUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { repository.nextIdentity() }
         verify(exactly = 1) {
-            repository.save(withArg {
-                it.id shouldBe id
-                it.label shouldBe command.label
-                it.createdAt shouldBe OffsetDateTime.now(fixedClock)
-                it.classes shouldBe command.classes
-                it.createdBy shouldBe ContributorId.UNKNOWN
-                it.observatoryId shouldBe ObservatoryId.UNKNOWN
-                it.extractionMethod shouldBe ExtractionMethod.UNKNOWN
-                it.organizationId shouldBe OrganizationId.UNKNOWN
-                it.visibility shouldBe Visibility.DEFAULT
-                it.verified shouldBe null
-                it.unlistedBy shouldBe null
-                it.modifiable shouldBe command.modifiable
-            })
+            repository.save(
+                withArg {
+                    it.id shouldBe id
+                    it.label shouldBe command.label
+                    it.createdAt shouldBe OffsetDateTime.now(fixedClock)
+                    it.classes shouldBe command.classes
+                    it.createdBy shouldBe ContributorId.UNKNOWN
+                    it.observatoryId shouldBe ObservatoryId.UNKNOWN
+                    it.extractionMethod shouldBe ExtractionMethod.UNKNOWN
+                    it.organizationId shouldBe OrganizationId.UNKNOWN
+                    it.visibility shouldBe Visibility.DEFAULT
+                    it.verified shouldBe null
+                    it.unlistedBy shouldBe null
+                    it.modifiable shouldBe command.modifiable
+                }
+            )
         }
     }
 
@@ -127,16 +131,18 @@ internal class UnsafeResourceServiceUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { repository.findById(resource.id) }
         verify(exactly = 1) {
-            repository.save(withArg {
-                it.label shouldBe label
-                it.classes shouldBe classes
-                it.observatoryId shouldBe observatoryId
-                it.organizationId shouldBe organizationId
-                it.extractionMethod shouldBe extractionMethod
-                it.modifiable shouldBe modifiable
-                it.visibility shouldBe visibility
-                it.verified shouldBe verified
-            })
+            repository.save(
+                withArg {
+                    it.label shouldBe label
+                    it.classes shouldBe classes
+                    it.observatoryId shouldBe observatoryId
+                    it.organizationId shouldBe organizationId
+                    it.extractionMethod shouldBe extractionMethod
+                    it.modifiable shouldBe modifiable
+                    it.visibility shouldBe visibility
+                    it.verified shouldBe verified
+                }
+            )
         }
     }
 

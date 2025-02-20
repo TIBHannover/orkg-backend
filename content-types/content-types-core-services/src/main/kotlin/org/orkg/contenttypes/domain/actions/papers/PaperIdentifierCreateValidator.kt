@@ -9,8 +9,9 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.output.StatementRepository
 
 class PaperIdentifierCreateValidator(
-    statementRepository: StatementRepository
-) : IdentifierValidator(statementRepository), Action<CreatePaperCommand, CreatePaperState> {
+    statementRepository: StatementRepository,
+) : IdentifierValidator(statementRepository),
+    Action<CreatePaperCommand, CreatePaperState> {
     override fun invoke(command: CreatePaperCommand, state: CreatePaperState): CreatePaperState =
         state.apply { validate(command.identifiers, Classes.paper, null, PaperAlreadyExists::withIdentifier) }
 }

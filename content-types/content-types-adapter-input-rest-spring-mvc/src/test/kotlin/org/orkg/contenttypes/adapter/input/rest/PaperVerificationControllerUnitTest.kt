@@ -20,7 +20,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @ContextConfiguration(classes = [PaperVerificationCommandController::class, ExceptionHandler::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [PaperVerificationCommandController::class])
 internal class PaperVerificationControllerUnitTest : MockMvcBaseTest("papers") {
-
     @MockkBean
     private lateinit var service: MarkAsVerifiedUseCase
 

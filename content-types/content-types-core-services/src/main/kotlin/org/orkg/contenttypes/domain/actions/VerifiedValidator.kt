@@ -9,7 +9,7 @@ class VerifiedValidator<T, S>(
     private val contributorRepository: ContributorRepository,
     private val contributorSelector: (T) -> ContributorId,
     private val oldValueSelector: (S) -> Boolean,
-    private val newValueSelector: (T) -> Boolean?
+    private val newValueSelector: (T) -> Boolean?,
 ) : Action<T, S> {
     override fun invoke(command: T, state: S): S {
         val newVisibility = newValueSelector(command)

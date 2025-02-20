@@ -36,7 +36,10 @@ internal class TemplateInstancePropertyValueValidatorUnitTest : MockkBaseTest {
     private val abstractTemplatePropertyValueValidator: AbstractTemplatePropertyValueValidator = mockk()
 
     private val templateInstancePropertyValueValidator = TemplateInstancePropertyValueValidator(
-        thingRepository, classRepository, statementRepository, abstractTemplatePropertyValueValidator
+        thingRepository,
+        classRepository,
+        statementRepository,
+        abstractTemplatePropertyValueValidator
     )
 
     @Test

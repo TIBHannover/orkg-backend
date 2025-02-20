@@ -3,7 +3,6 @@ package org.orkg.contenttypes.adapter.input.rest
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
-import java.util.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
@@ -11,10 +10,10 @@ import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.contenttypes.domain.ContributionNotFound
 import org.orkg.contenttypes.domain.testing.fixtures.createContribution
-import org.orkg.contenttypes.input.ContributionUseCases
-import org.orkg.testing.configuration.FixedClockConfig
+import org.orkg.contenttypes.input.RetrieveContributionUseCase
 import org.orkg.testing.andExpectContribution
 import org.orkg.testing.andExpectPage
+import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
@@ -28,13 +27,15 @@ import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.util.Optional
 
-@ContextConfiguration(classes = [ContributionController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(
+    classes = [ContributionController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class]
+)
 @WebMvcTest(controllers = [ContributionController::class])
 internal class ContributionControllerUnitTest : MockMvcBaseTest("contributions") {
-
     @MockkBean
-    private lateinit var contributionService: ContributionUseCases
+    private lateinit var contributionService: RetrieveContributionUseCase
 
     @Test
     @DisplayName("Given a contribution, when it is fetched by id and service succeeds, then status is 200 OK and contribution is returned")

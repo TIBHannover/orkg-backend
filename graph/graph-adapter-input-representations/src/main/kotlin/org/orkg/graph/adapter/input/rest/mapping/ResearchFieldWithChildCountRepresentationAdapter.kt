@@ -2,15 +2,14 @@ package org.orkg.graph.adapter.input.rest.mapping
 
 import org.orkg.common.MediaTypeCapabilities
 import org.orkg.contenttypes.domain.ResearchFieldWithChildCount
+import org.orkg.graph.adapter.input.rest.ResearchFieldWithChildCountRepresentation
 import org.orkg.graph.domain.FormattedLabels
 import org.orkg.graph.domain.StatementCounts
-import org.orkg.graph.adapter.input.rest.ResearchFieldWithChildCountRepresentation
 import org.springframework.data.domain.Page
 
 interface ResearchFieldWithChildCountRepresentationAdapter : ResourceRepresentationAdapter {
-
     fun Page<ResearchFieldWithChildCount>.mapToResearchFieldWithChildCountRepresentation(
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): Page<ResearchFieldWithChildCountRepresentation> {
         val resources = content.map { it.resource }
         val usageCounts = countIncomingStatements(resources)
@@ -20,7 +19,7 @@ interface ResearchFieldWithChildCountRepresentationAdapter : ResourceRepresentat
 
     fun ResearchFieldWithChildCount.toResearchFieldWithChildCountRepresentation(
         usageCounts: StatementCounts,
-        formattedLabels: FormattedLabels
+        formattedLabels: FormattedLabels,
     ): ResearchFieldWithChildCountRepresentation =
         ResearchFieldWithChildCountRepresentation(resource.toResourceRepresentation(usageCounts, formattedLabels), childCount)
 }

@@ -1,6 +1,5 @@
 package org.orkg.contenttypes.adapter.input.rest
 
-import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -13,17 +12,18 @@ import org.orkg.graph.domain.VisibilityFilter
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.format.annotation.DateTimeFormat
-import org.springframework.format.annotation.DateTimeFormat.*
+import org.springframework.format.annotation.DateTimeFormat.ISO
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.time.OffsetDateTime
 
 @RestController
 @RequestMapping("/api/content-types", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ContentTypeController(
-    private val service: ContentTypeUseCases
+    private val service: ContentTypeUseCases,
 ) : ContentTypeRepresentationAdapter {
     @GetMapping
     fun findAll(
@@ -39,7 +39,7 @@ class ContentTypeController(
         @RequestParam("sdg", required = false) sustainableDevelopmentGoal: ThingId?,
         @RequestParam("author_id", required = false) authorId: ThingId?,
         @RequestParam("author_name", required = false) authorName: String?,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<ContentTypeRepresentation> {
         if (authorId != null && authorName != null) {
             throw TooManyParameters.atMostOneOf("author_id", "author_name")

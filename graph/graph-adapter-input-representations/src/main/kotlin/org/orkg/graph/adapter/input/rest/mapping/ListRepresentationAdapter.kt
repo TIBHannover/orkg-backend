@@ -1,12 +1,11 @@
 package org.orkg.graph.adapter.input.rest.mapping
 
-import java.util.*
-import org.orkg.graph.domain.List
 import org.orkg.graph.adapter.input.rest.ListRepresentation
+import org.orkg.graph.domain.List
 import org.springframework.data.domain.Page
+import java.util.Optional
 
 interface ListRepresentationAdapter {
-
     fun Optional<List>.mapToListRepresentation(): Optional<ListRepresentation> =
         map { it.toListRepresentation() }
 

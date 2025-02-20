@@ -5,7 +5,6 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.util.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.RealNumber
@@ -31,6 +30,7 @@ import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createPredicate
+import java.util.Optional
 
 internal class AbstractTemplatePropertyValidatorUnitTest : MockkBaseTest {
     private val predicateRepository: PredicateRepository = mockk()
@@ -217,7 +217,8 @@ internal class AbstractTemplatePropertyValidatorUnitTest : MockkBaseTest {
     fun `Given a number template property definition, when datatype does not match xsd integer, decimal or float, it throws an exception`() {
         val property = createNumberLiteralTemplatePropertyCommand().copy(datatype = Classes.string)
         val exception = InvalidDatatype(
-            property.datatype, *Literals.XSD.entries.filter { it.isNumber }.map { it.`class` }.toTypedArray()
+            property.datatype,
+            *Literals.XSD.entries.filter { it.isNumber }.map { it.`class` }.toTypedArray()
         )
 
         assertThrows<InvalidDatatype> { abstractTemplatePropertyValidator.validate(property) }.message shouldBe exception.message

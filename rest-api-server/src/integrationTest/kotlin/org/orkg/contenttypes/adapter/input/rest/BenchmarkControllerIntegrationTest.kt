@@ -9,12 +9,12 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.output.LabelAndClassService
-import org.orkg.createStatement
 import org.orkg.createClass
 import org.orkg.createClasses
 import org.orkg.createLiteral
 import org.orkg.createPredicate
 import org.orkg.createResource
+import org.orkg.createStatement
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.LiteralUseCases
@@ -36,7 +36,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @Neo4jContainerIntegrationTest
 @Suppress("HttpUrlsUsage")
 internal class BenchmarkControllerIntegrationTest : MockMvcBaseTest("benchmarks") {
-
     @Autowired
     private lateinit var labelsAndClasses: LabelAndClassService
 
@@ -612,13 +611,16 @@ internal class BenchmarkControllerIntegrationTest : MockMvcBaseTest("benchmarks"
         val metric2 = resourceService.createResource(setOf(labelsAndClasses.metricClass), label = "Metric 2")
 
         val quantityValueB1E1 = resourceService.createResource(
-            classes = setOf(labelsAndClasses.quantityValueClass), label = "Quantity Value 1"
+            classes = setOf(labelsAndClasses.quantityValueClass),
+            label = "Quantity Value 1"
         )
         val quantityValueB1E2 = resourceService.createResource(
-            classes = setOf(labelsAndClasses.quantityValueClass), label = "Quantity Value 2"
+            classes = setOf(labelsAndClasses.quantityValueClass),
+            label = "Quantity Value 2"
         )
         val quantityValueB2E1 = resourceService.createResource(
-            classes = setOf(labelsAndClasses.quantityValueClass), label = "Quantity Value 3"
+            classes = setOf(labelsAndClasses.quantityValueClass),
+            label = "Quantity Value 3"
         )
 
         statementService.createStatement(benchmark1, ThingId(labelsAndClasses.quantityPredicate), quantityB1E1)

@@ -5,9 +5,6 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.every
 import io.mockk.verify
-import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter
-import java.util.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
@@ -42,11 +39,21 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Optional
 
-@ContextConfiguration(classes = [TableController::class, ExceptionHandler::class, CommonJacksonModule::class, ContentTypeJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(
+    classes = [
+        TableController::class,
+        ExceptionHandler::class,
+        CommonJacksonModule::class,
+        ContentTypeJacksonModule::class,
+        FixedClockConfig::class
+    ]
+)
 @WebMvcTest(controllers = [TableController::class])
 internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
-
     @MockkBean
     private lateinit var tableService: TableUseCases
 

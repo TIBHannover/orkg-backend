@@ -7,9 +7,6 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.runs
 import io.mockk.verify
-import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter
-import java.util.*
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.DisplayName
@@ -47,7 +44,6 @@ import org.orkg.contenttypes.domain.ThingIsNotAPredicate
 import org.orkg.contenttypes.domain.ThingNotDefined
 import org.orkg.contenttypes.domain.identifiers.DOI
 import org.orkg.contenttypes.domain.testing.fixtures.createPaper
-import org.orkg.contenttypes.input.ContributionUseCases
 import org.orkg.contenttypes.input.CreateContributionUseCase
 import org.orkg.contenttypes.input.CreatePaperUseCase
 import org.orkg.contenttypes.input.PaperUseCases
@@ -83,16 +79,23 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Optional
 
-@ContextConfiguration(classes = [PaperController::class, ExceptionHandler::class, CommonJacksonModule::class, ContentTypeJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(
+    classes = [
+        PaperController::class,
+        ExceptionHandler::class,
+        CommonJacksonModule::class,
+        ContentTypeJacksonModule::class,
+        FixedClockConfig::class
+    ]
+)
 @WebMvcTest(controllers = [PaperController::class])
 internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
-
     @MockkBean
     private lateinit var paperService: PaperUseCases
-
-    @MockkBean
-    private lateinit var contributionService: ContributionUseCases
 
     @Test
     @DisplayName("Given a paper, when it is fetched by id and service succeeds, then status is 200 OK and paper is returned")

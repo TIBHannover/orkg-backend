@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonDeserializer
 import com.fasterxml.jackson.databind.JsonNode
-import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -12,11 +11,12 @@ import org.orkg.common.ThingId
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.Visibility
+import java.time.OffsetDateTime
 
 class ResourceDeserializer : JsonDeserializer<Resource>() {
     override fun deserialize(
         p: JsonParser?,
-        ctxt: DeserializationContext?
+        ctxt: DeserializationContext?,
     ): Resource = with(p!!.codec.readTree<JsonNode>(p)) {
         Resource(
             id = ThingId(this["id"].asText()),

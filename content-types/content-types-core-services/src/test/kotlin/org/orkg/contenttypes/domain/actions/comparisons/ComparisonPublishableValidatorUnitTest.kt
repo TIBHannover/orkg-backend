@@ -5,7 +5,6 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.util.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ThingId
@@ -20,6 +19,7 @@ import org.orkg.contenttypes.domain.testing.fixtures.createComparisonTable
 import org.orkg.contenttypes.input.ComparisonUseCases
 import org.orkg.contenttypes.input.testing.fixtures.publishComparisonCommand
 import org.orkg.contenttypes.output.ComparisonTableRepository
+import java.util.Optional
 
 internal class ComparisonPublishableValidatorUnitTest : MockkBaseTest {
     private val comparisonService: ComparisonUseCases = mockk()

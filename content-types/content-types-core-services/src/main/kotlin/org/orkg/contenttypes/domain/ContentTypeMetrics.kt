@@ -47,7 +47,7 @@ class ContentTypeMetrics {
     @Bean
     fun paperCountMetric(
         paperRepository: PaperRepository,
-        cacheManager: CacheManager?
+        cacheManager: CacheManager?,
     ): Metric = CachedMetric.create(
         cacheManager = cacheManager,
         name = "paper-count",
@@ -66,7 +66,7 @@ class ContentTypeMetrics {
     @Bean
     fun comparisonCountMetric(
         comparisonRepository: ComparisonRepository,
-        cacheManager: CacheManager?
+        cacheManager: CacheManager?,
     ): Metric = CachedMetric.create(
         cacheManager = cacheManager,
         name = "comparison-count",
@@ -86,7 +86,7 @@ class ContentTypeMetrics {
     @Bean
     fun visualizationCountMetric(
         visualizationRepository: VisualizationRepository,
-        cacheManager: CacheManager?
+        cacheManager: CacheManager?,
     ): Metric = CachedMetric.create(
         cacheManager = cacheManager,
         name = "visualization-count",
@@ -105,7 +105,7 @@ class ContentTypeMetrics {
     @Bean
     fun literatureListCountMetric(
         literatureListRepository: LiteratureListRepository,
-        cacheManager: CacheManager?
+        cacheManager: CacheManager?,
     ): Metric = CachedMetric.create(
         cacheManager = cacheManager,
         name = "literature-list-count",
@@ -125,7 +125,7 @@ class ContentTypeMetrics {
     @Bean
     fun smartReviewCountMetric(
         smartReviewRepository: SmartReviewRepository,
-        cacheManager: CacheManager?
+        cacheManager: CacheManager?,
     ): Metric = CachedMetric.create(
         cacheManager = cacheManager,
         name = "smart-review-count",
@@ -145,7 +145,7 @@ class ContentTypeMetrics {
     @Bean
     fun templateCountMetric(
         templateRepository: TemplateRepository,
-        cacheManager: CacheManager?
+        cacheManager: CacheManager?,
     ): Metric = CachedMetric.create(
         cacheManager = cacheManager,
         name = "template-count",

@@ -13,7 +13,7 @@ interface ThingIdValidator {
     fun validateId(
         id: String,
         tempIds: Set<String>,
-        validationCache: MutableMap<String, Either<String, Thing>>
+        validationCache: MutableMap<String, Either<String, Thing>>,
     ): Either<String, Thing> =
         validationCache.getOrPut(id) {
             if (id.isTempId) {

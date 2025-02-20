@@ -13,7 +13,7 @@ data class Neo4jBenchmarkSummary(
     val fields: List<Neo4jResource>,
     val totalPapers: Long,
     val totalDatasets: Long,
-    val totalCodes: Long
+    val totalCodes: Long,
 ) {
     fun toBenchmarkSummary() =
         BenchmarkSummary(
@@ -29,7 +29,7 @@ data class Neo4jDataset(
     val dataset: Neo4jResource,
     val totalModels: Long,
     val totalPapers: Long,
-    val totalCodes: Long
+    val totalCodes: Long,
 ) {
     fun toDataset() =
         Dataset(
@@ -49,7 +49,7 @@ data class Neo4jDatasetSummary(
     val paper: Neo4jResource,
     val codes: List<String>,
     val month: String?,
-    val year: String?
+    val year: String?,
 ) {
     fun toDatasetSummary() =
         DatasetSummary(

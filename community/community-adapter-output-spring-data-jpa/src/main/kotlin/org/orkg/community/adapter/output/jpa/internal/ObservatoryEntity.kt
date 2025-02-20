@@ -1,6 +1,5 @@
 package org.orkg.community.adapter.output.jpa.internal
 
-import java.util.*
 import jakarta.persistence.CascadeType
 import jakarta.persistence.CollectionTable
 import jakarta.persistence.Column
@@ -19,6 +18,7 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.community.domain.Observatory
+import java.util.UUID
 
 @Entity
 @Table(name = "observatories")

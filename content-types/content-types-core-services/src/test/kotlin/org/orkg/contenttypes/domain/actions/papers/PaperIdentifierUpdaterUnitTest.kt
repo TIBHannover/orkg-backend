@@ -9,9 +9,9 @@ import io.mockk.runs
 import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.orkg.common.testing.fixtures.MockkBaseTest
-import org.orkg.contenttypes.domain.Identifiers
 import org.orkg.contenttypes.domain.actions.IdentifierUpdater
 import org.orkg.contenttypes.domain.actions.UpdatePaperState
+import org.orkg.contenttypes.domain.identifiers.Identifiers
 import org.orkg.contenttypes.domain.testing.fixtures.createPaper
 import org.orkg.contenttypes.input.testing.fixtures.updatePaperCommand
 import org.orkg.graph.testing.fixtures.createStatement

@@ -7,7 +7,6 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import java.util.*
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
@@ -31,6 +30,7 @@ import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase.UpdateResourceP
 import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase.UpdateStringLiteralPropertyCommand
 import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase.UpdateUntypedPropertyCommand
 import org.orkg.graph.testing.fixtures.createStatement
+import java.util.UUID
 
 internal class TemplatePropertyUpdaterUnitTest : MockkBaseTest {
     private val abstractTemplatePropertyUpdater: AbstractTemplatePropertyUpdater = mockk()
@@ -333,7 +333,7 @@ internal class TemplatePropertyUpdaterUnitTest : MockkBaseTest {
 
     private fun UntypedTemplateProperty.toUpdateUntypedTemplatePropertyCommand(
         contributorId: ContributorId,
-        templateId: ThingId
+        templateId: ThingId,
     ): UpdateUntypedPropertyCommand = UpdateUntypedPropertyCommand(
         templatePropertyId = id,
         contributorId = contributorId,
@@ -348,7 +348,7 @@ internal class TemplatePropertyUpdaterUnitTest : MockkBaseTest {
 
     private fun StringLiteralTemplateProperty.toUpdateStringLiteralTemplatePropertyCommand(
         contributorId: ContributorId,
-        templateId: ThingId
+        templateId: ThingId,
     ): UpdateStringLiteralPropertyCommand = UpdateStringLiteralPropertyCommand(
         templatePropertyId = id,
         contributorId = contributorId,
@@ -365,7 +365,7 @@ internal class TemplatePropertyUpdaterUnitTest : MockkBaseTest {
 
     private fun NumberLiteralTemplateProperty.toUpdateNumberLiteralTemplatePropertyCommand(
         contributorId: ContributorId,
-        templateId: ThingId
+        templateId: ThingId,
     ): UpdateNumberLiteralPropertyCommand = UpdateNumberLiteralPropertyCommand(
         templatePropertyId = id,
         contributorId = contributorId,
@@ -383,7 +383,7 @@ internal class TemplatePropertyUpdaterUnitTest : MockkBaseTest {
 
     private fun OtherLiteralTemplateProperty.toUpdateOtherLiteralTemplatePropertyCommand(
         contributorId: ContributorId,
-        templateId: ThingId
+        templateId: ThingId,
     ): UpdateOtherLiteralPropertyCommand = UpdateOtherLiteralPropertyCommand(
         templatePropertyId = id,
         contributorId = contributorId,
@@ -399,7 +399,7 @@ internal class TemplatePropertyUpdaterUnitTest : MockkBaseTest {
 
     private fun ResourceTemplateProperty.toUpdateResourceTemplatePropertyCommand(
         contributorId: ContributorId,
-        templateId: ThingId
+        templateId: ThingId,
     ): UpdateResourcePropertyCommand = UpdateResourcePropertyCommand(
         templatePropertyId = id,
         contributorId = contributorId,

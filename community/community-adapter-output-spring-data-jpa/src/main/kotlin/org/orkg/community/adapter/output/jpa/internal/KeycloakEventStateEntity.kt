@@ -15,7 +15,6 @@ class KeycloakEventStateEntity(
     @Enumerated(EnumType.STRING)
     @Column(name = "event_type")
     var eventType: EventType? = null,
-
     @Column(name = "counter")
-    var counter: Int = 0
+    var counter: Int = 0,
 )

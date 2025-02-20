@@ -8,7 +8,7 @@ import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 
 class PaperResourceUpdater(
-    private val unsafeResourceUseCases: UnsafeResourceUseCases
+    private val unsafeResourceUseCases: UnsafeResourceUseCases,
 ) : UpdatePaperAction {
     override fun invoke(command: UpdatePaperCommand, state: State): State {
         unsafeResourceUseCases.update(

@@ -8,5 +8,5 @@ abstract class PublishedContentTypeMixin(
     @field:JsonProperty("rootResource")
     val rootId: ThingId,
     @field:JsonProperty("statements")
-    val subgraph: List<GeneralStatement>
+    val subgraph: List<GeneralStatement>,
 )

@@ -38,16 +38,16 @@ internal class SpringDataNeo4jContentTypeAdapterContractTest(
     @Autowired private val springDataNeo4jPredicateAdapter: PredicateRepository,
     @Autowired private val springDataNeo4jClassAdapter: ClassRepository,
     @Autowired private val springDataNeo4jLiteralAdapter: LiteralRepository,
-    @Autowired private val springDataNeo4jStatementAdapter: StatementRepository
+    @Autowired private val springDataNeo4jStatementAdapter: StatementRepository,
 ) : DescribeSpec({
-    include(
-        contentTypeRepositoryContract(
-            springDataNeo4jContentTypeAdapter,
-            springDataNeo4jStatementAdapter,
-            springDataNeo4jClassAdapter,
-            springDataNeo4jLiteralAdapter,
-            springDataNeo4jResourceAdapter,
-            springDataNeo4jPredicateAdapter
+        include(
+            contentTypeRepositoryContract(
+                springDataNeo4jContentTypeAdapter,
+                springDataNeo4jStatementAdapter,
+                springDataNeo4jClassAdapter,
+                springDataNeo4jLiteralAdapter,
+                springDataNeo4jResourceAdapter,
+                springDataNeo4jPredicateAdapter
+            )
         )
-    )
-})
+    })

@@ -18,11 +18,11 @@ import org.orkg.graph.input.UnsafeStatementUseCases
 class AbstractLiteratureListSectionCreator(
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
     private val unsafeResourceUseCases: UnsafeResourceUseCases,
-    private val literalService: LiteralUseCases
+    private val literalService: LiteralUseCases,
 ) {
     internal fun create(
         contributorId: ContributorId,
-        section: LiteratureListSectionDefinition
+        section: LiteratureListSectionDefinition,
     ): ThingId =
         when (section) {
             is LiteratureListListSectionDefinition -> createListSection(contributorId, section)
@@ -31,7 +31,7 @@ class AbstractLiteratureListSectionCreator(
 
     internal fun createListSectionEntry(
         contributorId: ContributorId,
-        entry: LiteratureListListSectionDefinition.Entry
+        entry: LiteratureListListSectionDefinition.Entry,
     ): ThingId {
         val entryId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
@@ -69,7 +69,7 @@ class AbstractLiteratureListSectionCreator(
 
     private fun createListSection(
         contributorId: ContributorId,
-        section: LiteratureListListSectionDefinition
+        section: LiteratureListListSectionDefinition,
     ): ThingId {
         val sectionId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
@@ -94,7 +94,7 @@ class AbstractLiteratureListSectionCreator(
 
     private fun createTextSection(
         contributorId: ContributorId,
-        section: LiteratureListTextSectionDefinition
+        section: LiteratureListTextSectionDefinition,
     ): ThingId {
         val sectionId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(

@@ -6,13 +6,13 @@ import org.orkg.contenttypes.domain.actions.UpdateLiteratureListState
 import org.orkg.graph.output.ResourceRepository
 
 class LiteratureListSectionsUpdateValidator(
-    private val abstractLiteratureListSectionValidator: AbstractLiteratureListSectionValidator
+    private val abstractLiteratureListSectionValidator: AbstractLiteratureListSectionValidator,
 ) : UpdateLiteratureListAction {
     constructor(resourceRepository: ResourceRepository) : this(AbstractLiteratureListSectionValidator(resourceRepository))
 
     override fun invoke(
         command: UpdateLiteratureListCommand,
-        state: UpdateLiteratureListState
+        state: UpdateLiteratureListState,
     ): UpdateLiteratureListState {
         command.sections?.let { sections ->
             val validIds = state.literatureList!!.sections.filterIsInstance<LiteratureListListSection>()

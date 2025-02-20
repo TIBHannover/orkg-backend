@@ -11,7 +11,7 @@ import org.orkg.graph.output.ResourceRepository
 
 class TemplateRelationsCreateValidator(
     private val resourceRepository: ResourceRepository,
-    private val predicateRepository: PredicateRepository
+    private val predicateRepository: PredicateRepository,
 ) : CreateTemplateAction {
     override fun invoke(command: CreateTemplateCommand, state: State): State {
         command.relations.researchFields.forEach { researchFieldId ->

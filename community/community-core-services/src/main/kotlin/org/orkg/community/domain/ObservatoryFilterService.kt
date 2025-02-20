@@ -1,8 +1,5 @@
 package org.orkg.community.domain
 
-import java.time.Clock
-import java.time.LocalDateTime
-import java.util.*
 import org.orkg.common.ObservatoryId
 import org.orkg.community.input.CreateObservatoryFilterUseCase
 import org.orkg.community.input.ObservatoryFilterUseCases
@@ -17,6 +14,9 @@ import org.orkg.spring.data.annotations.TransactionalOnJPA
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import java.time.Clock
+import java.time.LocalDateTime
+import java.util.Optional
 
 @Service
 @TransactionalOnJPA
@@ -25,9 +25,8 @@ class ObservatoryFilterService(
     private val observatoryRepository: ObservatoryRepository,
     private val predicateRepository: PredicateRepository,
     private val classRepository: ClassRepository,
-    private val clock: Clock = Clock.systemDefaultZone()
+    private val clock: Clock = Clock.systemDefaultZone(),
 ) : ObservatoryFilterUseCases {
-
     override fun create(command: CreateObservatoryFilterUseCase.CreateCommand): ObservatoryFilterId {
         val observatory = observatoryRepository
             .findById(command.observatoryId)

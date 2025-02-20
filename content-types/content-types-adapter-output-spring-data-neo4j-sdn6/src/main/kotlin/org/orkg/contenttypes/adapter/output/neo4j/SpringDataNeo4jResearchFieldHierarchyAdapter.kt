@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class SpringDataNeo4jResearchFieldHierarchyAdapter(
-    private val neo4jRepository: Neo4jResearchFieldHierarchyRepository
+    private val neo4jRepository: Neo4jResearchFieldHierarchyRepository,
 ) : ResearchFieldHierarchyRepository {
     override fun findAllChildrenByAncestorId(id: ThingId, pageable: Pageable): Page<ResearchFieldWithChildCount> =
         neo4jRepository.findAllChildrenByAncestorId(id, pageable)

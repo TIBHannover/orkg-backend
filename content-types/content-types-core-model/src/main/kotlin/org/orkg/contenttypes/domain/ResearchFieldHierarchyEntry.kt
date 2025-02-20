@@ -5,5 +5,5 @@ import org.orkg.graph.domain.Resource
 
 data class ResearchFieldHierarchyEntry(
     val resource: Resource,
-    val parentIds: Set<ThingId>
+    val parentIds: Set<ThingId>,
 )

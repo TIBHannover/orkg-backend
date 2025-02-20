@@ -11,7 +11,7 @@ import org.orkg.graph.input.UpdateResourceUseCase
 
 class SmartReviewVersionHistoryUpdater(
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
-    private val unsafeResourceUseCases: UnsafeResourceUseCases
+    private val unsafeResourceUseCases: UnsafeResourceUseCases,
 ) : PublishSmartReviewAction {
     override fun invoke(command: PublishSmartReviewCommand, state: State): State {
         unsafeStatementUseCases.create(

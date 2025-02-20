@@ -1,10 +1,9 @@
 package org.orkg.contenttypes.adapter.input.rest
 
-import java.util.*
 import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ThingId
 import org.orkg.community.domain.Contributor
-import org.orkg.contenttypes.input.RetrieveResearchFieldUseCase
+import org.orkg.contenttypes.input.ResearchFieldUseCases
 import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.graph.adapter.input.rest.PaperCountPerResearchProblemRepresentation
 import org.orkg.graph.adapter.input.rest.ResourceRepresentation
@@ -25,6 +24,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.util.Optional
 
 /**
  * This controller class fetches a list of
@@ -34,12 +34,13 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/research-fields", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ResearchFieldController(
-    private val service: RetrieveResearchFieldUseCase,
+    private val service: ResearchFieldUseCases,
     private val resourceService: ResourceUseCases,
     private val comparisonRepository: ComparisonRepository,
     override val statementService: StatementUseCases,
     override val formattedLabelService: FormattedLabelUseCases,
-) : ResourceRepresentationAdapter, PaperCountPerResearchProblemRepresentationAdapter {
+) : ResourceRepresentationAdapter,
+    PaperCountPerResearchProblemRepresentationAdapter {
     /**
      * Fetches all the research problems and
      * number of papers based on a research
@@ -50,7 +51,7 @@ class ResearchFieldController(
     fun findAllPaperCountsPerResearchProblem(
         @PathVariable id: ThingId,
         pageable: Pageable,
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): Page<PaperCountPerResearchProblemRepresentation> {
         resourceService.findById(id)
             .orElseThrow { ResourceNotFound.withId(id) }
@@ -73,7 +74,7 @@ class ResearchFieldController(
         @RequestParam("visibility", required = false)
         visibility: VisibilityFilter?,
         pageable: Pageable,
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): Page<ResourceRepresentation> {
         // Add if condition to check if featured is present and pass the variable
         // Do the same for all
@@ -94,7 +95,7 @@ class ResearchFieldController(
     @GetMapping("/{id}/subfields/contributors")
     fun findAllContributorsIncludingSubFields(
         @PathVariable id: ThingId,
-        pageable: Pageable
+        pageable: Pageable,
     ): ResponseEntity<Page<Contributor>> {
         resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
         return ok(service.findAllContributorsIncludingSubFields(id, pageable))
@@ -116,7 +117,7 @@ class ResearchFieldController(
         @RequestParam("visibility", required = false)
         visibility: VisibilityFilter?,
         pageable: Pageable,
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): Page<ResourceRepresentation> {
         resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
         return comparisonRepository.findAll(
@@ -142,7 +143,7 @@ class ResearchFieldController(
         @RequestParam("visibility", required = false)
         visibility: VisibilityFilter?,
         pageable: Pageable,
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): Page<ResourceRepresentation> {
         resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
         return service.findAllPapersByResearchField(
@@ -168,7 +169,7 @@ class ResearchFieldController(
         @RequestParam("visibility", required = false)
         visibility: VisibilityFilter?,
         pageable: Pageable,
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): Page<ResourceRepresentation> {
         resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
         return service.findAllPapersByResearchField(
@@ -195,7 +196,7 @@ class ResearchFieldController(
         @RequestParam("visibility", required = false)
         visibility: VisibilityFilter?,
         pageable: Pageable,
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): Page<ResourceRepresentation> {
         resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
         return comparisonRepository.findAll(
@@ -216,7 +217,7 @@ class ResearchFieldController(
         @PathVariable id: ThingId,
         @RequestParam("featured")
         featured: Optional<Boolean>,
-        pageable: Pageable
+        pageable: Pageable,
     ): ResponseEntity<Page<Contributor>> {
         resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
         return ok(service.findAllContributorsExcludingSubFields(id, pageable))
@@ -236,7 +237,7 @@ class ResearchFieldController(
         @RequestParam("visibility", required = false)
         visibility: VisibilityFilter?,
         pageable: Pageable,
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): Page<ResourceRepresentation> {
         resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
         return service.findAllResearchProblemsByResearchField(
@@ -263,7 +264,7 @@ class ResearchFieldController(
         @RequestParam("classes")
         classes: List<String>,
         pageable: Pageable,
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): Page<ResourceRepresentation> =
         service.findAllEntitiesBasedOnClassesByResearchField(
             id = id,
@@ -289,7 +290,7 @@ class ResearchFieldController(
         @RequestParam("classes")
         classes: List<String>,
         pageable: Pageable,
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): Page<ResourceRepresentation> =
         service.findAllEntitiesBasedOnClassesByResearchField(
             id = id,

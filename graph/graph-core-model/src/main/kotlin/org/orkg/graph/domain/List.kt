@@ -1,8 +1,8 @@
 package org.orkg.graph.domain
 
-import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import java.time.OffsetDateTime
 
 data class List(
     val id: ThingId,
@@ -10,5 +10,5 @@ data class List(
     val elements: kotlin.collections.List<ThingId>,
     val createdAt: OffsetDateTime,
     val createdBy: ContributorId = ContributorId.UNKNOWN,
-    val modifiable: Boolean = true
+    val modifiable: Boolean = true,
 )

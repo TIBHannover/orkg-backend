@@ -1,6 +1,5 @@
 package org.orkg.contenttypes.domain.testing.fixtures
 
-import java.time.OffsetDateTime
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
@@ -16,6 +15,7 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.Visibility
+import java.time.OffsetDateTime
 
 fun createPublishedContentType(
     id: ThingId = ThingId("R1234"),
@@ -79,5 +79,5 @@ fun createPublishedContentType(
             createdAt = OffsetDateTime.parse("2023-02-22T08:01:15.253502+01:00"),
             createdBy = ContributorId("d5416c16-1a45-4aee-8069-be1b6097478b")
         )
-    )
+    ),
 ): PublishedContentType = PublishedContentType(id, rootId, subgraph)

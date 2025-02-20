@@ -6,7 +6,7 @@ import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.PredicateRepository
 
 class RosettaStoneTemplatePropertiesCreateValidator(
-    private val abstractRosettaStoneTemplatePropertiesValidator: AbstractRosettaStoneTemplatePropertiesValidator
+    private val abstractRosettaStoneTemplatePropertiesValidator: AbstractRosettaStoneTemplatePropertiesValidator,
 ) : CreateRosettaStoneTemplateAction {
     constructor(
         predicateRepository: PredicateRepository,

@@ -9,5 +9,5 @@ data class ThingAddRequest(
     @JsonProperty("thing_key")
     val thingKey: ThingId,
     val config: Any,
-    val data: Any
+    val data: Any,
 )

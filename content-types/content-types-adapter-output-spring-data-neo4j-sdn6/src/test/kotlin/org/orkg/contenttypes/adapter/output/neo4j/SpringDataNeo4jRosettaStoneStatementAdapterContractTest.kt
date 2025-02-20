@@ -42,16 +42,16 @@ internal class SpringDataNeo4jRosettaStoneStatementAdapterContractTest(
     @Autowired private val springDataNeo4jPredicateAdapter: PredicateRepository,
     @Autowired private val springDataNeo4jClassAdapter: ClassRepository,
     @Autowired private val springDataNeo4jLiteralAdapter: LiteralRepository,
-    @Autowired private val springDataNeo4jStatementAdapter: StatementRepository
+    @Autowired private val springDataNeo4jStatementAdapter: StatementRepository,
 ) : DescribeSpec({
-    include(
-        rosettaStoneStatementRepositoryContract(
-            springDataNeo4jRosettaStoneStatementAdapter,
-            springDataNeo4jResourceAdapter,
-            springDataNeo4jPredicateAdapter,
-            springDataNeo4jClassAdapter,
-            springDataNeo4jLiteralAdapter,
-            springDataNeo4jStatementAdapter
+        include(
+            rosettaStoneStatementRepositoryContract(
+                springDataNeo4jRosettaStoneStatementAdapter,
+                springDataNeo4jResourceAdapter,
+                springDataNeo4jPredicateAdapter,
+                springDataNeo4jClassAdapter,
+                springDataNeo4jLiteralAdapter,
+                springDataNeo4jStatementAdapter
+            )
         )
-    )
-})
+    })

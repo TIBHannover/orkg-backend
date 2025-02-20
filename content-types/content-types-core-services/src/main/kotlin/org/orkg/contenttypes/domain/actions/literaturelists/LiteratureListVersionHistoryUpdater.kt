@@ -11,7 +11,7 @@ import org.orkg.graph.input.UpdateResourceUseCase
 
 class LiteratureListVersionHistoryUpdater(
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
-    private val unsafeResourceUseCases: UnsafeResourceUseCases
+    private val unsafeResourceUseCases: UnsafeResourceUseCases,
 ) : PublishLiteratureListAction {
     override fun invoke(command: PublishLiteratureListCommand, state: State): State {
         unsafeStatementUseCases.create(

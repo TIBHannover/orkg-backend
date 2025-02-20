@@ -1,13 +1,15 @@
 package org.orkg.contenttypes.adapter.input.rest.mapping
 
-import java.util.*
 import org.orkg.contenttypes.adapter.input.rest.PaperRepresentation
 import org.orkg.contenttypes.domain.Paper
 import org.springframework.data.domain.Page
+import java.util.Optional
 
-interface PaperRepresentationAdapter : AuthorRepresentationAdapter, LabeledObjectRepresentationAdapter,
-    PublicationInfoRepresentationAdapter, ThingReferenceRepresentationAdapter {
-
+interface PaperRepresentationAdapter :
+    AuthorRepresentationAdapter,
+    LabeledObjectRepresentationAdapter,
+    PublicationInfoRepresentationAdapter,
+    ThingReferenceRepresentationAdapter {
     fun Optional<Paper>.mapToPaperRepresentation(): Optional<PaperRepresentation> =
         map { it.toPaperRepresentation() }
 

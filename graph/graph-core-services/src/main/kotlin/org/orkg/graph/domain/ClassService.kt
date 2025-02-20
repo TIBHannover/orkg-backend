@@ -1,9 +1,6 @@
 package org.orkg.graph.domain
 
 import dev.forkhandles.values.ofOrNull
-import java.time.Clock
-import java.time.OffsetDateTime
-import java.util.*
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
@@ -15,6 +12,9 @@ import org.orkg.spring.data.annotations.TransactionalOnNeo4j
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import java.time.Clock
+import java.time.OffsetDateTime
+import java.util.Optional
 
 @Service
 @TransactionalOnNeo4j
@@ -60,7 +60,7 @@ class ClassService(
         label: SearchString?,
         createdBy: ContributorId?,
         createdAtStart: OffsetDateTime?,
-        createdAtEnd: OffsetDateTime?
+        createdAtEnd: OffsetDateTime?,
     ): Page<Class> =
         repository.findAll(pageable, label, createdBy, createdAtStart, createdAtEnd)
 
@@ -79,8 +79,9 @@ class ClassService(
         val found = repository.findById(command.id).orElseThrow { ClassNotFound.withThingId(command.id) }
         if (!found.modifiable) throw ClassNotModifiable(command.id)
         command.uri?.also { newUri ->
-            if (found.uri != null && command.uri != found.uri)
+            if (found.uri != null && command.uri != found.uri) {
                 throw CannotResetURI(command.id)
+            }
             findByURI(newUri).ifPresent {
                 if (it.id != found.id) throw URIAlreadyInUse(newUri, it.id)
             }
@@ -96,8 +97,9 @@ class ClassService(
         val label = Label.ofOrNull(command.label)?.value ?: throw InvalidLabel()
         val found = repository.findById(command.id).orElseThrow { ClassNotFound.withThingId(command.id) }
         if (!found.modifiable) throw ClassNotModifiable(command.id)
-        if (found.uri != null && command.uri != found.uri)
+        if (found.uri != null && command.uri != found.uri) {
             throw CannotResetURI(command.id)
+        }
         command.uri?.also { newUri ->
             findByURI(newUri).ifPresent {
                 if (it.id != found.id) throw URIAlreadyInUse(newUri, it.id)

@@ -1,7 +1,6 @@
 package org.orkg.contenttypes.adapter.input.rest
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import java.time.OffsetDateTime
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
@@ -34,18 +33,18 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
+import java.time.OffsetDateTime
 
 const val VISUALIZATION_JSON_V2 = "application/vnd.orkg.visualization.v2+json"
 
 @RestController
 @RequestMapping("/api/visualizations", produces = [MediaType.APPLICATION_JSON_VALUE])
 class VisualizationController(
-    private val service: VisualizationUseCases
+    private val service: VisualizationUseCases,
 ) : VisualizationRepresentationAdapter {
-
     @GetMapping("/{id}", produces = [VISUALIZATION_JSON_V2])
     fun findById(
-        @PathVariable id: ThingId
+        @PathVariable id: ThingId,
     ): VisualizationRepresentation =
         service.findById(id)
             .mapToVisualizationRepresentation()
@@ -63,7 +62,7 @@ class VisualizationController(
         @RequestParam("organization_id", required = false) organizationId: OrganizationId?,
         @RequestParam("research_field", required = false) researchField: ThingId?,
         @RequestParam("include_subfields", required = false) includeSubfields: Boolean = false,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<VisualizationRepresentation> =
         service.findAll(
             label = string?.let { SearchString.of(string, exactMatch = exactMatch) },
@@ -106,7 +105,7 @@ class VisualizationController(
         @field:Size(max = 1)
         val organizations: List<OrganizationId>,
         @JsonProperty("extraction_method")
-        val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN
+        val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     ) {
         fun toCreateCommand(contributorId: ContributorId): CreateVisualizationUseCase.CreateCommand =
             CreateVisualizationUseCase.CreateCommand(

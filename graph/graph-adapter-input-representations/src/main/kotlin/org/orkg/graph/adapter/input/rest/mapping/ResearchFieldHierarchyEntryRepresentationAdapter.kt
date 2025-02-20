@@ -8,9 +8,8 @@ import org.orkg.graph.domain.StatementCounts
 import org.springframework.data.domain.Page
 
 interface ResearchFieldHierarchyEntryRepresentationAdapter : ResourceRepresentationAdapter {
-
     fun Page<ResearchFieldHierarchyEntry>.mapToResearchFieldHierarchyEntryRepresentation(
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): Page<ResearchFieldHierarchyEntryRepresentation> {
         val resources = content.map { it.resource }
         val usageCounts = countIncomingStatements(resources)
@@ -20,7 +19,7 @@ interface ResearchFieldHierarchyEntryRepresentationAdapter : ResourceRepresentat
 
     fun ResearchFieldHierarchyEntry.toResearchFieldHierarchyEntryRepresentation(
         usageCounts: StatementCounts,
-        formattedLabels: FormattedLabels
+        formattedLabels: FormattedLabels,
     ): ResearchFieldHierarchyEntryRepresentation =
         ResearchFieldHierarchyEntryRepresentation(resource.toResourceRepresentation(usageCounts, formattedLabels), parentIds)
 }

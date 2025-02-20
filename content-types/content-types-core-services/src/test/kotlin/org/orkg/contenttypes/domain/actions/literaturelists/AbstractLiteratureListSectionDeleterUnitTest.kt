@@ -5,7 +5,6 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import java.util.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.orkg.common.ContributorId
@@ -24,6 +23,7 @@ import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.pageOf
+import java.util.UUID
 
 internal class AbstractLiteratureListSectionDeleterUnitTest : MockkBaseTest {
     private val resourceService: ResourceUseCases = mockk()
@@ -62,14 +62,16 @@ internal class AbstractLiteratureListSectionDeleterUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.deleteAllById(setOf(
-                StatementId("S0"),
-                StatementId("S1"),
-                StatementId("S0_2"),
-                StatementId("S1_2"),
-                StatementId("S0_3"),
-                literatureListHasSectionStatement.id
-            ))
+            statementService.deleteAllById(
+                setOf(
+                    StatementId("S0"),
+                    StatementId("S1"),
+                    StatementId("S0_2"),
+                    StatementId("S1_2"),
+                    StatementId("S0_3"),
+                    literatureListHasSectionStatement.id
+                )
+            )
         }
         verify(exactly = 1) { resourceService.delete(section.id, contributorId) }
         verify(exactly = 1) { resourceService.delete(ThingId("R0"), contributorId) }
@@ -147,14 +149,16 @@ internal class AbstractLiteratureListSectionDeleterUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            statementService.deleteAllById(setOf(
-                StatementId("S0"),
-                StatementId("S1"),
-                StatementId("S0_2"),
-                StatementId("S1_2"),
-                StatementId("S0_3"),
-                literatureListHasSectionStatement.id
-            ))
+            statementService.deleteAllById(
+                setOf(
+                    StatementId("S0"),
+                    StatementId("S1"),
+                    StatementId("S0_2"),
+                    StatementId("S1_2"),
+                    StatementId("S0_3"),
+                    literatureListHasSectionStatement.id
+                )
+            )
         }
         verify(exactly = 1) { resourceService.delete(section.id, contributorId) }
         verify(exactly = 1) { resourceService.delete(ThingId("R0"), contributorId) }

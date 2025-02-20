@@ -13,14 +13,14 @@ import org.orkg.graph.input.UnsafeStatementUseCases
 class LiteratureListSectionsUpdater(
     private val abstractLiteratureListSectionCreator: AbstractLiteratureListSectionCreator,
     private val abstractLiteratureListSectionDeleter: AbstractLiteratureListSectionDeleter,
-    private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater
+    private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater,
 ) : UpdateLiteratureListAction {
     constructor(
         literalService: LiteralUseCases,
         resourceService: ResourceUseCases,
         unsafeResourceUseCases: UnsafeResourceUseCases,
         statementService: StatementUseCases,
-        unsafeStatementUseCases: UnsafeStatementUseCases
+        unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
         AbstractLiteratureListSectionCreator(unsafeStatementUseCases, unsafeResourceUseCases, literalService),
         AbstractLiteratureListSectionDeleter(statementService, resourceService),
@@ -29,7 +29,7 @@ class LiteratureListSectionsUpdater(
 
     override fun invoke(
         command: UpdateLiteratureListCommand,
-        state: UpdateLiteratureListState
+        state: UpdateLiteratureListState,
     ): UpdateLiteratureListState {
         command.sections?.let { sections ->
             val oldSections = state.literatureList!!.sections.toMutableList()

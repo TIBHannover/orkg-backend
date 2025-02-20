@@ -1,7 +1,5 @@
 package org.orkg.contenttypes.output
 
-import java.time.OffsetDateTime
-import java.util.Optional
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -10,6 +8,8 @@ import org.orkg.contenttypes.domain.RosettaStoneStatement
 import org.orkg.graph.domain.VisibilityFilter
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import java.time.OffsetDateTime
+import java.util.Optional
 
 interface RosettaStoneStatementRepository {
     fun nextIdentity(): ThingId
@@ -26,7 +26,7 @@ interface RosettaStoneStatementRepository {
         createdAtStart: OffsetDateTime? = null,
         createdAtEnd: OffsetDateTime? = null,
         observatoryId: ObservatoryId? = null,
-        organizationId: OrganizationId? = null
+        organizationId: OrganizationId? = null,
     ): Page<RosettaStoneStatement>
 
     fun save(statement: RosettaStoneStatement)

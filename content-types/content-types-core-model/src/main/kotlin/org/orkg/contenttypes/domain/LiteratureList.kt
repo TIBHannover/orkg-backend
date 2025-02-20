@@ -1,6 +1,5 @@
 package org.orkg.contenttypes.domain
 
-import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -11,6 +10,7 @@ import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.Visibility
+import java.time.OffsetDateTime
 
 data class LiteratureList(
     override val id: ThingId,
@@ -28,7 +28,7 @@ data class LiteratureList(
     override val unlistedBy: ContributorId? = null,
     val published: Boolean,
     val sections: List<LiteratureListSection>,
-    val acknowledgements: Map<ContributorId, Double>
+    val acknowledgements: Map<ContributorId, Double>,
 ) : ContentType {
     companion object {
         fun from(resource: Resource, root: ThingId, statements: Map<ThingId, List<GeneralStatement>>): LiteratureList {
@@ -100,11 +100,11 @@ sealed interface LiteratureListSection {
 
 data class LiteratureListListSection(
     override val id: ThingId,
-    val entries: List<Entry>
+    val entries: List<Entry>,
 ) : LiteratureListSection {
     data class Entry(
         val value: ResourceReference,
-        val description: String? = null
+        val description: String? = null,
     )
 
     companion object {
@@ -148,7 +148,7 @@ data class LiteratureListTextSection(
     override val id: ThingId,
     val heading: String,
     val headingSize: Int,
-    val text: String
+    val text: String,
 ) : LiteratureListSection {
     companion object {
         fun from(root: Resource, statements: Map<ThingId, List<GeneralStatement>>): LiteratureListTextSection =

@@ -8,11 +8,11 @@ import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 
 class SmartReviewSectionDeleter(
-    private val abstractSmartReviewSectionDeleter: AbstractSmartReviewSectionDeleter
+    private val abstractSmartReviewSectionDeleter: AbstractSmartReviewSectionDeleter,
 ) : DeleteSmartReviewSectionAction {
     constructor(
         statementService: StatementUseCases,
-        resourceService: ResourceUseCases
+        resourceService: ResourceUseCases,
     ) : this(AbstractSmartReviewSectionDeleter(statementService, resourceService))
 
     override fun invoke(command: DeleteSmartReviewSectionCommand, state: State): State {

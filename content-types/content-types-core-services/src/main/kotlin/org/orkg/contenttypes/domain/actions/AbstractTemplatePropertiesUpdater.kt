@@ -14,7 +14,7 @@ import org.orkg.graph.input.UnsafeStatementUseCases
 class AbstractTemplatePropertiesUpdater(
     private val abstractTemplatePropertyCreator: AbstractTemplatePropertyCreator,
     private val abstractTemplatePropertyUpdater: AbstractTemplatePropertyUpdater,
-    private val abstractTemplatePropertyDeleter: AbstractTemplatePropertyDeleter
+    private val abstractTemplatePropertyDeleter: AbstractTemplatePropertyDeleter,
 ) {
     constructor(
         literalService: LiteralUseCases,
@@ -33,7 +33,7 @@ class AbstractTemplatePropertiesUpdater(
         subjectId: ThingId,
         newProperties: List<TemplatePropertyDefinition>,
         oldProperties: List<TemplateProperty>,
-        statements: Map<ThingId, List<GeneralStatement>>
+        statements: Map<ThingId, List<GeneralStatement>>,
     ) {
         val properties = oldProperties.toMutableList()
         val new2old = newProperties.associateWith { newProperty ->

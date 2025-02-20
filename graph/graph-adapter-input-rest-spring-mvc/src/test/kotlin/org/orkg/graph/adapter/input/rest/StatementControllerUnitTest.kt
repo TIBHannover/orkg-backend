@@ -7,10 +7,6 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.runs
 import io.mockk.verify
-import java.time.Clock
-import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter
-import java.util.*
 import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -61,11 +57,23 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.time.Clock
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Optional
 
-@ContextConfiguration(classes = [StatementController::class, ExceptionHandler::class, CommonJacksonModule::class, GraphJacksonModule::class, FixedClockConfig::class, WebMvcConfiguration::class])
+@ContextConfiguration(
+    classes = [
+        StatementController::class,
+        ExceptionHandler::class,
+        CommonJacksonModule::class,
+        GraphJacksonModule::class,
+        FixedClockConfig::class,
+        WebMvcConfiguration::class
+    ]
+)
 @WebMvcTest(controllers = [StatementController::class])
 internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
-
     @MockkBean
     private lateinit var statementService: StatementUseCases
 
@@ -410,12 +418,14 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) {
-            statementService.update(withArg {
-                it.statementId shouldBe id
-                it.subjectId shouldBe subjectId
-                it.predicateId shouldBe predicateId
-                it.objectId shouldBe objectId
-            })
+            statementService.update(
+                withArg {
+                    it.statementId shouldBe id
+                    it.subjectId shouldBe subjectId
+                    it.predicateId shouldBe predicateId
+                    it.objectId shouldBe objectId
+                }
+            )
         }
         verify(exactly = 1) { statementService.findById(id) }
         verify(exactly = 1) { statementService.findAllDescriptionsById(any()) }

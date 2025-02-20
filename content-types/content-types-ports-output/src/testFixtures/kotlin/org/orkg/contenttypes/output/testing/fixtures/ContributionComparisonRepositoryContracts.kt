@@ -5,7 +5,6 @@ import dev.forkhandles.fabrikate.Fabrikate
 import io.kotest.assertions.asClue
 import io.kotest.core.spec.style.describeSpec
 import io.kotest.matchers.shouldBe
-import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.fixedClock
@@ -26,6 +25,7 @@ import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.withGraphMappings
 import org.springframework.data.domain.PageRequest
+import java.time.OffsetDateTime
 
 fun <
     CC : ContributionComparisonRepository,
@@ -33,16 +33,15 @@ fun <
     C : ClassRepository,
     L : LiteralRepository,
     R : ResourceRepository,
-    P : PredicateRepository
+    P : PredicateRepository,
 > contributionComparisonRepositoryContract(
     repository: CC,
     statementRepository: S,
     classRepository: C,
     literalRepository: L,
     resourceRepository: R,
-    predicateRepository: P
+    predicateRepository: P,
 ) = describeSpec {
-
     val fabricator = Fabrikate(
         FabricatorConfig(
             collectionSizes = 12..12,
@@ -99,10 +98,11 @@ fun <
             resourceRepository.save(paper)
             resourceRepository.save(cont)
             if (year != null) {
-                if (year is Literal)
+                if (year is Literal) {
                     literalRepository.save(year)
-                else
+                } else {
                     resourceRepository.save(year as Resource)
+                }
             }
             contributionIds.add(
                 ContributionInfo(

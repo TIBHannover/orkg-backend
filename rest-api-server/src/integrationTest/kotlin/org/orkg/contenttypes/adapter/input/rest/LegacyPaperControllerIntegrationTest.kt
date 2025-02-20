@@ -1,6 +1,5 @@
 package org.orkg.contenttypes.adapter.input.rest
 
-import java.util.*
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.not
 import org.intellij.lang.annotations.Language
@@ -11,10 +10,10 @@ import org.orkg.common.ThingId
 import org.orkg.contenttypes.input.LegacyCreatePaperUseCase.LegacyCreatePaperRequest
 import org.orkg.contenttypes.input.LegacyCreatePaperUseCase.PaperDefinition
 import org.orkg.contenttypes.input.LegacyPaperUseCases
-import org.orkg.createStatement
 import org.orkg.createClasses
 import org.orkg.createPredicate
 import org.orkg.createResource
+import org.orkg.createStatement
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.ClassUseCases
@@ -31,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.util.UUID
 
 @Neo4jContainerIntegrationTest
 internal class LegacyPaperControllerIntegrationTest : MockMvcBaseTest("papers") {
@@ -94,10 +94,12 @@ internal class LegacyPaperControllerIntegrationTest : MockMvcBaseTest("papers") 
                         "name" to "Contribution 1",
                         "values" to mapOf(
                             "P32" to listOf(mapOf("@id" to "CUSTOM_ID")),
-                            "HAS_EVALUATION" to listOf(mapOf(
-                                "@temp" to "_b24c054a-fdde-68a7-c655-d4e7669a2079",
-                                "label" to "MOTO"
-                            ))
+                            "HAS_EVALUATION" to listOf(
+                                mapOf(
+                                    "@temp" to "_b24c054a-fdde-68a7-c655-d4e7669a2079",
+                                    "label" to "MOTO"
+                                )
+                            )
                         )
                     )
                 )
@@ -110,40 +112,56 @@ internal class LegacyPaperControllerIntegrationTest : MockMvcBaseTest("papers") 
             .andExpect(status().isCreated)
     }
 
-    fun createPaperObject(title: String = "long title here", doi: String = "doi.id.here", researchField: String = "R12"): LegacyCreatePaperRequest =
-        LegacyCreatePaperRequest(null, PaperDefinition(
-            title = title,
-            doi = doi,
-            researchField = ThingId(researchField),
-            publicationYear = 2015,
-            contributions = listOf(
-                NamedObject(
-                    name = "Contribution 1",
-                    classes = emptyList(),
-                    values = HashMap(
-                        mapOf(
-                            "P32" to listOf(ObjectStatement(`@id` = "CUSTOM_ID", null, null, null, null, null, null)),
-                            "HAS_EVALUATION" to listOf(
-                                ObjectStatement(
-                                    null,
-                                    null,
-                                    null,
-                                    null,
-                                    null,
-                                    label = "MOTO",
-                                    null
+    fun createPaperObject(
+        title: String = "long title here",
+        doi: String = "doi.id.here",
+        researchField: String = "R12",
+    ): LegacyCreatePaperRequest =
+        LegacyCreatePaperRequest(
+            null,
+            PaperDefinition(
+                title = title,
+                doi = doi,
+                researchField = ThingId(researchField),
+                publicationYear = 2015,
+                contributions = listOf(
+                    NamedObject(
+                        name = "Contribution 1",
+                        classes = emptyList(),
+                        values = HashMap(
+                            mapOf(
+                                "P32" to listOf(
+                                    ObjectStatement(
+                                        `@id` = "CUSTOM_ID",
+                                        classes = null,
+                                        `@temp` = null,
+                                        text = null,
+                                        datatype = null,
+                                        label = null,
+                                        values = null
+                                    )
+                                ),
+                                "HAS_EVALUATION" to listOf(
+                                    ObjectStatement(
+                                        `@id` = null,
+                                        classes = null,
+                                        `@temp` = null,
+                                        text = null,
+                                        datatype = null,
+                                        label = "MOTO",
+                                        values = null
+                                    )
                                 )
                             )
                         )
                     )
-                )
-            ),
-            authors = null,
-            publicationMonth = null,
-            publishedIn = null,
-            url = null,
-            extractionMethod = ExtractionMethod.MANUAL
-        )
+                ),
+                authors = null,
+                publicationMonth = null,
+                publishedIn = null,
+                url = null,
+                extractionMethod = ExtractionMethod.MANUAL
+            )
         )
 
     @Test
@@ -164,10 +182,12 @@ internal class LegacyPaperControllerIntegrationTest : MockMvcBaseTest("papers") 
                         "name" to "Contribution 2",
                         "values" to mapOf(
                             "P32" to listOf(mapOf("@id" to "CUSTOM_ID")),
-                            "HAS_EVALUATION" to listOf(mapOf(
-                                "@temp" to "_b24c054a-fdde-68a7-c655-d4e7669a2079",
-                                "label" to "MOTO"
-                            ))
+                            "HAS_EVALUATION" to listOf(
+                                mapOf(
+                                    "@temp" to "_b24c054a-fdde-68a7-c655-d4e7669a2079",
+                                    "label" to "MOTO"
+                                )
+                            )
                         )
                     )
                 )
@@ -201,10 +221,12 @@ internal class LegacyPaperControllerIntegrationTest : MockMvcBaseTest("papers") 
                         "name" to "Contribution 2",
                         "values" to mapOf(
                             "P32" to listOf(mapOf("@id" to "CUSTOM_ID")),
-                            "HAS_EVALUATION" to listOf(mapOf(
-                                "@temp" to "_b24c054a-fdde-68a7-c655-d4e7669a2079",
-                                "label" to "MOTO"
-                            ))
+                            "HAS_EVALUATION" to listOf(
+                                mapOf(
+                                    "@temp" to "_b24c054a-fdde-68a7-c655-d4e7669a2079",
+                                    "label" to "MOTO"
+                                )
+                            )
                         )
                     )
                 )
@@ -238,10 +260,12 @@ internal class LegacyPaperControllerIntegrationTest : MockMvcBaseTest("papers") 
                         "name" to "Contribution 2",
                         "values" to mapOf(
                             "P32" to listOf(mapOf("@id" to "CUSTOM_ID")),
-                            "HAS_EVALUATION" to listOf(mapOf(
-                                "@temp" to "_b24c054a-fdde-68a7-c655-d4e7669a2079",
-                                "label" to "MOTO"
-                            ))
+                            "HAS_EVALUATION" to listOf(
+                                mapOf(
+                                    "@temp" to "_b24c054a-fdde-68a7-c655-d4e7669a2079",
+                                    "label" to "MOTO"
+                                )
+                            )
                         )
                     )
                 )
@@ -275,10 +299,12 @@ internal class LegacyPaperControllerIntegrationTest : MockMvcBaseTest("papers") 
                         "name" to "Contribution 2",
                         "values" to mapOf(
                             "P32" to listOf(mapOf("@id" to "CUSTOM_ID")),
-                            "HAS_EVALUATION" to listOf(mapOf(
-                                "@temp" to "_b24c054a-fdde-68a7-c655-d4e7669a2079",
-                                "label" to "MOTO"
-                            ))
+                            "HAS_EVALUATION" to listOf(
+                                mapOf(
+                                    "@temp" to "_b24c054a-fdde-68a7-c655-d4e7669a2079",
+                                    "label" to "MOTO"
+                                )
+                            )
                         )
                     )
                 )
@@ -376,7 +402,8 @@ internal class LegacyPaperControllerIntegrationTest : MockMvcBaseTest("papers") 
 //region Example data for issue #292
 @Language("json")
 @Suppress("HttpUrlsUsage")
-private val exampleDataFromIssue = """
+private val exampleDataFromIssue =
+    """
     {
       "paper": {
         "authors": [

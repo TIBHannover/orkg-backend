@@ -3,7 +3,6 @@ package org.orkg.contenttypes.domain.actions
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.util.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.OrganizationId
@@ -15,13 +14,18 @@ import org.orkg.community.output.OrganizationRepository
 import org.orkg.community.testing.fixtures.createConferenceSeries
 import org.orkg.community.testing.fixtures.createOrganization
 import org.orkg.contenttypes.domain.OnlyOneOrganizationAllowed
+import java.util.Optional
+import java.util.UUID
 
 internal class OrganizationOrConferenceValidatorUnitTest : MockkBaseTest {
     private val organizationRepository: OrganizationRepository = mockk()
     private val conferenceSeriesRepository: ConferenceSeriesRepository = mockk()
 
     private val organizationValidator = OrganizationOrConferenceValidator<List<OrganizationId>?, List<OrganizationId>>(
-        organizationRepository, conferenceSeriesRepository, { it }, { it }
+        organizationRepository,
+        conferenceSeriesRepository,
+        { it },
+        { it }
     )
 
     @Test

@@ -25,12 +25,12 @@ fun <
     L : ListRepository,
     R : ResourceRepository,
     P : PredicateRepository,
-    S : StatementRepository
+    S : StatementRepository,
 > listRepositoryContract(
     repository: L,
     resourceRepository: R,
     predicateRepository: P,
-    statementRepository: S
+    statementRepository: S,
 ) = describeSpec {
     beforeTest {
         resourceRepository.deleteAll()

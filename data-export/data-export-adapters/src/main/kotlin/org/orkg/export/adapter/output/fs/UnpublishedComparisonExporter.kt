@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component
 @Component
 @Profile("production")
 class UnpublishedComparisonExporter(
-    private val service: ExportUnpublishedComparisonUseCase
+    private val service: ExportUnpublishedComparisonUseCase,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java.name)
 

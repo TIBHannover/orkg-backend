@@ -1,12 +1,6 @@
 package org.orkg.contenttypes.adapter.output.simcomp.internal
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import java.io.IOException
-import java.net.http.HttpClient
-import java.net.http.HttpClient.Version.HTTP_1_1
-import java.net.http.HttpRequest
-import java.net.http.HttpResponse
-import java.util.*
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ServiceUnavailable
 import org.orkg.common.send
@@ -16,6 +10,12 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.util.UriComponentsBuilder
+import java.io.IOException
+import java.net.http.HttpClient
+import java.net.http.HttpClient.Version.HTTP_1_1
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
+import java.util.Optional
 
 @Component
 @Profile("development", "production")
@@ -26,7 +26,7 @@ class SimCompThingRepositoryAdapter(
     @Value("\${orkg.simcomp.host}")
     private val host: String,
     @Value("\${orkg.simcomp.api-key}")
-    private val apiKey: String
+    private val apiKey: String,
 ) : SimCompThingRepository {
     override fun findById(id: ThingId, type: ThingType): Optional<BaseThing> {
         val uri = UriComponentsBuilder.fromUriString(host)

@@ -2,9 +2,6 @@ package org.orkg
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import java.time.Clock
-import java.time.OffsetDateTime
-import java.util.*
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.PageRequests
@@ -25,6 +22,9 @@ import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
+import java.time.Clock
+import java.time.OffsetDateTime
+import java.util.Optional
 
 @Component
 @Profile("development", "docker", "production")
@@ -34,9 +34,8 @@ class InitialDataSetup(
     private val resourceRepository: ResourceRepository,
     private val statementService: StatementUseCases,
     private val objectMapper: ObjectMapper,
-    private val clock: Clock
+    private val clock: Clock,
 ) : ApplicationRunner {
-
     private val logger = LoggerFactory.getLogger(this::class.java.name)
 
     @Value("\${orkg.init.setup.directory}")
@@ -130,23 +129,23 @@ class InitialDataSetup(
     data class RequiredClassDefinition(
         val id: ThingId,
         val label: String,
-        val uri: ParsedIRI?
+        val uri: ParsedIRI?,
     )
 
     data class RequiredPredicateDefinition(
         val id: ThingId,
-        val label: String
+        val label: String,
     )
 
     data class RequiredResourceDefinition(
         val id: ThingId,
         val label: String,
-        val classes: Set<ThingId>
+        val classes: Set<ThingId>,
     )
 
     data class RequiredResearchFieldDefinition(
         val id: ThingId,
         val label: String,
-        val subfields: List<RequiredResearchFieldDefinition> = emptyList()
+        val subfields: List<RequiredResearchFieldDefinition> = emptyList(),
     )
 }

@@ -4,7 +4,6 @@ import io.kotest.assertions.asClue
 import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import java.util.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ObservatoryId
@@ -14,6 +13,7 @@ import org.orkg.community.domain.Observatory
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.springframework.data.domain.PageRequest
+import java.util.UUID
 
 interface ObservatoryRepositoryContracts {
     val repository: ObservatoryRepository

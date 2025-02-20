@@ -1,6 +1,5 @@
 package org.orkg.contenttypes.domain
 
-import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -20,13 +19,13 @@ import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.input.CreateListUseCase
 import org.orkg.graph.input.CreateLiteralUseCase
-import org.orkg.graph.input.CreateObjectUseCase
 import org.orkg.graph.input.CreateObjectUseCase.CreateObjectRequest
 import org.orkg.graph.input.CreateObjectUseCase.NamedObject
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.ObjectUseCases
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
@@ -36,6 +35,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import java.util.UUID
 
 @Service
 class LegacyPaperService(
@@ -45,7 +45,7 @@ class LegacyPaperService(
     private val statementService: StatementUseCases,
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
     private val contributorService: RetrieveContributorUseCase,
-    private val objectService: CreateObjectUseCase,
+    private val objectService: ObjectUseCases,
     private val resourceRepository: ResourceRepository,
     private val repository: PaperRepository,
     private val listService: ListUseCases,
@@ -108,13 +108,11 @@ class LegacyPaperService(
     private fun createOrFindPaper(
         mergeIfExists: Boolean,
         request: LegacyCreatePaperUseCase.LegacyCreatePaperRequest,
-        userId: ContributorId
-    ): ThingId {
-        return if (mergeIfExists) {
-            mergePapersIfPossible(userId, request)
-        } else {
-            createNewPaperWithMetadata(userId, request)
-        }
+        userId: ContributorId,
+    ): ThingId = if (mergeIfExists) {
+        mergePapersIfPossible(userId, request)
+    } else {
+        createNewPaperWithMetadata(userId, request)
     }
 
     /**
@@ -123,7 +121,7 @@ class LegacyPaperService(
      */
     private fun mergePapersIfPossible(
         userId: ContributorId,
-        request: LegacyCreatePaperUseCase.LegacyCreatePaperRequest
+        request: LegacyCreatePaperUseCase.LegacyCreatePaperRequest,
     ): ThingId {
         // Do this in a sequential order, first check for DOI and then title, otherwise we create a new paper
         if (request.paper.hasDOI()) {
@@ -196,39 +194,50 @@ class LegacyPaperService(
         handleAuthors(request, userId, paperId, observatoryId, organizationId)
 
         // paper publication date
-        if (request.paper.hasPublicationMonth()) unsafeStatementUseCases.create(
-            CreateStatementUseCase.CreateCommand(
-                contributorId = userId,
-                subjectId = paperId,
-                predicateId = Predicates.monthPublished,
-                objectId = literalService.create(
-                    CreateLiteralUseCase.CreateCommand(
-                        contributorId = userId,
-                        label = request.paper.publicationMonth.toString(),
-                        datatype = "xsd:integer"
+        if (request.paper.hasPublicationMonth()) {
+            unsafeStatementUseCases.create(
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = userId,
+                    subjectId = paperId,
+                    predicateId = Predicates.monthPublished,
+                    objectId = literalService.create(
+                        CreateLiteralUseCase.CreateCommand(
+                            contributorId = userId,
+                            label = request.paper.publicationMonth.toString(),
+                            datatype = "xsd:integer"
+                        )
                     )
                 )
             )
-        )
-        if (request.paper.hasPublicationYear()) unsafeStatementUseCases.create(
-            CreateStatementUseCase.CreateCommand(
-                contributorId = userId,
-                subjectId = paperId,
-                predicateId = Predicates.yearPublished,
-                objectId = literalService.create(
-                    CreateLiteralUseCase.CreateCommand(
-                        contributorId = userId,
-                        label = request.paper.publicationYear.toString(),
-                        datatype = "xsd:integer"
+        }
+        if (request.paper.hasPublicationYear()) {
+            unsafeStatementUseCases.create(
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = userId,
+                    subjectId = paperId,
+                    predicateId = Predicates.yearPublished,
+                    objectId = literalService.create(
+                        CreateLiteralUseCase.CreateCommand(
+                            contributorId = userId,
+                            label = request.paper.publicationYear.toString(),
+                            datatype = "xsd:integer"
+                        )
                     )
                 )
             )
-        )
+        }
 
         // paper published At
-        if (request.paper.hasPublishedIn()) handlePublishingVenue(
-            request.paper.publishedIn!!, paperId, userId, observatoryId, request.paper.extractionMethod, organizationId
-        )
+        if (request.paper.hasPublishedIn()) {
+            handlePublishingVenue(
+                request.paper.publishedIn!!,
+                paperId,
+                userId,
+                observatoryId,
+                request.paper.extractionMethod,
+                organizationId
+            )
+        }
 
         // paper research field
         unsafeStatementUseCases.create(
@@ -252,7 +261,7 @@ class LegacyPaperService(
         userId: ContributorId,
         observatoryId: ObservatoryId,
         extractionMethod: ExtractionMethod,
-        organizationId: OrganizationId
+        organizationId: OrganizationId,
     ) {
         val venuePredicate = predicateService.findById(Predicates.hasVenue).get().id
         // Check if resource exists
@@ -294,7 +303,7 @@ class LegacyPaperService(
         userId: ContributorId,
         paperId: ThingId,
         observatoryId: ObservatoryId,
-        organizationId: OrganizationId
+        organizationId: OrganizationId,
     ) {
         if (paper.paper.hasAuthors()) {
             val authors = paper.paper.authors!!.map { it ->

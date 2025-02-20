@@ -25,27 +25,27 @@ internal class SpringDataNeo4jClassHierarchyAdapterContractTest(
     @Autowired private val springDataNeo4jClassAdapter: ClassRepository,
     @Autowired private val springDataNeo4jClassRelationAdapter: ClassRelationRepository,
     @Autowired private val springDataNeo4jClassHierarchyAdapter: ClassHierarchyRepository,
-    @Autowired private val springDataNeo4jResourceAdapter: ResourceRepository
+    @Autowired private val springDataNeo4jResourceAdapter: ResourceRepository,
 ) : DescribeSpec({
-    include(
-        classHierarchyRepositoryContract(
-            springDataNeo4jClassHierarchyAdapter,
-            springDataNeo4jClassAdapter,
-            springDataNeo4jClassRelationAdapter,
-            springDataNeo4jResourceAdapter
+        include(
+            classHierarchyRepositoryContract(
+                springDataNeo4jClassHierarchyAdapter,
+                springDataNeo4jClassAdapter,
+                springDataNeo4jClassRelationAdapter,
+                springDataNeo4jResourceAdapter
+            )
         )
-    )
-    include(
-        classRelationRepositoryContract(
-            springDataNeo4jClassRelationAdapter,
-            springDataNeo4jClassAdapter,
-            springDataNeo4jClassHierarchyAdapter
+        include(
+            classRelationRepositoryContract(
+                springDataNeo4jClassRelationAdapter,
+                springDataNeo4jClassAdapter,
+                springDataNeo4jClassHierarchyAdapter
+            )
         )
-    )
 
-    finalizeSpec {
-        springDataNeo4jClassRelationAdapter.deleteAll()
-        springDataNeo4jResourceAdapter.deleteAll()
-        springDataNeo4jClassAdapter.deleteAll()
-    }
-})
+        finalizeSpec {
+            springDataNeo4jClassRelationAdapter.deleteAll()
+            springDataNeo4jResourceAdapter.deleteAll()
+            springDataNeo4jClassAdapter.deleteAll()
+        }
+    })

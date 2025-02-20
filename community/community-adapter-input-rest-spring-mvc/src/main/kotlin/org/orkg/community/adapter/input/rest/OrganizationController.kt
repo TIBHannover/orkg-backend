@@ -1,10 +1,8 @@
 package org.orkg.community.adapter.input.rest
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import jakarta.validation.Valid
-import java.io.ByteArrayInputStream
-import java.util.*
 import jakarta.servlet.http.HttpServletResponse
+import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Pattern
 import jakarta.validation.constraints.Size
@@ -49,6 +47,9 @@ import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.util.UriComponentsBuilder
+import java.io.ByteArrayInputStream
+import java.util.Base64
+import java.util.UUID
 
 private val encodedImagePattern = Regex("""^data:(.*);base64,([A-Za-z0-9+/]+=*)$""").toPattern()
 
@@ -61,12 +62,11 @@ class OrganizationController(
     override val resourceRepository: ResourceUseCases,
     private val organizationRepository: OrganizationRepository,
 ) : ObservatoryRepresentationAdapter {
-
     @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])
     @RequireCuratorRole
     fun addOrganization(
         @RequestBody @Valid organization: CreateOrganizationRequest,
-        uriComponentsBuilder: UriComponentsBuilder
+        uriComponentsBuilder: UriComponentsBuilder,
     ): ResponseEntity<Any> {
         val decodedLogo = EncodedImage(organization.organizationLogo).decodeBase64()
         if (service.findByName(organization.organizationName).isPresent) {
@@ -95,7 +95,9 @@ class OrganizationController(
     fun findOrganizations(): List<Organization> = service.findAll()
 
     @GetMapping("/{id}")
-    fun findById(@PathVariable id: String): Organization = if (id.isValidUUID(id)) {
+    fun findById(
+        @PathVariable id: String,
+    ): Organization = if (id.isValidUUID(id)) {
         service
             .findById(OrganizationId(id))
             .orElseThrow { OrganizationNotFound(id) }
@@ -106,13 +108,17 @@ class OrganizationController(
     }
 
     @GetMapping("/{id}/observatories")
-    fun findObservatoriesByOrganization(@PathVariable id: OrganizationId): List<ObservatoryRepresentation> =
+    fun findObservatoriesByOrganization(
+        @PathVariable id: OrganizationId,
+    ): List<ObservatoryRepresentation> =
         observatoryService.findAllByOrganizationId(id, PageRequest.of(0, Int.MAX_VALUE))
             .mapToObservatoryRepresentation()
             .content
 
     @GetMapping("/{id}/users")
-    fun findUsersByOrganizationId(@PathVariable id: OrganizationId): Iterable<Contributor> =
+    fun findUsersByOrganizationId(
+        @PathVariable id: OrganizationId,
+    ): Iterable<Contributor> =
         organizationRepository.findAllMembersByOrganizationId(id, PageRequest.of(0, Int.MAX_VALUE)).content
 
     @GetMapping("/conferences")
@@ -129,24 +135,26 @@ class OrganizationController(
     ): ResponseEntity<Any> {
         val contributorId = currentUser.contributorId()
         service.update(
-            contributorId, UpdateOrganizationUseCases.UpdateOrganizationRequest(
-            id = id,
-            name = request?.name,
-            url = request?.url,
-            type = request?.type,
-            logo = logo?.let {
-                val bytes = logo.bytes
-                val mimeType = try {
-                    MimeType.valueOf(logo.contentType!!)
-                } catch (e: Exception) {
-                    throw InvalidMimeType(logo.contentType, e)
+            contributorId,
+            UpdateOrganizationUseCases.UpdateOrganizationRequest(
+                id = id,
+                name = request?.name,
+                url = request?.url,
+                type = request?.type,
+                logo = logo?.let {
+                    val bytes = logo.bytes
+                    val mimeType = try {
+                        MimeType.valueOf(logo.contentType!!)
+                    } catch (e: Exception) {
+                        throw InvalidMimeType(logo.contentType, e)
+                    }
+                    UpdateOrganizationUseCases.RawImage(
+                        data = ImageData(bytes),
+                        mimeType = mimeType
+                    )
                 }
-                UpdateOrganizationUseCases.RawImage(
-                    data = ImageData(bytes),
-                    mimeType = mimeType
-                )
-            }
-        ))
+            )
+        )
         val location = uriComponentsBuilder
             .path("/api/organizations/{id}")
             .buildAndExpand(id)
@@ -170,7 +178,7 @@ class OrganizationController(
     @RequireCuratorRole
     fun updateOrganizationUrl(
         @PathVariable id: OrganizationId,
-        @RequestBody @Valid url: UpdateRequest
+        @RequestBody @Valid url: UpdateRequest,
     ): ResponseEntity<Any> {
         val response = findOrganization(id)
         response.homepage = url.value
@@ -182,7 +190,7 @@ class OrganizationController(
     @RequireCuratorRole
     fun updateOrganizationType(
         @PathVariable id: OrganizationId,
-        @RequestBody @Valid type: UpdateRequest
+        @RequestBody @Valid type: UpdateRequest,
     ): ResponseEntity<Any> {
         val response = findOrganization(id)
         response.type = OrganizationType.fromOrNull(type.value)!!
@@ -211,20 +219,22 @@ class OrganizationController(
     @GetMapping("/{id}/logo")
     fun findOrganizationLogo(
         @PathVariable id: OrganizationId,
-        response: HttpServletResponse
+        response: HttpServletResponse,
     ) {
         val logo = service.findLogoById(id).orElseThrow { LogoNotFound(id) }
         response.contentType = logo.mimeType.toString()
         IOUtils.copy(ByteArrayInputStream(logo.data.bytes), response.outputStream)
     }
 
-    fun findOrganization(id: OrganizationId): Organization {
-        return service
-            .findById(id)
-            .orElseThrow { OrganizationNotFound(id) }
-    }
+    fun findOrganization(id: OrganizationId): Organization = service
+        .findById(id)
+        .orElseThrow { OrganizationNotFound(id) }
 
-    fun String.isValidUUID(id: String): Boolean = try { UUID.fromString(id) != null } catch (e: IllegalArgumentException) { false }
+    fun String.isValidUUID(id: String): Boolean = try {
+        UUID.fromString(id) != null
+    } catch (e: IllegalArgumentException) {
+        false
+    }
 
     data class CreateOrganizationRequest(
         @JsonProperty("organization_name")
@@ -242,12 +252,12 @@ class OrganizationController(
         @JsonProperty("display_id")
         val displayId: String,
         @field:NotBlank
-        val type: String
+        val type: String,
     )
 
     data class UpdateRequest(
         @field:NotBlank
-        val value: String
+        val value: String,
     )
 
     data class UpdateOrganizationRequest(
@@ -255,7 +265,7 @@ class OrganizationController(
         val name: String?,
         @field:Size(min = 1)
         val url: String?,
-        val type: OrganizationType?
+        val type: OrganizationType?,
     )
 }
 

@@ -1,6 +1,5 @@
 package org.orkg.contenttypes.adapter.input.rest.mapping
 
-import java.util.*
 import org.orkg.contenttypes.adapter.input.rest.SmartReviewComparisonSectionRepresentation
 import org.orkg.contenttypes.adapter.input.rest.SmartReviewOntologySectionRepresentation
 import org.orkg.contenttypes.adapter.input.rest.SmartReviewPredicateSectionRepresentation
@@ -18,10 +17,13 @@ import org.orkg.contenttypes.domain.SmartReviewSection
 import org.orkg.contenttypes.domain.SmartReviewTextSection
 import org.orkg.contenttypes.domain.SmartReviewVisualizationSection
 import org.springframework.data.domain.Page
+import java.util.Optional
 
-interface SmartReviewRepresentationAdapter : AuthorRepresentationAdapter, VersionRepresentationAdapter,
-    LabeledObjectRepresentationAdapter, ThingReferenceRepresentationAdapter {
-
+interface SmartReviewRepresentationAdapter :
+    AuthorRepresentationAdapter,
+    VersionRepresentationAdapter,
+    LabeledObjectRepresentationAdapter,
+    ThingReferenceRepresentationAdapter {
     fun Optional<SmartReview>.mapToSmartReviewRepresentation(): Optional<SmartReviewRepresentation> =
         map { it.toSmartReviewRepresentation() }
 

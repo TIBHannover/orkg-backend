@@ -9,30 +9,24 @@ import org.orkg.mediastorage.domain.ImageId
 
 data class Organization(
     val id: OrganizationId?,
-
     var name: String?,
-
     @JsonProperty("created_by")
     val createdBy: ContributorId? = ContributorId.UNKNOWN,
-
     var homepage: String?,
-
     @JsonProperty("observatory_ids")
     val observatoryIds: Set<ObservatoryId> = emptySet(),
-
     @JsonProperty("display_id")
     var displayId: String?,
-
     var type: OrganizationType?,
-
     @JsonIgnore
-    var logoId: ImageId?
+    var logoId: ImageId?,
 )
 
 enum class OrganizationType {
     GENERAL,
     CONFERENCE,
-    JOURNAL;
+    JOURNAL,
+    ;
 
     companion object {
         fun fromOrNull(name: String): OrganizationType? =

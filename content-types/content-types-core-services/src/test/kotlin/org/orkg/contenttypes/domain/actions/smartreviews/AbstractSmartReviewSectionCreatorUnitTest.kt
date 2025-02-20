@@ -5,7 +5,6 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import java.util.*
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
@@ -26,6 +25,7 @@ import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
+import java.util.UUID
 
 internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
     private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
@@ -34,7 +34,10 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
     private val statementCollectionPropertyCreator: StatementCollectionPropertyCreator = mockk()
 
     private val abstractSmartReviewSectionCreator = AbstractSmartReviewSectionCreator(
-        unsafeStatementUseCases, unsafeResourceUseCases, literalService, statementCollectionPropertyCreator
+        unsafeStatementUseCases,
+        unsafeResourceUseCases,
+        literalService,
+        statementCollectionPropertyCreator
     )
 
     @Test

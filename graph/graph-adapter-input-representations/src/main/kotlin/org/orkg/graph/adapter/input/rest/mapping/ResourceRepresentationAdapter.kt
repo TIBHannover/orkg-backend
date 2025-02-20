@@ -1,15 +1,15 @@
 package org.orkg.graph.adapter.input.rest.mapping
 
-import java.util.*
 import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ThingId
+import org.orkg.graph.adapter.input.rest.ResourceRepresentation
 import org.orkg.graph.domain.FormattedLabels
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.StatementCounts
 import org.orkg.graph.domain.Visibility
-import org.orkg.graph.adapter.input.rest.ResourceRepresentation
 import org.orkg.graph.input.StatementUseCases
 import org.springframework.data.domain.Page
+import java.util.Optional
 
 interface ResourceRepresentationAdapter : FormattedLabelRepresentationAdapter {
     val statementService: StatementUseCases
@@ -43,7 +43,7 @@ interface ResourceRepresentationAdapter : FormattedLabelRepresentationAdapter {
 
     fun Resource.toResourceRepresentation(
         usageCounts: StatementCounts,
-        formattedLabels: FormattedLabels
+        formattedLabels: FormattedLabels,
     ): ResourceRepresentation =
         ResourceRepresentation(
             id = id,

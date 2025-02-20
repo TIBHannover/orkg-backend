@@ -9,12 +9,12 @@ import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
 class RosettaStoneTemplateDescriptionUpdater(
-    private val singleStatementPropertyUpdater: SingleStatementPropertyUpdater
+    private val singleStatementPropertyUpdater: SingleStatementPropertyUpdater,
 ) : UpdateRosettaStoneTemplateAction {
     constructor(
         literalService: LiteralUseCases,
         statementService: StatementUseCases,
-        unsafeStatementUseCases: UnsafeStatementUseCases
+        unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(SingleStatementPropertyUpdater(literalService, statementService, unsafeStatementUseCases))
 
     override fun invoke(command: UpdateRosettaStoneTemplateCommand, state: State): State {

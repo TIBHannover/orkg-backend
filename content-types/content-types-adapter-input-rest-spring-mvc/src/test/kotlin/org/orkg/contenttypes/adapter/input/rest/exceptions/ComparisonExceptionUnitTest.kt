@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.RestController
 @WebMvcTest
 @ContextConfiguration(classes = [TestController::class, ExceptionHandler::class, FixedClockConfig::class])
 internal class ComparisonExceptionUnitTest : MockMvcBaseTest("comparisons") {
-
     @Test
     fun comparisonAlreadyPublished() {
         val id = "R123"
@@ -90,23 +89,23 @@ internal class ComparisonExceptionUnitTest : MockMvcBaseTest("comparisons") {
     @RestController
     internal class TestController {
         @GetMapping("/comparison-already-published")
-        fun comparisonAlreadyPublished(@RequestParam id: ThingId) {
-            throw ComparisonAlreadyPublished(id)
-        }
+        fun comparisonAlreadyPublished(
+            @RequestParam id: ThingId,
+        ): Unit = throw ComparisonAlreadyPublished(id)
 
         @GetMapping("/comparison-not-modifiable")
-        fun comparisonNotModifiable(@RequestParam id: ThingId) {
-            throw ComparisonNotModifiable(id)
-        }
+        fun comparisonNotModifiable(
+            @RequestParam id: ThingId,
+        ): Unit = throw ComparisonNotModifiable(id)
 
         @GetMapping("/comparison-related-resource-not-modifiable")
-        fun comparisonRelatedResourceNotModifiable(@RequestParam id: ThingId) {
-            throw ComparisonRelatedResourceNotModifiable(id)
-        }
+        fun comparisonRelatedResourceNotModifiable(
+            @RequestParam id: ThingId,
+        ): Unit = throw ComparisonRelatedResourceNotModifiable(id)
 
         @GetMapping("/comparison-related-figure-not-modifiable")
-        fun comparisonRelatedFigureNotModifiable(@RequestParam id: ThingId) {
-            throw ComparisonRelatedFigureNotModifiable(id)
-        }
+        fun comparisonRelatedFigureNotModifiable(
+            @RequestParam id: ThingId,
+        ): Unit = throw ComparisonRelatedFigureNotModifiable(id)
     }
 }

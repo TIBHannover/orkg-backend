@@ -1,13 +1,13 @@
 package org.orkg.contenttypes.domain.actions.templates.instances
 
+import org.orkg.contenttypes.domain.actions.ThingDefinitionValidator
 import org.orkg.contenttypes.domain.actions.UpdateTemplateInstanceCommand
 import org.orkg.contenttypes.domain.actions.UpdateTemplateInstanceState
-import org.orkg.contenttypes.domain.actions.ThingDefinitionValidator
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ThingRepository
 
 class TemplateInstanceThingDefinitionValidator(
-    private val thingDefinitionValidator: ThingDefinitionValidator
+    private val thingDefinitionValidator: ThingDefinitionValidator,
 ) : UpdateTemplateInstanceAction {
     constructor(thingRepository: ThingRepository, classRepository: ClassRepository) : this(
         ThingDefinitionValidator(
@@ -18,7 +18,7 @@ class TemplateInstanceThingDefinitionValidator(
 
     override operator fun invoke(
         command: UpdateTemplateInstanceCommand,
-        state: UpdateTemplateInstanceState
+        state: UpdateTemplateInstanceState,
     ): UpdateTemplateInstanceState =
         state.copy(
             validatedIds = thingDefinitionValidator.validateThingDefinitions(

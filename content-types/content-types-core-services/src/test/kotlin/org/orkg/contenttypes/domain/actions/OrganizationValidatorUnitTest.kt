@@ -3,7 +3,6 @@ package org.orkg.contenttypes.domain.actions
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.util.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.OrganizationId
@@ -12,6 +11,8 @@ import org.orkg.community.domain.OrganizationNotFound
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.community.testing.fixtures.createOrganization
 import org.orkg.contenttypes.domain.OnlyOneOrganizationAllowed
+import java.util.Optional
+import java.util.UUID
 
 internal class OrganizationValidatorUnitTest : MockkBaseTest {
     private val organizationRepository: OrganizationRepository = mockk()

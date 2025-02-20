@@ -11,7 +11,7 @@ import org.orkg.graph.domain.Resource
 import org.orkg.graph.output.StatementRepository
 
 class SmartReviewSectionExistenceCreateValidator(
-    private val statementRepository: StatementRepository
+    private val statementRepository: StatementRepository,
 ) : CreateSmartReviewSectionAction {
     override fun invoke(command: CreateSmartReviewSectionCommand, state: State): State {
         val statement = statementRepository.findAll(

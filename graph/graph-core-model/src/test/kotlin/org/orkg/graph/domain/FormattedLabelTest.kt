@@ -1,15 +1,14 @@
 package org.orkg.graph.domain
 
-import kotlin.collections.List
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
+import kotlin.collections.List
 
 /**
  * Test the Formatted label class.
  */
 internal class FormattedLabelTest {
-
     @Test
     fun formattedLabelCorrectlyComposed() {
         assertThat(createCorrectTemplatedResource())
@@ -52,7 +51,7 @@ internal class FormattedLabelTest {
     private fun createTemplatedResourceRepresentation(
         format: String,
         predicates: List<String>,
-        values: List<String>
+        values: List<String>,
     ): String =
         TemplatedResource(
             id = ThingId("R0"),

@@ -1,7 +1,5 @@
 package org.orkg.graph.adapter.output.neo4j.configuration
 
-import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import org.neo4j.cypherdsl.core.renderer.Dialect
 import org.neo4j.driver.Driver
 import org.orkg.common.ContributorId
@@ -18,6 +16,8 @@ import org.springframework.data.neo4j.core.DatabaseSelectionProvider
 import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.data.neo4j.core.convert.Neo4jConversions
 import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import org.neo4j.cypherdsl.core.renderer.Configuration as CypherConfiguration
 
 @Configuration

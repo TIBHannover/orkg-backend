@@ -7,8 +7,6 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import java.time.LocalDateTime
-import java.util.*
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
@@ -29,16 +27,22 @@ import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createPredicate
+import java.time.LocalDateTime
+import java.util.Optional
+import java.util.UUID
 
 internal class ObservatoryFilterServiceUnitTest : MockkBaseTest {
-
     private val repository: ObservatoryFilterRepository = mockk()
     private val observatoryRepository: ObservatoryRepository = mockk()
     private val predicateRepository: PredicateRepository = mockk()
     private val classRepository: ClassRepository = mockk()
 
     private val service = ObservatoryFilterService(
-        repository, observatoryRepository, predicateRepository, classRepository, fixedClock
+        repository,
+        observatoryRepository,
+        predicateRepository,
+        classRepository,
+        fixedClock
     )
 
     @Test
@@ -71,17 +75,19 @@ internal class ObservatoryFilterServiceUnitTest : MockkBaseTest {
         verify(exactly = 1) { classRepository.findById(command.range) }
         verify(exactly = 1) { predicateRepository.findById(command.path[0]) }
         verify(exactly = 1) {
-            repository.save(withArg {
-                it.id shouldBe id
-                it.observatoryId shouldBe command.observatoryId
-                it.createdAt shouldBe LocalDateTime.now(fixedClock)
-                it.createdBy shouldBe command.contributorId
-                it.path shouldBe command.path
-                it.label shouldBe command.label
-                it.range shouldBe command.range
-                it.exact shouldBe command.exact
-                it.featured shouldBe command.featured
-            })
+            repository.save(
+                withArg {
+                    it.id shouldBe id
+                    it.observatoryId shouldBe command.observatoryId
+                    it.createdAt shouldBe LocalDateTime.now(fixedClock)
+                    it.createdBy shouldBe command.contributorId
+                    it.path shouldBe command.path
+                    it.label shouldBe command.label
+                    it.range shouldBe command.range
+                    it.exact shouldBe command.exact
+                    it.featured shouldBe command.featured
+                }
+            )
         }
     }
 
@@ -114,17 +120,19 @@ internal class ObservatoryFilterServiceUnitTest : MockkBaseTest {
         verify(exactly = 1) { predicateRepository.findById(command.path[0]) }
         verify(exactly = 1) { repository.findById(command.id!!) }
         verify(exactly = 1) {
-            repository.save(withArg {
-                it.id shouldBe command.id
-                it.observatoryId shouldBe command.observatoryId
-                it.createdAt shouldBe LocalDateTime.now(fixedClock)
-                it.createdBy shouldBe command.contributorId
-                it.path shouldBe command.path
-                it.label shouldBe command.label
-                it.range shouldBe command.range
-                it.exact shouldBe command.exact
-                it.featured shouldBe command.featured
-            })
+            repository.save(
+                withArg {
+                    it.id shouldBe command.id
+                    it.observatoryId shouldBe command.observatoryId
+                    it.createdAt shouldBe LocalDateTime.now(fixedClock)
+                    it.createdBy shouldBe command.contributorId
+                    it.path shouldBe command.path
+                    it.label shouldBe command.label
+                    it.range shouldBe command.range
+                    it.exact shouldBe command.exact
+                    it.featured shouldBe command.featured
+                }
+            )
         }
     }
 
@@ -250,17 +258,19 @@ internal class ObservatoryFilterServiceUnitTest : MockkBaseTest {
         verify(exactly = 1) { classRepository.findById(command.range!!) }
         verify(exactly = 1) { predicateRepository.findById(command.path!![0]) }
         verify(exactly = 1) {
-            repository.save(withArg {
-                it.id shouldBe filter.id
-                it.observatoryId shouldBe filter.observatoryId
-                it.createdAt shouldBe filter.createdAt
-                it.createdBy shouldBe filter.createdBy
-                it.path shouldBe command.path
-                it.label shouldBe command.label
-                it.range shouldBe command.range
-                it.exact shouldBe command.exact
-                it.featured shouldBe command.featured
-            })
+            repository.save(
+                withArg {
+                    it.id shouldBe filter.id
+                    it.observatoryId shouldBe filter.observatoryId
+                    it.createdAt shouldBe filter.createdAt
+                    it.createdBy shouldBe filter.createdBy
+                    it.path shouldBe command.path
+                    it.label shouldBe command.label
+                    it.range shouldBe command.range
+                    it.exact shouldBe command.exact
+                    it.featured shouldBe command.featured
+                }
+            )
         }
     }
 

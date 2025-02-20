@@ -7,7 +7,6 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import java.util.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ObservatoryId
@@ -28,9 +27,10 @@ import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
+import java.util.Optional
+import java.util.UUID
 
 internal class ObservatoryServiceUnitTest : MockkBaseTest {
-
     private val repository: ObservatoryRepository = mockk()
     private val organizationRepository: OrganizationRepository = mockk()
     private val resourceRepository: ResourceRepository = mockk()
@@ -144,15 +144,17 @@ internal class ObservatoryServiceUnitTest : MockkBaseTest {
         verify(exactly = 1) { repository.findById(command.id!!) }
         verify(exactly = 1) { resourceRepository.findById(researchField.id) }
         verify(exactly = 1) {
-            repository.save(withArg {
-                it.id shouldBe command.id
-                it.name shouldBe command.name
-                it.organizationIds shouldBe command.organizations
-                it.description shouldBe command.description
-                it.researchField shouldBe command.researchField
-                it.displayId shouldBe command.displayId
-                it.sustainableDevelopmentGoals shouldBe command.sustainableDevelopmentGoals
-            })
+            repository.save(
+                withArg {
+                    it.id shouldBe command.id
+                    it.name shouldBe command.name
+                    it.organizationIds shouldBe command.organizations
+                    it.description shouldBe command.description
+                    it.researchField shouldBe command.researchField
+                    it.displayId shouldBe command.displayId
+                    it.sustainableDevelopmentGoals shouldBe command.sustainableDevelopmentGoals
+                }
+            )
         }
     }
 
@@ -182,15 +184,17 @@ internal class ObservatoryServiceUnitTest : MockkBaseTest {
         verify(exactly = 1) { organizationRepository.findById(organization.id!!) }
         verify(exactly = 1) { resourceRepository.findById(researchField.id) }
         verify(exactly = 1) {
-            repository.save(withArg {
-                it.id shouldNotBe null
-                it.name shouldBe command.name
-                it.organizationIds shouldBe command.organizations
-                it.description shouldBe command.description
-                it.researchField shouldBe command.researchField
-                it.displayId shouldBe command.displayId
-                it.sustainableDevelopmentGoals shouldBe command.sustainableDevelopmentGoals
-            })
+            repository.save(
+                withArg {
+                    it.id shouldNotBe null
+                    it.name shouldBe command.name
+                    it.organizationIds shouldBe command.organizations
+                    it.description shouldBe command.description
+                    it.researchField shouldBe command.researchField
+                    it.displayId shouldBe command.displayId
+                    it.sustainableDevelopmentGoals shouldBe command.sustainableDevelopmentGoals
+                }
+            )
         }
     }
 
@@ -359,15 +363,17 @@ internal class ObservatoryServiceUnitTest : MockkBaseTest {
         verify(exactly = 1) { organizationRepository.findById(organization.id!!) }
         verify(exactly = 1) { resourceRepository.findById(researchField.id) }
         verify(exactly = 1) {
-            repository.save(withArg {
-                it.id shouldBe observatory.id
-                it.name shouldBe command.name
-                it.organizationIds shouldBe command.organizations
-                it.description shouldBe command.description
-                it.researchField shouldBe command.researchField
-                it.displayId shouldBe observatory.displayId
-                it.sustainableDevelopmentGoals shouldBe command.sustainableDevelopmentGoals
-            })
+            repository.save(
+                withArg {
+                    it.id shouldBe observatory.id
+                    it.name shouldBe command.name
+                    it.organizationIds shouldBe command.organizations
+                    it.description shouldBe command.description
+                    it.researchField shouldBe command.researchField
+                    it.displayId shouldBe observatory.displayId
+                    it.sustainableDevelopmentGoals shouldBe command.sustainableDevelopmentGoals
+                }
+            )
         }
     }
 
@@ -385,15 +391,17 @@ internal class ObservatoryServiceUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { repository.findById(observatory.id) }
         verify(exactly = 1) {
-            repository.save(withArg {
-                it.id shouldBe observatory.id
-                it.name shouldBe command.name
-                it.organizationIds shouldBe observatory.organizationIds
-                it.description shouldBe observatory.description
-                it.researchField shouldBe observatory.researchField
-                it.displayId shouldBe observatory.displayId
-                it.sustainableDevelopmentGoals shouldBe observatory.sustainableDevelopmentGoals
-            })
+            repository.save(
+                withArg {
+                    it.id shouldBe observatory.id
+                    it.name shouldBe command.name
+                    it.organizationIds shouldBe observatory.organizationIds
+                    it.description shouldBe observatory.description
+                    it.researchField shouldBe observatory.researchField
+                    it.displayId shouldBe observatory.displayId
+                    it.sustainableDevelopmentGoals shouldBe observatory.sustainableDevelopmentGoals
+                }
+            )
         }
     }
 
@@ -414,15 +422,17 @@ internal class ObservatoryServiceUnitTest : MockkBaseTest {
         verify(exactly = 1) { repository.findById(observatory.id) }
         verify(exactly = 1) { organizationRepository.findById(organization.id!!) }
         verify(exactly = 1) {
-            repository.save(withArg {
-                it.id shouldBe observatory.id
-                it.name shouldBe observatory.name
-                it.organizationIds shouldBe command.organizations
-                it.description shouldBe observatory.description
-                it.researchField shouldBe observatory.researchField
-                it.displayId shouldBe observatory.displayId
-                it.sustainableDevelopmentGoals shouldBe observatory.sustainableDevelopmentGoals
-            })
+            repository.save(
+                withArg {
+                    it.id shouldBe observatory.id
+                    it.name shouldBe observatory.name
+                    it.organizationIds shouldBe command.organizations
+                    it.description shouldBe observatory.description
+                    it.researchField shouldBe observatory.researchField
+                    it.displayId shouldBe observatory.displayId
+                    it.sustainableDevelopmentGoals shouldBe observatory.sustainableDevelopmentGoals
+                }
+            )
         }
     }
 
@@ -440,15 +450,17 @@ internal class ObservatoryServiceUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { repository.findById(observatory.id) }
         verify(exactly = 1) {
-            repository.save(withArg {
-                it.id shouldBe observatory.id
-                it.name shouldBe observatory.name
-                it.organizationIds shouldBe observatory.organizationIds
-                it.description shouldBe command.description
-                it.researchField shouldBe observatory.researchField
-                it.displayId shouldBe observatory.displayId
-                it.sustainableDevelopmentGoals shouldBe observatory.sustainableDevelopmentGoals
-            })
+            repository.save(
+                withArg {
+                    it.id shouldBe observatory.id
+                    it.name shouldBe observatory.name
+                    it.organizationIds shouldBe observatory.organizationIds
+                    it.description shouldBe command.description
+                    it.researchField shouldBe observatory.researchField
+                    it.displayId shouldBe observatory.displayId
+                    it.sustainableDevelopmentGoals shouldBe observatory.sustainableDevelopmentGoals
+                }
+            )
         }
     }
 
@@ -469,15 +481,17 @@ internal class ObservatoryServiceUnitTest : MockkBaseTest {
         verify(exactly = 1) { repository.findById(observatory.id) }
         verify(exactly = 1) { resourceRepository.findById(researchField.id) }
         verify(exactly = 1) {
-            repository.save(withArg {
-                it.id shouldBe observatory.id
-                it.name shouldBe observatory.name
-                it.organizationIds shouldBe observatory.organizationIds
-                it.description shouldBe observatory.description
-                it.researchField shouldBe command.researchField
-                it.displayId shouldBe observatory.displayId
-                it.sustainableDevelopmentGoals shouldBe observatory.sustainableDevelopmentGoals
-            })
+            repository.save(
+                withArg {
+                    it.id shouldBe observatory.id
+                    it.name shouldBe observatory.name
+                    it.organizationIds shouldBe observatory.organizationIds
+                    it.description shouldBe observatory.description
+                    it.researchField shouldBe command.researchField
+                    it.displayId shouldBe observatory.displayId
+                    it.sustainableDevelopmentGoals shouldBe observatory.sustainableDevelopmentGoals
+                }
+            )
         }
     }
 
@@ -496,15 +510,17 @@ internal class ObservatoryServiceUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { repository.findById(observatory.id) }
         verify(exactly = 1) {
-            repository.save(withArg {
-                it.id shouldBe observatory.id
-                it.name shouldBe observatory.name
-                it.organizationIds shouldBe observatory.organizationIds
-                it.description shouldBe observatory.description
-                it.researchField shouldBe observatory.researchField
-                it.displayId shouldBe observatory.displayId
-                it.sustainableDevelopmentGoals shouldBe command.sustainableDevelopmentGoals
-            })
+            repository.save(
+                withArg {
+                    it.id shouldBe observatory.id
+                    it.name shouldBe observatory.name
+                    it.organizationIds shouldBe observatory.organizationIds
+                    it.description shouldBe observatory.description
+                    it.researchField shouldBe observatory.researchField
+                    it.displayId shouldBe observatory.displayId
+                    it.sustainableDevelopmentGoals shouldBe command.sustainableDevelopmentGoals
+                }
+            )
         }
     }
 

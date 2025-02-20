@@ -6,7 +6,6 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import java.util.*
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
@@ -24,6 +23,7 @@ import org.orkg.contenttypes.domain.actions.smartreviews.AbstractSmartReviewSect
 import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
 import org.orkg.contenttypes.domain.testing.fixtures.toGroupedStatements
 import org.orkg.contenttypes.input.UpdateSmartReviewSectionUseCase
+import java.util.UUID
 
 internal class SmartReviewSectionUpdaterUnitTest : MockkBaseTest {
     private val abstractSmartReviewSectionUpdater: AbstractSmartReviewSectionUpdater = mockk()
@@ -260,7 +260,7 @@ internal class SmartReviewSectionUpdaterUnitTest : MockkBaseTest {
 
     private fun SmartReviewSection.toUpdateCommand(
         contributorId: ContributorId,
-        smartReviewId: ThingId
+        smartReviewId: ThingId,
     ): UpdateSmartReviewSectionCommand =
         when (this) {
             is SmartReviewComparisonSection -> toUpdateCommand(contributorId, smartReviewId)
@@ -273,7 +273,7 @@ internal class SmartReviewSectionUpdaterUnitTest : MockkBaseTest {
 
     private fun SmartReviewComparisonSection.toUpdateCommand(
         contributorId: ContributorId,
-        smartReviewId: ThingId
+        smartReviewId: ThingId,
     ) = UpdateSmartReviewSectionUseCase.UpdateComparisonSectionCommand(
         smartReviewSectionId = id,
         contributorId = contributorId,
@@ -284,7 +284,7 @@ internal class SmartReviewSectionUpdaterUnitTest : MockkBaseTest {
 
     private fun SmartReviewVisualizationSection.toUpdateCommand(
         contributorId: ContributorId,
-        smartReviewId: ThingId
+        smartReviewId: ThingId,
     ) = UpdateSmartReviewSectionUseCase.UpdateVisualizationSectionCommand(
         smartReviewSectionId = id,
         contributorId = contributorId,
@@ -295,7 +295,7 @@ internal class SmartReviewSectionUpdaterUnitTest : MockkBaseTest {
 
     private fun SmartReviewResourceSection.toUpdateCommand(
         contributorId: ContributorId,
-        smartReviewId: ThingId
+        smartReviewId: ThingId,
     ) = UpdateSmartReviewSectionUseCase.UpdateResourceSectionCommand(
         smartReviewSectionId = id,
         contributorId = contributorId,
@@ -306,7 +306,7 @@ internal class SmartReviewSectionUpdaterUnitTest : MockkBaseTest {
 
     private fun SmartReviewPredicateSection.toUpdateCommand(
         contributorId: ContributorId,
-        smartReviewId: ThingId
+        smartReviewId: ThingId,
     ) = UpdateSmartReviewSectionUseCase.UpdatePredicateSectionCommand(
         smartReviewSectionId = id,
         contributorId = contributorId,
@@ -317,7 +317,7 @@ internal class SmartReviewSectionUpdaterUnitTest : MockkBaseTest {
 
     private fun SmartReviewOntologySection.toUpdateCommand(
         contributorId: ContributorId,
-        smartReviewId: ThingId
+        smartReviewId: ThingId,
     ) = UpdateSmartReviewSectionUseCase.UpdateOntologySectionCommand(
         smartReviewSectionId = id,
         contributorId = contributorId,
@@ -329,7 +329,7 @@ internal class SmartReviewSectionUpdaterUnitTest : MockkBaseTest {
 
     private fun SmartReviewTextSection.toUpdateCommand(
         contributorId: ContributorId,
-        smartReviewId: ThingId
+        smartReviewId: ThingId,
     ) = UpdateSmartReviewSectionUseCase.UpdateTextSectionCommand(
         smartReviewSectionId = id,
         contributorId = contributorId,

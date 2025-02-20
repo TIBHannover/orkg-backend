@@ -1,10 +1,10 @@
 package org.orkg.graph.adapter.output.neo4j.internal
 
-import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter
 import org.neo4j.driver.Value
 import org.neo4j.driver.Values
 import org.springframework.data.neo4j.core.convert.Neo4jPersistentPropertyConverter
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 
 class Neo4jOffsetDateTimeConverter : Neo4jPersistentPropertyConverter<OffsetDateTime> {
     override fun write(source: OffsetDateTime?): Value =

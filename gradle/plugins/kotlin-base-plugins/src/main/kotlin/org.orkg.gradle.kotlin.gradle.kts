@@ -88,7 +88,6 @@ tasks.register("compileAll") {
 }
 
 extensions.configure<SpotlessExtension> {
-    // ratchetFrom("origin/master")
     kotlin {
         ktlint("1.5.0") // TODO: Remove once Spotless uses this version
     }

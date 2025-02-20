@@ -1,7 +1,7 @@
 package org.orkg.graph.input
 
-import java.util.*
 import org.eclipse.rdf4j.common.net.ParsedIRI
+import java.util.Optional
 
 /**
  * A service that provides functionality for entities addressable by a [ParsedIRI].

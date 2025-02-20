@@ -36,7 +36,7 @@ fun <
     P : PredicateRepository,
     I : ListRepository,
     T : RosettaStoneStatementRepository,
-    U : RankingService
+    U : RankingService,
 > rankingServiceContract(
     statementRepository: S,
     classRepository: C,
@@ -45,7 +45,7 @@ fun <
     predicateRepository: P,
     @Suppress("UNUSED_PARAMETER") listRepository: I,
     rosettaStoneStatementRepository: T,
-    service: U
+    service: U,
 ) = describeSpec {
     beforeTest {
         rosettaStoneStatementRepository.deleteAll()
@@ -192,26 +192,34 @@ fun <
         )
         // create a head comparison linked to a published version, that
         // both compare the same contribution, that is part of a paper
-        saveStatement(fabricator.random<GeneralStatement>().copy(
-            subject = publishedComparison,
-            predicate = compareContribution,
-            `object` = contribution
-        ))
-        saveStatement(fabricator.random<GeneralStatement>().copy(
-            subject = headComparison,
-            predicate = compareContribution,
-            `object` = contribution
-        ))
-        saveStatement(fabricator.random<GeneralStatement>().copy(
-            subject = paper,
-            predicate = hasContribution,
-            `object` = contribution
-        ))
-        saveStatement(fabricator.random<GeneralStatement>().copy(
-            subject = headComparison,
-            predicate = hasPublishedVersion,
-            `object` = publishedComparison
-        ))
+        saveStatement(
+            fabricator.random<GeneralStatement>().copy(
+                subject = publishedComparison,
+                predicate = compareContribution,
+                `object` = contribution
+            )
+        )
+        saveStatement(
+            fabricator.random<GeneralStatement>().copy(
+                subject = headComparison,
+                predicate = compareContribution,
+                `object` = contribution
+            )
+        )
+        saveStatement(
+            fabricator.random<GeneralStatement>().copy(
+                subject = paper,
+                predicate = hasContribution,
+                `object` = contribution
+            )
+        )
+        saveStatement(
+            fabricator.random<GeneralStatement>().copy(
+                subject = headComparison,
+                predicate = hasPublishedVersion,
+                `object` = publishedComparison
+            )
+        )
 
         val expected = 1
         val result = service.countComparisonsIncludingPaper(paper.id)
@@ -241,21 +249,27 @@ fun <
         val hasPaper = fabricator.random<Predicate>().copy(
             id = Predicates.hasLink
         )
-        saveStatement(fabricator.random<GeneralStatement>().copy(
-            subject = literatureList,
-            predicate = hasSection,
-            `object` = listSection
-        ))
-        saveStatement(fabricator.random<GeneralStatement>().copy(
-            subject = listSection,
-            predicate = hasEntry,
-            `object` = entry
-        ))
-        saveStatement(fabricator.random<GeneralStatement>().copy(
-            subject = entry,
-            predicate = hasPaper,
-            `object` = paper
-        ))
+        saveStatement(
+            fabricator.random<GeneralStatement>().copy(
+                subject = literatureList,
+                predicate = hasSection,
+                `object` = listSection
+            )
+        )
+        saveStatement(
+            fabricator.random<GeneralStatement>().copy(
+                subject = listSection,
+                predicate = hasEntry,
+                `object` = entry
+            )
+        )
+        saveStatement(
+            fabricator.random<GeneralStatement>().copy(
+                subject = entry,
+                predicate = hasPaper,
+                `object` = paper
+            )
+        )
 
         val expected = 1
         val result = service.countLiteratureListsIncludingPaper(paper.id)

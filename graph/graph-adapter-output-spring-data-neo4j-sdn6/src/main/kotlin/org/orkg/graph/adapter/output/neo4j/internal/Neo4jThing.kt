@@ -1,6 +1,5 @@
 package org.orkg.graph.adapter.output.neo4j.internal
 
-import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.Thing
@@ -8,8 +7,10 @@ import org.springframework.data.annotation.Version
 import org.springframework.data.neo4j.core.schema.Id
 import org.springframework.data.neo4j.core.schema.Node
 import org.springframework.data.neo4j.core.schema.Property
+import java.time.OffsetDateTime
 
 @Node("Thing")
+@Suppress("ktlint:standard:property-naming")
 abstract class Neo4jThing {
     // We need this property for the ThingRepository
     @Id

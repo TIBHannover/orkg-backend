@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController
 @WebMvcTest
 @ContextConfiguration(classes = [TestController::class, ExceptionHandler::class, FixedClockConfig::class])
 internal class ThingExceptionUnitTest : MockMvcBaseTest("exceptions") {
-
     @Test
     fun thingAlreadyExists() {
         val id = "R123"
@@ -41,10 +40,9 @@ internal class ThingExceptionUnitTest : MockMvcBaseTest("exceptions") {
     @TestComponent
     @RestController
     internal class TestController {
-
         @GetMapping("/thing-already-exists")
-        fun thingAlreadyExists(@RequestParam id: ThingId) {
-            throw ThingAlreadyExists(id)
-        }
+        fun thingAlreadyExists(
+            @RequestParam id: ThingId,
+        ): Unit = throw ThingAlreadyExists(id)
     }
 }

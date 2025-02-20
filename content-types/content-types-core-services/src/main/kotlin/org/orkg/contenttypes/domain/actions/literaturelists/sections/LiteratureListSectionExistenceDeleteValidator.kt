@@ -7,16 +7,16 @@ import org.orkg.contenttypes.domain.actions.literaturelists.AbstractLiteratureLi
 import org.orkg.graph.output.ResourceRepository
 
 class LiteratureListSectionExistenceDeleteValidator(
-    private val abstractLiteratureListExistenceValidator: AbstractLiteratureListExistenceValidator
+    private val abstractLiteratureListExistenceValidator: AbstractLiteratureListExistenceValidator,
 ) : DeleteLiteratureListSectionAction {
     constructor(
         literatureListService: LiteratureListService,
-        resourceRepository: ResourceRepository
+        resourceRepository: ResourceRepository,
     ) : this(AbstractLiteratureListExistenceValidator(literatureListService, resourceRepository))
 
     override fun invoke(
         command: DeleteLiteratureListSectionCommand,
-        state: DeleteLiteratureListSectionState
+        state: DeleteLiteratureListSectionState,
     ): DeleteLiteratureListSectionState =
         abstractLiteratureListExistenceValidator.findUnpublishedLiteratureListById(command.literatureListId)
             .let { state.copy(literatureList = it.first, statements = it.second) }

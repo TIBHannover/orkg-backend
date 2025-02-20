@@ -8,7 +8,7 @@ import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
 class LiteratureListChangelogCreator(
-    private val singleStatementPropertyCreator: SingleStatementPropertyCreator
+    private val singleStatementPropertyCreator: SingleStatementPropertyCreator,
 ) : PublishLiteratureListAction {
     constructor(
         literalService: LiteralUseCases,

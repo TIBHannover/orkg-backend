@@ -8,11 +8,11 @@ import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
 class VisualizationDescriptionCreator(
-    private val singleStatementPropertyCreator: SingleStatementPropertyCreator
+    private val singleStatementPropertyCreator: SingleStatementPropertyCreator,
 ) : VisualizationAction {
     constructor(
         literalService: LiteralUseCases,
-        unsafeStatementUseCases: UnsafeStatementUseCases
+        unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(SingleStatementPropertyCreator(literalService, unsafeStatementUseCases))
 
     override operator fun invoke(command: CreateVisualizationCommand, state: State): State =

@@ -14,7 +14,6 @@ import org.springframework.test.context.ContextConfiguration
 @JsonTest
 @ContextConfiguration(classes = [CommonJacksonModule::class, CommunityJacksonModule::class])
 internal class ObservatoryDeserializerJsonTest {
-
     @Autowired
     private lateinit var json: JacksonTester<Organization>
 

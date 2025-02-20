@@ -8,7 +8,6 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import java.util.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ContributorId
@@ -53,6 +52,8 @@ import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.MockUserId
 import org.orkg.testing.pageOf
 import org.springframework.data.domain.Sort
+import java.util.Optional
+import java.util.UUID
 
 internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
     private val resourceRepository: ResourceRepository = mockk()
@@ -241,7 +242,6 @@ internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
                 predicate = createPredicate(Predicates.shProperty),
                 `object` = resourceProperty
             ),
-
             // Statements for untyped property
             createStatement(
                 subject = untypedProperty,
@@ -282,7 +282,6 @@ internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
                 predicate = createPredicate(Predicates.shPath),
                 `object` = untypedPropertyPath
             ),
-
             // Statements for string literal property
             createStatement(
                 subject = stringLiteralProperty,
@@ -333,7 +332,6 @@ internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
                 predicate = createPredicate(Predicates.shDatatype),
                 `object` = stringLiteralPropertyDatatype
             ),
-
             // Statements for number literal property
             createStatement(
                 subject = numberLiteralProperty,
@@ -395,7 +393,6 @@ internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
                 predicate = createPredicate(Predicates.shDatatype),
                 `object` = numberLiteralPropertyDatatype
             ),
-
             // Statements for literal property
             createStatement(
                 subject = otherLiteralProperty,
@@ -441,7 +438,6 @@ internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
                 predicate = createPredicate(Predicates.shDatatype),
                 `object` = otherLiteralPropertyDatatype
             ),
-
             // Statements for resource property
             createStatement(
                 subject = resourceProperty,

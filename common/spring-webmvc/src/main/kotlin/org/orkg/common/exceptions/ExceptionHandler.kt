@@ -4,8 +4,6 @@ import com.fasterxml.jackson.core.JsonParseException
 import com.fasterxml.jackson.databind.JsonMappingException
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException
-import java.time.Clock
-import java.time.OffsetDateTime
 import org.neo4j.driver.exceptions.Neo4jException
 import org.orkg.common.toSnakeCase
 import org.springframework.data.mapping.PropertyReferenceException
@@ -29,6 +27,8 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 import org.springframework.web.util.ContentCachingRequestWrapper
 import org.springframework.web.util.WebUtils
+import java.time.Clock
+import java.time.OffsetDateTime
 
 @ControllerAdvice
 class ExceptionHandler(private val clock: Clock) : ResponseEntityExceptionHandler() {
@@ -36,7 +36,7 @@ class ExceptionHandler(private val clock: Clock) : ResponseEntityExceptionHandle
         ex: MethodArgumentNotValidException,
         headers: HttpHeaders,
         status: HttpStatusCode,
-        request: WebRequest
+        request: WebRequest,
     ) = buildBadRequestResponse(ex, request.requestURI) {
         ex.bindingResult.fieldErrors.map {
             FieldValidationError(field = it.field.toSnakeCase(), message = it?.defaultMessage)
@@ -47,7 +47,7 @@ class ExceptionHandler(private val clock: Clock) : ResponseEntityExceptionHandle
         ex: HttpMediaTypeNotAcceptableException,
         headers: HttpHeaders,
         status: HttpStatusCode,
-        request: WebRequest
+        request: WebRequest,
     ): ResponseEntity<Any> {
         val payload = MessageErrorResponse(
             status = status.value(),
@@ -65,7 +65,7 @@ class ExceptionHandler(private val clock: Clock) : ResponseEntityExceptionHandle
         ex: HttpMediaTypeNotSupportedException,
         headers: HttpHeaders,
         status: HttpStatusCode,
-        request: WebRequest
+        request: WebRequest,
     ): ResponseEntity<Any> {
         val payload = MessageErrorResponse(
             status = status.value(),
@@ -83,7 +83,7 @@ class ExceptionHandler(private val clock: Clock) : ResponseEntityExceptionHandle
         ex: HttpMessageNotReadableException,
         headers: HttpHeaders,
         status: HttpStatusCode,
-        request: WebRequest
+        request: WebRequest,
     ): ResponseEntity<Any>? =
         when (val cause = ex.cause) {
             is UnrecognizedPropertyException -> {
@@ -124,7 +124,7 @@ class ExceptionHandler(private val clock: Clock) : ResponseEntityExceptionHandle
         body: Any?,
         headers: HttpHeaders,
         status: HttpStatusCode,
-        request: WebRequest
+        request: WebRequest,
     ): ResponseEntity<Any> {
         if (status.value() == INTERNAL_SERVER_ERROR.value()) {
             logException(ex, request)
@@ -141,29 +141,29 @@ class ExceptionHandler(private val clock: Clock) : ResponseEntityExceptionHandle
     @ExceptionHandler(PropertyValidationException::class)
     fun handlePropertyValidationException(
         ex: PropertyValidationException,
-        request: WebRequest
+        request: WebRequest,
     ) = buildBadRequestResponse(ex, request.requestURI) {
-            // Use a list so that it is compatible to the javax.validation responses
-            listOf(
-                FieldValidationError(field = ex.property, message = ex.message)
-            )
-        }
+        // Use a list so that it is compatible to the javax.validation responses
+        listOf(
+            FieldValidationError(field = ex.property, message = ex.message)
+        )
+    }
 
     @ExceptionHandler(ForbiddenOperationException::class)
     fun handleForbiddenOperationException(
         ex: ForbiddenOperationException,
-        request: WebRequest
+        request: WebRequest,
     ) = buildForbiddenResponse(ex, request.requestURI) {
-            // Use a list so that it is compatible to the javax.validation responses
-            listOf(
-                FieldValidationError(field = ex.property, message = ex.message)
-            )
-        }
+        // Use a list so that it is compatible to the javax.validation responses
+        listOf(
+            FieldValidationError(field = ex.property, message = ex.message)
+        )
+    }
 
     @ExceptionHandler(LoggedMessageException::class)
     fun handleLoggedMessageException(
         ex: LoggedMessageException,
-        request: WebRequest
+        request: WebRequest,
     ): ResponseEntity<Any> {
         logException(ex, request)
         return handleSimpleMessageException(ex, request)
@@ -172,7 +172,7 @@ class ExceptionHandler(private val clock: Clock) : ResponseEntityExceptionHandle
     @ExceptionHandler(ServiceUnavailable::class)
     fun handleServiceUnavailable(
         ex: ServiceUnavailable,
-        request: WebRequest
+        request: WebRequest,
     ): ResponseEntity<Any> {
         logger.error(ex.internalMessage)
         return handleLoggedMessageException(ex, request)
@@ -181,7 +181,7 @@ class ExceptionHandler(private val clock: Clock) : ResponseEntityExceptionHandle
     @ExceptionHandler(PropertyReferenceException::class)
     fun handlePropertyReferenceException(
         ex: PropertyReferenceException,
-        request: WebRequest
+        request: WebRequest,
     ): ResponseEntity<Any> {
         val payload = MessageErrorResponse(
             status = BAD_REQUEST.value(),
@@ -196,7 +196,7 @@ class ExceptionHandler(private val clock: Clock) : ResponseEntityExceptionHandle
     @ExceptionHandler(SimpleMessageException::class)
     fun handleSimpleMessageException(
         ex: SimpleMessageException,
-        request: WebRequest
+        request: WebRequest,
     ): ResponseEntity<Any> {
         val payload = MessageErrorResponse(
             status = ex.status.value(),
@@ -215,7 +215,7 @@ class ExceptionHandler(private val clock: Clock) : ResponseEntityExceptionHandle
     @ExceptionHandler(MethodArgumentTypeMismatchException::class)
     fun handleMethodArgumentTypeMismatchException(
         ex: MethodArgumentTypeMismatchException,
-        request: WebRequest
+        request: WebRequest,
     ): ResponseEntity<Any?>? {
         val payload = MessageErrorResponse(
             status = BAD_REQUEST.value(),
@@ -230,7 +230,7 @@ class ExceptionHandler(private val clock: Clock) : ResponseEntityExceptionHandle
     @ExceptionHandler(value = [RuntimeException::class, Neo4jException::class])
     fun handleRuntimeException(
         ex: RuntimeException,
-        request: WebRequest
+        request: WebRequest,
     ): ResponseEntity<Any> {
         logException(ex, request)
         val payload = ErrorResponse(
@@ -245,7 +245,7 @@ class ExceptionHandler(private val clock: Clock) : ResponseEntityExceptionHandle
     @ExceptionHandler(AccessDeniedException::class)
     fun handleAccessDeniedException(
         ex: AccessDeniedException,
-        request: WebRequest
+        request: WebRequest,
     ): ResponseEntity<Any> {
         val payload = ErrorResponse(
             status = FORBIDDEN.value(),
@@ -259,7 +259,7 @@ class ExceptionHandler(private val clock: Clock) : ResponseEntityExceptionHandle
     fun <T> buildBadRequestResponse(
         exception: T,
         path: String,
-        block: (ex: T) -> List<FieldValidationError>
+        block: (ex: T) -> List<FieldValidationError>,
     ): ResponseEntity<Any> {
         val errors = block(exception)
         val payload = ValidationFailureResponse(
@@ -275,7 +275,7 @@ class ExceptionHandler(private val clock: Clock) : ResponseEntityExceptionHandle
     fun <T> buildForbiddenResponse(
         exception: T,
         path: String,
-        block: (ex: T) -> List<FieldValidationError>
+        block: (ex: T) -> List<FieldValidationError>,
     ): ResponseEntity<Any> {
         val errors = block(exception)
         val payload = ValidationFailureResponse(
@@ -324,7 +324,7 @@ class ExceptionHandler(private val clock: Clock) : ResponseEntityExceptionHandle
      */
     data class FieldValidationError(
         val field: String,
-        val message: String?
+        val message: String?,
     )
 
     /**
@@ -335,7 +335,7 @@ class ExceptionHandler(private val clock: Clock) : ResponseEntityExceptionHandle
         val error: String,
         val path: String,
         val timestamp: OffsetDateTime,
-        val errors: List<FieldValidationError>
+        val errors: List<FieldValidationError>,
     )
 
     data class MessageErrorResponse(
@@ -343,7 +343,7 @@ class ExceptionHandler(private val clock: Clock) : ResponseEntityExceptionHandle
         val error: String,
         val path: String,
         val timestamp: OffsetDateTime,
-        val message: String?
+        val message: String?,
     )
 }
 

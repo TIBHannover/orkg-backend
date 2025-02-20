@@ -6,15 +6,14 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.util.concurrent.Callable
 import org.junit.jupiter.api.Test
 import org.orkg.common.exceptions.UnknownParameter
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.springframework.cache.Cache
 import org.springframework.cache.CacheManager
+import java.util.concurrent.Callable
 
 internal class CachedMetricTest : MockkBaseTest {
-
     @Test
     fun `Given a cached metric, retrieving its value without parameters, it returns the value`() {
         val mockMetricSupplier: (ParameterMap) -> Number = mockk()

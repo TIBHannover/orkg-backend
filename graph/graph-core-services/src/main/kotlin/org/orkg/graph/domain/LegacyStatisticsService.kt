@@ -1,9 +1,5 @@
 package org.orkg.graph.domain
 
-import java.time.Clock
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import kotlin.collections.List
 import org.orkg.common.ObservatoryId
 import org.orkg.common.ThingId
 import org.orkg.community.domain.Contributor
@@ -11,7 +7,7 @@ import org.orkg.community.domain.ObservatoryNotFound
 import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
-import org.orkg.graph.input.RetrieveLegacyStatisticsUseCase
+import org.orkg.graph.input.LegacyStatisticsUseCases
 import org.orkg.graph.output.LegacyStatisticsRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.spring.data.annotations.TransactionalOnNeo4j
@@ -19,6 +15,10 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import java.time.Clock
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import kotlin.collections.List
 
 @Service
 @TransactionalOnNeo4j
@@ -29,7 +29,7 @@ class LegacyStatisticsService(
     private val organizationRepository: OrganizationRepository,
     private val resourceRepository: ResourceRepository,
     private val clock: Clock,
-) : RetrieveLegacyStatisticsUseCase {
+) : LegacyStatisticsUseCases {
     override fun getStats(extra: List<String>?): Stats {
         val metadata = legacyStatisticsRepository.getGraphMetaData()
         val labels = metadata.first()["labels"] as Map<*, *>
@@ -52,11 +52,26 @@ class LegacyStatisticsService(
         val observatoriesCount = observatoryRepository.count()
         val organizationsCount = organizationRepository.count()
         val orphanedNodesCount = legacyStatisticsRepository.getOrphanedNodesCount()
-        return Stats(statementsCount, resourcesCount, predicatesCount,
-            literalsCount, papersCount, classesCount, contributionsCount,
-            fieldsCount, problemsCount, comparisonsCount, visualizationsCount,
-            templatesCount, smartReviewsCount, userCount, observatoriesCount,
-            organizationsCount, orphanedNodesCount, extraCounts)
+        return Stats(
+            statementsCount,
+            resourcesCount,
+            predicatesCount,
+            literalsCount,
+            papersCount,
+            classesCount,
+            contributionsCount,
+            fieldsCount,
+            problemsCount,
+            comparisonsCount,
+            visualizationsCount,
+            templatesCount,
+            smartReviewsCount,
+            userCount,
+            observatoriesCount,
+            organizationsCount,
+            orphanedNodesCount,
+            extraCounts
+        )
     }
 
     override fun getFieldsStats(): Map<ThingId, Int> {
@@ -88,7 +103,7 @@ class LegacyStatisticsService(
 
     override fun getTopCurrentContributors(
         days: Long,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<ContributorRecord> =
         legacyStatisticsRepository.getTopCurrentContributorIdsAndContributionsCount(calculateStartDate(daysAgo = days), pageable)
 
@@ -109,7 +124,7 @@ class LegacyStatisticsService(
     override fun getTopCurrentContributorsByResearchField(
         id: ThingId,
         days: Long,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<ContributorRecord> =
         legacyStatisticsRepository.getTopCurContribIdsAndContribCountByResearchFieldId(
             id,
@@ -120,7 +135,7 @@ class LegacyStatisticsService(
     override fun getTopCurrentContributorsByResearchFieldExcludeSubFields(
         id: ThingId,
         days: Long,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<ContributorRecord> =
         legacyStatisticsRepository.getTopCurContribIdsAndContribCountByResearchFieldIdExcludeSubFields(
             id,
@@ -149,11 +164,10 @@ class LegacyStatisticsService(
         return PageImpl(refinedChangeLog, pageable, refinedChangeLog.size.toLong())
     }
 
-    private fun extractValue(map: Map<*, *>, key: String): Long {
-        return if (map.containsKey(key))
-            map[key] as Long
-        else
-            0
+    private fun extractValue(map: Map<*, *>, key: String): Long = if (map.containsKey(key)) {
+        map[key] as Long
+    } else {
+        0
     }
 
     private fun calculateStartDate(daysAgo: Long): LocalDate =

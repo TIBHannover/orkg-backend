@@ -10,7 +10,6 @@ import org.orkg.common.exceptions.UnknownParameter
 import org.orkg.common.testing.fixtures.MockkBaseTest
 
 internal class SimpleMetricTest : MockkBaseTest {
-
     @Test
     fun `Given a simple metric, retrieving its value without parameters, it returns the value`() {
         val mockMetricSupplier: (ParameterMap) -> Number = mockk()

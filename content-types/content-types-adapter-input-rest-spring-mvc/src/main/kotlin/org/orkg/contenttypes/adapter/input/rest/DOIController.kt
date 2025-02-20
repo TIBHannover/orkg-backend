@@ -1,7 +1,6 @@
 package org.orkg.contenttypes.adapter.input.rest
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import java.net.URI
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Size
 import org.orkg.common.ThingId
@@ -18,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import java.net.URI
 
 val publishableClasses: Set<ThingId> = setOf(
     Classes.paper,
@@ -33,10 +33,12 @@ class DOIController(
     private val doiService: DoiService,
     private val dataciteConfiguration: DataCiteConfiguration,
     private val resourceRepository: ResourceRepository,
-    private val literalService: LiteralUseCases
+    private val literalService: LiteralUseCases,
 ) {
     @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])
-    fun addDOI(@RequestBody @Valid request: CreateDOIRequest): DoiResponse {
+    fun addDOI(
+        @RequestBody @Valid request: CreateDOIRequest,
+    ): DoiResponse {
         val resource = resourceRepository.findById(request.resourceId)
             .orElseThrow { ResourceNotFound.withId(request.resourceId) }
         if (resource.classes.intersect(publishableClasses).isEmpty()) {
@@ -69,7 +71,7 @@ class DOIController(
     }
 
     data class DoiResponse(
-        val doi: String
+        val doi: String,
     )
 
     data class CreateDOIRequest(
@@ -85,13 +87,13 @@ class DOIController(
         val url: URI,
         val type: String,
         @JsonProperty("resource_type")
-        val resourceType: String
+        val resourceType: String,
     ) {
         data class Creator(
             @JsonProperty("creator")
             val name: String,
             @field:Size(min = 19, max = 19)
-            val orcid: String?
+            val orcid: String?,
         )
     }
 }

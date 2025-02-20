@@ -1,9 +1,6 @@
 package org.orkg.graph.domain
 
 import dev.forkhandles.values.ofOrNull
-import java.time.OffsetDateTime
-import java.util.*
-import kotlin.collections.List
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -26,6 +23,9 @@ import org.orkg.spring.data.annotations.TransactionalOnNeo4j
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import java.time.OffsetDateTime
+import java.util.Optional
+import kotlin.collections.List
 
 @Service
 @TransactionalOnNeo4j
@@ -37,7 +37,7 @@ class ResourceService(
     private val thingRepository: ThingRepository,
     private val unsafeResourceUseCases: UnsafeResourceUseCases,
     private val observatoryRepository: ObservatoryRepository,
-    private val organizationRepository: OrganizationRepository
+    private val organizationRepository: OrganizationRepository,
 ) : ResourceUseCases {
     @TransactionalOnNeo4j(readOnly = true)
     override fun existsById(id: ThingId): Boolean = repository.existsById(id)
@@ -60,7 +60,7 @@ class ResourceService(
         excludeClasses: Set<ThingId>,
         baseClass: ThingId?,
         observatoryId: ObservatoryId?,
-        organizationId: OrganizationId?
+        organizationId: OrganizationId?,
     ): Page<Resource> =
         repository.findAll(
             pageable = pageable,
@@ -95,7 +95,7 @@ class ResourceService(
         classes: Set<ThingId>,
         visibility: VisibilityFilter,
         id: ObservatoryId,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<Resource> =
         when (visibility) {
             VisibilityFilter.ALL_LISTED -> repository.findAllListedByClassInAndObservatoryId(classes, id, pageable)
@@ -114,7 +114,7 @@ class ResourceService(
         observatoryId: ObservatoryId?,
         filters: List<SearchFilter>,
         visibility: VisibilityFilter,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<Resource> =
         statementRepository.findAllPapersByObservatoryIdAndFilters(observatoryId, filters, visibility, pageable)
 
@@ -165,11 +165,13 @@ class ResourceService(
     override fun delete(id: ThingId, contributorId: ContributorId) {
         val resource = repository.findById(id).orElseThrow { ResourceNotFound.withId(id) }
 
-        if (!resource.modifiable)
+        if (!resource.modifiable) {
             throw ResourceNotModifiable(resource.id)
+        }
 
-        if (thingRepository.isUsedAsObject(resource.id))
+        if (thingRepository.isUsedAsObject(resource.id)) {
             throw ResourceInUse(resource.id)
+        }
 
         if (!resource.isOwnedBy(contributorId)) {
             val contributor = contributorRepository.findById(contributorId)
@@ -185,7 +187,7 @@ class ResourceService(
     override fun findAllByClassInAndVisibility(
         classes: Set<ThingId>,
         visibility: VisibilityFilter,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<Resource> = when {
         classes.isNotEmpty() -> when (visibility) {
             VisibilityFilter.ALL_LISTED -> repository.findAllListedByClassIn(classes, pageable)
@@ -267,6 +269,8 @@ class ResourceService(
     }
 
     private fun isAllowedVisibilityChangeByOwner(source: Visibility, target: Visibility) =
-        source == Visibility.DELETED && target == Visibility.DEFAULT || // allow restoring deleted resources
+        source == Visibility.DELETED &&
+            target == Visibility.DEFAULT ||
+            // allow restoring deleted resources
             target == Visibility.DELETED // allow deletion of resources from any state
 }

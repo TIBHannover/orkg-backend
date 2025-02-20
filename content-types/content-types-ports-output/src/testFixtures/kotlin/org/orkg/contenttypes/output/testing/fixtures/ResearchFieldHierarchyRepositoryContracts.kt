@@ -5,7 +5,6 @@ import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import java.time.OffsetDateTime
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.ResearchFieldHierarchyEntry
 import org.orkg.contenttypes.domain.ResearchFieldWithChildCount
@@ -20,17 +19,18 @@ import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 import org.springframework.data.domain.PageRequest
+import java.time.OffsetDateTime
 
 fun <
     H : ResearchFieldHierarchyRepository,
     S : StatementRepository,
     R : ResourceRepository,
-    P : PredicateRepository
+    P : PredicateRepository,
 > researchFieldHierarchyRepositoryContract(
     repository: H,
     statementRepository: S,
     resourceRepository: R,
-    predicateRepository: P
+    predicateRepository: P,
 ) = describeSpec {
     beforeTest {
         statementRepository.deleteAll()

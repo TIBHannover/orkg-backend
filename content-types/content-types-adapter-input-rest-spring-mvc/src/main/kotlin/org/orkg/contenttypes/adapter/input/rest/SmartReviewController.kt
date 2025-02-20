@@ -3,7 +3,6 @@ package org.orkg.contenttypes.adapter.input.rest
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
-import java.time.OffsetDateTime
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.PositiveOrZero
@@ -59,6 +58,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
+import java.time.OffsetDateTime
 
 const val SMART_REVIEW_JSON_V1 = "application/vnd.orkg.smart-review.v1+json"
 const val SMART_REVIEW_SECTION_JSON_V1 = "application/vnd.orkg.smart-review-section.v1+json"
@@ -68,11 +68,13 @@ const val SMART_REVIEW_SECTION_JSON_V1 = "application/vnd.orkg.smart-review-sect
 class SmartReviewController(
     override val formattedLabelService: FormattedLabelUseCases,
     override val statementService: StatementUseCases,
-    private val service: SmartReviewUseCases
-) : SmartReviewRepresentationAdapter, ContentTypeRepresentationAdapter, StatementListRepresentationAdapter {
+    private val service: SmartReviewUseCases,
+) : SmartReviewRepresentationAdapter,
+    ContentTypeRepresentationAdapter,
+    StatementListRepresentationAdapter {
     @GetMapping("/{id}")
     fun findById(
-        @PathVariable id: ThingId
+        @PathVariable id: ThingId,
     ): SmartReviewRepresentation = service.findById(id)
         .mapToSmartReviewRepresentation()
         .orElseThrow { SmartReviewNotFound(id) }
@@ -91,7 +93,7 @@ class SmartReviewController(
         @RequestParam("include_subfields", required = false) includeSubfields: Boolean = false,
         @RequestParam("published", required = false) published: Boolean?,
         @RequestParam("sdg", required = false) sustainableDevelopmentGoal: ThingId?,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<SmartReviewRepresentation> =
         service.findAll(
             pageable = pageable,
@@ -113,7 +115,7 @@ class SmartReviewController(
         @PathVariable id: ThingId,
         @PathVariable contentId: ThingId,
         pageable: Pageable,
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): Any =
         service.findPublishedContentById(id, contentId)
             .fold({ it.toContentTypeRepresentation() }, { it.toStatementListRepresentation(capabilities) })
@@ -240,7 +242,7 @@ class SmartReviewController(
         @field:Valid
         val sections: List<SmartReviewSectionRequest>?,
         @field:Valid
-        val references: List<@NotBlank String>?
+        val references: List<@NotBlank String>?,
     ) {
         fun toCreateCommand(contributorId: ContributorId): CreateSmartReviewUseCase.CreateCommand =
             CreateSmartReviewUseCase.CreateCommand(
@@ -277,7 +279,7 @@ class SmartReviewController(
         val sections: List<SmartReviewSectionRequest>?,
         @field:Valid
         val references: List<@NotBlank String>?,
-        val visibility: Visibility?
+        val visibility: Visibility?,
     ) {
         fun toUpdateCommand(smartReviewId: ThingId, contributorId: ContributorId): UpdateSmartReviewUseCase.UpdateCommand =
             UpdateSmartReviewUseCase.UpdateCommand(
@@ -297,14 +299,16 @@ class SmartReviewController(
     }
 
     @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
-    @JsonSubTypes(value = [
-        JsonSubTypes.Type(SmartReviewComparisonSectionRequest::class),
-        JsonSubTypes.Type(SmartReviewVisualizationSection::class),
-        JsonSubTypes.Type(SmartReviewResourceSectionRequest::class),
-        JsonSubTypes.Type(SmartReviewPredicateSectionRequest::class),
-        JsonSubTypes.Type(SmartReviewOntologySectionRequest::class),
-        JsonSubTypes.Type(SmartReviewTextSectionRequest::class),
-    ])
+    @JsonSubTypes(
+        value = [
+            JsonSubTypes.Type(SmartReviewComparisonSectionRequest::class),
+            JsonSubTypes.Type(SmartReviewVisualizationSection::class),
+            JsonSubTypes.Type(SmartReviewResourceSectionRequest::class),
+            JsonSubTypes.Type(SmartReviewPredicateSectionRequest::class),
+            JsonSubTypes.Type(SmartReviewOntologySectionRequest::class),
+            JsonSubTypes.Type(SmartReviewTextSectionRequest::class),
+        ]
+    )
     sealed interface SmartReviewSectionRequest {
         val heading: String
 
@@ -313,19 +317,19 @@ class SmartReviewController(
         fun toCreateCommand(
             contributorId: ContributorId,
             smartReviewId: ThingId,
-            index: Int?
+            index: Int?,
         ): CreateSmartReviewSectionUseCase.CreateCommand
 
         fun toUpdateCommand(
             smartReviewSectionId: ThingId,
             contributorId: ContributorId,
-            smartReviewId: ThingId
+            smartReviewId: ThingId,
         ): UpdateSmartReviewSectionUseCase.UpdateCommand
     }
 
     data class SmartReviewComparisonSectionRequest(
         override val heading: String,
-        val comparison: ThingId?
+        val comparison: ThingId?,
     ) : SmartReviewSectionRequest {
         override fun toSmartReviewSectionDefinition(): SmartReviewSectionDefinition =
             SmartReviewComparisonSectionCommand(heading, comparison)
@@ -333,25 +337,33 @@ class SmartReviewController(
         override fun toCreateCommand(
             contributorId: ContributorId,
             smartReviewId: ThingId,
-            index: Int?
+            index: Int?,
         ): CreateSmartReviewSectionUseCase.CreateCommand =
             CreateSmartReviewSectionUseCase.CreateComparisonSectionCommand(
-                contributorId, smartReviewId, index, heading, comparison
+                contributorId,
+                smartReviewId,
+                index,
+                heading,
+                comparison
             )
 
         override fun toUpdateCommand(
             smartReviewSectionId: ThingId,
             contributorId: ContributorId,
-            smartReviewId: ThingId
+            smartReviewId: ThingId,
         ): UpdateSmartReviewSectionUseCase.UpdateCommand =
             UpdateSmartReviewSectionUseCase.UpdateComparisonSectionCommand(
-                smartReviewSectionId, contributorId, smartReviewId, heading, comparison
+                smartReviewSectionId,
+                contributorId,
+                smartReviewId,
+                heading,
+                comparison
             )
     }
 
     data class SmartReviewVisualizationSection(
         override val heading: String,
-        val visualization: ThingId?
+        val visualization: ThingId?,
     ) : SmartReviewSectionRequest {
         override fun toSmartReviewSectionDefinition(): SmartReviewSectionDefinition =
             SmartReviewVisualizationSectionCommand(heading, visualization)
@@ -359,25 +371,33 @@ class SmartReviewController(
         override fun toCreateCommand(
             contributorId: ContributorId,
             smartReviewId: ThingId,
-            index: Int?
+            index: Int?,
         ): CreateSmartReviewSectionUseCase.CreateCommand =
             CreateSmartReviewSectionUseCase.CreateVisualizationSectionCommand(
-                contributorId, smartReviewId, index, heading, visualization
+                contributorId,
+                smartReviewId,
+                index,
+                heading,
+                visualization
             )
 
         override fun toUpdateCommand(
             smartReviewSectionId: ThingId,
             contributorId: ContributorId,
-            smartReviewId: ThingId
+            smartReviewId: ThingId,
         ): UpdateSmartReviewSectionUseCase.UpdateCommand =
             UpdateSmartReviewSectionUseCase.UpdateVisualizationSectionCommand(
-                smartReviewSectionId, contributorId, smartReviewId, heading, visualization
+                smartReviewSectionId,
+                contributorId,
+                smartReviewId,
+                heading,
+                visualization
             )
     }
 
     data class SmartReviewResourceSectionRequest(
         override val heading: String,
-        val resource: ThingId?
+        val resource: ThingId?,
     ) : SmartReviewSectionRequest {
         override fun toSmartReviewSectionDefinition(): SmartReviewSectionDefinition =
             SmartReviewResourceSectionCommand(heading, resource)
@@ -385,25 +405,33 @@ class SmartReviewController(
         override fun toCreateCommand(
             contributorId: ContributorId,
             smartReviewId: ThingId,
-            index: Int?
+            index: Int?,
         ): CreateSmartReviewSectionUseCase.CreateCommand =
             CreateSmartReviewSectionUseCase.CreateResourceSectionCommand(
-                contributorId, smartReviewId, index, heading, resource
+                contributorId,
+                smartReviewId,
+                index,
+                heading,
+                resource
             )
 
         override fun toUpdateCommand(
             smartReviewSectionId: ThingId,
             contributorId: ContributorId,
-            smartReviewId: ThingId
+            smartReviewId: ThingId,
         ): UpdateSmartReviewSectionUseCase.UpdateCommand =
             UpdateSmartReviewSectionUseCase.UpdateResourceSectionCommand(
-                smartReviewSectionId, contributorId, smartReviewId, heading, resource
+                smartReviewSectionId,
+                contributorId,
+                smartReviewId,
+                heading,
+                resource
             )
     }
 
     data class SmartReviewPredicateSectionRequest(
         override val heading: String,
-        val predicate: ThingId?
+        val predicate: ThingId?,
     ) : SmartReviewSectionRequest {
         override fun toSmartReviewSectionDefinition(): SmartReviewSectionDefinition =
             SmartReviewPredicateSectionCommand(heading, predicate)
@@ -411,26 +439,34 @@ class SmartReviewController(
         override fun toCreateCommand(
             contributorId: ContributorId,
             smartReviewId: ThingId,
-            index: Int?
+            index: Int?,
         ): CreateSmartReviewSectionUseCase.CreateCommand =
             CreateSmartReviewSectionUseCase.CreatePredicateSectionCommand(
-                contributorId, smartReviewId, index, heading, predicate
+                contributorId,
+                smartReviewId,
+                index,
+                heading,
+                predicate
             )
 
         override fun toUpdateCommand(
             smartReviewSectionId: ThingId,
             contributorId: ContributorId,
-            smartReviewId: ThingId
+            smartReviewId: ThingId,
         ): UpdateSmartReviewSectionUseCase.UpdateCommand =
             UpdateSmartReviewSectionUseCase.UpdatePredicateSectionCommand(
-                smartReviewSectionId, contributorId, smartReviewId, heading, predicate
+                smartReviewSectionId,
+                contributorId,
+                smartReviewId,
+                heading,
+                predicate
             )
     }
 
     data class SmartReviewOntologySectionRequest(
         override val heading: String,
         val entities: List<ThingId>,
-        val predicates: List<ThingId>
+        val predicates: List<ThingId>,
     ) : SmartReviewSectionRequest {
         override fun toSmartReviewSectionDefinition(): SmartReviewSectionDefinition =
             SmartReviewOntologySectionCommand(heading, entities, predicates)
@@ -438,26 +474,36 @@ class SmartReviewController(
         override fun toCreateCommand(
             contributorId: ContributorId,
             smartReviewId: ThingId,
-            index: Int?
+            index: Int?,
         ): CreateSmartReviewSectionUseCase.CreateCommand =
             CreateSmartReviewSectionUseCase.CreateOntologySectionCommand(
-                contributorId, smartReviewId, index, heading, entities, predicates
+                contributorId,
+                smartReviewId,
+                index,
+                heading,
+                entities,
+                predicates
             )
 
         override fun toUpdateCommand(
             smartReviewSectionId: ThingId,
             contributorId: ContributorId,
-            smartReviewId: ThingId
+            smartReviewId: ThingId,
         ): UpdateSmartReviewSectionUseCase.UpdateCommand =
             UpdateSmartReviewSectionUseCase.UpdateOntologySectionCommand(
-                smartReviewSectionId, contributorId, smartReviewId, heading, entities, predicates
+                smartReviewSectionId,
+                contributorId,
+                smartReviewId,
+                heading,
+                entities,
+                predicates
             )
     }
 
     data class SmartReviewTextSectionRequest(
         override val heading: String,
         val `class`: ThingId?,
-        val text: String
+        val text: String,
     ) : SmartReviewSectionRequest {
         override fun toSmartReviewSectionDefinition(): SmartReviewSectionDefinition =
             SmartReviewTextSectionCommand(heading, `class`, text)
@@ -465,19 +511,29 @@ class SmartReviewController(
         override fun toCreateCommand(
             contributorId: ContributorId,
             smartReviewId: ThingId,
-            index: Int?
+            index: Int?,
         ): CreateSmartReviewSectionUseCase.CreateCommand =
             CreateSmartReviewSectionUseCase.CreateTextSectionCommand(
-                contributorId, smartReviewId, index, heading, `class`, text
+                contributorId,
+                smartReviewId,
+                index,
+                heading,
+                `class`,
+                text
             )
 
         override fun toUpdateCommand(
             smartReviewSectionId: ThingId,
             contributorId: ContributorId,
-            smartReviewId: ThingId
+            smartReviewId: ThingId,
         ): UpdateSmartReviewSectionUseCase.UpdateCommand =
             UpdateSmartReviewSectionUseCase.UpdateTextSectionCommand(
-                smartReviewSectionId, contributorId, smartReviewId, heading, `class`, text
+                smartReviewSectionId,
+                contributorId,
+                smartReviewId,
+                heading,
+                `class`,
+                text
             )
     }
 
@@ -487,7 +543,7 @@ class SmartReviewController(
         @JsonProperty("assign_doi")
         val assignDOI: Boolean,
         @field:NullableNotBlank
-        val description: String?
+        val description: String?,
     ) {
         fun toPublishCommand(id: ThingId, contributorId: ContributorId): PublishSmartReviewUseCase.PublishCommand =
             PublishSmartReviewUseCase.PublishCommand(id, contributorId, changelog, assignDOI, description)

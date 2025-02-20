@@ -1,8 +1,5 @@
 package org.orkg.graph.adapter.output.neo4j
 
-import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
-import java.util.*
 import org.neo4j.cypherdsl.core.Condition
 import org.neo4j.cypherdsl.core.Cypher.anonParameter
 import org.neo4j.cypherdsl.core.Cypher.anyNode
@@ -66,6 +63,9 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.stereotype.Component
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
+import java.util.Optional
 
 private const val RELATED = "RELATED"
 
@@ -78,7 +78,6 @@ class SpringDataNeo4jStatementAdapter(
     private val cypherQueryBuilderFactory: CypherQueryBuilderFactory,
     private val cacheManager: CacheManager? = null,
 ) : StatementRepository {
-
     override fun nextIdentity(): StatementId {
         // IDs could exist already by manual creation. We need to find the next available one.
         var id: StatementId
@@ -101,12 +100,18 @@ class SpringDataNeo4jStatementAdapter(
                     .match(`object`)
                     .create(
                         subject.relationshipTo(`object`, RELATED).withProperties(
-                            "statement_id", parameter("id"),
-                            "predicate_id", parameter("predicateId"),
-                            "created_by", parameter("createdBy"),
-                            "created_at", parameter("createdAt"),
-                            "index", parameter("index"),
-                            "modifiable", parameter("modifiable")
+                            "statement_id",
+                            parameter("id"),
+                            "predicate_id",
+                            parameter("predicateId"),
+                            "created_by",
+                            parameter("createdBy"),
+                            "created_at",
+                            parameter("createdAt"),
+                            "index",
+                            parameter("index"),
+                            "modifiable",
+                            parameter("modifiable")
                         )
                     )
             }
@@ -136,12 +141,18 @@ class SpringDataNeo4jStatementAdapter(
                     .match(`object`.withProperties("id", valueAt(statement, 1)))
                     .create(
                         subject.relationshipTo(`object`, RELATED).withProperties(
-                            "statement_id", valueAt(statement, 2),
-                            "predicate_id", valueAt(statement, 3),
-                            "created_by", valueAt(statement, 4),
-                            "created_at", valueAt(statement, 5),
-                            "index", valueAt(statement, 6),
-                            "modifiable", valueAt(statement, 7)
+                            "statement_id",
+                            valueAt(statement, 2),
+                            "predicate_id",
+                            valueAt(statement, 3),
+                            "created_by",
+                            valueAt(statement, 4),
+                            "created_at",
+                            valueAt(statement, 5),
+                            "index",
+                            valueAt(statement, 6),
+                            "modifiable",
+                            valueAt(statement, 7)
                         )
                     )
             }
@@ -345,7 +356,8 @@ class SpringDataNeo4jStatementAdapter(
             val `object` = node("Thing")
             match(
                 subject.relationshipTo(`object`, RELATED).withProperties(
-                    "statement_id", parameter("id")
+                    "statement_id",
+                    parameter("id")
                 ).named(r)
             ).returning(r, subject.`as`("sub"), `object`.`as`("obj"))
         }
@@ -364,7 +376,7 @@ class SpringDataNeo4jStatementAdapter(
         createdAtEnd: OffsetDateTime?,
         objectClasses: Set<ThingId>,
         objectId: ThingId?,
-        objectLabel: String?
+        objectLabel: String?,
     ): Page<GeneralStatement> = cypherQueryBuilderFactory.newBuilder(Uncached)
         .withCommonQuery {
             val subject = node("Thing").named("sub")
@@ -418,9 +430,18 @@ class SpringDataNeo4jStatementAdapter(
                     sort.toSortItems(
                         propertyMappings = propertyMappings,
                         knownProperties = arrayOf(
-                            "id", "created_at", "created_by", "index",
-                            "sub.id", "sub.label", "sub.created_at", "sub.created_by",
-                            "obj.id", "obj.label", "obj.created_at", "obj.created_by"
+                            "id",
+                            "created_at",
+                            "created_by",
+                            "index",
+                            "sub.id",
+                            "sub.label",
+                            "sub.created_at",
+                            "sub.created_by",
+                            "obj.id",
+                            "obj.label",
+                            "obj.created_at",
+                            "obj.created_by"
                         )
                     )
                 )
@@ -770,7 +791,7 @@ class SpringDataNeo4jStatementAdapter(
         observatoryId: ObservatoryId?,
         filters: List<SearchFilter>,
         visibility: VisibilityFilter,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<Resource> {
         val matchPaper = buildString {
             append("MATCH (paper:Paper:Resource")
@@ -779,7 +800,9 @@ class SpringDataNeo4jStatementAdapter(
             }
             append(")")
         }
-        val matchFilters = if (filters.isEmpty()) "" else {
+        val matchFilters = if (filters.isEmpty()) {
+            ""
+        } else {
             filters.mapIndexed { filterIndex, filter ->
                 filter.path.joinToString(
                     prefix = buildString {
@@ -810,7 +833,9 @@ class SpringDataNeo4jStatementAdapter(
                 prefix = """MATCH (paper)-[:RELATED {predicate_id: "P31"}]->(ctr:Contribution) """
             )
         }
-        val filterValuesWithAlias = if (filters.isEmpty()) "" else {
+        val filterValuesWithAlias = if (filters.isEmpty()) {
+            ""
+        } else {
             filters.withIndex().joinToString(prefix = ", ") { (filterIndex, filter) ->
                 when (filter.range) {
                     Classes.string, Classes.integer, Classes.decimal, Classes.boolean, Classes.uri, Classes.date -> "n$filterIndex.label"
@@ -819,7 +844,9 @@ class SpringDataNeo4jStatementAdapter(
             }
         }
         val withPaperAndValues = """WITH paper$filterValuesWithAlias"""
-        val andFilterValuesMatch = if (filters.isEmpty()) "" else {
+        val andFilterValuesMatch = if (filters.isEmpty()) {
+            ""
+        } else {
             filters.mapIndexed { filterIndex, filter ->
                 filter.values.withIndex().joinToString(
                     separator = " OR ",
@@ -846,7 +873,9 @@ class SpringDataNeo4jStatementAdapter(
             VisibilityFilter.DELETED -> """WHERE paper.visibility = "DELETED""""
         }
         val whereVisibilityAndValues = whereVisibility + andFilterValuesMatch
-        val filterValues = if (filters.isEmpty()) "" else {
+        val filterValues = if (filters.isEmpty()) {
+            ""
+        } else {
             filters.indices.joinToString(prefix = ", ") { filterIndex -> "value$filterIndex" }
         }
         val withNodePropertiesAndValues = """WITH paper, paper.id AS id, paper.created_at AS created_at, paper.created_by AS created_by$filterValues"""
@@ -880,7 +909,7 @@ class SpringDataNeo4jStatementAdapter(
         pageable: Pageable,
         subject: Node = node("Thing"),
         `object`: Node = node("Thing"),
-        filter: (subject: Node, relationship: Relationship, `object`: Node) -> Condition
+        filter: (subject: Node, relationship: Relationship, `object`: Node) -> Condition,
     ): Page<GeneralStatement> = cypherQueryBuilderFactory.newBuilder()
         .withCommonQuery {
             val r = name("rel")
@@ -903,22 +932,27 @@ class SpringDataNeo4jStatementAdapter(
             "bfs" to true
         )
         // configure min and max levels
-        if (maxLevel != null)
+        if (maxLevel != null) {
             conf["maxLevel"] = maxLevel!!
-        if (minLevel != null)
+        }
+        if (minLevel != null) {
             conf["minLevel"] = minLevel!!
+        }
         // configure blacklisting and whitelisting classes
         var labelFilter = ""
-        if (blacklist.isNotEmpty())
+        if (blacklist.isNotEmpty()) {
             labelFilter = blacklist.joinToString(prefix = "-", separator = "|-")
+        }
         if (whitelist.isNotEmpty()) {
             var positiveLabels = whitelist.joinToString(prefix = "+", separator = "|+")
-            if (labelFilter.isNotBlank())
+            if (labelFilter.isNotBlank()) {
                 positiveLabels += "|$labelFilter"
+            }
             labelFilter = positiveLabels
         }
-        if (blacklist.isNotEmpty() || whitelist.isNotEmpty())
+        if (blacklist.isNotEmpty() || whitelist.isNotEmpty()) {
             conf["labelFilter"] = labelFilter
+        }
         return conf
     }
 
@@ -931,14 +965,14 @@ class SpringDataNeo4jStatementAdapter(
     private fun ExposesWith.returningWithSortableFields(
         relation: String,
         subject: String,
-        `object`: String
+        `object`: String,
     ): StatementBuilder.OngoingReadingAndReturn =
         returningWithSortableFields(name(relation), name(subject), name(`object`))
 
     private fun ExposesWith.returningWithSortableFields(
         relation: Expression,
         subject: Expression,
-        `object`: Expression
+        `object`: Expression,
     ): StatementBuilder.OngoingReadingAndReturn {
         val sub = name("sub")
         val obj = name("obj")

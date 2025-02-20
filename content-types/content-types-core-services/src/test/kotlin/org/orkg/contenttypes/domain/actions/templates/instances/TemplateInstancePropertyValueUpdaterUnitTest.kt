@@ -70,11 +70,13 @@ internal class TemplateInstancePropertyValueUpdaterUnitTest : MockkBaseTest {
         val command = updateTemplateInstanceCommand()
         val statementToRemove = createStatement()
         val state = UpdateTemplateInstanceState(
-            statementsToRemove = setOf(BakedStatement(
-                first = statementToRemove.subject.id.value,
-                second = statementToRemove.predicate.id.value,
-                third = statementToRemove.`object`.id.value
-            ))
+            statementsToRemove = setOf(
+                BakedStatement(
+                    first = statementToRemove.subject.id.value,
+                    second = statementToRemove.predicate.id.value,
+                    third = statementToRemove.`object`.id.value
+                )
+            )
         )
 
         every { statementService.findAll(subjectId = command.subject, pageable = PageRequests.ALL) } returns pageOf(statementToRemove)

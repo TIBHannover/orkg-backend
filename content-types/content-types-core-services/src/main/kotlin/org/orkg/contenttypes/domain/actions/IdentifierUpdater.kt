@@ -10,7 +10,7 @@ import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
 class IdentifierUpdater(
-    private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater
+    private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater,
 ) {
     constructor(
         statementService: StatementUseCases,
@@ -29,13 +29,14 @@ class IdentifierUpdater(
         contributorId: ContributorId,
         newIdentifiers: Map<String, List<String>>,
         identifierDefinitions: Set<Identifier>,
-        subjectId: ThingId
+        subjectId: ThingId,
     ) {
         val directStatements = statements[subjectId].orEmpty()
         val oldIdentifiers = directStatements.associateIdentifiers(identifierDefinitions)
 
-        if (oldIdentifiers == newIdentifiers)
+        if (oldIdentifiers == newIdentifiers) {
             return
+        }
 
         identifierDefinitions.forEach { identifier ->
             statementCollectionPropertyUpdater.update(

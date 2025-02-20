@@ -1,8 +1,8 @@
 package org.orkg.graph.domain
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import kotlin.collections.List
 import org.orkg.common.ThingId
+import kotlin.collections.List
 
 data class DetailsPerProblem(
     val id: ThingId?,
@@ -13,5 +13,5 @@ data class DetailsPerProblem(
     val unlisted: Boolean?,
     val classes: List<String>,
     @JsonProperty("created_by")
-    val createdBy: String?
+    val createdBy: String?,
 )

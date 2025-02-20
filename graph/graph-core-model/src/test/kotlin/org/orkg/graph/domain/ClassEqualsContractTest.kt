@@ -1,15 +1,14 @@
 package org.orkg.graph.domain
 
 import com.redfin.contractual.EqualsContract
-import java.time.OffsetDateTime
-import java.util.*
-import java.util.function.Supplier
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import java.time.OffsetDateTime
+import java.util.UUID
+import java.util.function.Supplier
 
 internal class ClassEqualsContractTest : EqualsContract<Class> {
-
     private val equalID = "SOME_ID"
     private val differentID = "another_id"
 

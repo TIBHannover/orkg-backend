@@ -1,6 +1,5 @@
 package org.orkg.contenttypes.adapter.input.rest.mapping
 
-import java.util.*
 import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.adapter.input.rest.EmbeddedStatementRepresentation
@@ -13,16 +12,16 @@ import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.StatementCounts
 import org.orkg.graph.domain.Thing
 import org.springframework.data.domain.Page
+import java.util.Optional
 
 interface EmbeddedStatementRepresentationAdapter : ThingRepresentationAdapter {
-
     fun Optional<EmbeddedStatement>.mapToEmbeddedStatementRepresentation(
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): Optional<EmbeddedStatementRepresentation> =
         map { it.toEmbeddedStatementRepresentation(capabilities) }
 
     fun Page<EmbeddedStatement>.mapToEmbeddedStatementRepresentation(
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): Page<EmbeddedStatementRepresentation> {
         val resources = content.resources()
         val statementCounts = countIncomingStatements(resources)
@@ -32,7 +31,7 @@ interface EmbeddedStatementRepresentationAdapter : ThingRepresentationAdapter {
     }
 
     private fun EmbeddedStatement.toEmbeddedStatementRepresentation(
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): EmbeddedStatementRepresentation {
         val resources = resources()
         val counts = countIncomingStatements(resources)
@@ -44,7 +43,7 @@ interface EmbeddedStatementRepresentationAdapter : ThingRepresentationAdapter {
     fun EmbeddedStatement.toEmbeddedStatementRepresentation(
         statementCounts: StatementCounts,
         formattedLabels: FormattedLabels,
-        descriptions: Map<ThingId, String>
+        descriptions: Map<ThingId, String>,
     ): EmbeddedStatementRepresentation =
         EmbeddedStatementRepresentation(
             thing = thing.toThingRepresentation(statementCounts, formattedLabels, descriptions[thing.id]),

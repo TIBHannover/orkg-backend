@@ -6,11 +6,11 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
-import org.orkg.createStatement
 import org.orkg.createClass
 import org.orkg.createLiteral
 import org.orkg.createPredicate
 import org.orkg.createResource
+import org.orkg.createStatement
 import org.orkg.graph.adapter.input.rest.testing.fixtures.resourceResponseFields
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
@@ -348,11 +348,10 @@ internal class ResourceControllerIntegrationTest : MockMvcBaseTest("resources") 
     }
 
     companion object RestDoc {
-        fun pageOfDetailedResourcesResponseFields(): ResponseFieldsSnippet {
-            return responseFields(pageableDetailedFieldParameters())
-                .andWithPrefix(
-                    "content[].", resourceResponseFields()
-                ).andWithPrefix("")
-        }
+        fun pageOfDetailedResourcesResponseFields(): ResponseFieldsSnippet = responseFields(pageableDetailedFieldParameters())
+            .andWithPrefix(
+                "content[].",
+                resourceResponseFields()
+            ).andWithPrefix("")
     }
 }

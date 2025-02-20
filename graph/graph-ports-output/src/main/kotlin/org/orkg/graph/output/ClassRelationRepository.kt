@@ -5,7 +5,10 @@ import org.orkg.graph.domain.ClassSubclassRelation
 
 interface ClassRelationRepository {
     fun save(classRelation: ClassSubclassRelation)
+
     fun saveAll(classRelations: Set<ClassSubclassRelation>)
+
     fun deleteByChildId(childId: ThingId)
+
     fun deleteAll()
 }

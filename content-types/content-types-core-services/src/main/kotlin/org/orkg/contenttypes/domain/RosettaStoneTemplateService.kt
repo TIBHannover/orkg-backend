@@ -1,7 +1,5 @@
 package org.orkg.contenttypes.domain
 
-import java.time.OffsetDateTime
-import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -65,6 +63,8 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Component
+import java.time.OffsetDateTime
+import java.util.Optional
 
 @Component
 class RosettaStoneTemplateService(
@@ -82,7 +82,7 @@ class RosettaStoneTemplateService(
     private val literalService: LiteralUseCases,
     private val rosettaStoneStatementRepository: RosettaStoneStatementRepository,
     private val contributorRepository: ContributorRepository,
-    private val thingRepository: ThingRepository
+    private val thingRepository: ThingRepository,
 ) : RosettaStoneTemplateUseCases {
     override fun findById(id: ThingId): Optional<RosettaStoneTemplate> =
         resourceRepository.findById(id)
@@ -97,7 +97,7 @@ class RosettaStoneTemplateService(
         createdAtEnd: OffsetDateTime?,
         observatoryId: ObservatoryId?,
         organizationId: OrganizationId?,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<RosettaStoneTemplate> =
         resourceRepository.findAll(
             label = searchString,
@@ -159,8 +159,9 @@ class RosettaStoneTemplateService(
                 throw RosettaStoneTemplateNotModifiable(template.id)
             }
 
-            if (thingRepository.isUsedAsObject(template.id))
+            if (thingRepository.isUsedAsObject(template.id)) {
                 throw RosettaStoneTemplateInUse.cantBeDeleted(template.id)
+            }
 
             val rosettaStoneStatements = rosettaStoneStatementRepository.findAll(
                 templateId = template.id,
@@ -191,21 +192,19 @@ class RosettaStoneTemplateService(
         }
     }
 
-    internal fun findSubgraph(resource: Resource): ContentTypeSubgraph {
-        return ContentTypeSubgraph(
-            root = resource.id,
-            statements = statementRepository.fetchAsBundle(
-                id = resource.id,
-                configuration = BundleConfiguration(
-                    minLevel = null,
-                    maxLevel = 2,
-                    blacklist = emptyList(),
-                    whitelist = emptyList()
-                ),
-                sort = Sort.unsorted()
-            ).groupBy { it.subject.id }
-        )
-    }
+    internal fun findSubgraph(resource: Resource): ContentTypeSubgraph = ContentTypeSubgraph(
+        root = resource.id,
+        statements = statementRepository.fetchAsBundle(
+            id = resource.id,
+            configuration = BundleConfiguration(
+                minLevel = null,
+                maxLevel = 2,
+                blacklist = emptyList(),
+                whitelist = emptyList()
+            ),
+            sort = Sort.unsorted()
+        ).groupBy { it.subject.id }
+    )
 
     internal fun Resource.toRosettaStoneTemplate(): RosettaStoneTemplate =
         RosettaStoneTemplate.from(this, findSubgraph(this).statements)

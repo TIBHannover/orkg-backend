@@ -19,7 +19,7 @@ class SmartReviewVersionCreator(
     private val unsafeResourceUseCases: UnsafeResourceUseCases,
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
     private val literalService: LiteralUseCases,
-    private val listService: ListUseCases
+    private val listService: ListUseCases,
 ) : PublishSmartReviewAction {
     override fun invoke(command: PublishSmartReviewCommand, state: State): State {
         val smartReview = state.smartReview!!

@@ -5,7 +5,6 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.runs
 import io.mockk.verify
-import java.util.*
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
@@ -19,10 +18,10 @@ import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectStatement
 import org.orkg.testing.annotations.TestWithMockUser
+import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -35,11 +34,20 @@ import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.util.Optional
 
-@ContextConfiguration(classes = [BulkStatementController::class, ExceptionHandler::class, CommonJacksonModule::class, GraphJacksonModule::class, FixedClockConfig::class, WebMvcConfiguration::class])
+@ContextConfiguration(
+    classes = [
+        BulkStatementController::class,
+        ExceptionHandler::class,
+        CommonJacksonModule::class,
+        GraphJacksonModule::class,
+        FixedClockConfig::class,
+        WebMvcConfiguration::class
+    ]
+)
 @WebMvcTest(controllers = [BulkStatementController::class])
 internal class BulkStatementControllerUnitTest : MockMvcBaseTest("bulk-statements") {
-
     @MockkBean
     private lateinit var statementService: StatementUseCases
 

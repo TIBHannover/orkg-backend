@@ -19,14 +19,14 @@ class ComparisonRelatedResourceUpdater(
     private val comparisonService: ComparisonUseCases,
     private val resourceService: ResourceUseCases,
     private val statementService: StatementUseCases,
-    private val singleStatementPropertyUpdater: SingleStatementPropertyUpdater
+    private val singleStatementPropertyUpdater: SingleStatementPropertyUpdater,
 ) {
     constructor(
         comparisonService: ComparisonUseCases,
         resourceService: ResourceUseCases,
         literalService: LiteralUseCases,
         statementService: StatementUseCases,
-        unsafeStatementUseCases: UnsafeStatementUseCases
+        unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
         comparisonService,
         resourceService,

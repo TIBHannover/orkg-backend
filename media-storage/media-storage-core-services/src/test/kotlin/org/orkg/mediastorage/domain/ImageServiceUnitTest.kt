@@ -4,8 +4,6 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.time.OffsetDateTime
-import java.util.*
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.testing.fixtures.MockkBaseTest
@@ -16,6 +14,8 @@ import org.orkg.mediastorage.output.ImageRepository
 import org.orkg.mediastorage.testing.fixtures.loadRawImage
 import org.orkg.mediastorage.testing.fixtures.testImage
 import org.springframework.util.MimeType
+import java.time.OffsetDateTime
+import java.util.UUID
 
 internal class ImageServiceUnitTest : MockkBaseTest {
     private val repository: ImageRepository = mockk()

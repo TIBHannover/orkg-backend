@@ -7,7 +7,6 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import java.util.stream.Stream
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -32,6 +31,7 @@ import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
+import java.util.stream.Stream
 
 internal class SmartReviewSectionCreatorUnitTest : MockkBaseTest {
     private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
@@ -39,7 +39,9 @@ internal class SmartReviewSectionCreatorUnitTest : MockkBaseTest {
     private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater = mockk()
 
     private val smartReviewSectionCreator = SmartReviewSectionCreator(
-        unsafeStatementUseCases, abstractSmartReviewSectionCreator, statementCollectionPropertyUpdater
+        unsafeStatementUseCases,
+        abstractSmartReviewSectionCreator,
+        statementCollectionPropertyUpdater
     )
 
     @ParameterizedTest

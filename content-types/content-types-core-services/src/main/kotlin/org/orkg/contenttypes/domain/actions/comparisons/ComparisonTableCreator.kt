@@ -6,7 +6,7 @@ import org.orkg.contenttypes.domain.actions.comparisons.CreateComparisonAction.S
 import org.orkg.contenttypes.output.ComparisonTableRepository
 
 class ComparisonTableCreator(
-    private val comparisonTableRepository: ComparisonTableRepository
+    private val comparisonTableRepository: ComparisonTableRepository,
 ) : CreateComparisonAction {
     override fun invoke(command: CreateComparisonCommand, state: State): State {
         comparisonTableRepository.save(ComparisonTable(state.comparisonId!!, command.config, command.data))

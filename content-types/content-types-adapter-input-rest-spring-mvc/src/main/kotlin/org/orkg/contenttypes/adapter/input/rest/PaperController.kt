@@ -5,7 +5,6 @@ import dev.forkhandles.values.ofOrNull
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
-import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -50,17 +49,19 @@ import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
+import java.time.OffsetDateTime
 
 const val PAPER_JSON_V2 = "application/vnd.orkg.paper.v2+json"
 
 @RestController
 @RequestMapping("/api/papers", produces = [PAPER_JSON_V2])
 class PaperController(
-    private val service: PaperUseCases
-) : PaperRepresentationAdapter, ContributionRepresentationAdapter {
+    private val service: PaperUseCases,
+) : PaperRepresentationAdapter,
+    ContributionRepresentationAdapter {
     @GetMapping("/{id}")
     fun findById(
-        @PathVariable id: ThingId
+        @PathVariable id: ThingId,
     ): PaperRepresentation = service.findById(id)
         .mapToPaperRepresentation()
         .orElseThrow { PaperNotFound(id) }
@@ -68,12 +69,12 @@ class PaperController(
     @GetMapping("/{id}/contributors", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun findAllContributorsByPaperId(
         @PathVariable id: ThingId,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<ContributorId> = service.findAllContributorsByPaperId(id, pageable)
 
     @GetMapping("/statement-counts")
     fun countAllStatementsAboutPapers(
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<PaperWithStatementCount> = service.countAllStatementsAboutPapers(pageable)
 
     @GetMapping
@@ -93,7 +94,7 @@ class PaperController(
         @RequestParam("include_subfields", required = false) includeSubfields: Boolean = false,
         @RequestParam("sdg", required = false) sustainableDevelopmentGoal: ThingId?,
         @RequestParam("mentionings", required = false) mentionings: Set<ThingId>?,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<PaperRepresentation> =
         service.findAll(
             pageable = pageable,
@@ -185,18 +186,18 @@ class PaperController(
         @RequestParam("doi", required = false) doi: String,
         uriComponentsBuilder: UriComponentsBuilder,
     ): ResponseEntity<Nothing> = service.existsByDOI(DOI.ofOrNull(doi) ?: throw InvalidDOI(doi))
-            .map {
-                val location = uriComponentsBuilder.path("/api/papers/{id}")
-                    .buildAndExpand(it)
-                    .toUri()
-                ok().location(location).build<Nothing>()
-            }
-            .orElseGet { notFound().build() }
+        .map {
+            val location = uriComponentsBuilder.path("/api/papers/{id}")
+                .buildAndExpand(it)
+                .toUri()
+            ok().location(location).build<Nothing>()
+        }
+        .orElseGet { notFound().build() }
 
     @RequestMapping(method = [RequestMethod.HEAD], params = ["title"])
     fun existsByTitle(
         @RequestParam("title", required = false) title: String,
-        uriComponentsBuilder: UriComponentsBuilder
+        uriComponentsBuilder: UriComponentsBuilder,
     ): ResponseEntity<Nothing> =
         service.existsByTitle(ExactSearchString(title))
             .map {
@@ -213,7 +214,7 @@ class PaperController(
         @field:Size(min = 1, max = 1)
         @JsonProperty("research_fields")
         val researchFields: List<ThingId>,
-        @field: Valid
+        @field:Valid
         val identifiers: IdentifierMapDTO?,
         @JsonProperty("publication_info")
         val publicationInfo: PublicationInfoDTO?,
@@ -241,7 +242,7 @@ class PaperController(
             @field:Valid
             val lists: Map<String, ListDefinitionDTO>?,
             @field:Valid
-            val contributions: List<ContributionDTO>
+            val contributions: List<ContributionDTO>,
         ) {
             fun toCreateCommand(): CreatePaperUseCase.CreateCommand.PaperContents =
                 CreatePaperUseCase.CreateCommand.PaperContents(
@@ -259,7 +260,7 @@ class PaperController(
             val classes: Set<ThingId>?,
             @field:Valid
             @field:Size(min = 1)
-            val statements: Map<String, List<StatementObjectDefinitionDTO>>
+            val statements: Map<String, List<StatementObjectDefinitionDTO>>,
         ) {
             fun toCreateCommand(): ContributionDefinition =
                 ContributionDefinition(
@@ -273,7 +274,7 @@ class PaperController(
             val id: String,
             @field:Valid
             @field:Size(min = 1)
-            val statements: Map<String, List<StatementObjectDefinitionDTO>>?
+            val statements: Map<String, List<StatementObjectDefinitionDTO>>?,
         ) {
             fun toCreateCommand(): ContributionDefinition.StatementObjectDefinition =
                 ContributionDefinition.StatementObjectDefinition(
@@ -305,7 +306,7 @@ class PaperController(
         @field:Size(min = 1, max = 1)
         @JsonProperty("research_fields")
         val researchFields: List<ThingId>?,
-        @field: Valid
+        @field:Valid
         val identifiers: IdentifierMapDTO?,
         @field:Valid
         @JsonProperty("publication_info")
@@ -352,7 +353,7 @@ class PaperController(
         @field:Valid
         val contribution: CreatePaperRequest.ContributionDTO,
         @JsonProperty("extraction_method")
-        val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN
+        val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     ) {
         fun toCreateCommand(contributorId: ContributorId, paperId: ThingId): CreateContributionUseCase.CreateCommand =
             CreateContributionUseCase.CreateCommand(
@@ -374,7 +375,7 @@ class PaperController(
         val description: String,
         @field:Valid
         @field:Size(min = 1)
-        val authors: List<AuthorDTO>
+        val authors: List<AuthorDTO>,
     ) {
         fun toPublishCommand(id: ThingId, contributorId: ContributorId): PublishPaperUseCase.PublishCommand =
             PublishPaperUseCase.PublishCommand(

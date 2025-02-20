@@ -7,11 +7,15 @@ import org.orkg.mediastorage.domain.ImageId
 
 class MediaStorageJacksonModule : SimpleModule() {
     override fun setupModule(context: SetupContext?) {
-        context?.addSerializers(SimpleSerializers().apply {
-            addSerializer(ImageId::class.java, ImageIdSerializer())
-        })
-        context?.addDeserializers(SimpleDeserializers().apply {
-            addDeserializer(ImageId::class.java, ImageIdDeserializer())
-        })
+        context?.addSerializers(
+            SimpleSerializers().apply {
+                addSerializer(ImageId::class.java, ImageIdSerializer())
+            }
+        )
+        context?.addDeserializers(
+            SimpleDeserializers().apply {
+                addDeserializer(ImageId::class.java, ImageIdDeserializer())
+            }
+        )
     }
 }

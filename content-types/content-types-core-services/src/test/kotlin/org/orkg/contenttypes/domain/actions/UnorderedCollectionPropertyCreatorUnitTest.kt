@@ -3,7 +3,6 @@ package org.orkg.contenttypes.domain.actions
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.util.*
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
@@ -14,6 +13,7 @@ import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
+import java.util.UUID
 
 internal class UnorderedCollectionPropertyCreatorUnitTest : MockkBaseTest {
     private val literalService: LiteralUseCases = mockk()

@@ -6,7 +6,7 @@ import org.orkg.contenttypes.domain.actions.rosettastone.statements.CreateRosett
 import org.orkg.contenttypes.input.RosettaStoneTemplateUseCases
 
 class RosettaStoneStatementTemplateCreateValidator(
-    private val rosettaStoneTemplateService: RosettaStoneTemplateUseCases
+    private val rosettaStoneTemplateService: RosettaStoneTemplateUseCases,
 ) : CreateRosettaStoneStatementAction {
     override fun invoke(command: CreateRosettaStoneStatementCommand, state: State): State {
         val rosettaStoneTemplate = rosettaStoneTemplateService.findById(command.templateId)

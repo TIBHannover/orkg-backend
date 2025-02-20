@@ -10,5 +10,5 @@ import org.orkg.common.ThingId
 data class TrendingResearchProblems(
     val id: ThingId,
     val researchProblem: String,
-    val papersCount: Long
+    val papersCount: Long,
 )

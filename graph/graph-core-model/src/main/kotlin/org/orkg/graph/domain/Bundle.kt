@@ -6,15 +6,13 @@ import org.springframework.data.domain.Sort
 
 data class Bundle(
     val rootId: ThingId,
-    var bundle: MutableList<GeneralStatement> = mutableListOf()
+    var bundle: MutableList<GeneralStatement> = mutableListOf(),
 ) {
     private fun addStatement(statement: GeneralStatement) {
         bundle.add(statement)
     }
 
-    operator fun contains(statement: GeneralStatement): Boolean {
-        return this.bundle.any { it.id == statement.id }
-    }
+    operator fun contains(statement: GeneralStatement): Boolean = this.bundle.any { it.id == statement.id }
 
     fun merge(other: Bundle, sort: Sort): Bundle {
         val newBundle = this.copy()

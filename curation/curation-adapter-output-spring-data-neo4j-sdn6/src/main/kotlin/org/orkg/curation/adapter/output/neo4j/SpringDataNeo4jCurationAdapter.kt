@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component
 @Component
 class SpringDataNeo4jCurationAdapter(
     private val predicateRepository: Neo4jPredicateCurationRepository,
-    private val classRepository: Neo4jClassCurationRepository
+    private val classRepository: Neo4jClassCurationRepository,
 ) : CurationRepository {
     override fun findAllPredicatesWithoutDescriptions(pageable: Pageable): Page<Predicate> =
         predicateRepository.findAllPredicatesWithoutDescriptions(pageable.withDefaultSort { Sort.by("created_at") })

@@ -1,9 +1,5 @@
 package org.orkg.graph.adapter.output.inmemory
 
-import java.time.OffsetDateTime
-import java.time.ZoneOffset
-import java.util.*
-import kotlin.jvm.optionals.getOrNull
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -31,10 +27,15 @@ import org.orkg.graph.output.StatementRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
+import java.util.Optional
+import java.util.Stack
+import kotlin.jvm.optionals.getOrNull
 
 class InMemoryStatementRepository(private val inMemoryGraph: InMemoryGraph) :
-    InMemoryRepository<StatementId, GeneralStatement>(compareBy(GeneralStatement::createdAt)), StatementRepository {
-
+    InMemoryRepository<StatementId, GeneralStatement>(compareBy(GeneralStatement::createdAt)),
+    StatementRepository {
     override val entities: InMemoryEntityAdapter<StatementId, GeneralStatement> =
         object : InMemoryEntityAdapter<StatementId, GeneralStatement> {
             override val keys: Collection<StatementId> get() = inMemoryGraph.findAllStatements().map { it.id }
@@ -42,9 +43,11 @@ class InMemoryStatementRepository(private val inMemoryGraph: InMemoryGraph) :
                 get() = inMemoryGraph.findAllStatements().toMutableSet()
 
             override fun remove(key: StatementId): GeneralStatement? = get(key)?.also { inMemoryGraph.delete(it.id) }
+
             override fun clear() = inMemoryGraph.findAllStatements().forEach(inMemoryGraph::delete)
 
             override fun get(key: StatementId): GeneralStatement? = inMemoryGraph.findStatementById(key).getOrNull()
+
             override fun set(key: StatementId, value: GeneralStatement): GeneralStatement? =
                 get(key).also { inMemoryGraph.add(value) }
         }
@@ -68,7 +71,7 @@ class InMemoryStatementRepository(private val inMemoryGraph: InMemoryGraph) :
     }
 
     override fun deleteByStatementIds(ids: Set<StatementId>) =
-       ids.forEach { deleteByStatementId(it) }
+        ids.forEach { deleteByStatementId(it) }
 
     override fun findByStatementId(id: StatementId): Optional<GeneralStatement> =
         Optional.ofNullable(entities[id])
@@ -99,7 +102,7 @@ class InMemoryStatementRepository(private val inMemoryGraph: InMemoryGraph) :
         createdAtEnd: OffsetDateTime?,
         objectClasses: Set<ThingId>,
         objectId: ThingId?,
-        objectLabel: String?
+        objectLabel: String?,
     ): Page<GeneralStatement> =
         findAllFilteredAndPaged(
             pageable = pageable,
@@ -122,21 +125,22 @@ class InMemoryStatementRepository(private val inMemoryGraph: InMemoryGraph) :
 
     override fun countStatementsInPaperSubgraph(id: ThingId): Long =
         findSubgraph(ThingId(id.value)) { statement, _ ->
-            statement.`object` !is Resource || (statement.`object` as Resource).classes.none { `class` ->
-                `class` == Classes.paper || `class` == Classes.problem || `class` == Classes.researchField
-            }
+            statement.`object` !is Resource ||
+                (statement.`object` as Resource).classes.none { `class` ->
+                    `class` == Classes.paper || `class` == Classes.problem || `class` == Classes.researchField
+                }
         }.count().toLong()
 
     override fun findAllBySubjects(
         subjectIds: List<ThingId>,
-        pageable: Pageable
+        pageable: Pageable,
     ) = findAllFilteredAndPaged(pageable) {
         it.subject.id in subjectIds
     }
 
     override fun findAllByObjects(
         objectIds: List<ThingId>,
-        pageable: Pageable
+        pageable: Pageable,
     ) = findAllFilteredAndPaged(pageable) {
         it.`object`.id in objectIds
     }
@@ -154,8 +158,10 @@ class InMemoryStatementRepository(private val inMemoryGraph: InMemoryGraph) :
                 } else if (statement.`object` is Resource) {
                     with(statement.`object` as Resource) {
                         if (configuration.blacklist.isNotEmpty() &&
-                            (classes.containsAny(configuration.blacklist) ||
-                                configuration.blacklist.contains(Classes.resource))
+                            (
+                                classes.containsAny(configuration.blacklist) ||
+                                    configuration.blacklist.contains(Classes.resource)
+                            )
                         ) {
                             return@findSubgraph false
                         } else if (configuration.whitelist.isNotEmpty() &&
@@ -221,8 +227,11 @@ class InMemoryStatementRepository(private val inMemoryGraph: InMemoryGraph) :
         val predicateIdToUsageCount = mutableMapOf<ThingId, Long>()
         entities.values.forEach {
             predicateIdToUsageCount.compute(it.predicate.id) { _, value ->
-                if (value == null) 1
-                else value + 1
+                if (value == null) {
+                    1
+                } else {
+                    value + 1
+                }
             }
         }
         return predicateIdToUsageCount.entries.map { PredicateUsageCount(it.key, it.value) }
@@ -251,25 +260,30 @@ class InMemoryStatementRepository(private val inMemoryGraph: InMemoryGraph) :
         entities.filter { it.id in statementIds }.map { OwnershipInfo(it.id, it.createdBy) }.toSet()
 
     override fun findDOIByContributionId(id: ThingId): Optional<Literal> =
-        Optional.ofNullable(entities.values.find {
-            it.subject is Resource && Classes.paper in (it.subject as Resource).classes &&
-                it.predicate.id == Predicates.hasContribution &&
-                it.`object`.id.value == id.value
-        }?.let {
-            it.subject as Resource
-        }?.let { paper ->
+        Optional.ofNullable(
             entities.values.find {
-                it.subject.id == paper.id && it.predicate.id == Predicates.hasDOI
+                it.subject is Resource &&
+                    Classes.paper in (it.subject as Resource).classes &&
+                    it.predicate.id == Predicates.hasContribution &&
+                    it.`object`.id.value == id.value
             }?.let {
-                it.`object` as Literal
+                it.subject as Resource
+            }?.let { paper ->
+                entities.values.find {
+                    it.subject.id == paper.id && it.predicate.id == Predicates.hasDOI
+                }?.let {
+                    it.`object` as Literal
+                }
             }
-        })
+        )
 
     override fun findByDOI(doi: String, classes: Set<ThingId>): Optional<Resource> =
         entities.values.filter {
-            it.subject is Resource && (it.subject as Resource).classes.containsAny(classes) &&
+            it.subject is Resource &&
+                (it.subject as Resource).classes.containsAny(classes) &&
                 it.predicate.id == Predicates.hasDOI &&
-                it.`object` is Literal && it.`object`.label.uppercase() == doi.uppercase()
+                it.`object` is Literal &&
+                it.`object`.label.uppercase() == doi.uppercase()
         }
             .map { it.subject as Resource }
             .maxByOrNull { it.createdAt }
@@ -278,9 +292,13 @@ class InMemoryStatementRepository(private val inMemoryGraph: InMemoryGraph) :
     override fun findAllBySubjectClassAndDOI(subjectClass: ThingId, doi: String, pageable: Pageable): Page<Resource> =
         entities.values
             .filter {
-                it.subject is Resource && with(it.subject as Resource) {
-                    subjectClass in classes
-                } && it.predicate.id == Predicates.hasDOI && it.`object` is Literal && it.`object`.label.uppercase() == doi.uppercase()
+                it.subject is Resource &&
+                    with(it.subject as Resource) {
+                        subjectClass in classes
+                    } &&
+                    it.predicate.id == Predicates.hasDOI &&
+                    it.`object` is Literal &&
+                    it.`object`.label.uppercase() == doi.uppercase()
             }
             .map { it.subject as Resource }
             .distinct()
@@ -288,14 +306,18 @@ class InMemoryStatementRepository(private val inMemoryGraph: InMemoryGraph) :
 
     override fun findAllProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Resource> =
         entities.values.filter {
-            it.subject is Resource && Classes.paper in (it.subject as Resource).classes && (it.subject as Resource).observatoryId == id &&
+            it.subject is Resource &&
+                Classes.paper in (it.subject as Resource).classes &&
+                (it.subject as Resource).observatoryId == id &&
                 it.predicate.id == Predicates.hasContribution &&
-                it.`object` is Resource && Classes.contribution in (it.`object` as Resource).classes
+                it.`object` is Resource &&
+                Classes.contribution in (it.`object` as Resource).classes
         }.map { hasContributionStatement ->
             entities.values.filter {
                 it.subject.id == hasContributionStatement.`object`.id &&
                     it.predicate.id == Predicates.hasResearchProblem &&
-                    it.`object` is Resource && Classes.problem in (it.`object` as Resource).classes
+                    it.`object` is Resource &&
+                    Classes.problem in (it.`object` as Resource).classes
             }.map { it.`object` as Resource }
         }.flatten()
             .plus(inMemoryGraph.findAllResources().filter { Classes.problem in it.classes })
@@ -304,9 +326,10 @@ class InMemoryStatementRepository(private val inMemoryGraph: InMemoryGraph) :
 
     override fun findAllContributorsByResourceId(id: ThingId, pageable: Pageable): Page<ContributorId> =
         findSubgraph(id) { statement, _ ->
-            statement.`object` !is Resource || (statement.`object` as Resource).classes.none { `class` ->
-                `class` == Classes.paper || `class` == Classes.problem || `class` == Classes.researchField
-            }
+            statement.`object` !is Resource ||
+                (statement.`object` as Resource).classes.none { `class` ->
+                    `class` == Classes.paper || `class` == Classes.problem || `class` == Classes.researchField
+                }
         }.map {
             setOf(
                 it.subject.createdBy,
@@ -322,9 +345,10 @@ class InMemoryStatementRepository(private val inMemoryGraph: InMemoryGraph) :
             .first { it.subject.id == id && (it.subject is Resource) }
             .subject as Resource
         return findSubgraph(id) { statement, _ ->
-            statement.`object` !is Resource || (statement.`object` as Resource).classes.none { `class` ->
-                `class` == Classes.paper || `class` == Classes.problem || `class` == Classes.researchField
-            }
+            statement.`object` !is Resource ||
+                (statement.`object` as Resource).classes.none { `class` ->
+                    `class` == Classes.paper || `class` == Classes.problem || `class` == Classes.researchField
+                }
         }.asSequence()
             .map {
                 setOf(
@@ -345,14 +369,18 @@ class InMemoryStatementRepository(private val inMemoryGraph: InMemoryGraph) :
 
     override fun findAllProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> =
         entities.values.filter {
-            it.subject is Resource && Classes.comparison in (it.subject as Resource).classes && (it.subject as Resource).organizationId == id &&
+            it.subject is Resource &&
+                Classes.comparison in (it.subject as Resource).classes &&
+                (it.subject as Resource).organizationId == id &&
                 it.predicate.id == Predicates.comparesContribution &&
-                it.`object` is Resource && Classes.contribution in (it.`object` as Resource).classes
+                it.`object` is Resource &&
+                Classes.contribution in (it.`object` as Resource).classes
         }.map { compareContributionStatement ->
             entities.values.filter {
                 it.subject.id == compareContributionStatement.`object`.id &&
                     it.predicate.id == Predicates.hasResearchProblem &&
-                    it.`object` is Resource && Classes.problem in (it.`object` as Resource).classes
+                    it.`object` is Resource &&
+                    Classes.problem in (it.`object` as Resource).classes
             }.map { it.`object` as Resource }
         }.flatten().distinct().paged(pageable)
 
@@ -369,19 +397,24 @@ class InMemoryStatementRepository(private val inMemoryGraph: InMemoryGraph) :
         observatoryId: ObservatoryId?,
         filters: List<SearchFilter>,
         visibility: VisibilityFilter,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<Resource> =
         entities.values
             .filter {
-                it.subject is Resource && it.predicate.id == Predicates.hasContribution && with(it.subject as Resource) {
-                    (observatoryId == null || this.observatoryId == observatoryId) && Classes.paper in classes && when (visibility) {
-                        VisibilityFilter.ALL_LISTED -> this.visibility == Visibility.DEFAULT || this.visibility == Visibility.FEATURED
-                        VisibilityFilter.UNLISTED -> this.visibility == Visibility.UNLISTED
-                        VisibilityFilter.FEATURED -> this.visibility == Visibility.FEATURED
-                        VisibilityFilter.NON_FEATURED -> this.visibility == Visibility.FEATURED
-                        VisibilityFilter.DELETED -> this.visibility == Visibility.DELETED
-                    }
-                } && allFiltersMatch(filters, it.`object` as Resource)
+                it.subject is Resource &&
+                    it.predicate.id == Predicates.hasContribution &&
+                    with(it.subject as Resource) {
+                        (observatoryId == null || this.observatoryId == observatoryId) &&
+                            Classes.paper in classes &&
+                            when (visibility) {
+                                VisibilityFilter.ALL_LISTED -> this.visibility == Visibility.DEFAULT || this.visibility == Visibility.FEATURED
+                                VisibilityFilter.UNLISTED -> this.visibility == Visibility.UNLISTED
+                                VisibilityFilter.FEATURED -> this.visibility == Visibility.FEATURED
+                                VisibilityFilter.NON_FEATURED -> this.visibility == Visibility.FEATURED
+                                VisibilityFilter.DELETED -> this.visibility == Visibility.DELETED
+                            }
+                    } &&
+                    allFiltersMatch(filters, it.`object` as Resource)
             }
             .map { it.subject as Resource }
             .paged(pageable)
@@ -406,18 +439,19 @@ class InMemoryStatementRepository(private val inMemoryGraph: InMemoryGraph) :
                     }
                     is Predicate -> Classes.predicates == filter.range
                     is Class -> Classes.classes == filter.range
-                } && filter.values.any { (op, value) ->
-                    when (it) {
-                        is Literal -> when (it.datatype.toUri()) {
-                            Literals.XSD.INT.uri -> op.matches(it.label.toInt(), value.toInt())
-                            Literals.XSD.DECIMAL.uri, Literals.XSD.FLOAT.uri -> op.matches(it.label.toDouble(), value.toDouble())
-                            Literals.XSD.DATE.uri -> op.matches(OffsetDateTime.parse(it.label), OffsetDateTime.parse(value))
-                            Literals.XSD.BOOLEAN.uri -> op.matches(it.label.toBoolean(), value.toBoolean())
-                            else -> op.matches(it.label, value)
+                } &&
+                    filter.values.any { (op, value) ->
+                        when (it) {
+                            is Literal -> when (it.datatype.toUri()) {
+                                Literals.XSD.INT.uri -> op.matches(it.label.toInt(), value.toInt())
+                                Literals.XSD.DECIMAL.uri, Literals.XSD.FLOAT.uri -> op.matches(it.label.toDouble(), value.toDouble())
+                                Literals.XSD.DATE.uri -> op.matches(OffsetDateTime.parse(it.label), OffsetDateTime.parse(value))
+                                Literals.XSD.BOOLEAN.uri -> op.matches(it.label.toBoolean(), value.toBoolean())
+                                else -> op.matches(it.label, value)
+                            }
+                            else -> op.matches(it.id.value, value)
                         }
-                        else -> op.matches(it.id.value, value)
                     }
-                }
             }
         }
 
@@ -435,7 +469,7 @@ class InMemoryStatementRepository(private val inMemoryGraph: InMemoryGraph) :
 
     private fun findSubgraph(
         root: ThingId,
-        expansionFilter: (GeneralStatement, Int) -> Boolean = { _, _ -> true }
+        expansionFilter: (GeneralStatement, Int) -> Boolean = { _, _ -> true },
     ): Set<GeneralStatement> {
         val visited = mutableSetOf<GeneralStatement>()
         val frontier = entities.values.filter {
@@ -460,15 +494,19 @@ class InMemoryStatementRepository(private val inMemoryGraph: InMemoryGraph) :
     private fun <T : Any> Iterable<T>.containsAny(other: Iterable<T>): Boolean = any(other::contains)
 
     private infix fun Thing.isInstanceOfAll(classes: Set<ThingId>) =
-        classes.isEmpty() || classes.size == 1 && when (this) {
-            is Resource -> classes.single() == Classes.resource
-            is Predicate -> classes.single() == Classes.predicate
-            is Literal -> classes.single() == Classes.literal
-            is Class -> classes.single() == Classes.`class`
-        } || this is Resource && (classes - Classes.resource).all { it in classes }
+        classes.isEmpty() ||
+            classes.size == 1 &&
+            when (this) {
+                is Resource -> classes.single() == Classes.resource
+                is Predicate -> classes.single() == Classes.predicate
+                is Literal -> classes.single() == Classes.literal
+                is Class -> classes.single() == Classes.`class`
+            } ||
+            this is Resource &&
+            (classes - Classes.resource).all { it in classes }
 
     private data class ResourceEdit(
         val contributor: ContributorId,
-        val millis: Long
+        val millis: Long,
     )
 }

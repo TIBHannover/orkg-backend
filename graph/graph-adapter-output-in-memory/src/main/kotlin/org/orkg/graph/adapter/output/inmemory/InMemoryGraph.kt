@@ -1,6 +1,5 @@
 package org.orkg.graph.adapter.output.inmemory
 
-import java.util.*
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.ClassSubclassRelation
@@ -10,6 +9,7 @@ import org.orkg.graph.domain.Predicate
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.Thing
+import java.util.Optional
 
 class InMemoryGraph {
     private val things: MutableMap<ThingId, Thing> = mutableMapOf()

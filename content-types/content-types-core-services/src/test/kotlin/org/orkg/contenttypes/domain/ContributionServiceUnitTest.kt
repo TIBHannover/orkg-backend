@@ -6,7 +6,6 @@ import io.kotest.matchers.shouldNotBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.util.*
 import org.junit.jupiter.api.Test
 import org.orkg.common.PageRequests
 import org.orkg.common.testing.fixtures.MockkBaseTest
@@ -16,6 +15,7 @@ import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.createResource
 import org.springframework.data.domain.Page
+import java.util.Optional
 
 internal class ContributionServiceUnitTest : MockkBaseTest {
     private val resourceRepository: ResourceRepository = mockk()

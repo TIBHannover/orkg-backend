@@ -12,8 +12,9 @@ class PaperPublicationInfoCreator(
     unsafeResourceUseCases: UnsafeResourceUseCases,
     resourceRepository: ResourceRepository,
     unsafeStatementUseCases: UnsafeStatementUseCases,
-    literalService: LiteralUseCases
-) : PublicationInfoCreator(unsafeResourceUseCases, resourceRepository, unsafeStatementUseCases, literalService), CreatePaperAction {
+    literalService: LiteralUseCases,
+) : PublicationInfoCreator(unsafeResourceUseCases, resourceRepository, unsafeStatementUseCases, literalService),
+    CreatePaperAction {
     override operator fun invoke(command: CreatePaperCommand, state: CreatePaperState): CreatePaperState {
         if (command.publicationInfo != null) {
             create(command.contributorId, command.publicationInfo!!, state.paperId!!)

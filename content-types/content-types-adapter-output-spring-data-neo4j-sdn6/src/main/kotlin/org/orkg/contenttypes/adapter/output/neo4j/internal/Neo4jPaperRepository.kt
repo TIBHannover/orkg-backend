@@ -8,14 +8,14 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.repository.Neo4jRepository
 import org.springframework.data.neo4j.repository.query.Query
 
-private const val id = "${'$'}id"
+private const val ID = "${'$'}id"
 
 private const val PAGE_PARAMS = ":#{orderBy(#pageable)} SKIP ${'$'}skip LIMIT ${'$'}limit"
 
 interface Neo4jPaperRepository : Neo4jRepository<Neo4jResource, ThingId> {
-
-    @Query("""
-MATCH (r:Resource {id: $id})
+    @Query(
+        """
+MATCH (r:Resource {id: $ID})
 CALL apoc.path.expandConfig(r, {relationshipFilter: "<RELATED", labelFilter: "/Paper", uniqueness: "RELATIONSHIP_GLOBAL"})
 YIELD path
 WITH last(nodes(path)) AS paper, reverse(apoc.coll.flatten([r in relationships(path) | [r, startNode(r)]])) AS path
@@ -24,15 +24,16 @@ MATCH (t:Thing)
 WHERE t.id = thing.id
 RETURN paper, COLLECT(t) AS path $PAGE_PARAMS""",
         countQuery = """
-MATCH (r:Resource {id: $id})
+MATCH (r:Resource {id: $ID})
 CALL apoc.path.expandConfig(r, {relationshipFilter: "<RELATED", labelFilter: "/Paper", uniqueness: "RELATIONSHIP_GLOBAL"})
 YIELD path
 WITH last(nodes(path)) AS paper
-RETURN COUNT(DISTINCT paper) AS cnt""")
+RETURN COUNT(DISTINCT paper) AS cnt"""
+    )
     fun findAllPapersRelatedToResource(id: ThingId, pageable: Pageable): Page<Neo4jPaperWithPath>
 }
 
 data class Neo4jPaperWithPath(
     val paper: Neo4jResource,
-    val path: List<Neo4jThing>
+    val path: List<Neo4jThing>,
 )

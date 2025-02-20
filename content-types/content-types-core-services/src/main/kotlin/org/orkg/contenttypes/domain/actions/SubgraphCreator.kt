@@ -30,7 +30,7 @@ class SubgraphCreator(
     private val literalService: LiteralUseCases,
     private val predicateService: PredicateUseCases,
     private val statementRepository: StatementRepository,
-    private val listService: ListUseCases
+    private val listService: ListUseCases,
 ) {
     internal fun createThingsAndStatements(
         contributorId: ContributorId,
@@ -38,7 +38,7 @@ class SubgraphCreator(
         thingDefinitions: ThingDefinitions,
         validatedIds: Map<String, Either<String, Thing>>,
         bakedStatements: Set<BakedStatement>,
-        lookup: MutableMap<String, ThingId> = mutableMapOf()
+        lookup: MutableMap<String, ThingId> = mutableMapOf(),
     ) {
         createThings(thingDefinitions, validatedIds, contributorId, extractionMethod, lookup)
         createStatements(bakedStatements, lookup, contributorId)
@@ -49,7 +49,7 @@ class SubgraphCreator(
         validatedIds: Map<String, Either<String, Thing>>,
         contributorId: ContributorId,
         extractionMethod: ExtractionMethod,
-        lookup: MutableMap<String, ThingId> = mutableMapOf()
+        lookup: MutableMap<String, ThingId> = mutableMapOf(),
     ) {
         createClasses(thingDefinitions, validatedIds, lookup, contributorId)
         createResources(thingDefinitions, validatedIds, lookup, contributorId, extractionMethod)
@@ -62,7 +62,7 @@ class SubgraphCreator(
         thingDefinitions: ThingDefinitions,
         validatedIds: Map<String, Either<String, Thing>>,
         lookup: MutableMap<String, ThingId>,
-        contributorId: ContributorId
+        contributorId: ContributorId,
     ) {
         thingDefinitions.classes.forEach {
             if (it.key.isTempId && it.key in validatedIds) {
@@ -82,7 +82,7 @@ class SubgraphCreator(
         validatedIds: Map<String, Either<String, Thing>>,
         lookup: MutableMap<String, ThingId>,
         contributorId: ContributorId,
-        extractionMethod: ExtractionMethod
+        extractionMethod: ExtractionMethod,
     ) {
         thingDefinitions.resources.forEach {
             if (it.key.isTempId && it.key in validatedIds) {
@@ -102,7 +102,7 @@ class SubgraphCreator(
         thingDefinitions: ThingDefinitions,
         validatedIds: Map<String, Either<String, Thing>>,
         lookup: MutableMap<String, ThingId>,
-        contributorId: ContributorId
+        contributorId: ContributorId,
     ) {
         thingDefinitions.literals.forEach {
             if (it.key.isTempId && it.key in validatedIds) {
@@ -121,7 +121,7 @@ class SubgraphCreator(
         thingDefinitions: ThingDefinitions,
         validatedIds: Map<String, Either<String, Thing>>,
         contributorId: ContributorId,
-        lookup: MutableMap<String, ThingId>
+        lookup: MutableMap<String, ThingId>,
     ) {
         thingDefinitions.predicates.forEach {
             if (it.key.isTempId && it.key in validatedIds) {
@@ -156,7 +156,7 @@ class SubgraphCreator(
         thingDefinitions: ThingDefinitions,
         validatedIds: Map<String, Either<String, Thing>>,
         lookup: MutableMap<String, ThingId>,
-        contributorId: ContributorId
+        contributorId: ContributorId,
     ) {
         val lists = thingDefinitions.lists.filter { it.key.isTempId && it.key in validatedIds }
         // create all lists without contents first, so other lists can reference them
@@ -183,7 +183,7 @@ class SubgraphCreator(
     private fun createStatements(
         bakedStatements: Set<BakedStatement>,
         lookup: MutableMap<String, ThingId>,
-        contributorId: ContributorId
+        contributorId: ContributorId,
     ) {
         bakedStatements.forEach { (subjectId, predicateId, objectId) ->
             val subject = resolve(subjectId, lookup)

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
-import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -38,18 +37,18 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
+import java.time.OffsetDateTime
 
 const val ROSETTA_STONE_TEMPLATE_JSON_V1 = "application/vnd.orkg.rosetta-stone-template.v1+json"
 
 @RestController
 @RequestMapping("/api/rosetta-stone/templates", produces = [ROSETTA_STONE_TEMPLATE_JSON_V1])
 class RosettaStoneTemplateController(
-    private val service: RosettaStoneTemplateUseCases
+    private val service: RosettaStoneTemplateUseCases,
 ) : RosettaStoneTemplateRepresentationAdapter {
-
     @GetMapping("/{id}")
     fun findById(
-        @PathVariable id: ThingId
+        @PathVariable id: ThingId,
     ): RosettaStoneTemplateRepresentation =
         service.findById(id)
             .mapToRosettaStoneTemplateRepresentation()
@@ -65,7 +64,7 @@ class RosettaStoneTemplateController(
         @RequestParam("created_at_end", required = false) @DateTimeFormat(iso = ISO.DATE_TIME) createdAtEnd: OffsetDateTime?,
         @RequestParam("observatory_id", required = false) observatoryId: ObservatoryId?,
         @RequestParam("organization_id", required = false) organizationId: OrganizationId?,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<RosettaStoneTemplateRepresentation> =
         service.findAll(
             searchString = string?.let { SearchString.of(string, exactMatch = exactMatch) },

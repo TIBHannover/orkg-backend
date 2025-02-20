@@ -7,7 +7,7 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.output.ResourceRepository
 
 class TemplatePropertyExistenceCreateValidator(
-    private val resourceRepository: ResourceRepository
+    private val resourceRepository: ResourceRepository,
 ) : CreateTemplatePropertyAction {
     override fun invoke(command: CreateTemplatePropertyCommand, state: State): State {
         resourceRepository.findById(command.templateId)

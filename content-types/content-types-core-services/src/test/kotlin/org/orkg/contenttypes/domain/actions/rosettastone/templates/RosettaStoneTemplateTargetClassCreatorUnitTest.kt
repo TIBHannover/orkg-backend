@@ -25,7 +25,9 @@ internal class RosettaStoneTemplateTargetClassCreatorUnitTest : MockkBaseTest {
     private val literalService: LiteralUseCases = mockk()
 
     private val rosettaStoneTemplateTargetClassCreator = RosettaStoneTemplateTargetClassCreator(
-        classService, unsafeStatementUseCases, literalService
+        classService,
+        unsafeStatementUseCases,
+        literalService
     )
 
     @Test

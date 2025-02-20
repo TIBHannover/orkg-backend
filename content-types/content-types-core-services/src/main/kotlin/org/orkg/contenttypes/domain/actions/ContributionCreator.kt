@@ -22,7 +22,7 @@ import org.orkg.graph.output.StatementRepository
 class ContributionCreator(
     private val unsafeResourceUseCases: UnsafeResourceUseCases,
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
-    private val subgraphCreator: SubgraphCreator
+    private val subgraphCreator: SubgraphCreator,
 ) {
     constructor(
         classService: ClassUseCases,
@@ -53,7 +53,7 @@ class ContributionCreator(
         thingDefinitions: ThingDefinitions,
         contributionDefinitions: List<ContributionDefinition>,
         validatedIds: Map<String, Either<String, Thing>>,
-        bakedStatements: Set<BakedStatement>
+        bakedStatements: Set<BakedStatement>,
     ): List<ThingId> {
         val contributionLookup = mutableMapOf<String, ThingId>()
         val contributions = contributionDefinitions.mapIndexed { index, contribution ->

@@ -1,13 +1,13 @@
 package org.orkg.contenttypes.adapter.input.rest.mapping
 
-import org.orkg.contenttypes.domain.Template
-import java.util.*
 import org.orkg.contenttypes.adapter.input.rest.TemplateRepresentation
+import org.orkg.contenttypes.domain.Template
 import org.springframework.data.domain.Page
+import java.util.Optional
 
-interface TemplateRepresentationAdapter : TemplateRelationRepresentationAdapter,
+interface TemplateRepresentationAdapter :
+    TemplateRelationRepresentationAdapter,
     TemplatePropertyRepresentationAdapter {
-
     fun Optional<Template>.mapToTemplateRepresentation(): Optional<TemplateRepresentation> =
         map { it.toTemplateRepresentation() }
 

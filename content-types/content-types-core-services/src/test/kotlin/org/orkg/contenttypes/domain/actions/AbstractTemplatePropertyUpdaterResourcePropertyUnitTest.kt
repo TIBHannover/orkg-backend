@@ -4,7 +4,6 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.runs
 import io.mockk.verify
-import java.util.*
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.contenttypes.domain.testing.fixtures.createResourceTemplateProperty
@@ -20,6 +19,7 @@ import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createStatement
+import java.util.UUID
 
 internal class AbstractTemplatePropertyUpdaterResourcePropertyUnitTest : AbstractTemplatePropertyUpdaterUnitTest() {
     @Test

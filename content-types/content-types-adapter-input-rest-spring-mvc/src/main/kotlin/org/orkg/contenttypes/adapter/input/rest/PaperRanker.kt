@@ -1,8 +1,5 @@
 package org.orkg.contenttypes.adapter.input.rest
 
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.TimeUnit
-import kotlin.math.log10
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.ThingId
@@ -22,13 +19,16 @@ import org.springframework.data.domain.Sort
 import org.springframework.data.domain.Sort.Order
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.TimeUnit
+import kotlin.math.log10
 
 @Component
 @Profile("production")
 class PaperRanker(
     @Autowired private val resourceRepository: ResourceRepository,
     @Autowired private val rankingService: RankingService,
-    @Autowired private val listRepository: ListRepository
+    @Autowired private val listRepository: ListRepository,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java.name)
 
@@ -43,16 +43,20 @@ class PaperRanker(
         val startMillis = System.nanoTime()
         rankPapersAsync(workers!!) { paper, score ->
             if (paper.visibility == Visibility.UNLISTED && !score.isRejected) { // paper.unlistedBy is already checked by rankPapersAsync
-                resourceRepository.save(paper.copy(
-                    visibility = Visibility.DEFAULT,
-                    unlistedBy = null
-                ))
+                resourceRepository.save(
+                    paper.copy(
+                        visibility = Visibility.DEFAULT,
+                        unlistedBy = null
+                    )
+                )
                 logger.debug("""Re-listing paper "{}".""", paper.id)
             } else if (paper.visibility == Visibility.DEFAULT && score.isRejected) {
-                resourceRepository.save(paper.copy(
-                    visibility = Visibility.UNLISTED,
-                    unlistedBy = ContributorId.SYSTEM
-                ))
+                resourceRepository.save(
+                    paper.copy(
+                        visibility = Visibility.UNLISTED,
+                        unlistedBy = ContributorId.SYSTEM
+                    )
+                )
                 logger.debug("""Unlisting paper "{}".""", paper.id)
             }
         }.thenRun {
@@ -62,7 +66,7 @@ class PaperRanker(
 
     private fun rankPapersAsync(
         workers: Int,
-        block: (Resource, Score) -> Unit
+        block: (Resource, Score) -> Unit,
     ): CompletableFuture<Void> {
         val total = resourceRepository.findAll(
             includeClasses = setOf(Classes.paper),
@@ -148,7 +152,7 @@ class PaperRanker(
         val comparisonScore: Double,
         val listScore: Double,
         val doiScore: Int,
-        val observatoryScore: Int
+        val observatoryScore: Int,
     ) {
         constructor(stats: PaperStats) : this(
             isRejected = !stats.hasTitle || stats.authors == 0 || stats.contributions == 0 && stats.rosettaStoneStatements == 0L && stats.properties == 0L,

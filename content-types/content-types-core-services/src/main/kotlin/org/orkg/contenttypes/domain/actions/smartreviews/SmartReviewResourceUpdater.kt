@@ -8,7 +8,7 @@ import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 
 class SmartReviewResourceUpdater(
-    private val unsafeResourceUseCases: UnsafeResourceUseCases
+    private val unsafeResourceUseCases: UnsafeResourceUseCases,
 ) : UpdateSmartReviewAction {
     override fun invoke(command: UpdateSmartReviewCommand, state: State): State {
         unsafeResourceUseCases.update(

@@ -1,7 +1,5 @@
 package org.orkg.contenttypes.domain
 
-import java.time.OffsetDateTime
-import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -18,6 +16,8 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
+import java.time.OffsetDateTime
+import java.util.Optional
 
 @Service
 class TableService(
@@ -37,7 +37,7 @@ class TableService(
         createdAtStart: OffsetDateTime?,
         createdAtEnd: OffsetDateTime?,
         observatoryId: ObservatoryId?,
-        organizationId: OrganizationId?
+        organizationId: OrganizationId?,
     ): Page<Table> =
         resourceRepository.findAll(
             pageable = pageable,
@@ -68,7 +68,5 @@ class TableService(
         )
     }
 
-    internal fun Resource.toTable(): Table {
-        return Table.from(this, findSubgraph(this).statements)
-    }
+    internal fun Resource.toTable(): Table = Table.from(this, findSubgraph(this).statements)
 }

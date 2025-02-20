@@ -9,12 +9,12 @@ import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
 class TemplateTargetClassUpdater(
-    private val singleStatementPropertyUpdater: SingleStatementPropertyUpdater
+    private val singleStatementPropertyUpdater: SingleStatementPropertyUpdater,
 ) : UpdateTemplateAction {
     constructor(
         literalService: LiteralUseCases,
         statementUseCases: StatementUseCases,
-        unsafeStatementUseCases: UnsafeStatementUseCases
+        unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(SingleStatementPropertyUpdater(literalService, statementUseCases, unsafeStatementUseCases))
 
     override fun invoke(command: UpdateTemplateCommand, state: State): State {

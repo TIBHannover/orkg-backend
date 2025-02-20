@@ -9,7 +9,7 @@ import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
 class TemplatePropertyUpdater(
-    private val abstractTemplatePropertyUpdater: AbstractTemplatePropertyUpdater
+    private val abstractTemplatePropertyUpdater: AbstractTemplatePropertyUpdater,
 ) : UpdateTemplatePropertyAction {
     constructor(
         literalService: LiteralUseCases,

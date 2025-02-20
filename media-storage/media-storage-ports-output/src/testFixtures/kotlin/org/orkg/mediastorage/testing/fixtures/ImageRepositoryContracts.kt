@@ -3,10 +3,10 @@ package org.orkg.mediastorage.testing.fixtures
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import java.util.*
 import org.junit.jupiter.api.Test
 import org.orkg.mediastorage.domain.ImageId
 import org.orkg.mediastorage.output.ImageRepository
+import java.util.UUID
 
 interface ImageRepositoryContracts {
     val repository: ImageRepository

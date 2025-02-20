@@ -28,7 +28,6 @@ import org.springframework.web.bind.annotation.RestController
 @WebMvcTest
 @ContextConfiguration(classes = [TestController::class, ExceptionHandler::class, FixedClockConfig::class])
 internal class SmartReviewExceptionUnitTest : MockMvcBaseTest("smart-reviews") {
-
     @Test
     fun publishedSmartReviewContentNotFound() {
         val smartReviewId = "R123"
@@ -199,66 +198,53 @@ internal class SmartReviewExceptionUnitTest : MockMvcBaseTest("smart-reviews") {
     @RestController
     internal class TestController {
         @GetMapping("/published-smart-review-content-not-found")
-        fun publishedSmartReviewContentNotFound(@RequestParam smartReviewId: ThingId, @RequestParam contentId: ThingId) {
-            throw PublishedSmartReviewContentNotFound(smartReviewId, contentId)
-        }
+        fun publishedSmartReviewContentNotFound(
+            @RequestParam smartReviewId: ThingId,
+            @RequestParam contentId: ThingId,
+        ): Unit = throw PublishedSmartReviewContentNotFound(smartReviewId, contentId)
 
         @GetMapping("/ontology-entity-not-found")
-        fun ontologyEntityNotFound(@RequestParam entities: Set<ThingId>) {
-            throw OntologyEntityNotFound(entities)
-        }
+        fun ontologyEntityNotFound(
+            @RequestParam entities: Set<ThingId>,
+        ): Unit = throw OntologyEntityNotFound(entities)
 
         @GetMapping("/invalid-smart-review-text-section-type")
-        fun invalidSmartReviewTextSectionType(@RequestParam type: ThingId) {
-            throw InvalidSmartReviewTextSectionType(type)
-        }
+        fun invalidSmartReviewTextSectionType(
+            @RequestParam type: ThingId,
+        ): Unit = throw InvalidSmartReviewTextSectionType(type)
 
         @GetMapping("/unrelated-smart-review-section")
         fun unrelatedSmartReviewSection(
             @RequestParam smartReviewId: ThingId,
-            @RequestParam smartReviewSectionId: ThingId
-        ) {
-            throw UnrelatedSmartReviewSection(smartReviewId, smartReviewSectionId)
-        }
+            @RequestParam smartReviewSectionId: ThingId,
+        ): Unit = throw UnrelatedSmartReviewSection(smartReviewId, smartReviewSectionId)
 
         @GetMapping("/smart-review-section-type-mismatch-must-be-comparison-section")
-        fun smartReviewSectionTypeMismatchMustBeComparisonSection() {
-            throw SmartReviewSectionTypeMismatch.mustBeComparisonSection()
-        }
+        fun smartReviewSectionTypeMismatchMustBeComparisonSection(): Unit = throw SmartReviewSectionTypeMismatch.mustBeComparisonSection()
 
         @GetMapping("/smart-review-section-type-mismatch-must-be-visualization-section")
-        fun smartReviewSectionTypeMismatchMustBeVisualizationSection() {
-            throw SmartReviewSectionTypeMismatch.mustBeVisualizationSection()
-        }
+        fun smartReviewSectionTypeMismatchMustBeVisualizationSection(): Unit = throw SmartReviewSectionTypeMismatch.mustBeVisualizationSection()
 
         @GetMapping("/smart-review-section-type-mismatch-must-be-resource-section")
-        fun smartReviewSectionTypeMismatchMustBeResourceSection() {
-            throw SmartReviewSectionTypeMismatch.mustBeResourceSection()
-        }
+        fun smartReviewSectionTypeMismatchMustBeResourceSection(): Unit = throw SmartReviewSectionTypeMismatch.mustBeResourceSection()
 
         @GetMapping("/smart-review-section-type-mismatch-must-be-predicate-section")
-        fun smartReviewSectionTypeMismatchMustBePredicateSection() {
-            throw SmartReviewSectionTypeMismatch.mustBePredicateSection()
-        }
+        fun smartReviewSectionTypeMismatchMustBePredicateSection(): Unit = throw SmartReviewSectionTypeMismatch.mustBePredicateSection()
 
         @GetMapping("/smart-review-section-type-mismatch-must-be-ontology-section")
-        fun smartReviewSectionTypeMismatchMustBeOntologySection() {
-            throw SmartReviewSectionTypeMismatch.mustBeOntologySection()
-        }
+        fun smartReviewSectionTypeMismatchMustBeOntologySection(): Unit = throw SmartReviewSectionTypeMismatch.mustBeOntologySection()
 
         @GetMapping("/smart-review-section-type-mismatch-must-be-text-section")
-        fun smartReviewSectionTypeMismatchMustBeTextSection() {
-            throw SmartReviewSectionTypeMismatch.mustBeTextSection()
-        }
+        fun smartReviewSectionTypeMismatchMustBeTextSection(): Unit = throw SmartReviewSectionTypeMismatch.mustBeTextSection()
 
         @GetMapping("/smart-review-already-published")
-        fun smartReviewAlreadyPublished(@RequestParam id: ThingId) {
-            throw SmartReviewAlreadyPublished(id)
-        }
+        fun smartReviewAlreadyPublished(
+            @RequestParam id: ThingId,
+        ): Unit = throw SmartReviewAlreadyPublished(id)
 
         @GetMapping("/smart-review-not-modifiable")
-        fun smartReviewNotModifiable(@RequestParam id: ThingId) {
-            throw SmartReviewNotModifiable(id)
-        }
+        fun smartReviewNotModifiable(
+            @RequestParam id: ThingId,
+        ): Unit = throw SmartReviewNotModifiable(id)
     }
 }

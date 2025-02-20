@@ -4,6 +4,7 @@ import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.notNullValue
 import org.junit.jupiter.api.Test
 import org.orkg.common.configuration.CommonSpringConfig
+import org.orkg.common.exceptions.ExceptionUnitTest.TestController
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -24,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @WebMvcTest
-@ContextConfiguration(classes = [ExceptionHandler::class, ExceptionUnitTest.TestController::class, CommonSpringConfig::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [ExceptionHandler::class, TestController::class, CommonSpringConfig::class, FixedClockConfig::class])
 internal class ExceptionUnitTest : MockMvcBaseTest("errors") {
     @Test
     fun simpleMessageException() {
@@ -147,27 +148,37 @@ internal class ExceptionUnitTest : MockMvcBaseTest("errors") {
         fun serviceUnavailable(): Nothing = throw ServiceUnavailable.create("TEST", 500, "irrelevant")
 
         @GetMapping("/errors/property-reference-exception")
-        fun propertyReferenceException(@RequestParam property: String): Nothing =
+        fun propertyReferenceException(
+            @RequestParam property: String,
+        ): Nothing =
             throw PropertyReferenceException(property, TypeInformation.OBJECT, emptyList())
 
         @GetMapping("/errors/malformed-media-type-capability")
-        fun malformedMediaTypeCapability(@RequestParam name: String, @RequestParam value: String): Nothing =
+        fun malformedMediaTypeCapability(
+            @RequestParam name: String,
+            @RequestParam value: String,
+        ): Nothing =
             throw MalformedMediaTypeCapability(name, value)
 
         @GetMapping("/errors/handle-http-media-type-not-acceptable", produces = ["application/json", "application/xml"])
         fun handleHttpMediaTypeNotAcceptable() = "response"
 
         @PostMapping("/errors/http-media-type-not-supported", consumes = ["application/json", "application/xml"])
-        fun httpMediaTypeNotSupported(@RequestBody body: String): Nothing = throw NotImplementedError()
+        fun httpMediaTypeNotSupported(
+            @RequestBody body: String,
+        ): Nothing = throw NotImplementedError()
 
         @GetMapping("/errors/unknown-parameter")
-        fun unknownParameter(@RequestParam parameter: String): Nothing =
+        fun unknownParameter(
+            @RequestParam parameter: String,
+        ): Nothing =
             throw UnknownParameter(parameter)
     }
 
-    internal class FakeSimpleExceptionWithoutCause : SimpleMessageException(
-        status = HttpStatus.BAD_REQUEST,
-        message = "Something went terribly wrong!",
-        cause = null,
-    )
+    internal class FakeSimpleExceptionWithoutCause :
+        SimpleMessageException(
+            status = HttpStatus.BAD_REQUEST,
+            message = "Something went terribly wrong!",
+            cause = null,
+        )
 }

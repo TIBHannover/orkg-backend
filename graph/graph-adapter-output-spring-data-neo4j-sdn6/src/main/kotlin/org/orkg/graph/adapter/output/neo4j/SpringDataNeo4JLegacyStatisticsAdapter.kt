@@ -1,7 +1,5 @@
 package org.orkg.graph.adapter.output.neo4j
 
-import java.time.LocalDate
-import java.util.*
 import org.orkg.common.ObservatoryId
 import org.orkg.common.ThingId
 import org.orkg.graph.adapter.output.neo4j.internal.Neo4jLegacyStatisticsRepository
@@ -18,6 +16,8 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.stereotype.Component
+import java.time.LocalDate
+import java.util.Optional
 
 @Component
 @TransactionalOnNeo4j
@@ -52,21 +52,21 @@ class SpringDataNeo4JLegacyStatisticsAdapter(
 
     override fun getTopCurrentContributorIdsAndContributionsCount(
         date: LocalDate,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<ContributorRecord> =
         neo4jRepository.getTopCurrentContributorIdsAndContributionsCount(date.toString(), pageable)
 
     override fun getTopCurContribIdsAndContribCountByResearchFieldId(
         id: ThingId,
         date: LocalDate,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<ContributorRecord> =
         neo4jRepository.getTopCurContribIdsAndContribCountByResearchFieldId(id, date.toString(), pageable)
 
     override fun getTopCurContribIdsAndContribCountByResearchFieldIdExcludeSubFields(
         id: ThingId,
         date: LocalDate,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<ContributorRecord> =
         neo4jRepository.getTopCurContribIdsAndContribCountByResearchFieldIdExcludeSubFields(
             id = id,

@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable
 
 interface EntityRepository<T, I> {
     fun findAll(pageable: Pageable): Page<T>
+
     fun existsById(id: I): Boolean
 }
 

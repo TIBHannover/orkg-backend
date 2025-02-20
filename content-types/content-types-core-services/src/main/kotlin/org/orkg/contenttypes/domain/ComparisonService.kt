@@ -1,8 +1,6 @@
 package org.orkg.contenttypes.domain
 
 import dev.forkhandles.values.ofOrNull
-import java.time.OffsetDateTime
-import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -59,10 +57,10 @@ import org.orkg.contenttypes.domain.actions.comparisons.ComparisonVersionCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonVersionDoiPublisher
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonVersionHistoryUpdater
 import org.orkg.contenttypes.domain.actions.execute
+import org.orkg.contenttypes.input.ComparisonContributionsUseCases
 import org.orkg.contenttypes.input.ComparisonUseCases
 import org.orkg.contenttypes.input.CreateComparisonUseCase.CreateComparisonRelatedFigureCommand
 import org.orkg.contenttypes.input.CreateComparisonUseCase.CreateComparisonRelatedResourceCommand
-import org.orkg.contenttypes.input.RetrieveComparisonContributionsUseCase
 import org.orkg.contenttypes.input.UpdateComparisonUseCase.UpdateComparisonRelatedFigureCommand
 import org.orkg.contenttypes.input.UpdateComparisonUseCase.UpdateComparisonRelatedResourceCommand
 import org.orkg.contenttypes.output.ComparisonPublishedRepository
@@ -97,6 +95,8 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
+import java.time.OffsetDateTime
+import java.util.Optional
 
 @Service
 @TransactionalOnNeo4j
@@ -120,8 +120,9 @@ class ComparisonService(
     private val comparisonTableRepository: ComparisonTableRepository,
     private val comparisonPublishedRepository: ComparisonPublishedRepository,
     @Value("\${orkg.publishing.base-url.comparison}")
-    private val comparisonPublishBaseUri: String = "http://localhost/comparison/"
-) : ComparisonUseCases, RetrieveComparisonContributionsUseCase {
+    private val comparisonPublishBaseUri: String = "http://localhost/comparison/",
+) : ComparisonUseCases,
+    ComparisonContributionsUseCases {
     override fun findById(id: ThingId): Optional<Comparison> =
         resourceRepository.findById(id)
             .filter { Classes.comparison in it.classes || Classes.comparisonPublished in it.classes }
@@ -141,7 +142,7 @@ class ComparisonService(
         includeSubfields: Boolean,
         published: Boolean?,
         sustainableDevelopmentGoal: ThingId?,
-        researchProblem: ThingId?
+        researchProblem: ThingId?,
     ): Page<Comparison> =
         comparisonRepository.findAll(
             pageable = pageable,
@@ -394,7 +395,7 @@ class ComparisonService(
     override fun deleteComparisonRelatedResource(
         comparisonId: ThingId,
         comparisonRelatedResourceId: ThingId,
-        contributorId: ContributorId
+        contributorId: ContributorId,
     ) {
         ComparisonRelatedResourceDeleter(statementService, resourceService)
             .execute(comparisonId, comparisonRelatedResourceId, contributorId)
@@ -403,7 +404,7 @@ class ComparisonService(
     override fun deleteComparisonRelatedFigure(
         comparisonId: ThingId,
         comparisonRelatedFigureId: ThingId,
-        contributorId: ContributorId
+        contributorId: ContributorId,
     ) {
         ComparisonRelatedFigureDeleter(statementService, resourceService)
             .execute(comparisonId, comparisonRelatedFigureId, contributorId)

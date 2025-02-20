@@ -12,7 +12,7 @@ import org.orkg.graph.output.ResourceRepository
 
 class TemplateRelationsUpdateValidator(
     private val resourceRepository: ResourceRepository,
-    private val predicateRepository: PredicateRepository
+    private val predicateRepository: PredicateRepository,
 ) : UpdateTemplateAction {
     override fun invoke(command: UpdateTemplateCommand, state: State): State {
         command.relations?.let { relations ->

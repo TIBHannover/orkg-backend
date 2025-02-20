@@ -4,7 +4,6 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.util.*
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.testing.fixtures.MockkBaseTest
@@ -15,6 +14,7 @@ import org.orkg.contenttypes.domain.testing.fixtures.createPaper
 import org.orkg.graph.domain.NeitherOwnerNorCurator
 import org.orkg.graph.domain.Visibility
 import org.orkg.testing.MockUserId
+import java.util.Optional
 
 internal class VisibilityValidatorUnitTest : MockkBaseTest {
     private val contributorRepository: ContributorRepository = mockk()

@@ -1,17 +1,11 @@
 package org.orkg.contenttypes.adapter.output.web
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import java.io.IOException
-import java.net.URI
-import java.net.http.HttpClient
-import java.net.http.HttpRequest
-import java.net.http.HttpResponse
-import java.time.Clock
-import java.time.OffsetDateTime
 import org.orkg.common.exceptions.ServiceUnavailable
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.configuration.DataCiteConfiguration
 import org.orkg.contenttypes.domain.identifiers.DOI
+import org.orkg.contenttypes.output.DoiService
 import org.orkg.integration.datacite.json.DataCiteJson
 import org.orkg.integration.datacite.json.DataCiteJson.Attributes
 import org.orkg.integration.datacite.json.DataCiteJson.Creator
@@ -22,10 +16,16 @@ import org.orkg.integration.datacite.json.DataCiteJson.Rights
 import org.orkg.integration.datacite.json.DataCiteJson.Subject
 import org.orkg.integration.datacite.json.DataCiteJson.Title
 import org.orkg.integration.datacite.json.DataCiteJson.Type
-import org.orkg.contenttypes.output.DoiService
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
+import java.io.IOException
+import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
+import java.time.Clock
+import java.time.OffsetDateTime
 
 @Component
 class DataCiteDoiServiceAdapter(
@@ -33,7 +33,7 @@ class DataCiteDoiServiceAdapter(
     private val objectMapper: ObjectMapper,
     private val httpClient: HttpClient,
     private val bodyPublisherFactory: (String) -> HttpRequest.BodyPublisher = HttpRequest.BodyPublishers::ofString,
-    private val clock: Clock = Clock.systemDefaultZone()
+    private val clock: Clock = Clock.systemDefaultZone(),
 ) : DoiService {
     override fun register(command: DoiService.RegisterCommand): DOI {
         val body = command.toDataCiteRequest(dataciteConfiguration.doiPrefix!!, dataciteConfiguration.publish!!, clock)

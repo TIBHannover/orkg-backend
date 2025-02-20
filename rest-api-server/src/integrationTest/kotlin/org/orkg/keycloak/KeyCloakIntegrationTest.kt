@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import dasniko.testcontainers.keycloak.KeycloakContainer
 import io.restassured.RestAssured.given
 import io.restassured.http.ContentType
-import java.util.*
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
@@ -16,12 +15,12 @@ import org.keycloak.representations.idm.UserRepresentation
 import org.orkg.testing.KEYCLOAK_CLIENT_ID
 import org.orkg.testing.KEYCLOAK_REALM
 import org.orkg.testing.KeycloakTestContainersBaseTest
+import java.util.Base64
 
 private fun KeycloakContainer.wellKnownUrl(realm: String): String =
     "$authServerUrl/realms/$realm/.well-known/openid-configuration"
 
 internal class KeyCloakIntegrationTest : KeycloakTestContainersBaseTest() {
-
     @Test
     fun `obtains the account service information and successfully connects to it`() {
         val accountService = given().`when`().get("${container.authServerUrl}/realms/$KEYCLOAK_REALM")
@@ -92,9 +91,11 @@ internal class KeyCloakIntegrationTest : KeycloakTestContainersBaseTest() {
         given()
             .log().ifValidationFails()
             .contentType(ContentType.JSON.withCharset(Charsets.UTF_8))
-            .body(UserRepresentation().apply {
-                requiredActions = listOf()
-            })
+            .body(
+                UserRepresentation().apply {
+                    requiredActions = listOf()
+                }
+            )
             .auth().oauth2(adminAccessToken)
             .`when`().put(userId)
             .then().statusCode(204)

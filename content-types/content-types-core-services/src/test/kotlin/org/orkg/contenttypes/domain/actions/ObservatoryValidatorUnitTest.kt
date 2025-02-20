@@ -3,7 +3,6 @@ package org.orkg.contenttypes.domain.actions
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.util.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ObservatoryId
@@ -12,6 +11,8 @@ import org.orkg.community.domain.ObservatoryNotFound
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.testing.fixtures.createObservatory
 import org.orkg.contenttypes.domain.OnlyOneObservatoryAllowed
+import java.util.Optional
+import java.util.UUID
 
 internal class ObservatoryValidatorUnitTest : MockkBaseTest {
     private val observatoryRepository: ObservatoryRepository = mockk()

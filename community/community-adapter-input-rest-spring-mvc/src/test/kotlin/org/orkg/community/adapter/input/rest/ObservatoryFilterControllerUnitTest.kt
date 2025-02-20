@@ -5,7 +5,6 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.runs
 import io.mockk.verify
-import java.util.*
 import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -48,6 +47,8 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.util.Optional
+import java.util.UUID
 
 @ContextConfiguration(
     classes = [
@@ -60,7 +61,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 )
 @WebMvcTest(controllers = [ObservatoryFilterController::class])
 internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observatory-filters") {
-
     @MockkBean
     private lateinit var observatoryUseCases: ObservatoryUseCases
 
@@ -94,9 +94,9 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
                         fieldWithPath("id").description("The identifier of the filter."),
                         fieldWithPath("observatory_id").description("The id of the observatory that the filter belongs to."),
                         fieldWithPath("label").description("The label of the filter."),
-                        fieldWithPath("path[]").description(pathDescription),
-                        fieldWithPath("range").description(rangeDescription),
-                        fieldWithPath("exact").description(exactMatchDescription),
+                        fieldWithPath("path[]").description(PATH_DESCRIPTION),
+                        fieldWithPath("range").description(RANGE_DESCRIPTION),
+                        fieldWithPath("exact").description(EXACT_MATCH_DESCRIPTION),
                         timestampFieldWithPath("created_at", "the filter was created"),
                         // TODO: Add links to documentation of special user UUIDs.
                         fieldWithPath("created_by").description("The UUID of the user or service who created this filter."),
@@ -287,9 +287,9 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
                     ),
                     requestFields(
                         fieldWithPath("label").description("The label of the filter."),
-                        fieldWithPath("path[]").description(pathDescription),
-                        fieldWithPath("range").description(rangeDescription),
-                        fieldWithPath("exact").description(exactMatchDescription),
+                        fieldWithPath("path[]").description(PATH_DESCRIPTION),
+                        fieldWithPath("range").description(RANGE_DESCRIPTION),
+                        fieldWithPath("exact").description(EXACT_MATCH_DESCRIPTION),
                         fieldWithPath("featured").description("Whether or not the filter is featured. (optional)")
                             .optional(),
                     )
@@ -461,9 +461,9 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
                     ),
                     requestFields(
                         fieldWithPath("label").description("The new label of the filter. (optional)").optional(),
-                        fieldWithPath("path[]").description("$pathDescription (optional)").optional(),
-                        fieldWithPath("range").description("$rangeDescription (optional)").optional(),
-                        fieldWithPath("exact").description("$exactMatchDescription(optional)").optional(),
+                        fieldWithPath("path[]").description("$PATH_DESCRIPTION (optional)").optional(),
+                        fieldWithPath("range").description("$RANGE_DESCRIPTION (optional)").optional(),
+                        fieldWithPath("exact").description("$EXACT_MATCH_DESCRIPTION(optional)").optional(),
                         fieldWithPath("featured").description("Whether or not the filter is featured. (optional)")
                             .optional(),
                     )
@@ -642,9 +642,9 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
     }
 }
 
-private const val pathDescription =
+private const val PATH_DESCRIPTION =
     "Describes the path from the contribution node of a paper to the node that should be matched, where every entry stands for the predicate id of a statement."
-private const val rangeDescription =
+private const val RANGE_DESCRIPTION =
     "The class id that represents the range of the value that should be matched. Subclasses will also be considered when matching."
-private const val exactMatchDescription =
+private const val EXACT_MATCH_DESCRIPTION =
     "Whether to exactly match the given path. If `true`, the given path needs to exactly match, starting from the contribution resource. If `false`, the given path needs to exactly match, starting at any node in the subgraph of the contribution or the contribution node itself. The total path length limited to 10, including the length of the specified path, starting from the contribution node."

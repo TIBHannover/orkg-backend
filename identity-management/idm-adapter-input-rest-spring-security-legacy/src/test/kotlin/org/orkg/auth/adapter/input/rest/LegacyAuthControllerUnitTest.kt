@@ -8,13 +8,6 @@ import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.io.IOException
-import java.net.URI
-import java.net.URLDecoder
-import java.net.http.HttpClient
-import java.net.http.HttpRequest
-import java.net.http.HttpResponse
-import java.util.*
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.notNullValue
 import org.junit.jupiter.api.Test
@@ -40,18 +33,26 @@ import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.io.IOException
+import java.net.URI
+import java.net.URLDecoder
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
+import java.util.Base64
 
 @Import(SecurityTestConfiguration::class, LegacyAuthControllerUnitTest.LegacyAuthControllerTestConfiguration::class)
-@TestPropertySource(properties = [
-    "orkg.oauth.legacy-client-id=orkg-client",
-    "orkg.oauth.legacy-client-secret=secret",
-    "orkg.oauth.token-endpoint=http://localhost:1234/path/to/token/endpoint",
-    "orkg.oauth.registration-endpoint=http://localhost:1234/path/to/registration/endpoint",
-])
+@TestPropertySource(
+    properties = [
+        "orkg.oauth.legacy-client-id=orkg-client",
+        "orkg.oauth.legacy-client-secret=secret",
+        "orkg.oauth.token-endpoint=http://localhost:1234/path/to/token/endpoint",
+        "orkg.oauth.registration-endpoint=http://localhost:1234/path/to/registration/endpoint",
+    ]
+)
 @ContextConfiguration(classes = [LegacyAuthController::class, ExceptionHandler::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [LegacyAuthController::class])
 internal class LegacyAuthControllerUnitTest : MockMvcBaseTest("legacy-auth") {
-
     @Autowired
     private lateinit var httpClient: HttpClient
 
@@ -437,9 +438,7 @@ internal class LegacyAuthControllerUnitTest : MockMvcBaseTest("legacy-auth") {
     private fun createBasicAuthorizationToken(
         username: String = legacyClientId,
         secret: String = legacyClientSecret,
-    ): String {
-        return "Basic ${Base64.getEncoder().encodeToString("$username:$secret".toByteArray())}"
-    }
+    ): String = "Basic ${Base64.getEncoder().encodeToString("$username:$secret".toByteArray())}"
 
     private fun decodeFormUrlEncodedParameters(encoded: String): Map<String, String> =
         encoded.split("&")
@@ -449,9 +448,7 @@ internal class LegacyAuthControllerUnitTest : MockMvcBaseTest("legacy-auth") {
     @TestConfiguration
     class LegacyAuthControllerTestConfiguration {
         @Bean
-        fun bodyPublisherFactory(): (String) -> HttpRequest.BodyPublisher {
-            return ::TestBodyPublisher
-        }
+        fun bodyPublisherFactory(): (String) -> HttpRequest.BodyPublisher = ::TestBodyPublisher
 
         @Bean
         fun httpClient(): HttpClient = mockk(relaxUnitFun = true)

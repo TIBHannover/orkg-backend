@@ -8,7 +8,7 @@ import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.PredicateRepository
 
 class RosettaStoneTemplatePropertiesUpdateValidator(
-    private val abstractRosettaStoneTemplatePropertiesValidator: AbstractRosettaStoneTemplatePropertiesValidator
+    private val abstractRosettaStoneTemplatePropertiesValidator: AbstractRosettaStoneTemplatePropertiesValidator,
 ) : UpdateRosettaStoneTemplateAction {
     constructor(
         predicateRepository: PredicateRepository,

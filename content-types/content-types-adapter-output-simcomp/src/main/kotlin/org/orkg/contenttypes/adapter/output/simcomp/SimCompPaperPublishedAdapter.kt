@@ -14,8 +14,9 @@ import org.springframework.stereotype.Component
 class SimCompPaperPublishedAdapter(
     override val formattedLabelService: FormattedLabelUseCases,
     override val statementService: StatementUseCases,
-    private val repository: SimCompThingRepository
-) : PaperPublishedRepository, PublishedContentTypeRepresentationAdapter {
+    private val repository: SimCompThingRepository,
+) : PaperPublishedRepository,
+    PublishedContentTypeRepresentationAdapter {
     override fun save(paper: PublishedContentType) {
         repository.save(
             id = paper.id,

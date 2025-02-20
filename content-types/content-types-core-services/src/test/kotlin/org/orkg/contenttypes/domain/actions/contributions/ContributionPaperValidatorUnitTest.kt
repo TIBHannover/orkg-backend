@@ -5,7 +5,6 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.util.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.testing.fixtures.MockkBaseTest
@@ -18,6 +17,7 @@ import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.createResource
+import java.util.Optional
 
 internal class ContributionPaperValidatorUnitTest : MockkBaseTest {
     private val resourceRepository: ResourceRepository = mockk()

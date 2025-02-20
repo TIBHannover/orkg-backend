@@ -7,7 +7,6 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import java.net.URI
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
@@ -18,6 +17,7 @@ import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
 import org.orkg.contenttypes.input.testing.fixtures.publishSmartReviewCommand
 import org.orkg.contenttypes.output.DoiService
 import org.orkg.graph.domain.Predicates
+import java.net.URI
 
 internal class SmartReviewVersionDoiPublisherUnitTest : MockkBaseTest {
     private val singleStatementPropertyCreator: SingleStatementPropertyCreator = mockk()
@@ -49,17 +49,19 @@ internal class SmartReviewVersionDoiPublisherUnitTest : MockkBaseTest {
         }
 
         verify(exactly = 1) {
-            doiService.register(withArg {
-                it.suffix shouldBe smartReviewVersionId.value
-                it.title shouldBe smartReview.title
-                it.subject shouldBe smartReview.researchFields.firstOrNull()?.label.orEmpty()
-                it.description shouldBe command.description!!
-                it.url shouldBe URI.create("https://orkg.org/review/${smartReviewVersionId.value}")
-                it.creators shouldBe smartReview.authors
-                it.resourceType shouldBe "Review"
-                it.resourceTypeGeneral shouldBe "Preprint"
-                it.relatedIdentifiers shouldBe emptyList()
-            })
+            doiService.register(
+                withArg {
+                    it.suffix shouldBe smartReviewVersionId.value
+                    it.title shouldBe smartReview.title
+                    it.subject shouldBe smartReview.researchFields.firstOrNull()?.label.orEmpty()
+                    it.description shouldBe command.description!!
+                    it.url shouldBe URI.create("https://orkg.org/review/${smartReviewVersionId.value}")
+                    it.creators shouldBe smartReview.authors
+                    it.resourceType shouldBe "Review"
+                    it.resourceTypeGeneral shouldBe "Preprint"
+                    it.relatedIdentifiers shouldBe emptyList()
+                }
+            )
         }
         verify(exactly = 1) {
             singleStatementPropertyCreator.create(

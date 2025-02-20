@@ -29,14 +29,18 @@ class RdfController(
     private val classRepository: ClassRepository,
     override val statementService: StatementUseCases,
     override val formattedLabelService: FormattedLabelUseCases,
-) : ResourceRepresentationAdapter, PredicateRepresentationAdapter, ClassRepresentationAdapter {
+) : ResourceRepresentationAdapter,
+    PredicateRepresentationAdapter,
+    ClassRepresentationAdapter {
     @GetMapping(DUMP_ENDPOINT, produces = ["application/n-triples"])
     fun dumpToRdf(uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<String> =
         ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY)
-            .location(uriComponentsBuilder
-                .path("/files/rdf-dumps/rdf-export-orkg.nt")
-                .build()
-                .toUri())
+            .location(
+                uriComponentsBuilder
+                    .path("/files/rdf-dumps/rdf-export-orkg.nt")
+                    .build()
+                    .toUri()
+            )
             .build()
 
     @GetMapping(HINTS_ENDPOINT)
@@ -45,7 +49,7 @@ class RdfController(
         @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,
         @RequestParam("type", required = false, defaultValue = "item") type: String,
         pageable: Pageable,
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): Iterable<ThingRepresentation> =
         if (searchString != null) {
             val labelSearchString = SearchString.of(searchString, exactMatch = exactMatch)
@@ -59,10 +63,12 @@ class RdfController(
                 else -> resourceRepository.findAll(label = labelSearchString, pageable = pageable)
                     .mapToResourceRepresentation(capabilities)
             }
-        } else when (type) {
-            "property" -> predicateRepository.findAll(pageable).mapToPredicateRepresentation()
-            "class" -> classRepository.findAll(pageable).mapToClassRepresentation()
-            else -> resourceRepository.findAll(pageable).mapToResourceRepresentation(capabilities)
+        } else {
+            when (type) {
+                "property" -> predicateRepository.findAll(pageable).mapToPredicateRepresentation()
+                "class" -> classRepository.findAll(pageable).mapToClassRepresentation()
+                else -> resourceRepository.findAll(pageable).mapToResourceRepresentation(capabilities)
+            }
         }
 
     companion object {

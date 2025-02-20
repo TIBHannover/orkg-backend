@@ -9,7 +9,7 @@ class ImageIdSerializer : JsonSerializer<ImageId>() {
     override fun serialize(
         value: ImageId?,
         gen: JsonGenerator?,
-        serializers: SerializerProvider?
+        serializers: SerializerProvider?,
     ) {
         gen?.writeString(value.toString())
     }

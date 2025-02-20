@@ -6,8 +6,6 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.time.OffsetDateTime
-import java.util.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -22,9 +20,11 @@ import org.orkg.graph.input.UpdatePredicateUseCase
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.testing.MockUserId
+import java.time.OffsetDateTime
+import java.util.Optional
+import java.util.UUID
 
 internal class PredicateServiceUnitTest : MockkBaseTest {
-
     private val repository: PredicateRepository = mockk()
     private val contributorRepository: ContributorRepository = mockk()
     private val service = PredicateService(repository, contributorRepository, fixedClock)

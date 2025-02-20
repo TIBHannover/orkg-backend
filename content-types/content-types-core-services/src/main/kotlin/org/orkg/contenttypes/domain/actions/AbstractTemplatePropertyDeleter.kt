@@ -9,11 +9,11 @@ import org.orkg.graph.input.StatementUseCases
 class AbstractTemplatePropertyDeleter(
     private val resourceService: ResourceUseCases,
     private val statementService: StatementUseCases,
-    private val contentTypePartDeleter: ContentTypePartDeleter
+    private val contentTypePartDeleter: ContentTypePartDeleter,
 ) {
     constructor(
         resourceService: ResourceUseCases,
-        statementService: StatementUseCases
+        statementService: StatementUseCases,
     ) : this(resourceService, statementService, ContentTypePartDeleter(statementService))
 
     internal fun delete(contributorId: ContributorId, templateId: ThingId, propertyId: ThingId) =

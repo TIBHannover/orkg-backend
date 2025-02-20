@@ -1,7 +1,6 @@
 package org.orkg.graph.adapter.input.rest
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ThingId
@@ -36,14 +35,15 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
+import java.time.OffsetDateTime
 
 @RestController
 @RequestMapping("/api/statements", produces = [MediaType.APPLICATION_JSON_VALUE])
 class StatementController(
     override val statementService: StatementUseCases,
     override val formattedLabelService: FormattedLabelUseCases,
-) : StatementRepresentationAdapter, BundleRepresentationAdapter {
-
+) : StatementRepresentationAdapter,
+    BundleRepresentationAdapter {
     @GetMapping
     fun findAll(
         @RequestParam("subject_classes", required = false) subjectClasses: Set<ThingId>?,
@@ -57,7 +57,7 @@ class StatementController(
         @RequestParam("object_id", required = false) objectId: ThingId?,
         @RequestParam("object_label", required = false) objectLabel: String?,
         pageable: Pageable,
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): Page<StatementRepresentation> =
         statementService.findAll(
             pageable = pageable,
@@ -76,7 +76,7 @@ class StatementController(
     @GetMapping("/{id}")
     fun findById(
         @PathVariable id: StatementId,
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): StatementRepresentation =
         statementService.findById(id)
             .mapToStatementRepresentation(capabilities)
@@ -88,7 +88,7 @@ class StatementController(
         @RequestBody request: CreateStatementRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         currentUser: Authentication?,
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): ResponseEntity<StatementRepresentation> {
         val id = statementService.create(
             CreateCommand(
@@ -113,7 +113,7 @@ class StatementController(
         @RequestBody request: UpdateStatementRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         currentUser: Authentication?,
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): ResponseEntity<StatementRepresentation> {
         statementService.update(
             UpdateStatementUseCase.UpdateCommand(
@@ -134,7 +134,7 @@ class StatementController(
     @RequireLogin
     @DeleteMapping("/{id}")
     fun deleteById(
-        @PathVariable id: StatementId
+        @PathVariable id: StatementId,
     ): ResponseEntity<Unit> {
         statementService.deleteById(id)
         return ResponseEntity.noContent().build()
@@ -149,13 +149,15 @@ class StatementController(
         @RequestParam("whitelist", required = false, defaultValue = "") whitelist: List<ThingId>,
         @RequestParam("includeFirst", required = false, defaultValue = "true") includeFirst: Boolean,
         sort: Sort,
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): BundleRepresentation =
         statementService.fetchAsBundle(
             id,
             BundleConfiguration(
-                minLevel, maxLevel,
-                blacklist, whitelist
+                minLevel,
+                maxLevel,
+                blacklist,
+                whitelist
             ),
             includeFirst,
             sort
@@ -168,7 +170,7 @@ class StatementController(
         @JsonProperty("predicate_id")
         val predicateId: ThingId,
         @JsonProperty("object_id")
-        val objectId: ThingId
+        val objectId: ThingId,
     )
 
     data class UpdateStatementRequest(
@@ -177,6 +179,6 @@ class StatementController(
         @JsonProperty("predicate_id")
         val predicateId: ThingId?,
         @JsonProperty("object_id")
-        val objectId: ThingId?
+        val objectId: ThingId?,
     )
 }

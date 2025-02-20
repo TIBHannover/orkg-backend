@@ -10,7 +10,6 @@ import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldNotMatch
-import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -39,6 +38,7 @@ import org.orkg.graph.testing.fixtures.withGraphMappings
 import org.orkg.testing.MockUserId
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
+import java.time.OffsetDateTime
 
 fun <
     T : RosettaStoneStatementRepository,
@@ -46,14 +46,14 @@ fun <
     P : PredicateRepository,
     C : ClassRepository,
     L : LiteralRepository,
-    S : StatementRepository
+    S : StatementRepository,
 > rosettaStoneStatementRepositoryContract(
     repository: T,
     resourceRepository: R,
     predicateRepository: P,
     classRepository: C,
     literalRepository: L,
-    statementRepository: S
+    statementRepository: S,
 ) = describeSpec {
     beforeTest {
         repository.deleteAll()
@@ -649,10 +649,12 @@ fun <
 
                 val statementResource = resourceRepository.findById(statement.id).get()
                 val otherStatement = fabricator.random<RosettaStoneStatement>().let {
-                    it.copy(versions = it.versions + it.versions.first().copy(
-                        id = fabricator.random(),
-                        subjects = listOf(statementResource)
-                    ))
+                    it.copy(
+                        versions = it.versions + it.versions.first().copy(
+                            id = fabricator.random(),
+                            subjects = listOf(statementResource)
+                        )
+                    )
                 }
                 otherStatement.requiredEntities().forEach(saveThing)
                 repository.save(otherStatement)
@@ -669,10 +671,12 @@ fun <
 
                 val statementResource = resourceRepository.findById(statement.versions.last().id).get()
                 val otherStatement = fabricator.random<RosettaStoneStatement>().let {
-                    it.copy(versions = it.versions + it.versions.first().copy(
-                        id = fabricator.random(),
-                        subjects = listOf(statementResource)
-                    ))
+                    it.copy(
+                        versions = it.versions + it.versions.first().copy(
+                            id = fabricator.random(),
+                            subjects = listOf(statementResource)
+                        )
+                    )
                 }
                 otherStatement.requiredEntities().forEach(saveThing)
                 repository.save(otherStatement)
@@ -689,10 +693,12 @@ fun <
 
                 val statementResource = resourceRepository.findById(statement.id).get()
                 val otherStatement = fabricator.random<RosettaStoneStatement>().let {
-                    it.copy(versions = it.versions + it.versions.first().copy(
-                        id = fabricator.random(),
-                        objects = listOf(listOf(statementResource))
-                    ))
+                    it.copy(
+                        versions = it.versions + it.versions.first().copy(
+                            id = fabricator.random(),
+                            objects = listOf(listOf(statementResource))
+                        )
+                    )
                 }
                 otherStatement.requiredEntities().forEach(saveThing)
                 repository.save(otherStatement)
@@ -709,10 +715,12 @@ fun <
 
                 val statementResource = resourceRepository.findById(statement.versions.last().id).get()
                 val otherStatement = fabricator.random<RosettaStoneStatement>().let {
-                    it.copy(versions = it.versions + it.versions.first().copy(
-                        id = fabricator.random(),
-                        objects = listOf(listOf(statementResource))
-                    ))
+                    it.copy(
+                        versions = it.versions + it.versions.first().copy(
+                            id = fabricator.random(),
+                            objects = listOf(listOf(statementResource))
+                        )
+                    )
                 }
                 otherStatement.requiredEntities().forEach(saveThing)
                 repository.save(otherStatement)

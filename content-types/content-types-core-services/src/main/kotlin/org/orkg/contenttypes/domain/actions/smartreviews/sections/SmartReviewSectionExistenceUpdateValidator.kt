@@ -7,11 +7,11 @@ import org.orkg.contenttypes.domain.actions.smartreviews.sections.UpdateSmartRev
 import org.orkg.graph.output.ResourceRepository
 
 class SmartReviewSectionExistenceUpdateValidator(
-    private val abstractSmartReviewExistenceValidator: AbstractSmartReviewExistenceValidator
+    private val abstractSmartReviewExistenceValidator: AbstractSmartReviewExistenceValidator,
 ) : UpdateSmartReviewSectionAction {
     constructor(
         smartReviewService: SmartReviewService,
-        resourceRepository: ResourceRepository
+        resourceRepository: ResourceRepository,
     ) : this(AbstractSmartReviewExistenceValidator(smartReviewService, resourceRepository))
 
     override fun invoke(command: UpdateSmartReviewSectionCommand, state: State): State =

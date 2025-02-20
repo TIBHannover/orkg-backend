@@ -29,14 +29,13 @@ class ObservatoryResourceController(
     override val statementService: StatementUseCases,
     override val formattedLabelService: FormattedLabelUseCases,
 ) : ResourceRepresentationAdapter {
-
     @GetMapping("/{id}/papers")
     fun findAllPapersByObservatoryId(
         @PathVariable id: ObservatoryId,
         @RequestParam("filter_config", required = false) filterConfig: String?,
         @RequestParam("visibility", required = false) visibility: VisibilityFilter?,
         pageable: Pageable,
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): Page<ResourceRepresentation> =
         resourceService.findAllPapersByObservatoryIdAndFilters(
             observatoryId = id,
@@ -49,7 +48,7 @@ class ObservatoryResourceController(
     fun findAllProblemsByObservatoryId(
         @PathVariable id: ObservatoryId,
         pageable: Pageable,
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): Page<ResourceRepresentation> =
         resourceService.findAllProblemsByObservatoryId(id, pageable)
             .mapToResourceRepresentation(capabilities)
@@ -65,7 +64,7 @@ class ObservatoryResourceController(
         @RequestParam("visibility", required = false)
         visibility: VisibilityFilter?,
         pageable: Pageable,
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): Page<ResourceRepresentation> =
         resourceService.findAllByClassInAndVisibilityAndObservatoryId(
             classes = classes,

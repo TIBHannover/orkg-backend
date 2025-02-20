@@ -14,7 +14,7 @@ import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.PredicateRepository
 
 class AbstractRosettaStoneTemplatePropertiesValidator(
-    private val abstractTemplatePropertyValidator: AbstractTemplatePropertyValidator
+    private val abstractTemplatePropertyValidator: AbstractTemplatePropertyValidator,
 ) {
     constructor(
         predicateRepository: PredicateRepository,

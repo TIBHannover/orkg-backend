@@ -8,8 +8,6 @@ import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import java.time.OffsetDateTime
-import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -37,6 +35,8 @@ import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.withGraphMappings
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
+import java.time.OffsetDateTime
+import java.util.UUID
 
 fun <
     Q : PaperRepository,
@@ -44,14 +44,14 @@ fun <
     C : ClassRepository,
     L : LiteralRepository,
     R : ResourceRepository,
-    P : PredicateRepository
+    P : PredicateRepository,
 > paperRepositoryContract(
     repository: Q,
     statementRepository: S,
     classRepository: C,
     literalRepository: L,
     resourceRepository: R,
-    predicateRepository: P
+    predicateRepository: P,
 ) = describeSpec {
     beforeTest {
         statementRepository.deleteAll()

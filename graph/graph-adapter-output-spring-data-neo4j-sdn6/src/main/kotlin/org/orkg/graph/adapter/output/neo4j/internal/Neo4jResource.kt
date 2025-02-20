@@ -13,6 +13,7 @@ import org.springframework.data.neo4j.core.schema.Node
 import org.springframework.data.neo4j.core.schema.Property
 
 @Node("Resource")
+@Suppress("ktlint:standard:property-naming")
 class Neo4jResource : Neo4jThing() {
     @Property("observatory_id")
     var observatory_id: ObservatoryId = ObservatoryId.UNKNOWN

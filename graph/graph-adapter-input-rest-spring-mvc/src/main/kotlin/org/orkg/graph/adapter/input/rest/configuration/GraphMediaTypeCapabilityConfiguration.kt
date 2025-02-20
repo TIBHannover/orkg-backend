@@ -7,7 +7,7 @@ import org.springframework.http.MediaType
 
 @Configuration
 class GraphMediaTypeCapabilityConfiguration(
-    mediaTypeCapabilityRegistry: MediaTypeCapabilityRegistry
+    mediaTypeCapabilityRegistry: MediaTypeCapabilityRegistry,
 ) {
     init {
         mediaTypeCapabilityRegistry.register(MediaType.APPLICATION_JSON, FORMATTED_LABELS_CAPABILITY)

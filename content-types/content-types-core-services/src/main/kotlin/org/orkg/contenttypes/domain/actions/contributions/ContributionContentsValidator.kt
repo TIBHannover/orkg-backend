@@ -7,8 +7,9 @@ import org.orkg.contenttypes.domain.actions.CreateContributionCommand
 import org.orkg.graph.output.ThingRepository
 
 class ContributionContentsValidator(
-    thingRepository: ThingRepository
-) : ContributionValidator(thingRepository), ContributionAction {
+    thingRepository: ThingRepository,
+) : ContributionValidator(thingRepository),
+    ContributionAction {
     override operator fun invoke(command: CreateContributionCommand, state: ContributionState): ContributionState {
         val bakedStatements: MutableSet<BakedStatement> = mutableSetOf()
         val validatedIds = state.validatedIds.toMutableMap()

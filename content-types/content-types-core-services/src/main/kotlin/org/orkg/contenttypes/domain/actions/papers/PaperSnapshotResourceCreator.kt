@@ -6,7 +6,7 @@ import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.UnsafeResourceUseCases
 
 class PaperSnapshotResourceCreator(
-    private val unsafeResourceUseCases: UnsafeResourceUseCases
+    private val unsafeResourceUseCases: UnsafeResourceUseCases,
 ) : CreatePaperAction {
     override fun invoke(command: CreatePaperCommand, state: CreatePaperAction.State): CreatePaperAction.State {
         val paperId = unsafeResourceUseCases.create(

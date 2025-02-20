@@ -10,5 +10,7 @@ data class BenchmarkSummary(
     val researchFields: List<ResearchField> = emptyList(),
     override val totalPapers: Int,
     override val totalDatasets: Int,
-    override val totalCodes: Int
-) : PaperTotal, CodeTotal, DatasetTotal
+    override val totalCodes: Int,
+) : PaperTotal,
+    CodeTotal,
+    DatasetTotal

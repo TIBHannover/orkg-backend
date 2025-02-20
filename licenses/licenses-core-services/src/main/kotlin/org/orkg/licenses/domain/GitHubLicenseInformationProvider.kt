@@ -1,15 +1,15 @@
 package org.orkg.licenses.domain
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import org.springframework.stereotype.Component
 import java.io.IOException
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.util.regex.Pattern
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
-import org.springframework.stereotype.Component
 
 private val REPO_PATH_PATTERN = Pattern.compile("""/([a-zA-Z0-9-_.]+)/([a-zA-Z0-9-_.]+)/?""")
 private const val API_URL = "https://api.github.com"
@@ -17,7 +17,7 @@ private const val API_URL = "https://api.github.com"
 @Component
 class GitHubLicenseInformationProvider(
     val objectMapper: ObjectMapper,
-    val httpClient: HttpClient
+    val httpClient: HttpClient,
 ) : LicenseInformationProvider {
     override val id: String = "github"
     override val description: String = "Determines licenses of GitHub projects"

@@ -13,14 +13,14 @@ import org.orkg.contenttypes.domain.actions.UpdateComparisonCommand
 interface CreateComparisonAction : Action<CreateComparisonCommand, CreateComparisonAction.State> {
     data class State(
         val authors: List<Author> = emptyList(),
-        val comparisonId: ThingId? = null
+        val comparisonId: ThingId? = null,
     )
 }
 
 interface UpdateComparisonAction : Action<UpdateComparisonCommand, UpdateComparisonAction.State> {
     data class State(
         val comparison: Comparison? = null,
-        val authors: List<Author> = emptyList()
+        val authors: List<Author> = emptyList(),
     )
 }
 
@@ -29,6 +29,6 @@ interface PublishComparisonAction : Action<PublishComparisonCommand, PublishComp
         val comparison: Comparison? = null,
         val comparisonVersionId: ThingId? = null,
         val config: ComparisonConfig? = null,
-        val data: ComparisonData? = null
+        val data: ComparisonData? = null,
     )
 }

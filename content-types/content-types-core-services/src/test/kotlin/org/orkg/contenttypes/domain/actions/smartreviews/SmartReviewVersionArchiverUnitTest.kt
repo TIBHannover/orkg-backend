@@ -70,11 +70,13 @@ internal class SmartReviewVersionArchiverUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            smartReviewPublishedRepository.save(withArg {
-                it.id shouldBe state.smartReviewVersionId!!
-                it.rootId shouldBe command.smartReviewId
-                it.subgraph shouldBe listOf(createStatement())
-            })
+            smartReviewPublishedRepository.save(
+                withArg {
+                    it.id shouldBe state.smartReviewVersionId!!
+                    it.rootId shouldBe command.smartReviewId
+                    it.subgraph shouldBe listOf(createStatement())
+                }
+            )
         }
     }
 }

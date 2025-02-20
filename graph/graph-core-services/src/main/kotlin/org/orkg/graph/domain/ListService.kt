@@ -1,9 +1,6 @@
 package org.orkg.graph.domain
 
 import dev.forkhandles.values.ofOrNull
-import java.time.Clock
-import java.time.OffsetDateTime
-import java.util.*
 import org.orkg.common.ThingId
 import org.orkg.graph.input.CreateListUseCase
 import org.orkg.graph.input.ListUseCases
@@ -14,6 +11,9 @@ import org.orkg.spring.data.annotations.TransactionalOnNeo4j
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import java.time.Clock
+import java.time.OffsetDateTime
+import java.util.Optional
 
 @Service
 @TransactionalOnNeo4j
@@ -28,8 +28,9 @@ class ListService(
         val id = command.id
             ?.also { id -> thingRepository.findById(id).ifPresent { throw ThingAlreadyExists(id) } }
             ?: repository.nextIdentity()
-        if (command.elements.isNotEmpty() && !thingRepository.existsAllById(command.elements.toSet()))
+        if (command.elements.isNotEmpty() && !thingRepository.existsAllById(command.elements.toSet())) {
             throw ListElementNotFound()
+        }
         val list = List(
             id = id,
             label = label,
@@ -55,14 +56,16 @@ class ListService(
     override fun update(command: UpdateListUseCase.UpdateCommand) {
         val list = repository.findById(command.id)
             .orElseThrow { ListNotFound(command.id) }
-        if (!list.modifiable)
+        if (!list.modifiable) {
             throw ListNotModifiable(command.id)
+        }
         val label = command.label?.let {
             Label.ofOrNull(it)?.value ?: throw InvalidLabel()
         }
         val elements = command.elements?.also {
-            if (it.isNotEmpty() && !thingRepository.existsAllById(it.toSet()))
+            if (it.isNotEmpty() && !thingRepository.existsAllById(it.toSet())) {
                 throw ListElementNotFound()
+            }
         }
         val updated = list.copy(
             label = label ?: list.label,

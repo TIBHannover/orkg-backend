@@ -1,9 +1,5 @@
 package org.orkg.profiling.adapter.output.facade
 
-import java.time.LocalDate
-import java.time.OffsetDateTime
-import kotlin.random.Random
-import kotlin.reflect.KType
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -34,6 +30,10 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDate
+import java.time.OffsetDateTime
+import kotlin.random.Random
+import kotlin.reflect.KType
 
 @Component
 @Profile("profileRepositories")
@@ -42,7 +42,7 @@ class PageableValueGenerator : ValueGenerator<Pageable> {
         random: Random,
         name: String,
         type: KType,
-        randomInstances: (Random, String, KType) -> List<Any>
+        randomInstances: (Random, String, KType) -> List<Any>,
     ): List<Pageable> =
         listOf(
             PageRequest.of(0, 25),
@@ -56,7 +56,7 @@ class ThingIdValueGenerator(
     private val resourceRepository: ResourceRepository,
     private val predicateRepository: PredicateRepository,
     private val literalRepository: LiteralRepository,
-    private val classRepository: ClassRepository
+    private val classRepository: ClassRepository,
 ) : ValueGenerator<ThingId> {
     private val resourceCount: Int by lazy { resourceRepository.findAll(PageRequest.of(0, 1)).totalElements.toInt() }
     private val predicateCount: Int by lazy { predicateRepository.findAll(PageRequest.of(0, 1)).totalElements.toInt() }
@@ -67,7 +67,7 @@ class ThingIdValueGenerator(
         random: Random,
         name: String,
         type: KType,
-        randomInstances: (Random, String, KType) -> List<Any>
+        randomInstances: (Random, String, KType) -> List<Any>,
     ): List<ThingId> =
         when {
             "resource" in name -> listOf(random.nextResourceId())
@@ -86,8 +86,11 @@ class ThingIdValueGenerator(
         }
 
     private fun Random.nextPredicateId() = predicateRepository.findAll(PageRequest.of(nextInt(predicateCount), 1)).first().id
+
     private fun Random.nextLiteralId() = literalRepository.findAll(PageRequest.of(nextInt(literalCount), 1)).first().id
+
     private fun Random.nextClassId() = classRepository.findAll(PageRequest.of(nextInt(classCount), 1)).first().id
+
     private fun Random.nextResourceId(classId: ThingId? = null) =
         if (classId == null) {
             resourceRepository.findAll(PageRequest.of(nextInt(resourceCount), 1)).first().id
@@ -110,7 +113,7 @@ class ThingIdMapGenerator : ValueGenerator<Map<ThingId, ThingId>> {
         random: Random,
         name: String,
         type: KType,
-        randomInstances: (Random, String, KType) -> List<Any>
+        randomInstances: (Random, String, KType) -> List<Any>,
     ): List<Map<ThingId, ThingId>> = listOf(
         mapOf(ThingId("R44543") to ThingId("C5000"))
     )
@@ -123,7 +126,7 @@ class ListValueGenerator : ValueGenerator<List<*>> {
         random: Random,
         name: String,
         type: KType,
-        randomInstances: (Random, String, KType) -> List<Any>
+        randomInstances: (Random, String, KType) -> List<Any>,
     ): List<List<*>> = listOf(randomInstances(random, name, type.arguments.first().type!!))
 }
 
@@ -134,7 +137,7 @@ class IterableValueGenerator : ValueGenerator<Iterable<*>> {
         random: Random,
         name: String,
         type: KType,
-        randomInstances: (Random, String, KType) -> List<Any>
+        randomInstances: (Random, String, KType) -> List<Any>,
     ): List<Iterable<*>> = listOf(randomInstances(random, name, type.arguments.first().type!!))
 }
 
@@ -145,7 +148,7 @@ class SetValueGenerator : ValueGenerator<Set<*>> {
         random: Random,
         name: String,
         type: KType,
-        randomInstances: (Random, String, KType) -> List<Any>
+        randomInstances: (Random, String, KType) -> List<Any>,
     ): List<Set<*>> = listOf(randomInstances(random, name, type.arguments.first().type!!).toSet())
 }
 
@@ -153,7 +156,7 @@ class SetValueGenerator : ValueGenerator<Set<*>> {
 @Transactional
 @Profile("profileRepositories")
 class ObservatoryIdValueGenerator(
-    private val observatoryRepository: ObservatoryRepository
+    private val observatoryRepository: ObservatoryRepository,
 ) : ValueGenerator<ObservatoryId> {
     private val count: Int by lazy { observatoryRepository.findAll(PageRequest.of(0, 1)).totalElements.toInt() }
 
@@ -161,7 +164,7 @@ class ObservatoryIdValueGenerator(
         random: Random,
         name: String,
         type: KType,
-        randomInstances: (Random, String, KType) -> List<Any>
+        randomInstances: (Random, String, KType) -> List<Any>,
     ): List<ObservatoryId> = listOf(observatoryRepository.findAll(PageRequest.of(random.nextInt(count), 1)).first().id)
 }
 
@@ -169,7 +172,7 @@ class ObservatoryIdValueGenerator(
 @Transactional
 @Profile("profileRepositories")
 class OrganizationIdValueGenerator(
-    private val organizationRepository: PostgresOrganizationRepository
+    private val organizationRepository: PostgresOrganizationRepository,
 ) : ValueGenerator<OrganizationId> {
     private val count: Int by lazy { organizationRepository.count().toInt() }
 
@@ -177,7 +180,7 @@ class OrganizationIdValueGenerator(
         random: Random,
         name: String,
         type: KType,
-        randomInstances: (Random, String, KType) -> List<Any>
+        randomInstances: (Random, String, KType) -> List<Any>,
     ): List<OrganizationId> = listOf(OrganizationId(organizationRepository.findAll(PageRequest.of(random.nextInt(count), 1)).first().id!!))
 }
 
@@ -188,7 +191,7 @@ class BundleConfigurationValueGenerator : ValueGenerator<BundleConfiguration> {
         random: Random,
         name: String,
         type: KType,
-        randomInstances: (Random, String, KType) -> List<Any>
+        randomInstances: (Random, String, KType) -> List<Any>,
     ): List<BundleConfiguration> = listOf(BundleConfiguration.firstLevelConf())
 }
 
@@ -199,7 +202,7 @@ class VisibilityFilterValueGenerator : ValueGenerator<VisibilityFilter> {
         random: Random,
         name: String,
         type: KType,
-        randomInstances: (Random, String, KType) -> List<Any>
+        randomInstances: (Random, String, KType) -> List<Any>,
     ): List<VisibilityFilter> = VisibilityFilter.entries
 }
 
@@ -210,7 +213,7 @@ class VisibilityValueGenerator : ValueGenerator<Visibility> {
         random: Random,
         name: String,
         type: KType,
-        randomInstances: (Random, String, KType) -> List<Any>
+        randomInstances: (Random, String, KType) -> List<Any>,
     ): List<Visibility> = Visibility.entries
 }
 
@@ -221,7 +224,7 @@ class ContentTypeClassValueGenerator : ValueGenerator<ContentTypeClass> {
         random: Random,
         name: String,
         type: KType,
-        randomInstances: (Random, String, KType) -> List<Any>
+        randomInstances: (Random, String, KType) -> List<Any>,
     ): List<ContentTypeClass> = ContentTypeClass.entries
 }
 
@@ -232,7 +235,7 @@ class SearchFilterValueGenerator : ValueGenerator<SearchFilter> {
         random: Random,
         name: String,
         type: KType,
-        randomInstances: (Random, String, KType) -> List<Any>
+        randomInstances: (Random, String, KType) -> List<Any>,
     ): List<SearchFilter> = listOf(
         SearchFilter(
             path = listOf(Predicates.hasResearchProblem),
@@ -266,7 +269,7 @@ class BooleanValueGenerator : ValueGenerator<Boolean> {
         random: Random,
         name: String,
         type: KType,
-        randomInstances: (Random, String, KType) -> List<Any>
+        randomInstances: (Random, String, KType) -> List<Any>,
     ): List<Boolean> = listOf(true, false)
 }
 
@@ -277,7 +280,7 @@ class IntValueGenerator : ValueGenerator<Int> {
         random: Random,
         name: String,
         type: KType,
-        randomInstances: (Random, String, KType) -> List<Any>
+        randomInstances: (Random, String, KType) -> List<Any>,
     ): List<Int> = listOf(random.nextInt(10))
 }
 
@@ -303,7 +306,7 @@ class StringValueGenerator : ValueGenerator<String> {
         random: Random,
         name: String,
         type: KType,
-        randomInstances: (Random, String, KType) -> List<Any>
+        randomInstances: (Random, String, KType) -> List<Any>,
     ): List<String> =
         when {
             "class" in name -> labels
@@ -322,7 +325,7 @@ class StringValueGenerator : ValueGenerator<String> {
 @Component
 @Profile("profileRepositories")
 class StatementIdValueGenerator(
-    private val statementRepository: StatementRepository
+    private val statementRepository: StatementRepository,
 ) : ValueGenerator<StatementId> {
     private val count: Int by lazy { statementRepository.findAll(PageRequest.of(0, 1)).totalElements.toInt() }
 
@@ -330,7 +333,7 @@ class StatementIdValueGenerator(
         random: Random,
         name: String,
         type: KType,
-        randomInstances: (Random, String, KType) -> List<Any>
+        randomInstances: (Random, String, KType) -> List<Any>,
     ): List<StatementId> =
         listOf(statementRepository.findAll(PageRequest.of(random.nextInt(count), 1)).first().id)
 }
@@ -338,7 +341,7 @@ class StatementIdValueGenerator(
 @Component
 @Profile("profileRepositories")
 class ContributorIdValueGenerator(
-    private val contributorRepository: ContributorRepository
+    private val contributorRepository: ContributorRepository,
 ) : ValueGenerator<ContributorId> {
     private val count: Int by lazy { contributorRepository.count().toInt() }
 
@@ -346,7 +349,7 @@ class ContributorIdValueGenerator(
         random: Random,
         name: String,
         type: KType,
-        randomInstances: (Random, String, KType) -> List<Any>
+        randomInstances: (Random, String, KType) -> List<Any>,
     ): List<ContributorId> =
         listOf(contributorRepository.findAll(PageRequest.of(random.nextInt(count), 1)).first().id)
 }
@@ -355,13 +358,13 @@ class ContributorIdValueGenerator(
 @Profile("profileRepositories")
 class SearchStringValueGenerator(
     private val exactStringValueGenerator: ExactStringValueGenerator,
-    private val fuzzyStringValueGenerator: FuzzyStringValueGenerator
+    private val fuzzyStringValueGenerator: FuzzyStringValueGenerator,
 ) : ValueGenerator<SearchString> {
     override operator fun invoke(
         random: Random,
         name: String,
         type: KType,
-        randomInstances: (Random, String, KType) -> List<Any>
+        randomInstances: (Random, String, KType) -> List<Any>,
     ): List<SearchString> =
         exactStringValueGenerator(random, name, type, randomInstances) +
             fuzzyStringValueGenerator(random, name, type, randomInstances)
@@ -378,7 +381,7 @@ class FuzzyStringValueGenerator : ValueGenerator<FuzzySearchString> {
         random: Random,
         name: String,
         type: KType,
-        randomInstances: (Random, String, KType) -> List<Any>
+        randomInstances: (Random, String, KType) -> List<Any>,
     ): List<FuzzySearchString> = instances
 }
 
@@ -393,7 +396,7 @@ class ExactStringValueGenerator : ValueGenerator<ExactSearchString> {
         random: Random,
         name: String,
         type: KType,
-        randomInstances: (Random, String, KType) -> List<Any>
+        randomInstances: (Random, String, KType) -> List<Any>,
     ): List<ExactSearchString> = instances
 }
 
@@ -404,7 +407,7 @@ class OffsetDateTimeValueGenerator : ValueGenerator<OffsetDateTime> {
         random: Random,
         name: String,
         type: KType,
-        randomInstances: (Random, String, KType) -> List<Any>
+        randomInstances: (Random, String, KType) -> List<Any>,
     ): List<OffsetDateTime> = listOf(OffsetDateTime.parse("2023-01-23T16:28:34.513038Z"))
 }
 
@@ -415,7 +418,7 @@ class LocalDateValueGenerator : ValueGenerator<LocalDate> {
         random: Random,
         name: String,
         type: KType,
-        randomInstances: (Random, String, KType) -> List<Any>
+        randomInstances: (Random, String, KType) -> List<Any>,
     ): List<LocalDate> = listOf(LocalDate.parse("2023-01-23"))
 }
 
@@ -426,6 +429,6 @@ class SortValueGenerator : ValueGenerator<Sort> {
         random: Random,
         name: String,
         type: KType,
-        randomInstances: (Random, String, KType) -> List<Any>
+        randomInstances: (Random, String, KType) -> List<Any>,
     ): List<Sort> = listOf(Sort.by("created_by"))
 }

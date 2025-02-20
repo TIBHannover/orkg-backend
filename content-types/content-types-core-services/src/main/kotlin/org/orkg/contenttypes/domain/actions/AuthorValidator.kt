@@ -5,7 +5,7 @@ import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.AmbiguousAuthor
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.AuthorNotFound
-import org.orkg.contenttypes.domain.Identifiers
+import org.orkg.contenttypes.domain.identifiers.Identifiers
 import org.orkg.contenttypes.domain.identifiers.parse
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.output.ResourceRepository
@@ -13,7 +13,7 @@ import org.orkg.graph.output.StatementRepository
 
 class AuthorValidator(
     private val resourceRepository: ResourceRepository,
-    private val statementRepository: StatementRepository
+    private val statementRepository: StatementRepository,
 ) {
     internal fun validate(authors: List<Author>): List<Author> {
         val validatedAuthors = authors.distinct().map { author ->

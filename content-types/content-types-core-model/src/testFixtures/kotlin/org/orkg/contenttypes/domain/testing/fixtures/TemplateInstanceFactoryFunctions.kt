@@ -1,6 +1,5 @@
 package org.orkg.contenttypes.domain.testing.fixtures
 
-import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.EmbeddedStatement
@@ -9,6 +8,7 @@ import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createResource
+import java.time.OffsetDateTime
 
 fun createTemplateInstance() = TemplateInstance(
     root = createResource(ThingId("R54631"), classes = setOf(ThingId("targetClass"))),

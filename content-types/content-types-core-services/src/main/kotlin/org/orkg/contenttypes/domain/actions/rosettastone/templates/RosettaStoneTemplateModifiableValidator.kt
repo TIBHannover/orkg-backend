@@ -7,7 +7,7 @@ import org.orkg.contenttypes.domain.actions.rosettastone.templates.UpdateRosetta
 import org.orkg.contenttypes.output.RosettaStoneStatementRepository
 
 class RosettaStoneTemplateModifiableValidator(
-    private val rosettaStoneStatementRepository: RosettaStoneStatementRepository
+    private val rosettaStoneStatementRepository: RosettaStoneStatementRepository,
 ) : UpdateRosettaStoneTemplateAction {
     override fun invoke(command: UpdateRosettaStoneTemplateCommand, state: State): State {
         if (!state.rosettaStoneTemplate!!.modifiable) {

@@ -6,7 +6,6 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.util.*
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.Test
 import org.orkg.common.ObservatoryId
@@ -41,6 +40,7 @@ import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.pageOf
 import org.springframework.data.domain.Sort
+import java.util.UUID
 
 internal class TemplateServiceUnitTest : MockkBaseTest {
     private val resourceRepository: ResourceRepository = mockk()
@@ -257,7 +257,6 @@ internal class TemplateServiceUnitTest : MockkBaseTest {
                 predicate = createPredicate(Predicates.shProperty),
                 `object` = resourceProperty
             ),
-
             // Statements for untyped property
             createStatement(
                 subject = untypedProperty,
@@ -298,7 +297,6 @@ internal class TemplateServiceUnitTest : MockkBaseTest {
                 predicate = createPredicate(Predicates.shPath),
                 `object` = untypedPropertyPath
             ),
-
             // Statements for string literal property
             createStatement(
                 subject = stringLiteralProperty,
@@ -349,7 +347,6 @@ internal class TemplateServiceUnitTest : MockkBaseTest {
                 predicate = createPredicate(Predicates.shDatatype),
                 `object` = stringLiteralPropertyDatatype
             ),
-
             // Statements for number literal property
             createStatement(
                 subject = numberLiteralProperty,
@@ -411,7 +408,6 @@ internal class TemplateServiceUnitTest : MockkBaseTest {
                 predicate = createPredicate(Predicates.shDatatype),
                 `object` = numberLiteralPropertyDatatype
             ),
-
             // Statements for literal property
             createStatement(
                 subject = otherLiteralProperty,
@@ -457,7 +453,6 @@ internal class TemplateServiceUnitTest : MockkBaseTest {
                 predicate = createPredicate(Predicates.shDatatype),
                 `object` = otherLiteralPropertyDatatype
             ),
-
             // Statements for resource property
             createStatement(
                 subject = resourceProperty,

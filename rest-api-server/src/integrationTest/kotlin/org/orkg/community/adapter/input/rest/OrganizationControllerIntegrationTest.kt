@@ -108,11 +108,13 @@ internal class OrganizationControllerIntegrationTest : MockMvcBaseTest("organiza
     @Test
     fun fetchLogo() {
         val contributorId = contributorService.createContributor()
-        val imageId = imageService.create(CreateImageUseCase.CreateCommand(
-            data = ImageData(png("white_pixel")),
-            mimeType = MimeType.valueOf("image/png"),
-            createdBy = contributorId,
-        ))
+        val imageId = imageService.create(
+            CreateImageUseCase.CreateCommand(
+                data = ImageData(png("white_pixel")),
+                mimeType = MimeType.valueOf("image/png"),
+                createdBy = contributorId,
+            )
+        )
         val organizationId = service.createOrganization(createdBy = contributorId, logoId = imageId)
 
         get("/api/organizations/{id}/logo", organizationId)

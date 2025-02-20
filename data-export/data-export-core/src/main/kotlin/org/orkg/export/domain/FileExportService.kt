@@ -1,5 +1,6 @@
 package org.orkg.export.domain
 
+import org.springframework.stereotype.Component
 import java.io.FileOutputStream
 import java.io.OutputStreamWriter
 import java.io.Writer
@@ -13,16 +14,17 @@ import java.nio.file.attribute.PosixFilePermissions
 import kotlin.io.path.absolute
 import kotlin.io.path.exists
 import kotlin.io.path.isDirectory
-import org.springframework.stereotype.Component
 
 @Component
 class FileExportService {
     fun writeToFile(path: String?, defaultPath: String, block: (Writer) -> Unit) {
         val filePath = resolveFilePath(path, defaultPath)
-        if (filePath.absolute().parent.exists().not()) throw NoSuchFileException(
-            file = filePath.toFile(),
-            reason = "The directory ${filePath.parent} does not exist! Make sure it was created, and that permissions are correct.",
-        )
+        if (filePath.absolute().parent.exists().not()) {
+            throw NoSuchFileException(
+                file = filePath.toFile(),
+                reason = "The directory ${filePath.parent} does not exist! Make sure it was created, and that permissions are correct.",
+            )
+        }
         val temp = Files.createTempFile("", "", *fileAttributes())
         OutputStreamWriter(FileOutputStream(temp.toFile()), Charsets.UTF_8).use { block(it) }
         if (temp.exists()) {

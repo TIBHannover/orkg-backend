@@ -6,7 +6,6 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.runs
 import io.mockk.verify
-import java.util.*
 import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -28,9 +27,9 @@ import org.orkg.contenttypes.domain.ResearchField
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.testing.fixtures.createResource
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.andExpectObservatory
 import org.orkg.testing.annotations.TestWithMockCurator
+import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -49,11 +48,14 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import orkg.orkg.community.testing.fixtures.observatoryResponseFields
+import java.util.Optional
+import java.util.UUID
 
-@ContextConfiguration(classes = [ObservatoryController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(
+    classes = [ObservatoryController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class]
+)
 @WebMvcTest(controllers = [ObservatoryController::class])
 internal class ObservatoryControllerUnitTest : MockMvcBaseTest("observatories") {
-
     @MockkBean
     private lateinit var observatoryUseCases: ObservatoryUseCases
 
@@ -741,15 +743,17 @@ internal class ObservatoryControllerUnitTest : MockMvcBaseTest("observatories") 
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) {
-            observatoryUseCases.create(withArg {
-                it.id shouldBe null
-                it.name shouldBe observatory.name
-                it.organizations shouldBe observatory.organizationIds
-                it.description shouldBe observatory.description
-                it.researchField shouldBe observatory.researchField
-                it.displayId shouldBe observatory.displayId
-                it.sustainableDevelopmentGoals shouldBe observatory.sustainableDevelopmentGoals
-            })
+            observatoryUseCases.create(
+                withArg {
+                    it.id shouldBe null
+                    it.name shouldBe observatory.name
+                    it.organizations shouldBe observatory.organizationIds
+                    it.description shouldBe observatory.description
+                    it.researchField shouldBe observatory.researchField
+                    it.displayId shouldBe observatory.displayId
+                    it.sustainableDevelopmentGoals shouldBe observatory.sustainableDevelopmentGoals
+                }
+            )
         }
         verify(exactly = 1) { observatoryUseCases.findById(observatory.id) }
         verify(exactly = 1) { resourceUseCases.findById(observatory.researchField!!) }
@@ -795,14 +799,16 @@ internal class ObservatoryControllerUnitTest : MockMvcBaseTest("observatories") 
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) {
-            observatoryUseCases.update(withArg {
-                it.id shouldBe id
-                it.name shouldBe "updated"
-                it.organizations shouldBe setOf(OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f"))
-                it.description shouldBe "new observatory description"
-                it.researchField shouldBe ThingId("R123")
-                it.sustainableDevelopmentGoals shouldBe setOf(ThingId("SDG1"))
-            })
+            observatoryUseCases.update(
+                withArg {
+                    it.id shouldBe id
+                    it.name shouldBe "updated"
+                    it.organizations shouldBe setOf(OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f"))
+                    it.description shouldBe "new observatory description"
+                    it.researchField shouldBe ThingId("R123")
+                    it.sustainableDevelopmentGoals shouldBe setOf(ThingId("SDG1"))
+                }
+            )
         }
     }
 }

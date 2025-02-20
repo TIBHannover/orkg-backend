@@ -1,28 +1,34 @@
 package org.orkg.graph.output
 
-import java.time.OffsetDateTime
-import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.SearchString
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import java.time.OffsetDateTime
+import java.util.Optional
 
 interface ClassRepository : EntityRepository<Class, ThingId> {
     fun save(c: Class)
+
     fun findById(id: ThingId): Optional<Class>
+
     fun findAll(
         pageable: Pageable,
         label: SearchString? = null,
         createdBy: ContributorId? = null,
         createdAtStart: OffsetDateTime? = null,
-        createdAtEnd: OffsetDateTime? = null
+        createdAtEnd: OffsetDateTime? = null,
     ): Page<Class>
+
     @Deprecated("For removal")
     fun findAllById(id: Iterable<ThingId>, pageable: Pageable): Page<Class>
+
     fun findByUri(uri: String): Optional<Class>
+
     fun deleteAll()
+
     fun nextIdentity(): ThingId
 
     /**

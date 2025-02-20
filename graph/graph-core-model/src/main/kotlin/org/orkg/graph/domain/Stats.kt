@@ -23,5 +23,5 @@ data class Stats(
     @JsonProperty("orphaned_nodes")
     val orphanedNodes: Long,
     @JsonProperty("extras")
-    val extraCounts: Map<String, Long>?
+    val extraCounts: Map<String, Long>?,
 )

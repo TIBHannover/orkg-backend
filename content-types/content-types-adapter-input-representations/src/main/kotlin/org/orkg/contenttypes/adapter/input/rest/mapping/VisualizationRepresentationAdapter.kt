@@ -1,13 +1,14 @@
 package org.orkg.contenttypes.adapter.input.rest.mapping
 
-import java.util.*
 import org.orkg.contenttypes.adapter.input.rest.VisualizationRepresentation
 import org.orkg.contenttypes.domain.Visualization
 import org.springframework.data.domain.Page
+import java.util.Optional
 
-interface VisualizationRepresentationAdapter : AuthorRepresentationAdapter, LabeledObjectRepresentationAdapter,
+interface VisualizationRepresentationAdapter :
+    AuthorRepresentationAdapter,
+    LabeledObjectRepresentationAdapter,
     PublicationInfoRepresentationAdapter {
-
     fun Optional<Visualization>.mapToVisualizationRepresentation(): Optional<VisualizationRepresentation> =
         map { it.toVisualizationRepresentation() }
 

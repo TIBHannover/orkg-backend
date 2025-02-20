@@ -19,7 +19,7 @@ class ComparisonRelatedFigureUpdater(
     private val comparisonService: ComparisonUseCases,
     private val resourceService: ResourceUseCases,
     private val statementService: StatementUseCases,
-    private val singleStatementPropertyUpdater: SingleStatementPropertyUpdater
+    private val singleStatementPropertyUpdater: SingleStatementPropertyUpdater,
 ) {
     constructor(
         comparisonService: ComparisonUseCases,

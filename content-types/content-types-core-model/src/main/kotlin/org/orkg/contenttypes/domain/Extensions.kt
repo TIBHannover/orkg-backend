@@ -1,9 +1,9 @@
 package org.orkg.contenttypes.domain
 
-import java.util.stream.Collectors
 import org.orkg.common.ThingId
 import org.orkg.common.toIRIOrNull
 import org.orkg.contenttypes.domain.identifiers.Identifier
+import org.orkg.contenttypes.domain.identifiers.Identifiers
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literal
 import org.orkg.graph.domain.Predicates
@@ -11,6 +11,7 @@ import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.Thing
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
+import java.util.stream.Collectors
 
 fun <T, R> Page<T>.pmap(transform: (T) -> R): Page<R> =
     PageImpl(content.pmap(transform), pageable, totalElements)

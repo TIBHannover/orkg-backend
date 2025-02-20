@@ -32,19 +32,19 @@ import org.springframework.web.util.UriComponentsBuilder
 @RequestMapping("/api/classes", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ClassHierarchyController(
     override val statementService: StatementUseCases,
-    private val service: ClassHierarchyUseCases
-) : ClassHierarchyEntryRepresentationAdapter, ChildClassRepresentationAdapter {
-
+    private val service: ClassHierarchyUseCases,
+) : ClassHierarchyEntryRepresentationAdapter,
+    ChildClassRepresentationAdapter {
     @GetMapping("/{id}/children")
     fun findAllChildrenByAncestorId(
         @PathVariable id: ThingId,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<ChildClassRepresentation> =
         service.findAllChildrenByAncestorId(id, pageable).mapToChildClassRepresentation()
 
     @GetMapping("/{id}/parent")
     fun findParentByChildId(
-        @PathVariable id: ThingId
+        @PathVariable id: ThingId,
     ): ResponseEntity<ClassRepresentation> = service.findParentByChildId(id)
         .mapToClassRepresentation()
         .map(::ok)
@@ -54,7 +54,7 @@ class ClassHierarchyController(
     @RequireCuratorRole
     fun deleteParentRelation(
         @PathVariable id: ThingId,
-        uriComponentsBuilder: UriComponentsBuilder
+        uriComponentsBuilder: UriComponentsBuilder,
     ): ResponseEntity<Any> {
         service.deleteByChildId(id)
         return noContent().build()
@@ -78,7 +78,7 @@ class ClassHierarchyController(
 
     @GetMapping("/{id}/root")
     fun findRootByDescendantId(
-        @PathVariable id: ThingId
+        @PathVariable id: ThingId,
     ): ResponseEntity<ClassRepresentation> = service.findRootByDescendantId(id)
         .mapToClassRepresentation()
         .map(::ok)
@@ -86,7 +86,7 @@ class ClassHierarchyController(
 
     @GetMapping("/roots")
     fun findAllRoots(
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<ClassRepresentation> = service.findAllRoots(pageable).mapToClassRepresentation()
 
     @PostMapping("/{id}/children", consumes = [MediaType.APPLICATION_JSON_VALUE])
@@ -129,28 +129,28 @@ class ClassHierarchyController(
     @GetMapping("/{id}/count")
     fun countClassInstances(
         @PathVariable id: ThingId,
-        pageable: Pageable
+        pageable: Pageable,
     ): CountResponse = CountResponse(service.countClassInstances(id))
 
     @GetMapping("/{id}/hierarchy")
     fun findClassHierarchy(
         @PathVariable id: ThingId,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<ClassHierarchyEntryRepresentation> =
         service.findClassHierarchy(id, pageable).mapToClassHierarchyEntryRepresentation()
 }
 
 data class CreateChildrenRequest(
     @JsonProperty("child_ids")
-    val childIds: Set<ThingId>
+    val childIds: Set<ThingId>,
 )
 
 data class CountResponse(
     @JsonProperty("count")
-    val count: Long
+    val count: Long,
 )
 
 data class CreateParentRequest(
     @JsonProperty("parent_id")
-    val parentId: ThingId
+    val parentId: ThingId,
 )

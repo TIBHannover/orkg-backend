@@ -9,5 +9,5 @@ data class ContributorRecord(
     val contributions: Long = 0,
     val problems: Long = 0,
     val visualizations: Long = 0,
-    val total: Long = 0
+    val total: Long = 0,
 )

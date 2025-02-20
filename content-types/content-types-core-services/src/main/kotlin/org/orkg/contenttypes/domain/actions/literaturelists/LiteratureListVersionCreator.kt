@@ -19,7 +19,7 @@ class LiteratureListVersionCreator(
     private val unsafeResourceUseCases: UnsafeResourceUseCases,
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
     private val literalService: LiteralUseCases,
-    private val listService: ListUseCases
+    private val listService: ListUseCases,
 ) : PublishLiteratureListAction {
     override fun invoke(command: PublishLiteratureListCommand, state: State): State {
         val literatureList = state.literatureList!!

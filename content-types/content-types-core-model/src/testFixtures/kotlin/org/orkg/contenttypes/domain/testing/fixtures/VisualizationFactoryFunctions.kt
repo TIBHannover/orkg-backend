@@ -1,6 +1,5 @@
 package org.orkg.contenttypes.domain.testing.fixtures
 
-import java.time.OffsetDateTime
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
@@ -10,6 +9,7 @@ import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.Visualization
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Visibility
+import java.time.OffsetDateTime
 
 fun createVisualization() = Visualization(
     id = ThingId("R8186"),

@@ -12,8 +12,9 @@ class VisualizationAuthorCreator(
     unsafeResourceUseCases: UnsafeResourceUseCases,
     unsafeStatementUseCases: UnsafeStatementUseCases,
     literalService: LiteralUseCases,
-    listService: ListUseCases
-) : AuthorCreator(unsafeResourceUseCases, unsafeStatementUseCases, literalService, listService), VisualizationAction {
+    listService: ListUseCases,
+) : AuthorCreator(unsafeResourceUseCases, unsafeStatementUseCases, literalService, listService),
+    VisualizationAction {
     override operator fun invoke(command: CreateVisualizationCommand, state: State): State {
         create(command.contributorId, state.authors, state.visualizationId!!)
         return state

@@ -7,8 +7,6 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import java.time.OffsetDateTime
-import java.util.*
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
@@ -26,9 +24,10 @@ import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.MockUserId
+import java.time.OffsetDateTime
+import java.util.Optional
 
 internal class UnsafeStatementServiceUnitTest : MockkBaseTest {
-
     private val thingRepository: ThingRepository = mockk()
     private val predicateRepository: PredicateRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
@@ -54,15 +53,17 @@ internal class UnsafeStatementServiceUnitTest : MockkBaseTest {
         verify(exactly = 1) { predicateRepository.findById(command.predicateId) }
         verify(exactly = 1) { thingRepository.findById(command.objectId) }
         verify(exactly = 1) {
-            statementRepository.save(withArg {
-                it.id shouldBe command.id
-                it.subject shouldBe subject
-                it.predicate shouldBe predicate
-                it.`object` shouldBe `object`
-                it.createdBy shouldBe command.contributorId
-                it.createdAt shouldBe OffsetDateTime.now(fixedClock)
-                it.modifiable shouldBe command.modifiable
-            })
+            statementRepository.save(
+                withArg {
+                    it.id shouldBe command.id
+                    it.subject shouldBe subject
+                    it.predicate shouldBe predicate
+                    it.`object` shouldBe `object`
+                    it.createdBy shouldBe command.contributorId
+                    it.createdAt shouldBe OffsetDateTime.now(fixedClock)
+                    it.modifiable shouldBe command.modifiable
+                }
+            )
         }
     }
 
@@ -87,15 +88,17 @@ internal class UnsafeStatementServiceUnitTest : MockkBaseTest {
         verify(exactly = 1) { thingRepository.findById(command.objectId) }
         verify(exactly = 1) { statementRepository.nextIdentity() }
         verify(exactly = 1) {
-            statementRepository.save(withArg {
-                it.id shouldBe id
-                it.subject shouldBe subject
-                it.predicate shouldBe predicate
-                it.`object` shouldBe `object`
-                it.createdBy shouldBe command.contributorId
-                it.createdAt shouldBe OffsetDateTime.now(fixedClock)
-                it.modifiable shouldBe command.modifiable
-            })
+            statementRepository.save(
+                withArg {
+                    it.id shouldBe id
+                    it.subject shouldBe subject
+                    it.predicate shouldBe predicate
+                    it.`object` shouldBe `object`
+                    it.createdBy shouldBe command.contributorId
+                    it.createdAt shouldBe OffsetDateTime.now(fixedClock)
+                    it.modifiable shouldBe command.modifiable
+                }
+            )
         }
     }
 
@@ -169,15 +172,17 @@ internal class UnsafeStatementServiceUnitTest : MockkBaseTest {
         verify(exactly = 1) { thingRepository.findById(command.objectId!!) }
         verify(exactly = 1) { statementRepository.deleteByStatementId(command.statementId) }
         verify(exactly = 1) {
-            statementRepository.save(withArg {
-                it.id shouldBe command.statementId
-                it.subject shouldBe subject
-                it.predicate shouldBe predicate
-                it.`object` shouldBe `object`
-                it.createdBy shouldBe statement.createdBy
-                it.createdAt shouldBe statement.createdAt
-                it.modifiable shouldBe command.modifiable
-            })
+            statementRepository.save(
+                withArg {
+                    it.id shouldBe command.statementId
+                    it.subject shouldBe subject
+                    it.predicate shouldBe predicate
+                    it.`object` shouldBe `object`
+                    it.createdBy shouldBe statement.createdBy
+                    it.createdAt shouldBe statement.createdAt
+                    it.modifiable shouldBe command.modifiable
+                }
+            )
         }
     }
 
@@ -207,15 +212,17 @@ internal class UnsafeStatementServiceUnitTest : MockkBaseTest {
         verify(exactly = 1) { statementRepository.deleteByStatementId(command.statementId) }
         verify(exactly = 1) { literalRepository.save(`object`) }
         verify(exactly = 1) {
-            statementRepository.save(withArg {
-                it.id shouldBe command.statementId
-                it.subject shouldBe subject
-                it.predicate shouldBe predicate
-                it.`object` shouldBe `object`
-                it.createdBy shouldBe statement.createdBy
-                it.createdAt shouldBe statement.createdAt
-                it.modifiable shouldBe statement.modifiable
-            })
+            statementRepository.save(
+                withArg {
+                    it.id shouldBe command.statementId
+                    it.subject shouldBe subject
+                    it.predicate shouldBe predicate
+                    it.`object` shouldBe `object`
+                    it.createdBy shouldBe statement.createdBy
+                    it.createdAt shouldBe statement.createdAt
+                    it.modifiable shouldBe statement.modifiable
+                }
+            )
         }
     }
 

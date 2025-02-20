@@ -1,6 +1,5 @@
 package org.orkg.contenttypes.input.testing.fixtures
 
-import java.util.*
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
@@ -14,6 +13,7 @@ import org.orkg.contenttypes.input.PublishComparisonUseCase
 import org.orkg.contenttypes.input.UpdateComparisonUseCase
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Visibility
+import java.util.UUID
 
 fun createComparisonCommand() = CreateComparisonUseCase.CreateCommand(
     contributorId = ContributorId("0b3d7108-ea98-448f-85ef-e67a63a8b32b"),

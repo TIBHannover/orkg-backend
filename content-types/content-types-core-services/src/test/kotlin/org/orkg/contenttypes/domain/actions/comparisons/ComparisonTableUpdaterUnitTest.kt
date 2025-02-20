@@ -7,7 +7,6 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import java.util.stream.Stream
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -19,6 +18,7 @@ import org.orkg.contenttypes.domain.actions.UpdateComparisonState
 import org.orkg.contenttypes.domain.testing.fixtures.createComparison
 import org.orkg.contenttypes.input.testing.fixtures.updateComparisonCommand
 import org.orkg.contenttypes.output.ComparisonTableRepository
+import java.util.stream.Stream
 
 internal class ComparisonTableUpdaterUnitTest : MockkBaseTest {
     private val comparisonTableRepository: ComparisonTableRepository = mockk()
@@ -94,7 +94,7 @@ internal class ComparisonTableUpdaterUnitTest : MockkBaseTest {
                 command.copy(
                     config = command.config!!.copy(contributions = emptyList())
                 )
-           },
+            },
             updateComparisonCommand().let { command ->
                 command.copy(
                     config = null,

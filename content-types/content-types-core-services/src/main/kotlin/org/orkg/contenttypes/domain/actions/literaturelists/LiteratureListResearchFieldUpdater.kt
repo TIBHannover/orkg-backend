@@ -10,17 +10,17 @@ import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
 class LiteratureListResearchFieldUpdater(
-    private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater
+    private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater,
 ) : UpdateLiteratureListAction {
     constructor(
         literalService: LiteralUseCases,
         statementService: StatementUseCases,
-        unsafeStatementUseCases: UnsafeStatementUseCases
+        unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(StatementCollectionPropertyUpdater(literalService, statementService, unsafeStatementUseCases))
 
     override operator fun invoke(
         command: UpdateLiteratureListCommand,
-        state: UpdateLiteratureListState
+        state: UpdateLiteratureListState,
     ): UpdateLiteratureListState {
         if (command.researchFields != null && command.researchFields != state.literatureList!!.researchFields.ids) {
             statementCollectionPropertyUpdater.update(

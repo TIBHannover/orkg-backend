@@ -28,7 +28,7 @@ import org.orkg.graph.input.UpdateResourceUseCase
 class AbstractSmartReviewSectionUpdater(
     private val unsafeResourceUseCases: UnsafeResourceUseCases,
     private val singleStatementPropertyUpdater: SingleStatementPropertyUpdater,
-    private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater
+    private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater,
 ) {
     constructor(
         literalService: LiteralUseCases,
@@ -45,7 +45,7 @@ class AbstractSmartReviewSectionUpdater(
         contributorId: ContributorId,
         newSection: SmartReviewComparisonSectionDefinition,
         oldSection: SmartReviewComparisonSection,
-        statements: Map<ThingId, List<GeneralStatement>>
+        statements: Map<ThingId, List<GeneralStatement>>,
     ) {
         if (newSection.heading != oldSection.heading) {
             unsafeResourceUseCases.update(
@@ -71,7 +71,7 @@ class AbstractSmartReviewSectionUpdater(
         contributorId: ContributorId,
         newSection: SmartReviewVisualizationSectionDefinition,
         oldSection: SmartReviewVisualizationSection,
-        statements: Map<ThingId, List<GeneralStatement>>
+        statements: Map<ThingId, List<GeneralStatement>>,
     ) {
         if (newSection.heading != oldSection.heading) {
             unsafeResourceUseCases.update(
@@ -97,7 +97,7 @@ class AbstractSmartReviewSectionUpdater(
         contributorId: ContributorId,
         newSection: SmartReviewResourceSectionDefinition,
         oldSection: SmartReviewResourceSection,
-        statements: Map<ThingId, List<GeneralStatement>>
+        statements: Map<ThingId, List<GeneralStatement>>,
     ) {
         if (newSection.heading != oldSection.heading) {
             unsafeResourceUseCases.update(
@@ -123,7 +123,7 @@ class AbstractSmartReviewSectionUpdater(
         contributorId: ContributorId,
         newSection: SmartReviewPredicateSectionDefinition,
         oldSection: SmartReviewPredicateSection,
-        statements: Map<ThingId, List<GeneralStatement>>
+        statements: Map<ThingId, List<GeneralStatement>>,
     ) {
         if (newSection.heading != oldSection.heading) {
             unsafeResourceUseCases.update(
@@ -149,7 +149,7 @@ class AbstractSmartReviewSectionUpdater(
         contributorId: ContributorId,
         newSection: SmartReviewOntologySectionDefinition,
         oldSection: SmartReviewOntologySection,
-        statements: Map<ThingId, List<GeneralStatement>>
+        statements: Map<ThingId, List<GeneralStatement>>,
     ) {
         if (newSection.heading != oldSection.heading) {
             unsafeResourceUseCases.update(
@@ -184,7 +184,7 @@ class AbstractSmartReviewSectionUpdater(
         contributorId: ContributorId,
         newSection: SmartReviewTextSectionDefinition,
         oldSection: SmartReviewTextSection,
-        statements: Map<ThingId, List<GeneralStatement>>
+        statements: Map<ThingId, List<GeneralStatement>>,
     ) {
         if (newSection.heading != oldSection.heading || newSection.`class` !in oldSection.classes) {
             unsafeResourceUseCases.update(

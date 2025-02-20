@@ -17,7 +17,7 @@ class Metrics {
     @Bean
     fun resourceCountMetric(
         statisticsRepository: StatisticsRepository,
-        cacheManager: CacheManager?
+        cacheManager: CacheManager?,
     ): Metric = CachedMetric.create(
         cacheManager = cacheManager,
         name = "resource-count",
@@ -29,7 +29,7 @@ class Metrics {
     @Bean
     fun predicateCountMetric(
         statisticsRepository: StatisticsRepository,
-        cacheManager: CacheManager?
+        cacheManager: CacheManager?,
     ): Metric = CachedMetric.create(
         cacheManager = cacheManager,
         name = "predicate-count",
@@ -41,7 +41,7 @@ class Metrics {
     @Bean
     fun literalCountMetric(
         statisticsRepository: StatisticsRepository,
-        cacheManager: CacheManager?
+        cacheManager: CacheManager?,
     ): Metric = CachedMetric.create(
         cacheManager = cacheManager,
         name = "literal-count",
@@ -53,7 +53,7 @@ class Metrics {
     @Bean
     fun classCountMetric(
         statisticsRepository: StatisticsRepository,
-        cacheManager: CacheManager?
+        cacheManager: CacheManager?,
     ): Metric = CachedMetric.create(
         cacheManager = cacheManager,
         name = "class-count",
@@ -65,7 +65,7 @@ class Metrics {
     @Bean
     fun statementCountMetric(
         statisticsRepository: StatisticsRepository,
-        cacheManager: CacheManager?
+        cacheManager: CacheManager?,
     ): Metric = CachedMetric.create(
         cacheManager = cacheManager,
         name = "statement-count",
@@ -77,7 +77,7 @@ class Metrics {
     @Bean
     fun orphansCountMetric(
         statisticsRepository: StatisticsRepository,
-        cacheManager: CacheManager?
+        cacheManager: CacheManager?,
     ): Metric = CachedMetric.create(
         cacheManager = cacheManager,
         name = "orphan-count",
@@ -89,7 +89,7 @@ class Metrics {
     @Bean
     fun orphanResourceCountMetric(
         statisticsRepository: StatisticsRepository,
-        cacheManager: CacheManager?
+        cacheManager: CacheManager?,
     ): Metric = CachedMetric.create(
         cacheManager = cacheManager,
         name = "orphan-resource-count",
@@ -101,7 +101,7 @@ class Metrics {
     @Bean
     fun orphanPredicateCountMetric(
         statisticsRepository: StatisticsRepository,
-        cacheManager: CacheManager?
+        cacheManager: CacheManager?,
     ): Metric = CachedMetric.create(
         cacheManager = cacheManager,
         name = "orphan-predicate-count",
@@ -113,7 +113,7 @@ class Metrics {
     @Bean
     fun orphanLiteralCountMetric(
         statisticsRepository: StatisticsRepository,
-        cacheManager: CacheManager?
+        cacheManager: CacheManager?,
     ): Metric = CachedMetric.create(
         cacheManager = cacheManager,
         name = "orphan-literal-count",
@@ -125,7 +125,7 @@ class Metrics {
     @Bean
     fun orphanClassCountMetric(
         statisticsRepository: StatisticsRepository,
-        cacheManager: CacheManager?
+        cacheManager: CacheManager?,
     ): Metric = CachedMetric.create(
         cacheManager = cacheManager,
         name = "orphan-class-count",
@@ -137,7 +137,7 @@ class Metrics {
     @Bean
     fun unusedResourceCountMetric(
         statisticsRepository: StatisticsRepository,
-        cacheManager: CacheManager?
+        cacheManager: CacheManager?,
     ): Metric = CachedMetric.create(
         cacheManager = cacheManager,
         name = "unused-resource-count",
@@ -149,7 +149,7 @@ class Metrics {
     @Bean
     fun unusedPredicateCountMetric(
         statisticsRepository: StatisticsRepository,
-        cacheManager: CacheManager?
+        cacheManager: CacheManager?,
     ): Metric = CachedMetric.create(
         cacheManager = cacheManager,
         name = "unused-predicate-count",
@@ -161,7 +161,7 @@ class Metrics {
     @Bean
     fun unusedLiteralCountMetric(
         statisticsRepository: StatisticsRepository,
-        cacheManager: CacheManager?
+        cacheManager: CacheManager?,
     ): Metric = CachedMetric.create(
         cacheManager = cacheManager,
         name = "unused-literal-count",
@@ -173,7 +173,7 @@ class Metrics {
     @Bean
     fun unusedClassCountMetric(
         statisticsRepository: StatisticsRepository,
-        cacheManager: CacheManager?
+        cacheManager: CacheManager?,
     ): Metric = CachedMetric.create(
         cacheManager = cacheManager,
         name = "unused-class-count",
@@ -189,7 +189,7 @@ class Metrics {
     @Bean
     fun contributionCountMetric(
         statisticsRepository: StatisticsRepository,
-        cacheManager: CacheManager?
+        cacheManager: CacheManager?,
     ): Metric = CachedMetric.create(
         cacheManager = cacheManager,
         name = "contribution-count",
@@ -201,7 +201,7 @@ class Metrics {
     @Bean
     fun publishedComparisonVersionCountMetric(
         statisticsRepository: StatisticsRepository,
-        cacheManager: CacheManager?
+        cacheManager: CacheManager?,
     ): Metric = CachedMetric.create(
         cacheManager = cacheManager,
         name = "published-comparison-version-count",
@@ -213,7 +213,7 @@ class Metrics {
     @Bean
     fun publishedLiteratureListVersionCountMetric(
         statisticsRepository: StatisticsRepository,
-        cacheManager: CacheManager?
+        cacheManager: CacheManager?,
     ): Metric = CachedMetric.create(
         cacheManager = cacheManager,
         name = "published-literature-list-version-count",
@@ -225,7 +225,7 @@ class Metrics {
     @Bean
     fun publishedSmartReviewVersionCountMetric(
         statisticsRepository: StatisticsRepository,
-        cacheManager: CacheManager?
+        cacheManager: CacheManager?,
     ): Metric = CachedMetric.create(
         cacheManager = cacheManager,
         name = "published-smart-review-version-count",
@@ -237,7 +237,7 @@ class Metrics {
     @Bean
     fun researchFieldCountMetric(
         statisticsRepository: StatisticsRepository,
-        cacheManager: CacheManager?
+        cacheManager: CacheManager?,
     ): Metric = CachedMetric.create(
         cacheManager = cacheManager,
         name = "research-field-count",
@@ -249,7 +249,7 @@ class Metrics {
     @Bean
     fun problemCountMetric(
         statisticsRepository: StatisticsRepository,
-        cacheManager: CacheManager?
+        cacheManager: CacheManager?,
     ): Metric = CachedMetric.create(
         cacheManager = cacheManager,
         name = "problem-count",
@@ -261,7 +261,7 @@ class Metrics {
     @Bean
     fun benchmarkCountMetric(
         statisticsRepository: StatisticsRepository,
-        cacheManager: CacheManager?
+        cacheManager: CacheManager?,
     ): Metric = CachedMetric.create(
         cacheManager = cacheManager,
         name = "benchmark-count",
@@ -273,7 +273,7 @@ class Metrics {
     @Bean
     fun rosettaStoneTemplateVersionCountMetric(
         statisticsRepository: StatisticsRepository,
-        cacheManager: CacheManager?
+        cacheManager: CacheManager?,
     ): Metric = CachedMetric.create(
         cacheManager = cacheManager,
         name = "rosetta-stone-template-count",
@@ -285,7 +285,7 @@ class Metrics {
     @Bean
     fun rosettaStoneStatementVersionCountMetric(
         statisticsRepository: StatisticsRepository,
-        cacheManager: CacheManager?
+        cacheManager: CacheManager?,
     ): Metric = CachedMetric.create(
         cacheManager = cacheManager,
         name = "rosetta-stone-statement-version-count",
@@ -301,7 +301,7 @@ class Metrics {
     @Bean
     fun contributorsCountMetric(
         contributorRepository: ContributorRepository,
-        cacheManager: CacheManager?
+        cacheManager: CacheManager?,
     ): Metric = CachedMetric.create(
         cacheManager = cacheManager,
         name = "contributors-count",
@@ -313,7 +313,7 @@ class Metrics {
     @Bean
     fun organizationCountMetric(
         organizationRepository: OrganizationRepository,
-        cacheManager: CacheManager?
+        cacheManager: CacheManager?,
     ): Metric = CachedMetric.create(
         cacheManager = cacheManager,
         name = "organization-count",
@@ -325,7 +325,7 @@ class Metrics {
     @Bean
     fun observatoryCountMetric(
         observatoryRepository: ObservatoryRepository,
-        cacheManager: CacheManager?
+        cacheManager: CacheManager?,
     ): Metric = CachedMetric.create(
         cacheManager = cacheManager,
         name = "observatory-count",

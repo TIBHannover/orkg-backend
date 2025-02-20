@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class SpringDataNeo4jAuthorAdapter(
-    private val neo4jRepository: Neo4jAuthorRepository
+    private val neo4jRepository: Neo4jAuthorRepository,
 ) : AuthorRepository {
     override fun findTopAuthorsOfComparison(id: ThingId, pageable: Pageable): Page<ComparisonAuthor> =
         neo4jRepository.findTopAuthorsOfComparison(id, pageable)
@@ -47,9 +47,10 @@ private fun Neo4jAuthorOfComparison.toComparisonAuthor() =
 
 private fun Neo4jAuthorPerProblem.toPaperAuthor() =
     PaperAuthor(
-        if (thing is Neo4jResource)
+        if (thing is Neo4jResource) {
             SimpleAuthor.ResourceAuthor(thing.toResource())
-        else
-            SimpleAuthor.LiteralAuthor(thing.label!!),
+        } else {
+            SimpleAuthor.LiteralAuthor(thing.label!!)
+        },
         papers.toInt()
     )

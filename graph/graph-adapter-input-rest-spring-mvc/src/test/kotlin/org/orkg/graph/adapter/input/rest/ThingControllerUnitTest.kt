@@ -3,15 +3,13 @@ package org.orkg.graph.adapter.input.rest
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
-import java.time.Clock
-import java.util.*
 import org.junit.jupiter.api.Test
 import org.orkg.common.configuration.WebMvcConfiguration
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.graph.input.FormattedLabelUseCases
-import org.orkg.graph.input.RetrieveThingUseCase
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.ThingUseCases
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.andExpectResource
 import org.orkg.testing.configuration.FixedClockConfig
@@ -22,13 +20,22 @@ import org.springframework.restdocs.request.RequestDocumentation.parameterWithNa
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.time.Clock
+import java.util.Optional
 
-@ContextConfiguration(classes = [ThingController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class, WebMvcConfiguration::class])
+@ContextConfiguration(
+    classes = [
+        ThingController::class,
+        ExceptionHandler::class,
+        CommonJacksonModule::class,
+        FixedClockConfig::class,
+        WebMvcConfiguration::class
+    ]
+)
 @WebMvcTest(controllers = [ThingController::class])
 internal class ThingControllerUnitTest : MockMvcBaseTest("things") {
-
     @MockkBean
-    private lateinit var thingService: RetrieveThingUseCase
+    private lateinit var thingService: ThingUseCases
 
     @MockkBean
     private lateinit var statementService: StatementUseCases

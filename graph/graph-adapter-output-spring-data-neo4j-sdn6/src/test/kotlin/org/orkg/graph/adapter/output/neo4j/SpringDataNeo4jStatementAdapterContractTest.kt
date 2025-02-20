@@ -30,23 +30,23 @@ internal class SpringDataNeo4jStatementAdapterContractTest(
     @Autowired private val springDataNeo4jClassAdapter: ClassRepository,
     @Autowired private val springDataNeo4jLiteralAdapter: LiteralRepository,
     @Autowired private val springDataNeo4jResourceAdapter: ResourceRepository,
-    @Autowired private val springDataNeo4jPredicateAdapter: PredicateRepository
+    @Autowired private val springDataNeo4jPredicateAdapter: PredicateRepository,
 ) : DescribeSpec({
-    include(
-        statementRepositoryContract(
-            springDataNeo4jStatementAdapter,
-            springDataNeo4jClassAdapter,
-            springDataNeo4jLiteralAdapter,
-            springDataNeo4jResourceAdapter,
-            springDataNeo4jPredicateAdapter
+        include(
+            statementRepositoryContract(
+                springDataNeo4jStatementAdapter,
+                springDataNeo4jClassAdapter,
+                springDataNeo4jLiteralAdapter,
+                springDataNeo4jResourceAdapter,
+                springDataNeo4jPredicateAdapter
+            )
         )
-    )
 
-    finalizeSpec {
-        springDataNeo4jStatementAdapter.deleteAll()
-        springDataNeo4jClassAdapter.deleteAll()
-        springDataNeo4jLiteralAdapter.deleteAll()
-        springDataNeo4jResourceAdapter.deleteAll()
-        springDataNeo4jPredicateAdapter.deleteAll()
-    }
-})
+        finalizeSpec {
+            springDataNeo4jStatementAdapter.deleteAll()
+            springDataNeo4jClassAdapter.deleteAll()
+            springDataNeo4jLiteralAdapter.deleteAll()
+            springDataNeo4jResourceAdapter.deleteAll()
+            springDataNeo4jPredicateAdapter.deleteAll()
+        }
+    })

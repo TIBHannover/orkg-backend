@@ -6,7 +6,6 @@ import io.kotest.matchers.shouldNotBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.util.*
 import org.junit.jupiter.api.Test
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -26,6 +25,8 @@ import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.pageOf
 import org.springframework.data.domain.Sort
+import java.util.Optional
+import java.util.UUID
 
 internal class TableServiceUnitTest : MockkBaseTest {
     private val resourceRepository: ResourceRepository = mockk()
@@ -89,7 +90,6 @@ internal class TableServiceUnitTest : MockkBaseTest {
             )
         } returns pageOf(
             // declare columns
-
             // declare column 0
             createStatement(
                 subject = expected,
@@ -106,7 +106,6 @@ internal class TableServiceUnitTest : MockkBaseTest {
                 predicate = createPredicate(Predicates.csvwTitles),
                 `object` = createLiteral(label = "Column 0")
             ),
-
             // declare column 1
             createStatement(
                 subject = expected,
@@ -123,9 +122,7 @@ internal class TableServiceUnitTest : MockkBaseTest {
                 predicate = createPredicate(Predicates.csvwTitles),
                 `object` = createLiteral(label = "Column 1")
             ),
-
             // declare rows
-
             // declare row 0
             createStatement(
                 subject = expected,
@@ -142,7 +139,6 @@ internal class TableServiceUnitTest : MockkBaseTest {
                 predicate = createPredicate(Predicates.csvwTitles),
                 `object` = createLiteral(label = "Row 0")
             ),
-
             // declare row 1
             createStatement(
                 subject = expected,
@@ -159,9 +155,7 @@ internal class TableServiceUnitTest : MockkBaseTest {
                 predicate = createPredicate(Predicates.csvwTitles),
                 `object` = createLiteral(label = "Row 1")
             ),
-
             // declare cell contents
-
             // declare cell 00
             createStatement(
                 subject = row0,
@@ -174,7 +168,6 @@ internal class TableServiceUnitTest : MockkBaseTest {
                 `object` = column0
             ),
             // no data
-
             // declare cell 01
             createStatement(
                 subject = row0,
@@ -191,7 +184,6 @@ internal class TableServiceUnitTest : MockkBaseTest {
                 predicate = createPredicate(Predicates.csvwValue),
                 `object` = row0Data[1]!!
             ),
-
             // declare cell 10
             createStatement(
                 subject = row1,
@@ -208,7 +200,6 @@ internal class TableServiceUnitTest : MockkBaseTest {
                 predicate = createPredicate(Predicates.csvwValue),
                 `object` = row1Data[0]
             ),
-
             // declare cell 11
             createStatement(
                 subject = row1,

@@ -1,6 +1,5 @@
 package org.orkg.contenttypes.domain
 
-import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -13,6 +12,7 @@ import org.orkg.graph.domain.VisibilityFilter
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import java.time.OffsetDateTime
 
 @Service
 class ContentTypeService(
@@ -22,7 +22,7 @@ class ContentTypeService(
     private val visualizationService: VisualizationService,
     private val templateService: TemplateService,
     private val literatureListService: LiteratureListService,
-    private val smartReviewService: SmartReviewService
+    private val smartReviewService: SmartReviewService,
 ) : ContentTypeUseCases {
     override fun findAll(
         pageable: Pageable,

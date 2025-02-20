@@ -12,7 +12,7 @@ import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.StatementRepository
 
 class ContributionContentsCreator(
-    private val contributionCreator: ContributionCreator
+    private val contributionCreator: ContributionCreator,
 ) : ContributionAction {
     constructor(
         classService: ClassUseCases,

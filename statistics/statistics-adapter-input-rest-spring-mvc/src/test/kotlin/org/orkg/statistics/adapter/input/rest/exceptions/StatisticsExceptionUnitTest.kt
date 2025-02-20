@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController
 @WebMvcTest
 @ContextConfiguration(classes = [TestController::class, ExceptionHandler::class, FixedClockConfig::class])
 internal class StatisticsExceptionUnitTest : MockMvcBaseTest("statistics") {
-
     @Test
     fun groupNotFound() {
         val id = "group1"
@@ -59,13 +58,14 @@ internal class StatisticsExceptionUnitTest : MockMvcBaseTest("statistics") {
     @RestController
     internal class TestController {
         @GetMapping("/group-not-found")
-        fun groupNotFound(@RequestParam id: String) {
-            throw GroupNotFound(id)
-        }
+        fun groupNotFound(
+            @RequestParam id: String,
+        ): Unit = throw GroupNotFound(id)
 
         @GetMapping("/metric-not-found")
-        fun metricNotFound(@RequestParam group: String, @RequestParam name: String) {
-            throw MetricNotFound(group, name)
-        }
+        fun metricNotFound(
+            @RequestParam group: String,
+            @RequestParam name: String,
+        ): Unit = throw MetricNotFound(group, name)
     }
 }

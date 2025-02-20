@@ -3,7 +3,6 @@ package org.orkg.graph.domain
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.verify
-import java.util.*
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -12,6 +11,7 @@ import org.orkg.common.ThingId
 import org.orkg.graph.input.CreateClassUseCase
 import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.testing.MockUserId
+import java.util.Optional
 
 internal class ImportServiceClassUnitTest : AbstractImportServiceUnitTest() {
     @Test

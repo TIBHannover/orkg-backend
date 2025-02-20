@@ -1,6 +1,5 @@
 package org.orkg.contenttypes.domain
 
-import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -16,6 +15,7 @@ import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.Visibility
+import java.time.OffsetDateTime
 
 data class Template(
     override val id: ThingId,
@@ -32,7 +32,7 @@ data class Template(
     val organizations: List<OrganizationId>,
     override val extractionMethod: ExtractionMethod,
     override val visibility: Visibility,
-    override val unlistedBy: ContributorId? = null
+    override val unlistedBy: ContributorId? = null,
 ) : ContentType {
     companion object {
         fun from(resource: Resource, statements: Map<ThingId, List<GeneralStatement>>): Template {
@@ -211,7 +211,7 @@ data class UntypedTemplateProperty(
     override val maxCount: Int?,
     override val path: ObjectIdAndLabel,
     override val createdBy: ContributorId,
-    override val createdAt: OffsetDateTime
+    override val createdAt: OffsetDateTime,
 ) : TemplateProperty
 
 sealed interface LiteralTemplateProperty : TemplateProperty {
@@ -231,7 +231,7 @@ data class NumberLiteralTemplateProperty(
     override val path: ObjectIdAndLabel,
     override val createdBy: ContributorId,
     override val createdAt: OffsetDateTime,
-    override val datatype: ClassReference
+    override val datatype: ClassReference,
 ) : LiteralTemplateProperty
 
 data class StringLiteralTemplateProperty(
@@ -260,7 +260,7 @@ data class OtherLiteralTemplateProperty(
     override val path: ObjectIdAndLabel,
     override val createdBy: ContributorId,
     override val createdAt: OffsetDateTime,
-    override val datatype: ClassReference
+    override val datatype: ClassReference,
 ) : LiteralTemplateProperty
 
 data class ResourceTemplateProperty(
@@ -274,5 +274,5 @@ data class ResourceTemplateProperty(
     override val path: ObjectIdAndLabel,
     override val createdBy: ContributorId,
     override val createdAt: OffsetDateTime,
-    val `class`: ObjectIdAndLabel
+    val `class`: ObjectIdAndLabel,
 ) : TemplateProperty

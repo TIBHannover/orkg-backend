@@ -11,7 +11,7 @@ data class Author(
     val name: String,
     val id: ThingId? = null,
     val identifiers: Map<String, List<String>>? = null,
-    val homepage: ParsedIRI? = null
+    val homepage: ParsedIRI? = null,
 )
 
 data class ComparisonAuthor(
@@ -30,6 +30,7 @@ data class ComparisonAuthorInfo(
 
 sealed class SimpleAuthor {
     data class ResourceAuthor(val value: Resource) : SimpleAuthor()
+
     data class LiteralAuthor(val value: String) : SimpleAuthor()
 }
 

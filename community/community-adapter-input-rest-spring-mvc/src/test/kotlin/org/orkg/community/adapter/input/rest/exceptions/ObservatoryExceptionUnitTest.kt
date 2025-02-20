@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController
 @WebMvcTest
 @ContextConfiguration(classes = [TestController::class, ExceptionHandler::class, FixedClockConfig::class])
 internal class ObservatoryExceptionUnitTest : MockMvcBaseTest("exceptions") {
-
     @Test
     fun observatoryAlreadyExistsWithId() {
         val id = ObservatoryId("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")
@@ -72,18 +71,18 @@ internal class ObservatoryExceptionUnitTest : MockMvcBaseTest("exceptions") {
     @RestController
     internal class TestController {
         @GetMapping("/observatory-already-exists-with-id")
-        fun observatoryAlreadyExistsWithId(@RequestParam id: ObservatoryId) {
-            throw ObservatoryAlreadyExists.withId(id)
-        }
+        fun observatoryAlreadyExistsWithId(
+            @RequestParam id: ObservatoryId,
+        ): Unit = throw ObservatoryAlreadyExists.withId(id)
 
         @GetMapping("/observatory-already-exists-with-name")
-        fun observatoryAlreadyExistsWithName(@RequestParam name: String) {
-            throw ObservatoryAlreadyExists.withName(name)
-        }
+        fun observatoryAlreadyExistsWithName(
+            @RequestParam name: String,
+        ): Unit = throw ObservatoryAlreadyExists.withName(name)
 
         @GetMapping("/observatory-already-exists-with-display-id")
-        fun observatoryAlreadyExistsWithDisplayId(@RequestParam displayId: String) {
-            throw ObservatoryAlreadyExists.withDisplayId(displayId)
-        }
+        fun observatoryAlreadyExistsWithDisplayId(
+            @RequestParam displayId: String,
+        ): Unit = throw ObservatoryAlreadyExists.withDisplayId(displayId)
     }
 }

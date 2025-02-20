@@ -1,10 +1,10 @@
 package org.orkg.contenttypes.domain
 
-import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.contenttypes.domain.identifiers.Identifiers
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.GeneralStatement
@@ -14,6 +14,7 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.domain.Visibility
+import java.time.OffsetDateTime
 
 data class SmartReview(
     override val id: ThingId,
@@ -33,13 +34,14 @@ data class SmartReview(
     val published: Boolean,
     val sections: List<SmartReviewSection>,
     val references: List<String>,
-    val acknowledgements: Map<ContributorId, Double>
+    val acknowledgements: Map<ContributorId, Double>,
 ) : ContentType {
     companion object {
         fun from(resource: Resource, root: ThingId, statements: Map<ThingId, List<GeneralStatement>>): SmartReview {
             val directStatements = statements[root].orEmpty()
             val contributionStatements = directStatements.singleOrNull {
-                it.predicate.id == Predicates.hasContribution && it.`object` is Resource &&
+                it.predicate.id == Predicates.hasContribution &&
+                    it.`object` is Resource &&
                     Classes.contributionSmartReview in (it.`object` as Resource).classes
             }
                 ?.let { statements[it.`object`.id] }
@@ -135,7 +137,7 @@ sealed interface SmartReviewSection {
 data class SmartReviewComparisonSection(
     override val id: ThingId,
     override val heading: String,
-    val comparison: ResourceReference?
+    val comparison: ResourceReference?,
 ) : SmartReviewSection {
     companion object {
         fun from(root: Resource, statements: Map<ThingId, List<GeneralStatement>>): SmartReviewComparisonSection =
@@ -154,7 +156,7 @@ data class SmartReviewComparisonSection(
 data class SmartReviewVisualizationSection(
     override val id: ThingId,
     override val heading: String,
-    val visualization: ResourceReference?
+    val visualization: ResourceReference?,
 ) : SmartReviewSection {
     companion object {
         fun from(root: Resource, statements: Map<ThingId, List<GeneralStatement>>): SmartReviewVisualizationSection =
@@ -173,7 +175,7 @@ data class SmartReviewVisualizationSection(
 data class SmartReviewResourceSection(
     override val id: ThingId,
     override val heading: String,
-    val resource: ResourceReference?
+    val resource: ResourceReference?,
 ) : SmartReviewSection {
     companion object {
         fun from(root: Resource, statements: Map<ThingId, List<GeneralStatement>>): SmartReviewResourceSection =
@@ -192,7 +194,7 @@ data class SmartReviewResourceSection(
 data class SmartReviewPredicateSection(
     override val id: ThingId,
     override val heading: String,
-    val predicate: PredicateReference?
+    val predicate: PredicateReference?,
 ) : SmartReviewSection {
     companion object {
         fun from(root: Resource, statements: Map<ThingId, List<GeneralStatement>>): SmartReviewPredicateSection =
@@ -212,7 +214,7 @@ data class SmartReviewOntologySection(
     override val id: ThingId,
     override val heading: String,
     val entities: List<ThingReference>,
-    val predicates: List<PredicateReference>
+    val predicates: List<PredicateReference>,
 ) : SmartReviewSection {
     companion object {
         fun from(root: Resource, statements: Map<ThingId, List<GeneralStatement>>): SmartReviewOntologySection =
@@ -248,7 +250,7 @@ data class SmartReviewTextSection(
     override val id: ThingId,
     override val heading: String,
     val classes: Set<ThingId>,
-    val text: String
+    val text: String,
 ) : SmartReviewSection {
     companion object {
         val types = setOf(

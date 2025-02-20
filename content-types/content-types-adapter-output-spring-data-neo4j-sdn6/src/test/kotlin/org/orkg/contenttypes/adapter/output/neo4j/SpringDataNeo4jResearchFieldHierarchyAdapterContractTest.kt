@@ -32,20 +32,20 @@ internal class SpringDataNeo4jResearchFieldHierarchyAdapterContractTest(
     @Autowired private val springDataNeo4jResearchFieldHierarchyAdapter: ResearchFieldHierarchyRepository,
     @Autowired private val springDataNeo4jStatementAdapter: StatementRepository,
     @Autowired private val springDataNeo4jResourceAdapter: ResourceRepository,
-    @Autowired private val springDataNeo4jPredicateAdapter: PredicateRepository
+    @Autowired private val springDataNeo4jPredicateAdapter: PredicateRepository,
 ) : DescribeSpec({
-    include(
-        researchFieldHierarchyRepositoryContract(
-            springDataNeo4jResearchFieldHierarchyAdapter,
-            springDataNeo4jStatementAdapter,
-            springDataNeo4jResourceAdapter,
-            springDataNeo4jPredicateAdapter
+        include(
+            researchFieldHierarchyRepositoryContract(
+                springDataNeo4jResearchFieldHierarchyAdapter,
+                springDataNeo4jStatementAdapter,
+                springDataNeo4jResourceAdapter,
+                springDataNeo4jPredicateAdapter
+            )
         )
-    )
 
-    finalizeSpec {
-        springDataNeo4jStatementAdapter.deleteAll()
-        springDataNeo4jResourceAdapter.deleteAll()
-        springDataNeo4jPredicateAdapter.deleteAll()
-    }
-})
+        finalizeSpec {
+            springDataNeo4jStatementAdapter.deleteAll()
+            springDataNeo4jResourceAdapter.deleteAll()
+            springDataNeo4jPredicateAdapter.deleteAll()
+        }
+    })

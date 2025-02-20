@@ -1,6 +1,5 @@
 package org.orkg.contenttypes.input.testing.fixtures
 
-import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.input.ContributionDefinition
@@ -11,6 +10,7 @@ import org.orkg.contenttypes.input.ResourceDefinition
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
+import java.util.UUID
 
 fun createContributionCommand() = CreateContributionUseCase.CreateCommand(
     contributorId = ContributorId(UUID.fromString("5342d678-c54a-45ec-bc79-977c79dfff7d")),

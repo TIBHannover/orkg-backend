@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RestController
 @WebMvcTest
 @ContextConfiguration(classes = [TestController::class, ExceptionHandler::class, FixedClockConfig::class])
 internal class StatementExceptionUnitTest : MockMvcBaseTest("exceptions") {
-
     @Test
     fun statementNotModifiable() {
         val id = StatementId("S123")
@@ -95,28 +94,22 @@ internal class StatementExceptionUnitTest : MockMvcBaseTest("exceptions") {
     @RestController
     internal class TestController {
         @GetMapping("/statement-not-modifiable")
-        fun statementNotModifiable(@RequestParam id: StatementId) {
-            throw StatementNotModifiable(id)
-        }
+        fun statementNotModifiable(
+            @RequestParam id: StatementId,
+        ): Unit = throw StatementNotModifiable(id)
 
         @GetMapping("/invalid-statement-is-list-element")
-        fun invalidStatementIsListElement() {
-            throw InvalidStatement.isListElementStatement()
-        }
+        fun invalidStatementIsListElement(): Unit = throw InvalidStatement.isListElementStatement()
 
         @GetMapping("/invalid-statement-subject-must-not-be-literal")
-        fun invalidStatementSubjectMustNotBeLiteral() {
-            throw InvalidStatement.subjectMustNotBeLiteral()
-        }
+        fun invalidStatementSubjectMustNotBeLiteral(): Unit = throw InvalidStatement.subjectMustNotBeLiteral()
 
         @GetMapping("/invalid-statement-rosetta-stone-statement-resource")
-        fun invalidStatementRosettaStoneStatementResource() {
-            throw InvalidStatement.includesRosettaStoneStatementResource()
-        }
+        fun invalidStatementRosettaStoneStatementResource(): Unit = throw InvalidStatement.includesRosettaStoneStatementResource()
 
         @GetMapping("/statement-already-exists")
-        fun statementAlreadyExists(@RequestParam id: StatementId) {
-            throw StatementAlreadyExists(id)
-        }
+        fun statementAlreadyExists(
+            @RequestParam id: StatementId,
+        ): Unit = throw StatementAlreadyExists(id)
     }
 }

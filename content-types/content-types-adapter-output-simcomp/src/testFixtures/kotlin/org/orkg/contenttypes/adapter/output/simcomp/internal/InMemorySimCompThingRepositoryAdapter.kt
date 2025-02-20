@@ -1,23 +1,22 @@
 package org.orkg.contenttypes.adapter.output.simcomp.internal
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import java.time.Clock
-import java.time.LocalDateTime
-import java.util.*
 import org.orkg.common.ThingId
 import org.springframework.stereotype.Component
+import java.time.Clock
+import java.time.LocalDateTime
+import java.util.Optional
+import java.util.UUID
 
 @Component
 class InMemorySimCompThingRepositoryAdapter(
     private val objectMapper: ObjectMapper,
     private val idGenerator: () -> UUID = UUID::randomUUID,
-    private val clock: Clock = Clock.systemDefaultZone()
+    private val clock: Clock = Clock.systemDefaultZone(),
 ) : SimCompThingRepository {
     private val entities: MutableMap<ThingType, MutableMap<ThingId, BaseThing>> = mutableMapOf()
 
-    override fun findById(id: ThingId, type: ThingType): Optional<BaseThing> {
-        return entities[type]?.get(id).let { Optional.ofNullable(it) }
-    }
+    override fun findById(id: ThingId, type: ThingType): Optional<BaseThing> = entities[type]?.get(id).let { Optional.ofNullable(it) }
 
     override fun save(id: ThingId, type: ThingType, data: Any, config: Any) {
         val now = LocalDateTime.now(clock)

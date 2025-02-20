@@ -18,7 +18,7 @@ private val bundleConfiguration = BundleConfiguration(
 
 class LiteratureListVersionArchiver(
     private val statementService: StatementUseCases,
-    private val literatureListPublishedRepository: LiteratureListPublishedRepository
+    private val literatureListPublishedRepository: LiteratureListPublishedRepository,
 ) : PublishLiteratureListAction {
     override fun invoke(command: PublishLiteratureListCommand, state: State): State {
         val statementsToPersist = statementService.fetchAsBundle(

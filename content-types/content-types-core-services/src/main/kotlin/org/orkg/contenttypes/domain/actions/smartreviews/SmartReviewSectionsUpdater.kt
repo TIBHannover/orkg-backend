@@ -13,14 +13,14 @@ import org.orkg.graph.input.UnsafeStatementUseCases
 class SmartReviewSectionsUpdater(
     private val abstractSmartReviewSectionCreator: AbstractSmartReviewSectionCreator,
     private val abstractSmartReviewSectionDeleter: AbstractSmartReviewSectionDeleter,
-    private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater
+    private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater,
 ) : UpdateSmartReviewAction {
     constructor(
         literalService: LiteralUseCases,
         resourceService: ResourceUseCases,
         unsafeResourceUseCases: UnsafeResourceUseCases,
         statementService: StatementUseCases,
-        unsafeStatementUseCases: UnsafeStatementUseCases
+        unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
         AbstractSmartReviewSectionCreator(unsafeStatementUseCases, unsafeResourceUseCases, literalService),
         AbstractSmartReviewSectionDeleter(statementService, resourceService),

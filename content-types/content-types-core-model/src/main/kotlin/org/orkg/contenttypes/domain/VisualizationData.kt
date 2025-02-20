@@ -5,7 +5,7 @@ import org.orkg.common.ThingId
 
 data class VisualizationData(
     val id: ThingId,
-    val data: JsonNode
+    val data: JsonNode,
 ) {
     companion object {
         fun from(node: JsonNode): VisualizationData =

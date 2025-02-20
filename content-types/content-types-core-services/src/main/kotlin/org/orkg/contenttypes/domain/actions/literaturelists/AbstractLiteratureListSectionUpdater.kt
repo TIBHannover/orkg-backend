@@ -27,7 +27,7 @@ class AbstractLiteratureListSectionUpdater(
     private val resourceService: ResourceUseCases,
     private val unsafeResourceUseCases: UnsafeResourceUseCases,
     private val abstractLiteratureListSectionCreator: AbstractLiteratureListSectionCreator,
-    private val singleStatementPropertyUpdater: SingleStatementPropertyUpdater
+    private val singleStatementPropertyUpdater: SingleStatementPropertyUpdater,
 ) {
     constructor(
         literalService: LiteralUseCases,
@@ -59,7 +59,7 @@ class AbstractLiteratureListSectionUpdater(
         contributorId: ContributorId,
         newSection: LiteratureListListSectionDefinition,
         oldSection: LiteratureListListSection,
-        statements: Map<ThingId, List<GeneralStatement>>
+        statements: Map<ThingId, List<GeneralStatement>>,
     ) {
         if (newSection.entries != oldSection.entries.map { LiteratureListListSectionDefinition.Entry(it.value.id, it.description) }) {
             val connectionIterator = statements[oldSection.id].orEmpty()
@@ -142,7 +142,7 @@ class AbstractLiteratureListSectionUpdater(
         contributorId: ContributorId,
         newSection: LiteratureListTextSectionDefinition,
         oldSection: LiteratureListTextSection,
-        statements: Map<ThingId, List<GeneralStatement>>
+        statements: Map<ThingId, List<GeneralStatement>>,
     ) {
         if (newSection.heading != oldSection.heading) {
             unsafeResourceUseCases.update(
@@ -177,7 +177,7 @@ class AbstractLiteratureListSectionUpdater(
     private data class EntryConnection(
         val hasEntryStatement: GeneralStatement,
         val hasLinkStatement: GeneralStatement,
-        val hasDescriptionStatement: GeneralStatement?
+        val hasDescriptionStatement: GeneralStatement?,
     ) {
         fun toEntry(): LiteratureListListSectionDefinition.Entry =
             LiteratureListListSectionDefinition.Entry(

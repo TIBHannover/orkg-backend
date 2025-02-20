@@ -65,7 +65,9 @@ internal class StatementNTripleSerializationTest {
             subject = createResource(id = ThingId("R100"), label = "subject"),
             predicate = createPredicate(id = ThingId("P200")),
             `object` = createLiteral(
-                id = ThingId("L300"), label = "object", datatype = "http://example.org/myDataType"
+                id = ThingId("L300"),
+                label = "object",
+                datatype = "http://example.org/myDataType"
             )
         )
         assertThat(statement::toNTriple.asString()).isEqualTo(expectedOutput)

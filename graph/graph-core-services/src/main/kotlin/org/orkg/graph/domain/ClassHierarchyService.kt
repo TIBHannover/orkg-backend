@@ -1,8 +1,5 @@
 package org.orkg.graph.domain
 
-import java.time.Clock
-import java.time.OffsetDateTime
-import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.graph.input.ClassHierarchyUseCases
@@ -13,6 +10,9 @@ import org.orkg.spring.data.annotations.TransactionalOnNeo4j
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import java.time.Clock
+import java.time.OffsetDateTime
+import java.util.Optional
 
 @Service
 @TransactionalOnNeo4j
@@ -20,7 +20,7 @@ class ClassHierarchyService(
     private val repository: ClassHierarchyRepository,
     private val relationRepository: ClassRelationRepository,
     private val classRepository: ClassRepository,
-    private val clock: Clock
+    private val clock: Clock,
 ) : ClassHierarchyUseCases {
     override fun create(userId: ContributorId, parentId: ThingId, childIds: Set<ThingId>, checkIfParentIsLeaf: Boolean) {
         val parent = classRepository.findById(parentId)

@@ -7,7 +7,7 @@ import org.orkg.contenttypes.domain.actions.smartreviews.PublishSmartReviewActio
 import org.orkg.contenttypes.input.SmartReviewUseCases
 
 class SmartReviewPublishableValidator(
-    private val smartReviewService: SmartReviewUseCases
+    private val smartReviewService: SmartReviewUseCases,
 ) : PublishSmartReviewAction {
     override fun invoke(command: PublishSmartReviewCommand, state: State): State {
         val smartReview = smartReviewService.findById(command.smartReviewId)

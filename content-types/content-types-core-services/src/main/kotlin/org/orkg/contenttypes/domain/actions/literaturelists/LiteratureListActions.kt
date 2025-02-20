@@ -12,7 +12,7 @@ import org.orkg.graph.domain.GeneralStatement
 interface CreateLiteratureListAction : Action<CreateLiteratureListCommand, CreateLiteratureListAction.State> {
     data class State(
         val literatureListId: ThingId? = null,
-        val authors: List<Author> = emptyList()
+        val authors: List<Author> = emptyList(),
     )
 }
 
@@ -20,13 +20,13 @@ interface UpdateLiteratureListAction : Action<UpdateLiteratureListCommand, Updat
     data class State(
         val literatureList: LiteratureList? = null,
         val statements: Map<ThingId, List<GeneralStatement>> = emptyMap(),
-        val authors: List<Author> = emptyList()
+        val authors: List<Author> = emptyList(),
     )
 }
 
 interface PublishLiteratureListAction : Action<PublishLiteratureListCommand, PublishLiteratureListAction.State> {
     data class State(
         val literatureList: LiteratureList? = null,
-        val literatureListVersionId: ThingId? = null
+        val literatureListVersionId: ThingId? = null,
     )
 }

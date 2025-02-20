@@ -18,7 +18,7 @@ interface CreatePaperAction : Action<CreatePaperCommand, CreatePaperAction.State
         val validatedIds: Map<String, Either<String, Thing>> = emptyMap(),
         val bakedStatements: Set<BakedStatement> = emptySet(),
         val authors: List<Author> = emptyList(),
-        val paperId: ThingId? = null
+        val paperId: ThingId? = null,
     )
 }
 
@@ -26,7 +26,7 @@ interface UpdatePaperAction : Action<UpdatePaperCommand, UpdatePaperAction.State
     data class State(
         val paper: Paper? = null,
         val statements: Map<ThingId, List<GeneralStatement>> = emptyMap(),
-        val authors: List<Author> = emptyList()
+        val authors: List<Author> = emptyList(),
     )
 }
 
@@ -34,6 +34,6 @@ interface PublishPaperAction : Action<PublishPaperUseCase.PublishCommand, Publis
     data class State(
         val paper: Paper? = null,
         val statements: Map<ThingId, List<GeneralStatement>> = emptyMap(),
-        val paperVersionId: ThingId? = null
+        val paperVersionId: ThingId? = null,
     )
 }

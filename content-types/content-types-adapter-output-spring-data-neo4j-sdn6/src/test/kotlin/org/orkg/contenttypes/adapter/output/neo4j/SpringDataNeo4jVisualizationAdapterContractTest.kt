@@ -40,16 +40,16 @@ internal class SpringDataNeo4jVisualizationAdapterContractTest(
     @Autowired private val springDataNeo4jPredicateAdapter: PredicateRepository,
     @Autowired private val springDataNeo4jClassAdapter: ClassRepository,
     @Autowired private val springDataNeo4jLiteralAdapter: LiteralRepository,
-    @Autowired private val springDataNeo4jStatementAdapter: StatementRepository
+    @Autowired private val springDataNeo4jStatementAdapter: StatementRepository,
 ) : DescribeSpec({
-    include(
-        visualizationRepositoryContract(
-            springDataNeo4jVisualizationAdapter,
-            springDataNeo4jResourceAdapter,
-            springDataNeo4jPredicateAdapter,
-            springDataNeo4jClassAdapter,
-            springDataNeo4jLiteralAdapter,
-            springDataNeo4jStatementAdapter
+        include(
+            visualizationRepositoryContract(
+                springDataNeo4jVisualizationAdapter,
+                springDataNeo4jResourceAdapter,
+                springDataNeo4jPredicateAdapter,
+                springDataNeo4jClassAdapter,
+                springDataNeo4jLiteralAdapter,
+                springDataNeo4jStatementAdapter
+            )
         )
-    )
-})
+    })

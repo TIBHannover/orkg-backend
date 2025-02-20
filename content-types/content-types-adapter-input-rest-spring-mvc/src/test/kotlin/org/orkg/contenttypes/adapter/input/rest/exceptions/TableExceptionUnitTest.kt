@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController
 @WebMvcTest
 @ContextConfiguration(classes = [TestController::class, ExceptionHandler::class, FixedClockConfig::class])
 internal class TableExceptionUnitTest : MockMvcBaseTest("tables") {
-
     @Test
     fun tableNotFound() {
         val id = "R123"
@@ -42,8 +41,8 @@ internal class TableExceptionUnitTest : MockMvcBaseTest("tables") {
     @RestController
     internal class TestController {
         @GetMapping("/table-not-found")
-        fun tableNotFound(@RequestParam id: ThingId) {
-            throw TableNotFound(id)
-        }
+        fun tableNotFound(
+            @RequestParam id: ThingId,
+        ): Unit = throw TableNotFound(id)
     }
 }

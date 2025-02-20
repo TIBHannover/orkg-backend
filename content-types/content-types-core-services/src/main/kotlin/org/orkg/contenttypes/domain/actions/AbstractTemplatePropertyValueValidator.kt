@@ -35,7 +35,7 @@ import org.orkg.graph.output.ClassHierarchyRepository
 private const val ORKG_CLASS_NS = "http://orkg.org/orkg/class/"
 
 class AbstractTemplatePropertyValueValidator(
-    private val classHierarchyRepository: ClassHierarchyRepository
+    private val classHierarchyRepository: ClassHierarchyRepository,
 ) {
     internal fun validateCardinality(property: TemplateProperty, propertyInstances: List<String>) {
         if (property.minCount != null && property.minCount!! > 0 && propertyInstances.size < property.minCount!!) {
@@ -118,7 +118,5 @@ class AbstractTemplatePropertyValueValidator(
         }
     }
 
-    private fun ResourceDefinition.isInstanceOf(targetClass: ThingId): Boolean {
-        return targetClass in classes || classes.any { `class` -> classHierarchyRepository.existsChild(targetClass, `class`) }
-    }
+    private fun ResourceDefinition.isInstanceOf(targetClass: ThingId): Boolean = targetClass in classes || classes.any { `class` -> classHierarchyRepository.existsChild(targetClass, `class`) }
 }

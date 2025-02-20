@@ -47,18 +47,18 @@ internal class SpringDataNeo4jRankingServiceAdapterContractTest(
     @Autowired private val springDataNeo4jPredicateAdapter: PredicateRepository,
     @Autowired private val listAdapter: ListRepository,
     @Autowired private val springDataNeo4jRosettaStoneStatementAdapter: RosettaStoneStatementRepository,
-    @Autowired private val springDataNeo4jRankingServiceAdapter: RankingService
+    @Autowired private val springDataNeo4jRankingServiceAdapter: RankingService,
 ) : DescribeSpec({
-    include(
-        rankingServiceContract(
-            springDataNeo4jStatementAdapter,
-            springDataNeo4jClassAdapter,
-            springDataNeo4jLiteralAdapter,
-            springDataNeo4jResourceAdapter,
-            springDataNeo4jPredicateAdapter,
-            listAdapter,
-            springDataNeo4jRosettaStoneStatementAdapter,
-            springDataNeo4jRankingServiceAdapter
+        include(
+            rankingServiceContract(
+                springDataNeo4jStatementAdapter,
+                springDataNeo4jClassAdapter,
+                springDataNeo4jLiteralAdapter,
+                springDataNeo4jResourceAdapter,
+                springDataNeo4jPredicateAdapter,
+                listAdapter,
+                springDataNeo4jRosettaStoneStatementAdapter,
+                springDataNeo4jRankingServiceAdapter
+            )
         )
-    )
-})
+    })

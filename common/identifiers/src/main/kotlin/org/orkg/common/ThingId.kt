@@ -1,7 +1,6 @@
 package org.orkg.common
 
 data class ThingId(val value: String) : Comparable<ThingId> {
-
     init {
         require(value.isNotBlank()) { "ID must not be blank" }
         require(value.matches(VALID_ID_REGEX)) { "Must only contain alphanumeric characters, dashes and underscores" }

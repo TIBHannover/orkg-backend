@@ -1,12 +1,11 @@
 package org.orkg.graph.adapter.input.rest.mapping
 
-import java.util.*
-import org.orkg.graph.domain.Literal
 import org.orkg.graph.adapter.input.rest.LiteralRepresentation
+import org.orkg.graph.domain.Literal
 import org.springframework.data.domain.Page
+import java.util.Optional
 
 interface LiteralRepresentationAdapter {
-
     fun Optional<Literal>.mapToLiteralRepresentation(): Optional<LiteralRepresentation> =
         map { it.toLiteralRepresentation() }
 

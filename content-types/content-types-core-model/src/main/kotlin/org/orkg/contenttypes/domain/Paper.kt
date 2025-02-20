@@ -1,15 +1,16 @@
 package org.orkg.contenttypes.domain
 
-import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.contenttypes.domain.identifiers.Identifiers
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.Visibility
+import java.time.OffsetDateTime
 
 data class Paper(
     override val id: ThingId,
@@ -29,7 +30,7 @@ data class Paper(
     val verified: Boolean,
     override val visibility: Visibility,
     val modifiable: Boolean,
-    override val unlistedBy: ContributorId? = null
+    override val unlistedBy: ContributorId? = null,
 ) : ContentType {
     companion object {
         fun from(resource: Resource, statements: Map<ThingId, List<GeneralStatement>>): Paper {

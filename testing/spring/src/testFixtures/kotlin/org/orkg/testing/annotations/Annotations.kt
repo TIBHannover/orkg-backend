@@ -1,8 +1,6 @@
 package org.orkg.testing.annotations
 
 import ac.simons.neo4j.migrations.springframework.boot.autoconfigure.MigrationsAutoConfiguration
-import kotlin.annotation.AnnotationRetention.RUNTIME
-import kotlin.reflect.KClass
 import org.neo4j.driver.Driver
 import org.orkg.testing.MockUserId
 import org.orkg.testing.Neo4jContainerInitializer
@@ -22,6 +20,8 @@ import org.springframework.data.neo4j.core.DatabaseSelectionProvider
 import org.springframework.data.neo4j.core.transaction.Neo4jTransactionManager
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
+import kotlin.annotation.AnnotationRetention.RUNTIME
+import kotlin.reflect.KClass
 
 @SpringBootTest
 @ContextConfiguration(initializers = [Neo4jContainerInitializer::class])

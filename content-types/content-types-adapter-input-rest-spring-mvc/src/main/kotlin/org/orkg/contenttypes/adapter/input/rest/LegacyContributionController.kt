@@ -22,26 +22,35 @@ class LegacyContributionController(
     @PutMapping("/{id}/metadata/featured")
     @ResponseStatus(HttpStatus.OK)
     @RequireCuratorRole
-    fun markFeatured(@PathVariable id: ThingId) {
+    fun markFeatured(
+        @PathVariable id: ThingId,
+    ) {
         resourceService.markAsFeatured(id)
     }
 
     @DeleteMapping("/{id}/metadata/featured")
     @RequireCuratorRole
-    fun unmarkFeatured(@PathVariable id: ThingId) {
+    fun unmarkFeatured(
+        @PathVariable id: ThingId,
+    ) {
         resourceService.markAsNonFeatured(id)
     }
 
     @PutMapping("/{id}/metadata/unlisted")
     @RequireCuratorRole
     @ResponseStatus(HttpStatus.OK)
-    fun markUnlisted(@PathVariable id: ThingId, currentUser: Authentication?) {
+    fun markUnlisted(
+        @PathVariable id: ThingId,
+        currentUser: Authentication?,
+    ) {
         resourceService.markAsUnlisted(id, currentUser.contributorId())
     }
 
     @DeleteMapping("/{id}/metadata/unlisted")
     @RequireCuratorRole
-    fun unmarkUnlisted(@PathVariable id: ThingId) {
+    fun unmarkUnlisted(
+        @PathVariable id: ThingId,
+    ) {
         resourceService.markAsListed(id)
     }
 }

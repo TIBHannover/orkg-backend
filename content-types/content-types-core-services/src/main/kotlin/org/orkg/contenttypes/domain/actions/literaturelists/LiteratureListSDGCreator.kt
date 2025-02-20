@@ -8,16 +8,16 @@ import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
 class LiteratureListSDGCreator(
-    private val statementCollectionPropertyCreator: StatementCollectionPropertyCreator
+    private val statementCollectionPropertyCreator: StatementCollectionPropertyCreator,
 ) : CreateLiteratureListAction {
     constructor(
         literalService: LiteralUseCases,
-        unsafeStatementUseCases: UnsafeStatementUseCases
+        unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(StatementCollectionPropertyCreator(literalService, unsafeStatementUseCases))
 
     override operator fun invoke(
         command: CreateLiteratureListCommand,
-        state: CreateLiteratureListState
+        state: CreateLiteratureListState,
     ): CreateLiteratureListState {
         statementCollectionPropertyCreator.create(
             contributorId = command.contributorId,

@@ -5,10 +5,10 @@ data class ComparisonConfig(
     val contributions: List<String>,
     val transpose: Boolean,
     val type: ComparisonType,
-    val shortCodes: List<String> = emptyList()
+    val shortCodes: List<String> = emptyList(),
 )
 
 enum class ComparisonType {
     PATH,
-    MERGE
+    MERGE,
 }

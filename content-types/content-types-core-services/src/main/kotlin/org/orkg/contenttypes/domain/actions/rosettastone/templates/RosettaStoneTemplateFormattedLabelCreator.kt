@@ -14,7 +14,7 @@ class RosettaStoneTemplateFormattedLabelCreator(
 ) : CreateRosettaStoneTemplateAction {
     override fun invoke(
         command: CreateRosettaStoneTemplateCommand,
-        state: CreateRosettaStoneTemplateState
+        state: CreateRosettaStoneTemplateState,
     ): CreateRosettaStoneTemplateState =
         state.apply {
             val literalId = literalService.create(

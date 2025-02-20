@@ -1,8 +1,5 @@
 package org.orkg.graph.adapter.output.facade
 
-import java.time.Clock
-import java.time.OffsetDateTime
-import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
@@ -23,6 +20,9 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Component
+import java.time.Clock
+import java.time.OffsetDateTime
+import java.util.Optional
 
 @Component
 class ListAdapter(

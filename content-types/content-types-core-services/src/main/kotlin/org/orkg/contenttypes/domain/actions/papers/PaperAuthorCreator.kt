@@ -12,8 +12,9 @@ class PaperAuthorCreator(
     unsafeResourceUseCases: UnsafeResourceUseCases,
     unsafeStatementUseCases: UnsafeStatementUseCases,
     literalService: LiteralUseCases,
-    listService: ListUseCases
-) : AuthorCreator(unsafeResourceUseCases, unsafeStatementUseCases, literalService, listService), CreatePaperAction {
+    listService: ListUseCases,
+) : AuthorCreator(unsafeResourceUseCases, unsafeStatementUseCases, literalService, listService),
+    CreatePaperAction {
     override operator fun invoke(command: CreatePaperCommand, state: CreatePaperState): CreatePaperState =
         state.apply { create(command.contributorId, state.authors, state.paperId!!) }
 }

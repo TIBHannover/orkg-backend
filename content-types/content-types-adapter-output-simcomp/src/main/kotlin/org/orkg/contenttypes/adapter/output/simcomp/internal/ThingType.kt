@@ -10,5 +10,5 @@ enum class ThingType {
     REVIEW,
     QUALITY_REVIEW,
     PAPER_VERSION,
-    ANY
+    ANY,
 }

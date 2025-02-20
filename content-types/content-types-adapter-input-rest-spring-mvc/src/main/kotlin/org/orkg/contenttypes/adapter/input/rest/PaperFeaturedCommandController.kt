@@ -15,18 +15,22 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/papers", produces = [MediaType.APPLICATION_JSON_VALUE])
 class PaperFeaturedCommandController(
-    private val service: ResourceUseCases
+    private val service: ResourceUseCases,
 ) {
     @PutMapping("/{id}/metadata/featured")
     @RequireCuratorRole
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun markFeatured(@PathVariable id: ThingId) {
+    fun markFeatured(
+        @PathVariable id: ThingId,
+    ) {
         service.markAsFeatured(id)
     }
 
     @DeleteMapping("/{id}/metadata/featured")
     @RequireCuratorRole
-    fun unmarkFeatured(@PathVariable id: ThingId) {
+    fun unmarkFeatured(
+        @PathVariable id: ThingId,
+    ) {
         service.markAsNonFeatured(id)
     }
 }

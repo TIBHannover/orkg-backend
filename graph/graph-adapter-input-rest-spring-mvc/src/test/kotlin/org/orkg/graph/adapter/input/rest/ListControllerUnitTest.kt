@@ -5,8 +5,6 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.runs
 import io.mockk.verify
-import java.time.OffsetDateTime
-import java.util.*
 import org.hamcrest.CoreMatchers.endsWith
 import org.hamcrest.Matchers
 import org.junit.jupiter.api.DisplayName
@@ -46,11 +44,20 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.time.OffsetDateTime
+import java.util.Optional
 
-@ContextConfiguration(classes = [ListController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class, WebMvcConfiguration::class])
+@ContextConfiguration(
+    classes = [
+        ListController::class,
+        ExceptionHandler::class,
+        CommonJacksonModule::class,
+        FixedClockConfig::class,
+        WebMvcConfiguration::class
+    ]
+)
 @WebMvcTest(controllers = [ListController::class])
 internal class ListControllerUnitTest : MockMvcBaseTest("lists") {
-
     @MockkBean
     private lateinit var listService: ListUseCases
 

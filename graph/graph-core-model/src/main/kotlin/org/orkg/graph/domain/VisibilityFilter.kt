@@ -7,7 +7,8 @@ enum class VisibilityFilter(
     UNLISTED(setOf(Visibility.UNLISTED)),
     FEATURED(setOf(Visibility.FEATURED)),
     NON_FEATURED(setOf(Visibility.DEFAULT)),
-    DELETED(setOf(Visibility.DELETED));
+    DELETED(setOf(Visibility.DELETED)),
+    ;
 
     companion object {
         fun fromFlags(

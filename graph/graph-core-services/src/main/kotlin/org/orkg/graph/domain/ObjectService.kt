@@ -1,7 +1,5 @@
 package org.orkg.graph.domain
 
-import java.util.*
-import kotlin.collections.List
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -10,7 +8,6 @@ import org.orkg.community.domain.Contributor
 import org.orkg.community.input.RetrieveContributorUseCase
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.CreateLiteralUseCase
-import org.orkg.graph.input.CreateObjectUseCase
 import org.orkg.graph.input.CreateObjectUseCase.CreateObjectRequest
 import org.orkg.graph.input.CreateObjectUseCase.ObjectStatement
 import org.orkg.graph.input.CreateObjectUseCase.TempResource
@@ -19,11 +16,16 @@ import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.ObjectUseCases
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.spring.data.annotations.TransactionalOnNeo4j
 import org.springframework.stereotype.Service
+import java.util.LinkedList
+import java.util.Queue
+import java.util.UUID
+import kotlin.collections.List
 
 @Service
 @TransactionalOnNeo4j
@@ -36,8 +38,7 @@ class ObjectService(
     private val listService: ListUseCases,
     private val thingService: ThingService,
     private val contributorService: RetrieveContributorUseCase,
-) : CreateObjectUseCase {
-
+) : ObjectUseCases {
     /**
      * Creates an object into the ORKG
      * and object here is the term, like a json-object
@@ -123,16 +124,20 @@ class ObjectService(
      */
     fun checkObjectStatements(
         data: HashMap<String, List<ObjectStatement>>,
-        predicates: HashMap<String, ThingId>
+        predicates: HashMap<String, ThingId>,
     ) {
         for ((predicate, value) in data) {
             val predicateId = extractPredicate(predicate, predicates)
             checkIfPredicateExists(predicateId!!.value)
             for (jsonObject in value) {
-                if (jsonObject.isExisting() && !jsonObject.isTempResource()) // Add an existing entity
+                if (jsonObject.isExisting() && !jsonObject.isTempResource()) {
+                    // Add an existing entity
                     checkIfThingExists(ThingId(jsonObject.`@id`!!))
-                if (jsonObject.isTyped()) // Check for existing classes
+                }
+                if (jsonObject.isTyped()) {
+                    // Check for existing classes
                     jsonObject.classes!!.forEach { checkIfClassExists(it) }
+                }
                 if (jsonObject.hasSubsequentStatements()) checkObjectStatements(jsonObject.values!!, predicates)
             }
         }
@@ -152,14 +157,14 @@ class ObjectService(
         recursive: Boolean = false,
         observatoryId: ObservatoryId,
         extractionMethod: ExtractionMethod,
-        organizationId: OrganizationId
+        organizationId: OrganizationId,
     ) {
         for ((predicate, value) in data) {
             val predicateId = extractPredicate(predicate, predicates)
             for (jsonObject in value) {
                 when {
                     jsonObject.isExisting() -> { // Add an existing resource or literal
-                        if (!jsonObject.isTempResource())
+                        if (!jsonObject.isTempResource()) {
                             unsafeStatementService.create(
                                 CreateStatementUseCase.CreateCommand(
                                     contributorId = userId,
@@ -168,15 +173,16 @@ class ObjectService(
                                     objectId = ThingId(jsonObject.`@id`!!)
                                 )
                             )
-                        else {
-                            if (!tempResources.containsKey(jsonObject.`@id`)) resourceQueue.add(
-                                TempResource(
-                                    subject,
-                                    predicateId!!,
-                                    jsonObject.`@id`!!
+                        } else {
+                            if (!tempResources.containsKey(jsonObject.`@id`)) {
+                                resourceQueue.add(
+                                    TempResource(
+                                        subject,
+                                        predicateId!!,
+                                        jsonObject.`@id`!!
+                                    )
                                 )
-                            )
-                            else {
+                            } else {
                                 val tempId = tempResources[jsonObject.`@id`]
                                 unsafeStatementService.create(
                                     CreateStatementUseCase.CreateCommand(
@@ -274,7 +280,7 @@ class ObjectService(
         queue: Queue<TempResource>,
         tempResources: HashMap<String, ThingId>,
         isRecursive: Boolean,
-        userId: ContributorId
+        userId: ContributorId,
     ) {
         // Loop until the Queue is empty
         var limit = 50 // this is just to ensure that a user won't add an id that is not there
@@ -298,6 +304,7 @@ class ObjectService(
     }
 
     // <editor-fold desc="Helper Functions">
+
     /**
      * Check if a predicate is existing
      * o/w throw out a suitable exception
@@ -314,8 +321,9 @@ class ObjectService(
     }
 
     private fun checkIfThingExists(id: ThingId) {
-        if (!thingService.existsById(id))
+        if (!thingService.existsById(id)) {
             throw ThingNotFound(id)
+        }
     }
 
     /**
@@ -332,10 +340,11 @@ class ObjectService(
      */
     private fun extractPredicate(
         predicate: String,
-        predicates: HashMap<String, ThingId>
-    ): ThingId? {
-        return if (predicate.startsWith("_")) predicates[predicate]
-        else ThingId(predicate)
+        predicates: HashMap<String, ThingId>,
+    ): ThingId? = if (predicate.startsWith("_")) {
+        predicates[predicate]
+    } else {
+        ThingId(predicate)
     }
 
     // </editor-fold>

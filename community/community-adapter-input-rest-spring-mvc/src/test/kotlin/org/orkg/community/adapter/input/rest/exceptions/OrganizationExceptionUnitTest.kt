@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController
 @WebMvcTest
 @ContextConfiguration(classes = [TestController::class, ExceptionHandler::class, FixedClockConfig::class])
 internal class OrganizationExceptionUnitTest : MockMvcBaseTest("exceptions") {
-
     @Test
     fun organizationNotFound() {
         val id = OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")
@@ -42,8 +41,8 @@ internal class OrganizationExceptionUnitTest : MockMvcBaseTest("exceptions") {
     @RestController
     internal class TestController {
         @GetMapping("/organization-not-found")
-        fun organizationNotFound(@RequestParam id: OrganizationId) {
-            throw OrganizationNotFound(id)
-        }
+        fun organizationNotFound(
+            @RequestParam id: OrganizationId,
+        ): Unit = throw OrganizationNotFound(id)
     }
 }

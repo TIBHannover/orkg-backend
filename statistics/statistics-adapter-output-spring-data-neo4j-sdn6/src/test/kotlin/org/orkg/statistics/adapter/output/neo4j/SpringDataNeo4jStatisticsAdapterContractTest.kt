@@ -42,22 +42,22 @@ internal class SpringDataNeo4jStatisticsAdapterContractTest(
     @Autowired private val springDataNeo4jResourceAdapter: ResourceRepository,
     @Autowired private val springDataNeo4jPredicateAdapter: PredicateRepository,
 ) : DescribeSpec({
-    include(
-        statisticsRepositoryContract(
-            springDataNeo4jStatisticsAdapter,
-            springDataNeo4jStatementAdapter,
-            springDataNeo4jClassAdapter,
-            springDataNeo4jLiteralAdapter,
-            springDataNeo4jResourceAdapter,
-            springDataNeo4jPredicateAdapter
+        include(
+            statisticsRepositoryContract(
+                springDataNeo4jStatisticsAdapter,
+                springDataNeo4jStatementAdapter,
+                springDataNeo4jClassAdapter,
+                springDataNeo4jLiteralAdapter,
+                springDataNeo4jResourceAdapter,
+                springDataNeo4jPredicateAdapter
+            )
         )
-    )
 
-    finalizeSpec {
-        springDataNeo4jStatementAdapter.deleteAll()
-        springDataNeo4jClassAdapter.deleteAll()
-        springDataNeo4jLiteralAdapter.deleteAll()
-        springDataNeo4jResourceAdapter.deleteAll()
-        springDataNeo4jPredicateAdapter.deleteAll()
-    }
-})
+        finalizeSpec {
+            springDataNeo4jStatementAdapter.deleteAll()
+            springDataNeo4jClassAdapter.deleteAll()
+            springDataNeo4jLiteralAdapter.deleteAll()
+            springDataNeo4jResourceAdapter.deleteAll()
+            springDataNeo4jPredicateAdapter.deleteAll()
+        }
+    })

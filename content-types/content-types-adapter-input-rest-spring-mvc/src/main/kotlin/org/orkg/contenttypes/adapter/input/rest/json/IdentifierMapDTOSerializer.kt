@@ -9,7 +9,7 @@ class IdentifierMapDTOSerializer : JsonSerializer<IdentifierMapDTO>() {
     override fun serialize(
         value: IdentifierMapDTO?,
         gen: JsonGenerator?,
-        serializers: SerializerProvider?
+        serializers: SerializerProvider?,
     ) {
         gen?.writePOJO(value?.values)
     }

@@ -3,7 +3,6 @@ package org.orkg.common.neo4jdsl
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.util.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.neo4j.cypherdsl.core.Cypher.anyNode
@@ -16,6 +15,7 @@ import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.data.neo4j.core.Neo4jClient
+import java.util.Optional
 
 internal class CypherQueryBuilderUnitTest : MockkBaseTest {
     private val configuration: Configuration = Configuration.defaultConfig()

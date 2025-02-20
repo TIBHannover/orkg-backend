@@ -6,7 +6,7 @@ import org.orkg.contenttypes.domain.actions.rosettastone.statements.UpdateRosett
 import org.orkg.contenttypes.input.RosettaStoneTemplateUseCases
 
 class RosettaStoneStatementTemplateUpdateValidator(
-    private val rosettaStoneTemplateService: RosettaStoneTemplateUseCases
+    private val rosettaStoneTemplateService: RosettaStoneTemplateUseCases,
 ) : UpdateRosettaStoneStatementAction {
     override fun invoke(command: UpdateRosettaStoneStatementCommand, state: State): State {
         val rosettaStoneTemplate = rosettaStoneTemplateService.findById(state.rosettaStoneStatement!!.templateId)

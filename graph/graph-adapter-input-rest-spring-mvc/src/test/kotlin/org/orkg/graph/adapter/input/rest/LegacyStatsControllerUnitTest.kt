@@ -3,7 +3,6 @@ package org.orkg.graph.adapter.input.rest
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
-import java.util.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ObservatoryId
@@ -14,7 +13,7 @@ import org.orkg.community.input.RetrieveContributorUseCase
 import org.orkg.graph.domain.ObservatoryStats
 import org.orkg.graph.domain.ResearchFieldNotFound
 import org.orkg.graph.domain.ResearchFieldStats
-import org.orkg.graph.input.RetrieveLegacyStatisticsUseCase
+import org.orkg.graph.input.LegacyStatisticsUseCases
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
@@ -27,13 +26,15 @@ import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.util.UUID
 
-@ContextConfiguration(classes = [LegacyStatsController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(
+    classes = [LegacyStatsController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class]
+)
 @WebMvcTest(controllers = [LegacyStatsController::class])
 internal class LegacyStatsControllerUnitTest : MockMvcBaseTest("stats") {
-
     @MockkBean
-    private lateinit var statisticsService: RetrieveLegacyStatisticsUseCase
+    private lateinit var statisticsService: LegacyStatisticsUseCases
 
     @MockkBean
     private lateinit var contributorService: RetrieveContributorUseCase

@@ -1,7 +1,5 @@
 package org.orkg.contenttypes.domain
 
-import java.time.OffsetDateTime
-import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -71,6 +69,8 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Component
+import java.time.OffsetDateTime
+import java.util.Optional
 
 @Component
 class TemplateService(
@@ -112,7 +112,7 @@ class TemplateService(
         includeSubfields: Boolean,
         researchProblem: ThingId?,
         targetClass: ThingId?,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<Template> =
         templateRepository.findAll(
             label = label,
@@ -193,21 +193,19 @@ class TemplateService(
         steps.execute(command, UpdateTemplatePropertyState())
     }
 
-    internal fun findSubgraph(resource: Resource): ContentTypeSubgraph {
-        return ContentTypeSubgraph(
-            root = resource.id,
-            statements = statementRepository.fetchAsBundle(
-                id = resource.id,
-                configuration = BundleConfiguration(
-                    minLevel = null,
-                    maxLevel = 2,
-                    blacklist = emptyList(),
-                    whitelist = emptyList()
-                ),
-                sort = Sort.unsorted()
-            ).groupBy { it.subject.id }
-        )
-    }
+    internal fun findSubgraph(resource: Resource): ContentTypeSubgraph = ContentTypeSubgraph(
+        root = resource.id,
+        statements = statementRepository.fetchAsBundle(
+            id = resource.id,
+            configuration = BundleConfiguration(
+                minLevel = null,
+                maxLevel = 2,
+                blacklist = emptyList(),
+                whitelist = emptyList()
+            ),
+            sort = Sort.unsorted()
+        ).groupBy { it.subject.id }
+    )
 
     internal fun Resource.toTemplate(): Template =
         Template.from(this, findSubgraph(this).statements)

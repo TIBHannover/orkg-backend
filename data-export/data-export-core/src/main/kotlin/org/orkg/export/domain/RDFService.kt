@@ -1,7 +1,5 @@
 package org.orkg.export.domain
 
-import java.io.Writer
-import java.util.*
 import org.eclipse.rdf4j.model.Model
 import org.eclipse.rdf4j.model.util.ModelBuilder
 import org.eclipse.rdf4j.model.vocabulary.OWL
@@ -26,6 +24,8 @@ import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.output.forEach
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import java.io.Writer
+import java.util.Optional
 
 private const val DEFAULT_FILE_NAME = "rdf-export-orkg.nt"
 
@@ -36,7 +36,7 @@ class RDFService(
     private val resourceRepository: ResourceRepository,
     private val classesRepository: ClassRepository,
     private val fileExportService: FileExportService,
-    private val classHierarchyRepository: ClassHierarchyRepository
+    private val classHierarchyRepository: ClassHierarchyRepository,
 ) : ExportRDFUseCase {
     override fun dumpToNTriple(writer: Writer) {
         classesRepository.forEach({
@@ -46,8 +46,9 @@ class RDFService(
             it.toNTriple(writer)
         }, writer::flush)
         resourceRepository.forEach({
-            if (Classes.rosettaStoneStatement !in it.classes)
+            if (Classes.rosettaStoneStatement !in it.classes) {
                 it.toNTriple(writer)
+            }
         }, writer::flush)
         statementRepository.forEach({
             it.toNTriple(writer)
@@ -158,7 +159,9 @@ fun GeneralStatement.toNTriple(writer: Writer) {
     val pPrefix = RdfConstants.PREDICATE_NS
     val statement = if (predicate.id == Predicates.hasListElement && index != null && subject is Resource && Classes.list in (subject as Resource).classes) {
         "${serializeThing(subject)} <http://www.w3.org/1999/02/22-rdf-syntax-ns#_${index!! + 1}> ${serializeThing(`object`)} .\n"
-    } else "${serializeThing(subject)} <$pPrefix${predicate.id}> ${serializeThing(`object`)} .\n"
+    } else {
+        "${serializeThing(subject)} <$pPrefix${predicate.id}> ${serializeThing(`object`)} .\n"
+    }
     if (statement[0] == '"') {
         logger.warn("Encountered statement with literal subject: {}", id)
         return
@@ -180,7 +183,8 @@ private fun serializeThing(thing: Thing): String {
 
 private fun String.toDatatypeURL(): String =
     // This will have issues if other prefixes are used.
-    if (this.startsWith("xsd:"))
+    if (this.startsWith("xsd:")) {
         "http://www.w3.org/2001/XMLSchema#${replace("xsd:", "")}"
-    else
+    } else {
         this
+    }

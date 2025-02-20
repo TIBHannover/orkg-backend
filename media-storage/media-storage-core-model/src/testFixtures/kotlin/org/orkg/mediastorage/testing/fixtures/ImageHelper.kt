@@ -1,13 +1,5 @@
 package org.orkg.mediastorage.testing.fixtures
 
-import org.springframework.util.MimeType
-import java.io.BufferedReader
-import java.net.URI
-import java.nio.file.Files
-import java.time.Clock
-import java.time.OffsetDateTime
-import java.util.*
-import kotlin.io.path.Path
 import org.orkg.common.ContributorId
 import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.community.input.UpdateOrganizationUseCases
@@ -15,6 +7,14 @@ import org.orkg.mediastorage.domain.Image
 import org.orkg.mediastorage.domain.ImageData
 import org.orkg.mediastorage.domain.ImageId
 import org.springframework.core.io.ClassPathResource
+import org.springframework.util.MimeType
+import java.io.BufferedReader
+import java.net.URI
+import java.nio.file.Files
+import java.time.Clock
+import java.time.OffsetDateTime
+import java.util.UUID
+import kotlin.io.path.Path
 
 val testImage: URI = URI.create("classpath:/images/test_image.png")
 val encodedTestImage: URI = URI.create("classpath:/images/test_image_encoded.txt")

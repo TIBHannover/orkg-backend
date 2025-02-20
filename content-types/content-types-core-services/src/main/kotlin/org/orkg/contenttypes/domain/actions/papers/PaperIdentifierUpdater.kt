@@ -1,20 +1,20 @@
 package org.orkg.contenttypes.domain.actions.papers
 
-import org.orkg.contenttypes.domain.Identifiers
 import org.orkg.contenttypes.domain.actions.IdentifierUpdater
 import org.orkg.contenttypes.domain.actions.UpdatePaperCommand
 import org.orkg.contenttypes.domain.actions.UpdatePaperState
+import org.orkg.contenttypes.domain.identifiers.Identifiers
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
 class PaperIdentifierUpdater(
-    private val identifierUpdater: IdentifierUpdater
+    private val identifierUpdater: IdentifierUpdater,
 ) : UpdatePaperAction {
     constructor(
         statementService: StatementUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
-        literalService: LiteralUseCases
+        literalService: LiteralUseCases,
     ) : this(
         IdentifierUpdater(statementService, unsafeStatementUseCases, literalService)
     )

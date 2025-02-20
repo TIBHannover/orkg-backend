@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController
 @WebMvcTest
 @ContextConfiguration(classes = [TestController::class, ExceptionHandler::class, FixedClockConfig::class])
 internal class PaperExceptionUnitTest : MockMvcBaseTest("literature-lists") {
-
     @Test
     fun paperNotModifiable() {
         val id = "R123"
@@ -42,8 +41,8 @@ internal class PaperExceptionUnitTest : MockMvcBaseTest("literature-lists") {
     @RestController
     internal class TestController {
         @GetMapping("/paper-not-modifiable")
-        fun paperNotModifiable(@RequestParam id: ThingId) {
-            throw PaperNotModifiable(id)
-        }
+        fun paperNotModifiable(
+            @RequestParam id: ThingId,
+        ): Unit = throw PaperNotModifiable(id)
     }
 }

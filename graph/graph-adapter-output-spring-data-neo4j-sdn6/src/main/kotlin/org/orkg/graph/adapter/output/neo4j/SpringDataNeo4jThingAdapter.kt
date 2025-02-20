@@ -1,6 +1,5 @@
 package org.orkg.graph.adapter.output.neo4j
 
-import java.util.*
 import org.orkg.common.ThingId
 import org.orkg.graph.adapter.output.neo4j.internal.Neo4jThing
 import org.orkg.graph.adapter.output.neo4j.internal.Neo4jThingRepository
@@ -12,6 +11,7 @@ import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
+import java.util.Optional
 
 const val THING_ID_TO_THING_CACHE = "thing-id-to-thing"
 

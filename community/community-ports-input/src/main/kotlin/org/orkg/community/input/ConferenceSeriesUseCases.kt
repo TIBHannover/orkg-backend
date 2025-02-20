@@ -1,15 +1,14 @@
 package org.orkg.community.input
 
-import java.util.*
 import org.orkg.common.OrganizationId
 import org.orkg.community.domain.ConferenceSeries
 import org.orkg.community.domain.ConferenceSeriesId
 import org.orkg.community.domain.Metadata
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import java.util.Optional
 
 interface ConferenceSeriesUseCases {
-
     fun create(id: ConferenceSeriesId?, organizationId: OrganizationId, name: String, url: String, displayId: String, metadata: Metadata): ConferenceSeries
 
     fun findAll(pageable: Pageable): Page<ConferenceSeries>

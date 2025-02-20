@@ -1,6 +1,5 @@
 package org.orkg.community.domain
 
-import java.util.*
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
@@ -18,13 +17,15 @@ import org.orkg.spring.data.annotations.TransactionalOnJPA
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import java.util.Optional
+import java.util.UUID
 
 @Service
 @TransactionalOnJPA
 class ObservatoryService(
     private val postgresObservatoryRepository: ObservatoryRepository,
     private val postgresOrganizationRepository: OrganizationRepository,
-    private val resourceRepository: ResourceRepository
+    private val resourceRepository: ResourceRepository,
 ) : ObservatoryUseCases {
     override fun create(command: CreateObservatoryUseCase.CreateCommand): ObservatoryId {
         postgresObservatoryRepository.findByName(command.name).ifPresent {

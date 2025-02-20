@@ -33,7 +33,7 @@ class ImportService(
     private val resourceService: ResourceUseCases,
     private val classService: ClassUseCases,
     private val predicateService: PredicateUseCases,
-    private val literalService: LiteralUseCases
+    private val literalService: LiteralUseCases,
 ) : ImportUseCases {
     init {
         externalClassRepositories.sortBy { it.supportsMultipleOntologies() }
@@ -44,7 +44,7 @@ class ImportService(
     override fun importResourceByShortForm(
         contributorId: ContributorId,
         ontologyId: String,
-        shortForm: String
+        shortForm: String,
     ): ThingId {
         externalResourceRepositories.forEach { repository ->
             if (repository.supportsOntology(ontologyId)) {
@@ -70,7 +70,7 @@ class ImportService(
     override fun importResourceByURI(
         contributorId: ContributorId,
         ontologyId: String,
-        uri: ParsedIRI
+        uri: ParsedIRI,
     ): ThingId {
         val statements = statementService.findAll(
             pageable = PageRequests.SINGLE,
@@ -96,7 +96,7 @@ class ImportService(
     override fun importPredicateByShortForm(
         contributorId: ContributorId,
         ontologyId: String,
-        shortForm: String
+        shortForm: String,
     ): ThingId {
         externalPredicateRepositories.forEach { repository ->
             if (repository.supportsOntology(ontologyId)) {
@@ -122,7 +122,7 @@ class ImportService(
     override fun importPredicateByURI(
         contributorId: ContributorId,
         ontologyId: String,
-        uri: ParsedIRI
+        uri: ParsedIRI,
     ): ThingId {
         val statements = statementService.findAll(
             pageable = PageRequests.SINGLE,
@@ -148,7 +148,7 @@ class ImportService(
     override fun importClassByShortForm(
         contributorId: ContributorId,
         ontologyId: String,
-        shortForm: String
+        shortForm: String,
     ): ThingId {
         externalClassRepositories.forEach { repository ->
             if (repository.supportsOntology(ontologyId)) {
@@ -168,7 +168,7 @@ class ImportService(
     override fun importClassByURI(
         contributorId: ContributorId,
         ontologyId: String,
-        uri: ParsedIRI
+        uri: ParsedIRI,
     ): ThingId {
         val existingClass = classService.findByURI(uri)
         if (existingClass.isPresent) {
@@ -224,7 +224,7 @@ class ImportService(
     private fun createSameAsLiteral(
         contributorId: ContributorId,
         externalThing: ExternalThing,
-        subjectId: ThingId
+        subjectId: ThingId,
     ) {
         val sameAsLiteralId = literalService.create(
             CreateLiteralUseCase.CreateCommand(
@@ -246,7 +246,7 @@ class ImportService(
     private fun createDescription(
         externalThing: ExternalThing,
         contributorId: ContributorId,
-        subjectId: ThingId
+        subjectId: ThingId,
     ) {
         externalThing.description?.let { description ->
             val descriptionId = literalService.create(

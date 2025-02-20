@@ -7,9 +7,6 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.runs
 import io.mockk.verify
-import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter
-import java.util.*
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.DisplayName
@@ -26,7 +23,6 @@ import org.orkg.common.json.CommonJacksonModule
 import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
 import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
-import org.orkg.contenttypes.input.ContributionUseCases
 import org.orkg.contenttypes.input.CreateSmartReviewSectionUseCase
 import org.orkg.contenttypes.input.CreateSmartReviewUseCase
 import org.orkg.contenttypes.input.DeleteSmartReviewSectionUseCase
@@ -66,11 +62,23 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Optional
+import java.util.UUID
 
-@ContextConfiguration(classes = [SmartReviewController::class, ExceptionHandler::class, CommonJacksonModule::class, ContentTypeJacksonModule::class, FixedClockConfig::class, WebMvcConfiguration::class])
+@ContextConfiguration(
+    classes = [
+        SmartReviewController::class,
+        ExceptionHandler::class,
+        CommonJacksonModule::class,
+        ContentTypeJacksonModule::class,
+        FixedClockConfig::class,
+        WebMvcConfiguration::class
+    ]
+)
 @WebMvcTest(controllers = [SmartReviewController::class])
 internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") {
-
     @MockkBean
     private lateinit var smartReviewService: SmartReviewUseCases
 
@@ -79,9 +87,6 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
 
     @MockkBean
     private lateinit var statementService: StatementUseCases
-
-    @MockkBean
-    private lateinit var contributionService: ContributionUseCases
 
     @Test
     @DisplayName("Given a smart review, when it is fetched by id and service succeeds, then status is 200 OK and smart review is returned")
@@ -386,10 +391,12 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
             .andExpect(header().string("Location", endsWith("/api/smart-reviews/$id")))
 
         verify(exactly = 1) {
-            smartReviewService.create(withArg<CreateSmartReviewSectionUseCase.CreateComparisonSectionCommand> {
-                it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateComparisonSectionCommand>()
-                it.index shouldBe null
-            })
+            smartReviewService.create(
+                withArg<CreateSmartReviewSectionUseCase.CreateComparisonSectionCommand> {
+                    it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateComparisonSectionCommand>()
+                    it.index shouldBe null
+                }
+            )
         }
     }
 
@@ -429,10 +436,12 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) {
-            smartReviewService.create(withArg<CreateSmartReviewSectionUseCase.CreateComparisonSectionCommand> {
-                it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateComparisonSectionCommand>()
-                it.index shouldBe index
-            })
+            smartReviewService.create(
+                withArg<CreateSmartReviewSectionUseCase.CreateComparisonSectionCommand> {
+                    it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateComparisonSectionCommand>()
+                    it.index shouldBe index
+                }
+            )
         }
     }
 
@@ -455,10 +464,12 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
             .andExpect(header().string("Location", endsWith("/api/smart-reviews/$id")))
 
         verify(exactly = 1) {
-            smartReviewService.create(withArg<CreateSmartReviewSectionUseCase.CreateVisualizationSectionCommand> {
-                it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateVisualizationSectionCommand>()
-                it.index shouldBe null
-            })
+            smartReviewService.create(
+                withArg<CreateSmartReviewSectionUseCase.CreateVisualizationSectionCommand> {
+                    it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateVisualizationSectionCommand>()
+                    it.index shouldBe null
+                }
+            )
         }
     }
 
@@ -498,10 +509,12 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) {
-            smartReviewService.create(withArg<CreateSmartReviewSectionUseCase.CreateVisualizationSectionCommand> {
-                it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateVisualizationSectionCommand>()
-                it.index shouldBe index
-            })
+            smartReviewService.create(
+                withArg<CreateSmartReviewSectionUseCase.CreateVisualizationSectionCommand> {
+                    it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateVisualizationSectionCommand>()
+                    it.index shouldBe index
+                }
+            )
         }
     }
 
@@ -524,10 +537,12 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
             .andExpect(header().string("Location", endsWith("/api/smart-reviews/$id")))
 
         verify(exactly = 1) {
-            smartReviewService.create(withArg<CreateSmartReviewSectionUseCase.CreateResourceSectionCommand> {
-                it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateResourceSectionCommand>()
-                it.index shouldBe null
-            })
+            smartReviewService.create(
+                withArg<CreateSmartReviewSectionUseCase.CreateResourceSectionCommand> {
+                    it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateResourceSectionCommand>()
+                    it.index shouldBe null
+                }
+            )
         }
     }
 
@@ -567,10 +582,12 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) {
-            smartReviewService.create(withArg<CreateSmartReviewSectionUseCase.CreateResourceSectionCommand> {
-                it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateResourceSectionCommand>()
-                it.index shouldBe index
-            })
+            smartReviewService.create(
+                withArg<CreateSmartReviewSectionUseCase.CreateResourceSectionCommand> {
+                    it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateResourceSectionCommand>()
+                    it.index shouldBe index
+                }
+            )
         }
     }
 
@@ -593,10 +610,12 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
             .andExpect(header().string("Location", endsWith("/api/smart-reviews/$id")))
 
         verify(exactly = 1) {
-            smartReviewService.create(withArg<CreateSmartReviewSectionUseCase.CreatePredicateSectionCommand> {
-                it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreatePredicateSectionCommand>()
-                it.index shouldBe null
-            })
+            smartReviewService.create(
+                withArg<CreateSmartReviewSectionUseCase.CreatePredicateSectionCommand> {
+                    it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreatePredicateSectionCommand>()
+                    it.index shouldBe null
+                }
+            )
         }
     }
 
@@ -636,10 +655,12 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) {
-            smartReviewService.create(withArg<CreateSmartReviewSectionUseCase.CreatePredicateSectionCommand> {
-                it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreatePredicateSectionCommand>()
-                it.index shouldBe index
-            })
+            smartReviewService.create(
+                withArg<CreateSmartReviewSectionUseCase.CreatePredicateSectionCommand> {
+                    it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreatePredicateSectionCommand>()
+                    it.index shouldBe index
+                }
+            )
         }
     }
 
@@ -662,10 +683,12 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
             .andExpect(header().string("Location", endsWith("/api/smart-reviews/$id")))
 
         verify(exactly = 1) {
-            smartReviewService.create(withArg<CreateSmartReviewSectionUseCase.CreateOntologySectionCommand> {
-                it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateOntologySectionCommand>()
-                it.index shouldBe null
-            })
+            smartReviewService.create(
+                withArg<CreateSmartReviewSectionUseCase.CreateOntologySectionCommand> {
+                    it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateOntologySectionCommand>()
+                    it.index shouldBe null
+                }
+            )
         }
     }
 
@@ -706,10 +729,12 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) {
-            smartReviewService.create(withArg<CreateSmartReviewSectionUseCase.CreateOntologySectionCommand> {
-                it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateOntologySectionCommand>()
-                it.index shouldBe index
-            })
+            smartReviewService.create(
+                withArg<CreateSmartReviewSectionUseCase.CreateOntologySectionCommand> {
+                    it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateOntologySectionCommand>()
+                    it.index shouldBe index
+                }
+            )
         }
     }
 
@@ -732,10 +757,12 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
             .andExpect(header().string("Location", endsWith("/api/smart-reviews/$id")))
 
         verify(exactly = 1) {
-            smartReviewService.create(withArg<CreateSmartReviewSectionUseCase.CreateTextSectionCommand> {
-                it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateTextSectionCommand>()
-                it.index shouldBe null
-            })
+            smartReviewService.create(
+                withArg<CreateSmartReviewSectionUseCase.CreateTextSectionCommand> {
+                    it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateTextSectionCommand>()
+                    it.index shouldBe null
+                }
+            )
         }
     }
 
@@ -776,10 +803,12 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) {
-            smartReviewService.create(withArg<CreateSmartReviewSectionUseCase.CreateTextSectionCommand> {
-                it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateTextSectionCommand>()
-                it.index shouldBe index
-            })
+            smartReviewService.create(
+                withArg<CreateSmartReviewSectionUseCase.CreateTextSectionCommand> {
+                    it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateTextSectionCommand>()
+                    it.index shouldBe index
+                }
+            )
         }
     }
 
@@ -1066,7 +1095,9 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
         val id = ThingId("R3541")
         val sectionId = ThingId("R123")
         val command = DeleteSmartReviewSectionUseCase.DeleteCommand(
-            id, sectionId, ContributorId(MockUserId.USER)
+            id,
+            sectionId,
+            ContributorId(MockUserId.USER)
         )
         every { smartReviewService.delete(command) } just runs
 

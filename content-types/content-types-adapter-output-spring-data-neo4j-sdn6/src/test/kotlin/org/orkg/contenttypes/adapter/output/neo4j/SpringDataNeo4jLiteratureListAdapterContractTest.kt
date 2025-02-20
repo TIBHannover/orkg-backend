@@ -38,16 +38,16 @@ internal class SpringDataNeo4jLiteratureListAdapterContractTest(
     @Autowired private val springDataNeo4jPredicateAdapter: PredicateRepository,
     @Autowired private val springDataNeo4jClassAdapter: ClassRepository,
     @Autowired private val springDataNeo4jLiteralAdapter: LiteralRepository,
-    @Autowired private val springDataNeo4jStatementAdapter: StatementRepository
+    @Autowired private val springDataNeo4jStatementAdapter: StatementRepository,
 ) : DescribeSpec({
-    include(
-        literatureListRepositoryContract(
-            springDataNeo4jLiteratureListAdapter,
-            springDataNeo4jStatementAdapter,
-            springDataNeo4jClassAdapter,
-            springDataNeo4jLiteralAdapter,
-            springDataNeo4jResourceAdapter,
-            springDataNeo4jPredicateAdapter
+        include(
+            literatureListRepositoryContract(
+                springDataNeo4jLiteratureListAdapter,
+                springDataNeo4jStatementAdapter,
+                springDataNeo4jClassAdapter,
+                springDataNeo4jLiteralAdapter,
+                springDataNeo4jResourceAdapter,
+                springDataNeo4jPredicateAdapter
+            )
         )
-    )
-})
+    })

@@ -1,8 +1,5 @@
 package org.orkg.graph.adapter.output.neo4j
 
-import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter
-import java.util.function.BiFunction
 import org.apache.lucene.queryparser.classic.QueryParser
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.jetbrains.annotations.Contract
@@ -49,6 +46,9 @@ import org.orkg.graph.output.PredicateRepository
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
+import java.util.function.BiFunction
 
 val reservedLabels = setOf(
     Classes.literal,
@@ -72,7 +72,7 @@ data class StatementMapper(
         predicateRepository: PredicateRepository,
         subject: SymbolicName,
         relation: SymbolicName,
-        `object`: SymbolicName
+        `object`: SymbolicName,
     ) : this(predicateRepository, subject.value, relation.value, `object`.value)
 
     override fun apply(typeSystem: TypeSystem, record: Record): GeneralStatement {
@@ -95,21 +95,25 @@ data class StatementMapper(
 
 data class LiteralMapper(val name: String) : BiFunction<TypeSystem, Record, Literal> {
     constructor(symbolicName: SymbolicName) : this(symbolicName.value)
+
     override fun apply(typeSystem: TypeSystem, record: Record) = record[name].asNode().toLiteral()
 }
 
 data class ResourceMapper(val name: String) : BiFunction<TypeSystem, Record, Resource> {
     constructor(symbolicName: SymbolicName) : this(symbolicName.value)
+
     override fun apply(typeSystem: TypeSystem, record: Record) = record[name].asNode().toResource()
 }
 
 data class PredicateMapper(val name: String) : BiFunction<TypeSystem, Record, Predicate> {
     constructor(symbolicName: SymbolicName) : this(symbolicName.value)
+
     override fun apply(typeSystem: TypeSystem, record: Record) = record[name].asNode().toPredicate()
 }
 
 data class ClassMapper(val name: String) : BiFunction<TypeSystem, Record, Class> {
     constructor(symbolicName: SymbolicName) : this(symbolicName.value)
+
     override fun apply(typeSystem: TypeSystem, record: Record) = record[name].asNode().toClass()
 }
 
@@ -163,18 +167,31 @@ fun Node.toPredicate() = Predicate(
 )
 
 internal fun Value.asNullableBoolean(): Boolean? = if (isNull) null else isTrue
+
 internal fun Value.toOffsetDateTime() = OffsetDateTime.parse(asString(), DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+
 internal fun Value.toIRI() = if (isNull) null else ParsedIRI(asString())
+
 internal fun Value.toStatementId() = StatementId(asString())
+
 internal fun Value.toContributorId() = if (isNull) ContributorId.UNKNOWN else ContributorId(asString())
+
 internal fun Value.toNullableContributorId() = if (isNull) null else ContributorId(asString())
+
 internal fun Value.toObservatoryId() = if (isNull) ObservatoryId.UNKNOWN else ObservatoryId(asString())
+
 internal fun Value.toOrganizationId() = if (isNull) OrganizationId.UNKNOWN else OrganizationId(asString())
+
 internal fun Value.toExtractionMethod() = if (isNull) ExtractionMethod.UNKNOWN else ExtractionMethod.valueOf(asString())
+
 fun Value.toThingId() = if (isNull) null else ThingId(asString())
+
 internal fun Value.toVisibility() = if (isNull) Visibility.DEFAULT else Visibility.valueOf(asString())
+
 internal fun Value.asNullableInt() = if (isNull) null else asInt()
+
 internal fun Value.asNullableLong() = if (isNull) null else asLong()
+
 internal fun Value.asNullableNode() = if (isNull) null else asNode()
 
 @Contract(pure = true)
@@ -188,8 +205,11 @@ internal fun endNode(symbolicName: SymbolicName): FunctionInvocation =
 internal operator fun MapAccessor.get(symbolicName: SymbolicName): Value = this[symbolicName.value]
 
 fun paperNode() = node("Paper")
+
 fun comparisonNode() = node("Comparison")
+
 fun problemNode() = node("Problem")
+
 fun contributionNode() = node("Contribution")
 
 fun ExposesWith.withSortableFields(node: String) =
@@ -208,7 +228,7 @@ internal fun StatementBuilder.TerminalExposesOrderBy.build(pageable: Pageable): 
 
 fun Sort.toSortItems(
     node: Expression,
-    vararg knownProperties: String
+    vararg knownProperties: String,
 ): kotlin.collections.List<SortItem> = toSortItems(
     propertyMappings = knownProperties.associateWith { node.property(it) },
     knownProperties = knownProperties
@@ -216,7 +236,7 @@ fun Sort.toSortItems(
 
 fun Sort.toSortItems(
     propertyMappings: Map<String, Expression>? = null,
-    vararg knownProperties: String
+    vararg knownProperties: String,
 ): kotlin.collections.List<SortItem> =
     map { sort ->
         if (knownProperties.isNotEmpty() && sort.property !in knownProperties) {
@@ -239,12 +259,12 @@ inline fun <T : Collection<*>> T.toCondition(mapper: (T) -> Condition): Conditio
     if (isEmpty()) noCondition() else mapper(this)
 
 fun StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere.where(
-    vararg conditions: Condition
+    vararg conditions: Condition,
 ): StatementBuilder.OrderableOngoingReadingAndWithWithWhere =
     where(conditions.reduceOrNull(Condition::and) ?: noCondition())
 
 fun StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere.where(
-    conditions: kotlin.collections.List<Condition>
+    conditions: kotlin.collections.List<Condition>,
 ): StatementBuilder.OrderableOngoingReadingAndWithWithWhere =
     where(conditions.reduceOrNull(Condition::and) ?: noCondition())
 
@@ -252,7 +272,7 @@ fun StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere?.call(
     function: String,
     arguments: Array<Expression>,
     yieldItems: Array<String>,
-    condition: Condition
+    condition: Condition,
 ): StatementBuilder.OngoingReading =
     this?.apply {
         call(function)
@@ -260,16 +280,16 @@ fun StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere?.call(
             .yield(*yieldItems)
             .where(condition)
     } ?: call(function)
-            .withArgs(*arguments)
-            .yield(*yieldItems)
-            .where(condition)
+        .withArgs(*arguments)
+        .yield(*yieldItems)
+        .where(condition)
 
 fun Collection<PatternElement>.toMatchOrNull(node: org.neo4j.cypherdsl.core.Node): StatementBuilder.OngoingReadingWithoutWhere? =
     if (isEmpty()) null else match(node).match(this)
 
 fun matchDistinct(
     node: org.neo4j.cypherdsl.core.Node,
-    patternGenerator: (org.neo4j.cypherdsl.core.Node) -> Collection<PatternElement>
+    patternGenerator: (org.neo4j.cypherdsl.core.Node) -> Collection<PatternElement>,
 ): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere =
     patternGenerator(node).let { patterns ->
         match(node).let { if (patterns.isNotEmpty()) it.match(patterns) else it }.withDistinct(node)
@@ -287,7 +307,7 @@ inline fun Sort.orElseGet(sort: () -> Sort): Sort =
 fun orderByOptimizations(
     node: Expression,
     sort: Sort,
-    vararg properties: String
+    vararg properties: String,
 ): kotlin.collections.List<Condition> = orderByOptimizations(
     propertyMappings = properties.associateWith { node.property(it) },
     sort = sort,
@@ -297,7 +317,7 @@ fun orderByOptimizations(
 fun orderByOptimizations(
     propertyMappings: Map<String, Expression>,
     sort: Sort,
-    vararg properties: String
+    vararg properties: String,
 ): kotlin.collections.List<Condition> {
     val sortProperties = sort.map { it.property }
     return properties.filter { it in sortProperties }
@@ -321,7 +341,9 @@ val FuzzySearchString.query: String get() {
             builder.append(reader.readWord())
             builder.append("*")
             reader.skipWhitespace()
-        } else if ((c == '+' || c == '-') && reader.canRead(1) && reader.peek(1).isWordCharacter() &&
+        } else if ((c == '+' || c == '-') &&
+            reader.canRead(1) &&
+            reader.peek(1).isWordCharacter() &&
             (builder.isEmpty() || reader.cursor > 0 && reader.peek(-1).isWhitespace())
         ) {
             reader.skip()

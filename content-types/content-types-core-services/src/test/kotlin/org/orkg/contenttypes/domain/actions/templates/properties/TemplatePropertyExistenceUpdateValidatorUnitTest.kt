@@ -6,8 +6,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.verify
-import java.util.*
-import java.util.stream.Stream
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -29,6 +27,8 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
+import java.util.Optional
+import java.util.stream.Stream
 
 internal class TemplatePropertyExistenceUpdateValidatorUnitTest : MockkBaseTest {
     private val templateService: TemplateService = mockk()

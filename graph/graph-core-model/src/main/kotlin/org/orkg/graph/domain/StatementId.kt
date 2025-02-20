@@ -3,7 +3,6 @@ package org.orkg.graph.domain
 import org.orkg.common.VALID_ID_REGEX
 
 data class StatementId(val value: String) : Comparable<StatementId> {
-
     init {
         require(value.isNotBlank()) { "ID must not be blank" }
         require(value.startsWith("S")) { "ID must start with \"S\"" }

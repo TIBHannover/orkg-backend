@@ -1,12 +1,11 @@
 package org.orkg.contenttypes.adapter.input.rest.mapping
 
-import java.util.*
 import org.orkg.contenttypes.adapter.input.rest.RosettaStoneTemplateRepresentation
 import org.orkg.contenttypes.domain.RosettaStoneTemplate
 import org.springframework.data.domain.Page
+import java.util.Optional
 
 interface RosettaStoneTemplateRepresentationAdapter : TemplatePropertyRepresentationAdapter {
-
     fun Optional<RosettaStoneTemplate>.mapToRosettaStoneTemplateRepresentation(): Optional<RosettaStoneTemplateRepresentation> =
         map { it.toRosettaStoneTemplateRepresentation() }
 

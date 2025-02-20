@@ -12,7 +12,7 @@ class CachedMetric private constructor(
     override val group: String,
     override val parameterSpecs: Map<String, ParameterSpec<Any>>,
     private val cache: Cache?,
-    supplier: (parameters: ParameterMap) -> Number
+    supplier: (parameters: ParameterMap) -> Number,
 ) : SimpleMetric(name, description, group, parameterSpecs, supplier) {
     init {
         if (cache == null) {
@@ -34,7 +34,7 @@ class CachedMetric private constructor(
             description: String,
             group: String = Metric.DEFAULT_GROUP,
             parameterSpecs: Map<String, ParameterSpec<Any>> = emptyMap(),
-            supplier: (parameters: ParameterMap) -> Number
+            supplier: (parameters: ParameterMap) -> Number,
         ): Metric =
             CachedMetric(
                 name = name,

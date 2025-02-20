@@ -11,7 +11,7 @@ class CypherQueryBuilderConfiguration {
     @Bean
     fun cypherQueryBuilderFactory(
         configuration: CypherConfiguration,
-        neo4jClient: Neo4jClient
+        neo4jClient: Neo4jClient,
     ): CypherQueryBuilderFactory =
         CypherQueryBuilderFactory(configuration, neo4jClient)
 }

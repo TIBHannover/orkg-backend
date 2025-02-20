@@ -4,7 +4,8 @@ enum class Visibility {
     DEFAULT,
     UNLISTED,
     FEATURED,
-    DELETED;
+    DELETED,
+    ;
 
     fun toVisibilityFilter(): VisibilityFilter =
         when (this) {

@@ -7,11 +7,6 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.runs
 import io.mockk.verify
-import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter
-import java.util.*
-import java.util.regex.PatternSyntaxException
-import java.util.stream.Stream
 import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -88,6 +83,12 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Optional
+import java.util.UUID
+import java.util.regex.PatternSyntaxException
+import java.util.stream.Stream
 
 @ContextConfiguration(
     classes = [
@@ -100,7 +101,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 )
 @WebMvcTest(controllers = [TemplateController::class])
 internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
-
     @MockkBean
     private lateinit var templateService: TemplateUseCases
 
@@ -593,7 +593,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
 
     private inline fun <reified T : CreateTemplatePropertyUseCase.CreateCommand> createProperty(
         request: TemplatePropertyRequest,
-        additionalRequestFieldDescriptors: List<FieldDescriptor> = emptyList()
+        additionalRequestFieldDescriptors: List<FieldDescriptor> = emptyList(),
     ) {
         val templateId = ThingId("R3541")
         val id = ThingId("R123")
@@ -627,9 +627,11 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) {
-            templateService.create(withArg<T> {
-                it.shouldBeInstanceOf<T>()
-            })
+            templateService.create(
+                withArg<T> {
+                    it.shouldBeInstanceOf<T>()
+                }
+            )
         }
     }
 
@@ -685,7 +687,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
     @MethodSource("templatePropertyRequests")
     @TestWithMockUser
     fun `Given a template property create request, when service reports datatype or class range not found, then status is 404 NOT FOUND`(
-        request: TemplatePropertyRequest
+        request: TemplatePropertyRequest,
     ) {
         val templateId = ThingId("R123")
         val exception = ClassNotFound.withThingId(ThingId("invalid"))
@@ -708,7 +710,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
     @MethodSource("templatePropertyRequests")
     @TestWithMockUser
     fun `Given a template property create request, when service reports invalid min count, then status is 400 BAD REQUEST`(
-        request: TemplatePropertyRequest
+        request: TemplatePropertyRequest,
     ) {
         val templateId = ThingId("R123")
         val exception = InvalidMinCount(-1)
@@ -731,7 +733,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
     @MethodSource("templatePropertyRequests")
     @TestWithMockUser
     fun `Given a template property create request, when service reports invalid max count, then status is 400 BAD REQUEST`(
-        request: TemplatePropertyRequest
+        request: TemplatePropertyRequest,
     ) {
         val templateId = ThingId("R123")
         val exception = InvalidMaxCount(-1)
@@ -754,7 +756,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
     @MethodSource("templatePropertyRequests")
     @TestWithMockUser
     fun `Given a template property create request, when service reports invalid cardinality, then status is 400 BAD REQUEST`(
-        request: TemplatePropertyRequest
+        request: TemplatePropertyRequest,
     ) {
         val templateId = ThingId("R123")
         val exception = InvalidCardinality(5, 1)
@@ -777,7 +779,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
     @MethodSource("templatePropertyRequests")
     @TestWithMockUser
     fun `Given a template property create request, when service reports invalid pattern, then status is 400 BAD REQUEST`(
-        request: TemplatePropertyRequest
+        request: TemplatePropertyRequest,
     ) {
         val templateId = ThingId("R123")
         val exception = InvalidRegexPattern("\\", PatternSyntaxException("Invalid regex pattern", "\\", 1))
@@ -800,7 +802,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
     @MethodSource("templatePropertyRequests")
     @TestWithMockUser
     fun `Given a template property create request, when service reports path predicate not found, then status is 404 NOT FOUND`(
-        request: TemplatePropertyRequest
+        request: TemplatePropertyRequest,
     ) {
         val templateId = ThingId("R123")
         val exception = PredicateNotFound("P123")
@@ -823,7 +825,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
     @MethodSource("templatePropertyRequests")
     @TestWithMockUser
     fun `Given a template property create request, when service reports template is closed, then status is 400 BAD REQUEST`(
-        request: TemplatePropertyRequest
+        request: TemplatePropertyRequest,
     ) {
         val templateId = ThingId("R123")
         val exception = TemplateClosed(ThingId("P123"))
@@ -844,7 +846,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
 
     private inline fun <reified T : UpdateTemplatePropertyUseCase.UpdateCommand> updateProperty(
         request: TemplatePropertyRequest,
-        additionalRequestFieldDescriptors: List<FieldDescriptor> = emptyList()
+        additionalRequestFieldDescriptors: List<FieldDescriptor> = emptyList(),
     ) {
         val id = ThingId("R3541")
         val propertyId = ThingId("R123")
@@ -879,9 +881,11 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) {
-            templateService.update(withArg<T> {
-                it.shouldBeInstanceOf<T>()
-            })
+            templateService.update(
+                withArg<T> {
+                    it.shouldBeInstanceOf<T>()
+                }
+            )
         }
     }
 

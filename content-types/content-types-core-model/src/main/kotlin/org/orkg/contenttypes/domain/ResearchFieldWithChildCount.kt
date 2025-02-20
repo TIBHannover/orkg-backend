@@ -4,5 +4,5 @@ import org.orkg.graph.domain.Resource
 
 data class ResearchFieldWithChildCount(
     val resource: Resource,
-    val childCount: Long
+    val childCount: Long,
 )

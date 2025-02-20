@@ -9,8 +9,6 @@ import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.comparables.shouldBeLessThanOrEqualTo
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import java.time.OffsetDateTime
-import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -43,6 +41,8 @@ import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.withGraphMappings
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
+import java.time.OffsetDateTime
+import java.util.UUID
 
 fun <
     CR : ComparisonRepository,
@@ -50,14 +50,14 @@ fun <
     P : PredicateRepository,
     C : ClassRepository,
     L : LiteralRepository,
-    S : StatementRepository
+    S : StatementRepository,
 > comparisonRepositoryContract(
     repository: CR,
     resourceRepository: R,
     predicateRepository: P,
     classRepository: C,
     literalRepository: L,
-    statementRepository: S
+    statementRepository: S,
 ) = describeSpec {
     beforeTest {
         statementRepository.deleteAll()
@@ -94,7 +94,7 @@ fun <
     data class TestGraph(
         val resources: List<Resource>,
         val statements: List<GeneralStatement>,
-        val ignored: Set<Resource>
+        val ignored: Set<Resource>,
     ) {
         val expected: List<Resource> get() = (resources - ignored)
 
@@ -1010,9 +1010,14 @@ fun <
                 }
 
                 val expected = graph.resources.filterIndexed { index, _ ->
-                    index % 2 == 0 && // default or featured visibility
-                        (index > 5 || // is a published comparison
-                        index < 2) // has no published comparison attached
+                    // default or featured visibility
+                    index % 2 == 0 &&
+                        (
+                            // is a published comparison
+                            index > 5 ||
+                                // has no published comparison attached
+                                index < 2
+                        )
                 }
                 val result = repository.findAllCurrentAndListedAndUnpublishedComparisons(PageRequest.of(0, 5))
 

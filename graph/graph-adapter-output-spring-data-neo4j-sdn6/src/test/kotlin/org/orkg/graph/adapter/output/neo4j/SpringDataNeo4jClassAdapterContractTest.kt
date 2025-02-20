@@ -28,23 +28,23 @@ import org.springframework.data.neo4j.core.fetchAs
 )
 internal class SpringDataNeo4jClassAdapterContractTests(
     @Autowired private val springDataNeo4jClassAdapter: ClassRepository,
-    @Autowired private val neo4jClient: Neo4jClient
+    @Autowired private val neo4jClient: Neo4jClient,
 ) : DescribeSpec({
-    include(
-        classRepositoryContract(
-            springDataNeo4jClassAdapter
+        include(
+            classRepositoryContract(
+                springDataNeo4jClassAdapter
+            )
         )
-    )
-    include(neo4jClassRepositoryContract(springDataNeo4jClassAdapter, neo4jClient))
+        include(neo4jClassRepositoryContract(springDataNeo4jClassAdapter, neo4jClient))
 
-    finalizeSpec {
-        springDataNeo4jClassAdapter.deleteAll()
-    }
-})
+        finalizeSpec {
+            springDataNeo4jClassAdapter.deleteAll()
+        }
+    })
 
 fun <R : ClassRepository, C : Neo4jClient> neo4jClassRepositoryContract(
     repository: R,
-    neo4jClient: C
+    neo4jClient: C,
 ) = describeSpec {
     beforeTest {
         repository.deleteAll()

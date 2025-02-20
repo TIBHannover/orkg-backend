@@ -3,7 +3,6 @@ package org.orkg.graph.adapter.output.neo4j
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.util.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -21,16 +20,17 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.util.AopTestUtils
+import java.util.Optional
 
 private val allCacheNames: Array<out String> = arrayOf(
-    CLASS_ID_TO_CLASS_CACHE, CLASS_ID_TO_CLASS_EXISTS_CACHE,
+    CLASS_ID_TO_CLASS_CACHE,
+    CLASS_ID_TO_CLASS_EXISTS_CACHE,
     THING_ID_TO_THING_CACHE,
 )
 
 @ContextConfiguration
 @ExtendWith(SpringExtension::class)
 internal class SpringDataNeo4jClassAdapterCachingTest : MockkBaseTest {
-
     private lateinit var mock: ClassRepository
 
     @Autowired

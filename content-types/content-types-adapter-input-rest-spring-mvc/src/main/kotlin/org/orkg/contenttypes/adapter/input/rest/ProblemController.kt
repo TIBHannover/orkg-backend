@@ -6,8 +6,8 @@ import org.orkg.common.ThingId
 import org.orkg.common.annotations.RequireCuratorRole
 import org.orkg.common.contributorId
 import org.orkg.community.input.RetrieveContributorUseCase
-import org.orkg.contenttypes.input.RetrieveAuthorUseCase
-import org.orkg.contenttypes.input.RetrieveResearchProblemUseCase
+import org.orkg.contenttypes.input.AuthorUseCases
+import org.orkg.contenttypes.input.ResearchProblemUseCases
 import org.orkg.graph.adapter.input.rest.FieldWithFreqRepresentation
 import org.orkg.graph.adapter.input.rest.PaperAuthorRepresentation
 import org.orkg.graph.adapter.input.rest.ResourceRepresentation
@@ -37,18 +37,19 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/problems", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ProblemController(
-    private val service: RetrieveResearchProblemUseCase,
+    private val service: ResearchProblemUseCases,
     private val resourceService: ResourceUseCases,
     private val contributorService: RetrieveContributorUseCase,
-    private val authorService: RetrieveAuthorUseCase,
+    private val authorService: AuthorUseCases,
     override val statementService: StatementUseCases,
     override val formattedLabelService: FormattedLabelUseCases,
-) : ResourceRepresentationAdapter, AuthorRepresentationAdapter, FieldPerProblemRepresentationAdapter {
-
+) : ResourceRepresentationAdapter,
+    AuthorRepresentationAdapter,
+    FieldPerProblemRepresentationAdapter {
     @GetMapping("/{id}/fields")
     fun findAllResearchFields(
         @PathVariable id: ThingId,
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): List<FieldWithFreqRepresentation> =
         service.findAllResearchFields(id)
             .mapToFieldWithFreqRepresentation(capabilities)
@@ -63,7 +64,7 @@ class ProblemController(
         unlisted: Boolean,
         @RequestParam("visibility", required = false)
         visibility: VisibilityFilter?,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<DetailsPerProblem> =
         service.findAllEntitiesBasedOnClassByProblem(
             problemId = id,
@@ -79,7 +80,7 @@ class ProblemController(
     @GetMapping("/{id}/users")
     fun findAllContributorsPerProblem(
         @PathVariable id: ThingId,
-        pageable: Pageable
+        pageable: Pageable,
     ): ResponseEntity<Iterable<Any>> {
         val contributors = service.findAllContributorsPerProblem(id, pageable).map {
             val user = contributorService.findById(ContributorId(it.user)).get()
@@ -95,7 +96,7 @@ class ProblemController(
     fun findAllByProblemId(
         @PathVariable id: ThingId,
         pageable: Pageable,
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): Page<PaperAuthorRepresentation> =
         authorService.findAllByProblemId(id, pageable)
             .mapToPaperAuthorRepresentation(capabilities)
@@ -103,26 +104,35 @@ class ProblemController(
     @PutMapping("/{id}/metadata/featured")
     @RequireCuratorRole
     @ResponseStatus(HttpStatus.OK)
-    fun markFeatured(@PathVariable id: ThingId) {
+    fun markFeatured(
+        @PathVariable id: ThingId,
+    ) {
         resourceService.markAsFeatured(id)
     }
 
     @DeleteMapping("/{id}/metadata/featured")
     @RequireCuratorRole
-    fun unmarkFeatured(@PathVariable id: ThingId) {
+    fun unmarkFeatured(
+        @PathVariable id: ThingId,
+    ) {
         resourceService.markAsNonFeatured(id)
     }
 
     @PutMapping("/{id}/metadata/unlisted")
     @RequireCuratorRole
     @ResponseStatus(HttpStatus.OK)
-    fun markUnlisted(@PathVariable id: ThingId, currentUser: Authentication?) {
+    fun markUnlisted(
+        @PathVariable id: ThingId,
+        currentUser: Authentication?,
+    ) {
         resourceService.markAsUnlisted(id, currentUser.contributorId())
     }
 
     @DeleteMapping("/{id}/metadata/unlisted")
     @RequireCuratorRole
-    fun unmarkUnlisted(@PathVariable id: ThingId) {
+    fun unmarkUnlisted(
+        @PathVariable id: ThingId,
+    ) {
         resourceService.markAsListed(id)
     }
 }

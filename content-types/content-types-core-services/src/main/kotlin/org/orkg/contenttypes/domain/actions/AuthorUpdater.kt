@@ -21,7 +21,7 @@ open class AuthorUpdater(
     private val literalService: LiteralUseCases,
     private val listService: ListUseCases,
     private val listRepository: ListRepository,
-    private val authorCreator: AuthorCreator = object : AuthorCreator(unsafeResourceUseCases, unsafeStatementUseCases, literalService, listService) {}
+    private val authorCreator: AuthorCreator = object : AuthorCreator(unsafeResourceUseCases, unsafeStatementUseCases, literalService, listService) {},
 ) {
     // TODO: refactor method to use a provided list of statements and replace delete + create with update action
     internal fun update(contributorId: ContributorId, authors: List<Author>, subjectId: ThingId) {

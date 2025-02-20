@@ -1,6 +1,5 @@
 package org.orkg.contenttypes.output
 
-import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -10,6 +9,7 @@ import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.VisibilityFilter
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import java.time.OffsetDateTime
 
 interface ContentTypeRepository {
     fun findAll(

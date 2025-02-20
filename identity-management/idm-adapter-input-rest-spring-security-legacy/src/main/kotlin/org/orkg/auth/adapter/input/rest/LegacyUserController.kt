@@ -1,7 +1,6 @@
 package org.orkg.auth.adapter.input.rest
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -17,11 +16,12 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import java.time.OffsetDateTime
 
 @RestController
 @RequestMapping("/api/user", produces = [MediaType.APPLICATION_JSON_VALUE])
 class LegacyUserController(
-    private val contributorRepository: ContributorRepository
+    private val contributorRepository: ContributorRepository,
 ) {
     @GetMapping
     fun lookupUserDetails(currentUser: JwtAuthenticationToken?): UserDetails {
@@ -57,7 +57,7 @@ class LegacyUserController(
         @JsonProperty("observatory_id")
         val observatoryId: ObservatoryId?, // nullable for legacy reasons, see orkg-backend#592
         @get:JsonProperty("is_curation_allowed")
-        val isCurationAllowed: Boolean
+        val isCurationAllowed: Boolean,
     ) {
         companion object {
             fun from(contributor: Contributor, jwtToken: JwtAuthenticationToken): UserDetails =

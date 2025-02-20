@@ -15,7 +15,7 @@ import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
 class LiteratureListSectionUpdater(
-    private val abstractLiteratureListSectionUpdater: AbstractLiteratureListSectionUpdater
+    private val abstractLiteratureListSectionUpdater: AbstractLiteratureListSectionUpdater,
 ) : UpdateLiteratureListSectionAction {
     constructor(
         literalService: LiteralUseCases,
@@ -35,7 +35,7 @@ class LiteratureListSectionUpdater(
 
     override fun invoke(
         command: UpdateLiteratureListSectionCommand,
-        state: UpdateLiteratureListSectionState
+        state: UpdateLiteratureListSectionState,
     ): UpdateLiteratureListSectionState {
         val section = state.literatureList!!.sections.single { it.id == command.literatureListSectionId }
         if (!(command as LiteratureListSectionDefinition).matchesLiteratureListSection(section)) {

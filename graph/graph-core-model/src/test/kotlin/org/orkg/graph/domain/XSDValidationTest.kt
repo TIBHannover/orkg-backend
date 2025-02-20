@@ -286,7 +286,8 @@ internal class XSDValidationTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = [
+    @ValueSource(
+        strings = [
             "de",
             "de-CH",
             "de-DE-1901",

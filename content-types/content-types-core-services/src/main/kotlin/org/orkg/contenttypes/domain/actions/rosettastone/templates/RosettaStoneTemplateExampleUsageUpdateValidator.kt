@@ -9,8 +9,11 @@ class RosettaStoneTemplateExampleUsageUpdateValidator : UpdateRosettaStoneTempla
         val newExampleUsage = command.exampleUsage
         val oldExampleUsage = state.rosettaStoneTemplate!!.exampleUsage
         if (
-            newExampleUsage != null && oldExampleUsage != null && newExampleUsage != oldExampleUsage &&
-            state.isUsedInRosettaStoneStatement && !newExampleUsage.startsWith(oldExampleUsage)
+            newExampleUsage != null &&
+            oldExampleUsage != null &&
+            newExampleUsage != oldExampleUsage &&
+            state.isUsedInRosettaStoneStatement &&
+            !newExampleUsage.startsWith(oldExampleUsage)
         ) {
             throw NewRosettaStoneTemplateExampleUsageMustStartWithPreviousExampleUsage()
         }

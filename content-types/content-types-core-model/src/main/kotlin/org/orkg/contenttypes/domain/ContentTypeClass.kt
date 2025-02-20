@@ -6,5 +6,5 @@ enum class ContentTypeClass {
     VISUALIZATION,
     TEMPLATE,
     LITERATURE_LIST,
-    SMART_REVIEW
+    SMART_REVIEW,
 }

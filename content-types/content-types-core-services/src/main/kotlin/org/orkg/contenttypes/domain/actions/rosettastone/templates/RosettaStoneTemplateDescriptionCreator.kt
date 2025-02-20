@@ -8,16 +8,16 @@ import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
 class RosettaStoneTemplateDescriptionCreator(
-    private val singleStatementPropertyCreator: SingleStatementPropertyCreator
+    private val singleStatementPropertyCreator: SingleStatementPropertyCreator,
 ) : CreateRosettaStoneTemplateAction {
     constructor(
         literalService: LiteralUseCases,
-        unsafeStatementUseCases: UnsafeStatementUseCases
+        unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(SingleStatementPropertyCreator(literalService, unsafeStatementUseCases))
 
     override fun invoke(
         command: CreateRosettaStoneTemplateCommand,
-        state: CreateRosettaStoneTemplateState
+        state: CreateRosettaStoneTemplateState,
     ): CreateRosettaStoneTemplateState =
         state.apply {
             singleStatementPropertyCreator.create(

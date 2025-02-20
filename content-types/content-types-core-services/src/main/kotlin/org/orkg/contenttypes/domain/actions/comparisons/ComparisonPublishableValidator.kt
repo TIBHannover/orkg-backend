@@ -10,7 +10,7 @@ import org.orkg.contenttypes.output.ComparisonTableRepository
 
 class ComparisonPublishableValidator(
     private val comparisonService: ComparisonUseCases,
-    private val comparisonTableRepository: ComparisonTableRepository
+    private val comparisonTableRepository: ComparisonTableRepository,
 ) : PublishComparisonAction {
     override fun invoke(command: PublishComparisonCommand, state: State): State {
         val comparison = comparisonService.findById(command.id)

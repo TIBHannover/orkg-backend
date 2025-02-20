@@ -11,7 +11,7 @@ import org.orkg.graph.output.ResourceRepository
 
 class AbstractLiteratureListExistenceValidator(
     private val literatureListService: LiteratureListService,
-    private val resourceRepository: ResourceRepository
+    private val resourceRepository: ResourceRepository,
 ) {
     internal fun findUnpublishedLiteratureListById(id: ThingId): Pair<LiteratureList, Map<ThingId, List<GeneralStatement>>> {
         val resource = resourceRepository.findById(id)

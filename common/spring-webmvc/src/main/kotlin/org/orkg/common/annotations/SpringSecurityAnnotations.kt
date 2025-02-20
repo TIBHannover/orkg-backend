@@ -1,7 +1,7 @@
 package org.orkg.common.annotations
 
-import kotlin.annotation.AnnotationRetention.RUNTIME
 import org.springframework.security.access.prepost.PreAuthorize
+import kotlin.annotation.AnnotationRetention.RUNTIME
 
 @Retention(RUNTIME)
 @PreAuthorize("isAuthenticated()")

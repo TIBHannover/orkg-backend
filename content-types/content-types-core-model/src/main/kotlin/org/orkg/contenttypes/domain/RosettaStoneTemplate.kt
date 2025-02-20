@@ -1,6 +1,5 @@
 package org.orkg.contenttypes.domain
 
-import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -11,6 +10,7 @@ import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.Visibility
+import java.time.OffsetDateTime
 
 data class RosettaStoneTemplate(
     val id: ThingId,
@@ -26,7 +26,7 @@ data class RosettaStoneTemplate(
     val organizations: List<OrganizationId>,
     val visibility: Visibility,
     val unlistedBy: ContributorId? = null,
-    val modifiable: Boolean
+    val modifiable: Boolean,
 ) {
     companion object {
         fun from(resource: Resource, statements: Map<ThingId, List<GeneralStatement>>): RosettaStoneTemplate {

@@ -4,8 +4,6 @@ import io.kotest.assertions.asClue
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import java.time.LocalDateTime
-import java.util.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.OrganizationId
@@ -19,6 +17,8 @@ import org.orkg.eventbus.EventBus
 import org.orkg.eventbus.events.UserRegistered
 import org.orkg.testing.MockUserId
 import org.springframework.data.domain.PageRequest
+import java.time.LocalDateTime
+import java.util.UUID
 
 interface ObservatoryFilterRepositoryContracts {
     val repository: ObservatoryFilterRepository

@@ -1,7 +1,5 @@
 package org.orkg.contenttypes.domain
 
-import java.time.OffsetDateTime
-import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -36,6 +34,8 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
+import java.time.OffsetDateTime
+import java.util.Optional
 
 @Service
 @TransactionalOnNeo4j
@@ -48,7 +48,7 @@ class VisualizationService(
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
     private val literalService: LiteralUseCases,
     private val listService: ListUseCases,
-    private val visualizationRepository: VisualizationRepository
+    private val visualizationRepository: VisualizationRepository,
 ) : VisualizationUseCases {
     override fun findById(id: ThingId): Optional<Visualization> =
         resourceRepository.findById(id)
@@ -65,7 +65,7 @@ class VisualizationService(
         organizationId: OrganizationId?,
         researchField: ThingId?,
         includeSubfields: Boolean,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<Visualization> =
         visualizationRepository.findAll(
             label = label,

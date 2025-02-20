@@ -1,19 +1,21 @@
 package org.orkg.contenttypes.adapter.input.rest.mapping
 
-import java.util.*
 import org.orkg.contenttypes.adapter.input.rest.ListSectionRepresentation
 import org.orkg.contenttypes.adapter.input.rest.LiteratureListRepresentation
 import org.orkg.contenttypes.adapter.input.rest.LiteratureListSectionRepresentation
 import org.orkg.contenttypes.adapter.input.rest.TextSectionRepresentation
-import org.orkg.contenttypes.domain.LiteratureListListSection
 import org.orkg.contenttypes.domain.LiteratureList
+import org.orkg.contenttypes.domain.LiteratureListListSection
 import org.orkg.contenttypes.domain.LiteratureListSection
 import org.orkg.contenttypes.domain.LiteratureListTextSection
 import org.springframework.data.domain.Page
+import java.util.Optional
 
-interface LiteratureListRepresentationAdapter : AuthorRepresentationAdapter, VersionRepresentationAdapter,
-    LabeledObjectRepresentationAdapter, ThingReferenceRepresentationAdapter {
-
+interface LiteratureListRepresentationAdapter :
+    AuthorRepresentationAdapter,
+    VersionRepresentationAdapter,
+    LabeledObjectRepresentationAdapter,
+    ThingReferenceRepresentationAdapter {
     fun Optional<LiteratureList>.mapToLiteratureListRepresentation(): Optional<LiteratureListRepresentation> =
         map { it.toLiteratureListRepresentation() }
 

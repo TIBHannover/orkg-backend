@@ -1,8 +1,5 @@
 package org.orkg.community.testing.fixtures
 
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -23,6 +20,9 @@ import org.orkg.graph.domain.PredicatePath
 import org.orkg.graph.domain.Predicates
 import org.orkg.mediastorage.domain.ImageId
 import org.orkg.testing.MockUserId
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.OffsetDateTime
 
 fun createContributor(
     id: ContributorId = ContributorId("824e21b5-5df6-44c7-b2db-5929598f7398"),
@@ -52,7 +52,7 @@ fun createOrganization(
     observatories: Set<ObservatoryId> = emptySet(),
     displayId: String = "some display id",
     type: OrganizationType = OrganizationType.GENERAL,
-    logoId: ImageId? = null
+    logoId: ImageId? = null,
 ) = Organization(id, name, createdBy, homepage, observatories, displayId, type, logoId)
 
 fun createObservatory(
@@ -63,7 +63,7 @@ fun createObservatory(
     researchField: ThingId = ThingId("R1234"),
     members: Set<ContributorId> = emptySet(),
     displayId: String = "test_observatory",
-    sustainableDevelopmentGoals: Set<ThingId> = emptySet()
+    sustainableDevelopmentGoals: Set<ThingId> = emptySet(),
 ) = Observatory(id, name, description, researchField, members, organizationIds, displayId, sustainableDevelopmentGoals)
 
 fun createObservatoryFilter(
@@ -75,7 +75,7 @@ fun createObservatoryFilter(
     path: PredicatePath = listOf(Predicates.hasResearchProblem),
     range: ThingId = Classes.resources,
     exact: Boolean = false,
-    featured: Boolean = false
+    featured: Boolean = false,
 ): ObservatoryFilter = ObservatoryFilter(id, observatoryId, label, createdBy, createdAt, path, range, exact, featured)
 
 fun createConferenceSeries(
@@ -87,5 +87,5 @@ fun createConferenceSeries(
     metadata: Metadata = Metadata(
         startDate = LocalDate.parse("2023-10-17"),
         reviewType = PeerReviewType.SINGLE_BLIND
-    )
+    ),
 ) = ConferenceSeries(id, organizationId, name, homepage, displayId, metadata)

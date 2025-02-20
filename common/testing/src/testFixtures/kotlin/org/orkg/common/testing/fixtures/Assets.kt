@@ -1,7 +1,7 @@
 package org.orkg.common.testing.fixtures
 
-import java.net.URI
 import org.springframework.core.io.ClassPathResource
+import java.net.URI
 
 object Assets {
     fun requestJson(name: String): String = fileContents("requests/$name.json").decodeToString()

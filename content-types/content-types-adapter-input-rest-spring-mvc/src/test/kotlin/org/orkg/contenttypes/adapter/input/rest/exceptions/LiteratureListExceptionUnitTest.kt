@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.RestController
 @WebMvcTest
 @ContextConfiguration(classes = [TestController::class, ExceptionHandler::class, FixedClockConfig::class])
 internal class LiteratureListExceptionUnitTest : MockMvcBaseTest("literature-lists") {
-
     @Test
     fun publishedLiteratureListContentNotFound() {
         val literatureListId = "R123"
@@ -169,51 +168,47 @@ internal class LiteratureListExceptionUnitTest : MockMvcBaseTest("literature-lis
     @RestController
     internal class TestController {
         @GetMapping("/published-literature-list-content-not-found")
-        fun publishedLiteratureListContentNotFound(@RequestParam literatureListId: ThingId, @RequestParam contentId: ThingId) {
-            throw PublishedLiteratureListContentNotFound(literatureListId, contentId)
-        }
+        fun publishedLiteratureListContentNotFound(
+            @RequestParam literatureListId: ThingId,
+            @RequestParam contentId: ThingId,
+        ): Unit = throw PublishedLiteratureListContentNotFound(literatureListId, contentId)
 
         @GetMapping("/literature-list-already-published")
-        fun literatureListAlreadyPublished(@RequestParam id: ThingId) {
-            throw LiteratureListAlreadyPublished(id)
-        }
+        fun literatureListAlreadyPublished(
+            @RequestParam id: ThingId,
+        ): Unit = throw LiteratureListAlreadyPublished(id)
 
         @GetMapping("/errors/literature-list-not-found")
-        fun literatureListNotFound(@RequestParam id: ThingId) {
-            throw LiteratureListNotFound(id)
-        }
+        fun literatureListNotFound(
+            @RequestParam id: ThingId,
+        ): Unit = throw LiteratureListNotFound(id)
 
         @GetMapping("/invalid-list-section-entry")
-        fun invalidListSectionEntry(@RequestParam id: ThingId, @RequestParam expectedAnyInstanceOf: Set<ThingId>) {
-            throw InvalidListSectionEntry(id, expectedAnyInstanceOf)
-        }
+        fun invalidListSectionEntry(
+            @RequestParam id: ThingId,
+            @RequestParam expectedAnyInstanceOf: Set<ThingId>,
+        ): Unit = throw InvalidListSectionEntry(id, expectedAnyInstanceOf)
 
         @GetMapping("/invalid-heading-size")
-        fun invalidHeadingSize(@RequestParam headingSize: Int) {
-            throw InvalidHeadingSize(headingSize)
-        }
+        fun invalidHeadingSize(
+            @RequestParam headingSize: Int,
+        ): Unit = throw InvalidHeadingSize(headingSize)
 
         @GetMapping("/unrelated-literature-list-section")
         fun unrelatedLiteratureListSection(
             @RequestParam literatureListId: ThingId,
-            @RequestParam literatureListSectionId: ThingId
-        ) {
-            throw UnrelatedLiteratureListSection(literatureListId, literatureListSectionId)
-        }
+            @RequestParam literatureListSectionId: ThingId,
+        ): Unit = throw UnrelatedLiteratureListSection(literatureListId, literatureListSectionId)
 
         @GetMapping("/literature-list-section-type-mismatch-must-be-text-section")
-        fun literatureListSectionTypeMismatchMustBeTextSection() {
-            throw LiteratureListSectionTypeMismatch.mustBeTextSection()
-        }
+        fun literatureListSectionTypeMismatchMustBeTextSection(): Unit = throw LiteratureListSectionTypeMismatch.mustBeTextSection()
 
         @GetMapping("/literature-list-section-type-mismatch-must-be-list-section")
-        fun literatureListSectionTypeMismatchMustBeListSection() {
-            throw LiteratureListSectionTypeMismatch.mustBeListSection()
-        }
+        fun literatureListSectionTypeMismatchMustBeListSection(): Unit = throw LiteratureListSectionTypeMismatch.mustBeListSection()
 
         @GetMapping("/literature-list-not-modifiable")
-        fun literatureListNotModifiable(@RequestParam id: ThingId) {
-            throw LiteratureListNotModifiable(id)
-        }
+        fun literatureListNotModifiable(
+            @RequestParam id: ThingId,
+        ): Unit = throw LiteratureListNotModifiable(id)
     }
 }

@@ -1,6 +1,5 @@
 package org.orkg.community.output
 
-import java.util.*
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
@@ -8,6 +7,7 @@ import org.orkg.community.domain.Contributor
 import org.orkg.community.domain.Observatory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import java.util.Optional
 
 interface ObservatoryRepository {
     fun save(observatory: Observatory)

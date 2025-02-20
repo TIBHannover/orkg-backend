@@ -25,14 +25,14 @@ fun <
     C : ClassRepository,
     L : LiteralRepository,
     R : ResourceRepository,
-    P : PredicateRepository
+    P : PredicateRepository,
 > statisticsRepositoryContract(
     repository: T,
     statementRepository: S,
     classRepository: C,
     literalRepository: L,
     resourceRepository: R,
-    predicateRepository: P
+    predicateRepository: P,
 ) = describeSpec {
     beforeTest {
         statementRepository.deleteAll()

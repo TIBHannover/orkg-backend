@@ -1,7 +1,5 @@
 package org.orkg
 
-import java.time.Clock
-import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
@@ -26,9 +24,10 @@ import org.springframework.context.annotation.Profile
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.stereotype.Component
+import java.time.Clock
+import java.time.OffsetDateTime
 
-private const val chunkSize = 10_000
-private val UNKNOWN_CONTRIBUTOR = ContributorId.UNKNOWN
+private const val CHUNK_SIZE = 10_000
 
 @Component
 @Profile("listMigrations")
@@ -118,9 +117,9 @@ class ListMigrationRunner(
                 label = label,
                 elements = objects,
                 createdAt = OffsetDateTime.now(clock),
-                createdBy = UNKNOWN_CONTRIBUTOR
+                createdBy = ContributorId.UNKNOWN
             ),
-            UNKNOWN_CONTRIBUTOR
+            ContributorId.UNKNOWN
         )
         statementRepository.deleteByStatementIds(statements.mapTo(mutableSetOf()) { it.id })
         statementRepository.save(
@@ -129,7 +128,7 @@ class ListMigrationRunner(
                 subject = resource,
                 predicate = newPredicate,
                 `object` = resourceRepository.findById(listId).get(),
-                createdBy = UNKNOWN_CONTRIBUTOR,
+                createdBy = ContributorId.UNKNOWN,
                 createdAt = OffsetDateTime.now(clock)
             )
         )
@@ -186,10 +185,10 @@ class ListMigrationRunner(
                 id = listId,
                 label = "Sections",
                 elements = sections,
-                createdBy = UNKNOWN_CONTRIBUTOR,
+                createdBy = ContributorId.UNKNOWN,
                 createdAt = OffsetDateTime.now(clock)
             ),
-            UNKNOWN_CONTRIBUTOR
+            ContributorId.UNKNOWN
         )
         statementRepository.deleteByStatementIds(sectionStatements.mapTo(mutableSetOf()) { it.id })
         statementRepository.save(
@@ -198,7 +197,7 @@ class ListMigrationRunner(
                 subject = resource,
                 predicate = newPredicate,
                 `object` = resourceRepository.findById(listId).get(),
-                createdBy = UNKNOWN_CONTRIBUTOR,
+                createdBy = ContributorId.UNKNOWN,
                 createdAt = OffsetDateTime.now(clock)
             )
         )
@@ -219,13 +218,13 @@ class ListMigrationRunner(
         logger.info("Migrating resources of class $classId...")
         var page = resourceRepository.findAll(
             includeClasses = setOf(classId),
-            pageable = PageRequest.of(0, chunkSize)
+            pageable = PageRequest.of(0, CHUNK_SIZE)
         )
         page.content.forEach(consumer)
         while (page.hasNext()) {
             page = resourceRepository.findAll(
                 includeClasses = setOf(classId),
-                pageable = PageRequest.of(page.number + 1, chunkSize)
+                pageable = PageRequest.of(page.number + 1, CHUNK_SIZE)
             )
             page.content.forEach(consumer)
         }

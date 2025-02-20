@@ -1,16 +1,17 @@
 package org.orkg.mediastorage.adapter.output.jpa
 
-import java.util.*
 import org.orkg.mediastorage.adapter.output.jpa.internal.ImageEntity
 import org.orkg.mediastorage.adapter.output.jpa.internal.PostgresImageRepository
 import org.orkg.mediastorage.domain.Image
 import org.orkg.mediastorage.domain.ImageId
 import org.orkg.mediastorage.output.ImageRepository
 import org.springframework.stereotype.Component
+import java.util.Optional
+import java.util.UUID
 
 @Component
 class SpringJpaPostgresImageAdapter(
-    private val repository: PostgresImageRepository
+    private val repository: PostgresImageRepository,
 ) : ImageRepository {
     override fun save(image: Image) {
         repository.save(image.toImageEntity())

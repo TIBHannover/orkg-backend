@@ -17,7 +17,7 @@ class StatementCollectionPropertyCreator(
         subjectId: ThingId,
         predicateId: ThingId,
         labels: Collection<String>,
-        datatype: String = Literals.XSD.STRING.prefixedUri
+        datatype: String = Literals.XSD.STRING.prefixedUri,
     ) {
         labels.forEach { label ->
             val literal = literalService.create(
@@ -42,7 +42,7 @@ class StatementCollectionPropertyCreator(
         contributorId: ContributorId,
         subjectId: ThingId,
         predicateId: ThingId,
-        objects: List<ThingId>
+        objects: List<ThingId>,
     ) {
         objects.distinct().forEach { objectId ->
             unsafeStatementUseCases.create(

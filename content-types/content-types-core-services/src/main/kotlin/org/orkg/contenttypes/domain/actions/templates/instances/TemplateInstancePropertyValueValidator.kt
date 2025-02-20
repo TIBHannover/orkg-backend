@@ -21,13 +21,14 @@ class TemplateInstancePropertyValueValidator(
     override val thingRepository: ThingRepository,
     private val classRepository: ClassRepository,
     private val statementRepository: StatementRepository,
-    private val abstractTemplatePropertyValueValidator: AbstractTemplatePropertyValueValidator
-) : UpdateTemplateInstanceAction, ThingIdValidator {
+    private val abstractTemplatePropertyValueValidator: AbstractTemplatePropertyValueValidator,
+) : UpdateTemplateInstanceAction,
+    ThingIdValidator {
     constructor(
         thingRepository: ThingRepository,
         classRepository: ClassRepository,
         statementRepository: StatementRepository,
-        classHierarchyRepository: ClassHierarchyRepository
+        classHierarchyRepository: ClassHierarchyRepository,
     ) : this(
         thingRepository,
         classRepository,
@@ -37,7 +38,7 @@ class TemplateInstancePropertyValueValidator(
 
     override fun invoke(
         command: UpdateTemplateInstanceCommand,
-        state: UpdateTemplateInstanceState
+        state: UpdateTemplateInstanceState,
     ): UpdateTemplateInstanceState {
         val toRemove = mutableSetOf<BakedStatement>()
         val toAdd = mutableSetOf<BakedStatement>()

@@ -7,11 +7,11 @@ import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ThingRepository
 
 class RosettaStoneStatementThingDefinitionCreateValidator(
-    private val thingDefinitionValidator: ThingDefinitionValidator
+    private val thingDefinitionValidator: ThingDefinitionValidator,
 ) : CreateRosettaStoneStatementAction {
     constructor(
         thingRepository: ThingRepository,
-        classRepository: ClassRepository
+        classRepository: ClassRepository,
     ) : this(ThingDefinitionValidator(thingRepository, classRepository))
 
     override fun invoke(command: CreateRosettaStoneStatementCommand, state: State): State =

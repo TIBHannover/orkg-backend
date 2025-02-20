@@ -1,7 +1,5 @@
 package org.orkg.export.adapter.input.rest
 
-import java.io.StringWriter
-import java.net.URI
 import org.eclipse.rdf4j.model.Model
 import org.eclipse.rdf4j.rio.RDFFormat
 import org.eclipse.rdf4j.rio.Rio
@@ -20,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
+import java.io.StringWriter
+import java.net.URI
 
 @RestController
 @RequestMapping("/api/vocab", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -34,10 +34,11 @@ class VocabController(
     fun resource(
         @PathVariable id: ThingId,
         @RequestHeader("Accept") acceptHeader: String,
-        uriComponentsBuilder: UriComponentsBuilder
+        uriComponentsBuilder: UriComponentsBuilder,
     ): ResponseEntity<String> {
-        if (!checkAcceptHeader(acceptHeader))
+        if (!checkAcceptHeader(acceptHeader)) {
             return createRedirectResponse("resource", id.value, uriComponentsBuilder)
+        }
         val model = service.rdfModelForResource(id)
             .orElseThrow { ResourceNotFound.withId(id) }
         val response = getRdfSerialization(model, acceptHeader)
@@ -52,10 +53,11 @@ class VocabController(
     fun predicate(
         @PathVariable id: ThingId,
         @RequestHeader("Accept") acceptHeader: String,
-        uriComponentsBuilder: UriComponentsBuilder
+        uriComponentsBuilder: UriComponentsBuilder,
     ): ResponseEntity<String> {
-        if (!checkAcceptHeader(acceptHeader))
+        if (!checkAcceptHeader(acceptHeader)) {
             return createRedirectResponse("predicate", id.value, uriComponentsBuilder)
+        }
         val model = service.rdfModelForPredicate(id)
             .orElseThrow { PredicateNotFound(id) }
         val response = getRdfSerialization(model, acceptHeader)
@@ -78,8 +80,8 @@ class VocabController(
             .body(response)
     }
 
-    private fun checkAcceptHeader(acceptHeader: String): Boolean {
-        return (acceptHeader in arrayOf(
+    private fun checkAcceptHeader(acceptHeader: String): Boolean = (
+        acceptHeader in arrayOf(
             "application/n-triples",
             "application/rdf+xml",
             "text/n3",
@@ -91,28 +93,26 @@ class VocabController(
             "application/n-quads",
             "text/x-nquads",
             "text/nquads"
-        ))
-    }
+        )
+    )
 
     private fun createRedirectResponse(
         destination: String,
         id: String,
-        uriComponentsBuilder: UriComponentsBuilder
-    ): ResponseEntity<String> {
-        return ResponseEntity
-            .status(HttpStatus.TEMPORARY_REDIRECT)
-            .location(
-                uriComponentsBuilder
-                    .uri(URI.create(rdfConfiguration.frontendUri!!))
-                    .path("/$destination/{id}")
-                    .buildAndExpand(id)
-                    .toUri()
-            ).build()
-    }
+        uriComponentsBuilder: UriComponentsBuilder,
+    ): ResponseEntity<String> = ResponseEntity
+        .status(HttpStatus.TEMPORARY_REDIRECT)
+        .location(
+            uriComponentsBuilder
+                .uri(URI.create(rdfConfiguration.frontendUri!!))
+                .path("/$destination/{id}")
+                .buildAndExpand(id)
+                .toUri()
+        ).build()
 
     private fun getRdfSerialization(
         model: Model?,
-        accept: String
+        accept: String,
     ): String {
         val writer = StringWriter()
         val format = when (accept) {

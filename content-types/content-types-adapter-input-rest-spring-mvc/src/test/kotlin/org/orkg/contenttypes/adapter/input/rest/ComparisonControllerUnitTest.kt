@@ -7,9 +7,6 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.runs
 import io.mockk.verify
-import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter
-import java.util.*
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.DisplayName
@@ -72,11 +69,21 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Optional
 
-@ContextConfiguration(classes = [ComparisonController::class, ExceptionHandler::class, CommonJacksonModule::class, ContentTypeJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(
+    classes = [
+        ComparisonController::class,
+        ExceptionHandler::class,
+        CommonJacksonModule::class,
+        ContentTypeJacksonModule::class,
+        FixedClockConfig::class
+    ]
+)
 @WebMvcTest(controllers = [ComparisonController::class])
 internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
-
     @MockkBean
     private lateinit var comparisonService: ComparisonUseCases
 
@@ -205,7 +212,20 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
     fun getPaged() {
         every {
             comparisonService.findAll(
-                any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()
+                pageable = any(),
+                label = any(),
+                doi = any(),
+                visibility = any(),
+                createdBy = any(),
+                createdAtStart = any(),
+                createdAtEnd = any(),
+                observatoryId = any(),
+                organizationId = any(),
+                researchField = any(),
+                includeSubfields = any(),
+                published = any(),
+                sustainableDevelopmentGoal = any(),
+                researchProblem = any()
             )
         } returns pageOf(createComparison())
 
@@ -220,7 +240,20 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
 
         verify(exactly = 1) {
             comparisonService.findAll(
-                any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()
+                pageable = any(),
+                label = any(),
+                doi = any(),
+                visibility = any(),
+                createdBy = any(),
+                createdAtStart = any(),
+                createdAtEnd = any(),
+                observatoryId = any(),
+                organizationId = any(),
+                researchField = any(),
+                includeSubfields = any(),
+                published = any(),
+                sustainableDevelopmentGoal = any(),
+                researchProblem = any()
             )
         }
     }
@@ -230,7 +263,20 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
     fun getPagedWithParameters() {
         every {
             comparisonService.findAll(
-                any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()
+                pageable = any(),
+                label = any(),
+                doi = any(),
+                visibility = any(),
+                createdBy = any(),
+                createdAtStart = any(),
+                createdAtEnd = any(),
+                observatoryId = any(),
+                organizationId = any(),
+                researchField = any(),
+                includeSubfields = any(),
+                published = any(),
+                sustainableDevelopmentGoal = any(),
+                researchProblem = any()
             )
         } returns pageOf(createComparison())
 
@@ -319,7 +365,20 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
         val exception = UnknownSortingProperty("unknown")
         every {
             comparisonService.findAll(
-                any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()
+                pageable = any(),
+                label = any(),
+                doi = any(),
+                visibility = any(),
+                createdBy = any(),
+                createdAtStart = any(),
+                createdAtEnd = any(),
+                observatoryId = any(),
+                organizationId = any(),
+                researchField = any(),
+                includeSubfields = any(),
+                published = any(),
+                sustainableDevelopmentGoal = any(),
+                researchProblem = any()
             )
         } throws exception
 
@@ -336,7 +395,20 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
 
         verify(exactly = 1) {
             comparisonService.findAll(
-                any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()
+                pageable = any(),
+                label = any(),
+                doi = any(),
+                visibility = any(),
+                createdBy = any(),
+                createdAtStart = any(),
+                createdAtEnd = any(),
+                observatoryId = any(),
+                organizationId = any(),
+                researchField = any(),
+                includeSubfields = any(),
+                published = any(),
+                sustainableDevelopmentGoal = any(),
+                researchProblem = any()
             )
         }
     }

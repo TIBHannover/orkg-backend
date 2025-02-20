@@ -1,9 +1,6 @@
 package org.orkg.graph.domain
 
 import dev.forkhandles.values.ofOrNull
-import java.time.Clock
-import java.time.OffsetDateTime
-import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.community.domain.ContributorNotFound
@@ -16,6 +13,9 @@ import org.orkg.spring.data.annotations.TransactionalOnNeo4j
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import java.time.Clock
+import java.time.OffsetDateTime
+import java.util.Optional
 
 @Service
 @TransactionalOnNeo4j
@@ -47,7 +47,7 @@ class PredicateService(
         label: SearchString?,
         createdBy: ContributorId?,
         createdAtStart: OffsetDateTime?,
-        createdAtEnd: OffsetDateTime?
+        createdAtEnd: OffsetDateTime?,
     ): Page<Predicate> =
         repository.findAll(pageable, label, createdBy, createdAtStart, createdAtEnd)
 
@@ -57,8 +57,9 @@ class PredicateService(
     override fun update(id: ThingId, command: UpdatePredicateUseCase.ReplaceCommand) {
         var found = repository.findById(id).get()
 
-        if (!found.modifiable)
+        if (!found.modifiable) {
             throw PredicateNotModifiable(found.id)
+        }
 
         // update all the properties
         found = found.copy(label = command.label)
@@ -68,11 +69,13 @@ class PredicateService(
 
     override fun delete(predicateId: ThingId, contributorId: ContributorId) {
         val predicate = findById(predicateId).orElseThrow { PredicateNotFound(predicateId) }
-        if (!predicate.modifiable)
+        if (!predicate.modifiable) {
             throw PredicateNotModifiable(predicate.id)
+        }
 
-        if (repository.isInUse(predicate.id))
+        if (repository.isInUse(predicate.id)) {
             throw PredicateInUse(predicate.id)
+        }
 
         if (!predicate.isOwnedBy(contributorId)) {
             val contributor = contributorRepository.findById(contributorId)

@@ -2,14 +2,6 @@ package org.orkg.community.adapter.input.keycloak
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
-import java.net.URI
-import java.net.http.HttpClient
-import java.net.http.HttpRequest
-import java.net.http.HttpResponse
-import java.time.Instant
-import java.time.OffsetDateTime
-import java.time.ZoneId
-import java.util.*
 import org.keycloak.admin.client.Keycloak
 import org.keycloak.admin.client.resource.RealmResource
 import org.keycloak.admin.client.resource.UserResource
@@ -29,6 +21,14 @@ import org.springframework.http.MediaType
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.web.util.UriComponentsBuilder
+import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
+import java.time.Instant
+import java.time.OffsetDateTime
+import java.time.ZoneId
+import java.util.Optional
 
 @Service
 @Profile("development", "docker", "production")
@@ -96,7 +96,7 @@ class KeycloakEventProcessor(
         dateFrom: String? = null,
         dateTo: String? = null,
         firstResult: Int? = null,
-        maxResults: Int? = null
+        maxResults: Int? = null,
     ): List<AdminEventRepresentation> {
         val uri = UriComponentsBuilder.fromUriString(host)
             .path("/admin/realms/$realm/events-reversed/admin-events-reversed")
@@ -161,9 +161,7 @@ class KeycloakEventProcessor(
     private fun fetchUserById(id: String): UserResource =
         keycloak.realm(realm).users().get(id)
 
-    private fun extractUserIdFromResourcePath(resourcePath: String): String {
-        return resourcePath.substringAfter("/").substringBefore("/")
-    }
+    private fun extractUserIdFromResourcePath(resourcePath: String): String = resourcePath.substringAfter("/").substringBefore("/")
 
     private val AdminEventRepresentation.isUserEvent get() = resourceType == "USER"
 

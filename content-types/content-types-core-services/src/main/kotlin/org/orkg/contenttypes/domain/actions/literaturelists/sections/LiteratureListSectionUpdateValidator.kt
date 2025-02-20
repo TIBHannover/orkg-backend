@@ -12,13 +12,13 @@ import org.orkg.contenttypes.input.UpdateLiteratureListSectionUseCase
 import org.orkg.graph.output.ResourceRepository
 
 class LiteratureListSectionUpdateValidator(
-    private val abstractLiteratureListSectionValidator: AbstractLiteratureListSectionValidator
+    private val abstractLiteratureListSectionValidator: AbstractLiteratureListSectionValidator,
 ) : UpdateLiteratureListSectionAction {
     constructor(resourceRepository: ResourceRepository) : this(AbstractLiteratureListSectionValidator(resourceRepository))
 
     override fun invoke(
         command: UpdateLiteratureListSectionCommand,
-        state: UpdateLiteratureListSectionState
+        state: UpdateLiteratureListSectionState,
     ): UpdateLiteratureListSectionState {
         val section = state.literatureList!!.sections.singleOrNull { it.id == command.literatureListSectionId }
             ?: throw UnrelatedLiteratureListSection(command.literatureListId, command.literatureListSectionId)

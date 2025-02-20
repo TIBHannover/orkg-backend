@@ -7,11 +7,15 @@ import org.orkg.graph.domain.StatementId
 
 class GraphJacksonModule : SimpleModule() {
     override fun setupModule(context: SetupContext?) {
-        context?.addSerializers(SimpleSerializers().apply {
-            addSerializer(StatementId::class.java, StatementIdSerializer())
-        })
-        context?.addDeserializers(SimpleDeserializers().apply {
-            addDeserializer(StatementId::class.java, StatementIdDeserializer())
-        })
+        context?.addSerializers(
+            SimpleSerializers().apply {
+                addSerializer(StatementId::class.java, StatementIdSerializer())
+            }
+        )
+        context?.addDeserializers(
+            SimpleDeserializers().apply {
+                addDeserializer(StatementId::class.java, StatementIdDeserializer())
+            }
+        )
     }
 }

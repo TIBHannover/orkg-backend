@@ -7,7 +7,7 @@ import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.UnsafeResourceUseCases
 
 class LiteratureListVersionResourceCreator(
-    private val unsafeResourceUseCases: UnsafeResourceUseCases
+    private val unsafeResourceUseCases: UnsafeResourceUseCases,
 ) : CreateLiteratureListAction {
     override fun invoke(command: CreateLiteratureListCommand, state: State): State {
         val literatureListId = unsafeResourceUseCases.create(

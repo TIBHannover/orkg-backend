@@ -2,10 +2,10 @@ package org.orkg.migrations.neo4j
 
 import ac.simons.neo4j.migrations.core.JavaBasedMigration
 import ac.simons.neo4j.migrations.core.MigrationContext
+import org.springframework.core.io.ClassPathResource
 import java.lang.Thread.sleep
 import java.net.URI
-import java.util.*
-import org.springframework.core.io.ClassPathResource
+import java.util.Optional
 
 abstract class AbstractCustomProcedureMigration(
     private val migrationQueryFile: String,

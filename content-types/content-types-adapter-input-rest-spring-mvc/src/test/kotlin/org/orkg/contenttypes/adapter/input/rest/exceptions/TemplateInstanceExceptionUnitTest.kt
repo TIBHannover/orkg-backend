@@ -39,7 +39,6 @@ import org.springframework.web.bind.annotation.RestController
 @WebMvcTest
 @ContextConfiguration(classes = [TestController::class, ExceptionHandler::class, FixedClockConfig::class])
 internal class TemplateInstanceExceptionUnitTest : MockMvcBaseTest("tables") {
-
     @Test
     fun templateNotApplicable() {
         val templateId = ThingId("R123")
@@ -422,64 +421,53 @@ internal class TemplateInstanceExceptionUnitTest : MockMvcBaseTest("tables") {
     @RestController
     internal class TestController {
         @GetMapping("/template-not-applicable")
-        fun templateNotApplicable(@RequestParam templateId: ThingId, @RequestParam id: ThingId) {
-            throw TemplateNotApplicable(templateId, id)
-        }
+        fun templateNotApplicable(
+            @RequestParam templateId: ThingId,
+            @RequestParam id: ThingId,
+        ): Unit = throw TemplateNotApplicable(templateId, id)
 
         @GetMapping("/object-is-not-a-class")
         fun objectIsNotAClass(
             @RequestParam templatePropertyId: ThingId,
             @RequestParam predicateId: ThingId,
-            @RequestParam id: String
-        ) {
-            throw ObjectIsNotAClass(templatePropertyId, predicateId, id)
-        }
+            @RequestParam id: String,
+        ): Unit = throw ObjectIsNotAClass(templatePropertyId, predicateId, id)
 
         @GetMapping("/object-is-not-a-predicate")
         fun objectIsNotAPredicate(
             @RequestParam templatePropertyId: ThingId,
             @RequestParam predicateId: ThingId,
-            @RequestParam id: String
-        ) {
-            throw ObjectIsNotAPredicate(templatePropertyId, predicateId, id)
-        }
+            @RequestParam id: String,
+        ): Unit = throw ObjectIsNotAPredicate(templatePropertyId, predicateId, id)
 
         @GetMapping("/object-is-not-a-list")
         fun objectIsNotAList(
             @RequestParam templatePropertyId: ThingId,
             @RequestParam predicateId: ThingId,
-            @RequestParam id: String
-        ) {
-            throw ObjectIsNotAList(templatePropertyId, predicateId, id)
-        }
+            @RequestParam id: String,
+        ): Unit = throw ObjectIsNotAList(templatePropertyId, predicateId, id)
 
         @GetMapping("/object-is-not-a-literal")
         fun objectIsNotALiteral(
             @RequestParam templatePropertyId: ThingId,
             @RequestParam predicateId: ThingId,
-            @RequestParam id: String
-        ) {
-            throw ObjectIsNotALiteral(templatePropertyId, predicateId, id)
-        }
+            @RequestParam id: String,
+        ): Unit = throw ObjectIsNotALiteral(templatePropertyId, predicateId, id)
 
         @GetMapping("/object-must-not-be-a-literal")
         fun objectMustNotBeALiteral(
             @RequestParam templatePropertyId: ThingId,
             @RequestParam predicateId: ThingId,
-            @RequestParam id: String
-        ) {
-            throw ObjectMustNotBeALiteral(templatePropertyId, predicateId, id)
-        }
+            @RequestParam id: String,
+        ): Unit = throw ObjectMustNotBeALiteral(templatePropertyId, predicateId, id)
 
         @GetMapping("/resource-is-not-an-instance-of-target-class")
         fun resourceIsNotAnInstanceOfTargetClass(
             @RequestParam templatePropertyId: ThingId,
             @RequestParam predicateId: ThingId,
             @RequestParam id: String,
-            @RequestParam targetClass: ThingId
-        ) {
-            throw ResourceIsNotAnInstanceOfTargetClass(templatePropertyId, predicateId, id, targetClass)
-        }
+            @RequestParam targetClass: ThingId,
+        ): Unit = throw ResourceIsNotAnInstanceOfTargetClass(templatePropertyId, predicateId, id, targetClass)
 
         @GetMapping("/label-does-not-match-pattern")
         fun labelDoesNotMatchPattern(
@@ -487,38 +475,30 @@ internal class TemplateInstanceExceptionUnitTest : MockMvcBaseTest("tables") {
             @RequestParam objectId: String,
             @RequestParam predicateId: ThingId,
             @RequestParam label: String,
-            @RequestParam pattern: String
-        ) {
-            throw LabelDoesNotMatchPattern(templatePropertyId, objectId, predicateId, label, pattern)
-        }
+            @RequestParam pattern: String,
+        ): Unit = throw LabelDoesNotMatchPattern(templatePropertyId, objectId, predicateId, label, pattern)
 
         @GetMapping("/unknown-template-properties")
         fun unknownTemplateProperties(
             @RequestParam templateId: ThingId,
-            @RequestParam("unknownProperties") unknownProperties: Set<ThingId>
-        ) {
-            throw UnknownTemplateProperties(templateId, unknownProperties)
-        }
+            @RequestParam("unknownProperties") unknownProperties: Set<ThingId>,
+        ): Unit = throw UnknownTemplateProperties(templateId, unknownProperties)
 
         @GetMapping("/missing-property-values")
         fun missingPropertyValues(
             @RequestParam templatePropertyId: ThingId,
             @RequestParam predicateId: ThingId,
             @RequestParam min: Int,
-            @RequestParam actual: Int
-        ) {
-            throw MissingPropertyValues(templatePropertyId, predicateId, min, actual)
-        }
+            @RequestParam actual: Int,
+        ): Unit = throw MissingPropertyValues(templatePropertyId, predicateId, min, actual)
 
         @GetMapping("/too-many-property-values")
         fun tooManyPropertyValues(
             @RequestParam templatePropertyId: ThingId,
             @RequestParam predicateId: ThingId,
             @RequestParam max: Int,
-            @RequestParam actual: Int
-        ) {
-            throw TooManyPropertyValues(templatePropertyId, predicateId, max, actual)
-        }
+            @RequestParam actual: Int,
+        ): Unit = throw TooManyPropertyValues(templatePropertyId, predicateId, max, actual)
 
         @GetMapping("/invalid-literal")
         fun invalidLiteral(
@@ -526,10 +506,8 @@ internal class TemplateInstanceExceptionUnitTest : MockMvcBaseTest("tables") {
             @RequestParam predicateId: ThingId,
             @RequestParam datatype: ThingId,
             @RequestParam id: String,
-            @RequestParam value: String
-        ) {
-            throw InvalidLiteral(templatePropertyId, predicateId, datatype, id, value)
-        }
+            @RequestParam value: String,
+        ): Unit = throw InvalidLiteral(templatePropertyId, predicateId, datatype, id, value)
 
         @GetMapping("/mismatched-data-type")
         fun mismatchedDataType(
@@ -537,42 +515,32 @@ internal class TemplateInstanceExceptionUnitTest : MockMvcBaseTest("tables") {
             @RequestParam predicateId: ThingId,
             @RequestParam expectedDataType: String,
             @RequestParam id: String,
-            @RequestParam foundDataType: String
-        ) {
-            throw MismatchedDataType(templatePropertyId, predicateId, expectedDataType, id, foundDataType)
-        }
+            @RequestParam foundDataType: String,
+        ): Unit = throw MismatchedDataType(templatePropertyId, predicateId, expectedDataType, id, foundDataType)
 
         @GetMapping("/unrelated-template-property")
         fun invalidLiteral(
             @RequestParam templateId: ThingId,
             @RequestParam templatePropertyId: ThingId,
-        ) {
-            throw UnrelatedTemplateProperty(templateId, templatePropertyId)
-        }
+        ): Unit = throw UnrelatedTemplateProperty(templateId, templatePropertyId)
 
         @GetMapping("/invalid-bounds")
         fun invalidBounds(
             @RequestParam min: Number,
             @RequestParam max: Number,
-        ) {
-            throw InvalidBounds(min, max)
-        }
+        ): Unit = throw InvalidBounds(min, max)
 
         @GetMapping("/invalid-datatype")
         fun invalidDatatype(
             @RequestParam actual: ThingId,
             @RequestParam expected: ThingId,
-        ) {
-            throw InvalidDatatype(actual, expected)
-        }
+        ): Unit = throw InvalidDatatype(actual, expected)
 
         @GetMapping("/invalid-datatype-several")
         fun invalidDatatype(
             @RequestParam actual: ThingId,
             @RequestParam expected: List<ThingId>,
-        ) {
-            throw InvalidDatatype(actual, expected[0], expected[1], *expected.drop(2).toTypedArray())
-        }
+        ): Unit = throw InvalidDatatype(actual, expected[0], expected[1], *expected.drop(2).toTypedArray())
 
         @GetMapping("/number-too-low")
         fun numberTooLow(
@@ -580,10 +548,8 @@ internal class TemplateInstanceExceptionUnitTest : MockMvcBaseTest("tables") {
             @RequestParam objectId: String,
             @RequestParam predicateId: ThingId,
             @RequestParam label: String,
-            @RequestParam minInclusive: Number
-        ) {
-            throw NumberTooLow(templatePropertyId, objectId, predicateId, label, minInclusive)
-        }
+            @RequestParam minInclusive: Number,
+        ): Unit = throw NumberTooLow(templatePropertyId, objectId, predicateId, label, minInclusive)
 
         @GetMapping("/number-too-high")
         fun numberTooHigh(
@@ -591,9 +557,7 @@ internal class TemplateInstanceExceptionUnitTest : MockMvcBaseTest("tables") {
             @RequestParam objectId: String,
             @RequestParam predicateId: ThingId,
             @RequestParam label: String,
-            @RequestParam maxInclusive: Number
-        ) {
-            throw NumberTooHigh(templatePropertyId, objectId, predicateId, label, maxInclusive)
-        }
+            @RequestParam maxInclusive: Number,
+        ): Unit = throw NumberTooHigh(templatePropertyId, objectId, predicateId, label, maxInclusive)
     }
 }

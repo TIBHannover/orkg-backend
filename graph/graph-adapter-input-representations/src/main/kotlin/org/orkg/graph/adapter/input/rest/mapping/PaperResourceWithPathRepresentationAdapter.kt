@@ -13,9 +13,8 @@ import org.orkg.graph.domain.Visibility
 import org.springframework.data.domain.Page
 
 interface PaperResourceWithPathRepresentationAdapter : ThingRepresentationAdapter {
-
     fun Page<PaperResourceWithPath>.mapToPaperResourceWithPathRepresentation(
-        capabilities: MediaTypeCapabilities
+        capabilities: MediaTypeCapabilities,
     ): Page<PaperResourceWithPathRepresentation> {
         val pathItems = map { it.path.flatten() }.flatten()
         val resources = map { it.paper } + pathItems.filterIsInstance<Resource>()
@@ -29,7 +28,7 @@ interface PaperResourceWithPathRepresentationAdapter : ThingRepresentationAdapte
     fun PaperResourceWithPath.toPaperResourceWithPathRepresentation(
         usageCounts: StatementCounts,
         formattedLabels: FormattedLabels,
-        descriptions: Map<ThingId, String>
+        descriptions: Map<ThingId, String>,
     ): PaperResourceWithPathRepresentation =
         PaperResourceWithPathRepresentation(
             path = path.map { list ->

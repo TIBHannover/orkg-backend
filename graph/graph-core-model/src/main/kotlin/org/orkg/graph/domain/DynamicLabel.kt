@@ -1,11 +1,11 @@
 package org.orkg.graph.domain
 
 import org.orkg.common.StringReader
-import kotlin.collections.List
 import org.orkg.graph.domain.DynamicLabel.Component.Companion.formatValue
+import kotlin.collections.List
 
 data class DynamicLabel(
-    val template: String
+    val template: String,
 ) {
     val components by lazy { parse(template) }
 
@@ -173,31 +173,25 @@ data class DynamicLabel(
     }
 
     data class TextComponent(val text: String) : Component {
-        override fun render(valueMap: Map<String, List<String>>): String {
-            return text
-        }
+        override fun render(valueMap: Map<String, List<String>>): String = text
 
         fun append(other: TextComponent): TextComponent =
             TextComponent(text + other.text)
     }
 
     data class PlaceholderComponent(
-        val key: String
+        val key: String,
     ) : Component {
-        override fun render(valueMap: Map<String, List<String>>): String {
-            return valueMap[key]?.let(::formatValue) ?: "{$key}"
-        }
+        override fun render(valueMap: Map<String, List<String>>): String = valueMap[key]?.let(::formatValue) ?: "{$key}"
     }
 
     data class SectionComponent(
         val key: String,
         val preposition: String,
-        val postposition: String
+        val postposition: String,
     ) : Component {
-        override fun render(valueMap: Map<String, List<String>>): String? {
-            return valueMap[key]
-                ?.takeIf { it.isNotEmpty() }
-                ?.let { value -> (preposition + " " + formatValue(value) + " " + postposition).trim() }
-        }
+        override fun render(valueMap: Map<String, List<String>>): String? = valueMap[key]
+            ?.takeIf { it.isNotEmpty() }
+            ?.let { value -> (preposition + " " + formatValue(value) + " " + postposition).trim() }
     }
 }

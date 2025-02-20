@@ -5,7 +5,5 @@ import org.orkg.common.PageRepresentation
 import org.springframework.data.domain.Page
 
 class PageModelConverter : StdConverter<Page<*>?, PageRepresentation<*>?>() {
-    override fun convert(value: Page<*>?): PageRepresentation<*>? {
-        return value?.let { PageRepresentation(value) }
-    }
+    override fun convert(value: Page<*>?): PageRepresentation<*>? = value?.let { PageRepresentation(value) }
 }

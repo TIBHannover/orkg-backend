@@ -3,8 +3,6 @@ package org.orkg.graph.testing.fixtures
 import io.kotest.assertions.asClue
 import io.kotest.core.spec.style.describeSpec
 import io.kotest.matchers.shouldBe
-import java.time.OffsetDateTime
-import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.fixedClock
@@ -13,15 +11,17 @@ import org.orkg.graph.output.ClassHierarchyRepository
 import org.orkg.graph.output.ClassRelationRepository
 import org.orkg.graph.output.ClassRepository
 import org.springframework.data.domain.PageRequest
+import java.time.OffsetDateTime
+import java.util.UUID
 
 fun <
     R : ClassRelationRepository,
     C : ClassRepository,
-    H : ClassHierarchyRepository
+    H : ClassHierarchyRepository,
 > classRelationRepositoryContract(
     repository: R,
     classRepository: C,
-    hierarchyRepository: H
+    hierarchyRepository: H,
 ) = describeSpec {
     beforeTest {
         classRepository.deleteAll()
@@ -35,12 +35,14 @@ fun <
             val child = createClass(ThingId("2"), uri = null)
             classRepository.save(parent)
             classRepository.save(child)
-            repository.save(ClassSubclassRelation(
-                child,
-                parent,
-                OffsetDateTime.now(fixedClock),
-                ContributorId(UUID.randomUUID())
-            ))
+            repository.save(
+                ClassSubclassRelation(
+                    child,
+                    parent,
+                    OffsetDateTime.now(fixedClock),
+                    ContributorId(UUID.randomUUID())
+                )
+            )
             val result = hierarchyRepository.findParentByChildId(child.id)
             result.isPresent shouldBe true
             result.get().id shouldBe parent.id
@@ -87,12 +89,14 @@ fun <
                 val child = createClass(ThingId("2"), uri = null)
                 classRepository.save(parent)
                 classRepository.save(child)
-                repository.save(ClassSubclassRelation(
-                    child,
-                    parent,
-                    OffsetDateTime.now(fixedClock),
-                    ContributorId(UUID.randomUUID())
-                ))
+                repository.save(
+                    ClassSubclassRelation(
+                        child,
+                        parent,
+                        OffsetDateTime.now(fixedClock),
+                        ContributorId(UUID.randomUUID())
+                    )
+                )
                 val precondition = hierarchyRepository.findParentByChildId(child.id)
                 precondition.isPresent shouldBe true
                 precondition.get().id shouldBe parent.id

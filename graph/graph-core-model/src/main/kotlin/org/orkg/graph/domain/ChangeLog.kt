@@ -13,5 +13,5 @@ data class ChangeLog(
     @JsonProperty("created_at")
     val createdAt: String?,
     val classes: List<String>?,
-    val profile: Profile?
+    val profile: Profile?,
 )

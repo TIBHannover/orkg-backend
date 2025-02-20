@@ -14,5 +14,5 @@ data class Profile(
     @JsonProperty("gravatar_id")
     val gravatarId: String?,
     @JsonProperty("gravatar_url")
-    val gravatarUrl: String?
+    val gravatarUrl: String?,
 )

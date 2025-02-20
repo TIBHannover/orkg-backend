@@ -4,8 +4,12 @@ Manuel Prinz <manuel.prinz@tib.eu>
 :icons: font
 :apidoc_url: https://tibhannover.gitlab.io/orkg/orkg-backend/api-doc/index.html
 
-This repository contains a backend API for the ORKG based on the https://spring.io/[Spring Framework].
-It is written in https://kotlinlang.org/[Kotlin] as a proof-of-concept and for experimenting with a possible architecture and technologies.
+This repository contains a backend API for the Open Research Knowledge Graph (ORKG) written in https://kotlinlang.org/[Kotlin].
+It is based on the https://spring.io/[Spring Framework] and uses https://gradle.org/[Gradle] for its build process.
+
+== REST API documentation
+
+The documentation can be found at {apidoc_url}.
 
 == Building and running
 
@@ -13,11 +17,8 @@ It is written in https://kotlinlang.org/[Kotlin] as a proof-of-concept and for e
 
 The backend API can be run stand-alone.
 However, it needs other services to start properly.
-Services are managed via https://www.docker.com/community-edition[Docker (CE)] and the https://docs.docker.com/compose/[Docker Compose] plugin.
+Services are managed via https://www.docker.com/[Docker].
 Please follow the respective installation instructions for your operating system or distribution.
-
-WARNING: The Docker Compose standalone binary will not work, you need the Docker Compose plugin for the Docker CLI.
-         Users of Docker Desktop will have it installed already, and do not need any additional installation.
 
 === Stand-alone application
 
@@ -48,15 +49,12 @@ After installing it, run:
 
     docker compose up -d
 
-WARNING: In the past, it was possible to use this software with the standalone Docker Compose binary, which is deprecated by Docker Inc. for quite a while now.
-We only support using the Docker Compose plug-in now, which is installed by default in most Docker installations.
-
 This will start the application image and all dependent containers.
 It will take care of linking all containers so the services can see each other.
 You can start and connect all services yourself but this is not recommended.
 
 The application can be accessed via http://localhost:8080/.
-The other services can be accessed via the URLs described in the table "<<endpoints>>".
+The other services can be accessed via the URLs described in table "<<endpoints>>".
 
 To diagnose problems, check the logs with:
 
@@ -89,16 +87,16 @@ The images will provide the following end-points:
 |End-points
 
 |`registry.gitlab.com/tibhannover/orkg/orkg-backend`
-|`orkg-backend_api_1`
+|`orkg-backend-api-1`
 |http://localhost:8080/api/ (REST API)
 
 |`neo4j`
-|`orkg-backend_neo4j_1`
+|`orkg-backend-neo4j-1`
 | http://localhost:7474/browser/ (HTTP) +
 localhost:7687 (BOLT)
 
-| `postgres:11`
-| `orkg-backend_postgres_1`
+| `postgres`
+| `orkg-backend-postgres-1`
 | localhost:5432
 
 |===
@@ -110,14 +108,11 @@ If you need to expose those to your host network, refer to the Docker documentat
 
 The Neo4j Docker image includes the following extensions:
 
-* https://github.com/neo4j-contrib/neo4j-apoc-procedures[Awesome Procedures On Cypher (APOC)]
+* https://github.com/neo4j/apoc[APOC Core]
+* https://github.com/neo4j-contrib/neo4j-apoc-procedures[APOC Extended]
 
-APOC is required by the ORKG.
-You need to include it when you set up Neo4j in your environment manually.
-
-=== REST API documentation
-
-The documentation can be found at {apidoc_url}.
+APOC Core and APOC Extended are required by the ORKG.
+You need to include them when you set up Neo4j in your environment manually.
 
 == Gradle Subprojects (a. k. a. Modules)
 

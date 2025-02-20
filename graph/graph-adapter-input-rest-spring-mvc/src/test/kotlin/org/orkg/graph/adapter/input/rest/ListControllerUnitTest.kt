@@ -25,6 +25,7 @@ import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.andExpectPage
+import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
@@ -39,7 +40,6 @@ import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
-import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -130,7 +130,7 @@ internal class ListControllerUnitTest : MockMvcBaseTest("lists") {
     }
 
     @Test
-    @WithMockUser(username = "b7c81eed-52e1-4f7a-93bf-e6d331b8df7b")
+    @TestWithMockUser
     @DisplayName("When creating a list and service succeeds, then status is 201 CREATED")
     fun create() {
         val id = ThingId("R123")
@@ -170,7 +170,7 @@ internal class ListControllerUnitTest : MockMvcBaseTest("lists") {
     }
 
     @Test
-    @WithMockUser(username = "b7c81eed-52e1-4f7a-93bf-e6d331b8df7b")
+    @TestWithMockUser
     fun `When creating a list and service reports invalid label, then status is 400 BAD REQUEST`() {
         val id = ThingId("List1")
         val request = mapOf(
@@ -198,7 +198,7 @@ internal class ListControllerUnitTest : MockMvcBaseTest("lists") {
     }
 
     @Test
-    @WithMockUser(username = "b7c81eed-52e1-4f7a-93bf-e6d331b8df7b")
+    @TestWithMockUser
     fun `When creating a list and service reports list element not found, then status is 400 BAD REQUEST`() {
         val id = ThingId("List1")
         val request = mapOf(
@@ -226,7 +226,7 @@ internal class ListControllerUnitTest : MockMvcBaseTest("lists") {
     }
 
     @Test
-    @WithMockUser(username = "b7c81eed-52e1-4f7a-93bf-e6d331b8df7b")
+    @TestWithMockUser
     @DisplayName("When updating a list and service succeeds, then status is 204 NO CONTENT")
     fun update() {
         val id = ThingId("List1")
@@ -267,7 +267,7 @@ internal class ListControllerUnitTest : MockMvcBaseTest("lists") {
     }
 
     @Test
-    @WithMockUser(username = "b7c81eed-52e1-4f7a-93bf-e6d331b8df7b")
+    @TestWithMockUser
     fun `When updating a list and service reports invalid label, then status is 400 BAD REQUEST`() {
         val id = ThingId("List1")
         val request = mapOf(
@@ -295,7 +295,7 @@ internal class ListControllerUnitTest : MockMvcBaseTest("lists") {
     }
 
     @Test
-    @WithMockUser(username = "b7c81eed-52e1-4f7a-93bf-e6d331b8df7b")
+    @TestWithMockUser
     fun `When updating a list and service reports list element not found, then status is 400 BAD REQUEST`() {
         val id = ThingId("List1")
         val request = mapOf(

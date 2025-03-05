@@ -8,131 +8,88 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
-import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.community.output.ContributorRepository
 import org.orkg.community.testing.fixtures.createContributor
 import org.orkg.graph.input.CreatePredicateUseCase
+import org.orkg.graph.input.UnsafePredicateUseCases
 import org.orkg.graph.input.UpdatePredicateUseCase
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.testing.MockUserId
-import java.time.OffsetDateTime
 import java.util.Optional
-import java.util.UUID
 
 internal class PredicateServiceUnitTest : MockkBaseTest {
     private val repository: PredicateRepository = mockk()
     private val contributorRepository: ContributorRepository = mockk()
-    private val service = PredicateService(repository, contributorRepository, fixedClock)
+    private val unsafePredicateUseCases: UnsafePredicateUseCases = mockk()
+
+    private val service = PredicateService(repository, contributorRepository, unsafePredicateUseCases)
 
     @Test
-    fun `given a predicate is created, when no id is given, then it gets an id from the repository`() {
-        val mockPredicateId = ThingId("P1")
-        every { repository.nextIdentity() } returns mockPredicateId
-        every { repository.save(any()) } returns Unit
+    fun `Given a predicate create command, when inputs are valid, it creates a new predicate`() {
+        val id = ThingId("R123")
+        val command = CreatePredicateUseCase.CreateCommand(
+            id = id,
+            contributorId = ContributorId(MockUserId.USER),
+            label = "label",
+            modifiable = false
+        )
 
-        service.create(CreatePredicateUseCase.CreateCommand(label = "irrelevant", id = null)) shouldBe mockPredicateId
+        every { repository.findById(id) } returns Optional.empty()
+        every { unsafePredicateUseCases.create(command) } returns id
 
-        verify(exactly = 1) { repository.nextIdentity() }
-        verify(exactly = 1) { repository.save(any()) }
+        service.create(command) shouldBe id
+
+        verify(exactly = 1) { repository.findById(id) }
+        verify(exactly = 1) { unsafePredicateUseCases.create(command) }
     }
 
     @Test
-    fun `given a predicate is created, when an id is given, then it does not get a new id`() {
-        val mockPredicateId = ThingId("P1")
-        every { repository.findById(mockPredicateId) } returns Optional.empty()
-        every { repository.save(any()) } returns Unit
+    fun `Given a predicate create command, when inputs are minimal, it creates a new predicate`() {
+        val id = ThingId("R123")
+        val command = CreatePredicateUseCase.CreateCommand(
+            contributorId = ContributorId(MockUserId.USER),
+            label = "label"
+        )
 
-        service.create(CreatePredicateUseCase.CreateCommand(label = "irrelevant", id = mockPredicateId)) shouldBe mockPredicateId
+        every { unsafePredicateUseCases.create(command) } returns id
 
-        verify(exactly = 1) { repository.findById(mockPredicateId) }
-        verify(exactly = 1) {
-            repository.save(
-                withArg {
-                    it.id shouldBe mockPredicateId
-                }
-            )
-        }
-        verify(exactly = 0) { repository.nextIdentity() }
+        service.create(command) shouldBe id
+
+        verify(exactly = 1) { unsafePredicateUseCases.create(command) }
     }
 
     @Test
-    fun `given a predicate is created, when an id is taken, then it throws an exception`() {
-        val id = ThingId("P1")
+    fun `Given a predicate create command, when id already exists, it throws an exception`() {
+        val id = ThingId("R123")
+        val command = CreatePredicateUseCase.CreateCommand(
+            id = id,
+            contributorId = ContributorId(MockUserId.USER),
+            label = "some label"
+        )
+
         every { repository.findById(id) } returns Optional.of(createPredicate(id))
 
-        assertThrows<PredicateAlreadyExists> {
-            service.create(CreatePredicateUseCase.CreateCommand(id = id, label = "irrelevant"))
-        }
+        assertThrows<PredicateAlreadyExists> { service.create(command) }
 
         verify(exactly = 1) { repository.findById(id) }
     }
 
     @Test
-    fun `given a predicate is created, when the label is invalid, then an exception is thrown`() {
-        val mockPredicateId = ThingId("P1")
-        every { repository.nextIdentity() } returns mockPredicateId
+    fun `Given a predicate create command, when label is invalid, it throws an exception`() {
+        val id = ThingId("R123")
+        val command = CreatePredicateUseCase.CreateCommand(
+            id = id,
+            contributorId = ContributorId(MockUserId.USER),
+            label = "\n"
+        )
 
-        val exception = assertThrows<InvalidLabel> {
-            service.create(CreatePredicateUseCase.CreateCommand(label = " \t "))
-        }
-        assertThat(exception.message).isEqualTo("A label must not be blank or contain newlines and must be at most 8164 characters long.")
-
-        verify(exactly = 1) { repository.nextIdentity() }
-    }
-
-    @Test
-    fun `given a predicate is created, when no contributor is given, the anonymous user id is used`() {
-        val mockPredicateId = ThingId("P1")
-        every { repository.nextIdentity() } returns mockPredicateId
-        every { repository.save(any()) } returns Unit
-
-        service.create(CreatePredicateUseCase.CreateCommand(label = "irrelevant")) shouldBe mockPredicateId
-
-        verify(exactly = 1) {
-            repository.nextIdentity()
-            repository.save(
-                Predicate(
-                    id = mockPredicateId,
-                    label = "irrelevant",
-                    createdAt = OffsetDateTime.now(fixedClock),
-                    createdBy = ContributorId(UUID(0, 0)),
-                )
-            )
-        }
-    }
-
-    @Test
-    fun `given a predicate is created, when a contributor is given, the contributor id is used`() {
-        val mockPredicateId = ThingId("P1")
-        every { repository.nextIdentity() } returns mockPredicateId
-        every { repository.save(any()) } returns Unit
-
-        val randomContributorId = ContributorId(UUID.randomUUID())
-        service.create(
-            CreatePredicateUseCase.CreateCommand(
-                label = "irrelevant",
-                contributorId = randomContributorId
-            )
-        ) shouldBe mockPredicateId
-
-        verify(exactly = 1) {
-            repository.nextIdentity()
-            repository.save(
-                Predicate(
-                    id = mockPredicateId,
-                    label = "irrelevant",
-                    createdAt = OffsetDateTime.now(fixedClock),
-                    createdBy = randomContributorId,
-                )
-            )
-        }
+        assertThrows<InvalidLabel> { service.create(command) }
     }
 
     @Test
@@ -241,7 +198,7 @@ internal class PredicateServiceUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `given a predicate is being deleted, when it is still used in a statement, an appropriate error is thrown`() {
+    fun `Given a predicate is being deleted, when it is still used in a statement, an appropriate error is thrown`() {
         val mockPredicate = createPredicate()
         val couldBeAnyone = ContributorId(MockUserId.USER)
 
@@ -254,27 +211,26 @@ internal class PredicateServiceUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { repository.findById(mockPredicate.id) }
         verify(exactly = 1) { repository.isInUse(mockPredicate.id) }
-        verify(exactly = 0) { repository.deleteById(any()) }
     }
 
     @Test
-    fun `given a predicate is being deleted, when it is not used in a statement, and it is owned by the user, it gets deleted`() {
+    fun `Given a predicate is being deleted, when it is not used in a statement, and it is owned by the user, it gets deleted`() {
         val theOwningContributorId = ContributorId(MockUserId.USER)
         val predicate = createPredicate(createdBy = theOwningContributorId)
 
         every { repository.findById(predicate.id) } returns Optional.of(predicate)
         every { repository.isInUse(predicate.id) } returns false
-        every { repository.deleteById(predicate.id) } returns Unit
+        every { unsafePredicateUseCases.delete(predicate.id, theOwningContributorId) } returns Unit
 
         service.delete(predicate.id, theOwningContributorId)
 
         verify(exactly = 1) { repository.findById(predicate.id) }
         verify(exactly = 1) { repository.isInUse(predicate.id) }
-        verify(exactly = 1) { repository.deleteById(predicate.id) }
+        verify(exactly = 1) { unsafePredicateUseCases.delete(predicate.id, theOwningContributorId) }
     }
 
     @Test
-    fun `given a predicate is being deleted, when it is not used in a statement, and it is not owned by the user, but the user is a curator, it gets deleted`() {
+    fun `Given a predicate is being deleted, when it is not used in a statement, and it is not owned by the user, but the user is a curator, it gets deleted`() {
         val theOwningContributorId = ContributorId(MockUserId.USER)
         val aCurator = createContributor(id = ContributorId(MockUserId.CURATOR), isCurator = true)
         val predicate = createPredicate(createdBy = theOwningContributorId)
@@ -282,18 +238,18 @@ internal class PredicateServiceUnitTest : MockkBaseTest {
         every { repository.findById(predicate.id) } returns Optional.of(predicate)
         every { repository.isInUse(predicate.id) } returns false
         every { contributorRepository.findById(aCurator.id) } returns Optional.of(aCurator)
-        every { repository.deleteById(predicate.id) } returns Unit
+        every { unsafePredicateUseCases.delete(predicate.id, aCurator.id) } returns Unit
 
         service.delete(predicate.id, aCurator.id)
 
         verify(exactly = 1) { repository.findById(predicate.id) }
         verify(exactly = 1) { repository.isInUse(predicate.id) }
-        verify(exactly = 1) { repository.deleteById(predicate.id) }
+        verify(exactly = 1) { unsafePredicateUseCases.delete(predicate.id, aCurator.id) }
         verify(exactly = 1) { contributorRepository.findById(aCurator.id) }
     }
 
     @Test
-    fun `given a predicate is being deleted, when it is not used in a statement, and it is not owned by the user, and the user is not a curator, it throws an exception`() {
+    fun `Given a predicate is being deleted, when it is not used in a statement, and it is not owned by the user, and the user is not a curator, it throws an exception`() {
         val theOwningContributorId = ContributorId("1255bbe4-1850-4033-ba10-c80d4b370e3e")
         val loggedInUserId = ContributorId(MockUserId.USER)
         val loggedInUser = createContributor(id = loggedInUserId)
@@ -309,12 +265,11 @@ internal class PredicateServiceUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { repository.findById(predicate.id) }
         verify(exactly = 1) { repository.isInUse(predicate.id) }
-        verify(exactly = 0) { repository.deleteById(predicate.id) }
         verify(exactly = 1) { contributorRepository.findById(loggedInUserId) }
     }
 
     @Test
-    fun `given a predicate is being deleted, when it is unmodifiable, it throws an exception`() {
+    fun `Given a predicate is being deleted, when it is unmodifiable, it throws an exception`() {
         val predicate = createPredicate(modifiable = false)
         val loggedInUser = ContributorId("89b13df4-22ae-4685-bed0-4bb1f1873c78")
 
@@ -325,6 +280,5 @@ internal class PredicateServiceUnitTest : MockkBaseTest {
         }
 
         verify(exactly = 1) { repository.findById(predicate.id) }
-        verify(exactly = 0) { repository.deleteById(any()) }
     }
 }

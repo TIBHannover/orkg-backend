@@ -17,7 +17,7 @@ import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.PredicateUseCases
+import org.orkg.graph.input.UnsafePredicateUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.input.UpdateListUseCase
@@ -28,7 +28,7 @@ class SubgraphCreator(
     private val unsafeResourceUseCases: UnsafeResourceUseCases,
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
     private val literalService: LiteralUseCases,
-    private val predicateService: PredicateUseCases,
+    private val unsafePredicateUseCases: UnsafePredicateUseCases,
     private val statementRepository: StatementRepository,
     private val listService: ListUseCases,
 ) {
@@ -125,10 +125,10 @@ class SubgraphCreator(
     ) {
         thingDefinitions.predicates.forEach {
             if (it.key.isTempId && it.key in validatedIds) {
-                val predicate = predicateService.create(
+                val predicate = unsafePredicateUseCases.create(
                     CreatePredicateUseCase.CreateCommand(
-                        label = it.value.label,
-                        contributorId = contributorId
+                        contributorId = contributorId,
+                        label = it.value.label
                     )
                 )
                 lookup[it.key] = predicate

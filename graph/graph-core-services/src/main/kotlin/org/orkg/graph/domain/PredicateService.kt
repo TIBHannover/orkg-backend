@@ -7,13 +7,13 @@ import org.orkg.community.domain.ContributorNotFound
 import org.orkg.community.output.ContributorRepository
 import org.orkg.graph.input.CreatePredicateUseCase
 import org.orkg.graph.input.PredicateUseCases
+import org.orkg.graph.input.UnsafePredicateUseCases
 import org.orkg.graph.input.UpdatePredicateUseCase
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.spring.data.annotations.TransactionalOnNeo4j
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
-import java.time.Clock
 import java.time.OffsetDateTime
 import java.util.Optional
 
@@ -22,24 +22,15 @@ import java.util.Optional
 class PredicateService(
     private val repository: PredicateRepository,
     private val contributorRepository: ContributorRepository,
-    private val clock: Clock,
+    private val unsafePredicateUseCases: UnsafePredicateUseCases,
 ) : PredicateUseCases {
     @TransactionalOnNeo4j(readOnly = true)
     override fun existsById(id: ThingId): Boolean = repository.existsById(id)
 
     override fun create(command: CreatePredicateUseCase.CreateCommand): ThingId {
-        val id = command.id
-            ?.also { id -> repository.findById(id).ifPresent { throw PredicateAlreadyExists(id) } }
-            ?: repository.nextIdentity()
-        val predicate = Predicate(
-            id = id,
-            label = Label.ofOrNull(command.label)?.value ?: throw InvalidLabel(),
-            createdAt = OffsetDateTime.now(clock),
-            createdBy = command.contributorId ?: ContributorId.UNKNOWN,
-            modifiable = command.modifiable
-        )
-        repository.save(predicate)
-        return id
+        Label.ofOrNull(command.label) ?: throw InvalidLabel()
+        command.id?.also { id -> repository.findById(id).ifPresent { throw PredicateAlreadyExists(id) } }
+        return unsafePredicateUseCases.create(command)
     }
 
     override fun findAll(
@@ -68,8 +59,8 @@ class PredicateService(
         }
     }
 
-    override fun delete(predicateId: ThingId, contributorId: ContributorId) {
-        val predicate = findById(predicateId).orElseThrow { PredicateNotFound(predicateId) }
+    override fun delete(id: ThingId, contributorId: ContributorId) {
+        val predicate = findById(id).orElseThrow { PredicateNotFound(id) }
         if (!predicate.modifiable) {
             throw PredicateNotModifiable(predicate.id)
         }
@@ -84,7 +75,7 @@ class PredicateService(
             if (!contributor.isCurator) throw NeitherOwnerNorCurator(contributorId)
         }
 
-        repository.deleteById(predicate.id)
+        unsafePredicateUseCases.delete(predicate.id, contributorId)
     }
 
     override fun deleteAll() = repository.deleteAll()

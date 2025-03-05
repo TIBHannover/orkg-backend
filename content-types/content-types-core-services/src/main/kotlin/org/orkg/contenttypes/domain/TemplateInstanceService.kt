@@ -25,8 +25,8 @@ import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafePredicateUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ClassHierarchyRepository
@@ -50,7 +50,7 @@ class TemplateInstanceService(
     private val classService: ClassUseCases,
     private val unsafeResourceUseCases: UnsafeResourceUseCases,
     private val literalService: LiteralUseCases,
-    private val predicateService: PredicateUseCases,
+    private val unsafePredicateUseCases: UnsafePredicateUseCases,
     private val listService: ListUseCases,
     private val statementRepository: StatementRepository,
     private val classRepository: ClassRepository,
@@ -102,7 +102,7 @@ class TemplateInstanceService(
             TemplateInstanceThingDefinitionValidator(thingRepository, classRepository),
             TemplateInstancePropertyValueValidator(thingRepository, classRepository, statementRepository, classHierarchyRepository),
             TemplateInstanceSubjectUpdater(resourceRepository),
-            TemplateInstancePropertyValueUpdater(classService, unsafeResourceUseCases, statementService, unsafeStatementUseCases, literalService, predicateService, statementRepository, listService)
+            TemplateInstancePropertyValueUpdater(classService, unsafeResourceUseCases, statementService, unsafeStatementUseCases, literalService, unsafePredicateUseCases, statementRepository, listService)
         )
         steps.execute(command, UpdateTemplateInstanceState())
     }

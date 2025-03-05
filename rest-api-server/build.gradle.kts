@@ -131,7 +131,7 @@ dependencies {
     runtimeOnly(project(":graph:graph-adapter-output-web"))
     implementation(project(":graph:graph-core-constants"))
     implementation(project(":graph:graph-core-model"))
-    implementation(project(":graph:graph-core-services"))
+    runtimeOnly(project(":graph:graph-core-services"))
     implementation(project(":graph:graph-ports-input"))
     implementation(project(":graph:graph-ports-output"))
 

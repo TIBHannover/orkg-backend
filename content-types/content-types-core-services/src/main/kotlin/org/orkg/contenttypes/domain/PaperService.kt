@@ -76,9 +76,9 @@ import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafePredicateUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ClassRepository
@@ -107,7 +107,7 @@ class PaperService(
     private val statementService: StatementUseCases,
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
     private val literalService: LiteralUseCases,
-    private val predicateService: PredicateUseCases,
+    private val unsafePredicateUseCases: UnsafePredicateUseCases,
     private val listService: ListUseCases,
     private val listRepository: ListRepository,
     private val doiService: DoiService,
@@ -188,7 +188,7 @@ class PaperService(
             PaperAuthorCreator(unsafeResourceUseCases, unsafeStatementUseCases, literalService, listService),
             PaperResearchFieldCreator(literalService, unsafeStatementUseCases),
             PaperPublicationInfoCreator(unsafeResourceUseCases, resourceRepository, unsafeStatementUseCases, literalService),
-            PaperContributionCreator(classService, unsafeResourceUseCases, unsafeStatementUseCases, literalService, predicateService, statementRepository, listService)
+            PaperContributionCreator(classService, unsafeResourceUseCases, unsafeStatementUseCases, literalService, unsafePredicateUseCases, statementRepository, listService)
         )
         return steps.execute(command, CreatePaperState()).paperId!!
     }
@@ -199,7 +199,7 @@ class PaperService(
             ContributionPaperValidator(resourceRepository),
             ContributionThingDefinitionValidator(thingRepository, classRepository),
             ContributionContentsValidator(thingRepository),
-            ContributionContentsCreator(classService, unsafeResourceUseCases, unsafeStatementUseCases, literalService, predicateService, statementRepository, listService)
+            ContributionContentsCreator(classService, unsafeResourceUseCases, unsafeStatementUseCases, literalService, unsafePredicateUseCases, statementRepository, listService)
         )
         return steps.execute(command, ContributionState()).contributionId!!
     }

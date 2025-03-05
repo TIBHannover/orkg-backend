@@ -6,7 +6,7 @@ import org.orkg.contenttypes.domain.actions.CreateContributionCommand
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.PredicateUseCases
+import org.orkg.graph.input.UnsafePredicateUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.StatementRepository
@@ -19,18 +19,18 @@ class ContributionContentsCreator(
         unsafeResourceUseCases: UnsafeResourceUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
         literalService: LiteralUseCases,
-        predicateService: PredicateUseCases,
+        unsafePredicateUseCases: UnsafePredicateUseCases,
         statementRepository: StatementRepository,
         listService: ListUseCases,
     ) : this(
         ContributionCreator(
-            classService = classService,
-            unsafeResourceUseCases = unsafeResourceUseCases,
-            unsafeStatementUseCases = unsafeStatementUseCases,
-            literalService = literalService,
-            predicateService = predicateService,
-            statementRepository = statementRepository,
-            listService = listService
+            classService,
+            unsafeResourceUseCases,
+            unsafeStatementUseCases,
+            literalService,
+            unsafePredicateUseCases,
+            statementRepository,
+            listService
         )
     )
 

@@ -28,9 +28,9 @@ import org.orkg.graph.domain.Visibility
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafePredicateUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ClassRepository
@@ -59,7 +59,7 @@ internal class PaperServiceUnitTest : MockkBaseTest {
     private val statementService: StatementUseCases = mockk()
     private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()
-    private val predicateService: PredicateUseCases = mockk()
+    private val unsafePredicateUseCases: UnsafePredicateUseCases = mockk()
     private val listService: ListUseCases = mockk()
     private val doiService: DoiService = mockk()
     private val paperRepository: PaperRepository = mockk()
@@ -80,7 +80,7 @@ internal class PaperServiceUnitTest : MockkBaseTest {
         statementService = statementService,
         unsafeStatementUseCases = unsafeStatementUseCases,
         literalService = literalService,
-        predicateService = predicateService,
+        unsafePredicateUseCases = unsafePredicateUseCases,
         listService = listService,
         listRepository = listRepository,
         doiService = doiService,

@@ -72,8 +72,8 @@ class ObjectService(
                 val surrogateId = it[it.keys.first()]!!
                 val predicateId = predicateService.create(
                     CreatePredicateUseCase.CreateCommand(
-                        label = it.keys.first(),
-                        contributorId = userId
+                        contributorId = userId,
+                        label = it.keys.first()
                     )
                 )
                 predicates[surrogateId] = predicateId

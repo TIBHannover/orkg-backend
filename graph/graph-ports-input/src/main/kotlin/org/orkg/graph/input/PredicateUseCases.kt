@@ -15,6 +15,11 @@ interface PredicateUseCases :
     UpdatePredicateUseCase,
     RetrievePredicateUseCase
 
+interface UnsafePredicateUseCases :
+    CreatePredicateUseCase,
+    UpdatePredicateUseCase,
+    DeletePredicateUseCase
+
 interface RetrievePredicateUseCase {
     fun existsById(id: ThingId): Boolean
 
@@ -34,8 +39,8 @@ interface CreatePredicateUseCase {
 
     data class CreateCommand(
         val id: ThingId? = null,
+        val contributorId: ContributorId,
         val label: String,
-        val contributorId: ContributorId? = null,
         val modifiable: Boolean = true,
     )
 }
@@ -53,7 +58,7 @@ interface UpdatePredicateUseCase {
 
 interface DeletePredicateUseCase {
     // legacy methods:
-    fun delete(predicateId: ThingId, contributorId: ContributorId)
+    fun delete(id: ThingId, contributorId: ContributorId)
 
     fun deleteAll()
 }

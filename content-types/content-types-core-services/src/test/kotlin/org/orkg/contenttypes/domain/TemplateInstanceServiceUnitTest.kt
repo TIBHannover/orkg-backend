@@ -21,8 +21,8 @@ import org.orkg.graph.domain.Thing
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafePredicateUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ClassHierarchyRepository
@@ -46,26 +46,26 @@ internal class TemplateInstanceServiceUnitTest : MockkBaseTest {
     private val classService: ClassUseCases = mockk()
     private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()
-    private val predicateService: PredicateUseCases = mockk()
+    private val unsafePredicateUseCases: UnsafePredicateUseCases = mockk()
     private val listService: ListUseCases = mockk()
     private val statementRepository: StatementRepository = mockk()
     private val classRepository: ClassRepository = mockk()
     private val classHierarchyRepository: ClassHierarchyRepository = mockk()
 
     private val service = TemplateInstanceService(
-        resourceRepository = resourceRepository,
-        templateService = templateService,
-        statementService = statementService,
-        unsafeStatementUseCases = unsafeStatementUseCases,
-        thingRepository = thingRepository,
-        classService = classService,
-        unsafeResourceUseCases = unsafeResourceUseCases,
-        literalService = literalService,
-        predicateService = predicateService,
-        listService = listService,
-        statementRepository = statementRepository,
-        classRepository = classRepository,
-        classHierarchyRepository = classHierarchyRepository
+        resourceRepository,
+        templateService,
+        statementService,
+        unsafeStatementUseCases,
+        thingRepository,
+        classService,
+        unsafeResourceUseCases,
+        literalService,
+        unsafePredicateUseCases,
+        listService,
+        statementRepository,
+        classRepository,
+        classHierarchyRepository
     )
 
     @Test

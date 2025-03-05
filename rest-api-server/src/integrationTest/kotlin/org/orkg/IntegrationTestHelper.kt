@@ -59,8 +59,8 @@ fun CreatePredicateUseCase.createPredicate(
 ): ThingId = create(
     CreatePredicateUseCase.CreateCommand(
         id = id,
-        label = label,
         contributorId = contributorId,
+        label = label,
         modifiable = modifiable
     )
 )

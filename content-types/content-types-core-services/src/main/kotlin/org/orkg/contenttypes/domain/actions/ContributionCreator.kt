@@ -14,7 +14,7 @@ import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.PredicateUseCases
+import org.orkg.graph.input.UnsafePredicateUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.StatementRepository
@@ -29,7 +29,7 @@ class ContributionCreator(
         unsafeResourceUseCases: UnsafeResourceUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
         literalService: LiteralUseCases,
-        predicateService: PredicateUseCases,
+        unsafePredicateUseCases: UnsafePredicateUseCases,
         statementRepository: StatementRepository,
         listService: ListUseCases,
     ) : this(
@@ -40,7 +40,7 @@ class ContributionCreator(
             unsafeResourceUseCases = unsafeResourceUseCases,
             unsafeStatementUseCases = unsafeStatementUseCases,
             literalService = literalService,
-            predicateService = predicateService,
+            unsafePredicateUseCases = unsafePredicateUseCases,
             statementRepository = statementRepository,
             listService = listService
         )

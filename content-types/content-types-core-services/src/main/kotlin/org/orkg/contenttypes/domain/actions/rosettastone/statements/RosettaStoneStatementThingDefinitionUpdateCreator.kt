@@ -7,7 +7,7 @@ import org.orkg.contenttypes.domain.actions.rosettastone.statements.UpdateRosett
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.PredicateUseCases
+import org.orkg.graph.input.UnsafePredicateUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.StatementRepository
@@ -20,7 +20,7 @@ class RosettaStoneStatementThingDefinitionUpdateCreator(
         unsafeResourceUseCases: UnsafeResourceUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
         literalService: LiteralUseCases,
-        predicateService: PredicateUseCases,
+        unsafePredicateUseCases: UnsafePredicateUseCases,
         statementRepository: StatementRepository,
         listService: ListUseCases,
     ) : this(
@@ -29,7 +29,7 @@ class RosettaStoneStatementThingDefinitionUpdateCreator(
             unsafeResourceUseCases,
             unsafeStatementUseCases,
             literalService,
-            predicateService,
+            unsafePredicateUseCases,
             statementRepository,
             listService
         )

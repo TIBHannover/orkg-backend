@@ -70,8 +70,8 @@ class PredicateController(
     ): ResponseEntity<PredicateRepresentation> {
         val id = service.create(
             CreatePredicateUseCase.CreateCommand(
-                contributorId = currentUser.contributorId(),
                 id = predicate.id,
+                contributorId = currentUser.contributorId(),
                 label = predicate.label,
             )
         )

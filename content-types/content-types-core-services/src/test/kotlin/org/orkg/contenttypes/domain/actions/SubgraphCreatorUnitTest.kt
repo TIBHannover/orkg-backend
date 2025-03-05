@@ -32,7 +32,7 @@ import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.PredicateUseCases
+import org.orkg.graph.input.UnsafePredicateUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.input.UpdateListUseCase
@@ -51,7 +51,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
     private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
     private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()
-    private val predicateService: PredicateUseCases = mockk()
+    private val unsafePredicateUseCases: UnsafePredicateUseCases = mockk()
     private val listService: ListUseCases = mockk()
 
     private val subgraphCreator = SubgraphCreator(
@@ -59,7 +59,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         unsafeResourceUseCases = unsafeResourceUseCases,
         unsafeStatementUseCases = unsafeStatementUseCases,
         literalService = literalService,
-        predicateService = predicateService,
+        unsafePredicateUseCases = unsafePredicateUseCases,
         statementRepository = statementRepository,
         listService = listService
     )
@@ -287,10 +287,10 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         )
 
         every {
-            predicateService.create(
+            unsafePredicateUseCases.create(
                 CreatePredicateUseCase.CreateCommand(
-                    label = predicateDefinition.label,
-                    contributorId = contributorId
+                    contributorId = contributorId,
+                    label = predicateDefinition.label
                 )
             )
         } returns ThingId("R456")
@@ -304,10 +304,10 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         )
 
         verify(exactly = 1) {
-            predicateService.create(
+            unsafePredicateUseCases.create(
                 CreatePredicateUseCase.CreateCommand(
-                    label = predicateDefinition.label,
-                    contributorId = contributorId
+                    contributorId = contributorId,
+                    label = predicateDefinition.label
                 )
             )
         }
@@ -330,10 +330,10 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         val literal = ThingId("L1")
 
         every {
-            predicateService.create(
+            unsafePredicateUseCases.create(
                 CreatePredicateUseCase.CreateCommand(
-                    label = predicateDefinition.label,
-                    contributorId = contributorId
+                    contributorId = contributorId,
+                    label = predicateDefinition.label
                 )
             )
         } returns predicateId
@@ -365,10 +365,10 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         )
 
         verify(exactly = 1) {
-            predicateService.create(
+            unsafePredicateUseCases.create(
                 CreatePredicateUseCase.CreateCommand(
-                    label = predicateDefinition.label,
-                    contributorId = contributorId
+                    contributorId = contributorId,
+                    label = predicateDefinition.label
                 )
             )
         }
@@ -532,10 +532,10 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             )
         } returns resourceId
         every {
-            predicateService.create(
+            unsafePredicateUseCases.create(
                 CreatePredicateUseCase.CreateCommand(
-                    label = predicateDefinition.label,
-                    contributorId = contributorId
+                    contributorId = contributorId,
+                    label = predicateDefinition.label
                 )
             )
         } returns predicateId
@@ -582,10 +582,10 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            predicateService.create(
+            unsafePredicateUseCases.create(
                 CreatePredicateUseCase.CreateCommand(
-                    label = predicateDefinition.label,
-                    contributorId = contributorId
+                    contributorId = contributorId,
+                    label = predicateDefinition.label
                 )
             )
         }

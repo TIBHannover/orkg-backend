@@ -7,10 +7,10 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.List
 import org.orkg.graph.domain.Predicate
-import org.orkg.graph.domain.PredicateService
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.input.CreatePredicateUseCase
+import org.orkg.graph.input.UnsafePredicateUseCases
 import org.orkg.graph.output.ListRepository
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
@@ -34,7 +34,7 @@ private const val CHUNK_SIZE = 10_000
 class ListMigrationRunner(
     private val listRepository: ListRepository,
     private val resourceRepository: ResourceRepository,
-    private val predicateService: PredicateService,
+    private val unsafePredicateUseCases: UnsafePredicateUseCases,
     private val statementRepository: StatementRepository,
     private val predicateRepository: PredicateRepository,
     private val neo4jClient: Neo4jClient,
@@ -205,10 +205,11 @@ class ListMigrationRunner(
 
     private fun findOrCreatePredicate(label: String, id: ThingId): Predicate =
         predicateRepository.findById(id).orElseGet {
-            val predicateId = predicateService.create(
+            val predicateId = unsafePredicateUseCases.create(
                 CreatePredicateUseCase.CreateCommand(
-                    label = label,
-                    id = id
+                    id = id,
+                    contributorId = ContributorId.UNKNOWN,
+                    label = label
                 )
             )
             predicateRepository.findById(predicateId).get()

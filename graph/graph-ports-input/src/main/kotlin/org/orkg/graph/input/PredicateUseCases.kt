@@ -41,11 +41,13 @@ interface CreatePredicateUseCase {
 }
 
 interface UpdatePredicateUseCase {
-    fun update(id: ThingId, command: ReplaceCommand)
+    fun update(command: UpdateCommand)
 
-    data class ReplaceCommand(
-        val label: String,
-        val description: String? = null,
+    data class UpdateCommand(
+        val id: ThingId,
+        val contributorId: ContributorId,
+        val label: String? = null,
+        val modifiable: Boolean? = null,
     )
 }
 

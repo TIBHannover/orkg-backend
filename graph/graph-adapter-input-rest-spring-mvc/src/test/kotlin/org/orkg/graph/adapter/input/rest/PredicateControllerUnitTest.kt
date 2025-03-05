@@ -4,7 +4,10 @@ import com.ninjasquad.springmockk.MockkBean
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.every
+import io.mockk.just
+import io.mockk.runs
 import io.mockk.verify
+import org.hamcrest.CoreMatchers
 import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -15,11 +18,13 @@ import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.graph.adapter.input.rest.json.GraphJacksonModule
+import org.orkg.graph.adapter.input.rest.testing.fixtures.predicateResponseFields
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UpdatePredicateUseCase
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
@@ -38,6 +43,7 @@ import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
+import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
@@ -269,5 +275,64 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
             .andExpect(jsonPath("$.path").value("/api/predicates"))
 
         verify(exactly = 1) { predicateService.findAll(any()) }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a predicate update command, when service succeeds, it returns status 200 OK")
+    fun update() {
+        val predicate = createPredicate(label = "foo")
+        val command = UpdatePredicateUseCase.UpdateCommand(
+            id = predicate.id,
+            contributorId = ContributorId(MockUserId.USER),
+            label = predicate.label,
+        )
+        val request = mapOf(
+            "label" to predicate.label,
+        )
+
+        every { predicateService.update(command) } just runs
+        every { predicateService.findById(any()) } returns Optional.of(predicate)
+        every {
+            statementService.findAll(
+                pageable = PageRequests.SINGLE,
+                subjectId = predicate.id,
+                predicateId = Predicates.description,
+                objectClasses = setOf(Classes.literal)
+            )
+        } returns pageOf()
+
+        documentedPutRequestTo("/api/predicates/{id}", predicate.id)
+            .content(request)
+            .perform()
+            .andExpect(status().isOk)
+            .andExpect(header().string("Location", CoreMatchers.endsWith("/api/predicates/${predicate.id}")))
+            .andExpectPredicate()
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the predicate.")
+                    ),
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the updated predicate can be fetched from.")
+                    ),
+                    requestFields(
+                        fieldWithPath("label").description("The updated predicate label. (optional)").optional(),
+                    ),
+                    responseFields(predicateResponseFields())
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { predicateService.update(command) }
+        verify(exactly = 1) { predicateService.findById(any()) }
+        verify(exactly = 1) {
+            statementService.findAll(
+                pageable = PageRequests.SINGLE,
+                subjectId = predicate.id,
+                predicateId = Predicates.description,
+                objectClasses = setOf(Classes.literal)
+            )
+        }
     }
 }

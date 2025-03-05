@@ -54,17 +54,18 @@ class PredicateService(
     override fun findById(id: ThingId): Optional<Predicate> =
         repository.findById(id)
 
-    override fun update(id: ThingId, command: UpdatePredicateUseCase.ReplaceCommand) {
-        var found = repository.findById(id).get()
-
-        if (!found.modifiable) {
-            throw PredicateNotModifiable(found.id)
+    override fun update(command: UpdatePredicateUseCase.UpdateCommand) {
+        if (command.hasNoContents()) return
+        val predicate = repository.findById(command.id)
+            .orElseThrow { PredicateNotFound(command.id) }
+        if (!predicate.modifiable) {
+            throw PredicateNotModifiable(predicate.id)
         }
-
-        // update all the properties
-        found = found.copy(label = command.label)
-
-        repository.save(found)
+        command.label?.also { Label.ofOrNull(it) ?: throw InvalidLabel() }
+        val updated = predicate.apply(command)
+        if (updated != predicate) {
+            repository.save(updated)
+        }
     }
 
     override fun delete(predicateId: ThingId, contributorId: ContributorId) {

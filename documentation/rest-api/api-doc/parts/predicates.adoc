@@ -38,11 +38,11 @@ operation::predicates-create[snippets='request-fields,curl-request,response-head
 [[predicates-edit]]
 == Updating Predicates
 
-A `PUT` request updates a predicate with a new given label.
+A `PUT` request updates a predicate with the given parameters.
 The response will be `200 OK` when successful.
 The updated predicate is returned in the body for convenience.
 
-operation::predicates-edit[snippets='path-parameters,curl-request,response-headers,http-response']
+operation::predicates-update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[predicates-delete]]
 == Deleting Predicates

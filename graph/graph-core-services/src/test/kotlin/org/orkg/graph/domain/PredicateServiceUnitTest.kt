@@ -4,7 +4,9 @@ import io.kotest.assertions.asClue
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.runs
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -134,20 +136,108 @@ internal class PredicateServiceUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given a predicate update command, when updating an unmodifiable predicate, it throws an exception`() {
-        val predicate = createPredicate(modifiable = false)
-        val label = "updated label"
+    fun `Given a predicate update command, when updating no properties, it does nothing`() {
+        val id = ThingId("P123")
+        val contributorId = ContributorId(MockUserId.USER)
+
+        service.update(UpdatePredicateUseCase.UpdateCommand(id, contributorId))
+    }
+
+    @Test
+    fun `Given a predicate update command, when it contains an invalid label, it throws an exception`() {
+        val predicate = createPredicate()
+        val command = UpdatePredicateUseCase.UpdateCommand(
+            id = predicate.id,
+            contributorId = ContributorId(MockUserId.USER),
+            label = "\n"
+        )
 
         every { repository.findById(predicate.id) } returns Optional.of(predicate)
 
-        shouldThrow<PredicateNotModifiable> {
-            service.update(predicate.id, UpdatePredicateUseCase.ReplaceCommand(label))
-        }.asClue {
+        shouldThrow<InvalidLabel> { service.update(command) }
+
+        verify(exactly = 1) { repository.findById(predicate.id) }
+    }
+
+    @Test
+    fun `Given a predicate update command, when predicate does not exist, it throws an exception`() {
+        val command = UpdatePredicateUseCase.UpdateCommand(
+            id = ThingId("P123"),
+            contributorId = ContributorId(MockUserId.USER),
+            label = "new label"
+        )
+
+        every { repository.findById(any()) } returns Optional.empty()
+
+        shouldThrow<PredicateNotFound> { service.update(command) }
+
+        verify(exactly = 1) { repository.findById(any()) }
+    }
+
+    @Test
+    fun `Given a predicate update command, when updating an unmodifiable predicate, it throws an exception`() {
+        val predicate = createPredicate(modifiable = false)
+        val contributorId = ContributorId(MockUserId.USER)
+        val command = UpdatePredicateUseCase.UpdateCommand(predicate.id, contributorId, "updated label")
+
+        every { repository.findById(predicate.id) } returns Optional.of(predicate)
+
+        shouldThrow<PredicateNotModifiable> { service.update(command) }.asClue {
             it.message shouldBe """Predicate "${predicate.id}" is not modifiable."""
         }
 
         verify(exactly = 1) { repository.findById(predicate.id) }
-        verify(exactly = 0) { repository.save(any()) }
+    }
+
+    @Test
+    fun `Given a predicate update command, when updating with the same values, it does nothing`() {
+        val predicate = createPredicate()
+        val contributorId = ContributorId(MockUserId.USER)
+
+        every { repository.findById(predicate.id) } returns Optional.of(predicate)
+
+        service.update(
+            UpdatePredicateUseCase.UpdateCommand(
+                id = predicate.id,
+                contributorId = contributorId,
+                label = predicate.label,
+                modifiable = predicate.modifiable
+            )
+        )
+
+        verify(exactly = 1) { repository.findById(predicate.id) }
+    }
+
+    @Test
+    fun `Given a predicate update command, when all properties, it returns success`() {
+        val predicate = createPredicate()
+        val contributorId = ContributorId(MockUserId.USER)
+        val label = "updated label"
+        val modifiable = true
+        val command = UpdatePredicateUseCase.UpdateCommand(
+            id = predicate.id,
+            contributorId = contributorId,
+            label = label,
+            modifiable = modifiable
+        )
+
+        every { repository.findById(predicate.id) } returns Optional.of(predicate)
+        every { repository.save(any()) } just runs
+
+        service.update(command)
+
+        verify(exactly = 1) { repository.findById(predicate.id) }
+        verify(exactly = 1) {
+            repository.save(
+                withArg {
+                    it.id shouldBe predicate.id
+                    it.label shouldBe label
+                    it.createdAt shouldBe predicate.createdAt
+                    it.createdBy shouldBe predicate.createdBy
+                    it.modifiable shouldBe modifiable
+                }
+            )
+        }
     }
 
     @Test

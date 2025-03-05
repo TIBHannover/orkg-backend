@@ -1,5 +1,6 @@
 package org.orkg.graph.domain
 
+import org.orkg.graph.input.UpdatePredicateUseCase
 import org.orkg.graph.input.UpdateResourceUseCase
 import org.orkg.graph.input.UpdateStatementUseCase
 import org.orkg.graph.output.PredicateRepository
@@ -57,3 +58,12 @@ fun GeneralStatement.apply(
         ?: `object`,
     modifiable = command.modifiable ?: modifiable,
 )
+
+fun UpdatePredicateUseCase.UpdateCommand.hasNoContents(): Boolean =
+    label == null && modifiable == null
+
+fun Predicate.apply(command: UpdatePredicateUseCase.UpdateCommand): Predicate =
+    copy(
+        label = command.label ?: label,
+        modifiable = command.modifiable ?: modifiable,
+    )

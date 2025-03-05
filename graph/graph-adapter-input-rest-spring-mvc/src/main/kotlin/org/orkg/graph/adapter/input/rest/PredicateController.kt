@@ -10,7 +10,7 @@ import org.orkg.graph.domain.SearchString
 import org.orkg.graph.input.CreatePredicateUseCase
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.graph.input.UpdatePredicateUseCase.ReplaceCommand
+import org.orkg.graph.input.UpdatePredicateUseCase
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.format.annotation.DateTimeFormat
@@ -86,15 +86,17 @@ class PredicateController(
     @PutMapping("/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun update(
         @PathVariable id: ThingId,
-        @RequestBody predicate: ReplacePredicateRequest,
+        @RequestBody predicate: UpdatePredicateRequest,
         uriComponentsBuilder: UriComponentsBuilder,
+        currentUser: Authentication?,
     ): ResponseEntity<PredicateRepresentation> {
-        val found = service.findById(id)
-
-        if (!found.isPresent) return ResponseEntity.notFound().build()
-
-        service.update(id, ReplaceCommand(label = predicate.label, description = predicate.description))
-
+        service.update(
+            UpdatePredicateUseCase.UpdateCommand(
+                id = id,
+                contributorId = currentUser.contributorId(),
+                label = predicate.label
+            )
+        )
         val location = uriComponentsBuilder
             .path("/api/predicates/{id}")
             .buildAndExpand(id)
@@ -117,8 +119,7 @@ class PredicateController(
         val label: String,
     )
 
-    data class ReplacePredicateRequest(
-        val label: String,
-        val description: String? = null,
+    data class UpdatePredicateRequest(
+        val label: String?,
     )
 }

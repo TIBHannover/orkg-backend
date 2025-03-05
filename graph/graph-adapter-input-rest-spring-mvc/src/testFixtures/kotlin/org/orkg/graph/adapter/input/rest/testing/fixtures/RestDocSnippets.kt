@@ -38,6 +38,16 @@ fun resourceResponseFields(): List<FieldDescriptor> = listOf(
     fieldWithPath("_class").description("An indicator which type of entity was returned. Always has the value `resource`."),
 )
 
+fun predicateResponseFields() = listOf(
+    fieldWithPath("id").description("The identifier of the predicate."),
+    fieldWithPath("label").description("The label of the predicate."),
+    timestampFieldWithPath("created_at", "the predicate was created"),
+    fieldWithPath("created_by").description("The UUID of the user or service who created this predicate."),
+    fieldWithPath("description").type("String").description("The description of the predicate, if exists."),
+    fieldWithPath("modifiable").description("Whether this predicate can be modified."),
+    fieldWithPath("_class").description("An indicator which type of entity was returned. Always has the value `predicate`."),
+)
+
 fun statementResponseFields(): List<FieldDescriptor> = listOf(
     fieldWithPath("id").description("The statement ID"),
     fieldWithPath("created_at").description("The statement creation datetime"),

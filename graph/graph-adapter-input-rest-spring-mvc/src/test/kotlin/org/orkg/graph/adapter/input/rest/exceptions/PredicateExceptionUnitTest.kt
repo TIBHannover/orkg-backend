@@ -7,6 +7,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.graph.adapter.input.rest.exceptions.PredicateExceptionUnitTest.TestController
 import org.orkg.graph.domain.ExternalPredicateNotFound
+import org.orkg.graph.domain.PredicateNotFound
 import org.orkg.graph.domain.PredicateNotModifiable
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcBaseTest
@@ -39,6 +40,21 @@ internal class PredicateExceptionUnitTest : MockMvcBaseTest("exceptions") {
     }
 
     @Test
+    fun predicateNotFound() {
+        val id = "R123"
+
+        get("/predicate-not-found")
+            .param("id", id)
+            .perform()
+            .andExpect(status().isNotFound)
+            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
+            .andExpect(jsonPath("$.error", `is`("Not Found")))
+            .andExpect(jsonPath("$.path").value("/predicate-not-found"))
+            .andExpect(jsonPath("$.message").value("""Predicate "$id" not found."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
     fun externalPredicateNotFound() {
         val id = "R123"
         val ontologyId = "skos"
@@ -62,6 +78,11 @@ internal class PredicateExceptionUnitTest : MockMvcBaseTest("exceptions") {
         fun predicateNotModifiable(
             @RequestParam id: ThingId,
         ): Unit = throw PredicateNotModifiable(id)
+
+        @GetMapping("/predicate-not-found")
+        fun predicateNotFound(
+            @RequestParam id: ThingId,
+        ): Unit = throw PredicateNotFound(id)
 
         @GetMapping("/external-predicate-not-found")
         fun externalPredicateNotFound(

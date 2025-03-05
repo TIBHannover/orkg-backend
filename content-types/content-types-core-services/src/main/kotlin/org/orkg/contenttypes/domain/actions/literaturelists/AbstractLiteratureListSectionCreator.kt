@@ -11,14 +11,14 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.CreateStatementUseCase
-import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
 class AbstractLiteratureListSectionCreator(
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
     private val unsafeResourceUseCases: UnsafeResourceUseCases,
-    private val literalService: LiteralUseCases,
+    private val unsafeLiteralUseCases: UnsafeLiteralUseCases,
 ) {
     internal fun create(
         contributorId: ContributorId,
@@ -49,7 +49,7 @@ class AbstractLiteratureListSectionCreator(
             )
         )
         entry.description?.let { description ->
-            val descriptionLiteral = literalService.create(
+            val descriptionLiteral = unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = description
@@ -103,7 +103,7 @@ class AbstractLiteratureListSectionCreator(
                 contributorId = contributorId
             )
         )
-        val headingSizeId = literalService.create(
+        val headingSizeId = unsafeLiteralUseCases.create(
             CreateLiteralUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = section.headingSize.toString(),
@@ -118,7 +118,7 @@ class AbstractLiteratureListSectionCreator(
                 objectId = headingSizeId
             )
         )
-        val textId = literalService.create(
+        val textId = unsafeLiteralUseCases.create(
             CreateLiteralUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = section.text

@@ -7,13 +7,13 @@ import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.CreateClassUseCase
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateStatementUseCase.CreateCommand
-import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
 class RosettaStoneTemplateTargetClassCreator(
     private val classService: ClassUseCases,
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
-    private val literalService: LiteralUseCases,
+    private val unsafeLiteralUseCases: UnsafeLiteralUseCases,
 ) : CreateRosettaStoneTemplateAction {
     override fun invoke(
         command: CreateRosettaStoneTemplateCommand,
@@ -34,7 +34,7 @@ class RosettaStoneTemplateTargetClassCreator(
                     objectId = classId
                 )
             )
-            val exampleUsageId = literalService.create(
+            val exampleUsageId = unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = command.exampleUsage
@@ -48,7 +48,7 @@ class RosettaStoneTemplateTargetClassCreator(
                     objectId = exampleUsageId
                 )
             )
-            val descriptionId = literalService.create(
+            val descriptionId = unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = "${command.description}\n\nThis is a Rosetta Statement class. Every Rosetta Stone Statement class has a template associated that should be used when adding a statement of this type to the ORKG."

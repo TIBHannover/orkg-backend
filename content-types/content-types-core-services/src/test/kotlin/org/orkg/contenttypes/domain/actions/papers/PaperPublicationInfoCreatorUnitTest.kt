@@ -23,7 +23,7 @@ import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.CreateStatementUseCase
-import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ResourceRepository
@@ -35,13 +35,13 @@ internal class PaperPublicationInfoCreatorUnitTest : MockkBaseTest {
     private val resourceRepository: ResourceRepository = mockk()
     private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
     private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
-    private val literalService: LiteralUseCases = mockk()
+    private val unsafeLiteralUseCases: UnsafeLiteralUseCases = mockk()
 
     private val paperPublicationInfoCreator = PaperPublicationInfoCreator(
         unsafeResourceUseCases = unsafeResourceUseCases,
         resourceRepository = resourceRepository,
         unsafeStatementUseCases = unsafeStatementUseCases,
-        literalService = literalService
+        unsafeLiteralUseCases = unsafeLiteralUseCases
     )
 
     @Test
@@ -83,7 +83,7 @@ internal class PaperPublicationInfoCreatorUnitTest : MockkBaseTest {
         val monthLiteralId = ThingId("L1")
 
         every {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = month.toString(),
@@ -113,7 +113,7 @@ internal class PaperPublicationInfoCreatorUnitTest : MockkBaseTest {
         }
 
         verify(exactly = 1) {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = month.toString(),
@@ -151,7 +151,7 @@ internal class PaperPublicationInfoCreatorUnitTest : MockkBaseTest {
         val yearLiteralId = ThingId("L1")
 
         every {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = year.toString(),
@@ -181,7 +181,7 @@ internal class PaperPublicationInfoCreatorUnitTest : MockkBaseTest {
         }
 
         verify(exactly = 1) {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = year.toString(),
@@ -360,7 +360,7 @@ internal class PaperPublicationInfoCreatorUnitTest : MockkBaseTest {
         val urlLiteralId = ThingId("L1")
 
         every {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = url.toString(),
@@ -390,7 +390,7 @@ internal class PaperPublicationInfoCreatorUnitTest : MockkBaseTest {
         }
 
         verify(exactly = 1) {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = url.toString(),

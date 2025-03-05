@@ -13,13 +13,13 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.CreateStatementUseCase
-import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
 class AbstractTemplatePropertyCreator(
     private val unsafeResourceUseCases: UnsafeResourceUseCases,
-    private val literalService: LiteralUseCases,
+    private val unsafeLiteralUseCases: UnsafeLiteralUseCases,
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
 ) {
     internal fun create(
@@ -41,7 +41,7 @@ class AbstractTemplatePropertyCreator(
                     contributorId = contributorId,
                     subjectId = propertyId,
                     predicateId = Predicates.placeholder,
-                    objectId = literalService.create(
+                    objectId = unsafeLiteralUseCases.create(
                         CreateLiteralUseCase.CreateCommand(
                             contributorId = contributorId,
                             label = placeholder
@@ -56,7 +56,7 @@ class AbstractTemplatePropertyCreator(
                     contributorId = contributorId,
                     subjectId = propertyId,
                     predicateId = Predicates.description,
-                    objectId = literalService.create(
+                    objectId = unsafeLiteralUseCases.create(
                         CreateLiteralUseCase.CreateCommand(
                             contributorId = contributorId,
                             label = description
@@ -71,7 +71,7 @@ class AbstractTemplatePropertyCreator(
                     contributorId = contributorId,
                     subjectId = propertyId,
                     predicateId = Predicates.shMinCount,
-                    objectId = literalService.create(
+                    objectId = unsafeLiteralUseCases.create(
                         CreateLiteralUseCase.CreateCommand(
                             contributorId = contributorId,
                             label = min.toString(),
@@ -87,7 +87,7 @@ class AbstractTemplatePropertyCreator(
                     contributorId = contributorId,
                     subjectId = propertyId,
                     predicateId = Predicates.shMaxCount,
-                    objectId = literalService.create(
+                    objectId = unsafeLiteralUseCases.create(
                         CreateLiteralUseCase.CreateCommand(
                             contributorId = contributorId,
                             label = max.toString(),
@@ -104,7 +104,7 @@ class AbstractTemplatePropertyCreator(
                         contributorId = contributorId,
                         subjectId = propertyId,
                         predicateId = Predicates.shPattern,
-                        objectId = literalService.create(
+                        objectId = unsafeLiteralUseCases.create(
                             CreateLiteralUseCase.CreateCommand(
                                 contributorId = contributorId,
                                 label = pattern
@@ -120,7 +120,7 @@ class AbstractTemplatePropertyCreator(
                         contributorId = contributorId,
                         subjectId = propertyId,
                         predicateId = Predicates.shMinInclusive,
-                        objectId = literalService.create(
+                        objectId = unsafeLiteralUseCases.create(
                             CreateLiteralUseCase.CreateCommand(
                                 contributorId = contributorId,
                                 label = minInclusive.toString(),
@@ -137,7 +137,7 @@ class AbstractTemplatePropertyCreator(
                         contributorId = contributorId,
                         subjectId = propertyId,
                         predicateId = Predicates.shMaxInclusive,
-                        objectId = literalService.create(
+                        objectId = unsafeLiteralUseCases.create(
                             CreateLiteralUseCase.CreateCommand(
                                 contributorId = contributorId,
                                 label = maxInclusive.toString(),
@@ -181,7 +181,7 @@ class AbstractTemplatePropertyCreator(
                 contributorId = contributorId,
                 subjectId = propertyId,
                 predicateId = Predicates.shOrder,
-                objectId = literalService.create(
+                objectId = unsafeLiteralUseCases.create(
                     CreateLiteralUseCase.CreateCommand(
                         contributorId = contributorId,
                         label = order.toString(),

@@ -4,8 +4,8 @@ import org.orkg.contenttypes.domain.actions.AuthorUpdater
 import org.orkg.contenttypes.domain.actions.UpdatePaperCommand
 import org.orkg.contenttypes.domain.actions.UpdatePaperState
 import org.orkg.graph.input.ListUseCases
-import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ListRepository
@@ -17,7 +17,7 @@ class PaperAuthorUpdater(
         unsafeResourceUseCases: UnsafeResourceUseCases,
         statementService: StatementUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
-        literalService: LiteralUseCases,
+        unsafeLiteralUseCases: UnsafeLiteralUseCases,
         listService: ListUseCases,
         listRepository: ListRepository,
     ) : this(
@@ -25,7 +25,7 @@ class PaperAuthorUpdater(
             unsafeResourceUseCases,
             statementService,
             unsafeStatementUseCases,
-            literalService,
+            unsafeLiteralUseCases,
             listService,
             listRepository
         )

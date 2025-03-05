@@ -16,18 +16,18 @@ import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.CreateClassUseCase
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateStatementUseCase
-import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
 internal class RosettaStoneTemplateTargetClassCreatorUnitTest : MockkBaseTest {
     private val classService: ClassUseCases = mockk()
     private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
-    private val literalService: LiteralUseCases = mockk()
+    private val unsafeLiteralUseCases: UnsafeLiteralUseCases = mockk()
 
     private val rosettaStoneTemplateTargetClassCreator = RosettaStoneTemplateTargetClassCreator(
         classService,
         unsafeStatementUseCases,
-        literalService
+        unsafeLiteralUseCases
     )
 
     @Test
@@ -41,7 +41,7 @@ internal class RosettaStoneTemplateTargetClassCreatorUnitTest : MockkBaseTest {
         val descriptionId = ThingId("L456")
 
         every { classService.create(any()) } returns classId
-        every { literalService.create(any()) } returns exampleUsageId andThen descriptionId
+        every { unsafeLiteralUseCases.create(any()) } returns exampleUsageId andThen descriptionId
         every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
 
         val result = rosettaStoneTemplateTargetClassCreator(command, state)
@@ -69,7 +69,7 @@ internal class RosettaStoneTemplateTargetClassCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = command.exampleUsage
@@ -87,7 +87,7 @@ internal class RosettaStoneTemplateTargetClassCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = "${command.description}\n\nThis is a Rosetta Statement class. Every Rosetta Stone Statement class has a template associated that should be used when adding a statement of this type to the ORKG."

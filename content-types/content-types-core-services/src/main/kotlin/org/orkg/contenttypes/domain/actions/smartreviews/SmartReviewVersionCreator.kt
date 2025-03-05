@@ -7,7 +7,7 @@ import org.orkg.contenttypes.domain.actions.execute
 import org.orkg.contenttypes.domain.actions.smartreviews.PublishSmartReviewAction.State
 import org.orkg.contenttypes.domain.ids
 import org.orkg.graph.input.ListUseCases
-import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ResourceRepository
@@ -18,7 +18,7 @@ class SmartReviewVersionCreator(
     private val statementRepository: StatementRepository,
     private val unsafeResourceUseCases: UnsafeResourceUseCases,
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
-    private val literalService: LiteralUseCases,
+    private val unsafeLiteralUseCases: UnsafeLiteralUseCases,
     private val listService: ListUseCases,
 ) : PublishSmartReviewAction {
     override fun invoke(command: PublishSmartReviewCommand, state: State): State {
@@ -38,9 +38,9 @@ class SmartReviewVersionCreator(
         val steps = listOf(
             SmartReviewAuthorCreateValidator(resourceRepository, statementRepository),
             SmartReviewVersionResourceCreator(unsafeResourceUseCases),
-            SmartReviewResearchFieldCreator(literalService, unsafeStatementUseCases),
-            SmartReviewAuthorCreator(unsafeResourceUseCases, unsafeStatementUseCases, literalService, listService),
-            SmartReviewSDGCreator(literalService, unsafeStatementUseCases)
+            SmartReviewResearchFieldCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
+            SmartReviewAuthorCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService),
+            SmartReviewSDGCreator(unsafeLiteralUseCases, unsafeStatementUseCases)
         )
         return state.copy(
             smartReviewVersionId = steps.execute(

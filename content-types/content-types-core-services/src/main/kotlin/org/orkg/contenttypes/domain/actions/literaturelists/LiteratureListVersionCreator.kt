@@ -7,7 +7,7 @@ import org.orkg.contenttypes.domain.actions.execute
 import org.orkg.contenttypes.domain.actions.literaturelists.PublishLiteratureListAction.State
 import org.orkg.contenttypes.domain.ids
 import org.orkg.graph.input.ListUseCases
-import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ResourceRepository
@@ -18,7 +18,7 @@ class LiteratureListVersionCreator(
     private val statementRepository: StatementRepository,
     private val unsafeResourceUseCases: UnsafeResourceUseCases,
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
-    private val literalService: LiteralUseCases,
+    private val unsafeLiteralUseCases: UnsafeLiteralUseCases,
     private val listService: ListUseCases,
 ) : PublishLiteratureListAction {
     override fun invoke(command: PublishLiteratureListCommand, state: State): State {
@@ -37,9 +37,9 @@ class LiteratureListVersionCreator(
         val steps = listOf(
             LiteratureListAuthorCreateValidator(resourceRepository, statementRepository),
             LiteratureListVersionResourceCreator(unsafeResourceUseCases),
-            LiteratureListResearchFieldCreator(literalService, unsafeStatementUseCases),
-            LiteratureListAuthorCreator(unsafeResourceUseCases, unsafeStatementUseCases, literalService, listService),
-            LiteratureListSDGCreator(literalService, unsafeStatementUseCases)
+            LiteratureListResearchFieldCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
+            LiteratureListAuthorCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService),
+            LiteratureListSDGCreator(unsafeLiteralUseCases, unsafeStatementUseCases)
         )
         return state.copy(
             literatureListVersionId = steps.execute(

@@ -4,8 +4,8 @@ import org.orkg.contenttypes.domain.actions.IdentifierUpdater
 import org.orkg.contenttypes.domain.actions.UpdatePaperCommand
 import org.orkg.contenttypes.domain.actions.UpdatePaperState
 import org.orkg.contenttypes.domain.identifiers.Identifiers
-import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
 class PaperIdentifierUpdater(
@@ -14,9 +14,9 @@ class PaperIdentifierUpdater(
     constructor(
         statementService: StatementUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
-        literalService: LiteralUseCases,
+        unsafeLiteralUseCases: UnsafeLiteralUseCases,
     ) : this(
-        IdentifierUpdater(statementService, unsafeStatementUseCases, literalService)
+        IdentifierUpdater(statementService, unsafeStatementUseCases, unsafeLiteralUseCases)
     )
 
     override fun invoke(command: UpdatePaperCommand, state: UpdatePaperState): UpdatePaperState {

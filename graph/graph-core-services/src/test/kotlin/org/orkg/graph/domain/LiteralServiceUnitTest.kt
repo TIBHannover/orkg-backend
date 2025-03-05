@@ -12,8 +12,8 @@ import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
-import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UpdateLiteralUseCase
 import org.orkg.graph.output.LiteralRepository
 import org.orkg.graph.output.StatementRepository
@@ -25,8 +25,9 @@ import java.util.UUID
 internal class LiteralServiceUnitTest {
     private val literalRepository: LiteralRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
+    private val unsafeLiteralUseCases: UnsafeLiteralUseCases = mockk()
 
-    private val service = LiteralService(literalRepository, statementRepository, fixedClock)
+    private val service = LiteralService(literalRepository, statementRepository, unsafeLiteralUseCases)
 
     @Test
     fun `Given a literal create command, when datatype is an invalid URI, it throws an exception`() {
@@ -104,51 +105,20 @@ internal class LiteralServiceUnitTest {
     fun `Given a literal create command, when all inputs are valid, it successfully creates and saves the label`() {
         val randomId = ThingId("L1234")
         val contributorId = ContributorId(UUID.randomUUID())
-        every { literalRepository.nextIdentity() } returns randomId
-        every { literalRepository.save(any()) } returns Unit
-
-        val result = service.create(
-            CreateCommand(
-                contributorId = contributorId,
-                label = "3.141593",
-                datatype = "xsd:float",
-                modifiable = false
-            )
+        val command = CreateCommand(
+            contributorId = contributorId,
+            label = "3.141593",
+            datatype = "xsd:float",
+            modifiable = false
         )
+
+        every { unsafeLiteralUseCases.create(command) } returns randomId
+
+        val result = service.create(command)
 
         result shouldBe randomId
 
-        verify(exactly = 1) { literalRepository.nextIdentity() }
-        verify(exactly = 1) {
-            literalRepository.save(
-                withArg {
-                    it.id shouldBe randomId
-                    it.createdBy shouldBe contributorId
-                    it.datatype shouldBe "xsd:float"
-                    it.label shouldBe "3.141593"
-                    it.modifiable shouldBe false
-                }
-            )
-        }
-    }
-
-    @Test
-    fun `Given a literal update command, when literal is unmodifiable, it throws an exception`() {
-        val literal = createLiteral(modifiable = false)
-        val contributorId = ContributorId(MockUserId.USER)
-        val command = UpdateLiteralUseCase.UpdateCommand(
-            id = literal.id,
-            contributorId = contributorId,
-            label = "new label"
-        )
-
-        every { literalRepository.findById(literal.id) } returns Optional.of(literal)
-
-        shouldThrowExactly<LiteralNotModifiable> {
-            service.update(command)
-        }
-
-        verify(exactly = 1) { literalRepository.findById(literal.id) }
+        verify(exactly = 1) { unsafeLiteralUseCases.create(command) }
     }
 
     @Test

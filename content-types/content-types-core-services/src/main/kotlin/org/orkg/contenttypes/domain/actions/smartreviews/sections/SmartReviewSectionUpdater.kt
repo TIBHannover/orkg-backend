@@ -16,8 +16,8 @@ import org.orkg.contenttypes.input.SmartReviewResourceSectionDefinition
 import org.orkg.contenttypes.input.SmartReviewSectionDefinition
 import org.orkg.contenttypes.input.SmartReviewTextSectionDefinition
 import org.orkg.contenttypes.input.SmartReviewVisualizationSectionDefinition
-import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
@@ -25,13 +25,13 @@ class SmartReviewSectionUpdater(
     private val abstractSmartReviewSectionUpdater: AbstractSmartReviewSectionUpdater,
 ) : UpdateSmartReviewSectionAction {
     constructor(
-        literalService: LiteralUseCases,
+        unsafeLiteralUseCases: UnsafeLiteralUseCases,
         unsafeResourceUseCases: UnsafeResourceUseCases,
         statementService: StatementUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
         AbstractSmartReviewSectionUpdater(
-            literalService,
+            unsafeLiteralUseCases,
             unsafeResourceUseCases,
             statementService,
             unsafeStatementUseCases

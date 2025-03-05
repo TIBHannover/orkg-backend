@@ -24,7 +24,7 @@ import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.ListUseCases
-import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ResourceRepository
@@ -46,7 +46,7 @@ class VisualizationService(
     private val organizationRepository: OrganizationRepository,
     private val unsafeResourceUseCases: UnsafeResourceUseCases,
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
-    private val literalService: LiteralUseCases,
+    private val unsafeLiteralUseCases: UnsafeLiteralUseCases,
     private val listService: ListUseCases,
     private val visualizationRepository: VisualizationRepository,
 ) : VisualizationUseCases {
@@ -87,8 +87,8 @@ class VisualizationService(
             OrganizationValidator(organizationRepository, { it.organizations }),
             VisualizationAuthorValidator(resourceRepository, statementRepository),
             VisualizationResourceCreator(unsafeResourceUseCases),
-            VisualizationDescriptionCreator(literalService, unsafeStatementUseCases),
-            VisualizationAuthorCreator(unsafeResourceUseCases, unsafeStatementUseCases, literalService, listService)
+            VisualizationDescriptionCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
+            VisualizationAuthorCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService)
         )
         return steps.execute(command, VisualizationState()).visualizationId!!
     }

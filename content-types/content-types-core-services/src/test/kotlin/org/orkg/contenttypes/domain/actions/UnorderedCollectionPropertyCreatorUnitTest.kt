@@ -11,15 +11,15 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateStatementUseCase
-import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import java.util.UUID
 
 internal class UnorderedCollectionPropertyCreatorUnitTest : MockkBaseTest {
-    private val literalService: LiteralUseCases = mockk()
+    private val unsafeLiteralUseCases: UnsafeLiteralUseCases = mockk()
     private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
 
-    private val unorderedCollectionPropertyCreator = UnorderedCollectionPropertyCreator(literalService, unsafeStatementUseCases)
+    private val unorderedCollectionPropertyCreator = UnorderedCollectionPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases)
 
     @Test
     fun `Given a list of labels and a subject id, when list of labels is empty, it does nothing`() {
@@ -39,7 +39,7 @@ internal class UnorderedCollectionPropertyCreatorUnitTest : MockkBaseTest {
         val literal = ThingId("L1")
 
         every {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = description
@@ -60,7 +60,7 @@ internal class UnorderedCollectionPropertyCreatorUnitTest : MockkBaseTest {
         unorderedCollectionPropertyCreator.create(contributorId, subjectId, Predicates.description, listOf(description))
 
         verify(exactly = 1) {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = description

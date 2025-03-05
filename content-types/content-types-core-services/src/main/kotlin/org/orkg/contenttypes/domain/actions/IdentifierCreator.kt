@@ -6,12 +6,12 @@ import org.orkg.contenttypes.domain.identifiers.Identifier
 import org.orkg.contenttypes.domain.identifiers.parse
 import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.input.CreateStatementUseCase
-import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
 abstract class IdentifierCreator(
     protected val unsafeStatementUseCases: UnsafeStatementUseCases,
-    protected val literalService: LiteralUseCases,
+    protected val unsafeLiteralUseCases: UnsafeLiteralUseCases,
 ) {
     internal fun create(
         contributorId: ContributorId,
@@ -27,7 +27,7 @@ abstract class IdentifierCreator(
                         contributorId = contributorId,
                         subjectId = subjectId,
                         predicateId = identifier.predicateId,
-                        objectId = literalService.create(
+                        objectId = unsafeLiteralUseCases.create(
                             CreateCommand(
                                 contributorId = contributorId,
                                 label = value

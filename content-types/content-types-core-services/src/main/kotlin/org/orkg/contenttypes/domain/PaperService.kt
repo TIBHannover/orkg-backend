@@ -75,9 +75,9 @@ import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.ListUseCases
-import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafePredicateUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
@@ -106,7 +106,7 @@ class PaperService(
     private val unsafeResourceUseCases: UnsafeResourceUseCases,
     private val statementService: StatementUseCases,
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
-    private val literalService: LiteralUseCases,
+    private val unsafeLiteralUseCases: UnsafeLiteralUseCases,
     private val unsafePredicateUseCases: UnsafePredicateUseCases,
     private val listService: ListUseCases,
     private val listRepository: ListRepository,
@@ -182,13 +182,13 @@ class PaperService(
             PaperThingDefinitionValidator(thingRepository, classRepository),
             PaperContributionValidator(thingRepository),
             PaperResourceCreator(unsafeResourceUseCases),
-            PaperIdentifierCreator(unsafeStatementUseCases, literalService),
-            PaperSDGCreator(literalService, unsafeStatementUseCases),
-            PaperMentioningsCreator(literalService, unsafeStatementUseCases),
-            PaperAuthorCreator(unsafeResourceUseCases, unsafeStatementUseCases, literalService, listService),
-            PaperResearchFieldCreator(literalService, unsafeStatementUseCases),
-            PaperPublicationInfoCreator(unsafeResourceUseCases, resourceRepository, unsafeStatementUseCases, literalService),
-            PaperContributionCreator(classService, unsafeResourceUseCases, unsafeStatementUseCases, literalService, unsafePredicateUseCases, statementRepository, listService)
+            PaperIdentifierCreator(unsafeStatementUseCases, unsafeLiteralUseCases),
+            PaperSDGCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
+            PaperMentioningsCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
+            PaperAuthorCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService),
+            PaperResearchFieldCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
+            PaperPublicationInfoCreator(unsafeResourceUseCases, resourceRepository, unsafeStatementUseCases, unsafeLiteralUseCases),
+            PaperContributionCreator(classService, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, unsafePredicateUseCases, statementRepository, listService)
         )
         return steps.execute(command, CreatePaperState()).paperId!!
     }
@@ -199,7 +199,7 @@ class PaperService(
             ContributionPaperValidator(resourceRepository),
             ContributionThingDefinitionValidator(thingRepository, classRepository),
             ContributionContentsValidator(thingRepository),
-            ContributionContentsCreator(classService, unsafeResourceUseCases, unsafeStatementUseCases, literalService, unsafePredicateUseCases, statementRepository, listService)
+            ContributionContentsCreator(classService, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, unsafePredicateUseCases, statementRepository, listService)
         )
         return steps.execute(command, ContributionState()).contributionId!!
     }
@@ -220,12 +220,12 @@ class PaperService(
             PaperIdentifierUpdateValidator(statementRepository),
             PaperAuthorUpdateValidator(resourceRepository, statementRepository),
             PaperResourceUpdater(unsafeResourceUseCases),
-            PaperIdentifierUpdater(statementService, unsafeStatementUseCases, literalService),
-            PaperAuthorUpdater(unsafeResourceUseCases, statementService, unsafeStatementUseCases, literalService, listService, listRepository),
-            PaperResearchFieldUpdater(literalService, statementService, unsafeStatementUseCases),
-            PaperPublicationInfoUpdater(unsafeResourceUseCases, resourceRepository, statementService, unsafeStatementUseCases, literalService),
-            PaperSDGUpdater(literalService, statementService, unsafeStatementUseCases),
-            PaperMentioningsUpdater(literalService, statementService, unsafeStatementUseCases)
+            PaperIdentifierUpdater(statementService, unsafeStatementUseCases, unsafeLiteralUseCases),
+            PaperAuthorUpdater(unsafeResourceUseCases, statementService, unsafeStatementUseCases, unsafeLiteralUseCases, listService, listRepository),
+            PaperResearchFieldUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
+            PaperPublicationInfoUpdater(unsafeResourceUseCases, resourceRepository, statementService, unsafeStatementUseCases, unsafeLiteralUseCases),
+            PaperSDGUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
+            PaperMentioningsUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases)
         )
         steps.execute(command, UpdatePaperState())
     }
@@ -233,10 +233,10 @@ class PaperService(
     override fun publish(command: PublishPaperCommand): ThingId {
         val steps = listOf<Action<PublishPaperCommand, PublishPaperState>>(
             PaperPublishableValidator(this, resourceRepository),
-            PaperVersionCreator(resourceRepository, statementRepository, unsafeResourceUseCases, unsafeStatementUseCases, literalService, listService),
+            PaperVersionCreator(resourceRepository, statementRepository, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService),
             PaperVersionArchiver(statementService, paperPublishedRepository),
             PaperVersionHistoryUpdater(statementService, unsafeStatementUseCases),
-            PaperVersionDoiPublisher(unsafeStatementUseCases, literalService, doiService, paperPublishBaseUri)
+            PaperVersionDoiPublisher(unsafeStatementUseCases, unsafeLiteralUseCases, doiService, paperPublishBaseUri)
         )
         return steps.execute(command, PublishPaperState()).paperVersionId!!
     }

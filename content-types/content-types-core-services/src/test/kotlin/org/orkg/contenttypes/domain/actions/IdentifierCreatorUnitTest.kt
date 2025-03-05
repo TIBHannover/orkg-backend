@@ -12,15 +12,15 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateStatementUseCase
-import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import java.util.UUID
 
 internal class IdentifierCreatorUnitTest : MockkBaseTest {
     private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
-    private val literalService: LiteralUseCases = mockk()
+    private val unsafeLiteralUseCases: UnsafeLiteralUseCases = mockk()
 
-    private val identifierCreator = object : IdentifierCreator(unsafeStatementUseCases, literalService) {}
+    private val identifierCreator = object : IdentifierCreator(unsafeStatementUseCases, unsafeLiteralUseCases) {}
 
     @Test
     fun `Given a map of identifiers, it crates new paper identifiers`() {
@@ -37,7 +37,7 @@ internal class IdentifierCreatorUnitTest : MockkBaseTest {
         )
 
         every {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = doi
@@ -49,7 +49,7 @@ internal class IdentifierCreatorUnitTest : MockkBaseTest {
         identifierCreator.create(contributorId, identifiers, Identifiers.paper, paperId)
 
         verify(exactly = 1) {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = doi
@@ -67,7 +67,7 @@ internal class IdentifierCreatorUnitTest : MockkBaseTest {
 
         identifierCreator.create(contributorId, identifiers, Identifiers.paper, paperId)
 
-        verify(exactly = 0) { literalService.create(any()) }
+        verify(exactly = 0) { unsafeLiteralUseCases.create(any()) }
         verify(exactly = 0) { unsafeStatementUseCases.create(any()) }
     }
 }

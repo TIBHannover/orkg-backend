@@ -6,7 +6,7 @@ import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneStatementCommand
 import org.orkg.contenttypes.domain.actions.rosettastone.statements.UpdateRosettaStoneStatementAction.State
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.ListUseCases
-import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafePredicateUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
@@ -19,7 +19,7 @@ class RosettaStoneStatementThingDefinitionUpdateCreator(
         classService: ClassUseCases,
         unsafeResourceUseCases: UnsafeResourceUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
-        literalService: LiteralUseCases,
+        unsafeLiteralUseCases: UnsafeLiteralUseCases,
         unsafePredicateUseCases: UnsafePredicateUseCases,
         statementRepository: StatementRepository,
         listService: ListUseCases,
@@ -28,7 +28,7 @@ class RosettaStoneStatementThingDefinitionUpdateCreator(
             classService,
             unsafeResourceUseCases,
             unsafeStatementUseCases,
-            literalService,
+            unsafeLiteralUseCases,
             unsafePredicateUseCases,
             statementRepository,
             listService

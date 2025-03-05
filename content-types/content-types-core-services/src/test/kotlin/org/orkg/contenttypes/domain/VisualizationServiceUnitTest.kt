@@ -19,7 +19,7 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.input.ListUseCases
-import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ResourceRepository
@@ -40,7 +40,7 @@ internal class VisualizationServiceUnitTest : MockkBaseTest {
     private val organizationRepository: OrganizationRepository = mockk()
     private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
     private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
-    private val literalService: LiteralUseCases = mockk()
+    private val unsafeLiteralUseCases: UnsafeLiteralUseCases = mockk()
     private val listService: ListUseCases = mockk()
     private val visualizationRepository: VisualizationRepository = mockk()
 
@@ -51,7 +51,7 @@ internal class VisualizationServiceUnitTest : MockkBaseTest {
         organizationRepository = organizationRepository,
         unsafeResourceUseCases = unsafeResourceUseCases,
         unsafeStatementUseCases = unsafeStatementUseCases,
-        literalService = literalService,
+        unsafeLiteralUseCases = unsafeLiteralUseCases,
         listService = listService,
         visualizationRepository = visualizationRepository
     )

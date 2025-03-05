@@ -5,6 +5,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.toIRIOrNull
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UpdateLiteralUseCase
 import org.orkg.graph.output.LiteralRepository
 import org.orkg.graph.output.StatementRepository
@@ -12,7 +13,6 @@ import org.orkg.spring.data.annotations.TransactionalOnNeo4j
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
-import java.time.Clock
 import java.time.OffsetDateTime
 import java.util.Optional
 
@@ -21,26 +21,15 @@ import java.util.Optional
 class LiteralService(
     private val repository: LiteralRepository,
     private val statementRepository: StatementRepository,
-    private val clock: Clock,
+    private val unsafeLiteralUseCases: UnsafeLiteralUseCases,
 ) : LiteralUseCases {
     override fun create(command: CreateLiteralUseCase.CreateCommand): ThingId {
         if (command.label.length > MAX_LABEL_LENGTH) {
             throw InvalidLiteralLabel()
         }
         validateLabel(command.label, command.datatype)
-        val id = command.id
-            ?.also { id -> repository.findById(id).ifPresent { throw LiteralAlreadyExists(id) } }
-            ?: repository.nextIdentity()
-        val literal = Literal(
-            label = command.label,
-            id = id,
-            datatype = command.datatype,
-            createdBy = command.contributorId,
-            createdAt = OffsetDateTime.now(clock),
-            modifiable = command.modifiable
-        )
-        repository.save(literal)
-        return id
+        command.id?.also { id -> repository.findById(id).ifPresent { throw LiteralAlreadyExists(id) } }
+        return unsafeLiteralUseCases.create(command)
     }
 
     @TransactionalOnNeo4j(readOnly = true)

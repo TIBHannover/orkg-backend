@@ -17,7 +17,7 @@ import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.CreateStatementUseCase
-import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import java.util.UUID
@@ -25,12 +25,12 @@ import java.util.UUID
 internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
     private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
     private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
-    private val literalService: LiteralUseCases = mockk()
+    private val unsafeLiteralUseCases: UnsafeLiteralUseCases = mockk()
 
     private val abstractLiteratureListSectionCreator = AbstractLiteratureListSectionCreator(
         unsafeStatementUseCases,
         unsafeResourceUseCases,
-        literalService
+        unsafeLiteralUseCases
     )
 
     @Test
@@ -83,7 +83,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                 )
             )
         } returns StatementId("S2")
-        every { literalService.create(any()) } returns descriptionId
+        every { unsafeLiteralUseCases.create(any()) } returns descriptionId
         every {
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
@@ -136,7 +136,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = description
@@ -264,7 +264,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
             )
         } returns sectionId
         every {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = section.headingSize.toString(),
@@ -283,7 +283,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
             )
         } returns StatementId("S1")
         every {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = section.text
@@ -313,7 +313,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = section.headingSize.toString(),
@@ -332,7 +332,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = section.text

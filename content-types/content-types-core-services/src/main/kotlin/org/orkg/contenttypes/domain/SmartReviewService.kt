@@ -78,9 +78,9 @@ import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.ListUseCases
-import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ListRepository
@@ -109,7 +109,7 @@ class SmartReviewService(
     private val thingRepository: ThingRepository,
     private val resourceService: ResourceUseCases,
     private val unsafeResourceUseCases: UnsafeResourceUseCases,
-    private val literalService: LiteralUseCases,
+    private val unsafeLiteralUseCases: UnsafeLiteralUseCases,
     private val statementService: StatementUseCases,
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
     private val listService: ListUseCases,
@@ -196,11 +196,11 @@ class SmartReviewService(
             SmartReviewSectionsCreateValidator(resourceRepository, predicateRepository, thingRepository),
             SmartReviewResourceCreator(unsafeResourceUseCases),
             SmartReviewContributionCreator(unsafeResourceUseCases, unsafeStatementUseCases),
-            SmartReviewReferencesCreator(literalService, unsafeStatementUseCases),
-            SmartReviewResearchFieldCreator(literalService, unsafeStatementUseCases),
-            SmartReviewAuthorCreator(unsafeResourceUseCases, unsafeStatementUseCases, literalService, listService),
-            SmartReviewSDGCreator(literalService, unsafeStatementUseCases),
-            SmartReviewSectionsCreator(literalService, unsafeResourceUseCases, unsafeStatementUseCases)
+            SmartReviewReferencesCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
+            SmartReviewResearchFieldCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
+            SmartReviewAuthorCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService),
+            SmartReviewSDGCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
+            SmartReviewSectionsCreator(unsafeLiteralUseCases, unsafeResourceUseCases, unsafeStatementUseCases)
         )
         return steps.execute(command, CreateSmartReviewState()).smartReviewId!!
     }
@@ -210,7 +210,7 @@ class SmartReviewService(
             SmartReviewSectionExistenceCreateValidator(statementRepository),
             SmartReviewSectionIndexValidator(statementRepository),
             SmartReviewSectionCreateValidator(resourceRepository, predicateRepository, thingRepository),
-            SmartReviewSectionCreator(literalService, unsafeResourceUseCases, statementService, unsafeStatementUseCases)
+            SmartReviewSectionCreator(unsafeLiteralUseCases, unsafeResourceUseCases, statementService, unsafeStatementUseCases)
         )
         return steps.execute(command, CreateSmartReviewSectionState()).smartReviewSectionId!!
     }
@@ -229,11 +229,11 @@ class SmartReviewService(
             ObservatoryValidator(observatoryRepository, { it.observatories }, { it.smartReview!!.observatories }),
             SmartReviewSectionsUpdateValidator(resourceRepository, predicateRepository, thingRepository),
             SmartReviewResourceUpdater(unsafeResourceUseCases),
-            SmartReviewReferencesUpdater(literalService, statementService, unsafeStatementUseCases),
-            SmartReviewResearchFieldUpdater(literalService, statementService, unsafeStatementUseCases),
-            SmartReviewAuthorUpdater(unsafeResourceUseCases, statementService, unsafeStatementUseCases, literalService, listService, listRepository),
-            SmartReviewSDGUpdater(literalService, statementService, unsafeStatementUseCases),
-            SmartReviewSectionsUpdater(literalService, resourceService, unsafeResourceUseCases, statementService, unsafeStatementUseCases)
+            SmartReviewReferencesUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
+            SmartReviewResearchFieldUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
+            SmartReviewAuthorUpdater(unsafeResourceUseCases, statementService, unsafeStatementUseCases, unsafeLiteralUseCases, listService, listRepository),
+            SmartReviewSDGUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
+            SmartReviewSectionsUpdater(unsafeLiteralUseCases, resourceService, unsafeResourceUseCases, statementService, unsafeStatementUseCases)
         )
         steps.execute(command, UpdateSmartReviewState())
     }
@@ -242,7 +242,7 @@ class SmartReviewService(
         val steps = listOf<Action<UpdateSmartReviewSectionCommand, UpdateSmartReviewSectionState>>(
             SmartReviewSectionExistenceUpdateValidator(this, resourceRepository),
             SmartReviewSectionUpdateValidator(resourceRepository, predicateRepository, thingRepository),
-            SmartReviewSectionUpdater(literalService, unsafeResourceUseCases, statementService, unsafeStatementUseCases)
+            SmartReviewSectionUpdater(unsafeLiteralUseCases, unsafeResourceUseCases, statementService, unsafeStatementUseCases)
         )
         steps.execute(command, UpdateSmartReviewSectionState())
     }
@@ -260,11 +260,11 @@ class SmartReviewService(
             SmartReviewPublishableValidator(this),
             DescriptionValidator("changelog") { it.changelog },
             DescriptionValidator { it.description?.takeIf { _ -> it.assignDOI } },
-            SmartReviewVersionCreator(resourceRepository, statementRepository, unsafeResourceUseCases, unsafeStatementUseCases, literalService, listService),
-            SmartReviewChangelogCreator(literalService, unsafeStatementUseCases),
+            SmartReviewVersionCreator(resourceRepository, statementRepository, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService),
+            SmartReviewChangelogCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
             SmartReviewVersionArchiver(statementService, smartReviewPublishedRepository),
             SmartReviewVersionHistoryUpdater(unsafeStatementUseCases, unsafeResourceUseCases),
-            SmartReviewVersionDoiPublisher(unsafeStatementUseCases, literalService, doiService, smartReviewPublishBaseUri)
+            SmartReviewVersionDoiPublisher(unsafeStatementUseCases, unsafeLiteralUseCases, doiService, smartReviewPublishBaseUri)
         )
         return steps.execute(command, PublishSmartReviewState()).smartReviewVersionId!!
     }

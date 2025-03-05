@@ -16,8 +16,8 @@ import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateStatementUseCase
-import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.input.UpdateLiteralUseCase.UpdateCommand
 import org.orkg.graph.testing.fixtures.createLiteral
@@ -27,13 +27,13 @@ import org.orkg.testing.pageOf
 import java.util.UUID
 
 internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
-    private val literalService: LiteralUseCases = mockk()
+    private val unsafeLiteralUseCases: UnsafeLiteralUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
     private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
     private val singleStatementPropertyCreator: SingleStatementPropertyCreator = mockk()
 
     private val singleStatementPropertyUpdater = SingleStatementPropertyUpdater(
-        literalService,
+        unsafeLiteralUseCases,
         statementService,
         unsafeStatementUseCases,
         singleStatementPropertyCreator
@@ -66,7 +66,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
             )
         )
 
-        every { literalService.update(updateLiteralCommand) } just runs
+        every { unsafeLiteralUseCases.update(updateLiteralCommand) } just runs
 
         singleStatementPropertyUpdater.updateRequiredProperty(
             contributorId = contributorId,
@@ -84,7 +84,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
                 pageable = PageRequests.SINGLE
             )
         }
-        verify(exactly = 1) { literalService.update(updateLiteralCommand) }
+        verify(exactly = 1) { unsafeLiteralUseCases.update(updateLiteralCommand) }
     }
 
     @Test
@@ -169,7 +169,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
                 `object` = createLiteral(ThingId("L132"), label = "other")
             )
         )
-        every { literalService.update(updateLiteralCommand) } just runs
+        every { unsafeLiteralUseCases.update(updateLiteralCommand) } just runs
         every { statementService.deleteAllById(setOf(StatementId("S456"))) } just runs
 
         singleStatementPropertyUpdater.updateRequiredProperty(
@@ -188,7 +188,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
                 pageable = PageRequests.SINGLE
             )
         }
-        verify(exactly = 1) { literalService.update(updateLiteralCommand) }
+        verify(exactly = 1) { unsafeLiteralUseCases.update(updateLiteralCommand) }
         verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S456"))) }
     }
 
@@ -211,7 +211,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
             )
         )
 
-        every { literalService.update(updateLiteralCommand) } just runs
+        every { unsafeLiteralUseCases.update(updateLiteralCommand) } just runs
 
         singleStatementPropertyUpdater.updateRequiredProperty(
             statements = statements,
@@ -222,7 +222,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
             datatype = Literals.XSD.INT.prefixedUri
         )
 
-        verify(exactly = 1) { literalService.update(updateLiteralCommand) }
+        verify(exactly = 1) { unsafeLiteralUseCases.update(updateLiteralCommand) }
     }
 
     @Test
@@ -286,7 +286,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
             )
         )
 
-        every { literalService.update(updateLiteralCommand) } just runs
+        every { unsafeLiteralUseCases.update(updateLiteralCommand) } just runs
         every { statementService.deleteAllById(setOf(StatementId("S456"))) } just runs
 
         singleStatementPropertyUpdater.updateRequiredProperty(
@@ -298,7 +298,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
             datatype = Literals.XSD.INT.prefixedUri
         )
 
-        verify(exactly = 1) { literalService.update(updateLiteralCommand) }
+        verify(exactly = 1) { unsafeLiteralUseCases.update(updateLiteralCommand) }
         verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S456"))) }
     }
 
@@ -321,11 +321,11 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
             )
         )
 
-        every { literalService.update(updateLiteralCommand) } just runs
+        every { unsafeLiteralUseCases.update(updateLiteralCommand) } just runs
 
         singleStatementPropertyUpdater.updateOptionalProperty(statements, contributorId, subjectId, Predicates.description, description)
 
-        verify(exactly = 1) { literalService.update(updateLiteralCommand) }
+        verify(exactly = 1) { unsafeLiteralUseCases.update(updateLiteralCommand) }
     }
 
     @Test
@@ -380,12 +380,12 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
             )
         )
 
-        every { literalService.update(updateLiteralCommand) } just runs
+        every { unsafeLiteralUseCases.update(updateLiteralCommand) } just runs
         every { statementService.deleteAllById(setOf(StatementId("S456"))) } just runs
 
         singleStatementPropertyUpdater.updateOptionalProperty(statements, contributorId, subjectId, Predicates.description, description)
 
-        verify(exactly = 1) { literalService.update(updateLiteralCommand) }
+        verify(exactly = 1) { unsafeLiteralUseCases.update(updateLiteralCommand) }
         verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S456"))) }
     }
 

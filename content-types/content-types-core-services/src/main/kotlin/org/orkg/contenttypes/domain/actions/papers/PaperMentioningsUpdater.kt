@@ -5,18 +5,18 @@ import org.orkg.contenttypes.domain.actions.UpdatePaperCommand
 import org.orkg.contenttypes.domain.actions.papers.UpdatePaperAction.State
 import org.orkg.contenttypes.domain.ids
 import org.orkg.graph.domain.Predicates
-import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
 class PaperMentioningsUpdater(
     private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater,
 ) : UpdatePaperAction {
     constructor(
-        literalService: LiteralUseCases,
+        unsafeLiteralUseCases: UnsafeLiteralUseCases,
         statementService: StatementUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
-    ) : this(StatementCollectionPropertyUpdater(literalService, statementService, unsafeStatementUseCases))
+    ) : this(StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases))
 
     override fun invoke(command: UpdatePaperCommand, state: State): State {
         if (command.mentionings != null && command.mentionings != state.paper!!.mentionings.ids) {

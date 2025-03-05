@@ -12,7 +12,7 @@ import org.orkg.graph.domain.SearchString
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.CreateStatementUseCase
-import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ResourceRepository
@@ -21,7 +21,7 @@ abstract class PublicationInfoCreator(
     protected val unsafeResourceUseCases: UnsafeResourceUseCases,
     protected val resourceRepository: ResourceRepository,
     protected val unsafeStatementUseCases: UnsafeStatementUseCases,
-    protected val literalService: LiteralUseCases,
+    protected val unsafeLiteralUseCases: UnsafeLiteralUseCases,
 ) {
     internal fun create(contributorId: ContributorId, publicationInfo: PublicationInfoDefinition, subjectId: ThingId) {
         if (publicationInfo.publishedMonth != null) {
@@ -43,7 +43,7 @@ abstract class PublicationInfoCreator(
         subjectId: ThingId,
         publishedMonth: Int,
     ) {
-        val monthLiteralId = literalService.create(
+        val monthLiteralId = unsafeLiteralUseCases.create(
             CreateLiteralUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = publishedMonth.toString(),
@@ -65,7 +65,7 @@ abstract class PublicationInfoCreator(
         subjectId: ThingId,
         publishedYear: Long,
     ) {
-        val yearLiteralId = literalService.create(
+        val yearLiteralId = unsafeLiteralUseCases.create(
             CreateLiteralUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = publishedYear.toString(),
@@ -113,7 +113,7 @@ abstract class PublicationInfoCreator(
         subjectId: ThingId,
         url: ParsedIRI,
     ) {
-        val urlLiteralId = literalService.create(
+        val urlLiteralId = unsafeLiteralUseCases.create(
             CreateLiteralUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = url.toString(),

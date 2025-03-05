@@ -5,7 +5,7 @@ import org.orkg.contenttypes.domain.actions.CreatePaperCommand
 import org.orkg.contenttypes.domain.actions.CreatePaperState
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.ListUseCases
-import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafePredicateUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
@@ -18,7 +18,7 @@ class PaperContributionCreator(
         classService: ClassUseCases,
         unsafeResourceUseCases: UnsafeResourceUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
-        literalService: LiteralUseCases,
+        unsafeLiteralUseCases: UnsafeLiteralUseCases,
         unsafePredicateUseCases: UnsafePredicateUseCases,
         statementRepository: StatementRepository,
         listService: ListUseCases,
@@ -27,7 +27,7 @@ class PaperContributionCreator(
             classService,
             unsafeResourceUseCases,
             unsafeStatementUseCases,
-            literalService,
+            unsafeLiteralUseCases,
             unsafePredicateUseCases,
             statementRepository,
             listService

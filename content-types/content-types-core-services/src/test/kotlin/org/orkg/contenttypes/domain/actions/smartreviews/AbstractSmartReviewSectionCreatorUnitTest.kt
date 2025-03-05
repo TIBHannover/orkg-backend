@@ -22,7 +22,7 @@ import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.CreateStatementUseCase
-import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import java.util.UUID
@@ -30,13 +30,13 @@ import java.util.UUID
 internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
     private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
     private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
-    private val literalService: LiteralUseCases = mockk()
+    private val unsafeLiteralUseCases: UnsafeLiteralUseCases = mockk()
     private val statementCollectionPropertyCreator: StatementCollectionPropertyCreator = mockk()
 
     private val abstractSmartReviewSectionCreator = AbstractSmartReviewSectionCreator(
         unsafeStatementUseCases,
         unsafeResourceUseCases,
-        literalService,
+        unsafeLiteralUseCases,
         statementCollectionPropertyCreator
     )
 
@@ -341,7 +341,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
         val textId = ThingId("L123")
 
         every { unsafeResourceUseCases.create(resourceCreateCommand) } returns sectionId
-        every { literalService.create(literalCreateCommand) } returns textId
+        every { unsafeLiteralUseCases.create(literalCreateCommand) } returns textId
         every {
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
@@ -356,7 +356,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
         abstractSmartReviewSectionCreator.create(contributorId, section)
 
         verify(exactly = 1) { unsafeResourceUseCases.create(resourceCreateCommand) }
-        verify(exactly = 1) { literalService.create(literalCreateCommand) }
+        verify(exactly = 1) { unsafeLiteralUseCases.create(literalCreateCommand) }
         verify(exactly = 1) {
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(

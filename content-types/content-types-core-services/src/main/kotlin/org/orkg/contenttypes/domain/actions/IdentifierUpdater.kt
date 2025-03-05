@@ -5,8 +5,8 @@ import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.associateIdentifiers
 import org.orkg.contenttypes.domain.identifiers.Identifier
 import org.orkg.graph.domain.GeneralStatement
-import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
 class IdentifierUpdater(
@@ -15,10 +15,10 @@ class IdentifierUpdater(
     constructor(
         statementService: StatementUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
-        literalService: LiteralUseCases,
+        unsafeLiteralUseCases: UnsafeLiteralUseCases,
     ) : this(
         StatementCollectionPropertyUpdater(
-            literalService,
+            unsafeLiteralUseCases,
             statementService,
             unsafeStatementUseCases
         )

@@ -16,7 +16,7 @@ import org.orkg.graph.input.CreatePredicateUseCase
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.ListUseCases
-import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafePredicateUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
@@ -27,7 +27,7 @@ class SubgraphCreator(
     private val classService: ClassUseCases,
     private val unsafeResourceUseCases: UnsafeResourceUseCases,
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
-    private val literalService: LiteralUseCases,
+    private val unsafeLiteralUseCases: UnsafeLiteralUseCases,
     private val unsafePredicateUseCases: UnsafePredicateUseCases,
     private val statementRepository: StatementRepository,
     private val listService: ListUseCases,
@@ -106,7 +106,7 @@ class SubgraphCreator(
     ) {
         thingDefinitions.literals.forEach {
             if (it.key.isTempId && it.key in validatedIds) {
-                lookup[it.key] = literalService.create(
+                lookup[it.key] = unsafeLiteralUseCases.create(
                     CreateLiteralUseCase.CreateCommand(
                         contributorId = contributorId,
                         label = it.value.label,
@@ -133,7 +133,7 @@ class SubgraphCreator(
                 )
                 lookup[it.key] = predicate
                 it.value.description?.let { description ->
-                    val literal = literalService.create(
+                    val literal = unsafeLiteralUseCases.create(
                         CreateLiteralUseCase.CreateCommand(
                             contributorId = contributorId,
                             label = description

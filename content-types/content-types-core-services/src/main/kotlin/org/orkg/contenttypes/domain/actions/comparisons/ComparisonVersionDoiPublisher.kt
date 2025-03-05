@@ -7,7 +7,7 @@ import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.contenttypes.output.DoiService
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
-import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import java.net.URI
 
@@ -19,12 +19,12 @@ class ComparisonVersionDoiPublisher(
 ) : PublishComparisonAction {
     constructor(
         unsafeStatementUseCases: UnsafeStatementUseCases,
-        literalService: LiteralUseCases,
+        unsafeLiteralUseCases: UnsafeLiteralUseCases,
         comparisonRepository: ComparisonRepository,
         doiService: DoiService,
         comparisonPublishBaseUri: String,
     ) : this(
-        SingleStatementPropertyCreator(literalService, unsafeStatementUseCases),
+        SingleStatementPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
         comparisonRepository,
         doiService,
         comparisonPublishBaseUri

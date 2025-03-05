@@ -9,9 +9,9 @@ import org.orkg.contenttypes.input.ComparisonUseCases
 import org.orkg.contenttypes.input.UpdateComparisonUseCase.UpdateComparisonRelatedFigureCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
-import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 
@@ -24,14 +24,14 @@ class ComparisonRelatedFigureUpdater(
     constructor(
         comparisonService: ComparisonUseCases,
         resourceService: ResourceUseCases,
-        literalService: LiteralUseCases,
+        unsafeLiteralUseCases: UnsafeLiteralUseCases,
         statementService: StatementUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
         comparisonService,
         resourceService,
         statementService,
-        SingleStatementPropertyUpdater(literalService, statementService, unsafeStatementUseCases)
+        SingleStatementPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases)
     )
 
     fun execute(command: UpdateComparisonRelatedFigureCommand) {

@@ -18,8 +18,8 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateStatementUseCase
-import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
@@ -30,12 +30,12 @@ import java.time.OffsetDateTime
 import java.util.UUID
 
 internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
-    private val literalService: LiteralUseCases = mockk()
+    private val unsafeLiteralUseCases: UnsafeLiteralUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
     private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
 
     private val statementCollectionPropertyUpdater = StatementCollectionPropertyUpdater(
-        literalService,
+        unsafeLiteralUseCases,
         statementService,
         unsafeStatementUseCases
     )
@@ -245,7 +245,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         } returns pageOf(oldLiteralStatements)
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
         every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
-        every { literalService.create(any()) } returns ThingId("L1") andThen ThingId("L2")
+        every { unsafeLiteralUseCases.create(any()) } returns ThingId("L1") andThen ThingId("L2")
 
         statementCollectionPropertyUpdater.update(contributorId, subjectId, Predicates.reference, literals.toSet())
 
@@ -260,7 +260,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         verify(exactly = 1) { statementService.deleteAllById(oldLiteralStatements.map { it.id }.toSet()) }
         literals.forEach { literal ->
             verify(exactly = 1) {
-                literalService.create(
+                unsafeLiteralUseCases.create(
                     CreateLiteralUseCase.CreateCommand(label = literal, contributorId = contributorId)
                 )
             }
@@ -304,7 +304,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         } returns pageOf(oldLiteralStatements)
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
         every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
-        every { literalService.create(any()) } returns ThingId("L1")
+        every { unsafeLiteralUseCases.create(any()) } returns ThingId("L1")
 
         statementCollectionPropertyUpdater.update(contributorId, subjectId, Predicates.reference, literals.toSet())
 
@@ -318,7 +318,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) { statementService.deleteAllById(setOf(oldLiteralStatements[0].id)) }
         verify(exactly = 1) {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(label = literals[1], contributorId = contributorId)
             )
         }
@@ -407,7 +407,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
             )
         } returns pageOf()
         every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
-        every { literalService.create(any()) } returns ThingId("L1") andThen ThingId("L2")
+        every { unsafeLiteralUseCases.create(any()) } returns ThingId("L1") andThen ThingId("L2")
 
         statementCollectionPropertyUpdater.update(contributorId, subjectId, Predicates.reference, literals.toSet())
 
@@ -421,7 +421,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         }
         literals.forEach { literal ->
             verify(exactly = 1) {
-                literalService.create(
+                unsafeLiteralUseCases.create(
                     CreateLiteralUseCase.CreateCommand(label = literal, contributorId = contributorId)
                 )
             }
@@ -686,14 +686,14 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
 
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
         every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
-        every { literalService.create(literalCreateCommand1) } returns literalId1
-        every { literalService.create(literalCreateCommand2) } returns literalId2
+        every { unsafeLiteralUseCases.create(literalCreateCommand1) } returns literalId1
+        every { unsafeLiteralUseCases.create(literalCreateCommand2) } returns literalId2
 
         statementCollectionPropertyUpdater.update(oldObjectStatements, contributorId, subjectId, Predicates.reference, literals)
 
         verify(exactly = 1) { statementService.deleteAllById(oldObjectStatements.map { it.id }.toSet()) }
-        verify(exactly = 1) { literalService.create(literalCreateCommand1) }
-        verify(exactly = 1) { literalService.create(literalCreateCommand2) }
+        verify(exactly = 1) { unsafeLiteralUseCases.create(literalCreateCommand1) }
+        verify(exactly = 1) { unsafeLiteralUseCases.create(literalCreateCommand2) }
         verify(exactly = 1) {
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
@@ -731,12 +731,12 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
 
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
         every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
-        every { literalService.create(literalCreateCommand2) } returns literalId2
+        every { unsafeLiteralUseCases.create(literalCreateCommand2) } returns literalId2
 
         statementCollectionPropertyUpdater.update(oldObjectStatements, contributorId, subjectId, Predicates.reference, literals)
 
         verify(exactly = 1) { statementService.deleteAllById(setOf(oldObjectStatements[0].id)) }
-        verify(exactly = 1) { literalService.create(literalCreateCommand2) }
+        verify(exactly = 1) { unsafeLiteralUseCases.create(literalCreateCommand2) }
         verify(exactly = 1) {
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
@@ -792,13 +792,13 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         )
 
         every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
-        every { literalService.create(literalCreateCommand1) } returns literalId1
-        every { literalService.create(literalCreateCommand2) } returns literalId2
+        every { unsafeLiteralUseCases.create(literalCreateCommand1) } returns literalId1
+        every { unsafeLiteralUseCases.create(literalCreateCommand2) } returns literalId2
 
         statementCollectionPropertyUpdater.update(emptyList(), contributorId, subjectId, Predicates.reference, literals)
 
-        verify(exactly = 1) { literalService.create(literalCreateCommand1) }
-        verify(exactly = 1) { literalService.create(literalCreateCommand2) }
+        verify(exactly = 1) { unsafeLiteralUseCases.create(literalCreateCommand1) }
+        verify(exactly = 1) { unsafeLiteralUseCases.create(literalCreateCommand2) }
         verify(exactly = 1) {
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(

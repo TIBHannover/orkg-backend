@@ -6,20 +6,20 @@ import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateStatementUseCase
-import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import java.time.Clock
 import java.time.OffsetDateTime
 
 class ComparisonPublicationInfoCreator(
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
-    private val literalService: LiteralUseCases,
+    private val unsafeLiteralUseCases: UnsafeLiteralUseCases,
     private val clock: Clock = Clock.systemDefaultZone(),
 ) : CreateComparisonAction {
     override fun invoke(command: CreateComparisonCommand, state: State): State {
         val comparisonId = state.comparisonId!!
         val now = OffsetDateTime.now(clock)
-        val publicationYearLiteralId = literalService.create(
+        val publicationYearLiteralId = unsafeLiteralUseCases.create(
             CreateLiteralUseCase.CreateCommand(
                 contributorId = command.contributorId,
                 label = now.year.toString(),
@@ -34,7 +34,7 @@ class ComparisonPublicationInfoCreator(
                 objectId = publicationYearLiteralId
             )
         )
-        val publicationMonthLiteralId = literalService.create(
+        val publicationMonthLiteralId = unsafeLiteralUseCases.create(
             CreateLiteralUseCase.CreateCommand(
                 contributorId = command.contributorId,
                 label = now.monthValue.toString(),

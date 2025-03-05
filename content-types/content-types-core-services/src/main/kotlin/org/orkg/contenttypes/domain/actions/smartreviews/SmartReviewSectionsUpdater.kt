@@ -4,9 +4,9 @@ import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyUpdater
 import org.orkg.contenttypes.domain.actions.UpdateSmartReviewCommand
 import org.orkg.contenttypes.domain.actions.smartreviews.UpdateSmartReviewAction.State
 import org.orkg.graph.domain.Predicates
-import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
@@ -16,15 +16,15 @@ class SmartReviewSectionsUpdater(
     private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater,
 ) : UpdateSmartReviewAction {
     constructor(
-        literalService: LiteralUseCases,
+        unsafeLiteralUseCases: UnsafeLiteralUseCases,
         resourceService: ResourceUseCases,
         unsafeResourceUseCases: UnsafeResourceUseCases,
         statementService: StatementUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
-        AbstractSmartReviewSectionCreator(unsafeStatementUseCases, unsafeResourceUseCases, literalService),
+        AbstractSmartReviewSectionCreator(unsafeStatementUseCases, unsafeResourceUseCases, unsafeLiteralUseCases),
         AbstractSmartReviewSectionDeleter(statementService, resourceService),
-        StatementCollectionPropertyUpdater(literalService, statementService, unsafeStatementUseCases)
+        StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases)
     )
 
     override fun invoke(command: UpdateSmartReviewCommand, state: State): State {

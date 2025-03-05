@@ -28,8 +28,8 @@ import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.CreateStatementUseCase
-import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ResourceRepository
@@ -45,14 +45,14 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
     private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
     private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
-    private val literalService: LiteralUseCases = mockk()
+    private val unsafeLiteralUseCases: UnsafeLiteralUseCases = mockk()
 
     private val paperPublicationInfoUpdater = PaperPublicationInfoUpdater(
         unsafeResourceUseCases = unsafeResourceUseCases,
         resourceRepository = resourceRepository,
         statementService = statementService,
         unsafeStatementUseCases = unsafeStatementUseCases,
-        literalService = literalService
+        unsafeLiteralUseCases = unsafeLiteralUseCases
     )
 
     @Test
@@ -160,7 +160,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
         val monthLiteralId = ThingId("L132")
 
         every {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = month.toString(),
@@ -187,7 +187,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
         }
 
         verify(exactly = 1) {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = month.toString(),
@@ -243,7 +243,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
 
         every { statementService.deleteAllById(setOf(statementId)) } just runs
         every {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = command.publicationInfo!!.publishedMonth.toString(),
@@ -271,7 +271,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { statementService.deleteAllById(setOf(statementId)) }
         verify(exactly = 1) {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = command.publicationInfo!!.publishedMonth.toString(),
@@ -380,7 +380,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
         val yearLiteralId = ThingId("L645")
 
         every {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = command.publicationInfo!!.publishedYear.toString(),
@@ -407,7 +407,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
         }
 
         verify(exactly = 1) {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = command.publicationInfo!!.publishedYear.toString(),
@@ -463,7 +463,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
 
         every { statementService.deleteAllById(setOf(statementId)) } just runs
         every {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = command.publicationInfo!!.publishedYear.toString(),
@@ -491,7 +491,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { statementService.deleteAllById(setOf(statementId)) }
         verify(exactly = 1) {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = command.publicationInfo!!.publishedYear.toString(),
@@ -827,7 +827,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
         val urlLiteralId = ThingId("L4356")
 
         every {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = url.toString(),
@@ -854,7 +854,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
         }
 
         verify(exactly = 1) {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = url.toString(),
@@ -910,7 +910,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
 
         every { statementService.deleteAllById(setOf(statementId)) } just runs
         every {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = command.publicationInfo!!.url.toString(),
@@ -938,7 +938,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { statementService.deleteAllById(setOf(statementId)) }
         verify(exactly = 1) {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = command.publicationInfo!!.url.toString(),

@@ -56,9 +56,9 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
-import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ClassRepository
@@ -80,7 +80,7 @@ class TemplateService(
     private val predicateRepository: PredicateRepository,
     private val resourceService: ResourceUseCases,
     private val unsafeResourceUseCases: UnsafeResourceUseCases,
-    private val literalService: LiteralUseCases,
+    private val unsafeLiteralUseCases: UnsafeLiteralUseCases,
     private val statementService: StatementUseCases,
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
     private val observatoryRepository: ObservatoryRepository,
@@ -142,10 +142,10 @@ class TemplateService(
             TemplateResourceCreator(unsafeResourceUseCases),
             TemplateTargetClassCreator(unsafeStatementUseCases),
             TemplateRelationsCreator(unsafeStatementUseCases),
-            TemplateDescriptionCreator(literalService, unsafeStatementUseCases),
-            TemplateFormattedLabelCreator(literalService, unsafeStatementUseCases),
-            TemplateClosedCreator(literalService, unsafeStatementUseCases),
-            TemplatePropertiesCreator(unsafeResourceUseCases, literalService, unsafeStatementUseCases)
+            TemplateDescriptionCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
+            TemplateFormattedLabelCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
+            TemplateClosedCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
+            TemplatePropertiesCreator(unsafeResourceUseCases, unsafeLiteralUseCases, unsafeStatementUseCases)
         )
         return steps.execute(command, CreateTemplateState()).templateId!!
     }
@@ -155,7 +155,7 @@ class TemplateService(
             TemplatePropertyExistenceCreateValidator(resourceRepository),
             TemplatePropertyTemplateCreateValidator(statementRepository),
             TemplatePropertyValidator(predicateRepository, classRepository, { it }),
-            TemplatePropertyCreator(unsafeResourceUseCases, literalService, unsafeStatementUseCases)
+            TemplatePropertyCreator(unsafeResourceUseCases, unsafeLiteralUseCases, unsafeStatementUseCases)
         )
         return steps.execute(command, CreateTemplatePropertyState()).templatePropertyId!!
     }
@@ -173,12 +173,12 @@ class TemplateService(
             OrganizationValidator(organizationRepository, { it.organizations }, { it.template!!.organizations }),
             ObservatoryValidator(observatoryRepository, { it.observatories }, { it.template!!.observatories }),
             TemplateResourceUpdater(unsafeResourceUseCases),
-            TemplateTargetClassUpdater(literalService, statementService, unsafeStatementUseCases),
-            TemplateRelationsUpdater(literalService, statementService, unsafeStatementUseCases),
-            TemplateDescriptionUpdater(literalService, statementService, unsafeStatementUseCases),
-            TemplateFormattedLabelUpdater(literalService, statementService, unsafeStatementUseCases),
-            TemplateClosedUpdater(literalService, statementService, unsafeStatementUseCases),
-            TemplatePropertiesUpdater(literalService, resourceService, unsafeResourceUseCases, statementService, unsafeStatementUseCases)
+            TemplateTargetClassUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
+            TemplateRelationsUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
+            TemplateDescriptionUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
+            TemplateFormattedLabelUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
+            TemplateClosedUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
+            TemplatePropertiesUpdater(unsafeLiteralUseCases, resourceService, unsafeResourceUseCases, statementService, unsafeStatementUseCases)
         )
         steps.execute(command, UpdateTemplateState())
     }
@@ -188,7 +188,7 @@ class TemplateService(
             TemplatePropertyExistenceUpdateValidator(this, resourceRepository),
             TemplatePropertyTemplateUpdateValidator(),
             TemplatePropertyValidator(predicateRepository, classRepository, { it }, { it.templateProperty }),
-            TemplatePropertyUpdater(literalService, unsafeResourceUseCases, statementService, unsafeStatementUseCases)
+            TemplatePropertyUpdater(unsafeLiteralUseCases, unsafeResourceUseCases, statementService, unsafeStatementUseCases)
         )
         steps.execute(command, UpdateTemplatePropertyState())
     }

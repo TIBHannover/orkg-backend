@@ -19,8 +19,8 @@ import org.orkg.contenttypes.input.SmartReviewVisualizationSectionDefinition
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Predicates
-import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
@@ -31,14 +31,14 @@ class AbstractSmartReviewSectionUpdater(
     private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater,
 ) {
     constructor(
-        literalService: LiteralUseCases,
+        unsafeLiteralUseCases: UnsafeLiteralUseCases,
         unsafeResourceUseCases: UnsafeResourceUseCases,
         statementService: StatementUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
         unsafeResourceUseCases,
-        SingleStatementPropertyUpdater(literalService, statementService, unsafeStatementUseCases),
-        StatementCollectionPropertyUpdater(literalService, statementService, unsafeStatementUseCases)
+        SingleStatementPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
+        StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases)
     )
 
     internal fun updateComparisonSection(

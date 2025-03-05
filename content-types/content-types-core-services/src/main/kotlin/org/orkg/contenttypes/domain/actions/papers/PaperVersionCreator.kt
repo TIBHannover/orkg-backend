@@ -8,7 +8,7 @@ import org.orkg.contenttypes.domain.actions.papers.PublishPaperAction.State
 import org.orkg.contenttypes.domain.ids
 import org.orkg.contenttypes.input.PublicationInfoDefinition
 import org.orkg.graph.input.ListUseCases
-import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ResourceRepository
@@ -19,7 +19,7 @@ class PaperVersionCreator(
     private val statementRepository: StatementRepository,
     private val unsafeResourceUseCases: UnsafeResourceUseCases,
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
-    private val literalService: LiteralUseCases,
+    private val unsafeLiteralUseCases: UnsafeLiteralUseCases,
     private val listService: ListUseCases,
 ) : PublishPaperAction {
     override fun invoke(command: PublishPaperCommand, state: State): State {
@@ -46,12 +46,12 @@ class PaperVersionCreator(
         val steps = listOf(
             PaperAuthorCreateValidator(resourceRepository, statementRepository),
             PaperSnapshotResourceCreator(unsafeResourceUseCases),
-            PaperIdentifierCreator(unsafeStatementUseCases, literalService),
-            PaperSDGCreator(literalService, unsafeStatementUseCases),
-            PaperMentioningsCreator(literalService, unsafeStatementUseCases),
-            PaperAuthorCreator(unsafeResourceUseCases, unsafeStatementUseCases, literalService, listService),
-            PaperResearchFieldCreator(literalService, unsafeStatementUseCases),
-            PaperPublicationInfoCreator(unsafeResourceUseCases, resourceRepository, unsafeStatementUseCases, literalService)
+            PaperIdentifierCreator(unsafeStatementUseCases, unsafeLiteralUseCases),
+            PaperSDGCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
+            PaperMentioningsCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
+            PaperAuthorCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService),
+            PaperResearchFieldCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
+            PaperPublicationInfoCreator(unsafeResourceUseCases, resourceRepository, unsafeStatementUseCases, unsafeLiteralUseCases)
         )
         return state.copy(paperVersionId = steps.execute(createPaperCommand, CreatePaperState()).paperId!!)
     }

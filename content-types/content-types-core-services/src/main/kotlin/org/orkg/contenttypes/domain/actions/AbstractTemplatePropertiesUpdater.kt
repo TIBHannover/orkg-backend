@@ -5,9 +5,9 @@ import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.TemplateProperty
 import org.orkg.contenttypes.input.TemplatePropertyDefinition
 import org.orkg.graph.domain.GeneralStatement
-import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
@@ -17,14 +17,14 @@ class AbstractTemplatePropertiesUpdater(
     private val abstractTemplatePropertyDeleter: AbstractTemplatePropertyDeleter,
 ) {
     constructor(
-        literalService: LiteralUseCases,
+        unsafeLiteralUseCases: UnsafeLiteralUseCases,
         resourceService: ResourceUseCases,
         unsafeResourceUseCases: UnsafeResourceUseCases,
         statementService: StatementUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
-        AbstractTemplatePropertyCreator(unsafeResourceUseCases, literalService, unsafeStatementUseCases),
-        AbstractTemplatePropertyUpdater(literalService, unsafeResourceUseCases, statementService, unsafeStatementUseCases),
+        AbstractTemplatePropertyCreator(unsafeResourceUseCases, unsafeLiteralUseCases, unsafeStatementUseCases),
+        AbstractTemplatePropertyUpdater(unsafeLiteralUseCases, unsafeResourceUseCases, statementService, unsafeStatementUseCases),
         AbstractTemplatePropertyDeleter(resourceService, statementService)
     )
 

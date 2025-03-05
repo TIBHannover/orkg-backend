@@ -16,6 +16,11 @@ interface LiteralUseCases :
     UpdateLiteralUseCase,
     DeleteLiteralUseCase
 
+interface UnsafeLiteralUseCases :
+    CreateLiteralUseCase,
+    UpdateLiteralUseCase,
+    DeleteLiteralUseCase
+
 interface RetrieveLiteralUseCase {
     fun existsById(id: ThingId): Boolean
 

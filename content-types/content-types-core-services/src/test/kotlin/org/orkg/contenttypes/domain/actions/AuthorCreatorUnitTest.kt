@@ -18,7 +18,7 @@ import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.ListUseCases
-import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.testing.fixtures.createLiteral
@@ -27,11 +27,11 @@ import java.util.UUID
 internal class AuthorCreatorUnitTest : MockkBaseTest {
     private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
     private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
-    private val literalService: LiteralUseCases = mockk()
+    private val unsafeLiteralUseCases: UnsafeLiteralUseCases = mockk()
     private val listService: ListUseCases = mockk()
 
     private val authorCreator =
-        object : AuthorCreator(unsafeResourceUseCases, unsafeStatementUseCases, literalService, listService) {}
+        object : AuthorCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService) {}
 
     @Test
     fun `Given a list of authors, when linking an existing author to the subject resource, it returns success`() {
@@ -53,7 +53,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
         )
 
         every {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = orcid
@@ -93,7 +93,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
         authorCreator.create(contributorId, listOf(author), subjectId)
 
         verify(exactly = 1) {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = orcid
@@ -143,7 +143,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
         val contributorId = ContributorId(UUID.randomUUID())
 
         every {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = author.name
@@ -173,7 +173,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
         authorCreator.create(contributorId, listOf(author), subjectId)
 
         verify(exactly = 1) {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = author.name
@@ -225,7 +225,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
 
         every { unsafeResourceUseCases.create(resourceCreateCommand) } returns authorId
         every {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = orcid
@@ -243,7 +243,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
             )
         } returns StatementId("S1")
         every {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = author.homepage.toString(),
@@ -285,7 +285,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { unsafeResourceUseCases.create(resourceCreateCommand) }
         verify(exactly = 1) {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = orcid
@@ -303,7 +303,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = author.homepage.toString(),

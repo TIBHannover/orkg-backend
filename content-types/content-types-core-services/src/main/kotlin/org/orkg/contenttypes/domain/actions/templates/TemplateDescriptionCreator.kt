@@ -4,16 +4,16 @@ import org.orkg.contenttypes.domain.actions.CreateTemplateCommand
 import org.orkg.contenttypes.domain.actions.SingleStatementPropertyCreator
 import org.orkg.contenttypes.domain.actions.templates.CreateTemplateAction.State
 import org.orkg.graph.domain.Predicates
-import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
 class TemplateDescriptionCreator(
     private val singleStatementPropertyCreator: SingleStatementPropertyCreator,
 ) : CreateTemplateAction {
     constructor(
-        literalService: LiteralUseCases,
+        unsafeLiteralUseCases: UnsafeLiteralUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
-    ) : this(SingleStatementPropertyCreator(literalService, unsafeStatementUseCases))
+    ) : this(SingleStatementPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases))
 
     override fun invoke(command: CreateTemplateCommand, state: State): State =
         state.apply {

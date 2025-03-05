@@ -31,7 +31,7 @@ import org.orkg.graph.input.CreatePredicateUseCase
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.ListUseCases
-import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafePredicateUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
@@ -50,7 +50,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
     private val classService: ClassUseCases = mockk()
     private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
     private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
-    private val literalService: LiteralUseCases = mockk()
+    private val unsafeLiteralUseCases: UnsafeLiteralUseCases = mockk()
     private val unsafePredicateUseCases: UnsafePredicateUseCases = mockk()
     private val listService: ListUseCases = mockk()
 
@@ -58,7 +58,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         classService = classService,
         unsafeResourceUseCases = unsafeResourceUseCases,
         unsafeStatementUseCases = unsafeStatementUseCases,
-        literalService = literalService,
+        unsafeLiteralUseCases = unsafeLiteralUseCases,
         unsafePredicateUseCases = unsafePredicateUseCases,
         statementRepository = statementRepository,
         listService = listService
@@ -222,7 +222,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         )
 
         every {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = literalDefinition.label,
@@ -240,7 +240,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         )
 
         verify(exactly = 1) {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = literalDefinition.label,
@@ -338,7 +338,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             )
         } returns predicateId
         every {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = predicateDefinition.description!!
@@ -373,7 +373,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = predicateDefinition.description!!
@@ -540,7 +540,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             )
         } returns predicateId
         every {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = literalDefinition.label,
@@ -590,7 +590,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = literalDefinition.label,

@@ -18,17 +18,17 @@ import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.CreateStatementUseCase
-import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
 internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
     private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
-    private val literalService: LiteralUseCases = mockk()
+    private val unsafeLiteralUseCases: UnsafeLiteralUseCases = mockk()
     private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
 
     private val abstractTemplatePropertyCreator =
-        AbstractTemplatePropertyCreator(unsafeResourceUseCases, literalService, unsafeStatementUseCases)
+        AbstractTemplatePropertyCreator(unsafeResourceUseCases, unsafeLiteralUseCases, unsafeStatementUseCases)
 
     @Test
     fun `Given an untyped template property definition, when creating, it returns success`() {
@@ -99,7 +99,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             )
         } returns StatementId("S1")
         every {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = property.contributorId,
                     label = property.pattern.toString()
@@ -140,7 +140,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = property.contributorId,
                     label = property.pattern.toString()
@@ -305,7 +305,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             )
         } returns StatementId("S1")
         every {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = property.contributorId,
                     label = property.minInclusive.toString(),
@@ -324,7 +324,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             )
         } returns StatementId("S2")
         every {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = property.contributorId,
                     label = property.maxInclusive.toString(),
@@ -366,7 +366,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = property.contributorId,
                     label = property.minInclusive.toString(),
@@ -385,7 +385,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = property.contributorId,
                     label = property.maxInclusive.toString(),
@@ -541,7 +541,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
         } returns propertyId
         property.placeholder?.let { placeholder ->
             every {
-                literalService.create(
+                unsafeLiteralUseCases.create(
                     CreateLiteralUseCase.CreateCommand(
                         contributorId = property.contributorId,
                         label = placeholder
@@ -561,7 +561,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
         }
         property.description?.let { description ->
             every {
-                literalService.create(
+                unsafeLiteralUseCases.create(
                     CreateLiteralUseCase.CreateCommand(
                         contributorId = property.contributorId,
                         label = description
@@ -580,7 +580,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             } returns StatementId("Sdescription")
         }
         every {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = property.contributorId,
                     label = property.minCount.toString(),
@@ -599,7 +599,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             )
         } returns StatementId("SminCount")
         every {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = property.contributorId,
                     label = property.maxCount.toString(),
@@ -628,7 +628,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             )
         } returns StatementId("Spath")
         every {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = property.contributorId,
                     label = order.toString(),
@@ -679,7 +679,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
         }
         property.placeholder?.let { placeholder ->
             verify(exactly = 1) {
-                literalService.create(
+                unsafeLiteralUseCases.create(
                     CreateLiteralUseCase.CreateCommand(
                         contributorId = property.contributorId,
                         label = placeholder
@@ -699,7 +699,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
         }
         property.description?.let { description ->
             verify(exactly = 1) {
-                literalService.create(
+                unsafeLiteralUseCases.create(
                     CreateLiteralUseCase.CreateCommand(
                         contributorId = property.contributorId,
                         label = description
@@ -719,7 +719,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
         }
 
         verify(exactly = 1) {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = property.contributorId,
                     label = property.minCount.toString(),
@@ -739,7 +739,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
         }
 
         verify(exactly = 1) {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = property.contributorId,
                     label = property.maxCount.toString(),
@@ -769,7 +769,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = property.contributorId,
                     label = order.toString(),

@@ -7,8 +7,8 @@ import org.orkg.contenttypes.domain.actions.smartreviews.sections.CreateSmartRev
 import org.orkg.contenttypes.input.SmartReviewSectionDefinition
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateStatementUseCase
-import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
@@ -18,14 +18,14 @@ class SmartReviewSectionCreator(
     private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater,
 ) : CreateSmartReviewSectionAction {
     constructor(
-        literalService: LiteralUseCases,
+        unsafeLiteralUseCases: UnsafeLiteralUseCases,
         unsafeResourceUseCases: UnsafeResourceUseCases,
         statementService: StatementUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
         unsafeStatementUseCases,
-        AbstractSmartReviewSectionCreator(unsafeStatementUseCases, unsafeResourceUseCases, literalService),
-        StatementCollectionPropertyUpdater(literalService, statementService, unsafeStatementUseCases)
+        AbstractSmartReviewSectionCreator(unsafeStatementUseCases, unsafeResourceUseCases, unsafeLiteralUseCases),
+        StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases)
     )
 
     override fun invoke(command: CreateSmartReviewSectionCommand, state: State): State {

@@ -14,14 +14,14 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateStatementUseCase
-import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
 internal class TemplateFormattedLabelCreatorUnitTest : MockkBaseTest {
-    private val literalService: LiteralUseCases = mockk()
+    private val unsafeLiteralUseCases: UnsafeLiteralUseCases = mockk()
     private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
 
-    private val templateFormattedLabelCreator = TemplateFormattedLabelCreator(literalService, unsafeStatementUseCases)
+    private val templateFormattedLabelCreator = TemplateFormattedLabelCreator(unsafeLiteralUseCases, unsafeStatementUseCases)
 
     @Test
     fun `Given a template create command, when formatted label is not null, it creates a new statement`() {
@@ -33,7 +33,7 @@ internal class TemplateFormattedLabelCreatorUnitTest : MockkBaseTest {
         val formattedLabelLiteralId = ThingId("R124")
 
         every {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = command.formattedLabel!!.value
@@ -58,7 +58,7 @@ internal class TemplateFormattedLabelCreatorUnitTest : MockkBaseTest {
         }
 
         verify(exactly = 1) {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = command.formattedLabel!!.value

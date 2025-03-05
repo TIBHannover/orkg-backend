@@ -10,12 +10,12 @@ import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateStatementUseCase
-import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
 class StatementCollectionPropertyUpdater(
-    private val literalService: LiteralUseCases,
+    private val unsafeLiteralUseCases: UnsafeLiteralUseCases,
     private val statementService: StatementUseCases,
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
 ) {
@@ -170,7 +170,7 @@ class StatementCollectionPropertyUpdater(
 
         // Create new object statements
         toAdd.forEach { literal ->
-            val literalId = literalService.create(
+            val literalId = unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = literal,
@@ -214,7 +214,7 @@ class StatementCollectionPropertyUpdater(
                 toRemove += statement.id
             }
             if (matchingStatement == null) {
-                val literalId = literalService.create(
+                val literalId = unsafeLiteralUseCases.create(
                     CreateLiteralUseCase.CreateCommand(
                         contributorId = contributorId,
                         label = literal,

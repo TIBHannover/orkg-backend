@@ -6,8 +6,8 @@ import org.orkg.contenttypes.domain.actions.UpdateComparisonCommand
 import org.orkg.contenttypes.domain.actions.comparisons.UpdateComparisonAction.State
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
-import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
 class ComparisonReferencesUpdater(
@@ -15,12 +15,12 @@ class ComparisonReferencesUpdater(
     private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater,
 ) : UpdateComparisonAction {
     constructor(
-        literalService: LiteralUseCases,
+        unsafeLiteralUseCases: UnsafeLiteralUseCases,
         statementService: StatementUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
         statementService,
-        StatementCollectionPropertyUpdater(literalService, statementService, unsafeStatementUseCases)
+        StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases)
     )
 
     override fun invoke(command: UpdateComparisonCommand, state: State): State {

@@ -5,11 +5,11 @@ import org.orkg.common.ThingId
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateStatementUseCase
-import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
 class StatementCollectionPropertyCreator(
-    private val literalService: LiteralUseCases,
+    private val unsafeLiteralUseCases: UnsafeLiteralUseCases,
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
 ) {
     internal fun create(
@@ -20,7 +20,7 @@ class StatementCollectionPropertyCreator(
         datatype: String = Literals.XSD.STRING.prefixedUri,
     ) {
         labels.forEach { label ->
-            val literal = literalService.create(
+            val literal = unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = label,

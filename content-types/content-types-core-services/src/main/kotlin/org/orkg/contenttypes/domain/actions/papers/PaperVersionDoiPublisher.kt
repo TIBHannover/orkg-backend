@@ -6,7 +6,7 @@ import org.orkg.contenttypes.domain.actions.papers.PublishPaperAction.State
 import org.orkg.contenttypes.output.DoiService
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
-import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import java.net.URI
 
@@ -17,10 +17,10 @@ class PaperVersionDoiPublisher(
 ) : PublishPaperAction {
     constructor(
         unsafeStatementUseCases: UnsafeStatementUseCases,
-        literalService: LiteralUseCases,
+        unsafeLiteralUseCases: UnsafeLiteralUseCases,
         doiService: DoiService,
         paperPublishBaseUri: String,
-    ) : this(SingleStatementPropertyCreator(literalService, unsafeStatementUseCases), doiService, paperPublishBaseUri)
+    ) : this(SingleStatementPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases), doiService, paperPublishBaseUri)
 
     override fun invoke(command: PublishPaperCommand, state: State): State {
         val paper = state.paper!!

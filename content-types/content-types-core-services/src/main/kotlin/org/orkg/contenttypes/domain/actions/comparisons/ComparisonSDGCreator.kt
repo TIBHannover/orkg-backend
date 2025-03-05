@@ -4,16 +4,16 @@ import org.orkg.contenttypes.domain.actions.CreateComparisonCommand
 import org.orkg.contenttypes.domain.actions.CreateComparisonState
 import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyCreator
 import org.orkg.graph.domain.Predicates
-import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
 class ComparisonSDGCreator(
     private val statementCollectionPropertyCreator: StatementCollectionPropertyCreator,
 ) : CreateComparisonAction {
     constructor(
-        literalUseCases: LiteralUseCases,
+        unsafeLiteralUseCases: UnsafeLiteralUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
-    ) : this(StatementCollectionPropertyCreator(literalUseCases, unsafeStatementUseCases))
+    ) : this(StatementCollectionPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases))
 
     override operator fun invoke(command: CreateComparisonCommand, state: CreateComparisonState): CreateComparisonState =
         state.also {

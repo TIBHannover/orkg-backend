@@ -18,8 +18,8 @@ import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateStatementUseCase.CreateCommand
-import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
@@ -31,7 +31,7 @@ class AbstractTemplatePropertyUpdater(
     private val singleStatementPropertyUpdater: SingleStatementPropertyUpdater,
 ) {
     constructor(
-        literalService: LiteralUseCases,
+        unsafeLiteralUseCases: UnsafeLiteralUseCases,
         unsafeResourceUseCases: UnsafeResourceUseCases,
         statementService: StatementUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
@@ -39,7 +39,7 @@ class AbstractTemplatePropertyUpdater(
         statementService,
         unsafeStatementUseCases,
         unsafeResourceUseCases,
-        SingleStatementPropertyUpdater(literalService, statementService, unsafeStatementUseCases)
+        SingleStatementPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases)
     )
 
     internal fun update(

@@ -15,16 +15,16 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.CreateStatementUseCase
-import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
 class AbstractSmartReviewSectionCreator(
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
     private val unsafeResourceUseCases: UnsafeResourceUseCases,
-    private val literalService: LiteralUseCases,
+    private val unsafeLiteralUseCases: UnsafeLiteralUseCases,
     private val statementCollectionPropertyCreator: StatementCollectionPropertyCreator = StatementCollectionPropertyCreator(
-        literalService,
+        unsafeLiteralUseCases,
         unsafeStatementUseCases
     ),
 ) {
@@ -174,7 +174,7 @@ class AbstractSmartReviewSectionCreator(
                 contributorId = contributorId
             )
         )
-        val textId = literalService.create(
+        val textId = unsafeLiteralUseCases.create(
             CreateLiteralUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = section.text

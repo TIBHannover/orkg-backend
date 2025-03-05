@@ -13,14 +13,14 @@ import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.ListUseCases
-import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
 abstract class AuthorCreator(
     protected val unsafeResourceUseCases: UnsafeResourceUseCases,
     protected val unsafeStatementUseCases: UnsafeStatementUseCases,
-    protected val literalService: LiteralUseCases,
+    protected val unsafeLiteralUseCases: UnsafeLiteralUseCases,
     protected val listService: ListUseCases,
 ) {
     internal fun create(contributorId: ContributorId, authors: List<Author>, subjectId: ThingId) {
@@ -57,7 +57,7 @@ abstract class AuthorCreator(
     }
 
     private fun createLiteralAuthor(author: Author, contributorId: ContributorId): ThingId =
-        literalService.create(
+        unsafeLiteralUseCases.create(
             CreateLiteralUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = author.name
@@ -78,7 +78,7 @@ abstract class AuthorCreator(
         }
 
         if (author.homepage != null) {
-            val homepage = literalService.create(
+            val homepage = unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = author.homepage.toString(),
@@ -106,7 +106,7 @@ abstract class AuthorCreator(
         val identifiers = Identifiers.author.parse(missingIdentifiers, validate = false)
         identifiers.forEach { (identifier, values) ->
             values.forEach { value ->
-                val literalId = literalService.create(
+                val literalId = unsafeLiteralUseCases.create(
                     CreateLiteralUseCase.CreateCommand(
                         contributorId = contributorId,
                         label = value

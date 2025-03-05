@@ -10,8 +10,8 @@ import org.orkg.contenttypes.domain.ids
 import org.orkg.contenttypes.domain.wherePredicate
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Predicates
-import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ResourceRepository
@@ -21,8 +21,8 @@ class PaperPublicationInfoUpdater(
     resourceRepository: ResourceRepository,
     private val statementService: StatementUseCases,
     unsafeStatementUseCases: UnsafeStatementUseCases,
-    literalService: LiteralUseCases,
-) : PublicationInfoCreator(unsafeResourceUseCases, resourceRepository, unsafeStatementUseCases, literalService),
+    unsafeLiteralUseCases: UnsafeLiteralUseCases,
+) : PublicationInfoCreator(unsafeResourceUseCases, resourceRepository, unsafeStatementUseCases, unsafeLiteralUseCases),
     UpdatePaperAction {
     override fun invoke(command: UpdatePaperCommand, state: UpdatePaperState): UpdatePaperState {
         if (command.publicationInfo != null) {

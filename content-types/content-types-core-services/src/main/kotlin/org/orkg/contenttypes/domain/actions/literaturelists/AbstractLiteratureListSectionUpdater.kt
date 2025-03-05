@@ -14,9 +14,9 @@ import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateStatementUseCase.CreateCommand
-import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
@@ -30,7 +30,7 @@ class AbstractLiteratureListSectionUpdater(
     private val singleStatementPropertyUpdater: SingleStatementPropertyUpdater,
 ) {
     constructor(
-        literalService: LiteralUseCases,
+        unsafeLiteralUseCases: UnsafeLiteralUseCases,
         resourceService: ResourceUseCases,
         unsafeResourceUseCases: UnsafeResourceUseCases,
         statementService: StatementUseCases,
@@ -40,8 +40,8 @@ class AbstractLiteratureListSectionUpdater(
         unsafeStatementUseCases,
         resourceService,
         unsafeResourceUseCases,
-        AbstractLiteratureListSectionCreator(unsafeStatementUseCases, unsafeResourceUseCases, literalService),
-        SingleStatementPropertyUpdater(literalService, statementService, unsafeStatementUseCases)
+        AbstractLiteratureListSectionCreator(unsafeStatementUseCases, unsafeResourceUseCases, unsafeLiteralUseCases),
+        SingleStatementPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases)
     )
 
     /**

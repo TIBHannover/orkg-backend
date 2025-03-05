@@ -37,9 +37,9 @@ import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.ListUseCases
-import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ListRepository
@@ -66,7 +66,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
     private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
     private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
-    private val literalService: LiteralUseCases = mockk()
+    private val unsafeLiteralUseCases: UnsafeLiteralUseCases = mockk()
     private val listService: ListUseCases = mockk()
     private val listRepository: ListRepository = mockk()
     private val doiService: DoiService = mockk()
@@ -86,7 +86,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
         unsafeResourceUseCases = unsafeResourceUseCases,
         statementService = statementService,
         unsafeStatementUseCases = unsafeStatementUseCases,
-        literalService = literalService,
+        unsafeLiteralUseCases = unsafeLiteralUseCases,
         listService = listService,
         listRepository = listRepository,
         doiService = doiService,
@@ -650,7 +650,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
             )
         } returns StatementId("S123")
         every {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = command.image!!
@@ -658,7 +658,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
             )
         } returns imageLiteralId
         every {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = command.url!!
@@ -666,7 +666,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
             )
         } returns urlLiteralId
         every {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = command.description!!
@@ -727,7 +727,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = command.image!!
@@ -735,7 +735,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = command.url!!
@@ -743,7 +743,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = command.description!!
@@ -848,7 +848,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
             )
         } returns StatementId("S1")
         every {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = command.image!!
@@ -856,7 +856,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
             )
         } returns image.id
         every {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = command.description!!
@@ -907,7 +907,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = command.image!!
@@ -915,7 +915,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = command.description!!

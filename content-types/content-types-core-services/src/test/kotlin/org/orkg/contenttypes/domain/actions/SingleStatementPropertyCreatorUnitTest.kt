@@ -12,15 +12,15 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateStatementUseCase
-import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import java.util.UUID
 
 internal class SingleStatementPropertyCreatorUnitTest : MockkBaseTest {
-    private val literalService: LiteralUseCases = mockk()
+    private val unsafeLiteralUseCases: UnsafeLiteralUseCases = mockk()
     private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
 
-    private val singleStatementPropertyCreator = SingleStatementPropertyCreator(literalService, unsafeStatementUseCases)
+    private val singleStatementPropertyCreator = SingleStatementPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases)
 
     @Test
     fun `Given a literal value and a subject id, it creates a new literal and links it to the subject resource`() {
@@ -30,7 +30,7 @@ internal class SingleStatementPropertyCreatorUnitTest : MockkBaseTest {
         val literal = ThingId("L1")
 
         every {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = description
@@ -51,7 +51,7 @@ internal class SingleStatementPropertyCreatorUnitTest : MockkBaseTest {
         singleStatementPropertyCreator.create(contributorId, subjectId, Predicates.description, description)
 
         verify(exactly = 1) {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = description
@@ -82,7 +82,7 @@ internal class SingleStatementPropertyCreatorUnitTest : MockkBaseTest {
             datatype = Literals.XSD.BOOLEAN.prefixedUri
         )
 
-        every { literalService.create(literalCreateCommand) } returns literal
+        every { unsafeLiteralUseCases.create(literalCreateCommand) } returns literal
         every {
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
@@ -102,7 +102,7 @@ internal class SingleStatementPropertyCreatorUnitTest : MockkBaseTest {
             datatype = Literals.XSD.BOOLEAN.prefixedUri
         )
 
-        verify(exactly = 1) { literalService.create(literalCreateCommand) }
+        verify(exactly = 1) { unsafeLiteralUseCases.create(literalCreateCommand) }
         verify(exactly = 1) {
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(

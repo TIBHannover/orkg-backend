@@ -16,17 +16,17 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateStatementUseCase
-import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import java.time.OffsetDateTime
 
 internal class ComparisonPublicationInfoCreatorUnitTest : MockkBaseTest {
     private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
-    private val literalService: LiteralUseCases = mockk()
+    private val unsafeLiteralUseCases: UnsafeLiteralUseCases = mockk()
 
     private val comparisonPublicationInfoCreator = ComparisonPublicationInfoCreator(
         unsafeStatementUseCases,
-        literalService,
+        unsafeLiteralUseCases,
         fixedClock
     )
 
@@ -39,7 +39,7 @@ internal class ComparisonPublicationInfoCreatorUnitTest : MockkBaseTest {
         val publicationYearLiteralId = ThingId("L123")
         val publicationMonthLiteralId = ThingId("L456")
 
-        every { literalService.create(any()) } returns publicationYearLiteralId andThen publicationMonthLiteralId
+        every { unsafeLiteralUseCases.create(any()) } returns publicationYearLiteralId andThen publicationMonthLiteralId
         every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
 
         comparisonPublicationInfoCreator(command, state).asClue {
@@ -48,7 +48,7 @@ internal class ComparisonPublicationInfoCreatorUnitTest : MockkBaseTest {
         }
 
         verify(exactly = 1) {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = now.year.toString(),
@@ -67,7 +67,7 @@ internal class ComparisonPublicationInfoCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            literalService.create(
+            unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = now.monthValue.toString(),

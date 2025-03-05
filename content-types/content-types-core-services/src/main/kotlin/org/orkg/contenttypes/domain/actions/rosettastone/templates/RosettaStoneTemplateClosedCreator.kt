@@ -6,11 +6,11 @@ import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateStatementUseCase
-import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
 class RosettaStoneTemplateClosedCreator(
-    private val literalService: LiteralUseCases,
+    private val unsafeLiteralUseCases: UnsafeLiteralUseCases,
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
 ) : CreateRosettaStoneTemplateAction {
     override fun invoke(
@@ -18,7 +18,7 @@ class RosettaStoneTemplateClosedCreator(
         state: CreateRosettaStoneTemplateState,
     ): CreateRosettaStoneTemplateState =
         state.apply {
-            val literalId = literalService.create(
+            val literalId = unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = "true",

@@ -7,8 +7,8 @@ import org.orkg.contenttypes.domain.actions.literaturelists.AbstractLiteratureLi
 import org.orkg.contenttypes.input.LiteratureListSectionDefinition
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateStatementUseCase
-import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
@@ -18,14 +18,14 @@ class LiteratureListSectionCreator(
     private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater,
 ) : CreateLiteratureListSectionAction {
     constructor(
-        literalService: LiteralUseCases,
+        unsafeLiteralUseCases: UnsafeLiteralUseCases,
         unsafeResourceUseCases: UnsafeResourceUseCases,
         statementService: StatementUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
         unsafeStatementUseCases,
-        AbstractLiteratureListSectionCreator(unsafeStatementUseCases, unsafeResourceUseCases, literalService),
-        StatementCollectionPropertyUpdater(literalService, statementService, unsafeStatementUseCases)
+        AbstractLiteratureListSectionCreator(unsafeStatementUseCases, unsafeResourceUseCases, unsafeLiteralUseCases),
+        StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases)
     )
 
     override fun invoke(

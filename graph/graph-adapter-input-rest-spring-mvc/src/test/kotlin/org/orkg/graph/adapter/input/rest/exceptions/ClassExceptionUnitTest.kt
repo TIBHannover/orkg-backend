@@ -10,6 +10,7 @@ import org.orkg.graph.adapter.input.rest.exceptions.ClassExceptionUnitTest.TestC
 import org.orkg.graph.domain.CannotResetURI
 import org.orkg.graph.domain.ClassAlreadyExists
 import org.orkg.graph.domain.ClassNotAllowed
+import org.orkg.graph.domain.ClassNotFound
 import org.orkg.graph.domain.ClassNotModifiable
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExternalClassNotFound
@@ -129,6 +130,21 @@ internal class ClassExceptionUnitTest : MockMvcBaseTest("exceptions") {
     }
 
     @Test
+    fun classNotFound() {
+        val id = "R123"
+
+        get("/class-not-found")
+            .param("id", id)
+            .perform()
+            .andExpect(status().isNotFound)
+            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
+            .andExpect(jsonPath("$.error", `is`("Not Found")))
+            .andExpect(jsonPath("$.path").value("/class-not-found"))
+            .andExpect(jsonPath("$.message").value("""Class "$id" not found."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
     fun externalClassNotFound() {
         val id = "R123"
         val ontologyId = "skos"
@@ -178,6 +194,11 @@ internal class ClassExceptionUnitTest : MockMvcBaseTest("exceptions") {
         fun cannotResetURI(
             @RequestParam id: ThingId,
         ): Unit = throw CannotResetURI(id)
+
+        @GetMapping("/class-not-found")
+        fun classNotFound(
+            @RequestParam id: ThingId,
+        ): Unit = throw ClassNotFound.withThingId(id)
 
         @GetMapping("/external-class-not-found")
         fun externalClassNotFound(

@@ -54,14 +54,18 @@ interface UpdateClassUseCase {
 
     data class UpdateCommand(
         val id: ThingId,
+        val contributorId: ContributorId,
         val label: String? = null,
         val uri: ParsedIRI? = null,
+        val modifiable: Boolean? = null,
     )
 
     data class ReplaceCommand(
         val id: ThingId,
+        val contributorId: ContributorId,
         val label: String,
-        val uri: ParsedIRI?,
+        val uri: ParsedIRI? = null,
+        val modifiable: Boolean? = null,
     )
 }
 

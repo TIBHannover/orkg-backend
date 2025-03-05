@@ -1,5 +1,6 @@
 package org.orkg.graph.domain
 
+import org.orkg.graph.input.UpdateClassUseCase
 import org.orkg.graph.input.UpdateLiteralUseCase
 import org.orkg.graph.input.UpdatePredicateUseCase
 import org.orkg.graph.input.UpdateResourceUseCase
@@ -76,5 +77,22 @@ fun Literal.apply(command: UpdateLiteralUseCase.UpdateCommand): Literal =
     copy(
         label = command.label ?: label,
         datatype = command.datatype ?: datatype,
+        modifiable = command.modifiable ?: modifiable,
+    )
+
+fun UpdateClassUseCase.UpdateCommand.hasNoContents(): Boolean =
+    label == null && uri == null && modifiable == null
+
+fun Class.apply(command: UpdateClassUseCase.UpdateCommand): Class =
+    copy(
+        label = command.label ?: label,
+        uri = command.uri ?: uri,
+        modifiable = command.modifiable ?: modifiable,
+    )
+
+fun Class.apply(command: UpdateClassUseCase.ReplaceCommand): Class =
+    copy(
+        label = command.label,
+        uri = command.uri ?: uri,
         modifiable = command.modifiable ?: modifiable,
     )

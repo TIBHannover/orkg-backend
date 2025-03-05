@@ -72,41 +72,49 @@ class ClassService(
         repository.findById(id)
 
     override fun update(command: UpdateClassUseCase.UpdateCommand) {
-        if (command.label == null && command.uri == null) {
-            return
-        }
+        if (command.hasNoContents()) return
         command.label?.also { Label.ofOrNull(it) ?: throw InvalidLabel() }
-        val found = repository.findById(command.id).orElseThrow { ClassNotFound.withThingId(command.id) }
-        if (!found.modifiable) throw ClassNotModifiable(command.id)
+        val `class` = repository.findById(command.id)
+            .orElseThrow { ClassNotFound.withThingId(command.id) }
+        if (!`class`.modifiable) {
+            throw ClassNotModifiable(command.id)
+        }
         command.uri?.also { newUri ->
-            if (found.uri != null && command.uri != found.uri) {
+            if (`class`.uri != null && command.uri != `class`.uri) {
                 throw CannotResetURI(command.id)
             }
             findByURI(newUri).ifPresent {
-                if (it.id != found.id) throw URIAlreadyInUse(newUri, it.id)
+                if (it.id != `class`.id) {
+                    throw URIAlreadyInUse(newUri, it.id)
+                }
             }
         }
-        val label = command.label ?: found.label
-        val uri = command.uri ?: found.uri
-        if (found.label != label || found.uri != uri) {
-            repository.save(found.copy(label = label, uri = uri))
+        val updated = `class`.apply(command)
+        if (updated != `class`) {
+            repository.save(updated)
         }
     }
 
     override fun replace(command: UpdateClassUseCase.ReplaceCommand) {
-        val label = Label.ofOrNull(command.label)?.value ?: throw InvalidLabel()
-        val found = repository.findById(command.id).orElseThrow { ClassNotFound.withThingId(command.id) }
-        if (!found.modifiable) throw ClassNotModifiable(command.id)
-        if (found.uri != null && command.uri != found.uri) {
+        Label.ofOrNull(command.label) ?: throw InvalidLabel()
+        val `class` = repository.findById(command.id)
+            .orElseThrow { ClassNotFound.withThingId(command.id) }
+        if (!`class`.modifiable) {
+            throw ClassNotModifiable(command.id)
+        }
+        if (`class`.uri != null && command.uri != `class`.uri) {
             throw CannotResetURI(command.id)
         }
         command.uri?.also { newUri ->
             findByURI(newUri).ifPresent {
-                if (it.id != found.id) throw URIAlreadyInUse(newUri, it.id)
+                if (it.id != `class`.id) {
+                    throw URIAlreadyInUse(newUri, it.id)
+                }
             }
         }
-        if (label != found.label || found.uri != command.uri) {
-            repository.save(found.copy(label = label, uri = command.uri))
+        val updated = `class`.apply(command)
+        if (updated != `class`) {
+            repository.save(updated)
         }
     }
 

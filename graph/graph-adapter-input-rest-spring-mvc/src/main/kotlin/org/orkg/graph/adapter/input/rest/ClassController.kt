@@ -107,8 +107,16 @@ class ClassController(
         @PathVariable id: ThingId,
         @RequestBody request: ReplaceClassRequest,
         uriComponentsBuilder: UriComponentsBuilder,
+        currentUser: Authentication?,
     ): ResponseEntity<ClassRepresentation> {
-        service.replace(UpdateClassUseCase.ReplaceCommand(id, request.label, request.uri))
+        service.replace(
+            UpdateClassUseCase.ReplaceCommand(
+                id = id,
+                contributorId = currentUser.contributorId(),
+                label = request.label,
+                uri = request.uri
+            )
+        )
         val location = uriComponentsBuilder
             .path("/api/classes/{id}")
             .buildAndExpand(id)
@@ -122,8 +130,16 @@ class ClassController(
         @PathVariable id: ThingId,
         @Valid @RequestBody request: UpdateClassRequest,
         uriComponentsBuilder: UriComponentsBuilder,
+        currentUser: Authentication?,
     ): ResponseEntity<Any> {
-        service.update(UpdateClassUseCase.UpdateCommand(id, request.label, request.uri))
+        service.update(
+            UpdateClassUseCase.UpdateCommand(
+                id = id,
+                contributorId = currentUser.contributorId(),
+                label = request.label,
+                uri = request.uri
+            )
+        )
         val location = uriComponentsBuilder
             .path("/api/classes/{id}")
             .buildAndExpand(id)

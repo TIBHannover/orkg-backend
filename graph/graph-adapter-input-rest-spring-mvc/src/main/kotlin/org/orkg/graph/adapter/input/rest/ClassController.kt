@@ -81,15 +81,15 @@ class ClassController(
     @RequireLogin
     @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(CREATED)
-    fun add(
+    fun create(
         @RequestBody request: CreateClassRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         currentUser: Authentication?,
     ): ResponseEntity<ClassRepresentation> {
         val id = service.create(
             CreateClassUseCase.CreateCommand(
-                contributorId = currentUser.contributorId(),
                 id = request.id,
+                contributorId = currentUser.contributorId(),
                 label = request.label,
                 uri = request.uri,
             )

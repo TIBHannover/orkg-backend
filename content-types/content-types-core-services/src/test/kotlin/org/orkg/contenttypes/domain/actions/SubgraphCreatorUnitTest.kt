@@ -155,9 +155,9 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         every {
             classService.create(
                 CreateClassUseCase.CreateCommand(
+                    contributorId = contributorId,
                     label = classDefinition.label,
-                    uri = classDefinition.uri,
-                    contributorId = contributorId
+                    uri = classDefinition.uri
                 )
             )
         } returns ThingId("C123")
@@ -173,9 +173,9 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             classService.create(
                 CreateClassUseCase.CreateCommand(
+                    contributorId = contributorId,
                     label = classDefinition.label,
-                    uri = classDefinition.uri,
-                    contributorId = contributorId
+                    uri = classDefinition.uri
                 )
             )
         }

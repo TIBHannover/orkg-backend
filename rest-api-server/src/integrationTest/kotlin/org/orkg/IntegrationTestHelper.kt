@@ -32,22 +32,38 @@ import java.time.OffsetDateTime
 
 fun CreateClassUseCase.createClasses(vararg classes: Pair<String, String>) =
     classes.forEach {
-        createClass(id = it.first, label = it.second)
+        createClass(
+            id = it.first,
+            contributorId = ContributorId.UNKNOWN,
+            label = it.second
+        )
     }
 
 fun CreateClassUseCase.createClasses(vararg classes: String) =
     classes.forEach {
-        createClass(id = it, label = it)
+        createClass(
+            id = it,
+            contributorId = ContributorId.UNKNOWN,
+            label = it
+        )
     }
 
 fun CreateClassUseCase.createClass(
     label: String,
     id: String? = null,
-    contributorId: ContributorId? = null,
+    contributorId: ContributorId = ContributorId.UNKNOWN,
     uri: ParsedIRI? = null,
     modifiable: Boolean = true,
 ): ThingId =
-    create(CreateClassUseCase.CreateCommand(label, id?.let(::ThingId), contributorId, uri, modifiable))
+    create(
+        CreateClassUseCase.CreateCommand(
+            id = id?.let(::ThingId),
+            contributorId = contributorId,
+            label = label,
+            uri = uri,
+            modifiable = modifiable
+        )
+    )
 
 // Predicates
 

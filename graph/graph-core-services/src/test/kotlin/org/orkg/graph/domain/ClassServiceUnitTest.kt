@@ -31,10 +31,16 @@ internal class ClassServiceUnitTest : MockkBaseTest {
     @Test
     fun `given a class is created, when no id is given, then it gets an id from the repository`() {
         val mockClassId = ThingId("1")
+        val command = CreateClassUseCase.CreateCommand(
+            id = null,
+            contributorId = ContributorId(MockUserId.USER),
+            label = "irrelevant"
+        )
+
         every { repository.nextIdentity() } returns mockClassId
         every { repository.save(any()) } returns Unit
 
-        service.create(CreateClassUseCase.CreateCommand(label = "irrelevant", id = null)) shouldBe mockClassId
+        service.create(command) shouldBe mockClassId
 
         verify(exactly = 1) { repository.nextIdentity() }
         verify(exactly = 1) { repository.save(any()) }
@@ -43,10 +49,16 @@ internal class ClassServiceUnitTest : MockkBaseTest {
     @Test
     fun `given a class is created, when an id is given, then it does not get a new id`() {
         val mockClassId = ThingId("1")
+        val command = CreateClassUseCase.CreateCommand(
+            id = mockClassId,
+            contributorId = ContributorId(MockUserId.USER),
+            label = "irrelevant"
+        )
+
         every { repository.findById(mockClassId) } returns Optional.empty()
         every { repository.save(any()) } returns Unit
 
-        service.create(CreateClassUseCase.CreateCommand(label = "irrelevant", id = mockClassId)) shouldBe mockClassId
+        service.create(command) shouldBe mockClassId
 
         verify(exactly = 1) { repository.findById(mockClassId) }
         verify(exactly = 1) { repository.save(any()) }
@@ -55,68 +67,63 @@ internal class ClassServiceUnitTest : MockkBaseTest {
     @Test
     fun `given a class is created, when an already existing id is given, then an exception is thrown`() {
         val mockClassId = ThingId("1")
+        val command = CreateClassUseCase.CreateCommand(
+            id = mockClassId,
+            contributorId = ContributorId(MockUserId.USER),
+            label = "irrelevant"
+        )
+
         every { repository.findById(mockClassId) } returns createClass(id = mockClassId).toOptional()
 
-        assertThrows<ClassAlreadyExists> {
-            service.create(CreateClassUseCase.CreateCommand(label = "irrelevant", id = mockClassId))
-        }
+        assertThrows<ClassAlreadyExists> { service.create(command) }
 
         verify(exactly = 1) { repository.findById(mockClassId) }
     }
 
     @Test
     fun `given a class is created, when a reserved id is given, then an exception is thrown`() {
-        assertThrows<ClassNotAllowed> {
-            service.create(CreateClassUseCase.CreateCommand(id = reservedClassIds.first(), label = "irrelevant"))
-        }
+        val contributorId = ContributorId(MockUserId.USER)
+        val command = CreateClassUseCase.CreateCommand(
+            id = reservedClassIds.first(),
+            contributorId = contributorId,
+            label = "irrelevant"
+        )
+        assertThrows<ClassNotAllowed> { service.create(command) }
     }
 
     @Test
     fun `given a class is created, when the label is invalid, then an exception is thrown`() {
-        assertThrows<InvalidLabel> {
-            service.create(CreateClassUseCase.CreateCommand(label = " \t "))
-        }
+        val command = CreateClassUseCase.CreateCommand(
+            contributorId = ContributorId(MockUserId.USER),
+            label = " \t "
+        )
+        assertThrows<InvalidLabel> { service.create(command) }
     }
 
     @Test
     fun `given a class is created, when uri is not absolute, then an exception is thrown`() {
-        assertThrows<URINotAbsolute> {
-            service.create(CreateClassUseCase.CreateCommand(label = "irrelevant", uri = ParsedIRI("invalid")))
-        }
+        val command = CreateClassUseCase.CreateCommand(
+            contributorId = ContributorId(MockUserId.USER),
+            label = "irrelevant",
+            uri = ParsedIRI("invalid")
+        )
+        assertThrows<URINotAbsolute> { service.create(command) }
     }
 
     @Test
     fun `given a class is created, when an already existing uri is given, then an exception is thrown`() {
         val mockClass = createClass(uri = ParsedIRI("https://orkg.org/class/C1"))
+        val command = CreateClassUseCase.CreateCommand(
+            contributorId = ContributorId(MockUserId.USER),
+            label = "irrelevant",
+            uri = mockClass.uri
+        )
+
         every { repository.findByUri(mockClass.uri.toString()) } returns mockClass.toOptional()
 
-        assertThrows<URIAlreadyInUse> {
-            service.create(CreateClassUseCase.CreateCommand(label = "irrelevant", uri = mockClass.uri))
-        }
+        assertThrows<URIAlreadyInUse> { service.create(command) }
 
         verify(exactly = 1) { repository.findByUri(mockClass.uri.toString()) }
-    }
-
-    @Test
-    fun `given a class is created, when no contributor is given, the anonymous user id is used`() {
-        val mockClassId = ThingId("1")
-        every { repository.nextIdentity() } returns mockClassId
-        every { repository.save(any()) } returns Unit
-
-        service.create(CreateClassUseCase.CreateCommand(label = "irrelevant")) shouldBe mockClassId
-
-        verify(exactly = 1) {
-            repository.save(
-                Class(
-                    id = mockClassId,
-                    label = "irrelevant",
-                    uri = null,
-                    createdAt = OffsetDateTime.now(fixedClock),
-                    createdBy = ContributorId(UUID(0, 0)),
-                )
-            )
-        }
-        verify(exactly = 1) { repository.nextIdentity() }
     }
 
     @Test
@@ -126,7 +133,7 @@ internal class ClassServiceUnitTest : MockkBaseTest {
         every { repository.save(any()) } returns Unit
 
         val randomContributorId = ContributorId(UUID.randomUUID())
-        service.create(CreateClassUseCase.CreateCommand(label = "irrelevant", contributorId = randomContributorId))
+        service.create(CreateClassUseCase.CreateCommand(contributorId = randomContributorId, label = "irrelevant"))
 
         verify(exactly = 1) {
             repository.save(

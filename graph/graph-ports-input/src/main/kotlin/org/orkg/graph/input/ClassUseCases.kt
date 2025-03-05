@@ -39,9 +39,9 @@ interface CreateClassUseCase {
     fun create(command: CreateCommand): ThingId
 
     data class CreateCommand(
-        val label: String,
         val id: ThingId? = null,
-        val contributorId: ContributorId? = null,
+        val contributorId: ContributorId,
+        val label: String,
         val uri: ParsedIRI? = null,
         val modifiable: Boolean = true,
     )

@@ -68,8 +68,8 @@ class SubgraphCreator(
             if (it.key.isTempId && it.key in validatedIds) {
                 lookup[it.key] = classService.create(
                     CreateClassUseCase.CreateCommand(
-                        label = it.value.label,
                         contributorId = contributorId,
+                        label = it.value.label,
                         uri = it.value.uri
                     )
                 )

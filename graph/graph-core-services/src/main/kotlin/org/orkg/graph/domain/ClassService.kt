@@ -45,7 +45,7 @@ class ClassService(
             label = label,
             uri = command.uri,
             createdAt = OffsetDateTime.now(clock),
-            createdBy = command.contributorId ?: ContributorId.UNKNOWN,
+            createdBy = command.contributorId,
             modifiable = command.modifiable
         )
         repository.save(newClass)

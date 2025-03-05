@@ -9,10 +9,10 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Thing
-import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.ListUseCases
+import org.orkg.graph.input.UnsafeClassUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafePredicateUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
@@ -25,7 +25,7 @@ class ContributionCreator(
     private val subgraphCreator: SubgraphCreator,
 ) {
     constructor(
-        classService: ClassUseCases,
+        unsafeClassUseCases: UnsafeClassUseCases,
         unsafeResourceUseCases: UnsafeResourceUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
         unsafeLiteralUseCases: UnsafeLiteralUseCases,
@@ -33,16 +33,16 @@ class ContributionCreator(
         statementRepository: StatementRepository,
         listService: ListUseCases,
     ) : this(
-        unsafeResourceUseCases = unsafeResourceUseCases,
-        unsafeStatementUseCases = unsafeStatementUseCases,
-        subgraphCreator = SubgraphCreator(
-            classService = classService,
-            unsafeResourceUseCases = unsafeResourceUseCases,
-            unsafeStatementUseCases = unsafeStatementUseCases,
-            unsafeLiteralUseCases = unsafeLiteralUseCases,
-            unsafePredicateUseCases = unsafePredicateUseCases,
-            statementRepository = statementRepository,
-            listService = listService
+        unsafeResourceUseCases,
+        unsafeStatementUseCases,
+        SubgraphCreator(
+            unsafeClassUseCases,
+            unsafeResourceUseCases,
+            unsafeStatementUseCases,
+            unsafeLiteralUseCases,
+            unsafePredicateUseCases,
+            statementRepository,
+            listService
         )
     )
 

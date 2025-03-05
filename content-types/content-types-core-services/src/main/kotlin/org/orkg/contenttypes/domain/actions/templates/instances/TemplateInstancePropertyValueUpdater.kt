@@ -5,9 +5,9 @@ import org.orkg.contenttypes.domain.actions.BakedStatement
 import org.orkg.contenttypes.domain.actions.SubgraphCreator
 import org.orkg.contenttypes.domain.actions.UpdateTemplateInstanceCommand
 import org.orkg.contenttypes.domain.actions.UpdateTemplateInstanceState
-import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeClassUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafePredicateUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
@@ -19,7 +19,7 @@ class TemplateInstancePropertyValueUpdater(
     private val statementService: StatementUseCases,
 ) : UpdateTemplateInstanceAction {
     constructor(
-        classService: ClassUseCases,
+        unsafeClassUseCases: UnsafeClassUseCases,
         unsafeResourceUseCases: UnsafeResourceUseCases,
         statementService: StatementUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
@@ -29,7 +29,7 @@ class TemplateInstancePropertyValueUpdater(
         listService: ListUseCases,
     ) : this(
         SubgraphCreator(
-            classService,
+            unsafeClassUseCases,
             unsafeResourceUseCases,
             unsafeStatementUseCases,
             unsafeLiteralUseCases,

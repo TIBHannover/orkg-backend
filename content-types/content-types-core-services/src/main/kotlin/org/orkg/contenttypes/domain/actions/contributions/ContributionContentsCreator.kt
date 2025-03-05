@@ -3,8 +3,8 @@ package org.orkg.contenttypes.domain.actions.contributions
 import org.orkg.contenttypes.domain.actions.ContributionCreator
 import org.orkg.contenttypes.domain.actions.ContributionState
 import org.orkg.contenttypes.domain.actions.CreateContributionCommand
-import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.ListUseCases
+import org.orkg.graph.input.UnsafeClassUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafePredicateUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
@@ -15,7 +15,7 @@ class ContributionContentsCreator(
     private val contributionCreator: ContributionCreator,
 ) : ContributionAction {
     constructor(
-        classService: ClassUseCases,
+        unsafeClassUseCases: UnsafeClassUseCases,
         unsafeResourceUseCases: UnsafeResourceUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
         unsafeLiteralUseCases: UnsafeLiteralUseCases,
@@ -24,7 +24,7 @@ class ContributionContentsCreator(
         listService: ListUseCases,
     ) : this(
         ContributionCreator(
-            classService,
+            unsafeClassUseCases,
             unsafeResourceUseCases,
             unsafeStatementUseCases,
             unsafeLiteralUseCases,

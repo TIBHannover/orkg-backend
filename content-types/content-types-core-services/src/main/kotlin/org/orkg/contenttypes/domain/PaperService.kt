@@ -73,10 +73,10 @@ import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
-import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeClassUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafePredicateUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
@@ -101,7 +101,7 @@ class PaperService(
     private val observatoryRepository: ObservatoryRepository,
     private val organizationRepository: OrganizationRepository,
     private val thingRepository: ThingRepository,
-    private val classService: ClassUseCases,
+    private val unsafeClassUseCases: UnsafeClassUseCases,
     private val resourceService: ResourceUseCases,
     private val unsafeResourceUseCases: UnsafeResourceUseCases,
     private val statementService: StatementUseCases,
@@ -188,7 +188,7 @@ class PaperService(
             PaperAuthorCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService),
             PaperResearchFieldCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
             PaperPublicationInfoCreator(unsafeResourceUseCases, resourceRepository, unsafeStatementUseCases, unsafeLiteralUseCases),
-            PaperContributionCreator(classService, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, unsafePredicateUseCases, statementRepository, listService)
+            PaperContributionCreator(unsafeClassUseCases, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, unsafePredicateUseCases, statementRepository, listService)
         )
         return steps.execute(command, CreatePaperState()).paperId!!
     }
@@ -199,7 +199,7 @@ class PaperService(
             ContributionPaperValidator(resourceRepository),
             ContributionThingDefinitionValidator(thingRepository, classRepository),
             ContributionContentsValidator(thingRepository),
-            ContributionContentsCreator(classService, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, unsafePredicateUseCases, statementRepository, listService)
+            ContributionContentsCreator(unsafeClassUseCases, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, unsafePredicateUseCases, statementRepository, listService)
         )
         return steps.execute(command, ContributionState()).contributionId!!
     }

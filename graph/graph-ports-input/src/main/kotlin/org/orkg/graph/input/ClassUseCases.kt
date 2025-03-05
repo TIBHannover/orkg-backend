@@ -17,6 +17,11 @@ interface ClassUseCases :
     DeleteClassUseCase,
     URIService<Class>
 
+interface UnsafeClassUseCases :
+    CreateClassUseCase,
+    UpdateClassUseCase,
+    DeleteClassUseCase
+
 interface RetrieveClassUseCase {
     fun existsById(id: ThingId): Boolean
 

@@ -3,15 +3,15 @@ package org.orkg.contenttypes.domain.actions.rosettastone.templates
 import org.orkg.contenttypes.domain.actions.CreateRosettaStoneTemplateCommand
 import org.orkg.contenttypes.domain.actions.CreateRosettaStoneTemplateState
 import org.orkg.graph.domain.Predicates
-import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.CreateClassUseCase
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateStatementUseCase.CreateCommand
+import org.orkg.graph.input.UnsafeClassUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
 class RosettaStoneTemplateTargetClassCreator(
-    private val classService: ClassUseCases,
+    private val unsafeClassUseCases: UnsafeClassUseCases,
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
     private val unsafeLiteralUseCases: UnsafeLiteralUseCases,
 ) : CreateRosettaStoneTemplateAction {
@@ -20,7 +20,7 @@ class RosettaStoneTemplateTargetClassCreator(
         state: CreateRosettaStoneTemplateState,
     ): CreateRosettaStoneTemplateState =
         state.apply {
-            val classId = classService.create(
+            val classId = unsafeClassUseCases.create(
                 CreateClassUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = "${command.label} (class)",

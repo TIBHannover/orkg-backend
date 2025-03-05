@@ -6,13 +6,13 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.CreateClassUseCase
+import org.orkg.graph.input.UnsafeClassUseCases
 import org.orkg.graph.input.UpdateClassUseCase
 import org.orkg.graph.output.ClassRepository
 import org.orkg.spring.data.annotations.TransactionalOnNeo4j
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
-import java.time.Clock
 import java.time.OffsetDateTime
 import java.util.Optional
 
@@ -20,10 +20,10 @@ import java.util.Optional
 @TransactionalOnNeo4j
 class ClassService(
     private val repository: ClassRepository,
-    private val clock: Clock,
+    private val unsafeClassUseCases: UnsafeClassUseCases,
 ) : ClassUseCases {
     override fun create(command: CreateClassUseCase.CreateCommand): ThingId {
-        val label = Label.ofOrNull(command.label)?.value ?: throw InvalidLabel()
+        Label.ofOrNull(command.label) ?: throw InvalidLabel()
         command.uri?.let { uri ->
             if (!uri.isAbsolute) {
                 throw URINotAbsolute(uri)
@@ -32,24 +32,15 @@ class ClassService(
                 throw URIAlreadyInUse(uri, it.id)
             }
         }
-        val id = command.id?.also { id ->
+        command.id?.also { id ->
             if (id in reservedClassIds) {
                 throw ClassNotAllowed(id)
             }
             repository.findById(id).ifPresent {
                 throw ClassAlreadyExists(id)
             }
-        } ?: repository.nextIdentity()
-        val newClass = Class(
-            id = id,
-            label = label,
-            uri = command.uri,
-            createdAt = OffsetDateTime.now(clock),
-            createdBy = command.contributorId,
-            modifiable = command.modifiable
-        )
-        repository.save(newClass)
-        return newClass.id
+        }
+        return unsafeClassUseCases.create(command)
     }
 
     @TransactionalOnNeo4j(readOnly = true)

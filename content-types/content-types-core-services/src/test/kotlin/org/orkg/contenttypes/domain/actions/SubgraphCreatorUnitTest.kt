@@ -23,7 +23,6 @@ import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
-import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.CreateClassUseCase
 import org.orkg.graph.input.CreateListUseCase
 import org.orkg.graph.input.CreateLiteralUseCase
@@ -31,6 +30,7 @@ import org.orkg.graph.input.CreatePredicateUseCase
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.ListUseCases
+import org.orkg.graph.input.UnsafeClassUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafePredicateUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
@@ -47,7 +47,7 @@ import java.util.UUID
 
 internal class SubgraphCreatorUnitTest : MockkBaseTest {
     private val statementRepository: StatementRepository = mockk()
-    private val classService: ClassUseCases = mockk()
+    private val unsafeClassUseCases: UnsafeClassUseCases = mockk()
     private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
     private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
     private val unsafeLiteralUseCases: UnsafeLiteralUseCases = mockk()
@@ -55,13 +55,13 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
     private val listService: ListUseCases = mockk()
 
     private val subgraphCreator = SubgraphCreator(
-        classService = classService,
-        unsafeResourceUseCases = unsafeResourceUseCases,
-        unsafeStatementUseCases = unsafeStatementUseCases,
-        unsafeLiteralUseCases = unsafeLiteralUseCases,
-        unsafePredicateUseCases = unsafePredicateUseCases,
-        statementRepository = statementRepository,
-        listService = listService
+        unsafeClassUseCases,
+        unsafeResourceUseCases,
+        unsafeStatementUseCases,
+        unsafeLiteralUseCases,
+        unsafePredicateUseCases,
+        statementRepository,
+        listService
     )
 
     @Test
@@ -153,7 +153,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         )
 
         every {
-            classService.create(
+            unsafeClassUseCases.create(
                 CreateClassUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = classDefinition.label,
@@ -171,7 +171,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         )
 
         verify(exactly = 1) {
-            classService.create(
+            unsafeClassUseCases.create(
                 CreateClassUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = classDefinition.label,

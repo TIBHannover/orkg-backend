@@ -8,7 +8,6 @@ import org.orkg.contenttypes.input.ThingDefinitions
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Thing
-import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.CreateClassUseCase
 import org.orkg.graph.input.CreateListUseCase
 import org.orkg.graph.input.CreateLiteralUseCase
@@ -16,6 +15,7 @@ import org.orkg.graph.input.CreatePredicateUseCase
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.ListUseCases
+import org.orkg.graph.input.UnsafeClassUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafePredicateUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
@@ -24,7 +24,7 @@ import org.orkg.graph.input.UpdateListUseCase
 import org.orkg.graph.output.StatementRepository
 
 class SubgraphCreator(
-    private val classService: ClassUseCases,
+    private val unsafeClassUseCases: UnsafeClassUseCases,
     private val unsafeResourceUseCases: UnsafeResourceUseCases,
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
     private val unsafeLiteralUseCases: UnsafeLiteralUseCases,
@@ -66,7 +66,7 @@ class SubgraphCreator(
     ) {
         thingDefinitions.classes.forEach {
             if (it.key.isTempId && it.key in validatedIds) {
-                lookup[it.key] = classService.create(
+                lookup[it.key] = unsafeClassUseCases.create(
                     CreateClassUseCase.CreateCommand(
                         contributorId = contributorId,
                         label = it.value.label,

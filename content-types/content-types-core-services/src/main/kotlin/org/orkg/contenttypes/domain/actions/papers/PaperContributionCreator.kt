@@ -3,8 +3,8 @@ package org.orkg.contenttypes.domain.actions.papers
 import org.orkg.contenttypes.domain.actions.ContributionCreator
 import org.orkg.contenttypes.domain.actions.CreatePaperCommand
 import org.orkg.contenttypes.domain.actions.CreatePaperState
-import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.ListUseCases
+import org.orkg.graph.input.UnsafeClassUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafePredicateUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
@@ -15,7 +15,7 @@ class PaperContributionCreator(
     private val contributionCreator: ContributionCreator,
 ) : CreatePaperAction {
     constructor(
-        classService: ClassUseCases,
+        unsafeClassUseCases: UnsafeClassUseCases,
         unsafeResourceUseCases: UnsafeResourceUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
         unsafeLiteralUseCases: UnsafeLiteralUseCases,
@@ -24,7 +24,7 @@ class PaperContributionCreator(
         listService: ListUseCases,
     ) : this(
         ContributionCreator(
-            classService,
+            unsafeClassUseCases,
             unsafeResourceUseCases,
             unsafeStatementUseCases,
             unsafeLiteralUseCases,

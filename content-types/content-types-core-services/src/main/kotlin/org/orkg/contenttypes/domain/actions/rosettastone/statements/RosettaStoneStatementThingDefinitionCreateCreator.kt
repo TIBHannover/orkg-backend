@@ -4,8 +4,8 @@ import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.actions.CreateRosettaStoneStatementCommand
 import org.orkg.contenttypes.domain.actions.SubgraphCreator
 import org.orkg.contenttypes.domain.actions.rosettastone.statements.CreateRosettaStoneStatementAction.State
-import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.ListUseCases
+import org.orkg.graph.input.UnsafeClassUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafePredicateUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
@@ -16,7 +16,7 @@ class RosettaStoneStatementThingDefinitionCreateCreator(
     private val subgraphCreator: SubgraphCreator,
 ) : CreateRosettaStoneStatementAction {
     constructor(
-        classService: ClassUseCases,
+        unsafeClassUseCases: UnsafeClassUseCases,
         unsafeResourceUseCases: UnsafeResourceUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
         unsafeLiteralUseCases: UnsafeLiteralUseCases,
@@ -25,7 +25,7 @@ class RosettaStoneStatementThingDefinitionCreateCreator(
         listService: ListUseCases,
     ) : this(
         SubgraphCreator(
-            classService,
+            unsafeClassUseCases,
             unsafeResourceUseCases,
             unsafeStatementUseCases,
             unsafeLiteralUseCases,

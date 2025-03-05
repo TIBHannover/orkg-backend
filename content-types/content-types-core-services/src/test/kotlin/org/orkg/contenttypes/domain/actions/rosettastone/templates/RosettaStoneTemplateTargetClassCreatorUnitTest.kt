@@ -12,20 +12,20 @@ import org.orkg.contenttypes.domain.actions.CreateRosettaStoneTemplateState
 import org.orkg.contenttypes.input.testing.fixtures.createRosettaStoneTemplateCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
-import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.CreateClassUseCase
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateStatementUseCase
+import org.orkg.graph.input.UnsafeClassUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
 internal class RosettaStoneTemplateTargetClassCreatorUnitTest : MockkBaseTest {
-    private val classService: ClassUseCases = mockk()
+    private val unsafeClassUseCases: UnsafeClassUseCases = mockk()
     private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
     private val unsafeLiteralUseCases: UnsafeLiteralUseCases = mockk()
 
     private val rosettaStoneTemplateTargetClassCreator = RosettaStoneTemplateTargetClassCreator(
-        classService,
+        unsafeClassUseCases,
         unsafeStatementUseCases,
         unsafeLiteralUseCases
     )
@@ -40,7 +40,7 @@ internal class RosettaStoneTemplateTargetClassCreatorUnitTest : MockkBaseTest {
         val exampleUsageId = ThingId("L123")
         val descriptionId = ThingId("L456")
 
-        every { classService.create(any()) } returns classId
+        every { unsafeClassUseCases.create(any()) } returns classId
         every { unsafeLiteralUseCases.create(any()) } returns exampleUsageId andThen descriptionId
         every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
 
@@ -51,7 +51,7 @@ internal class RosettaStoneTemplateTargetClassCreatorUnitTest : MockkBaseTest {
         }
 
         verify(exactly = 1) {
-            classService.create(
+            unsafeClassUseCases.create(
                 CreateClassUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = "${command.label} (class)",

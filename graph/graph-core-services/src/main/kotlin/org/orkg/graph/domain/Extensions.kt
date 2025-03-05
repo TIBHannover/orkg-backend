@@ -93,6 +93,6 @@ fun Class.apply(command: UpdateClassUseCase.UpdateCommand): Class =
 fun Class.apply(command: UpdateClassUseCase.ReplaceCommand): Class =
     copy(
         label = command.label,
-        uri = command.uri ?: uri,
+        uri = command.uri,
         modifiable = command.modifiable ?: modifiable,
     )

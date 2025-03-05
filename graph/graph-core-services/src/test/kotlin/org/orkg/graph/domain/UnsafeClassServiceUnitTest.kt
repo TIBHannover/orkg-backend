@@ -12,58 +12,42 @@ import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
+import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.graph.input.CreateClassUseCase
-import org.orkg.graph.input.UnsafeClassUseCases
 import org.orkg.graph.input.UpdateClassUseCase
 import org.orkg.graph.input.UpdateClassUseCase.ReplaceCommand
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createClassWithoutURI
 import org.orkg.testing.MockUserId
+import java.time.OffsetDateTime
 import java.util.Optional
+import java.util.UUID
 
-internal class ClassServiceUnitTest : MockkBaseTest {
+internal class UnsafeClassServiceUnitTest : MockkBaseTest {
     private val repository: ClassRepository = mockk()
-    private val unsafeClassUseCases: UnsafeClassUseCases = mockk()
-
-    private val service = ClassService(repository, unsafeClassUseCases)
+    private val service = UnsafeClassService(repository, fixedClock)
 
     @Test
-    fun `Given a class create command, when inputs are valid, it creates a new class`() {
-        val id = ThingId("R123")
+    fun `Given a class is created, when no id is given, then it gets an id from the repository`() {
+        val mockClassId = ThingId("1")
         val command = CreateClassUseCase.CreateCommand(
-            id = id,
+            id = null,
             contributorId = ContributorId(MockUserId.USER),
-            label = "label",
-            modifiable = false
+            label = "irrelevant"
         )
 
-        every { repository.findById(id) } returns Optional.empty()
-        every { unsafeClassUseCases.create(command) } returns id
+        every { repository.nextIdentity() } returns mockClassId
+        every { repository.save(any()) } just runs
 
-        service.create(command) shouldBe id
+        service.create(command) shouldBe mockClassId
 
-        verify(exactly = 1) { repository.findById(id) }
-        verify(exactly = 1) { unsafeClassUseCases.create(command) }
+        verify(exactly = 1) { repository.nextIdentity() }
+        verify(exactly = 1) { repository.save(any()) }
     }
 
     @Test
-    fun `Given a class create command, when inputs are minimal, it creates a new class`() {
-        val id = ThingId("R123")
-        val command = CreateClassUseCase.CreateCommand(
-            contributorId = ContributorId(MockUserId.USER),
-            label = "label"
-        )
-
-        every { unsafeClassUseCases.create(command) } returns id
-
-        service.create(command) shouldBe id
-
-        verify(exactly = 1) { unsafeClassUseCases.create(command) }
-    }
-
-    @Test
-    fun `Given a class is created, when an already existing id is given, then an exception is thrown`() {
+    fun `Given a class is created, when an id is given, then it does not get a new id`() {
         val mockClassId = ThingId("1")
         val command = CreateClassUseCase.CreateCommand(
             id = mockClassId,
@@ -71,57 +55,141 @@ internal class ClassServiceUnitTest : MockkBaseTest {
             label = "irrelevant"
         )
 
-        every { repository.findById(mockClassId) } returns createClass(id = mockClassId).toOptional()
+        every { repository.save(any()) } just runs
 
-        assertThrows<ClassAlreadyExists> { service.create(command) }
+        service.create(command) shouldBe mockClassId
 
-        verify(exactly = 1) { repository.findById(mockClassId) }
+        verify(exactly = 1) { repository.save(withArg { it.id shouldBe command.id }) }
     }
 
     @Test
-    fun `Given a class is created, when a reserved id is given, then an exception is thrown`() {
+    fun `Given a class is created, when an already existing id is given, then it overrides the existing class`() {
+        val mockClassId = ThingId("1")
+        val command = CreateClassUseCase.CreateCommand(
+            id = mockClassId,
+            contributorId = ContributorId(MockUserId.USER),
+            label = "irrelevant"
+        )
+
+        every { repository.save(any()) } just runs
+
+        service.create(command)
+
+        verify(exactly = 1) { repository.save(withArg { it.id shouldBe command.id }) }
+    }
+
+    @Test
+    fun `Given a class is created, when a reserved id is given, then it creates the class`() {
         val contributorId = ContributorId(MockUserId.USER)
         val command = CreateClassUseCase.CreateCommand(
             id = reservedClassIds.first(),
             contributorId = contributorId,
             label = "irrelevant"
         )
-        assertThrows<ClassNotAllowed> { service.create(command) }
+
+        every { repository.save(any()) } just runs
+
+        service.create(command)
+
+        verify(exactly = 1) { repository.save(withArg { it.id shouldBe reservedClassIds.first() }) }
     }
 
     @Test
-    fun `Given a class is created, when the label is invalid, then an exception is thrown`() {
+    fun `Given a class is created, when the label is invalid, then it creates the class`() {
         val command = CreateClassUseCase.CreateCommand(
             contributorId = ContributorId(MockUserId.USER),
             label = " \t "
         )
-        assertThrows<InvalidLabel> { service.create(command) }
+        val id = ThingId("C123")
+
+        every { repository.nextIdentity() } returns id
+        every { repository.save(any()) } just runs
+
+        service.create(command)
+
+        verify(exactly = 1) { repository.nextIdentity() }
+        verify(exactly = 1) {
+            repository.save(
+                withArg {
+                    it.id shouldBe id
+                    it.label shouldBe command.label
+                }
+            )
+        }
     }
 
     @Test
-    fun `Given a class is created, when uri is not absolute, then an exception is thrown`() {
+    fun `Given a class is created, when uri is not absolute, then it creates the class`() {
         val command = CreateClassUseCase.CreateCommand(
             contributorId = ContributorId(MockUserId.USER),
             label = "irrelevant",
             uri = ParsedIRI("invalid")
         )
-        assertThrows<URINotAbsolute> { service.create(command) }
+        val id = ThingId("C123")
+
+        every { repository.nextIdentity() } returns id
+        every { repository.save(any()) } just runs
+
+        service.create(command)
+
+        verify(exactly = 1) { repository.nextIdentity() }
+        verify(exactly = 1) {
+            repository.save(
+                withArg {
+                    it.id shouldBe id
+                    it.uri shouldBe command.uri
+                }
+            )
+        }
     }
 
     @Test
-    fun `Given a class is created, when an already existing uri is given, then an exception is thrown`() {
+    fun `Given a class is created, when an already existing uri is given, then it creates the class`() {
         val mockClass = createClass(uri = ParsedIRI("https://orkg.org/class/C1"))
         val command = CreateClassUseCase.CreateCommand(
             contributorId = ContributorId(MockUserId.USER),
             label = "irrelevant",
             uri = mockClass.uri
         )
+        val id = ThingId("C123")
 
-        every { repository.findByUri(mockClass.uri.toString()) } returns mockClass.toOptional()
+        every { repository.nextIdentity() } returns id
+        every { repository.save(any()) } just runs
 
-        assertThrows<URIAlreadyInUse> { service.create(command) }
+        service.create(command)
 
-        verify(exactly = 1) { repository.findByUri(mockClass.uri.toString()) }
+        verify(exactly = 1) { repository.nextIdentity() }
+        verify(exactly = 1) {
+            repository.save(
+                withArg {
+                    it.id shouldBe id
+                    it.uri shouldBe command.uri
+                }
+            )
+        }
+    }
+
+    @Test
+    fun `Given a class is created, when a contributor is given, the contributor id is used`() {
+        val mockClassId = ThingId("1")
+        every { repository.nextIdentity() } returns mockClassId
+        every { repository.save(any()) } just runs
+
+        val randomContributorId = ContributorId(UUID.randomUUID())
+        service.create(CreateClassUseCase.CreateCommand(contributorId = randomContributorId, label = "irrelevant"))
+
+        verify(exactly = 1) {
+            repository.save(
+                Class(
+                    id = mockClassId,
+                    label = "irrelevant",
+                    uri = null,
+                    createdAt = OffsetDateTime.now(fixedClock),
+                    createdBy = randomContributorId,
+                )
+            )
+        }
+        verify(exactly = 1) { repository.nextIdentity() }
     }
 
     @Test
@@ -150,7 +218,6 @@ internal class ClassServiceUnitTest : MockkBaseTest {
         val modifiable = false
 
         every { repository.findById(`class`.id) } returns Optional.of(`class`)
-        every { repository.findByUri(uri.toString()) } returns Optional.empty()
         every { repository.save(any()) } just runs
 
         service.update(
@@ -164,7 +231,6 @@ internal class ClassServiceUnitTest : MockkBaseTest {
         )
 
         verify(exactly = 1) { repository.findById(`class`.id) }
-        verify(exactly = 1) { repository.findByUri(uri.toString()) }
         verify(exactly = 1) {
             repository.save(
                 withArg {
@@ -180,7 +246,7 @@ internal class ClassServiceUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given a class exists, when updating the label and the label is valid, it returns success`() {
+    fun `Given a class exists, when updating the label and the label is valid, it updates the label`() {
         val originalClass = createClass()
         val expectedClass = originalClass.copy(label = "new label")
         val contributorId = ContributorId(MockUserId.USER)
@@ -191,7 +257,7 @@ internal class ClassServiceUnitTest : MockkBaseTest {
         )
 
         every { repository.findById(originalClass.id) } returns Optional.of(originalClass)
-        every { repository.save(expectedClass) } returns Unit
+        every { repository.save(expectedClass) } just runs
 
         service.update(command)
 
@@ -200,13 +266,21 @@ internal class ClassServiceUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given a class exists, when updating the label and the label is invalid, it returns an appropriate error`() {
+    fun `Given a class exists, when updating the label and the label is invalid, it updates the label`() {
+        val originalClass = createClass()
         val command = UpdateClassUseCase.UpdateCommand(
-            id = ThingId("OK"),
+            id = originalClass.id,
             contributorId = ContributorId(MockUserId.USER),
             label = "some\ninvalid\nlabel"
         )
-        assertThrows<InvalidLabel> { service.update(command) }
+
+        every { repository.findById(originalClass.id) } returns originalClass.toOptional()
+        every { repository.save(any()) } just runs
+
+        service.update(command)
+
+        verify(exactly = 1) { repository.findById(originalClass.id) }
+        verify(exactly = 1) { repository.save(withArg { it.label shouldBe command.label }) }
     }
 
     @Test
@@ -228,20 +302,33 @@ internal class ClassServiceUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given a class is unmodifiable, when updating the label, it returns an appropriate error`() {
+    fun `Given a class is unmodifiable, when updating the label, it updates the label`() {
         val originalClass = createClass(modifiable = false)
         val contributorId = ContributorId(MockUserId.USER)
         val command = UpdateClassUseCase.UpdateCommand(
             id = originalClass.id,
             contributorId = contributorId,
-            label = "some label"
+            label = "changed label"
         )
 
-        every { repository.findById(originalClass.id) } returns Optional.of(originalClass)
+        every { repository.findById(originalClass.id) } returns originalClass.toOptional()
+        every { repository.save(any()) } just runs
 
-        assertThrows<ClassNotModifiable> { service.update(command) }
+        service.update(command)
 
         verify(exactly = 1) { repository.findById(originalClass.id) }
+        verify(exactly = 1) {
+            repository.save(
+                withArg {
+                    it.id shouldBe originalClass.id
+                    it.label shouldBe command.label
+                    it.uri shouldBe originalClass.uri
+                    it.createdAt shouldBe originalClass.createdAt
+                    it.createdBy shouldBe originalClass.createdBy
+                    it.modifiable shouldBe false
+                }
+            )
+        }
     }
 
     @Test
@@ -273,21 +360,17 @@ internal class ClassServiceUnitTest : MockkBaseTest {
         )
 
         every { repository.findById(originalClass.id) } returns Optional.of(originalClass)
-        every { service.findByURI(expectedClass.uri!!) } returns Optional.empty()
-        every { repository.save(expectedClass) } returns Unit
+        every { repository.save(expectedClass) } just runs
 
         service.update(command)
 
         verify(exactly = 1) { repository.findById(originalClass.id) }
-        verify(exactly = 1) { service.findByURI(expectedClass.uri!!) }
         verify(exactly = 1) { repository.save(expectedClass) }
     }
 
     @Test
-    fun `Given a class exists and has no URI, when updating the URI and the URI is valid and the URI is already used, it returns an appropriate error`() {
+    fun `Given a class exists and has no URI, when updating the URI and the URI is valid and the URI is already used, it updates the URI`() {
         val originalClass = createClassWithoutURI()
-        val expectedClass = originalClass.copy(uri = ParsedIRI("https://example.org/NEW"))
-        val differentWithSameURI = createClassWithoutURI().copy(id = ThingId("different"), uri = expectedClass.uri)
         val contributorId = ContributorId(MockUserId.USER)
         val command = UpdateClassUseCase.UpdateCommand(
             id = originalClass.id,
@@ -295,17 +378,24 @@ internal class ClassServiceUnitTest : MockkBaseTest {
             uri = ParsedIRI("https://example.org/NEW")
         )
 
-        every { repository.findById(originalClass.id) } returns Optional.of(originalClass)
-        every { service.findByURI(expectedClass.uri!!) } returns differentWithSameURI.toOptional()
+        every { repository.findById(originalClass.id) } returns originalClass.toOptional()
+        every { repository.save(any()) } just runs
 
-        assertThrows<URIAlreadyInUse> { service.update(command) }
+        service.update(command)
 
         verify(exactly = 1) { repository.findById(originalClass.id) }
-        verify(exactly = 1) { service.findByURI(expectedClass.uri!!) }
+        verify(exactly = 1) {
+            repository.save(
+                withArg {
+                    it.id shouldBe command.id
+                    it.uri shouldBe command.uri
+                }
+            )
+        }
     }
 
     @Test
-    fun `Given a class exists and has a URI, when updating the URI, it returns an appropriate error`() {
+    fun `Given a class exists and has a URI, when updating the URI, it updates the URI`() {
         val originalClass = createClass()
         val contributorId = ContributorId(MockUserId.USER)
         val command = UpdateClassUseCase.UpdateCommand(
@@ -314,11 +404,13 @@ internal class ClassServiceUnitTest : MockkBaseTest {
             uri = ParsedIRI("https://example.org/DIFFERENT")
         )
 
-        every { repository.findById(originalClass.id) } returns Optional.of(originalClass)
+        every { repository.findById(originalClass.id) } returns originalClass.toOptional()
+        every { repository.save(any()) } just runs
 
-        assertThrows<CannotResetURI> { service.update(command) }
+        service.update(command)
 
         verify(exactly = 1) { repository.findById(originalClass.id) }
+        verify(exactly = 1) { repository.save(withArg { it.uri shouldBe command.uri }) }
     }
 
     @Test
@@ -329,7 +421,7 @@ internal class ClassServiceUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given a class is unmodifiable, when updating the URI, it returns an appropriate error`() {
+    fun `Given a class is unmodifiable, when updating the URI, it updates the URI`() {
         val originalClass = createClass(modifiable = false)
         val contributorId = ContributorId(MockUserId.USER)
         val command = UpdateClassUseCase.UpdateCommand(
@@ -338,11 +430,24 @@ internal class ClassServiceUnitTest : MockkBaseTest {
             uri = ParsedIRI("https://example.com/DIFFERENT")
         )
 
-        every { repository.findById(originalClass.id) } returns Optional.of(originalClass)
+        every { repository.findById(originalClass.id) } returns originalClass.toOptional()
+        every { repository.save(any()) } just runs
 
-        assertThrows<ClassNotModifiable> { service.update(command) }
+        service.update(command)
 
         verify(exactly = 1) { repository.findById(originalClass.id) }
+        verify(exactly = 1) {
+            repository.save(
+                withArg {
+                    it.id shouldBe originalClass.id
+                    it.label shouldBe originalClass.label
+                    it.uri shouldBe command.uri
+                    it.createdAt shouldBe originalClass.createdAt
+                    it.createdBy shouldBe originalClass.createdBy
+                    it.modifiable shouldBe false
+                }
+            )
+        }
     }
 
     @Test
@@ -354,7 +459,6 @@ internal class ClassServiceUnitTest : MockkBaseTest {
         val modifiable = false
 
         every { repository.findById(`class`.id) } returns Optional.of(`class`)
-        every { repository.findByUri(uri.toString()) } returns Optional.empty()
         every { repository.save(any()) } just runs
 
         service.replace(
@@ -368,7 +472,6 @@ internal class ClassServiceUnitTest : MockkBaseTest {
         )
 
         verify(exactly = 1) { repository.findById(`class`.id) }
-        verify(exactly = 1) { repository.findByUri(uri.toString()) }
         verify(exactly = 1) {
             repository.save(
                 withArg {
@@ -391,36 +494,43 @@ internal class ClassServiceUnitTest : MockkBaseTest {
         val contributorId = ContributorId(MockUserId.USER)
 
         every { repository.findById(originalClass.id) } returns Optional.of(originalClass)
-        every { service.findByURI(expectedClass.uri!!) } returns Optional.empty()
-        every { repository.save(expectedClass) } returns Unit
+        every { repository.save(expectedClass) } just runs
 
         service.replace(replacingClass.toReplaceCommand(contributorId))
 
         verify(exactly = 1) { repository.findById(originalClass.id) }
-        verify(exactly = 1) { service.findByURI(expectedClass.uri!!) }
         verify(exactly = 1) { repository.save(expectedClass) }
     }
 
     @Test
-    fun `Given a class is replaced, when an invalid label is provided, then returns an error`() {
+    fun `Given a class is replaced, when an invalid label is provided, then it updates the label`() {
         val replacingClass = createClass(label = "invalid\nlabel", uri = ParsedIRI("https://example.com/NEW"))
+        val existingClass = createClass()
         val contributorId = ContributorId(MockUserId.USER)
 
-        assertThrows<InvalidLabel> { service.replace(replacingClass.toReplaceCommand(contributorId)) }
+        every { repository.findById(replacingClass.id) } returns existingClass.toOptional()
+        every { repository.save(any()) } just runs
+
+        service.replace(replacingClass.toReplaceCommand(contributorId))
+
+        verify(exactly = 1) { repository.findById(replacingClass.id) }
+        verify(exactly = 1) { repository.save(withArg { it.label shouldBe replacingClass.label }) }
     }
 
     @Test
-    fun `Given a class is replaced, when no URI is provided and the class has a URI, then returns an error`() {
+    fun `Given a class is replaced, when no URI is provided and the class has a URI, then it removes the URI`() {
         val classToReplace = ThingId("ToReplace")
         val replacingClass = createClassWithoutURI().copy(id = classToReplace, label = "other label")
         val existingClass = createClass(id = classToReplace)
         val contributorId = ContributorId(MockUserId.USER)
 
-        every { repository.findById(classToReplace) } returns existingClass.toOptional()
+        every { repository.findById(replacingClass.id) } returns existingClass.toOptional()
+        every { repository.save(any()) } just runs
 
-        assertThrows<CannotResetURI> { service.replace(replacingClass.toReplaceCommand(contributorId)) }
+        service.replace(replacingClass.toReplaceCommand(contributorId))
 
-        verify(exactly = 1) { repository.findById(classToReplace) }
+        verify(exactly = 1) { repository.findById(replacingClass.id) }
+        verify(exactly = 1) { repository.save(withArg { it.uri shouldBe replacingClass.uri }) }
     }
 
     @Test
@@ -432,13 +542,11 @@ internal class ClassServiceUnitTest : MockkBaseTest {
         val contributorId = ContributorId(MockUserId.USER)
 
         every { repository.findById(classToReplace) } returns existingClass.toOptional()
-        every { service.findByURI(expectedClass.uri!!) } returns Optional.empty()
-        every { repository.save(expectedClass) } returns Unit
+        every { repository.save(expectedClass) } just runs
 
         service.replace(replacingClass.toReplaceCommand(contributorId))
 
         verify(exactly = 1) { repository.findById(classToReplace) }
-        verify(exactly = 1) { service.findByURI(expectedClass.uri!!) }
         verify(exactly = 1) { repository.save(expectedClass) }
     }
 
@@ -451,46 +559,44 @@ internal class ClassServiceUnitTest : MockkBaseTest {
         val contributorId = ContributorId(MockUserId.USER)
 
         every { repository.findById(classToReplace) } returns existingClass.toOptional()
-        every { service.findByURI(expectedClass.uri!!) } returns Optional.empty()
-        every { repository.save(expectedClass) } returns Unit
+        every { repository.save(expectedClass) } just runs
 
         service.replace(replacingClass.toReplaceCommand(contributorId))
 
         verify(exactly = 1) { repository.findById(classToReplace) }
-        verify(exactly = 1) { service.findByURI(expectedClass.uri!!) }
         verify(exactly = 1) { repository.save(expectedClass) }
     }
 
     @Test
-    fun `Given a class is replaced, when a URI is provided and the class has no URI and the URI is already used, then returns an error`() {
+    fun `Given a class is replaced, when a URI is provided and the class has no URI and the URI is already used, then it updates the URI`() {
         val classToReplace = ThingId("ToReplace")
         val existingClass = createClassWithoutURI().copy(id = classToReplace)
         val replacingClass = existingClass.copy(uri = ParsedIRI("https://example.com/NEW"))
-        val expectedClass = existingClass.copy(id = classToReplace, uri = replacingClass.uri)
-        val differentWithSameURI = createClassWithoutURI().copy(id = ThingId("different"), uri = expectedClass.uri)
         val contributorId = ContributorId(MockUserId.USER)
 
-        every { repository.findById(classToReplace) } returns existingClass.toOptional()
-        every { service.findByURI(expectedClass.uri!!) } returns differentWithSameURI.toOptional()
+        every { repository.findById(replacingClass.id) } returns existingClass.toOptional()
+        every { repository.save(any()) } just runs
 
-        assertThrows<URIAlreadyInUse> { service.replace(replacingClass.toReplaceCommand(contributorId)) }
+        service.replace(replacingClass.toReplaceCommand(contributorId))
 
-        verify(exactly = 1) { repository.findById(classToReplace) }
-        verify(exactly = 1) { service.findByURI(expectedClass.uri!!) }
+        verify(exactly = 1) { repository.findById(replacingClass.id) }
+        verify(exactly = 1) { repository.save(withArg { it.uri shouldBe replacingClass.uri }) }
     }
 
     @Test
-    fun `Given a class is replaced, when a URI is provided and the class has a different URI, then returns an error`() {
+    fun `Given a class is replaced, when a URI is provided and the class has a different URI, then it updates the URI`() {
         val classToReplace = ThingId("ToReplace")
         val replacingClass = createClass(id = classToReplace, label = "other label", uri = ParsedIRI("https://example.com/NEW"))
         val existingClass = createClass(id = classToReplace)
         val contributorId = ContributorId(MockUserId.USER)
 
-        every { repository.findById(classToReplace) } returns existingClass.toOptional()
+        every { repository.findById(replacingClass.id) } returns existingClass.toOptional()
+        every { repository.save(any()) } just runs
 
-        assertThrows<CannotResetURI> { service.replace(replacingClass.toReplaceCommand(contributorId)) }
+        service.replace(replacingClass.toReplaceCommand(contributorId))
 
-        verify(exactly = 1) { repository.findById(classToReplace) }
+        verify(exactly = 1) { repository.findById(replacingClass.id) }
+        verify(exactly = 1) { repository.save(withArg { it.uri shouldBe replacingClass.uri }) }
     }
 
     @Test
@@ -502,7 +608,7 @@ internal class ClassServiceUnitTest : MockkBaseTest {
         val contributorId = ContributorId(MockUserId.USER)
 
         every { repository.findById(classToReplace) } returns existingClass.toOptional()
-        every { repository.save(expectedClass) } returns Unit
+        every { repository.save(expectedClass) } just runs
 
         service.replace(replacingClass.toReplaceCommand(contributorId))
 
@@ -511,17 +617,30 @@ internal class ClassServiceUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given a class is replaced, when class is unmodifiable, then returns an error`() {
+    fun `Given a class is replaced, when class is unmodifiable, then it updates the class`() {
         val classToReplace = ThingId("ToReplace")
         val existingClass = createClass(id = classToReplace, modifiable = false)
         val replacingClass = existingClass.copy(label = "other label")
         val contributorId = ContributorId(MockUserId.USER)
 
-        every { repository.findById(classToReplace) } returns existingClass.toOptional()
+        every { repository.findById(replacingClass.id) } returns existingClass.toOptional()
+        every { repository.save(any()) } just runs
 
-        assertThrows<ClassNotModifiable> { service.replace(replacingClass.toReplaceCommand(contributorId)) }
+        service.replace(replacingClass.toReplaceCommand(contributorId))
 
-        verify(exactly = 1) { repository.findById(classToReplace) }
+        verify(exactly = 1) { repository.findById(replacingClass.id) }
+        verify(exactly = 1) {
+            repository.save(
+                withArg {
+                    it.id shouldBe existingClass.id
+                    it.label shouldBe replacingClass.label
+                    it.uri shouldBe replacingClass.uri
+                    it.createdAt shouldBe existingClass.createdAt
+                    it.createdBy shouldBe existingClass.createdBy
+                    it.modifiable shouldBe false
+                }
+            )
+        }
     }
 
     private fun Class.toReplaceCommand(contributorId: ContributorId): ReplaceCommand =

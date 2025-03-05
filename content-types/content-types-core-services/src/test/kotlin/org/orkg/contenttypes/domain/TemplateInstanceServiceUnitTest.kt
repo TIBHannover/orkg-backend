@@ -18,9 +18,9 @@ import org.orkg.contenttypes.input.TemplateUseCases
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Thing
-import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeClassUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafePredicateUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
@@ -43,7 +43,7 @@ internal class TemplateInstanceServiceUnitTest : MockkBaseTest {
     private val statementService: StatementUseCases = mockk()
     private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
     private val thingRepository: ThingRepository = mockk()
-    private val classService: ClassUseCases = mockk()
+    private val unsafeClassUseCases: UnsafeClassUseCases = mockk()
     private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
     private val unsafeLiteralUseCases: UnsafeLiteralUseCases = mockk()
     private val unsafePredicateUseCases: UnsafePredicateUseCases = mockk()
@@ -58,7 +58,7 @@ internal class TemplateInstanceServiceUnitTest : MockkBaseTest {
         statementService,
         unsafeStatementUseCases,
         thingRepository,
-        classService,
+        unsafeClassUseCases,
         unsafeResourceUseCases,
         unsafeLiteralUseCases,
         unsafePredicateUseCases,

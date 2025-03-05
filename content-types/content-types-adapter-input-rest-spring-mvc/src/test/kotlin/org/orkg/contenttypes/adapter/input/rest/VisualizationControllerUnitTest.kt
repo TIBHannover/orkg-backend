@@ -29,6 +29,8 @@ import org.orkg.contenttypes.input.VisualizationUseCases
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.VisibilityFilter
+import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
+import org.orkg.graph.testing.asciidoc.allowedVisibilityValues
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectVisualization
 import org.orkg.testing.annotations.TestWithMockUser
@@ -92,11 +94,11 @@ internal class VisualizationControllerUnitTest : MockMvcBaseTest("visualizations
                         fieldWithPath("description").description("The description of the visualization."),
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the visualization belongs to."),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the visualization belongs to."),
-                        fieldWithPath("extraction_method").description("""The method used to extract the visualization resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC"."""),
+                        fieldWithPath("extraction_method").description("""The method used to extract the visualization resource. Can be one of $allowedExtractionMethodValues."""),
                         timestampFieldWithPath("created_at", "the visualization resource was created"),
                         // TODO: Add links to documentation of special user UUIDs.
                         fieldWithPath("created_by").description("The UUID of the user or service who created this visualization."),
-                        fieldWithPath("visibility").description("""Visibility of the visualization. Can be one of "DEFAULT", "FEATURED", "UNLISTED" or "DELETED"."""),
+                        fieldWithPath("visibility").description("""Visibility of the visualization. Can be one of $allowedVisibilityValues."""),
                         fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this visualization.").optional(),
                         fieldWithPath("_class").description("Indicates which type of entity was returned. Always has the value `visualization`."),
                     ).and(authorListFields("visualization"))
@@ -262,7 +264,7 @@ internal class VisualizationControllerUnitTest : MockMvcBaseTest("visualizations
                         fieldWithPath("description").description("The description of the visualization."),
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the visualization belongs to."),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the visualization belongs to."),
-                        fieldWithPath("extraction_method").description("""The method used to extract the visualization resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC".""")
+                        fieldWithPath("extraction_method").description("""The method used to extract the visualization resource. Can be one of $allowedExtractionMethodValues.""")
                     ).and(authorListFields("visualization"))
                 )
             )

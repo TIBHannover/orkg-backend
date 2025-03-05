@@ -37,6 +37,7 @@ import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
 import org.orkg.graph.testing.asciidoc.allowedVisibilityValues
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectLiteratureList
@@ -124,11 +125,11 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
                         fieldWithPath("versions.published[].changelog").description("The changelog of the published version."),
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the literature list belongs to."),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the literature list belongs to."),
-                        fieldWithPath("extraction_method").description("""The method used to extract the literature list resource. Can be one of "unknown", "manual" or "automatic"."""),
+                        fieldWithPath("extraction_method").description("""The method used to extract the literature list resource. Can be one of $allowedExtractionMethodValues."""),
                         timestampFieldWithPath("created_at", "the literature list resource was created"),
                         // TODO: Add links to documentation of special user UUIDs.
                         fieldWithPath("created_by").description("The UUID of the user or service who created this literature list."),
-                        fieldWithPath("visibility").description("""Visibility of the literature list. Can be one of "default", "featured", "unlisted" or "deleted"."""),
+                        fieldWithPath("visibility").description("""Visibility of the literature list. Can be one of $allowedVisibilityValues."""),
                         fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this literature list.").optional(),
                         fieldWithPath("published").description("Whether the literature is published or not."),
                         fieldWithPath("sections").description("The list of sections of the literature list."),
@@ -303,7 +304,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
                         fieldWithPath("sdgs").description("The set of ids of sustainable development goals the literature list will be assigned to. (optional)").optional(),
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the literature list belongs to. (optional)").optional(),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the literature list belongs to. (optional)").optional(),
-                        fieldWithPath("extraction_method").type("String").description("""The method used to extract the resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC". (optional, default: "UNKNOWN")""").optional(),
+                        fieldWithPath("extraction_method").type("String").description("""The method used to extract the resource. Can be one of $allowedExtractionMethodValues. (optional, default: "UNKNOWN")""").optional(),
                         subsectionWithPath("sections").description("The list of updated sections of the literature list (optional). See <<literature-list-sections,literature list sections>> for more information. (optional)").optional(),
                     ).and(authorListFields("literature list"))
                 )
@@ -503,7 +504,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
                         fieldWithPath("sdgs").description("The set of ids of sustainable development goals the literature list will be assigned to. (optional)"),
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the literature list belongs to. (optional)").optional(),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the literature list belongs to. (optional)").optional(),
-                        fieldWithPath("extraction_method").type("String").description("""The method used to extract the resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC". (optional, default: "UNKNOWN")""").optional(),
+                        fieldWithPath("extraction_method").type("String").description("""The method used to extract the resource. Can be one of $allowedExtractionMethodValues. (optional, default: "UNKNOWN")""").optional(),
                         subsectionWithPath("sections").description("The list of updated sections of the literature list (optional). See <<literature-list-sections,literature list sections>> for more information."),
                         fieldWithPath("visibility").description("The updated visibility of the literature list. Can be one of $allowedVisibilityValues. (optional)").optional(),
                     ).and(authorListFields("literature list"))

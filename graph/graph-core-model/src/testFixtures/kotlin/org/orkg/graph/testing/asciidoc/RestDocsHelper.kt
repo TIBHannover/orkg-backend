@@ -12,12 +12,12 @@ val allowedExtractionMethodValues =
 val allowedVisibilityValues =
     Visibility.entries.sorted().joinToString(separator = ", ", prefix = "`", postfix = "`")
 
-private val allowedValues =
+val allowedVisibilityFilterValues =
     VisibilityFilter.entries.sorted().joinToString(separator = ", ", prefix = "`", postfix = "`")
 
 fun visibilityFilterRequestParameter(): ParameterDescriptor =
     parameterWithName("visibility")
-        .description("The visibility modifier. Must be one of $allowedValues. If it is not provided, it will be determined from the `featured` and `unlisted` request parameters (where available).")
+        .description("The visibility modifier. Must be one of $allowedVisibilityFilterValues. If it is not provided, it will be determined from the `featured` and `unlisted` request parameters (where available).")
         .optional()
 
 fun legacyVisibilityFilterRequestParameters(): Array<ParameterDescriptor> = arrayOf(

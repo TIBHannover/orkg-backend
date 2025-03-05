@@ -59,6 +59,7 @@ import org.orkg.graph.domain.PredicateNotFound
 import org.orkg.graph.domain.ResearchFieldNotFound
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
+import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
 import org.orkg.graph.testing.asciidoc.allowedVisibilityValues
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectTemplate
@@ -146,11 +147,11 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
                         fieldWithPath("is_closed").description("Whether the template is closed or not. When a template is closed, its properties cannot be modified."),
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the template belongs to."),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the template belongs to."),
-                        fieldWithPath("extraction_method").description("""The method used to extract the template resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC"."""),
+                        fieldWithPath("extraction_method").description("""The method used to extract the template resource. Can be one of $allowedExtractionMethodValues."""),
                         timestampFieldWithPath("created_at", "the template resource was created"),
                         // TODO: Add links to documentation of special user UUIDs.
                         fieldWithPath("created_by").description("The UUID of the user or service who created this template."),
-                        fieldWithPath("visibility").description("""Visibility of the template. Can be one of "DEFAULT", "FEATURED", "UNLISTED" or "DELETED"."""),
+                        fieldWithPath("visibility").description("""Visibility of the template. Can be one of $allowedVisibilityValues."""),
                         fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this template.").optional(),
                         fieldWithPath("_class").description("Indicates which type of entity was returned. Always has the value `template`."),
                     )
@@ -309,7 +310,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
                         fieldWithPath("is_closed").description("Whether the template is closed or not. When a template is closed, its properties cannot be modified."),
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the template belongs to."),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the template belongs to."),
-                        fieldWithPath("extraction_method").description("""The method used to extract the template resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC". (optional)""")
+                        fieldWithPath("extraction_method").description("""The method used to extract the template resource. Can be one of $allowedExtractionMethodValues. (optional)""")
                     )
                 )
             )
@@ -581,7 +582,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
                         fieldWithPath("is_closed").description("Whether the template is closed or not. When a template is closed, its properties cannot be modified. (optional)"),
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the template belongs to. (optional)"),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the template belongs to. (optional)"),
-                        fieldWithPath("extraction_method").description("""The updated method used to extract the template resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC". (optional)"""),
+                        fieldWithPath("extraction_method").description("""The updated method used to extract the template resource. Can be one of $allowedExtractionMethodValues. (optional)"""),
                         fieldWithPath("visibility").description("The updated visibility of the template. Can be one of $allowedVisibilityValues. (optional)").optional()
                     )
                 )

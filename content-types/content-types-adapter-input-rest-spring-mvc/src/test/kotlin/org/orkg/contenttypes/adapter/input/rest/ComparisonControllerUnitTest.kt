@@ -27,12 +27,12 @@ import org.orkg.contenttypes.domain.AuthorNotFound
 import org.orkg.contenttypes.domain.ComparisonNotFound
 import org.orkg.contenttypes.domain.ComparisonRelatedFigureNotFound
 import org.orkg.contenttypes.domain.ComparisonRelatedResourceNotFound
-import org.orkg.contenttypes.domain.ComparisonType
 import org.orkg.contenttypes.domain.ContributionNotFound
 import org.orkg.contenttypes.domain.OnlyOneObservatoryAllowed
 import org.orkg.contenttypes.domain.OnlyOneOrganizationAllowed
 import org.orkg.contenttypes.domain.OnlyOneResearchFieldAllowed
 import org.orkg.contenttypes.domain.RequiresAtLeastTwoContributions
+import org.orkg.contenttypes.domain.testing.asciidoc.allowedComparisonTypeValues
 import org.orkg.contenttypes.domain.testing.fixtures.createComparison
 import org.orkg.contenttypes.domain.testing.fixtures.createComparisonConfig
 import org.orkg.contenttypes.domain.testing.fixtures.createComparisonData
@@ -44,6 +44,7 @@ import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.ResearchFieldNotFound
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
+import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
 import org.orkg.graph.testing.asciidoc.allowedVisibilityValues
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectComparison
@@ -121,7 +122,7 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
                         fieldWithPath("config.predicates").description("The list of labels of the predicates used in the comparison."),
                         fieldWithPath("config.contributions").description("The list of ids of contributions that are being compared in the comparison."),
                         fieldWithPath("config.transpose").description("Whether the comparison table is transposed."),
-                        fieldWithPath("config.type").description("The type of method used to create the comparison. Either of ${ComparisonType.entries.joinToString { "\"$it\"" }}."),
+                        fieldWithPath("config.type").description("The type of method used to create the comparison. Either of $allowedComparisonTypeValues."),
                         // The short_codes field exists for compatibility reasons, but should not end up in the documentation, as it allows for arbitrary inputs.
                         fieldWithPath("config.short_codes").description("The list of short form ids for the comparison.").optional().ignored(),
                         fieldWithPath("data").description("The data contained in the comparison."),
@@ -160,7 +161,7 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
                         fieldWithPath("references[]").description("The list of references of the comparison."),
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations or conference series the comparison belongs to."),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the comparison belongs to."),
-                        fieldWithPath("extraction_method").description("""The method used to extract the comparison resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC"."""),
+                        fieldWithPath("extraction_method").description("""The method used to extract the comparison resource. Can be one of $allowedExtractionMethodValues."""),
                         timestampFieldWithPath("created_at", "the comparison resource was created"),
                         // TODO: Add links to documentation of special user UUIDs.
                         fieldWithPath("created_by").description("The UUID of the user or service who created this comparison."),
@@ -176,7 +177,7 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
                         fieldWithPath("versions.published[].created_by").type("String").description("The UUID of the user or service who created the comparison version."),
                         fieldWithPath("versions.published[].changelog").description("The changelog of the comparison version. (currently unsupported)"),
                         fieldWithPath("is_anonymized").description("Whether or not the comparison is anonymized."),
-                        fieldWithPath("visibility").description("""Visibility of the comparison. Can be one of "DEFAULT", "FEATURED", "UNLISTED" or "DELETED"."""),
+                        fieldWithPath("visibility").description("""Visibility of the comparison. Can be one of $allowedVisibilityValues."""),
                         fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this comparison.").optional(),
                         fieldWithPath("published").description("Whether the comparison is published or not."),
                         fieldWithPath("_class").description("Indicates which type of entity was returned. Always has the value `comparison`."),
@@ -747,7 +748,7 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
                         fieldWithPath("config.predicates").description("The list of labels of the predicates used in the comparison."),
                         fieldWithPath("config.contributions").description("The list of ids of contributions that are being compared in the comparison."),
                         fieldWithPath("config.transpose").description("Whether the comparison table is transposed."),
-                        fieldWithPath("config.type").description("The type of method used to create the comparison. Either of ${ComparisonType.entries.joinToString { "\"$it\"" }}."),
+                        fieldWithPath("config.type").description("The type of method used to create the comparison. Either of $allowedComparisonTypeValues."),
                         // The short_codes field exists for compatibility reasons, but should not end up in the documentation, as it allows for arbitrary inputs.
                         fieldWithPath("config.short_codes").description("The list of short form ids for the comparison.").optional().ignored(),
                         fieldWithPath("data").description("The data contained in the comparison."),
@@ -778,7 +779,7 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the comparison belongs to."),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the comparison belongs to."),
                         fieldWithPath("is_anonymized").description("Whether or not the comparison should be displayed as anonymous."),
-                        fieldWithPath("extraction_method").description("""The method used to extract the comparison resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC".""")
+                        fieldWithPath("extraction_method").description("""The method used to extract the comparison resource. Can be one of $allowedExtractionMethodValues.""")
                     ).and(authorListFields("comparison"))
                 )
             )
@@ -1088,7 +1089,7 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
                         fieldWithPath("config.predicates").description("The list of labels of the predicates used in the comparison."),
                         fieldWithPath("config.contributions").description("The list of ids of contributions that are being compared in the comparison."),
                         fieldWithPath("config.transpose").description("Whether the comparison table is transposed."),
-                        fieldWithPath("config.type").description("The type of method used to create the comparison. Either of ${ComparisonType.entries.joinToString { "\"$it\"" }}."),
+                        fieldWithPath("config.type").description("The type of method used to create the comparison. Either of $allowedComparisonTypeValues."),
                         // The short_codes field exists for compatibility reasons, but should not end up in the documentation, as it allows for arbitrary inputs.
                         fieldWithPath("config.short_codes").description("The list of short form ids for the comparison.").optional().ignored(),
                         fieldWithPath("data").description("The data contained in the comparison."),
@@ -1119,7 +1120,7 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations or conference series the comparison belongs to. (optional)"),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the comparison belongs to. (optional)"),
                         fieldWithPath("is_anonymized").description("Whether or not the comparison should be displayed as anonymous. (optional)"),
-                        fieldWithPath("extraction_method").description("""The method used to extract the comparison resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC". (optional)"""),
+                        fieldWithPath("extraction_method").description("""The method used to extract the comparison resource. Can be one of $allowedExtractionMethodValues. (optional)"""),
                         fieldWithPath("visibility").description("The updated visibility of the comparison. Can be one of $allowedVisibilityValues. (optional)").optional()
                     ).and(authorListFields("comparison"))
                 )

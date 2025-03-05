@@ -52,6 +52,7 @@ import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.ThingNotFound
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
+import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
 import org.orkg.graph.testing.asciidoc.allowedVisibilityValues
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
@@ -131,12 +132,12 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
                         fieldWithPath("mentionings[].label").description("The label of the mentioned resource."),
                         fieldWithPath("mentionings[].classes").description("The class ids of the mentioned resource."),
                         fieldWithPath("mentionings[]._class").description("Indicates which type of entity was returned. Always has the value `resource_ref`."),
-                        fieldWithPath("extraction_method").description("""The method used to extract the paper resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC"."""),
+                        fieldWithPath("extraction_method").description("""The method used to extract the paper resource. Can be one of $allowedExtractionMethodValues."""),
                         timestampFieldWithPath("created_at", "the paper resource was created"),
                         // TODO: Add links to documentation of special user UUIDs.
                         fieldWithPath("created_by").description("The UUID of the user or service who created this paper."),
                         fieldWithPath("verified").description("Determines if the paper was verified by a curator."),
-                        fieldWithPath("visibility").description("""Visibility of the paper. Can be one of "DEFAULT", "FEATURED", "UNLISTED" or "DELETED"."""),
+                        fieldWithPath("visibility").description("""Visibility of the paper. Can be one of $allowedVisibilityValues."""),
                         fieldWithPath("modifiable").description("Whether this paper can be modified."),
                         fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this paper.").optional(),
                         fieldWithPath("_class").description("Indicates which type of entity was returned. Always has the value `paper`."),
@@ -517,7 +518,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
                         fieldWithPath("contents.contributions[].statements.*[].id").description("The ID of the object of the statement."),
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the paper belongs to. Can be at most one organization id."),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the paper belongs to. Can be at most one observatory id."),
-                        fieldWithPath("extraction_method").description("""The method used to extract the paper resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC".""")
+                        fieldWithPath("extraction_method").description("""The method used to extract the paper resource. Can be one of $allowedExtractionMethodValues.""")
                     ).and(authorListFields("paper"))
                         .and(paperIdentifierFields())
                 )
@@ -1050,7 +1051,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
                         headerWithName("Location").description("The uri path where the newly created contribution can be fetched from.")
                     ),
                     requestFields(
-                        fieldWithPath("extraction_method").description("""The method used to extract the contribution resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC". (default: "UNKNOWN")""").optional(),
+                        fieldWithPath("extraction_method").description("""The method used to extract the contribution resource. Can be one of $allowedExtractionMethodValues. (default: "UNKNOWN")""").optional(),
                         fieldWithPath("resources").description("Definition of resources that need to be created."),
                         fieldWithPath("resources.*.label").description("The label of the resource."),
                         fieldWithPath("resources.*.classes").description("The list of classes of the resource."),

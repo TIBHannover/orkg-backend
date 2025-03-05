@@ -15,6 +15,7 @@ import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.contenttypes.domain.ContentTypeClass
+import org.orkg.contenttypes.domain.testing.asciidoc.allowedContentTypeClassValues
 import org.orkg.contenttypes.domain.testing.fixtures.createComparison
 import org.orkg.contenttypes.domain.testing.fixtures.createLiteratureList
 import org.orkg.contenttypes.domain.testing.fixtures.createPaper
@@ -23,6 +24,7 @@ import org.orkg.contenttypes.domain.testing.fixtures.createTemplate
 import org.orkg.contenttypes.domain.testing.fixtures.createVisualization
 import org.orkg.contenttypes.input.ContentTypeUseCases
 import org.orkg.graph.domain.VisibilityFilter
+import org.orkg.graph.testing.asciidoc.allowedVisibilityFilterValues
 import org.orkg.testing.andExpectComparison
 import org.orkg.testing.andExpectLiteratureList
 import org.orkg.testing.andExpectPage
@@ -132,8 +134,8 @@ internal class ContentTypeControllerUnitTest : MockMvcBaseTest("content-types") 
             .andDo(
                 documentationHandler.document(
                     queryParameters(
-                        parameterWithName("classes").description("Filter for the content type classes. Available classes are ${ContentTypeClass.entries.joinToString(",") { "\"$it\"" }} (optional)"),
-                        parameterWithName("visibility").description("Filter for visibility. Either of ${VisibilityFilter.entries.joinToString(",") { "\"$it\"" }}. (optional)"),
+                        parameterWithName("classes").description("Filter for the content type classes. Available classes are $allowedContentTypeClassValues (optional)"),
+                        parameterWithName("visibility").description("Filter for visibility. Either of $allowedVisibilityFilterValues. (optional)"),
                         parameterWithName("created_by").description("Filter for the UUID of the user or service who created this content type. (optional)"),
                         parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned content type can have. (optional)"),
                         parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned content type can have. (optional)"),

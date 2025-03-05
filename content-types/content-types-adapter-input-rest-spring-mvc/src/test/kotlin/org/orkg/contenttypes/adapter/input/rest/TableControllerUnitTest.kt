@@ -21,6 +21,8 @@ import org.orkg.contenttypes.domain.testing.fixtures.createTable
 import org.orkg.contenttypes.input.TableUseCases
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.VisibilityFilter
+import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
+import org.orkg.graph.testing.asciidoc.allowedVisibilityValues
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectTable
 import org.orkg.testing.configuration.FixedClockConfig
@@ -84,11 +86,11 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                         subsectionWithPath("rows[].data[]").description("The ordered list of values (thing representations) of the row.").optional(),
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations or conference series the table belongs to."),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the table belongs to."),
-                        fieldWithPath("extraction_method").description("""The method used to extract the table resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC"."""),
+                        fieldWithPath("extraction_method").description("""The method used to extract the table resource. Can be one of $allowedExtractionMethodValues."""),
                         timestampFieldWithPath("created_at", "the table resource was created"),
                         // TODO: Add links to documentation of special user UUIDs.
                         fieldWithPath("created_by").description("The UUID of the user or service who created this table."),
-                        fieldWithPath("visibility").description("""Visibility of the table. Can be one of "DEFAULT", "FEATURED", "UNLISTED" or "DELETED"."""),
+                        fieldWithPath("visibility").description("""Visibility of the table. Can be one of $allowedVisibilityValues."""),
                         fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this table.").optional(),
                     )
                 )

@@ -21,6 +21,7 @@ import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
+import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
 import org.orkg.testing.MockUserId
 import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
 import org.orkg.testing.annotations.TestWithMockAdmin
@@ -108,7 +109,7 @@ internal class ResourceControllerIntegrationTest : MockMvcBaseTest("resources") 
                     requestFields(
                         fieldWithPath("label").description("The resource label."),
                         fieldWithPath("classes").type("Array").description("The classes of the resource. (optional)").optional(),
-                        fieldWithPath("extraction_method").type("String").description("""The method used to extract the resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC". (optional, default: "UNKNOWN")""").optional()
+                        fieldWithPath("extraction_method").type("String").description("""The method used to extract the resource. Can be one of $allowedExtractionMethodValues. (optional, default: "UNKNOWN")""").optional()
                     ),
                     responseFields(resourceResponseFields())
                 )

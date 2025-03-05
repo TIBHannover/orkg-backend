@@ -25,6 +25,7 @@ import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectTemplateInstance
 import org.orkg.testing.annotations.TestWithMockUser
@@ -256,7 +257,7 @@ internal class TemplateInstanceControllerUnitTest : MockMvcBaseTest("template-in
                         fieldWithPath("classes").description("Definition of classes that need to be created."),
                         fieldWithPath("classes.*.label").description("The label of the class."),
                         fieldWithPath("classes.*.uri").description("The uri of the class."),
-                        fieldWithPath("extraction_method").description("""The method used to extract the template instance. Can be one of "unknown", "manual" or "automatic".""")
+                        fieldWithPath("extraction_method").description("""The method used to extract the template instance. Can be one of $allowedExtractionMethodValues.""")
                     )
                 )
             )

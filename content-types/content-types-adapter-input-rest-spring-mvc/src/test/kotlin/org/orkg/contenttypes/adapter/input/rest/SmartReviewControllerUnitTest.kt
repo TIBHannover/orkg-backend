@@ -36,6 +36,7 @@ import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
 import org.orkg.graph.testing.asciidoc.allowedVisibilityValues
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
@@ -125,11 +126,11 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                         fieldWithPath("versions.published[].changelog").description("The changelog of the published version."),
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the smart review belongs to."),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the smart review belongs to."),
-                        fieldWithPath("extraction_method").description("""The method used to extract the smart review resource. Can be one of "unknown", "manual" or "automatic"."""),
+                        fieldWithPath("extraction_method").description("""The method used to extract the smart review resource. Can be one of $allowedExtractionMethodValues."""),
                         timestampFieldWithPath("created_at", "the smart review resource was created"),
                         // TODO: Add links to documentation of special user UUIDs.
                         fieldWithPath("created_by").description("The UUID of the user or service who created this smart review."),
-                        fieldWithPath("visibility").description("""Visibility of the smart review. Can be one of "default", "featured", "unlisted" or "deleted"."""),
+                        fieldWithPath("visibility").description("""Visibility of the smart review. Can be one of $allowedVisibilityValues."""),
                         fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this smart review.").optional(),
                         fieldWithPath("published").description("Whether the smart review is published or not."),
                         fieldWithPath("sections").description("The list of sections of the smart review."),
@@ -361,7 +362,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                         fieldWithPath("sdgs").description("The set of ids of sustainable development goals the smart review will be assigned to. (optional)").optional(),
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the smart review belongs to. (optional)").optional(),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the smart review belongs to. (optional)").optional(),
-                        fieldWithPath("extraction_method").type("String").description("""The method used to extract the resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC". (optional, default: "UNKNOWN")""").optional(),
+                        fieldWithPath("extraction_method").type("String").description("""The method used to extract the resource. Can be one of $allowedExtractionMethodValues. (optional, default: "UNKNOWN")""").optional(),
                         subsectionWithPath("sections").description("The list of sections of the smart review. See <<smart-review-sections,smart review sections>> for more information. (optional)").optional(),
                         fieldWithPath("references[]").description("The list of bibtex references of the smart review. (optional)").optional(),
                     ).and(authorListFields("smart review"))
@@ -840,7 +841,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                         fieldWithPath("sdgs").description("The set of ids of sustainable development goals the smart review will be assigned to. (optional)"),
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the smart review belongs to. (optional)").optional(),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the smart review belongs to. (optional)").optional(),
-                        fieldWithPath("extraction_method").type("String").description("""The method used to extract the resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC". (optional, default: "UNKNOWN")""").optional(),
+                        fieldWithPath("extraction_method").type("String").description("""The method used to extract the resource. Can be one of $allowedExtractionMethodValues. (optional, default: "UNKNOWN")""").optional(),
                         subsectionWithPath("sections").description("The list of updated sections of the smart review (optional). See <<smart-review-sections,smart review sections>> for more information."),
                         fieldWithPath("references[]").description("The list of updated bibtex references of the smart review."),
                         fieldWithPath("visibility").description("The updated visibility of the smart review. Can be one of $allowedVisibilityValues. (optional)").optional(),

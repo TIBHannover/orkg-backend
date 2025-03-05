@@ -19,11 +19,14 @@ import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
 import org.orkg.contenttypes.domain.Certainty
 import org.orkg.contenttypes.domain.RosettaStoneStatementNotFound
+import org.orkg.contenttypes.domain.testing.asciidoc.allowedCertaintyValues
 import org.orkg.contenttypes.domain.testing.fixtures.createRosettaStoneStatement
 import org.orkg.contenttypes.input.RosettaStoneStatementUseCases
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.VisibilityFilter
+import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
+import org.orkg.graph.testing.asciidoc.allowedVisibilityValues
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectRosettaStoneStatement
@@ -98,12 +101,12 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
                         timestampFieldWithPath("created_at", "the rosetta stone statement was created"),
                         // TODO: Add links to documentation of special user UUIDs.
                         fieldWithPath("created_by").description("The UUID of the user or service who created this rosetta stone statement."),
-                        fieldWithPath("certainty").description("""The certainty of the rosetta stone statement. Either of ${Certainty.entries.joinToString { "\"$it\"" }}."""),
+                        fieldWithPath("certainty").description("""The certainty of the rosetta stone statement. Either of $allowedCertaintyValues."""),
                         fieldWithPath("negated").description("Whether the statement represented by the rosetta stone statement instance is semantically negated."),
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the rosetta stone statement belongs to."),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the rosetta stone statement belongs to."),
-                        fieldWithPath("extraction_method").description("""The method used to extract the rosetta stone statement. Either of ${ExtractionMethod.entries.joinToString { "\"$it\"" }}."""),
-                        fieldWithPath("visibility").description("""Visibility of the rosetta stone statement. Can be one of "default", "featured", "unlisted" or "deleted"."""),
+                        fieldWithPath("extraction_method").description("""The method used to extract the rosetta stone statement. Either of $allowedExtractionMethodValues."""),
+                        fieldWithPath("visibility").description("""Visibility of the rosetta stone statement. Can be one of $allowedVisibilityValues."""),
                         fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this rosetta stone statement.").optional(),
                         fieldWithPath("modifiable").description("Whether this rosetta stone statement can be modified."),
                         timestampFieldWithPath("deleted_at", "the rosetta stone statement was deleted").optional(),
@@ -283,7 +286,7 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
                         fieldWithPath("subjects[]").description("The ordered list of subject instance IDs used in the rosetta stone statement."),
                         fieldWithPath("objects[]").description("The ordered list of object position instances used in the rosetta stone statement. The order of the objects corresponds to the order of the properties of the rosetta stone template."),
                         fieldWithPath("objects[][]").description("The ordered list of object instance IDs used for the object position index defined by the outer array."),
-                        fieldWithPath("certainty").description("""The certainty of the rosetta stone statement. Either of ${Certainty.entries.joinToString { "\"$it\"" }}."""),
+                        fieldWithPath("certainty").description("""The certainty of the rosetta stone statement. Either of $allowedCertaintyValues."""),
                         fieldWithPath("resources").description("Definition of resources that need to be created."),
                         fieldWithPath("resources.*.label").description("The label of the resource."),
                         fieldWithPath("resources.*.classes").description("The list of classes of the resource."),
@@ -302,7 +305,7 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
                         fieldWithPath("negated").description("Whether the statement represented by the rosetta stone statement instance is semantically negated. (optional, default: false)").optional(),
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the rosetta stone statement belongs to."),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the rosetta stone statement belongs to."),
-                        fieldWithPath("extraction_method").description("""The method used to extract the rosetta stone statement. Either of ${ExtractionMethod.entries.joinToString { "\"$it\"" }}."""),
+                        fieldWithPath("extraction_method").description("""The method used to extract the rosetta stone statement. Either of $allowedExtractionMethodValues."""),
                     )
                 )
             )
@@ -338,7 +341,7 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
                         fieldWithPath("subjects[]").description("The ordered list of subject instance IDs used in the updated rosetta stone statement."),
                         fieldWithPath("objects[]").description("The ordered list of object position instances used in the updated rosetta stone statement. The order of the objects corresponds to the order of the properties of the rosetta stone template."),
                         fieldWithPath("objects[][]").description("The ordered list of object instance IDs used for the object position index defined by the outer array."),
-                        fieldWithPath("certainty").description("""The certainty of the updated rosetta stone statement. Either of ${Certainty.entries.joinToString { "\"$it\"" }}."""),
+                        fieldWithPath("certainty").description("""The certainty of the updated rosetta stone statement. Either of $allowedCertaintyValues."""),
                         fieldWithPath("resources").description("Definition of resources that need to be created."),
                         fieldWithPath("resources.*.label").description("The label of the resource."),
                         fieldWithPath("resources.*.classes").description("The list of classes of the resource."),
@@ -357,7 +360,7 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
                         fieldWithPath("negated").description("Whether the statement represented by the updated rosetta stone statement instance is semantically negated. (optional, default: false)").optional(),
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the rosetta stone statement belongs to."),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the rosetta stone statement belongs to."),
-                        fieldWithPath("extraction_method").description("""The method used to extract the updated rosetta stone statement. Either of ${ExtractionMethod.entries.joinToString { "\"$it\"" }}."""),
+                        fieldWithPath("extraction_method").description("""The method used to extract the updated rosetta stone statement. Either of $allowedExtractionMethodValues."""),
                     )
                 )
             )

@@ -33,6 +33,8 @@ import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
+import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
+import org.orkg.graph.testing.asciidoc.allowedVisibilityValues
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
@@ -376,8 +378,8 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
                     requestFields(
                         fieldWithPath("label").description("The updated resource label. (optional)").optional(),
                         fieldWithPath("classes").description("The classes to which the resource belongs to. (optional)").optional(),
-                        fieldWithPath("extraction_method").description("""The method used to extract the resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC". (optional)""").optional(),
-                        fieldWithPath("visibility").description("""Visibility of the resource. Can be one of "DEFAULT", "FEATURED", "UNLISTED" or "DELETED". (optional)""").optional(),
+                        fieldWithPath("extraction_method").description("""The method used to extract the resource. Can be one of $allowedExtractionMethodValues. (optional)""").optional(),
+                        fieldWithPath("visibility").description("""Visibility of the resource. Can be one of $allowedVisibilityValues. (optional)""").optional(),
                         fieldWithPath("organization_id").description("The updated ID of the organization the resource belongs to. (optional)").optional(),
                         fieldWithPath("observatory_id").description("The updated ID of the observatory the resource belongs to. (optional)").optional(),
                     ),

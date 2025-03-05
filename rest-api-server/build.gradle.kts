@@ -45,6 +45,7 @@ testing {
                 implementation(project(":graph:graph-core-constants"))
                 implementation(project(":graph:graph-ports-output"))
                 implementation(testFixtures(project(":graph:graph-adapter-input-rest-spring-mvc")))
+                implementation(testFixtures(project(":graph:graph-core-model")))
                 implementation(project(":content-types:content-types-ports-output"))
                 implementation(project(":community:community-ports-output")) // for CuratorRepository
                 implementation(testFixtures(project(":community:community-adapter-input-rest-spring-mvc")))

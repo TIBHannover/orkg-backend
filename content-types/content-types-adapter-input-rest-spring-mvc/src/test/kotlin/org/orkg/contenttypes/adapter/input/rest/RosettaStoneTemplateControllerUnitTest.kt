@@ -26,6 +26,7 @@ import org.orkg.contenttypes.input.testing.fixtures.stringLiteralTemplatePropert
 import org.orkg.contenttypes.input.testing.fixtures.untypedTemplatePropertyRequest
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.VisibilityFilter
+import org.orkg.graph.testing.asciidoc.allowedVisibilityValues
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectRosettaStoneTemplate
@@ -103,7 +104,7 @@ internal class RosettaStoneTemplateControllerUnitTest : MockMvcBaseTest("rosetta
                         timestampFieldWithPath("created_at", "the rosetta stone template resource was created"),
                         // TODO: Add links to documentation of special user UUIDs.
                         fieldWithPath("created_by").description("The UUID of the user or service who created this rosetta stone template."),
-                        fieldWithPath("visibility").description("""Visibility of the rosetta stone template. Can be one of "default", "featured", "unlisted" or "deleted"."""),
+                        fieldWithPath("visibility").description("""Visibility of the rosetta stone template. Can be one of $allowedVisibilityValues."""),
                         fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this rosetta stone template.").optional(),
                         fieldWithPath("modifiable").description("Whether the rosetta stone template can be modified.")
                     )

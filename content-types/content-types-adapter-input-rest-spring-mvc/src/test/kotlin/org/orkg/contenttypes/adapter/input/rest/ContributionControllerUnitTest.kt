@@ -11,6 +11,8 @@ import org.orkg.common.json.CommonJacksonModule
 import org.orkg.contenttypes.domain.ContributionNotFound
 import org.orkg.contenttypes.domain.testing.fixtures.createContribution
 import org.orkg.contenttypes.input.RetrieveContributionUseCase
+import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
+import org.orkg.graph.testing.asciidoc.allowedVisibilityValues
 import org.orkg.testing.andExpectContribution
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.configuration.FixedClockConfig
@@ -59,11 +61,11 @@ internal class ContributionControllerUnitTest : MockMvcBaseTest("contributions")
                         fieldWithPath("label").description("The label of the contribution."),
                         fieldWithPath("classes").description("The classes of the contribution resource."),
                         subsectionWithPath("properties").description("A map of predicate ids to lists of thing ids, that represent the statements that this contribution consists of."),
-                        fieldWithPath("extraction_method").description("""The method used to extract the contribution resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC"."""),
+                        fieldWithPath("extraction_method").description("""The method used to extract the contribution resource. Can be one of $allowedExtractionMethodValues."""),
                         timestampFieldWithPath("created_at", "the contribution resource was created"),
                         // TODO: Add links to documentation of special user UUIDs.
                         fieldWithPath("created_by").description("The UUID of the user or service who created this contribution."),
-                        fieldWithPath("visibility").description("""Visibility of the contribution. Can be one of "DEFAULT", "FEATURED", "UNLISTED" or "DELETED"."""),
+                        fieldWithPath("visibility").description("""Visibility of the contribution. Can be one of $allowedVisibilityValues."""),
                         fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this contribution.").optional()
                     )
                 )

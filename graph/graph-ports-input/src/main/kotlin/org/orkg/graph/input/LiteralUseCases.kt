@@ -45,8 +45,15 @@ interface CreateLiteralUseCase {
 }
 
 interface UpdateLiteralUseCase {
-    // legacy methods:
-    fun update(literal: Literal)
+    fun update(command: UpdateCommand)
+
+    data class UpdateCommand(
+        val id: ThingId,
+        val contributorId: ContributorId,
+        val label: String? = null,
+        val datatype: String? = null,
+        val modifiable: Boolean? = null,
+    )
 }
 
 interface DeleteLiteralUseCase {

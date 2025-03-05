@@ -1,5 +1,6 @@
 package org.orkg.graph.domain
 
+import org.orkg.graph.input.UpdateLiteralUseCase
 import org.orkg.graph.input.UpdatePredicateUseCase
 import org.orkg.graph.input.UpdateResourceUseCase
 import org.orkg.graph.input.UpdateStatementUseCase
@@ -65,5 +66,15 @@ fun UpdatePredicateUseCase.UpdateCommand.hasNoContents(): Boolean =
 fun Predicate.apply(command: UpdatePredicateUseCase.UpdateCommand): Predicate =
     copy(
         label = command.label ?: label,
+        modifiable = command.modifiable ?: modifiable,
+    )
+
+fun UpdateLiteralUseCase.UpdateCommand.hasNoContents(): Boolean =
+    label == null && datatype == null && modifiable == null
+
+fun Literal.apply(command: UpdateLiteralUseCase.UpdateCommand): Literal =
+    copy(
+        label = command.label ?: label,
+        datatype = command.datatype ?: datatype,
         modifiable = command.modifiable ?: modifiable,
     )

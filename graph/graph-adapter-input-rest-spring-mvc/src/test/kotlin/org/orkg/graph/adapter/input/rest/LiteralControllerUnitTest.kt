@@ -7,6 +7,7 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.runs
 import io.mockk.verify
+import org.hamcrest.CoreMatchers.endsWith
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.matchesPattern
 import org.junit.jupiter.api.DisplayName
@@ -16,15 +17,17 @@ import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.json.CommonJacksonModule
-import org.orkg.graph.adapter.input.rest.LiteralController.LiteralCreateRequest
-import org.orkg.graph.adapter.input.rest.LiteralController.LiteralUpdateRequest
+import org.orkg.graph.adapter.input.rest.LiteralController.CreateLiteralRequest
 import org.orkg.graph.adapter.input.rest.json.GraphJacksonModule
+import org.orkg.graph.adapter.input.rest.testing.fixtures.literalResponseFields
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.InvalidLiteralLabel
 import org.orkg.graph.domain.Literal
+import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.MAX_LABEL_LENGTH
 import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.UpdateLiteralUseCase
 import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectLiteral
@@ -37,7 +40,10 @@ import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType.APPLICATION_JSON
+import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
+import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
@@ -225,28 +231,8 @@ internal class LiteralControllerUnitTest : MockMvcBaseTest("literals") {
     }
 
     @Test
-    @TestWithMockUser
-    fun whenPUT_AndLabelIsEmpty_ThenSucceed() {
-        val literal = createUpdateRequestWithEmptyLabel()
-        val double = createLiteral() // needed so "expected" has the same timestamp
-        val expected = double.copy(label = "")
-        every { literalService.findById(any()) } returns Optional.of(double) andThen Optional.of(expected)
-        every { literalService.update(any()) } just runs
-
-        put("/api/literals/{id}", "L1")
-            .content(literal)
-            .perform()
-            .andExpect(status().isOk)
-
-        verify(exactly = 2) { literalService.findById(any()) }
-        verify(exactly = 1) {
-            literalService.update(expected)
-        }
-    }
-
-    @Test
     fun whenPOST_AndDatatypeIsBlank_ThenFailValidation() {
-        val literal = LiteralCreateRequest(
+        val literal = CreateLiteralRequest(
             label = "irrelevant",
             datatype = " ".repeat(5)
         )
@@ -263,26 +249,8 @@ internal class LiteralControllerUnitTest : MockMvcBaseTest("literals") {
 
     @Test
     @TestWithMockUser
-    fun whenPUT_AndDatatypeIsBlank_ThenFailValidation() {
-        val literal = createUpdateRequestWithBlankDatatype()
-        every { literalService.findById(any()) } returns Optional.of(createLiteral())
-
-        put("/api/literals/{id}", "L1")
-            .content(literal)
-            .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("\$.status").value(400))
-            .andExpect(jsonPath("\$.errors.length()").value(1))
-            .andExpect(jsonPath("\$.errors[0].field").value("datatype"))
-            .andExpect(jsonPath("\$.errors[0].message").value("must not be blank"))
-
-        verify(exactly = 1) { literalService.findById(any()) }
-    }
-
-    @Test
-    @TestWithMockUser
     fun whenPOST_AndLabelIsTooLong_ThenFailValidation() {
-        val literal = LiteralCreateRequest(
+        val literal = CreateLiteralRequest(
             label = "a".repeat(MAX_LABEL_LENGTH + 1)
         )
         every { literalService.create(any()) } throws InvalidLiteralLabel()
@@ -301,32 +269,8 @@ internal class LiteralControllerUnitTest : MockMvcBaseTest("literals") {
 
     @Test
     @TestWithMockUser
-    fun whenPUT_AndLabelIsTooLong_ThenFailValidation() {
-        val literal = LiteralUpdateRequest(
-            id = null,
-            label = "a".repeat(MAX_LABEL_LENGTH + 1),
-            datatype = null
-        )
-        every { literalService.findById(any()) } returns Optional.of(createLiteral())
-        every { literalService.update(any()) } throws InvalidLiteralLabel()
-
-        put("/api/literals/{id}", "L1")
-            .content(literal)
-            .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("\$.status").value(400))
-            .andExpect(jsonPath("\$.errors.length()").value(1))
-            .andExpect(jsonPath("\$.errors[0].field").value("label"))
-            .andExpect(jsonPath("\$.errors[0].message").value("A literal must be at most $MAX_LABEL_LENGTH characters long."))
-
-        verify(exactly = 1) { literalService.findById(any()) }
-        verify(exactly = 1) { literalService.update(any()) }
-    }
-
-    @Test
-    @TestWithMockUser
     fun whenPOST_AndRequestIsValid_ThenSucceed() {
-        val literal = LiteralCreateRequest(
+        val literal = CreateLiteralRequest(
             label = "irrelevant",
             datatype = "irrelevant"
         )
@@ -355,13 +299,53 @@ internal class LiteralControllerUnitTest : MockMvcBaseTest("literals") {
         verify(exactly = 1) { literalService.create(command) }
     }
 
-    private fun createCreateRequestWithEmptyLabel() = LiteralCreateRequest(label = "")
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a literal update command, when service succeeds, it returns status 200 OK")
+    fun update() {
+        val literal = createLiteral(label = "foo")
+        val command = UpdateLiteralUseCase.UpdateCommand(
+            id = literal.id,
+            contributorId = ContributorId(MockUserId.USER),
+            label = literal.label,
+            datatype = Literals.XSD.STRING.prefixedUri
+        )
+        val request = mapOf(
+            "label" to literal.label,
+            "datatype" to literal.datatype,
+        )
 
-    private fun createUpdateRequestWithEmptyLabel() =
-        LiteralUpdateRequest(id = null, label = "", datatype = null)
+        every { literalService.update(command) } just runs
+        every { literalService.findById(any()) } returns Optional.of(literal)
 
-    private fun createUpdateRequestWithBlankDatatype() =
-        LiteralUpdateRequest(id = null, label = null, datatype = " ".repeat(5))
+        documentedPutRequestTo("/api/literals/{id}", literal.id)
+            .content(request)
+            .perform()
+            .andExpect(status().isOk)
+            .andExpect(header().string("Location", endsWith("/api/literals/${literal.id}")))
+            .andExpectLiteral()
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the literal.")
+                    ),
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the updated literal can be fetched from.")
+                    ),
+                    requestFields(
+                        fieldWithPath("label").description("The updated value of the literal. (optional)").optional(),
+                        fieldWithPath("datatype").description("The updated datatype of the literal value. (optional)").optional(),
+                    ),
+                    responseFields(literalResponseFields())
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { literalService.update(command) }
+        verify(exactly = 1) { literalService.findById(any()) }
+    }
+
+    private fun createCreateRequestWithEmptyLabel() = CreateLiteralRequest(label = "")
 
     private fun createLiteral(): Literal = Literal(
         id = ThingId("L1"),

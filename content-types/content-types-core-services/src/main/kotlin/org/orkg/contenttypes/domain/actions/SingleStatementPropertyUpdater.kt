@@ -12,6 +12,7 @@ import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
+import org.orkg.graph.input.UpdateLiteralUseCase
 
 class SingleStatementPropertyUpdater(
     private val literalService: LiteralUseCases,
@@ -59,9 +60,14 @@ class SingleStatementPropertyUpdater(
                 singleStatementPropertyCreator.create(contributorId, subjectId, predicateId, label, datatype)
             } else {
                 val statement = toRemove.first()
-                with(statement.`object` as Literal) {
-                    literalService.update(copy(label = label, datatype = datatype))
-                }
+                literalService.update(
+                    UpdateLiteralUseCase.UpdateCommand(
+                        id = (statement.`object` as Literal).id,
+                        contributorId = contributorId,
+                        label = label,
+                        datatype = datatype
+                    )
+                )
                 toRemove -= statement
             }
 

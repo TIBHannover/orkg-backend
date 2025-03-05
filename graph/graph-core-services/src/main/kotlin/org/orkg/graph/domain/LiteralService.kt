@@ -5,6 +5,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.toIRIOrNull
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.UpdateLiteralUseCase
 import org.orkg.graph.output.LiteralRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.spring.data.annotations.TransactionalOnNeo4j
@@ -26,14 +27,7 @@ class LiteralService(
         if (command.label.length > MAX_LABEL_LENGTH) {
             throw InvalidLiteralLabel()
         }
-        // Note: "xsd:foo" is a valid IRI, so is everything starting with a letter followed by a colon.
-        // There is no easy way around that, because other valid URIs use "prefix-like" structures, such as URNs.
-        val xsd = Literals.XSD.fromString(command.datatype)
-        if (xsd != null && !xsd.canParse(command.label)) {
-            throw InvalidLiteralLabel(command.label, command.datatype)
-        } else if (command.datatype.toIRIOrNull()?.isAbsolute != true) {
-            throw InvalidLiteralDatatype()
-        }
+        validateLabel(command.label, command.datatype)
         val id = command.id
             ?.also { id -> repository.findById(id).ifPresent { throw LiteralAlreadyExists(id) } }
             ?: repository.nextIdentity()
@@ -67,23 +61,37 @@ class LiteralService(
     override fun findDOIByContributionId(id: ThingId): Optional<Literal> =
         statementRepository.findDOIByContributionId(id)
 
-    override fun update(literal: Literal) {
-        if (literal.label.length > MAX_LABEL_LENGTH) {
-            throw InvalidLiteralLabel()
+    override fun update(command: UpdateLiteralUseCase.UpdateCommand) {
+        if (command.hasNoContents()) return
+        command.label?.also { label ->
+            if (label.length > MAX_LABEL_LENGTH) {
+                throw InvalidLiteralLabel()
+            }
         }
-        // already checked by service
-        var found = repository.findById(literal.id).get()
-
-        if (!found.modifiable) {
-            throw LiteralNotModifiable(found.id)
+        val literal = repository.findById(command.id)
+            .orElseThrow { LiteralNotFound(command.id) }
+        if (!literal.modifiable) {
+            throw LiteralNotModifiable(literal.id)
         }
-
-        // update all the properties
-        found = found.copy(label = literal.label)
-        found = found.copy(datatype = literal.datatype)
-
-        repository.save(found)
+        val updated = literal.apply(command)
+        if (literal.label != updated.label || literal.datatype != updated.datatype) {
+            validateLabel(updated.label, updated.datatype)
+        }
+        if (updated != literal) {
+            repository.save(updated)
+        }
     }
 
     override fun deleteAll() = repository.deleteAll()
+
+    // Note: "xsd:foo" is a valid IRI, so is everything starting with a letter followed by a colon.
+    // There is no easy way around that, because other valid URIs use "prefix-like" structures, such as URNs.
+    private fun validateLabel(value: String, datatype: String) {
+        val xsd = Literals.XSD.fromString(datatype)
+        if (xsd != null && !xsd.canParse(value)) {
+            throw InvalidLiteralLabel(value, datatype)
+        } else if (datatype.toIRIOrNull()?.isAbsolute != true) {
+            throw InvalidLiteralDatatype()
+        }
+    }
 }

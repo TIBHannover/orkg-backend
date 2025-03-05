@@ -19,6 +19,7 @@ import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
+import org.orkg.graph.input.UpdateLiteralUseCase.UpdateCommand
 import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createStatement
@@ -44,7 +45,9 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
         val contributorId = ContributorId(UUID.randomUUID())
         val description = "some description"
         val literal = createLiteral()
-        val updatedLiteral = literal.copy(
+        val updateLiteralCommand = UpdateCommand(
+            id = literal.id,
+            contributorId = contributorId,
             label = description,
             datatype = Literals.XSD.INT.prefixedUri
         )
@@ -62,7 +65,8 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
                 `object` = literal
             )
         )
-        every { literalService.update(updatedLiteral) } just runs
+
+        every { literalService.update(updateLiteralCommand) } just runs
 
         singleStatementPropertyUpdater.updateRequiredProperty(
             contributorId = contributorId,
@@ -80,7 +84,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
                 pageable = PageRequests.SINGLE
             )
         }
-        verify(exactly = 1) { literalService.update(updatedLiteral) }
+        verify(exactly = 1) { literalService.update(updateLiteralCommand) }
     }
 
     @Test
@@ -140,7 +144,9 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
         val contributorId = ContributorId(UUID.randomUUID())
         val description = "some description"
         val literal = createLiteral()
-        val updatedLiteral = literal.copy(
+        val updateLiteralCommand = UpdateCommand(
+            id = literal.id,
+            contributorId = contributorId,
             label = description,
             datatype = Literals.XSD.INT.prefixedUri
         )
@@ -163,7 +169,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
                 `object` = createLiteral(ThingId("L132"), label = "other")
             )
         )
-        every { literalService.update(updatedLiteral) } just runs
+        every { literalService.update(updateLiteralCommand) } just runs
         every { statementService.deleteAllById(setOf(StatementId("S456"))) } just runs
 
         singleStatementPropertyUpdater.updateRequiredProperty(
@@ -182,7 +188,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
                 pageable = PageRequests.SINGLE
             )
         }
-        verify(exactly = 1) { literalService.update(updatedLiteral) }
+        verify(exactly = 1) { literalService.update(updateLiteralCommand) }
         verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S456"))) }
     }
 
@@ -192,7 +198,9 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
         val contributorId = ContributorId(UUID.randomUUID())
         val description = "some description"
         val literal = createLiteral()
-        val updatedLiteral = literal.copy(
+        val updateLiteralCommand = UpdateCommand(
+            id = literal.id,
+            contributorId = contributorId,
             label = description,
             datatype = Literals.XSD.INT.prefixedUri
         )
@@ -203,7 +211,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
             )
         )
 
-        every { literalService.update(updatedLiteral) } just runs
+        every { literalService.update(updateLiteralCommand) } just runs
 
         singleStatementPropertyUpdater.updateRequiredProperty(
             statements = statements,
@@ -214,7 +222,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
             datatype = Literals.XSD.INT.prefixedUri
         )
 
-        verify(exactly = 1) { literalService.update(updatedLiteral) }
+        verify(exactly = 1) { literalService.update(updateLiteralCommand) }
     }
 
     @Test
@@ -260,7 +268,9 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
         val contributorId = ContributorId(UUID.randomUUID())
         val description = "some description"
         val literal = createLiteral()
-        val updatedLiteral = literal.copy(
+        val updateLiteralCommand = UpdateCommand(
+            id = literal.id,
+            contributorId = contributorId,
             label = description,
             datatype = Literals.XSD.INT.prefixedUri
         )
@@ -276,7 +286,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
             )
         )
 
-        every { literalService.update(updatedLiteral) } just runs
+        every { literalService.update(updateLiteralCommand) } just runs
         every { statementService.deleteAllById(setOf(StatementId("S456"))) } just runs
 
         singleStatementPropertyUpdater.updateRequiredProperty(
@@ -288,7 +298,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
             datatype = Literals.XSD.INT.prefixedUri
         )
 
-        verify(exactly = 1) { literalService.update(updatedLiteral) }
+        verify(exactly = 1) { literalService.update(updateLiteralCommand) }
         verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S456"))) }
     }
 
@@ -298,7 +308,9 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
         val contributorId = ContributorId(UUID.randomUUID())
         val description = "some description"
         val literal = createLiteral()
-        val updatedLiteral = literal.copy(
+        val updateLiteralCommand = UpdateCommand(
+            id = literal.id,
+            contributorId = contributorId,
             label = description,
             datatype = Literals.XSD.STRING.prefixedUri
         )
@@ -309,11 +321,11 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
             )
         )
 
-        every { literalService.update(updatedLiteral) } just runs
+        every { literalService.update(updateLiteralCommand) } just runs
 
         singleStatementPropertyUpdater.updateOptionalProperty(statements, contributorId, subjectId, Predicates.description, description)
 
-        verify(exactly = 1) { literalService.update(updatedLiteral) }
+        verify(exactly = 1) { literalService.update(updateLiteralCommand) }
     }
 
     @Test
@@ -350,7 +362,9 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
         val contributorId = ContributorId(UUID.randomUUID())
         val description = "some description"
         val literal = createLiteral()
-        val updatedLiteral = literal.copy(
+        val updateLiteralCommand = UpdateCommand(
+            id = literal.id,
+            contributorId = contributorId,
             label = description,
             datatype = Literals.XSD.STRING.prefixedUri
         )
@@ -366,12 +380,12 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
             )
         )
 
-        every { literalService.update(updatedLiteral) } just runs
+        every { literalService.update(updateLiteralCommand) } just runs
         every { statementService.deleteAllById(setOf(StatementId("S456"))) } just runs
 
         singleStatementPropertyUpdater.updateOptionalProperty(statements, contributorId, subjectId, Predicates.description, description)
 
-        verify(exactly = 1) { literalService.update(updatedLiteral) }
+        verify(exactly = 1) { literalService.update(updateLiteralCommand) }
         verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S456"))) }
     }
 

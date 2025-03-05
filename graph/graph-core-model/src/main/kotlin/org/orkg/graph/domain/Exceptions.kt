@@ -351,12 +351,3 @@ class NotACurator private constructor(
             )
     }
 }
-
-/**
- * Exception indicating that a property was blank when it was not supposed to be.
- */
-class PropertyIsBlank(override val property: String) :
-    PropertyValidationException(
-        property,
-        "must not be blank"
-    )

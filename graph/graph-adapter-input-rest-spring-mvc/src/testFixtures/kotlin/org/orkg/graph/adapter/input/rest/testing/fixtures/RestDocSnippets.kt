@@ -48,6 +48,16 @@ fun predicateResponseFields() = listOf(
     fieldWithPath("_class").description("An indicator which type of entity was returned. Always has the value `predicate`."),
 )
 
+fun literalResponseFields() = listOf(
+    fieldWithPath("id").description("The identifier of the literal."),
+    fieldWithPath("label").description("The value of the literal."),
+    fieldWithPath("datatype").description("The data type of the literal value. Defaults to `xsd:string`."),
+    timestampFieldWithPath("created_at", "the literal was created"),
+    fieldWithPath("created_by").description("The UUID of the user or service who created this literal."),
+    fieldWithPath("modifiable").description("Whether this literal can be modified."),
+    fieldWithPath("_class").description("An indicator which type of entity was returned. Always has the value `literal`."),
+)
+
 fun statementResponseFields(): List<FieldDescriptor> = listOf(
     fieldWithPath("id").description("The statement ID"),
     fieldWithPath("created_at").description("The statement creation datetime"),

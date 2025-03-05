@@ -8,10 +8,10 @@ import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId
 import org.orkg.graph.adapter.input.rest.mapping.LiteralRepresentationAdapter
 import org.orkg.graph.domain.LiteralNotFound
-import org.orkg.graph.domain.PropertyIsBlank
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.UpdateLiteralUseCase
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.format.annotation.DateTimeFormat
@@ -65,7 +65,7 @@ class LiteralController(
     @RequireLogin
     @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun add(
-        @RequestBody @Valid literal: LiteralCreateRequest,
+        @RequestBody @Valid literal: CreateLiteralRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         currentUser: Authentication?,
     ): ResponseEntity<LiteralRepresentation> {
@@ -87,20 +87,18 @@ class LiteralController(
     @PutMapping("/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun update(
         @PathVariable id: ThingId,
-        @RequestBody @Valid request: LiteralUpdateRequest,
+        @RequestBody @Valid request: UpdateLiteralRequest,
         uriComponentsBuilder: UriComponentsBuilder,
+        currentUser: Authentication?,
     ): ResponseEntity<LiteralRepresentation> {
-        var literal = service.findById(id).orElseThrow { LiteralNotFound(id) }
-
-        if (request.label != null) {
-            literal = literal.copy(label = request.label)
-        }
-
-        if (request.datatype != null) {
-            if (request.datatype.isBlank()) throw PropertyIsBlank("datatype")
-            literal = literal.copy(datatype = request.datatype)
-        }
-        service.update(literal)
+        service.update(
+            UpdateLiteralUseCase.UpdateCommand(
+                id = id,
+                contributorId = currentUser.contributorId(),
+                label = request.label,
+                datatype = request.datatype
+            )
+        )
         val location = uriComponentsBuilder
             .path("/api/literals/{id}")
             .buildAndExpand(id)
@@ -108,15 +106,14 @@ class LiteralController(
         return ok().location(location).body(service.findById(id).mapToLiteralRepresentation().get())
     }
 
-    data class LiteralCreateRequest(
-        // No restriction, as we need to support empty values; at lease for strings. See TIBHannover/orkg/orkg-backend!152.
+    data class CreateLiteralRequest(
+        // No restriction, as we need to support empty values; at least for strings. See TIBHannover/orkg/orkg-backend!152.
         val label: String,
         @field:NotBlank
         val datatype: String = "xsd:string",
     )
 
-    data class LiteralUpdateRequest(
-        val id: ThingId?,
+    data class UpdateLiteralRequest(
         val label: String?,
         val datatype: String?,
     )

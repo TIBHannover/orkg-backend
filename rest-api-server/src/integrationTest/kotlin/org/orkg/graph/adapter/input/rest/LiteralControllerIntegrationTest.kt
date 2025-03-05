@@ -6,6 +6,7 @@ import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.createLiteral
+import org.orkg.graph.adapter.input.rest.testing.fixtures.literalResponseFields
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
 import org.orkg.testing.annotations.TestWithMockUser
@@ -17,8 +18,6 @@ import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
-import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -112,7 +111,7 @@ internal class LiteralControllerIntegrationTest : MockMvcBaseTest("literals") {
 
     @Test
     @TestWithMockUser
-    fun edit() {
+    fun update() {
         val literalId = service.createLiteral(
             label = "foo",
             datatype = "dt:old"
@@ -120,44 +119,19 @@ internal class LiteralControllerIntegrationTest : MockMvcBaseTest("literals") {
 
         val update = mapOf("label" to "bar", "datatype" to "dt:new")
 
-        documentedPutRequestTo("/api/literals/{id}", literalId)
+        put("/api/literals/{id}", literalId)
             .content(update)
             .perform()
             .andExpect(status().isOk)
             .andExpect(header().string("Location", endsWith("api/literals/$literalId")))
             .andExpect(jsonPath("$.label").value(update["label"] as String))
             .andExpect(jsonPath("$.datatype").value(update["datatype"] as String))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the literal.")
-                    ),
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the updated literal can be fetched from.")
-                    ),
-                    requestFields(ofCreateAndUpdateRequests()),
-                    responseFields(literalResponseFields())
-                )
-            )
-            .andDo(generateDefaultDocSnippets())
     }
 
     companion object RestDoc {
         fun ofCreateAndUpdateRequests() = listOf(
             fieldWithPath("label").description("The updated value of the literal."),
             fieldWithPath("datatype").description("The updated datatype of the literal value.")
-        )
-
-        fun literalResponseFields() = listOf(
-            fieldWithPath("id").description("The resource ID"),
-            fieldWithPath("label").description("The resource label"),
-            fieldWithPath("datatype").description("The data type of the literal value. Defaults to `xsd:string`."),
-            fieldWithPath("created_at").description("The resource creation datetime"),
-            fieldWithPath("created_by").description("The ID of the user that created the literal. All zeros if unknown."),
-            fieldWithPath("_class").optional().ignored(),
-            fieldWithPath("featured").optional().ignored(),
-            fieldWithPath("unlisted").optional().ignored(),
-            fieldWithPath("modifiable").description("Whether this literal can be modified.").optional().ignored(),
         )
     }
 }

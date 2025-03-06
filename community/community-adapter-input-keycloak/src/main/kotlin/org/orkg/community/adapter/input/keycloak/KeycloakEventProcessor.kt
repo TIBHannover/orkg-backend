@@ -3,7 +3,6 @@ package org.orkg.community.adapter.input.keycloak
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.keycloak.admin.client.Keycloak
-import org.keycloak.admin.client.resource.RealmResource
 import org.keycloak.admin.client.resource.UserResource
 import org.keycloak.representations.idm.AdminEventRepresentation
 import org.keycloak.representations.idm.EventRepresentation
@@ -23,6 +22,7 @@ import org.springframework.stereotype.Service
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 import java.net.http.HttpClient
+import java.net.http.HttpClient.Version.HTTP_1_1
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.time.Instant
@@ -48,7 +48,7 @@ class KeycloakEventProcessor(
     @Scheduled(cron = "\${orkg.keycloak.event-poll-schedule}")
     fun processEvents() {
         var offset = keycloakEventStateRepository.findById(EventType.USER_EVENT)
-        val events = keycloak.realm(realm).getEventsReversed(
+        val events = getEventsReversed(
             types = listOf("REGISTER", "UPDATE_PROFILE", "DELETE_ACCOUNT"),
             firstResult = offset,
             maxResults = eventPollChunkSize
@@ -65,7 +65,7 @@ class KeycloakEventProcessor(
     @Scheduled(cron = "\${orkg.keycloak.event-poll-schedule}")
     fun processAdminEvents() {
         var offset = keycloakEventStateRepository.findById(EventType.ADMIN_EVENT)
-        val events = keycloak.realm(realm).getAdminEventsReversed(
+        val events = getAdminEventsReversed(
             operationTypes = listOf("CREATE", "UPDATE", "DELETE"),
             firstResult = offset,
             maxResults = eventPollChunkSize
@@ -85,7 +85,7 @@ class KeycloakEventProcessor(
         }
     }
 
-    private fun RealmResource.getAdminEventsReversed(
+    private fun getAdminEventsReversed(
         operationTypes: List<String>? = null,
         authRealm: String? = null,
         authClient: String? = null,
@@ -120,7 +120,7 @@ class KeycloakEventProcessor(
         return response.body().let { objectMapper.readValue(it, object : TypeReference<List<AdminEventRepresentation>>() {}) }
     }
 
-    private fun RealmResource.getEventsReversed(
+    private fun getEventsReversed(
         types: List<String>? = null,
         client: String? = null,
         user: String? = null,
@@ -151,6 +151,7 @@ class KeycloakEventProcessor(
 
     private fun sendRequest(uri: URI): HttpResponse<String> {
         val request = HttpRequest.newBuilder(uri)
+            .version(HTTP_1_1) // JDK 21 does not handle HTTP/2 GOAWAY frames correctly. See https://bugs.openjdk.org/browse/JDK-8335181
             .header("Accept", MediaType.APPLICATION_JSON_VALUE)
             .header("Authorization", "Bearer ${keycloak.tokenManager().accessTokenString}")
             .GET()

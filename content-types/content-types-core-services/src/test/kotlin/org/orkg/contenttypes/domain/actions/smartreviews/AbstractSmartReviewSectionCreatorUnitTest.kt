@@ -46,9 +46,9 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
         val contributorId = ContributorId(UUID.randomUUID())
 
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
+            contributorId = contributorId,
             label = section.heading,
-            classes = setOf(Classes.comparisonSection),
-            contributorId = contributorId
+            classes = setOf(Classes.comparisonSection)
         )
         val sectionId = ThingId("R156465")
 
@@ -85,9 +85,9 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
         val contributorId = ContributorId(UUID.randomUUID())
 
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
+            contributorId = contributorId,
             label = section.heading,
-            classes = setOf(Classes.comparisonSection),
-            contributorId = contributorId
+            classes = setOf(Classes.comparisonSection)
         )
         val sectionId = ThingId("R156465")
 
@@ -104,9 +104,9 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
         val contributorId = ContributorId(UUID.randomUUID())
 
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
+            contributorId = contributorId,
             label = section.heading,
-            classes = setOf(Classes.visualizationSection),
-            contributorId = contributorId
+            classes = setOf(Classes.visualizationSection)
         )
         val sectionId = ThingId("R156465")
 
@@ -143,9 +143,9 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
         val contributorId = ContributorId(UUID.randomUUID())
 
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
+            contributorId = contributorId,
             label = section.heading,
-            classes = setOf(Classes.visualizationSection),
-            contributorId = contributorId
+            classes = setOf(Classes.visualizationSection)
         )
         val sectionId = ThingId("R156465")
 
@@ -162,9 +162,9 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
         val contributorId = ContributorId(UUID.randomUUID())
 
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
+            contributorId = contributorId,
             label = section.heading,
-            classes = setOf(Classes.resourceSection),
-            contributorId = contributorId
+            classes = setOf(Classes.resourceSection)
         )
         val sectionId = ThingId("R156465")
 
@@ -201,9 +201,9 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
         val contributorId = ContributorId(UUID.randomUUID())
 
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
+            contributorId = contributorId,
             label = section.heading,
-            classes = setOf(Classes.resourceSection),
-            contributorId = contributorId
+            classes = setOf(Classes.resourceSection)
         )
         val sectionId = ThingId("R156465")
 
@@ -220,9 +220,9 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
         val contributorId = ContributorId(UUID.randomUUID())
 
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
+            contributorId = contributorId,
             label = section.heading,
-            classes = setOf(Classes.propertySection),
-            contributorId = contributorId
+            classes = setOf(Classes.propertySection)
         )
         val sectionId = ThingId("R156465")
 
@@ -259,9 +259,9 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
         val contributorId = ContributorId(UUID.randomUUID())
 
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
+            contributorId = contributorId,
             label = section.heading,
-            classes = setOf(Classes.propertySection),
-            contributorId = contributorId
+            classes = setOf(Classes.propertySection)
         )
         val sectionId = ThingId("R156465")
 
@@ -278,9 +278,9 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
         val contributorId = ContributorId(UUID.randomUUID())
 
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
+            contributorId = contributorId,
             label = section.heading,
-            classes = setOf(Classes.ontologySection),
-            contributorId = contributorId
+            classes = setOf(Classes.ontologySection)
         )
         val sectionId = ThingId("R156465")
 
@@ -329,9 +329,9 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
         val contributorId = ContributorId(UUID.randomUUID())
 
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
+            contributorId = contributorId,
             label = section.heading,
-            classes = setOfNotNull(Classes.section, section.`class`),
-            contributorId = contributorId
+            classes = setOfNotNull(Classes.section, section.`class`)
         )
         val sectionId = ThingId("R156465")
         val literalCreateCommand = CreateLiteralUseCase.CreateCommand(

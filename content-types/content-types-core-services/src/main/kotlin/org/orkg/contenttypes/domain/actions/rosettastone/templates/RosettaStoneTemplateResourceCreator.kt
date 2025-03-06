@@ -15,9 +15,9 @@ class RosettaStoneTemplateResourceCreator(
     ): CreateRosettaStoneTemplateState {
         val rosettaStoneTemplateId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
+                contributorId = command.contributorId,
                 label = command.label,
                 classes = setOf(Classes.rosettaNodeShape),
-                contributorId = command.contributorId,
                 observatoryId = command.observatories.firstOrNull(),
                 organizationId = command.organizations.firstOrNull()
             )

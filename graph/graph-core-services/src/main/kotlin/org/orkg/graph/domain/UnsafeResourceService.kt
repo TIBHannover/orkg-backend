@@ -24,7 +24,7 @@ class UnsafeResourceService(
             classes = command.classes,
             extractionMethod = command.extractionMethod ?: ExtractionMethod.UNKNOWN,
             createdAt = OffsetDateTime.now(clock),
-            createdBy = command.contributorId ?: ContributorId.UNKNOWN,
+            createdBy = command.contributorId,
             observatoryId = command.observatoryId ?: ObservatoryId.UNKNOWN,
             organizationId = command.organizationId ?: OrganizationId.UNKNOWN,
             modifiable = command.modifiable
@@ -34,13 +34,12 @@ class UnsafeResourceService(
     }
 
     override fun update(command: UpdateCommand) {
-        if (!command.hasNoContents()) {
-            val resource = repository.findById(command.id)
-                .orElseThrow { ResourceNotFound.withId(command.id) }
-            val updated = resource.apply(command)
-            if (updated != resource) {
-                repository.save(updated)
-            }
+        if (command.hasNoContents()) return
+        val resource = repository.findById(command.id)
+            .orElseThrow { ResourceNotFound.withId(command.id) }
+        val updated = resource.apply(command)
+        if (updated != resource) {
+            repository.save(updated)
         }
     }
 

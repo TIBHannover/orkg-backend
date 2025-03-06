@@ -4,12 +4,14 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.createClass
 import org.orkg.createResource
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.ResourceUseCases
+import org.orkg.testing.MockUserId
 import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
@@ -35,7 +37,11 @@ internal class ResourceServiceIntegrationTest {
     @DisplayName("should create resource from request")
     fun shouldCreateResourceFromRequest() {
         val resource = service.create(
-            CreateResourceUseCase.CreateCommand(id = ThingId("someID"), label = "Some Concept")
+            CreateResourceUseCase.CreateCommand(
+                id = ThingId("someID"),
+                contributorId = ContributorId(MockUserId.USER),
+                label = "Some Concept"
+            )
         )
 
         assertThat(resource.value).isEqualTo("someID")
@@ -215,6 +221,7 @@ internal class ResourceServiceIntegrationTest {
         repeat(5) {
             resources += service.create(
                 CreateResourceUseCase.CreateCommand(
+                    contributorId = ContributorId(MockUserId.USER),
                     label = "Testing the Darwin's naturalisation hypothesis in invasion biology",
                     classes = setOf(researchProblemClass),
                 )

@@ -47,9 +47,9 @@ class AbstractSmartReviewSectionCreator(
     ): ThingId {
         val sectionId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
+                contributorId = contributorId,
                 label = section.heading,
-                classes = setOf(Classes.comparisonSection),
-                contributorId = contributorId
+                classes = setOf(Classes.comparisonSection)
             )
         )
         section.comparison?.let { comparisonId ->
@@ -71,9 +71,9 @@ class AbstractSmartReviewSectionCreator(
     ): ThingId {
         val sectionId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
+                contributorId = contributorId,
                 label = section.heading,
-                classes = setOf(Classes.visualizationSection),
-                contributorId = contributorId
+                classes = setOf(Classes.visualizationSection)
             )
         )
         section.visualization?.let { visualizationId ->
@@ -95,9 +95,9 @@ class AbstractSmartReviewSectionCreator(
     ): ThingId {
         val sectionId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
+                contributorId = contributorId,
                 label = section.heading,
-                classes = setOf(Classes.resourceSection),
-                contributorId = contributorId
+                classes = setOf(Classes.resourceSection)
             )
         )
         section.resource?.let { resourceId ->
@@ -119,9 +119,9 @@ class AbstractSmartReviewSectionCreator(
     ): ThingId {
         val sectionId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
+                contributorId = contributorId,
                 label = section.heading,
-                classes = setOf(Classes.propertySection),
-                contributorId = contributorId
+                classes = setOf(Classes.propertySection)
             )
         )
         section.predicate?.let { predicateId ->
@@ -143,9 +143,9 @@ class AbstractSmartReviewSectionCreator(
     ): ThingId {
         val sectionId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
+                contributorId = contributorId,
                 label = section.heading,
-                classes = setOf(Classes.ontologySection),
-                contributorId = contributorId
+                classes = setOf(Classes.ontologySection)
             )
         )
         statementCollectionPropertyCreator.create(
@@ -169,9 +169,9 @@ class AbstractSmartReviewSectionCreator(
     ): ThingId {
         val sectionId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
+                contributorId = contributorId,
                 label = section.heading,
-                classes = setOfNotNull(Classes.section, section.`class`),
-                contributorId = contributorId
+                classes = setOfNotNull(Classes.section, section.`class`)
             )
         )
         val textId = unsafeLiteralUseCases.create(

@@ -88,9 +88,9 @@ class SubgraphCreator(
             if (it.key.isTempId && it.key in validatedIds) {
                 lookup[it.key] = unsafeResourceUseCases.create(
                     CreateResourceUseCase.CreateCommand(
+                        contributorId = contributorId,
                         label = it.value.label,
                         classes = it.value.classes,
-                        contributorId = contributorId,
                         extractionMethod = extractionMethod
                     )
                 )

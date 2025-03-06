@@ -11,10 +11,10 @@ class PaperSnapshotResourceCreator(
     override fun invoke(command: CreatePaperCommand, state: CreatePaperAction.State): CreatePaperAction.State {
         val paperId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
+                contributorId = command.contributorId,
                 label = command.title,
                 classes = setOf(Classes.paperVersion),
                 extractionMethod = command.extractionMethod,
-                contributorId = command.contributorId,
                 observatoryId = command.observatories.singleOrNull(),
                 organizationId = command.organizations.singleOrNull()
             )

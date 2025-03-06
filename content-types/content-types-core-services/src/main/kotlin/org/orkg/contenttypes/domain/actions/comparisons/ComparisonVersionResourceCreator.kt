@@ -12,12 +12,12 @@ class ComparisonVersionResourceCreator(
     override fun invoke(command: CreateComparisonCommand, state: State): State {
         val comparisonId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
+                contributorId = command.contributorId,
                 label = command.title,
                 classes = setOf(Classes.comparisonPublished, Classes.latestVersion),
-                contributorId = command.contributorId,
+                extractionMethod = command.extractionMethod,
                 observatoryId = command.observatories.singleOrNull(),
-                organizationId = command.organizations.singleOrNull(),
-                extractionMethod = command.extractionMethod
+                organizationId = command.organizations.singleOrNull()
             )
         )
         return state.copy(comparisonId = comparisonId)

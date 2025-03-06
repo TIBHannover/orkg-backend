@@ -90,10 +90,10 @@ class ObjectService(
         val resourceId = existingThingId
             ?: resourceService.create(
                 CreateResourceUseCase.CreateCommand(
+                    contributorId = userId,
                     label = request.resource.name,
                     classes = request.resource.classes.toThingIds(),
                     extractionMethod = request.resource.extractionMethod,
-                    contributorId = userId,
                     observatoryId = observatoryId,
                     organizationId = organizationId,
                 )
@@ -231,9 +231,9 @@ class ObjectService(
                         // Create resource
                         val newResource = resourceService.create(
                             CreateResourceUseCase.CreateCommand(
+                                contributorId = userId,
                                 label = jsonObject.label!!,
                                 classes = classes.toSet(),
-                                contributorId = userId,
                                 extractionMethod = extractionMethod,
                                 observatoryId = observatoryId,
                                 organizationId = organizationId,

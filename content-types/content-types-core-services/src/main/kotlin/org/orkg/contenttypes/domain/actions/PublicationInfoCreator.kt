@@ -93,9 +93,9 @@ abstract class PublicationInfoCreator(
             pageable = PageRequests.SINGLE
         ).content.singleOrNull()?.id ?: unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
+                contributorId = contributorId,
                 label = publishedIn,
-                classes = setOf(Classes.venue),
-                contributorId = contributorId
+                classes = setOf(Classes.venue)
             )
         )
         unsafeStatementUseCases.create(

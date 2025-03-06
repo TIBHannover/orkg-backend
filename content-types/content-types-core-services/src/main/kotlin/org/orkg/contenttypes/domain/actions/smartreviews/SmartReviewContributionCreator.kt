@@ -16,12 +16,12 @@ class SmartReviewContributionCreator(
     override fun invoke(command: CreateSmartReviewCommand, state: State): State {
         val contributionId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
+                contributorId = command.contributorId,
                 label = command.title,
                 classes = setOf(Classes.contribution, Classes.contributionSmartReview),
-                contributorId = command.contributorId,
+                extractionMethod = command.extractionMethod,
                 observatoryId = command.observatories.singleOrNull(),
-                organizationId = command.organizations.singleOrNull(),
-                extractionMethod = command.extractionMethod
+                organizationId = command.organizations.singleOrNull()
             )
         )
         unsafeStatementUseCases.create(

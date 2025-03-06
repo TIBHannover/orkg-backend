@@ -25,10 +25,10 @@ internal class SmartReviewVersionResourceCreatorUnitTest : MockkBaseTest {
         val state = CreateSmartReviewState()
 
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
+            contributorId = command.contributorId,
             label = command.title,
             classes = setOf(Classes.smartReviewPublished),
             extractionMethod = command.extractionMethod,
-            contributorId = command.contributorId,
             observatoryId = command.observatories.firstOrNull(),
             organizationId = command.organizations.firstOrNull()
         )

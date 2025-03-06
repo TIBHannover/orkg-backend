@@ -12,12 +12,12 @@ class LiteratureListVersionResourceCreator(
     override fun invoke(command: CreateLiteratureListCommand, state: State): State {
         val literatureListId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
+                contributorId = command.contributorId,
                 label = command.title,
                 classes = setOf(Classes.literatureListPublished),
-                contributorId = command.contributorId,
+                extractionMethod = command.extractionMethod,
                 observatoryId = command.observatories.singleOrNull(),
-                organizationId = command.organizations.singleOrNull(),
-                extractionMethod = command.extractionMethod
+                organizationId = command.organizations.singleOrNull()
             )
         )
         return state.copy(literatureListId = literatureListId)

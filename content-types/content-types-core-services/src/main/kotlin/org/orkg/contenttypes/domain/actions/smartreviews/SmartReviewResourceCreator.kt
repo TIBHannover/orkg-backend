@@ -12,12 +12,12 @@ class SmartReviewResourceCreator(
     override fun invoke(command: CreateSmartReviewCommand, state: State): State {
         val smartReviewId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
+                contributorId = command.contributorId,
                 label = command.title,
                 classes = setOf(Classes.smartReview),
-                contributorId = command.contributorId,
+                extractionMethod = command.extractionMethod,
                 observatoryId = command.observatories.singleOrNull(),
-                organizationId = command.organizations.singleOrNull(),
-                extractionMethod = command.extractionMethod
+                organizationId = command.organizations.singleOrNull()
             )
         )
         return state.copy(smartReviewId = smartReviewId)

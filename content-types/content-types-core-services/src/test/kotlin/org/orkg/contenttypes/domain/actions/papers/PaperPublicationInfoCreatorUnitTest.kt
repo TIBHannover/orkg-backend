@@ -284,9 +284,9 @@ internal class PaperPublicationInfoCreatorUnitTest : MockkBaseTest {
             paperId = paperId
         )
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
+            contributorId = command.contributorId,
             label = venue,
-            classes = setOf(Classes.venue),
-            contributorId = command.contributorId
+            classes = setOf(Classes.venue)
         )
         val venueId = ThingId("R456")
 

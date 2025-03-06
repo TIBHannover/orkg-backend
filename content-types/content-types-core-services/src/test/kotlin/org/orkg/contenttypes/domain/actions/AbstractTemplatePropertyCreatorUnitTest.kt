@@ -533,9 +533,9 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
         every {
             unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
+                    contributorId = property.contributorId,
                     label = property.label,
-                    classes = setOf(Classes.propertyShape),
-                    contributorId = property.contributorId
+                    classes = setOf(Classes.propertyShape)
                 )
             )
         } returns propertyId
@@ -671,9 +671,9 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
+                    contributorId = property.contributorId,
                     label = property.label,
-                    classes = setOf(Classes.propertyShape),
-                    contributorId = property.contributorId
+                    classes = setOf(Classes.propertyShape)
                 )
             )
         }

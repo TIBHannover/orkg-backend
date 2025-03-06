@@ -144,10 +144,10 @@ class LegacyPaperService(
         // paper title
         val paperId = resourceService.create(
             CreateResourceUseCase.CreateCommand(
+                contributorId = userId,
                 label = request.paper.title,
                 classes = setOf(Classes.paper),
                 extractionMethod = request.paper.extractionMethod,
-                contributorId = userId,
                 observatoryId = observatoryId,
                 organizationId = organizationId
             )
@@ -271,10 +271,10 @@ class LegacyPaperService(
         ).singleOrNull() ?: run {
             val resourceId = resourceService.create(
                 CreateResourceUseCase.CreateCommand(
+                    contributorId = userId,
                     label = venue,
                     classes = setOf(Classes.venue),
                     extractionMethod = extractionMethod,
-                    contributorId = userId,
                     observatoryId = observatoryId,
                     organizationId = organizationId
                 )
@@ -327,10 +327,10 @@ class LegacyPaperService(
                             // create resource
                             val authorId = resourceService.create(
                                 CreateResourceUseCase.CreateCommand(
+                                    contributorId = userId,
                                     label = it.label!!,
                                     classes = setOf(Classes.author),
                                     extractionMethod = paper.paper.extractionMethod,
-                                    contributorId = userId,
                                     observatoryId = observatoryId,
                                     organizationId = organizationId
                                 )

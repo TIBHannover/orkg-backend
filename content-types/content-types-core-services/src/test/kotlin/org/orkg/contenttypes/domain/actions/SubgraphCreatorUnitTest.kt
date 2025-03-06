@@ -81,9 +81,9 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         every {
             unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
+                    contributorId = contributorId,
                     label = resourceDefinition.label,
                     classes = resourceDefinition.classes,
-                    contributorId = contributorId,
                     extractionMethod = ExtractionMethod.MANUAL
                 )
             )
@@ -100,9 +100,9 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
+                    contributorId = contributorId,
                     label = resourceDefinition.label,
                     classes = resourceDefinition.classes,
-                    contributorId = contributorId,
                     extractionMethod = ExtractionMethod.MANUAL
                 )
             )
@@ -524,9 +524,9 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         every {
             unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
+                    contributorId = contributorId,
                     label = resourceDefinition.label,
                     classes = resourceDefinition.classes,
-                    contributorId = contributorId,
                     extractionMethod = ExtractionMethod.MANUAL
                 )
             )
@@ -574,9 +574,9 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
+                    contributorId = contributorId,
                     label = resourceDefinition.label,
                     classes = resourceDefinition.classes,
-                    contributorId = contributorId,
                     extractionMethod = ExtractionMethod.MANUAL
                 )
             )

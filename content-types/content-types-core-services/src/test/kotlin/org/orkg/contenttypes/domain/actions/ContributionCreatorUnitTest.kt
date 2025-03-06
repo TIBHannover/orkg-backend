@@ -49,9 +49,9 @@ internal class ContributionCreatorUnitTest : MockkBaseTest {
         every {
             unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
+                    contributorId = contributorId,
                     label = contributionDefinition.label,
                     classes = setOf(Classes.contribution),
-                    contributorId = contributorId,
                     extractionMethod = ExtractionMethod.MANUAL
                 )
             )
@@ -92,9 +92,9 @@ internal class ContributionCreatorUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
+                    contributorId = contributorId,
                     label = contributionDefinition.label,
                     classes = setOf(Classes.contribution),
-                    contributorId = contributorId,
                     extractionMethod = ExtractionMethod.MANUAL
                 )
             )

@@ -96,10 +96,10 @@ interface CreateResourceUseCase {
 
     data class CreateCommand(
         val id: ThingId? = null,
+        val contributorId: ContributorId,
         val label: String,
         val classes: Set<ThingId> = emptySet(),
         val extractionMethod: ExtractionMethod? = null,
-        val contributorId: ContributorId? = null,
         val observatoryId: ObservatoryId? = null,
         val organizationId: OrganizationId? = null,
         val modifiable: Boolean = true,

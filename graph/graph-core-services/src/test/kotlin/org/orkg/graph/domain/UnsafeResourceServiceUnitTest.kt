@@ -32,10 +32,10 @@ internal class UnsafeResourceServiceUnitTest : MockkBaseTest {
         val id = ThingId("R123")
         val command = CreateResourceUseCase.CreateCommand(
             id = id,
+            contributorId = ContributorId(MockUserId.USER),
             label = "label",
             classes = setOf(Classes.paper),
             extractionMethod = ExtractionMethod.MANUAL,
-            contributorId = ContributorId(MockUserId.USER),
             observatoryId = ObservatoryId("1255bbe4-1850-4033-ba10-c80d4b370e3e"),
             organizationId = OrganizationId("56a4b65e-de56-0d4b-255b-255b372b65ef"),
             modifiable = false
@@ -68,7 +68,9 @@ internal class UnsafeResourceServiceUnitTest : MockkBaseTest {
     @Test
     fun `Given a resource create command, when using minimal inputs, it assigns a new id and creates a new resource`() {
         val id = ThingId("R123")
+        val contributorId = ContributorId(MockUserId.USER)
         val command = CreateResourceUseCase.CreateCommand(
+            contributorId = contributorId,
             label = "label"
         )
 
@@ -85,7 +87,7 @@ internal class UnsafeResourceServiceUnitTest : MockkBaseTest {
                     it.label shouldBe command.label
                     it.createdAt shouldBe OffsetDateTime.now(fixedClock)
                     it.classes shouldBe command.classes
-                    it.createdBy shouldBe ContributorId.UNKNOWN
+                    it.createdBy shouldBe contributorId
                     it.observatoryId shouldBe ObservatoryId.UNKNOWN
                     it.extractionMethod shouldBe ExtractionMethod.UNKNOWN
                     it.organizationId shouldBe OrganizationId.UNKNOWN

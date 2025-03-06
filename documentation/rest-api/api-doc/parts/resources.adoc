@@ -38,7 +38,7 @@ operation::resources-add[snippets='request-fields,curl-request,response-headers,
 [[resources-edit]]
 == Updating Resources
 
-A `PUT` request updates a resource with a new given label.
+A `PUT` request updates a resource with the given parameters.
 The response will be `200 OK` when successful.
 The created resource is returned in the body for convenience.
 

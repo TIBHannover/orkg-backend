@@ -12,12 +12,12 @@ class TemplateResourceCreator(
     override fun invoke(command: CreateTemplateCommand, state: State): State {
         val templateId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
+                contributorId = command.contributorId,
                 label = command.label,
                 classes = setOf(Classes.nodeShape),
-                contributorId = command.contributorId,
+                extractionMethod = command.extractionMethod,
                 observatoryId = command.observatories.firstOrNull(),
-                organizationId = command.organizations.firstOrNull(),
-                extractionMethod = command.extractionMethod
+                organizationId = command.organizations.firstOrNull()
             )
         )
         return state.copy(templateId = templateId)

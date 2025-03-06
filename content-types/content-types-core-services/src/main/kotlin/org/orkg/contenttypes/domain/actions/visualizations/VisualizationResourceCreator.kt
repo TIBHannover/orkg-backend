@@ -12,10 +12,10 @@ class VisualizationResourceCreator(
     override operator fun invoke(command: CreateVisualizationCommand, state: State): State {
         val visualizationId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
+                contributorId = command.contributorId,
                 label = command.title,
                 classes = setOf(Classes.visualization),
                 extractionMethod = command.extractionMethod,
-                contributorId = command.contributorId,
                 observatoryId = command.observatories.firstOrNull(),
                 organizationId = command.organizations.firstOrNull()
             )

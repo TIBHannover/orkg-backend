@@ -48,18 +48,18 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
         every {
             unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
+                    contributorId = contributorId,
                     label = "",
-                    classes = setOf(Classes.listSection),
-                    contributorId = contributorId
+                    classes = setOf(Classes.listSection)
                 )
             )
         } returns sectionId
         every {
             unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
+                    contributorId = contributorId,
                     label = "Entry",
-                    classes = setOf(Classes.listSection),
-                    contributorId = contributorId
+                    classes = setOf(Classes.listSection)
                 )
             )
         } returns entryId
@@ -100,18 +100,18 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
+                    contributorId = contributorId,
                     label = "",
-                    classes = setOf(Classes.listSection),
-                    contributorId = contributorId
+                    classes = setOf(Classes.listSection)
                 )
             )
         }
         verify(exactly = 1) {
             unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
+                    contributorId = contributorId,
                     label = "Entry",
-                    classes = setOf(Classes.listSection),
-                    contributorId = contributorId
+                    classes = setOf(Classes.listSection)
                 )
             )
         }
@@ -168,18 +168,18 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
         every {
             unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
+                    contributorId = contributorId,
                     label = "",
-                    classes = setOf(Classes.listSection),
-                    contributorId = contributorId
+                    classes = setOf(Classes.listSection)
                 )
             )
         } returns sectionId
         every {
             unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
+                    contributorId = contributorId,
                     label = "Entry",
-                    classes = setOf(Classes.listSection),
-                    contributorId = contributorId
+                    classes = setOf(Classes.listSection)
                 )
             )
         } returns entryId
@@ -209,18 +209,18 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
+                    contributorId = contributorId,
                     label = "",
-                    classes = setOf(Classes.listSection),
-                    contributorId = contributorId
+                    classes = setOf(Classes.listSection)
                 )
             )
         }
         verify(exactly = 1) {
             unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
+                    contributorId = contributorId,
                     label = "Entry",
-                    classes = setOf(Classes.listSection),
-                    contributorId = contributorId
+                    classes = setOf(Classes.listSection)
                 )
             )
         }
@@ -257,9 +257,9 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
         every {
             unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
+                    contributorId = contributorId,
                     label = section.heading,
-                    classes = setOf(Classes.textSection),
-                    contributorId = contributorId
+                    classes = setOf(Classes.textSection)
                 )
             )
         } returns sectionId
@@ -306,9 +306,9 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
+                    contributorId = contributorId,
                     label = section.heading,
-                    classes = setOf(Classes.textSection),
-                    contributorId = contributorId
+                    classes = setOf(Classes.textSection)
                 )
             )
         }

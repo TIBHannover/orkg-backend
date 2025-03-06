@@ -15,12 +15,12 @@ class LiteratureListResourceCreator(
     ): CreateLiteratureListState {
         val literatureListId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
+                contributorId = command.contributorId,
                 label = command.title,
                 classes = setOf(Classes.literatureList),
-                contributorId = command.contributorId,
+                extractionMethod = command.extractionMethod,
                 observatoryId = command.observatories.singleOrNull(),
-                organizationId = command.organizations.singleOrNull(),
-                extractionMethod = command.extractionMethod
+                organizationId = command.organizations.singleOrNull()
             )
         )
         return state.copy(literatureListId = literatureListId)

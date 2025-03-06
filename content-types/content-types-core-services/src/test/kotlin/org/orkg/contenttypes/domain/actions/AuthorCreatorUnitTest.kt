@@ -215,9 +215,9 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
         val authorId = ThingId("R456")
         val contributorId = ContributorId(UUID.randomUUID())
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
+            contributorId = contributorId,
             label = author.name,
-            classes = setOf(Classes.author),
-            contributorId = contributorId
+            classes = setOf(Classes.author)
         )
         val orcidLiteralId = ThingId("L65412")
         val homepageLiteralId = ThingId("L13254")

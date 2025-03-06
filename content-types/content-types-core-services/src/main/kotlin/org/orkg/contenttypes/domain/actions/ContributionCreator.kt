@@ -59,9 +59,9 @@ class ContributionCreator(
         val contributions = contributionDefinitions.mapIndexed { index, contribution ->
             val contributionId = unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
+                    contributorId = contributorId,
                     label = contribution.label,
                     classes = contribution.classes + Classes.contribution,
-                    contributorId = contributorId,
                     extractionMethod = extractionMethod
                 )
             )

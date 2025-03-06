@@ -103,10 +103,10 @@ class ResourceController(
         val id = service.create(
             CreateResourceUseCase.CreateCommand(
                 id = request.id,
+                contributorId = currentUser.contributorId(),
                 label = request.label,
                 classes = request.classes,
                 extractionMethod = request.extractionMethod,
-                contributorId = currentUser.contributorId(),
                 observatoryId = contributor.map { it.observatoryId }.orElse(ObservatoryId.UNKNOWN),
                 organizationId = contributor.map { it.organizationId }.orElse(OrganizationId.UNKNOWN),
             )

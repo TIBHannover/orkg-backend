@@ -101,10 +101,10 @@ fun CreateResourceUseCase.createResource(
 ): ThingId = create(
     CreateResourceUseCase.CreateCommand(
         id = id?.let(::ThingId),
+        contributorId = userId,
         label = label,
         classes = classes.map(::ThingId).toSet(),
         extractionMethod = extractionMethod ?: ExtractionMethod.UNKNOWN,
-        contributorId = userId,
         observatoryId = observatoryId,
         organizationId = organizationId,
         modifiable = modifiable

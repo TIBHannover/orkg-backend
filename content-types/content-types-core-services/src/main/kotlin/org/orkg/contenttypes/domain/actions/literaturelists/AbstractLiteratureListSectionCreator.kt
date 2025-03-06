@@ -35,9 +35,9 @@ class AbstractLiteratureListSectionCreator(
     ): ThingId {
         val entryId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
+                contributorId = contributorId,
                 label = "Entry",
-                classes = setOf(Classes.listSection),
-                contributorId = contributorId
+                classes = setOf(Classes.listSection)
             )
         )
         unsafeStatementUseCases.create(
@@ -73,9 +73,9 @@ class AbstractLiteratureListSectionCreator(
     ): ThingId {
         val sectionId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
+                contributorId = contributorId,
                 label = "",
-                classes = setOf(Classes.listSection),
-                contributorId = contributorId
+                classes = setOf(Classes.listSection)
             )
         )
         section.entries.forEach {
@@ -98,9 +98,9 @@ class AbstractLiteratureListSectionCreator(
     ): ThingId {
         val sectionId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
+                contributorId = contributorId,
                 label = section.heading,
-                classes = setOf(Classes.textSection),
-                contributorId = contributorId
+                classes = setOf(Classes.textSection)
             )
         )
         val headingSizeId = unsafeLiteralUseCases.create(

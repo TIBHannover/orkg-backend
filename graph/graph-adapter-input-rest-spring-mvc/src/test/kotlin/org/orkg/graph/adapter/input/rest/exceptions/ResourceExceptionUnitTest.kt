@@ -7,6 +7,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.graph.adapter.input.rest.exceptions.ResourceExceptionUnitTest.TestController
 import org.orkg.graph.domain.ExternalResourceNotFound
+import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.domain.ResourceNotModifiable
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcBaseTest
@@ -39,6 +40,21 @@ internal class ResourceExceptionUnitTest : MockMvcBaseTest("exceptions") {
     }
 
     @Test
+    fun resourceNotFound() {
+        val id = "R123"
+
+        get("/resource-not-found")
+            .param("id", id)
+            .perform()
+            .andExpect(status().isNotFound)
+            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
+            .andExpect(jsonPath("$.error", `is`("Not Found")))
+            .andExpect(jsonPath("$.path").value("/resource-not-found"))
+            .andExpect(jsonPath("$.message").value("""Resource "$id" not found."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
     fun externalResourceNotFound() {
         val id = "R123"
         val ontologyId = "skos"
@@ -62,6 +78,11 @@ internal class ResourceExceptionUnitTest : MockMvcBaseTest("exceptions") {
         fun resourceNotModifiable(
             @RequestParam id: ThingId,
         ): Unit = throw ResourceNotModifiable(id)
+
+        @GetMapping("/resource-not-found")
+        fun resourceNotFound(
+            @RequestParam id: ThingId,
+        ): Unit = throw ResourceNotFound.withId(id)
 
         @GetMapping("/external-resource-not-found")
         fun externalResourceNotFound(

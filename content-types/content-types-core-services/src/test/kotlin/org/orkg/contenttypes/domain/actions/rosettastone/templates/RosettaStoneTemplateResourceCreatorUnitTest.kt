@@ -25,9 +25,9 @@ internal class RosettaStoneTemplateResourceCreatorUnitTest : MockkBaseTest {
         val state = CreateRosettaStoneTemplateState()
 
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
+            contributorId = command.contributorId,
             label = command.label,
             classes = setOf(Classes.rosettaNodeShape),
-            contributorId = command.contributorId,
             observatoryId = command.observatories.firstOrNull(),
             organizationId = command.organizations.firstOrNull()
         )

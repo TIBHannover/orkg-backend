@@ -30,9 +30,9 @@ class AbstractTemplatePropertyCreator(
     ): ThingId {
         val propertyId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
+                contributorId = contributorId,
                 label = property.label,
-                classes = setOf(Classes.propertyShape),
-                contributorId = contributorId
+                classes = setOf(Classes.propertyShape)
             )
         )
         property.placeholder?.let { placeholder ->

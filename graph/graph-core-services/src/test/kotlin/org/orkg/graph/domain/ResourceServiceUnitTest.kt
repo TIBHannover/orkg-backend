@@ -63,10 +63,10 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
         val id = ThingId("R123")
         val command = CreateResourceUseCase.CreateCommand(
             id = id,
+            contributorId = ContributorId(MockUserId.USER),
             label = "label",
             classes = setOf(Classes.paper),
             extractionMethod = ExtractionMethod.MANUAL,
-            contributorId = ContributorId(MockUserId.USER),
             observatoryId = ObservatoryId("1255bbe4-1850-4033-ba10-c80d4b370e3e"),
             organizationId = OrganizationId("56a4b65e-de56-0d4b-255b-255b372b65ef"),
             modifiable = false
@@ -87,6 +87,7 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
     fun `given a resource create command, when inputs are minimal, it creates a new resource`() {
         val id = ThingId("R123")
         val command = CreateResourceUseCase.CreateCommand(
+            contributorId = ContributorId(MockUserId.USER),
             label = "label"
         )
 
@@ -102,6 +103,7 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
         val id = ThingId("R123")
         val command = CreateResourceUseCase.CreateCommand(
             id = id,
+            contributorId = ContributorId(MockUserId.USER),
             label = "\n",
             classes = setOf(Classes.paper)
         )
@@ -112,6 +114,7 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
     @Test
     fun `given a resource create command, when reserved class is specified in class list, it throws an exception`() {
         val command = CreateResourceUseCase.CreateCommand(
+            contributorId = ContributorId(MockUserId.USER),
             label = "label",
             classes = setOf(reservedClassIds.first())
         )
@@ -122,6 +125,7 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
     @Test
     fun `given a resource create command, when specified class does not exist, it throws an exception`() {
         val command = CreateResourceUseCase.CreateCommand(
+            contributorId = ContributorId(MockUserId.USER),
             label = "label",
             classes = setOf(Classes.paper)
         )
@@ -131,6 +135,22 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
         assertThrows<InvalidClassCollection> { service.create(command) }
 
         verify(exactly = 1) { classRepository.existsAllById(command.classes) }
+    }
+
+    @Test
+    fun `given a resource create command, when id already exists, it throws an exception`() {
+        val id = ThingId("R123")
+        val command = CreateResourceUseCase.CreateCommand(
+            id = id,
+            contributorId = ContributorId(MockUserId.USER),
+            label = "label"
+        )
+
+        every { repository.findById(id) } returns Optional.of(createResource(id))
+
+        assertThrows<ResourceAlreadyExists> { service.create(command) }
+
+        verify(exactly = 1) { repository.findById(id) }
     }
 
     @Test
@@ -261,6 +281,21 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
         verify(exactly = 1) { thingRepository.isUsedAsObject(mockResource.id) }
         verify(exactly = 1) { contributorRepository.findById(loggedInUserId) }
         verify(exactly = 0) { unsafeResourceUseCases.delete(mockResource.id, loggedInUserId) }
+    }
+
+    @Test
+    fun `Given a resource update command, when resource does not exist, it throws an exception`() {
+        val command = UpdateResourceUseCase.UpdateCommand(
+            id = ThingId("R123"),
+            contributorId = ContributorId(MockUserId.USER),
+            label = "new label"
+        )
+
+        every { repository.findById(any()) } returns Optional.empty()
+
+        shouldThrow<ResourceNotFound> { service.update(command) }
+
+        verify(exactly = 1) { repository.findById(any()) }
     }
 
     @Test
@@ -635,6 +670,31 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { repository.findById(resource.id) }
         verify(exactly = 1) { repository.save(withArg { it.unlistedBy shouldBe resource.unlistedBy }) }
+    }
+
+    @Test
+    fun `Given a resource update command, when updating with the same values, it does nothing`() {
+        val resource = createResource()
+        val contributorId = ContributorId(MockUserId.USER)
+
+        every { repository.findById(resource.id) } returns Optional.of(resource)
+
+        service.update(
+            UpdateResourceUseCase.UpdateCommand(
+                id = resource.id,
+                contributorId = contributorId,
+                label = resource.label,
+                classes = resource.classes,
+                observatoryId = resource.observatoryId,
+                organizationId = resource.organizationId,
+                extractionMethod = resource.extractionMethod,
+                modifiable = resource.modifiable,
+                visibility = resource.visibility,
+                verified = resource.verified,
+            )
+        )
+
+        verify(exactly = 1) { repository.findById(resource.id) }
     }
 
     @Test

@@ -25,12 +25,12 @@ internal class TemplateResourceCreatorUnitTest : MockkBaseTest {
         val state = CreateTemplateState()
 
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
+            contributorId = command.contributorId,
             label = command.label,
             classes = setOf(Classes.nodeShape),
-            contributorId = command.contributorId,
+            extractionMethod = command.extractionMethod,
             observatoryId = command.observatories.firstOrNull(),
-            organizationId = command.organizations.firstOrNull(),
-            extractionMethod = command.extractionMethod
+            organizationId = command.organizations.firstOrNull()
         )
         val id = ThingId("Template")
 

@@ -25,10 +25,10 @@ internal class VisualizationResourceCreatorUnitTest : MockkBaseTest {
         val state = VisualizationState()
 
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
+            contributorId = command.contributorId,
             label = command.title,
             classes = setOf(Classes.visualization),
             extractionMethod = command.extractionMethod,
-            contributorId = command.contributorId,
             observatoryId = command.observatories.firstOrNull(),
             organizationId = command.organizations.firstOrNull()
         )

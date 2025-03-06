@@ -1,6 +1,8 @@
 package org.orkg.contenttypes.domain
 
+import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
+import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.contenttypes.output.LiteratureListRepository
@@ -8,12 +10,16 @@ import org.orkg.contenttypes.output.PaperRepository
 import org.orkg.contenttypes.output.SmartReviewRepository
 import org.orkg.contenttypes.output.TemplateRepository
 import org.orkg.contenttypes.output.VisualizationRepository
+import org.orkg.graph.domain.Resources
+import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.statistics.domain.CachedMetric
 import org.orkg.statistics.domain.Metric
 import org.orkg.statistics.domain.ParameterSpec
 import org.springframework.cache.CacheManager
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 
 private val researchFieldParameter = ParameterSpec(
     name = "Research field id filter",
@@ -36,10 +42,77 @@ private val observatoryIdParameter = ParameterSpec(
     parser = ::ObservatoryId
 )
 
+private val organizationIdParameter = ParameterSpec(
+    name = "Organization id filter",
+    description = "Filter for organization id.",
+    type = OrganizationId::class,
+    parser = ::OrganizationId
+)
+
+private val createdByParameter = ParameterSpec(
+    name = "Created by filter",
+    description = "Filter for the original creator.",
+    type = ContributorId::class,
+    parser = ::ContributorId
+)
+
+private val createdAtStartParameter = ParameterSpec(
+    name = "Creation time start filter",
+    description = "Filter for the created at timestamp, marking the oldest timestamp.",
+    type = OffsetDateTime::class,
+    parser = { OffsetDateTime.parse(it, DateTimeFormatter.ISO_DATE_TIME) }
+)
+
+private val createdAtEndParameter = ParameterSpec(
+    name = "Creation time end filter",
+    description = "Filter for the created at timestamp, marking the most recent timestamp.",
+    type = OffsetDateTime::class,
+    parser = { OffsetDateTime.parse(it, DateTimeFormatter.ISO_DATE_TIME) }
+)
+
+private val visibilityParameter = ParameterSpec(
+    name = "Visibility filter",
+    description = "Filter for visibility.",
+    type = VisibilityFilter::class,
+    values = VisibilityFilter.entries,
+    parser = VisibilityFilter::valueOf
+)
+
+private val sdgParameter = ParameterSpec(
+    name = "Sustainable Development Goal filter",
+    description = "Filter for a Sustainable Development Goal.",
+    type = ThingId::class,
+    values = Resources.sustainableDevelopmentGoals,
+    parser = ::ThingId
+)
+
 private val sharedContentTypeParameters = mapOf(
     "research_field" to researchFieldParameter,
     "include_subfields" to includeSubfieldsParameter,
     "observatory_id" to observatoryIdParameter,
+    "organization_id" to organizationIdParameter,
+    "created_by" to createdByParameter,
+    "created_at_start" to createdAtStartParameter,
+    "created_at_end" to createdAtEndParameter,
+    "visibility" to visibilityParameter,
+)
+
+private val publishedParameter = ParameterSpec(
+    name = "Published filter",
+    description = "Filter for publication state.",
+    type = Boolean::class,
+    parser = { it.toBoolean() }
+)
+
+private val publishableContentTypeParameters = sharedContentTypeParameters + mapOf(
+    "published" to publishedParameter
+)
+
+private val verifiedParameter = ParameterSpec(
+    name = "Verified filter",
+    description = "Filter for verified state.",
+    type = Boolean::class,
+    parser = { it.toBoolean() }
 )
 
 @Configuration
@@ -53,12 +126,22 @@ class ContentTypeMetrics {
         name = "paper-count",
         description = "Number of papers in the graph.",
         group = "content-types",
-        parameterSpecs = sharedContentTypeParameters,
+        parameterSpecs = sharedContentTypeParameters + mapOf(
+            "verified" to verifiedParameter,
+            "sdg" to sdgParameter
+        ),
         supplier = { parameters ->
             paperRepository.count(
                 researchField = parameters[researchFieldParameter],
                 includeSubfields = parameters[includeSubfieldsParameter] ?: false,
-                observatoryId = parameters[observatoryIdParameter]
+                observatoryId = parameters[observatoryIdParameter],
+                organizationId = parameters[organizationIdParameter],
+                createdBy = parameters[createdByParameter],
+                createdAtStart = parameters[createdAtStartParameter],
+                createdAtEnd = parameters[createdAtEndParameter],
+                visibility = parameters[visibilityParameter],
+                sustainableDevelopmentGoal = parameters[sdgParameter],
+                verified = parameters[verifiedParameter],
             )
         }
     )
@@ -72,13 +155,21 @@ class ContentTypeMetrics {
         name = "comparison-count",
         description = "Number of comparisons in the graph.",
         group = "content-types",
-        parameterSpecs = sharedContentTypeParameters,
+        parameterSpecs = publishableContentTypeParameters + mapOf(
+            "sdg" to sdgParameter
+        ),
         supplier = { parameters ->
             comparisonRepository.count(
                 researchField = parameters[researchFieldParameter],
                 includeSubfields = parameters[includeSubfieldsParameter] ?: false,
                 observatoryId = parameters[observatoryIdParameter],
-                published = false
+                organizationId = parameters[organizationIdParameter],
+                createdBy = parameters[createdByParameter],
+                createdAtStart = parameters[createdAtStartParameter],
+                createdAtEnd = parameters[createdAtEndParameter],
+                visibility = parameters[visibilityParameter],
+                sustainableDevelopmentGoal = parameters[sdgParameter],
+                published = parameters[publishedParameter],
             )
         }
     )
@@ -97,7 +188,12 @@ class ContentTypeMetrics {
             visualizationRepository.count(
                 researchField = parameters[researchFieldParameter],
                 includeSubfields = parameters[includeSubfieldsParameter] ?: false,
-                observatoryId = parameters[observatoryIdParameter]
+                observatoryId = parameters[observatoryIdParameter],
+                organizationId = parameters[organizationIdParameter],
+                createdBy = parameters[createdByParameter],
+                createdAtStart = parameters[createdAtStartParameter],
+                createdAtEnd = parameters[createdAtEndParameter],
+                visibility = parameters[visibilityParameter],
             )
         }
     )
@@ -111,13 +207,21 @@ class ContentTypeMetrics {
         name = "literature-list-count",
         description = "Number of literature lists in the graph.",
         group = "content-types",
-        parameterSpecs = sharedContentTypeParameters,
+        parameterSpecs = publishableContentTypeParameters + mapOf(
+            "sdg" to sdgParameter
+        ),
         supplier = { parameters ->
             literatureListRepository.count(
                 researchField = parameters[researchFieldParameter],
                 includeSubfields = parameters[includeSubfieldsParameter] ?: false,
                 observatoryId = parameters[observatoryIdParameter],
-                published = false
+                organizationId = parameters[organizationIdParameter],
+                createdBy = parameters[createdByParameter],
+                createdAtStart = parameters[createdAtStartParameter],
+                createdAtEnd = parameters[createdAtEndParameter],
+                visibility = parameters[visibilityParameter],
+                sustainableDevelopmentGoal = parameters[sdgParameter],
+                published = parameters[publishedParameter],
             )
         }
     )
@@ -131,13 +235,21 @@ class ContentTypeMetrics {
         name = "smart-review-count",
         description = "Number of smart reviews in the graph.",
         group = "content-types",
-        parameterSpecs = sharedContentTypeParameters,
+        parameterSpecs = publishableContentTypeParameters + mapOf(
+            "sdg" to sdgParameter
+        ),
         supplier = { parameters ->
             smartReviewRepository.count(
                 researchField = parameters[researchFieldParameter],
                 includeSubfields = parameters[includeSubfieldsParameter] ?: false,
                 observatoryId = parameters[observatoryIdParameter],
-                published = false
+                organizationId = parameters[organizationIdParameter],
+                createdBy = parameters[createdByParameter],
+                createdAtStart = parameters[createdAtStartParameter],
+                createdAtEnd = parameters[createdAtEndParameter],
+                visibility = parameters[visibilityParameter],
+                sustainableDevelopmentGoal = parameters[sdgParameter],
+                published = parameters[publishedParameter],
             )
         }
     )
@@ -156,7 +268,12 @@ class ContentTypeMetrics {
             templateRepository.count(
                 researchField = parameters[researchFieldParameter],
                 includeSubfields = parameters[includeSubfieldsParameter] ?: false,
-                observatoryId = parameters[observatoryIdParameter]
+                observatoryId = parameters[observatoryIdParameter],
+                organizationId = parameters[organizationIdParameter],
+                createdBy = parameters[createdByParameter],
+                createdAtStart = parameters[createdAtStartParameter],
+                createdAtEnd = parameters[createdAtEndParameter],
+                visibility = parameters[visibilityParameter],
             )
         }
     )

@@ -93,6 +93,7 @@ internal class StatisticsControllerUnitTest : MockMvcBaseTest("statistics") {
             name = "parameter1",
             description = "Description of the parameter.",
             type = Int::class,
+            values = listOf(0, 1, 2, 3),
             parser = { it.toInt() }
         )
         val metric = SimpleMetric(
@@ -129,6 +130,7 @@ internal class StatisticsControllerUnitTest : MockMvcBaseTest("statistics") {
                         fieldWithPath("parameters[].name").description("The name of the parameter."),
                         fieldWithPath("parameters[].description").description("The description of the parameter."),
                         fieldWithPath("parameters[].type").description("The type of the parameter."),
+                        fieldWithPath("parameters[].values[]").description("A list of possible values for the parameter. (optional)").optional(),
                     )
                 )
             )

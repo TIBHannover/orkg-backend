@@ -48,6 +48,9 @@ fun CreateClassUseCase.createClasses(vararg classes: String) =
         )
     }
 
+fun CreateClassUseCase.createClasses(vararg classes: ThingId) =
+    classes.forEach { id -> createClass(id = id.value, label = id.value) }
+
 fun CreateClassUseCase.createClass(
     label: String,
     id: String? = null,
@@ -66,6 +69,9 @@ fun CreateClassUseCase.createClass(
     )
 
 // Predicates
+
+fun CreatePredicateUseCase.createPredicates(vararg classes: ThingId) =
+    classes.forEach { id -> createPredicate(id = id, label = id.value) }
 
 fun CreatePredicateUseCase.createPredicate(
     id: ThingId? = null,

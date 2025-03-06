@@ -837,3 +837,37 @@ class TooFewIDsError(ids: List<ThingId>) :
         HttpStatus.BAD_REQUEST,
         """Too few ids: At least two ids are required. Got only "${ids.size}"."""
     )
+
+class MissingTableRows :
+    SimpleMessageException(
+        HttpStatus.BAD_REQUEST,
+        """Missing table rows. At least one rows is required."""
+    )
+
+class MissingTableHeaderValue(index: Int) :
+    SimpleMessageException(
+        HttpStatus.BAD_REQUEST,
+        """Missing table header value at index $index."""
+    )
+
+class TableHeaderValueMustBeLiteral(index: Int) :
+    SimpleMessageException(
+        HttpStatus.BAD_REQUEST,
+        """Table header value at index "$index" must be a literal."""
+    )
+
+class TooManyTableRowValues(
+    index: Int,
+    expectedSize: Int,
+) : SimpleMessageException(
+        HttpStatus.BAD_REQUEST,
+        """Row $index has more values than the header. Expected exactly $expectedSize values based on header."""
+    )
+
+class MissingTableRowValues(
+    index: Int,
+    expectedSize: Int,
+) : SimpleMessageException(
+        HttpStatus.BAD_REQUEST,
+        """Row $index has less values than the header. Expected exactly $expectedSize values based on header."""
+    )

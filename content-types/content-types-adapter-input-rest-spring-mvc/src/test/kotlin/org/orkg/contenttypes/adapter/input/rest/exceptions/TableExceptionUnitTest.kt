@@ -6,7 +6,12 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.contenttypes.adapter.input.rest.exceptions.TableExceptionUnitTest.TestController
+import org.orkg.contenttypes.domain.MissingTableHeaderValue
+import org.orkg.contenttypes.domain.MissingTableRowValues
+import org.orkg.contenttypes.domain.MissingTableRows
+import org.orkg.contenttypes.domain.TableHeaderValueMustBeLiteral
 import org.orkg.contenttypes.domain.TableNotFound
+import org.orkg.contenttypes.domain.TooManyTableRowValues
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -37,6 +42,82 @@ internal class TableExceptionUnitTest : MockMvcBaseTest("tables") {
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
+    @Test
+    fun missingTableRows() {
+        get("/missing-table-rows")
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/missing-table-rows"))
+            .andExpect(jsonPath("$.message").value("""Missing table rows. At least one rows is required."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun missingTableHeaderValue() {
+        val index = "5"
+
+        get("/missing-table-header-value")
+            .param("index", index)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/missing-table-header-value"))
+            .andExpect(jsonPath("$.message").value("""Missing table header value at index $index."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun tableHeaderValueMustBeLiteral() {
+        val index = "5"
+
+        get("/table-header-value-must-be-literal")
+            .param("index", index)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/table-header-value-must-be-literal"))
+            .andExpect(jsonPath("$.message").value("""Table header value at index "$index" must be a literal."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun tooManyTableRowValues() {
+        val index = "5"
+        val expectedSize = "10"
+
+        get("/too-many-table-row-values")
+            .param("index", index)
+            .param("expectedSize", expectedSize)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/too-many-table-row-values"))
+            .andExpect(jsonPath("$.message").value("""Row $index has more values than the header. Expected exactly $expectedSize values based on header."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun missingTableRowValues() {
+        val index = "5"
+        val expectedSize = "10"
+
+        get("/missing-table-row-values")
+            .param("index", index)
+            .param("expectedSize", expectedSize)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/missing-table-row-values"))
+            .andExpect(jsonPath("$.message").value("""Row $index has less values than the header. Expected exactly $expectedSize values based on header."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
     @TestComponent
     @RestController
     internal class TestController {
@@ -44,5 +125,30 @@ internal class TableExceptionUnitTest : MockMvcBaseTest("tables") {
         fun tableNotFound(
             @RequestParam id: ThingId,
         ): Unit = throw TableNotFound(id)
+
+        @GetMapping("/missing-table-rows")
+        fun missingTableRows(): Unit = throw MissingTableRows()
+
+        @GetMapping("/missing-table-header-value")
+        fun missingTableHeaderValue(
+            @RequestParam index: Int,
+        ): Unit = throw MissingTableHeaderValue(index)
+
+        @GetMapping("/table-header-value-must-be-literal")
+        fun tableHeaderValueMustBeLiteral(
+            @RequestParam index: Int,
+        ): Unit = throw TableHeaderValueMustBeLiteral(index)
+
+        @GetMapping("/too-many-table-row-values")
+        fun tooManyTableRowValues(
+            @RequestParam index: Int,
+            @RequestParam expectedSize: Int,
+        ): Unit = throw TooManyTableRowValues(index, expectedSize)
+
+        @GetMapping("/missing-table-row-values")
+        fun missingTableRowValues(
+            @RequestParam index: Int,
+            @RequestParam expectedSize: Int,
+        ): Unit = throw MissingTableRowValues(index, expectedSize)
     }
 }

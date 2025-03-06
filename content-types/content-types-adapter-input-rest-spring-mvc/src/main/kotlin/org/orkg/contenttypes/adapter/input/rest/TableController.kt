@@ -1,23 +1,37 @@
 package org.orkg.contenttypes.adapter.input.rest
 
+import com.fasterxml.jackson.annotation.JsonProperty
+import jakarta.validation.Valid
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.Size
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.common.annotations.RequireLogin
+import org.orkg.common.contributorId
 import org.orkg.contenttypes.adapter.input.rest.mapping.TableRepresentationAdapter
 import org.orkg.contenttypes.domain.TableNotFound
+import org.orkg.contenttypes.input.CreateTableUseCase
 import org.orkg.contenttypes.input.TableUseCases
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.format.annotation.DateTimeFormat.ISO
+import org.springframework.http.ResponseEntity
+import org.springframework.http.ResponseEntity.created
+import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.util.UriComponentsBuilder
 import java.time.OffsetDateTime
 
 const val TABLE_JSON_V1 = "application/vnd.orkg.table.v1+json"
@@ -56,4 +70,59 @@ class TableController(
             observatoryId = observatoryId,
             organizationId = organizationId
         ).mapToTableRepresentation()
+
+    @RequireLogin
+    @PostMapping(consumes = [TABLE_JSON_V1])
+    fun create(
+        @RequestBody @Valid request: CreateTableRequest,
+        uriComponentsBuilder: UriComponentsBuilder,
+        currentUser: Authentication?,
+    ): ResponseEntity<Any> {
+        val userId = currentUser.contributorId()
+        val id = service.create(request.toCreateCommand(userId))
+        val location = uriComponentsBuilder
+            .path("/api/tables/{id}")
+            .buildAndExpand(id)
+            .toUri()
+        return created(location).build()
+    }
+
+    data class CreateTableRequest(
+        @field:NotBlank
+        val label: String,
+        @field:Valid
+        val resources: Map<String, ResourceDefinitionDTO>?,
+        @field:Valid
+        val literals: Map<String, LiteralDefinitionDTO>?,
+        @field:Valid
+        val predicates: Map<String, PredicateDefinitionDTO>?,
+        @field:Valid
+        val classes: Map<String, ClassDefinitionDTO>?,
+        @field:Valid
+        val lists: Map<String, ListDefinitionDTO>?,
+        @field:Valid
+        @field:Size(min = 2)
+        val rows: List<RowDefinitionDTO>,
+        @field:Size(max = 1)
+        val observatories: List<ObservatoryId>,
+        @field:Size(max = 1)
+        val organizations: List<OrganizationId>,
+        @JsonProperty("extraction_method")
+        val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
+    ) {
+        fun toCreateCommand(contributorId: ContributorId): CreateTableUseCase.CreateCommand =
+            CreateTableUseCase.CreateCommand(
+                contributorId = contributorId,
+                label = label,
+                resources = resources?.mapValues { it.value.toCreateCommand() }.orEmpty(),
+                literals = literals?.mapValues { it.value.toCreateCommand() }.orEmpty(),
+                predicates = predicates?.mapValues { it.value.toCreateCommand() }.orEmpty(),
+                classes = classes?.mapValues { it.value.toCreateCommand() }.orEmpty(),
+                lists = lists?.mapValues { it.value.toCreateCommand() }.orEmpty(),
+                rows = rows.map { it.toRowDefinition() },
+                observatories = observatories,
+                organizations = organizations,
+                extractionMethod = extractionMethod
+            )
+    }
 }

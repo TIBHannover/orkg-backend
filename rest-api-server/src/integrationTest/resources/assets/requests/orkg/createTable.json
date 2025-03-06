@@ -1,0 +1,93 @@
+{
+    "label": "example table",
+    "resources": {
+        "#temp1": {
+            "label": "MOTO",
+            "classes": [
+                "Result"
+            ]
+        }
+    },
+    "literals": {
+        "#temp2": {
+            "label": "0.1",
+            "data_type": "xsd:decimal"
+        },
+        "#temp3": {
+            "label": "header value",
+            "data_type": "xsd:string"
+        }
+    },
+    "predicates": {
+        "#temp4": {
+            "label": "hasResult",
+            "description": "has result"
+        }
+    },
+    "classes": {
+        "#temp5": {
+            "label": "test class",
+            "uri": "https://orkg.org/class/C123"
+        }
+    },
+    "lists": {
+        "#temp6": {
+            "label": "list",
+            "elements": [
+                "#temp1",
+                "C123"
+            ]
+        }
+    },
+    "rows": [
+        {
+            "label": null,
+            "data": [
+                "#temp3", "L123"
+            ]
+        },
+        {
+            "label": "row 1",
+            "data": [
+                "#temp1", "#temp2"
+            ]
+        },
+        {
+            "label": "row 2",
+            "data": [
+                "R123", "#temp4"
+            ]
+        },
+        {
+            "label": "row 3",
+            "data": [
+                "C123", "P123"
+            ]
+        },
+        {
+            "label": "row 4",
+            "data": [
+                "#temp5", null
+            ]
+        },
+        {
+            "label": "row 5",
+            "data": [
+                null, "#temp6"
+            ]
+        },
+        {
+            "label": "row 6",
+            "data": [
+                null, null
+            ]
+        }
+    ],
+    "observatories": [
+        "1afefdd0-5c09-4c9c-b718-2b35316b56f3"
+    ],
+    "organizations": [
+        "edc18168-c4ee-4cb8-a98a-136f748e912e"
+    ],
+    "extraction_method": "MANUAL"
+}

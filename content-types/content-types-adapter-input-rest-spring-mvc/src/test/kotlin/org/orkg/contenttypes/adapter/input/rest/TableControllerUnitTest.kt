@@ -5,6 +5,8 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.every
 import io.mockk.verify
+import org.eclipse.rdf4j.common.net.ParsedIRI
+import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
@@ -15,23 +17,30 @@ import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.common.testing.fixtures.fixedClock
+import org.orkg.contenttypes.adapter.input.rest.TableController.CreateTableRequest
 import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
 import org.orkg.contenttypes.domain.TableNotFound
 import org.orkg.contenttypes.domain.testing.fixtures.createTable
 import org.orkg.contenttypes.input.TableUseCases
 import org.orkg.graph.domain.ExactSearchString
+import org.orkg.graph.domain.ExtractionMethod
+import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
 import org.orkg.graph.testing.asciidoc.allowedVisibilityValues
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectTable
+import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus
+import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
+import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
@@ -39,6 +48,7 @@ import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.OffsetDateTime
@@ -223,4 +233,109 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
             tableService.findAll(any(), any(), any(), any(), any(), any(), any(), any())
         }
     }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a table create request, when service succeeds, it creates and returns the table")
+    fun create() {
+        val id = ThingId("R123")
+        every { tableService.create(any()) } returns id
+
+        documentedPostRequestTo("/api/tables")
+            .content(createTableRequest())
+            .accept(TABLE_JSON_V1)
+            .contentType(TABLE_JSON_V1)
+            .perform()
+            .andExpect(status().isCreated)
+            .andExpect(header().string("Location", endsWith("/api/tables/$id")))
+            .andDo(
+                documentationHandler.document(
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the newly created table can be fetched from.")
+                    ),
+                    requestFields(
+                        fieldWithPath("label").description("The label of the table."),
+                        fieldWithPath("resources").description("Definition of resources that need to be created. (optional)"),
+                        fieldWithPath("resources.*.label").description("The label of the resource."),
+                        fieldWithPath("resources.*.classes").description("The list of classes of the resource."),
+                        fieldWithPath("literals").description("Definition of literals that need to be created. (optional)"),
+                        fieldWithPath("literals.*.label").description("The value of the literal."),
+                        fieldWithPath("literals.*.data_type").description("The data type of the literal."),
+                        fieldWithPath("predicates").description("Definition of predicates that need to be created. (optional)"),
+                        fieldWithPath("predicates.*.label").description("The label of the predicate."),
+                        fieldWithPath("predicates.*.description").description("The description of the predicate."),
+                        fieldWithPath("lists").description("Definition of lists that need to be created (optional)."),
+                        fieldWithPath("lists.*.label").description("The label of the list."),
+                        fieldWithPath("lists.*.elements").description("The IDs of the elements of the list."),
+                        fieldWithPath("classes").description("Definition of classes that need to be created. (optional)"),
+                        fieldWithPath("classes.*.label").description("The label of the class."),
+                        fieldWithPath("classes.*.uri").description("The uri of the class."),
+                        fieldWithPath("rows[]").description("The ordered list of rows of the table. The first row always represents the header of the table and must only consist of string literals. Additionally, one data row is required. Every row must have the same length."),
+                        fieldWithPath("rows[].label").description("The label of the row. (optional)").optional(),
+                        subsectionWithPath("rows[].data[]").description("The ordered list of values (thing ids, temporary ids or `null`) of the row.").optional(),
+                        fieldWithPath("organizations[]").description("The list of IDs of the organizations or conference series the table belongs to."),
+                        fieldWithPath("observatories[]").description("The list of IDs of the observatories the table belongs to."),
+                        fieldWithPath("extraction_method").description("""The method used to extract the table resource. Can be one of $allowedExtractionMethodValues."""),
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { tableService.create(any()) }
+    }
+
+    private fun createTableRequest() =
+        CreateTableRequest(
+            label = "Table Title",
+            resources = mapOf(
+                "#temp1" to ResourceDefinitionDTO(
+                    label = "MOTO",
+                    classes = setOf(ThingId("Result"))
+                )
+            ),
+            literals = mapOf(
+                "#temp2" to LiteralDefinitionDTO("column 1", Literals.XSD.STRING.prefixedUri),
+                "#temp3" to LiteralDefinitionDTO("column 2", Literals.XSD.STRING.prefixedUri),
+                "#temp4" to LiteralDefinitionDTO("column 3", Literals.XSD.STRING.prefixedUri)
+            ),
+            predicates = mapOf(
+                "#temp5" to PredicateDefinitionDTO(
+                    label = "hasResult",
+                    description = "has result"
+                )
+            ),
+            lists = mapOf(
+                "#temp6" to ListDefinitionDTO(
+                    label = "list",
+                    elements = listOf("#temp1", "C123")
+                )
+            ),
+            classes = mapOf(
+                "#temp7" to ClassDefinitionDTO(
+                    label = "class",
+                    uri = ParsedIRI("https://orkg.org/class/C1")
+                )
+            ),
+            rows = listOf(
+                RowDefinitionDTO(
+                    label = "header",
+                    data = listOf("#temp1", "#temp2", "#temp3")
+                ),
+                RowDefinitionDTO(
+                    label = null,
+                    data = listOf("R456", "#temp4", "#temp5")
+                ),
+                RowDefinitionDTO(
+                    label = "row 2",
+                    data = listOf("#temp6", null, "#temp7")
+                )
+            ),
+            observatories = listOf(
+                ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece")
+            ),
+            organizations = listOf(
+                OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f")
+            ),
+            extractionMethod = ExtractionMethod.UNKNOWN
+        )
 }

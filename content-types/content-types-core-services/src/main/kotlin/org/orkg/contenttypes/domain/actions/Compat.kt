@@ -23,6 +23,7 @@ import org.orkg.contenttypes.domain.actions.smartreviews.UpdateSmartReviewAction
 import org.orkg.contenttypes.domain.actions.smartreviews.sections.CreateSmartReviewSectionAction
 import org.orkg.contenttypes.domain.actions.smartreviews.sections.DeleteSmartReviewSectionAction
 import org.orkg.contenttypes.domain.actions.smartreviews.sections.UpdateSmartReviewSectionAction
+import org.orkg.contenttypes.domain.actions.tables.CreateTableAction
 import org.orkg.contenttypes.domain.actions.templates.CreateTemplateAction
 import org.orkg.contenttypes.domain.actions.templates.UpdateTemplateAction
 import org.orkg.contenttypes.domain.actions.templates.instances.UpdateTemplateInstanceAction
@@ -38,6 +39,7 @@ import org.orkg.contenttypes.input.CreateRosettaStoneStatementUseCase
 import org.orkg.contenttypes.input.CreateRosettaStoneTemplateUseCase
 import org.orkg.contenttypes.input.CreateSmartReviewSectionUseCase
 import org.orkg.contenttypes.input.CreateSmartReviewUseCase
+import org.orkg.contenttypes.input.CreateTableUseCase
 import org.orkg.contenttypes.input.CreateTemplatePropertyUseCase
 import org.orkg.contenttypes.input.CreateTemplateUseCase
 import org.orkg.contenttypes.input.CreateVisualizationUseCase
@@ -73,6 +75,7 @@ internal typealias CreateSmartReviewCommand = CreateSmartReviewUseCase.CreateCom
 internal typealias CreateSmartReviewSectionCommand = CreateSmartReviewSectionUseCase.CreateCommand
 internal typealias CreateRosettaStoneTemplateCommand = CreateRosettaStoneTemplateUseCase.CreateCommand
 internal typealias CreateRosettaStoneStatementCommand = CreateRosettaStoneStatementUseCase.CreateCommand
+internal typealias CreateTableCommand = CreateTableUseCase.CreateCommand
 
 internal typealias UpdatePaperCommand = UpdatePaperUseCase.UpdateCommand
 internal typealias UpdateComparisonCommand = UpdateComparisonUseCase.UpdateCommand
@@ -134,3 +137,5 @@ internal typealias DeleteLiteratureListSectionState = DeleteLiteratureListSectio
 internal typealias CreateSmartReviewSectionState = CreateSmartReviewSectionAction.State
 internal typealias UpdateSmartReviewSectionState = UpdateSmartReviewSectionAction.State
 internal typealias DeleteSmartReviewSectionState = DeleteSmartReviewSectionAction.State
+
+internal typealias CreateTableState = CreateTableAction.State

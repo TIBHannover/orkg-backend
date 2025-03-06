@@ -13,4 +13,6 @@ dependencies {
     api(project(":content-types:content-types-ports-input"))
     api(project(":graph:graph-adapter-input-representations"))
     api(project(":graph:graph-core-model"))
+    implementation("jakarta.validation:jakarta.validation-api")
+    implementation(project(":common:serialization"))
 }

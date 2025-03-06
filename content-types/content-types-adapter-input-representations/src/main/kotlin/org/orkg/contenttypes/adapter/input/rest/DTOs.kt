@@ -6,6 +6,7 @@ import jakarta.validation.constraints.PositiveOrZero
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.RealNumber
 import org.orkg.common.ThingId
+import org.orkg.common.validation.NullableNotBlank
 import org.orkg.contenttypes.input.ClassDefinition
 import org.orkg.contenttypes.input.ListDefinition
 import org.orkg.contenttypes.input.LiteralDefinition
@@ -14,6 +15,7 @@ import org.orkg.contenttypes.input.OtherLiteralPropertyDefinition
 import org.orkg.contenttypes.input.PredicateDefinition
 import org.orkg.contenttypes.input.ResourceDefinition
 import org.orkg.contenttypes.input.ResourcePropertyDefinition
+import org.orkg.contenttypes.input.RowDefinition
 import org.orkg.contenttypes.input.StringLiteralPropertyDefinition
 import org.orkg.contenttypes.input.TemplatePropertyDefinition
 import org.orkg.contenttypes.input.UntypedPropertyDefinition
@@ -184,3 +186,12 @@ data class ResourcePropertyRequest(
 data class IdentifierMapDTO(
     val values: Map<String, List<String>>,
 )
+
+data class RowDefinitionDTO(
+    @field:NullableNotBlank
+    val label: String?,
+    val data: List<String?>,
+) {
+    fun toRowDefinition(): RowDefinition =
+        RowDefinition(label, data)
+}

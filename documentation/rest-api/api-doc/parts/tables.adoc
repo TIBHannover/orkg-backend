@@ -24,3 +24,12 @@ operation::tables-get-paged[snippets='curl-request']
 The following list of request parameters are supported:
 
 operation::tables-get-paged-with-parameters[snippets='query-parameters,curl-request']
+
+[[tables-create]]
+== Creating Tables
+
+A `POST` request creates a new table with all the given parameters.
+The response will be `201 Created` when successful.
+The table (object) can be retrieved by following the URI in the `Location` header field.
+
+operation::tables-create[snippets='request-fields,curl-request,response-headers,http-response']

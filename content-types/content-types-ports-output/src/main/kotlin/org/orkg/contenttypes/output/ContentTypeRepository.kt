@@ -27,4 +27,19 @@ interface ContentTypeRepository {
         authorId: ThingId? = null,
         authorName: String? = null,
     ): Page<Resource>
+
+    fun count(
+        classes: Set<ContentTypeClass> = ContentTypeClass.entries.toSet(),
+        visibility: VisibilityFilter? = null,
+        createdBy: ContributorId? = null,
+        createdAtStart: OffsetDateTime? = null,
+        createdAtEnd: OffsetDateTime? = null,
+        observatoryId: ObservatoryId? = null,
+        organizationId: OrganizationId? = null,
+        researchField: ThingId? = null,
+        includeSubfields: Boolean = false,
+        sustainableDevelopmentGoal: ThingId? = null,
+        authorId: ThingId? = null,
+        authorName: String? = null,
+    ): Long
 }

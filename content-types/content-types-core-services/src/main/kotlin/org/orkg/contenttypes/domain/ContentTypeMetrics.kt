@@ -5,6 +5,7 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.output.ComparisonRepository
+import org.orkg.contenttypes.output.ContentTypeRepository
 import org.orkg.contenttypes.output.LiteratureListRepository
 import org.orkg.contenttypes.output.PaperRepository
 import org.orkg.contenttypes.output.SmartReviewRepository
@@ -14,6 +15,7 @@ import org.orkg.graph.domain.Resources
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.statistics.domain.CachedMetric
 import org.orkg.statistics.domain.Metric
+import org.orkg.statistics.domain.MultiValueParameterSpec
 import org.orkg.statistics.domain.SingleValueParameterSpec
 import org.springframework.cache.CacheManager
 import org.springframework.context.annotation.Bean
@@ -115,8 +117,45 @@ private val verifiedParameter = SingleValueParameterSpec(
     parser = { it.toBoolean() }
 )
 
+private val contentTypeClassParameter = MultiValueParameterSpec(
+    name = "Content-Type class filter",
+    description = "Filter for one or more content-type classes. If absent, all content-type classes are included.",
+    type = ContentTypeClass::class,
+    values = ContentTypeClass.entries,
+    parser = ContentTypeClass::valueOf
+)
+
 @Configuration
 class ContentTypeMetrics {
+    @Bean
+    fun contentTypeCountMetric(
+        contentTypeRepository: ContentTypeRepository,
+        cacheManager: CacheManager?,
+    ): Metric = CachedMetric.create(
+        cacheManager = cacheManager,
+        name = "content-type-count",
+        description = "Number of content-types in the graph. Content types include papers, comparisons, visualizations, templates, literature lists and smart reviews.",
+        group = "content-types",
+        parameterSpecs = sharedContentTypeParameters + mapOf(
+            "classes" to contentTypeClassParameter,
+            "sdg" to sdgParameter
+        ),
+        supplier = { parameters ->
+            contentTypeRepository.count(
+                classes = parameters[contentTypeClassParameter].orEmpty().ifEmpty { ContentTypeClass.entries }.toSet(),
+                researchField = parameters[researchFieldParameter],
+                includeSubfields = parameters[includeSubfieldsParameter] ?: false,
+                observatoryId = parameters[observatoryIdParameter],
+                organizationId = parameters[organizationIdParameter],
+                createdBy = parameters[createdByParameter],
+                createdAtStart = parameters[createdAtStartParameter],
+                createdAtEnd = parameters[createdAtEndParameter],
+                visibility = parameters[visibilityParameter],
+                sustainableDevelopmentGoal = parameters[sdgParameter],
+            )
+        }
+    )
+
     @Bean
     fun paperCountMetric(
         paperRepository: PaperRepository,

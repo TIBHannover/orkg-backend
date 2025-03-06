@@ -61,7 +61,67 @@ class SpringDataNeo4jContentTypeAdapter(
         sustainableDevelopmentGoal: ThingId?,
         authorId: ThingId?,
         authorName: String?,
-    ): Page<Resource> = cypherQueryBuilderFactory.newBuilder(QueryCache.Uncached)
+    ): Page<Resource> =
+        buildFindAllQuery(
+            sort = pageable.sort.orElseGet { Sort.by("created_at") },
+            classes = classes,
+            visibility = visibility,
+            createdBy = createdBy,
+            createdAtStart = createdAtStart,
+            createdAtEnd = createdAtEnd,
+            observatoryId = observatoryId,
+            organizationId = organizationId,
+            researchField = researchField,
+            includeSubfields = includeSubfields,
+            sustainableDevelopmentGoal = sustainableDevelopmentGoal,
+            authorId = authorId,
+            authorName = authorName
+        ).fetch(pageable, false)
+
+    override fun count(
+        classes: Set<ContentTypeClass>,
+        visibility: VisibilityFilter?,
+        createdBy: ContributorId?,
+        createdAtStart: OffsetDateTime?,
+        createdAtEnd: OffsetDateTime?,
+        observatoryId: ObservatoryId?,
+        organizationId: OrganizationId?,
+        researchField: ThingId?,
+        includeSubfields: Boolean,
+        sustainableDevelopmentGoal: ThingId?,
+        authorId: ThingId?,
+        authorName: String?,
+    ): Long =
+        buildFindAllQuery(
+            classes = classes,
+            visibility = visibility,
+            createdBy = createdBy,
+            createdAtStart = createdAtStart,
+            createdAtEnd = createdAtEnd,
+            observatoryId = observatoryId,
+            organizationId = organizationId,
+            researchField = researchField,
+            includeSubfields = includeSubfields,
+            sustainableDevelopmentGoal = sustainableDevelopmentGoal,
+            authorId = authorId,
+            authorName = authorName
+        ).count()
+
+    private fun buildFindAllQuery(
+        sort: Sort = Sort.unsorted(),
+        classes: Set<ContentTypeClass>,
+        visibility: VisibilityFilter?,
+        createdBy: ContributorId?,
+        createdAtStart: OffsetDateTime?,
+        createdAtEnd: OffsetDateTime?,
+        observatoryId: ObservatoryId?,
+        organizationId: OrganizationId?,
+        researchField: ThingId?,
+        includeSubfields: Boolean,
+        sustainableDevelopmentGoal: ThingId?,
+        authorId: ThingId?,
+        authorName: String?,
+    ) = cypherQueryBuilderFactory.newBuilder(QueryCache.Uncached)
         .withCommonQuery {
             val node = name("node")
             val matches = classes.map { contentType ->
@@ -115,7 +175,6 @@ class SpringDataNeo4jContentTypeAdapter(
         }
         .withQuery { commonQuery ->
             val node = name("node")
-            val sort = pageable.sort.orElseGet { Sort.by("created_at") }
             commonQuery.orderBy(
                 sort.toSortItems(
                     node = node,
@@ -126,7 +185,6 @@ class SpringDataNeo4jContentTypeAdapter(
         }
         .countDistinctOver("node")
         .mappedBy(ResourceMapper("node"))
-        .fetch(pageable, false)
 
     private fun ContentTypeClass.match(
         node: SymbolicName,

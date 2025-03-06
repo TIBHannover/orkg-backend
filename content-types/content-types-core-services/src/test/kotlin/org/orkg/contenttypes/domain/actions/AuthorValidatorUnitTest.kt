@@ -1,5 +1,6 @@
 package org.orkg.contenttypes.domain.actions
 
+import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
@@ -16,6 +17,8 @@ import org.orkg.contenttypes.domain.AuthorNotFound
 import org.orkg.contenttypes.domain.InvalidIdentifier
 import org.orkg.contenttypes.input.testing.fixtures.createPaperCommand
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.InvalidLabel
+import org.orkg.graph.domain.MAX_LABEL_LENGTH
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
@@ -133,6 +136,18 @@ internal class AuthorValidatorUnitTest : MockkBaseTest {
         assertThrows<AuthorNotFound> { authorValidator.validate(authors) }
 
         verify(exactly = 1) { resourceRepository.findById(any()) }
+    }
+
+    @Test
+    fun `Given a list of authors, when name is not valid label, it throws an exception`() {
+        val authors = listOf(
+            Author(name = "\n")
+        )
+
+        assertThrows<InvalidLabel> { authorValidator.validate(authors) }.asClue {
+            it.property shouldBe "authors[0].name"
+            it.message shouldBe """A label must not be blank or contain newlines and must be at most $MAX_LABEL_LENGTH characters long."""
+        }
     }
 
     @Test

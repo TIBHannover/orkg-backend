@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 plugins {
     id("org.orkg.gradle.kotlin-library")
 }
@@ -8,7 +10,6 @@ dependencies {
     api("org.springframework.data:spring-data-commons")
     api(project(":common:identifiers"))
     api(project(":common:spring-webmvc"))
-    api(project(":content-types:content-types-core-model"))
     api(project(":graph:graph-core-model"))
     api(project(":graph:graph-ports-input"))
     implementation(project(":common:pagination"))

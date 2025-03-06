@@ -1,6 +1,7 @@
-package org.orkg.graph.adapter.input.rest.mapping
+package org.orkg.contenttypes.adapter.input.rest.mapping
 
 import org.orkg.common.MediaTypeCapabilities
+import org.orkg.contenttypes.adapter.input.rest.ComparisonAuthorRepresentation
 import org.orkg.contenttypes.domain.ComparisonAuthor
 import org.orkg.contenttypes.domain.PaperAuthor
 import org.orkg.contenttypes.domain.SimpleAuthor
@@ -9,13 +10,13 @@ import org.orkg.contenttypes.domain.SimpleAuthor.ResourceAuthor
 import org.orkg.graph.adapter.input.rest.AuthorRepresentation
 import org.orkg.graph.adapter.input.rest.AuthorRepresentation.LiteralAuthorRepresentation
 import org.orkg.graph.adapter.input.rest.AuthorRepresentation.ResourceAuthorRepresentation
-import org.orkg.graph.adapter.input.rest.ComparisonAuthorRepresentation
 import org.orkg.graph.adapter.input.rest.PaperAuthorRepresentation
+import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
 import org.orkg.graph.domain.FormattedLabels
 import org.orkg.graph.domain.StatementCounts
 import org.springframework.data.domain.Page
 
-interface AuthorRepresentationAdapter : ResourceRepresentationAdapter {
+interface LegacyAuthorRepresentationAdapter : ResourceRepresentationAdapter {
     fun Page<ComparisonAuthor>.mapToComparisonAuthorRepresentation(
         capabilities: MediaTypeCapabilities,
     ): Page<ComparisonAuthorRepresentation> {

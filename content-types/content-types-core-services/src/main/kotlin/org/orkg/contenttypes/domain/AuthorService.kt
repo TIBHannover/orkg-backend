@@ -2,7 +2,7 @@ package org.orkg.contenttypes.domain
 
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.input.AuthorUseCases
-import org.orkg.graph.output.AuthorRepository
+import org.orkg.contenttypes.output.AuthorRepository
 import org.orkg.spring.data.annotations.TransactionalOnNeo4j
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable

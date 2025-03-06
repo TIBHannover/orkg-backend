@@ -5,6 +5,7 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
+import org.orkg.common.pmap
 import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
@@ -118,10 +119,11 @@ class PaperService(
     @Value("\${orkg.publishing.base-url.paper}")
     private val paperPublishBaseUri: String = "http://localhost/paper/",
 ) : PaperUseCases {
-    override fun countAllStatementsAboutPapers(pageable: Pageable): Page<PaperWithStatementCount> = paperRepository.findAll(pageable = pageable).pmap { paper ->
-        val totalStatementCount = statementRepository.countStatementsInPaperSubgraph(paper.id)
-        PaperWithStatementCount(paper.id, paper.label, totalStatementCount)
-    }
+    override fun countAllStatementsAboutPapers(pageable: Pageable): Page<PaperWithStatementCount> =
+        paperRepository.findAll(pageable = pageable).pmap { paper ->
+            val totalStatementCount = statementRepository.countStatementsInPaperSubgraph(paper.id)
+            PaperWithStatementCount(paper.id, paper.label, totalStatementCount)
+        }
 
     override fun findById(id: ThingId): Optional<Paper> =
         resourceRepository.findPaperById(id)

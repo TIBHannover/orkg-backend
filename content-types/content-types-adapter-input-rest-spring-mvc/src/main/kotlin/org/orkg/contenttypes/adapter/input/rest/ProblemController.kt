@@ -6,13 +6,13 @@ import org.orkg.common.ThingId
 import org.orkg.common.annotations.RequireCuratorRole
 import org.orkg.common.contributorId
 import org.orkg.community.input.RetrieveContributorUseCase
+import org.orkg.contenttypes.adapter.input.rest.mapping.FieldPerProblemRepresentationAdapter
+import org.orkg.contenttypes.adapter.input.rest.mapping.LegacyAuthorRepresentationAdapter
 import org.orkg.contenttypes.input.AuthorUseCases
 import org.orkg.contenttypes.input.ResearchProblemUseCases
 import org.orkg.graph.adapter.input.rest.FieldWithFreqRepresentation
 import org.orkg.graph.adapter.input.rest.PaperAuthorRepresentation
 import org.orkg.graph.adapter.input.rest.ResourceRepresentation
-import org.orkg.graph.adapter.input.rest.mapping.AuthorRepresentationAdapter
-import org.orkg.graph.adapter.input.rest.mapping.FieldPerProblemRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
 import org.orkg.graph.domain.DetailsPerProblem
 import org.orkg.graph.domain.VisibilityFilter
@@ -44,7 +44,7 @@ class ProblemController(
     override val statementService: StatementUseCases,
     override val formattedLabelService: FormattedLabelUseCases,
 ) : ResourceRepresentationAdapter,
-    AuthorRepresentationAdapter,
+    LegacyAuthorRepresentationAdapter,
     FieldPerProblemRepresentationAdapter {
     @GetMapping("/{id}/fields")
     fun findAllResearchFields(

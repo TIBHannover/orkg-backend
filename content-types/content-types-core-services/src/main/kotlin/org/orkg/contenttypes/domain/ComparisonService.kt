@@ -6,6 +6,7 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
+import org.orkg.common.pmap
 import org.orkg.community.output.ConferenceSeriesRepository
 import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository

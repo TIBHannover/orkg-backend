@@ -4,6 +4,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.common.pmap
 import org.orkg.contenttypes.input.ContentTypeUseCases
 import org.orkg.contenttypes.output.ContentTypeRepository
 import org.orkg.graph.domain.Classes

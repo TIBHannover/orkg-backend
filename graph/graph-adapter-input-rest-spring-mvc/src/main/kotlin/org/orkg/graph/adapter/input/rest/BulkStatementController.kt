@@ -5,7 +5,7 @@ import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId
-import org.orkg.contenttypes.domain.pmap
+import org.orkg.common.pmap
 import org.orkg.graph.adapter.input.rest.mapping.StatementRepresentationAdapter
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.FormattedLabelUseCases

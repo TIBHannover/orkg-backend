@@ -21,6 +21,7 @@ import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.Certainty
 import org.orkg.contenttypes.domain.ClassReference
+import org.orkg.contenttypes.domain.ComparisonAuthorInfo
 import org.orkg.contenttypes.domain.ComparisonConfig
 import org.orkg.contenttypes.domain.ComparisonData
 import org.orkg.contenttypes.domain.LiteralReference
@@ -696,3 +697,8 @@ data class TableRepresentation(
         val data: List<ThingReferenceRepresentation?>,
     )
 }
+
+data class ComparisonAuthorRepresentation(
+    val author: org.orkg.graph.adapter.input.rest.AuthorRepresentation,
+    val info: Iterable<ComparisonAuthorInfo>,
+)

@@ -3,11 +3,11 @@ package org.orkg.contenttypes.adapter.input.rest
 import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ThingId
 import org.orkg.common.contributorId
+import org.orkg.contenttypes.adapter.input.rest.mapping.PaperResourceWithPathRepresentationAdapter
 import org.orkg.contenttypes.input.LegacyCreatePaperUseCase
 import org.orkg.contenttypes.input.LegacyPaperUseCases
 import org.orkg.graph.adapter.input.rest.PaperResourceWithPathRepresentation
 import org.orkg.graph.adapter.input.rest.ResourceRepresentation
-import org.orkg.graph.adapter.input.rest.mapping.PaperResourceWithPathRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.ResourceUseCases

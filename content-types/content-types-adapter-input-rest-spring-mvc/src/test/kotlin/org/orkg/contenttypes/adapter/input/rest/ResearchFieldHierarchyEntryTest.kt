@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.contenttypes.adapter.input.rest.ResearchFieldHierarchyEntryTest.FakeResearchFieldHierarchyEntryController
+import org.orkg.contenttypes.adapter.input.rest.mapping.ResearchFieldHierarchyEntryRepresentationAdapter
 import org.orkg.contenttypes.domain.ResearchFieldHierarchyEntry
 import org.orkg.graph.adapter.input.rest.ResearchFieldHierarchyEntryRepresentation
-import org.orkg.graph.adapter.input.rest.mapping.ResearchFieldHierarchyEntryRepresentationAdapter
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases

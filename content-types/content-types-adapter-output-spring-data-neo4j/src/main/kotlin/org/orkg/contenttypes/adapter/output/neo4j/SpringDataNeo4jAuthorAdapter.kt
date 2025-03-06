@@ -8,9 +8,9 @@ import org.orkg.contenttypes.domain.ComparisonAuthor
 import org.orkg.contenttypes.domain.ComparisonAuthorInfo
 import org.orkg.contenttypes.domain.PaperAuthor
 import org.orkg.contenttypes.domain.SimpleAuthor
+import org.orkg.contenttypes.output.AuthorRepository
 import org.orkg.graph.adapter.output.neo4j.internal.Neo4jLiteral
 import org.orkg.graph.adapter.output.neo4j.internal.Neo4jResource
-import org.orkg.graph.output.AuthorRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component

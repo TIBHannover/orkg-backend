@@ -9,15 +9,6 @@ import org.orkg.graph.domain.Literal
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.Thing
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageImpl
-import java.util.stream.Collectors
-
-fun <T, R> Page<T>.pmap(transform: (T) -> R): Page<R> =
-    PageImpl(content.pmap(transform), pageable, totalElements)
-
-fun <T, R> Collection<T>.pmap(transform: (T) -> R): List<R> =
-    parallelStream().map(transform).collect(Collectors.toList())
 
 fun Iterable<GeneralStatement>.wherePredicate(predicateId: ThingId) =
     filter { it.predicate.id == predicateId }

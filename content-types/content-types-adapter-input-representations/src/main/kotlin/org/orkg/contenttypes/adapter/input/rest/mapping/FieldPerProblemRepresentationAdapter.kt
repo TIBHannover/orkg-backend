@@ -1,7 +1,8 @@
-package org.orkg.graph.adapter.input.rest.mapping
+package org.orkg.contenttypes.adapter.input.rest.mapping
 
 import org.orkg.common.MediaTypeCapabilities
 import org.orkg.graph.adapter.input.rest.FieldWithFreqRepresentation
+import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
 import org.orkg.graph.domain.FieldWithFreq
 import org.orkg.graph.domain.FormattedLabels
 import org.orkg.graph.domain.StatementCounts

@@ -4,9 +4,8 @@ import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.RequireCuratorRole
 import org.orkg.common.contributorId
+import org.orkg.contenttypes.adapter.input.rest.mapping.LegacyAuthorRepresentationAdapter
 import org.orkg.contenttypes.input.AuthorUseCases
-import org.orkg.graph.adapter.input.rest.ComparisonAuthorRepresentation
-import org.orkg.graph.adapter.input.rest.mapping.AuthorRepresentationAdapter
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
@@ -30,7 +29,7 @@ class LegacyComparisonController(
     private val authorService: AuthorUseCases,
     override val statementService: StatementUseCases,
     override val formattedLabelService: FormattedLabelUseCases,
-) : AuthorRepresentationAdapter {
+) : LegacyAuthorRepresentationAdapter {
     @PutMapping("/{id}/metadata/featured")
     @ResponseStatus(HttpStatus.OK)
     @RequireCuratorRole

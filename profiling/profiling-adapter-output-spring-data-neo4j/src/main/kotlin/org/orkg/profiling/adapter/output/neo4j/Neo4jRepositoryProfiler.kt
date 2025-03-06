@@ -1,5 +1,6 @@
 package org.orkg.profiling.adapter.output.neo4j
 
+import org.orkg.contenttypes.output.AuthorRepository
 import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.contenttypes.output.ContentTypeRepository
 import org.orkg.contenttypes.output.ContributionComparisonRepository
@@ -14,7 +15,6 @@ import org.orkg.contenttypes.output.SummarizeBenchmarkQuery
 import org.orkg.contenttypes.output.SummarizeDatasetQuery
 import org.orkg.contenttypes.output.TemplateRepository
 import org.orkg.curation.output.CurationRepository
-import org.orkg.graph.output.AuthorRepository
 import org.orkg.graph.output.ClassHierarchyRepository
 import org.orkg.graph.output.ClassRelationRepository
 import org.orkg.graph.output.ClassRepository

@@ -4,7 +4,6 @@ plugins {
 
 dependencies {
     api(project(":common:identifiers"))
-    api(project(":content-types:content-types-core-model"))
     api(project(":graph:graph-core-model"))
 
     api("org.eclipse.rdf4j:rdf4j-common-io")

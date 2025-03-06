@@ -2,6 +2,7 @@ package org.orkg.contenttypes.domain
 
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
+import org.orkg.common.pmap
 import org.orkg.contenttypes.input.RetrieveContributionUseCase
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Resource

@@ -1,4 +1,4 @@
-package org.orkg.graph.output
+package org.orkg.contenttypes.output
 
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.ComparisonAuthor

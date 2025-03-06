@@ -3,11 +3,11 @@ package org.orkg.contenttypes.adapter.input.rest
 import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ThingId
 import org.orkg.community.domain.Contributor
+import org.orkg.contenttypes.adapter.input.rest.mapping.PaperCountPerResearchProblemRepresentationAdapter
 import org.orkg.contenttypes.input.ResearchFieldUseCases
 import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.graph.adapter.input.rest.PaperCountPerResearchProblemRepresentation
 import org.orkg.graph.adapter.input.rest.ResourceRepresentation
-import org.orkg.graph.adapter.input.rest.mapping.PaperCountPerResearchProblemRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
 import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.domain.VisibilityFilter

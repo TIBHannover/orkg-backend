@@ -5,6 +5,7 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
+import org.orkg.common.pmap
 import org.orkg.contenttypes.domain.actions.UpdateTemplateInstanceState
 import org.orkg.contenttypes.domain.actions.execute
 import org.orkg.contenttypes.domain.actions.templates.instances.TemplateInstancePropertyValueUpdater

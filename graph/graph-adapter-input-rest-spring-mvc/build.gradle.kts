@@ -19,10 +19,10 @@ dependencies {
     api(project(":common:identifiers"))
     api(project(":common:spring-webmvc"))
     api(project(":community:community-ports-input"))
-    implementation(project(":content-types:content-types-core-model"))
     api(project(":graph:graph-core-model"))
     api(project(":graph:graph-adapter-input-representations"))
     api(project(":graph:graph-ports-input"))
+    implementation(project(":common:pagination"))
     implementation(project(":community:community-core-model"))
 
     testFixturesApi("org.springframework.restdocs:spring-restdocs-core")
@@ -35,7 +35,6 @@ testing {
         val test by getting(JvmTestSuite::class) {
             dependencies {
                 implementation(project(":common:serialization"))
-                implementation(project(":common:pagination"))
                 implementation(project(":graph:graph-core-constants"))
                 implementation(testFixtures(project(":community:community-core-model")))
                 implementation(testFixtures(project(":graph:graph-core-model")))

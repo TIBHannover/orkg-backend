@@ -1,8 +1,9 @@
-package org.orkg.graph.adapter.input.rest.mapping
+package org.orkg.contenttypes.adapter.input.rest.mapping
 
 import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ThingId
 import org.orkg.graph.adapter.input.rest.PaperResourceWithPathRepresentation
+import org.orkg.graph.adapter.input.rest.mapping.ThingRepresentationAdapter
 import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.FormattedLabels
 import org.orkg.graph.domain.PaperResourceWithPath

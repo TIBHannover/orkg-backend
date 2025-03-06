@@ -2,12 +2,12 @@ package org.orkg.contenttypes.adapter.input.rest
 
 import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ThingId
+import org.orkg.contenttypes.adapter.input.rest.mapping.ResearchFieldHierarchyEntryRepresentationAdapter
+import org.orkg.contenttypes.adapter.input.rest.mapping.ResearchFieldWithChildCountRepresentationAdapter
 import org.orkg.contenttypes.input.ResearchFieldHierarchyUseCases
 import org.orkg.graph.adapter.input.rest.ResearchFieldHierarchyEntryRepresentation
 import org.orkg.graph.adapter.input.rest.ResearchFieldWithChildCountRepresentation
 import org.orkg.graph.adapter.input.rest.ResourceRepresentation
-import org.orkg.graph.adapter.input.rest.mapping.ResearchFieldHierarchyEntryRepresentationAdapter
-import org.orkg.graph.adapter.input.rest.mapping.ResearchFieldWithChildCountRepresentationAdapter
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.springframework.data.domain.Page

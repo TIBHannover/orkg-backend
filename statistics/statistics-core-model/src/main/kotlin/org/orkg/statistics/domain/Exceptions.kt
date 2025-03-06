@@ -16,3 +16,9 @@ class MetricNotFound(
         HttpStatus.NOT_FOUND,
         """Metric "$group-$name" not found."""
     )
+
+class TooManyParameterValues(name: String) :
+    SimpleMessageException(
+        HttpStatus.BAD_REQUEST,
+        """Too many values for parameter "$name"."""
+    )

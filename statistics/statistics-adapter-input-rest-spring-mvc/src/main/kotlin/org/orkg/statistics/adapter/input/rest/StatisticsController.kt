@@ -3,6 +3,7 @@ package org.orkg.statistics.adapter.input.rest
 import org.orkg.statistics.adapter.input.rest.mapping.MetricRepresentationAdapter
 import org.orkg.statistics.input.StatisticsUseCases
 import org.springframework.http.MediaType
+import org.springframework.util.MultiValueMap
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
@@ -42,7 +43,7 @@ class StatisticsController(private val service: StatisticsUseCases) : MetricRepr
     fun findMetricByGroupAndName(
         @PathVariable group: String,
         @PathVariable name: String,
-        @RequestParam parameters: Map<String, String>,
+        @RequestParam parameters: MultiValueMap<String, String>,
     ): MetricRepresentation =
         service.findMetricByGroupAndName(group, name)
             .let { metric -> metric.toMetricRepresentation(metric.value(parameters)) }

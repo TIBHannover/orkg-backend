@@ -3,6 +3,7 @@ package org.orkg.statistics.domain
 import org.slf4j.LoggerFactory
 import org.springframework.cache.Cache
 import org.springframework.cache.CacheManager
+import org.springframework.util.MultiValueMap
 
 const val METRICS_NAME_AND_PARAMETERS_TO_VALUE_CACHE = "metrics-name-and-parameters-to-number-cache"
 
@@ -20,12 +21,12 @@ class CachedMetric private constructor(
         }
     }
 
-    override fun value(parameters: Map<String, String>): Number =
+    override fun value(parameters: MultiValueMap<String, String>): Number =
         cache?.get(computeKey(parameters)) { super.value(parameters) }
             ?: super.value(parameters)
 
-    private fun computeKey(parameters: Map<String, String>): String =
-        "$group-$name:[${parameters.entries.joinToString(",") { (key, value) -> "$key=$value" }}]"
+    private fun computeKey(parameters: MultiValueMap<String, String>): String =
+        "$group-$name:[${parameters.entries.joinToString(",") { (key, value) -> "$key=${value.joinToString(",")}" }}]"
 
     companion object {
         fun create(

@@ -7,6 +7,7 @@ import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.statistics.adapter.input.rest.exceptions.StatisticsExceptionUnitTest.TestController
 import org.orkg.statistics.domain.GroupNotFound
 import org.orkg.statistics.domain.MetricNotFound
+import org.orkg.statistics.domain.TooManyParameterValues
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -54,6 +55,21 @@ internal class StatisticsExceptionUnitTest : MockMvcBaseTest("statistics") {
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
+    @Test
+    fun tooManyParameterValues() {
+        val name = "param1"
+
+        get("/too-many-parameter-values")
+            .param("name", name)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/too-many-parameter-values"))
+            .andExpect(jsonPath("$.message").value("""Too many values for parameter "$name"."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
     @TestComponent
     @RestController
     internal class TestController {
@@ -67,5 +83,10 @@ internal class StatisticsExceptionUnitTest : MockMvcBaseTest("statistics") {
             @RequestParam group: String,
             @RequestParam name: String,
         ): Unit = throw MetricNotFound(group, name)
+
+        @GetMapping("/too-many-parameter-values")
+        fun tooManyParameterValues(
+            @RequestParam name: String,
+        ): Unit = throw TooManyParameterValues(name)
     }
 }

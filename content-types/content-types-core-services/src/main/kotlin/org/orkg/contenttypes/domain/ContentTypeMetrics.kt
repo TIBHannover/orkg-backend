@@ -14,63 +14,63 @@ import org.orkg.graph.domain.Resources
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.statistics.domain.CachedMetric
 import org.orkg.statistics.domain.Metric
-import org.orkg.statistics.domain.ParameterSpec
+import org.orkg.statistics.domain.SingleValueParameterSpec
 import org.springframework.cache.CacheManager
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
-private val researchFieldParameter = ParameterSpec(
+private val researchFieldParameter = SingleValueParameterSpec(
     name = "Research field id filter",
     description = "Filter for research field id.",
     type = ThingId::class,
     parser = ::ThingId
 )
 
-private val includeSubfieldsParameter = ParameterSpec(
+private val includeSubfieldsParameter = SingleValueParameterSpec(
     name = "Include subfields",
     description = "Whether to include subfields when filtering by research field id.",
     type = Boolean::class,
     parser = { it.toBoolean() }
 )
 
-private val observatoryIdParameter = ParameterSpec(
+private val observatoryIdParameter = SingleValueParameterSpec(
     name = "Observatory id filter",
     description = "Filter for observatory id.",
     type = ObservatoryId::class,
     parser = ::ObservatoryId
 )
 
-private val organizationIdParameter = ParameterSpec(
+private val organizationIdParameter = SingleValueParameterSpec(
     name = "Organization id filter",
     description = "Filter for organization id.",
     type = OrganizationId::class,
     parser = ::OrganizationId
 )
 
-private val createdByParameter = ParameterSpec(
+private val createdByParameter = SingleValueParameterSpec(
     name = "Created by filter",
     description = "Filter for the original creator.",
     type = ContributorId::class,
     parser = ::ContributorId
 )
 
-private val createdAtStartParameter = ParameterSpec(
+private val createdAtStartParameter = SingleValueParameterSpec(
     name = "Creation time start filter",
     description = "Filter for the created at timestamp, marking the oldest timestamp.",
     type = OffsetDateTime::class,
     parser = { OffsetDateTime.parse(it, DateTimeFormatter.ISO_DATE_TIME) }
 )
 
-private val createdAtEndParameter = ParameterSpec(
+private val createdAtEndParameter = SingleValueParameterSpec(
     name = "Creation time end filter",
     description = "Filter for the created at timestamp, marking the most recent timestamp.",
     type = OffsetDateTime::class,
     parser = { OffsetDateTime.parse(it, DateTimeFormatter.ISO_DATE_TIME) }
 )
 
-private val visibilityParameter = ParameterSpec(
+private val visibilityParameter = SingleValueParameterSpec(
     name = "Visibility filter",
     description = "Filter for visibility.",
     type = VisibilityFilter::class,
@@ -78,7 +78,7 @@ private val visibilityParameter = ParameterSpec(
     parser = VisibilityFilter::valueOf
 )
 
-private val sdgParameter = ParameterSpec(
+private val sdgParameter = SingleValueParameterSpec(
     name = "Sustainable Development Goal filter",
     description = "Filter for a Sustainable Development Goal.",
     type = ThingId::class,
@@ -97,7 +97,7 @@ private val sharedContentTypeParameters = mapOf(
     "visibility" to visibilityParameter,
 )
 
-private val publishedParameter = ParameterSpec(
+private val publishedParameter = SingleValueParameterSpec(
     name = "Published filter",
     description = "Filter for publication state.",
     type = Boolean::class,
@@ -108,7 +108,7 @@ private val publishableContentTypeParameters = sharedContentTypeParameters + map
     "published" to publishedParameter
 )
 
-private val verifiedParameter = ParameterSpec(
+private val verifiedParameter = SingleValueParameterSpec(
     name = "Verified filter",
     description = "Filter for verified state.",
     type = Boolean::class,

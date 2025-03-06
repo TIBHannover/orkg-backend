@@ -32,6 +32,7 @@ testing {
 dependencies {
     api("io.micrometer:micrometer-core")
     api("org.springframework:spring-context")
+    api("org.springframework:spring-core")
     api("org.springframework:spring-web")
     api(project(":statistics:statistics-core-model"))
     api(project(":statistics:statistics-adapter-input-representations"))

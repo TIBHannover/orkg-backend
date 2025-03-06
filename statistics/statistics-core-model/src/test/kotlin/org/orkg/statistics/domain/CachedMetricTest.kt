@@ -11,6 +11,8 @@ import org.orkg.common.exceptions.UnknownParameter
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.springframework.cache.Cache
 import org.springframework.cache.CacheManager
+import org.springframework.util.LinkedMultiValueMap
+import org.springframework.util.MultiValueMap
 import java.util.concurrent.Callable
 
 internal class CachedMetricTest : MockkBaseTest {
@@ -29,7 +31,7 @@ internal class CachedMetricTest : MockkBaseTest {
             description = "test description",
             supplier = mockMetricSupplier
         )
-        val parameters = emptyMap<String, String>()
+        val parameters = LinkedMultiValueMap<String, String>()
 
         verify(exactly = 1) { cacheManager.getCache(METRICS_NAME_AND_PARAMETERS_TO_VALUE_CACHE) }
 
@@ -55,7 +57,7 @@ internal class CachedMetricTest : MockkBaseTest {
             description = "test description",
             supplier = mockMetricSupplier
         )
-        val parameters = emptyMap<String, String>()
+        val parameters = LinkedMultiValueMap<String, String>()
 
         verify(exactly = 1) { cacheManager.getCache(METRICS_NAME_AND_PARAMETERS_TO_VALUE_CACHE) }
 
@@ -76,7 +78,7 @@ internal class CachedMetricTest : MockkBaseTest {
 
         every { cacheManager.getCache(METRICS_NAME_AND_PARAMETERS_TO_VALUE_CACHE) } returns cache
 
-        val intParameterSpec = ParameterSpec(
+        val intParameterSpec = SingleValueParameterSpec(
             name = "test",
             description = "test description",
             type = Int::class,
@@ -90,7 +92,7 @@ internal class CachedMetricTest : MockkBaseTest {
             parameterSpecs = mapOf("id" to intParameterSpec),
             supplier = mockMetricSupplier
         )
-        val parameters = mapOf("id" to "123")
+        val parameters = MultiValueMap.fromSingleValue(mapOf("id" to "123"))
 
         verify(exactly = 1) { cacheManager.getCache(METRICS_NAME_AND_PARAMETERS_TO_VALUE_CACHE) }
 
@@ -99,6 +101,41 @@ internal class CachedMetricTest : MockkBaseTest {
         metric.value(parameters) shouldBe 5
 
         verify(exactly = 1) { cache.get("test-test:[id=123]", any<Callable<Number>>()) }
+    }
+
+    @Test
+    fun `Given a cached metric, retrieving its value with a multivalued parameter, it returns the value`() {
+        val mockMetricSupplier: (ParameterMap) -> Number = mockk()
+        val cacheManager: CacheManager = mockk()
+        val cache: Cache = mockk()
+
+        every { cacheManager.getCache(METRICS_NAME_AND_PARAMETERS_TO_VALUE_CACHE) } returns cache
+
+        val intParameterSpec = MultiValueParameterSpec(
+            name = "test",
+            description = "test description",
+            type = Int::class,
+            parser = { it.toInt() }
+        )
+        val metric = CachedMetric.create(
+            cacheManager = cacheManager,
+            name = "test",
+            group = "test",
+            description = "test description",
+            parameterSpecs = mapOf("id" to intParameterSpec),
+            supplier = mockMetricSupplier
+        )
+        val parameters = LinkedMultiValueMap<String, String>().apply {
+            put("id", listOf("123", "456"))
+        }
+
+        verify(exactly = 1) { cacheManager.getCache(METRICS_NAME_AND_PARAMETERS_TO_VALUE_CACHE) }
+
+        every { cache.get("test-test:[id=123,456]", any<Callable<Number>>()) } returns 5
+
+        metric.value(parameters) shouldBe 5
+
+        verify(exactly = 1) { cache.get("test-test:[id=123,456]", any<Callable<Number>>()) }
     }
 
     @Test
@@ -116,7 +153,7 @@ internal class CachedMetricTest : MockkBaseTest {
             description = "test description",
             supplier = mockMetricSupplier
         )
-        val parameters = mapOf("filter" to "value")
+        val parameters = MultiValueMap.fromSingleValue(mapOf("filter" to "value"))
 
         verify(exactly = 1) { cacheManager.getCache(METRICS_NAME_AND_PARAMETERS_TO_VALUE_CACHE) }
 

@@ -8,8 +8,8 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
-import org.orkg.statistics.domain.ParameterSpec
 import org.orkg.statistics.domain.SimpleMetric
+import org.orkg.statistics.domain.SingleValueParameterSpec
 import org.orkg.statistics.input.StatisticsUseCases
 import org.orkg.statistics.testing.fixtures.createMetrics
 import org.orkg.testing.configuration.FixedClockConfig
@@ -23,6 +23,7 @@ import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.util.LinkedMultiValueMap
 
 @ContextConfiguration(
     classes = [StatisticsController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class]
@@ -89,7 +90,7 @@ internal class StatisticsControllerUnitTest : MockMvcBaseTest("statistics") {
     @Test
     @DisplayName("Given a metric, when fetched, then status is 200 OK and metric is returned")
     fun findMetricByGroupAndName() {
-        val intParameterSpec = ParameterSpec(
+        val intParameterSpec = SingleValueParameterSpec(
             name = "parameter1",
             description = "Description of the parameter.",
             type = Int::class,
@@ -113,7 +114,7 @@ internal class StatisticsControllerUnitTest : MockMvcBaseTest("statistics") {
             .andExpect(jsonPath("$.name").value(metric.name))
             .andExpect(jsonPath("$.description").value(metric.description))
             .andExpect(jsonPath("$.group").value(metric.group))
-            .andExpect(jsonPath("$.value").value(metric.value(emptyMap()).toString()))
+            .andExpect(jsonPath("$.value").value(metric.value(LinkedMultiValueMap()).toString()))
             .andDo(
                 documentationHandler.document(
                     pathParameters(
@@ -130,6 +131,7 @@ internal class StatisticsControllerUnitTest : MockMvcBaseTest("statistics") {
                         fieldWithPath("parameters[].name").description("The name of the parameter."),
                         fieldWithPath("parameters[].description").description("The description of the parameter."),
                         fieldWithPath("parameters[].type").description("The type of the parameter."),
+                        fieldWithPath("parameters[].multivalued").description("Whether the parameter accepts multiple values at once."),
                         fieldWithPath("parameters[].values[]").description("A list of possible values for the parameter. (optional)").optional(),
                     )
                 )

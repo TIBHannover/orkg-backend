@@ -74,6 +74,33 @@ class InMemoryResourceRepository(private val inMemoryGraph: InMemoryGraph) :
             organizationId = null
         )
 
+    override fun count(
+        label: SearchString?,
+        visibility: VisibilityFilter?,
+        createdBy: ContributorId?,
+        createdAtStart: OffsetDateTime?,
+        createdAtEnd: OffsetDateTime?,
+        includeClasses: Set<ThingId>,
+        excludeClasses: Set<ThingId>,
+        baseClass: ThingId?,
+        observatoryId: ObservatoryId?,
+        organizationId: OrganizationId?,
+    ): Long =
+        entities.values.filter(
+            buildFindAllPredicate(
+                label,
+                visibility,
+                createdBy,
+                createdAtStart,
+                createdAtEnd,
+                includeClasses,
+                excludeClasses,
+                observatoryId,
+                organizationId,
+                baseClass
+            )
+        ).size.toLong()
+
     override fun findAll(
         pageable: Pageable,
         label: SearchString?,
@@ -94,19 +121,43 @@ class InMemoryResourceRepository(private val inMemoryGraph: InMemoryGraph) :
             } else {
                 pageable.withDefaultSort { Sort.by("created_at") }.sort.resourceComparator
             },
-            predicate = {
-                (label == null || it.label.matches(label)) &&
-                    (visibility == null || it.visibility in visibility.targets) &&
-                    (createdBy == null || it.createdBy == createdBy) &&
-                    (createdAtStart == null || it.createdAt >= createdAtStart) &&
-                    (createdAtEnd == null || it.createdAt <= createdAtEnd) &&
-                    (includeClasses.isEmpty() || includeClasses.all { `class` -> `class` in it.classes }) &&
-                    (excludeClasses.isEmpty() || excludeClasses.none { `class` -> `class` in it.classes }) &&
-                    (observatoryId == null || it.observatoryId == observatoryId) &&
-                    (organizationId == null || it.organizationId == organizationId) &&
-                    (baseClass == null || it.isInstanceOf(baseClass))
-            }
+            predicate = buildFindAllPredicate(
+                label,
+                visibility,
+                createdBy,
+                createdAtStart,
+                createdAtEnd,
+                includeClasses,
+                excludeClasses,
+                observatoryId,
+                organizationId,
+                baseClass
+            )
         )
+
+    private fun buildFindAllPredicate(
+        label: SearchString?,
+        visibility: VisibilityFilter?,
+        createdBy: ContributorId?,
+        createdAtStart: OffsetDateTime?,
+        createdAtEnd: OffsetDateTime?,
+        includeClasses: Set<ThingId>,
+        excludeClasses: Set<ThingId>,
+        observatoryId: ObservatoryId?,
+        organizationId: OrganizationId?,
+        baseClass: ThingId?,
+    ): (Resource) -> Boolean = {
+        (label == null || it.label.matches(label)) &&
+            (visibility == null || it.visibility in visibility.targets) &&
+            (createdBy == null || it.createdBy == createdBy) &&
+            (createdAtStart == null || it.createdAt >= createdAtStart) &&
+            (createdAtEnd == null || it.createdAt <= createdAtEnd) &&
+            (includeClasses.isEmpty() || includeClasses.all { `class` -> `class` in it.classes }) &&
+            (excludeClasses.isEmpty() || excludeClasses.none { `class` -> `class` in it.classes }) &&
+            (observatoryId == null || it.observatoryId == observatoryId) &&
+            (organizationId == null || it.organizationId == organizationId) &&
+            (baseClass == null || it.isInstanceOf(baseClass))
+    }
 
     private fun Resource.isInstanceOf(baseClass: ThingId): Boolean {
         val visited: MutableSet<ThingId> = mutableSetOf()

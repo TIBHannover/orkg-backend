@@ -246,7 +246,59 @@ class SpringDataNeo4jResourceAdapter(
         baseClass: ThingId?,
         observatoryId: ObservatoryId?,
         organizationId: OrganizationId?,
-    ): Page<Resource> = cypherQueryBuilderFactory.newBuilder(Uncached)
+    ): Page<Resource> =
+        buildFindAll(
+            sort = pageable.sort.orElseGet { Sort.by("created_at") },
+            label = label,
+            visibility = visibility,
+            createdBy = createdBy,
+            createdAtStart = createdAtStart,
+            createdAtEnd = createdAtEnd,
+            includeClasses = includeClasses,
+            excludeClasses = excludeClasses,
+            baseClass = baseClass,
+            observatoryId = observatoryId,
+            organizationId = organizationId
+        ).fetch(pageable, false)
+
+    override fun count(
+        label: SearchString?,
+        visibility: VisibilityFilter?,
+        createdBy: ContributorId?,
+        createdAtStart: OffsetDateTime?,
+        createdAtEnd: OffsetDateTime?,
+        includeClasses: Set<ThingId>,
+        excludeClasses: Set<ThingId>,
+        baseClass: ThingId?,
+        observatoryId: ObservatoryId?,
+        organizationId: OrganizationId?,
+    ): Long =
+        buildFindAll(
+            label = label,
+            visibility = visibility,
+            createdBy = createdBy,
+            createdAtStart = createdAtStart,
+            createdAtEnd = createdAtEnd,
+            includeClasses = includeClasses,
+            excludeClasses = excludeClasses,
+            baseClass = baseClass,
+            observatoryId = observatoryId,
+            organizationId = organizationId
+        ).count()
+
+    private fun buildFindAll(
+        sort: Sort = Sort.unsorted(),
+        label: SearchString?,
+        visibility: VisibilityFilter?,
+        createdBy: ContributorId?,
+        createdAtStart: OffsetDateTime?,
+        createdAtEnd: OffsetDateTime?,
+        includeClasses: Set<ThingId>,
+        excludeClasses: Set<ThingId>,
+        baseClass: ThingId?,
+        observatoryId: ObservatoryId?,
+        organizationId: OrganizationId?,
+    ) = cypherQueryBuilderFactory.newBuilder(Uncached)
         .withCommonQuery {
             val node = node("Resource", includeClasses.map { it.value }).named("node")
             val match = label?.let { searchString ->
@@ -293,7 +345,6 @@ class SpringDataNeo4jResourceAdapter(
             val node = name("node")
             val score = if (label != null && label is FuzzySearchString) name("score") else null
             val variables = listOfNotNull(node, score)
-            val sort = pageable.sort.orElseGet { Sort.by("created_at") }
             commonQuery
                 .with(variables) // "with" is required because cypher dsl reorders "orderBy" and "where" clauses sometimes, decreasing performance
                 .where(
@@ -322,7 +373,6 @@ class SpringDataNeo4jResourceAdapter(
         }
         .countOver("node")
         .mappedBy(ResourceMapper("node"))
-        .fetch(pageable, false)
 
     override fun findAllPapersByLabel(label: String): List<Resource> =
         neo4jRepository.findAllPapersByLabel(label).map(Neo4jResource::toResource)

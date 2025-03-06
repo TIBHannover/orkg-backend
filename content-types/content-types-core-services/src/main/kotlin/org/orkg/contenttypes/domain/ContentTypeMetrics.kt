@@ -11,11 +11,14 @@ import org.orkg.contenttypes.output.PaperRepository
 import org.orkg.contenttypes.output.SmartReviewRepository
 import org.orkg.contenttypes.output.TemplateRepository
 import org.orkg.contenttypes.output.VisualizationRepository
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Resources
 import org.orkg.graph.domain.VisibilityFilter
+import org.orkg.graph.output.ResourceRepository
 import org.orkg.statistics.domain.CachedMetric
 import org.orkg.statistics.domain.Metric
 import org.orkg.statistics.domain.MultiValueParameterSpec
+import org.orkg.statistics.domain.ParameterMap
 import org.orkg.statistics.domain.SingleValueParameterSpec
 import org.springframework.cache.CacheManager
 import org.springframework.context.annotation.Bean
@@ -88,15 +91,18 @@ private val sdgParameter = SingleValueParameterSpec(
     parser = ::ThingId
 )
 
-private val sharedContentTypeParameters = mapOf(
-    "research_field" to researchFieldParameter,
-    "include_subfields" to includeSubfieldsParameter,
+private val resourceParameters = mapOf(
     "observatory_id" to observatoryIdParameter,
     "organization_id" to organizationIdParameter,
     "created_by" to createdByParameter,
     "created_at_start" to createdAtStartParameter,
     "created_at_end" to createdAtEndParameter,
     "visibility" to visibilityParameter,
+)
+
+private val sharedContentTypeParameters = resourceParameters + mapOf(
+    "research_field" to researchFieldParameter,
+    "include_subfields" to includeSubfieldsParameter,
 )
 
 private val publishedParameter = SingleValueParameterSpec(
@@ -316,4 +322,67 @@ class ContentTypeMetrics {
             )
         }
     )
+
+    @Bean
+    fun rosettaStoneTemplateCountMetric(
+        resourceRepository: ResourceRepository,
+        cacheManager: CacheManager?,
+    ): Metric = CachedMetric.create(
+        cacheManager = cacheManager,
+        name = "rosetta-stone-template-count",
+        description = "Number of rosetta stone templates in the graph.",
+        group = "content-types",
+        parameterSpecs = resourceParameters,
+        supplier = resourceRepositoryBasedParameterizedCountSupplier(
+            resourceRepository = resourceRepository,
+            classes = setOf(Classes.rosettaNodeShape)
+        )
+    )
+
+    @Bean
+    fun rosettaStoneStatementCountMetric(
+        resourceRepository: ResourceRepository,
+        cacheManager: CacheManager?,
+    ): Metric = CachedMetric.create(
+        cacheManager = cacheManager,
+        name = "rosetta-stone-statement-count",
+        description = "Number of rosetta stone statements in the graph.",
+        group = "content-types",
+        parameterSpecs = resourceParameters,
+        supplier = resourceRepositoryBasedParameterizedCountSupplier(
+            resourceRepository = resourceRepository,
+            classes = setOf(Classes.rosettaStoneStatement, Classes.latestVersion)
+        )
+    )
+
+    @Bean
+    fun rosettaStoneStatementVersionCountMetric(
+        resourceRepository: ResourceRepository,
+        cacheManager: CacheManager?,
+    ): Metric = CachedMetric.create(
+        cacheManager = cacheManager,
+        name = "rosetta-stone-statement-version-count",
+        description = "Number of individual rosetta stone statement versions in the graph.",
+        group = "content-types",
+        parameterSpecs = resourceParameters,
+        supplier = resourceRepositoryBasedParameterizedCountSupplier(
+            resourceRepository = resourceRepository,
+            classes = setOf(Classes.rosettaStoneStatement)
+        )
+    )
+
+    private fun resourceRepositoryBasedParameterizedCountSupplier(
+        resourceRepository: ResourceRepository,
+        classes: Set<ThingId>,
+    ) = { parameters: ParameterMap ->
+        resourceRepository.count(
+            includeClasses = classes,
+            observatoryId = parameters[observatoryIdParameter],
+            organizationId = parameters[organizationIdParameter],
+            createdBy = parameters[createdByParameter],
+            createdAtStart = parameters[createdAtStartParameter],
+            createdAtEnd = parameters[createdAtEndParameter],
+            visibility = parameters[visibilityParameter],
+        )
+    }
 }

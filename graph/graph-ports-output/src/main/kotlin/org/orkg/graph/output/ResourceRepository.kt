@@ -39,6 +39,19 @@ interface ResourceRepository : EntityRepository<Resource, ThingId> {
         organizationId: OrganizationId? = null,
     ): Page<Resource>
 
+    fun count(
+        label: SearchString? = null,
+        visibility: VisibilityFilter? = null,
+        createdBy: ContributorId? = null,
+        createdAtStart: OffsetDateTime? = null,
+        createdAtEnd: OffsetDateTime? = null,
+        includeClasses: Set<ThingId> = emptySet(),
+        excludeClasses: Set<ThingId> = emptySet(),
+        baseClass: ThingId? = null,
+        observatoryId: ObservatoryId? = null,
+        organizationId: OrganizationId? = null,
+    ): Long
+
     fun findPaperByLabel(label: String): Optional<Resource>
 
     fun findAllPapersByLabel(label: String): List<Resource>

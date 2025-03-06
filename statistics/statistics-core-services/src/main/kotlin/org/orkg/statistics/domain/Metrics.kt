@@ -270,30 +270,6 @@ class Metrics {
         supplier = { statisticsRepository.countNodes("C14022") }
     )
 
-    @Bean
-    fun rosettaStoneTemplateVersionCountMetric(
-        statisticsRepository: StatisticsRepository,
-        cacheManager: CacheManager?,
-    ): Metric = CachedMetric.create(
-        cacheManager = cacheManager,
-        name = "rosetta-stone-template-count",
-        description = "Number of rosetta stone templates in the graph.",
-        group = "content-types",
-        supplier = { statisticsRepository.countNodes("RosettaNodeShape") }
-    )
-
-    @Bean
-    fun rosettaStoneStatementVersionCountMetric(
-        statisticsRepository: StatisticsRepository,
-        cacheManager: CacheManager?,
-    ): Metric = CachedMetric.create(
-        cacheManager = cacheManager,
-        name = "rosetta-stone-statement-version-count",
-        description = "Number of individual rosetta stone statement versions in the graph.",
-        group = "content-types",
-        supplier = { statisticsRepository.countNodes("RosettaStoneStatement") }
-    )
-
     //
     // Community
     //

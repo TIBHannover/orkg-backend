@@ -79,6 +79,8 @@ fun timestampFieldWithPath(path: String, suffix: String): FieldDescriptor = fiel
     )
     .type(OffsetDateTime::class.simpleName)
 
-fun <T : AbstractDescriptor<T>> AbstractDescriptor<T>.deprecated(): T = description("*Deprecated*. $description")
+fun <T : AbstractDescriptor<T>> AbstractDescriptor<T>.deprecated(): T =
+    description(listOfNotNull("*Deprecated*", description).joinToString(" "))
 
-fun <T : AbstractDescriptor<T>> AbstractDescriptor<T>.deprecated(replaceWith: String): T = description("*Deprecated*. See `$replaceWith` for replacement. $description")
+fun <T : AbstractDescriptor<T>> AbstractDescriptor<T>.deprecated(replaceWith: String): T =
+    description(listOfNotNull("*Deprecated*. See `$replaceWith` for replacement.", description).joinToString(" "))

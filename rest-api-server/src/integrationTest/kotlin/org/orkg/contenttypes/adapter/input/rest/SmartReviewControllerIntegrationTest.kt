@@ -37,6 +37,7 @@ import org.orkg.createLiteral
 import org.orkg.createObservatory
 import org.orkg.createOrganization
 import org.orkg.createPredicate
+import org.orkg.createPredicates
 import org.orkg.createResource
 import org.orkg.createStatement
 import org.orkg.graph.domain.Classes
@@ -98,59 +99,61 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
         assertThat(organizationService.findAll()).hasSize(0)
         assertThat(organizationService.findAllConferences()).hasSize(0)
 
-        predicateService.createPredicate(Predicates.description)
-        predicateService.createPredicate(Predicates.hasAuthors)
-        predicateService.createPredicate(Predicates.hasContent)
-        predicateService.createPredicate(Predicates.hasContribution)
-        predicateService.createPredicate(Predicates.hasEntity)
-        predicateService.createPredicate(Predicates.hasLink)
-        predicateService.createPredicate(Predicates.hasListElement)
-        predicateService.createPredicate(Predicates.hasORCID)
-        predicateService.createPredicate(Predicates.hasReference)
-        predicateService.createPredicate(Predicates.hasResearchField)
-        predicateService.createPredicate(Predicates.hasSection)
-        predicateService.createPredicate(Predicates.hasURL)
-        predicateService.createPredicate(Predicates.hasWebsite)
-        predicateService.createPredicate(Predicates.showProperty)
-        predicateService.createPredicate(Predicates.sustainableDevelopmentGoal)
+        predicateService.createPredicates(
+            Predicates.description,
+            Predicates.hasAuthors,
+            Predicates.hasContent,
+            Predicates.hasContribution,
+            Predicates.hasEntity,
+            Predicates.hasLink,
+            Predicates.hasListElement,
+            Predicates.hasORCID,
+            Predicates.hasReference,
+            Predicates.hasResearchField,
+            Predicates.hasSection,
+            Predicates.hasURL,
+            Predicates.hasWebsite,
+            Predicates.showProperty,
+            Predicates.sustainableDevelopmentGoal,
+        )
 
         classService.createClasses(
-            "SmartReview",
-            "Paper",
-            "Comparison",
-            "Visualization",
-            "Dataset",
-            "ResearchField",
-            "Author",
-            Classes.section.value,
-            Classes.sustainableDevelopmentGoal.value,
-            *SmartReviewTextSection.types.map { it.value }.toTypedArray()
+            Classes.smartReview,
+            Classes.paper,
+            Classes.comparison,
+            Classes.visualization,
+            Classes.dataset,
+            Classes.researchField,
+            Classes.author,
+            Classes.section,
+            Classes.sustainableDevelopmentGoal,
+            *SmartReviewTextSection.types.toTypedArray()
         )
 
         resourceService.createResource(
-            id = "R12",
+            id = ThingId("R12"),
             label = "Computer Science",
-            classes = setOf(Classes.researchField.value)
+            classes = setOf(Classes.researchField)
         )
         resourceService.createResource(
-            id = "R194",
+            id = ThingId("R194"),
             label = "Engineering",
-            classes = setOf(Classes.researchField.value)
+            classes = setOf(Classes.researchField)
         )
 
         // Example specific entities
 
-        classService.createClasses("C123")
+        classService.createClasses(ThingId("C123"))
 
-        resourceService.createResource(id = "R6416", label = "Some comparison", classes = setOf("Comparison"))
-        resourceService.createResource(id = "R215648", label = "Some visualization", classes = setOf("Visualization"))
-        resourceService.createResource(id = "R14565", label = "Some dataset resource", classes = setOf("Dataset"))
-        resourceService.createResource(id = "R1", label = "Some ontology resource")
+        resourceService.createResource(id = ThingId("R6416"), label = "Some comparison", classes = setOf(Classes.comparison))
+        resourceService.createResource(id = ThingId("R215648"), label = "Some visualization", classes = setOf(Classes.visualization))
+        resourceService.createResource(id = ThingId("R14565"), label = "Some dataset resource", classes = setOf(Classes.dataset))
+        resourceService.createResource(id = ThingId("R1"), label = "Some ontology resource")
 
-        resourceService.createResource(id = "R26416", label = "Some other comparison", classes = setOf("Comparison"))
-        resourceService.createResource(id = "R2215648", label = "Some other visualization", classes = setOf("Visualization"))
-        resourceService.createResource(id = "R214565", label = "Some other dataset resource", classes = setOf("Dataset"))
-        resourceService.createResource(id = "R21", label = "Some other ontology resource")
+        resourceService.createResource(id = ThingId("R26416"), label = "Some other comparison", classes = setOf(Classes.comparison))
+        resourceService.createResource(id = ThingId("R2215648"), label = "Some other visualization", classes = setOf(Classes.visualization))
+        resourceService.createResource(id = ThingId("R214565"), label = "Some other dataset resource", classes = setOf(Classes.dataset))
+        resourceService.createResource(id = ThingId("R21"), label = "Some other ontology resource")
 
         predicateService.createPredicate(id = ThingId("R15696541"), label = "Some predicate")
         predicateService.createPredicate(id = ThingId("P1"), label = "Some ontology predicate")
@@ -158,17 +161,17 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
         predicateService.createPredicate(id = ThingId("R215696541"), label = "Some other predicate")
         predicateService.createPredicate(id = ThingId("P21"), label = "Some other ontology predicate")
 
-        resourceService.createResource(id = "R123", label = "Author with id", classes = setOf("Author"))
-        resourceService.createResource(id = "SDG_1", label = "No poverty", classes = setOf(Classes.sustainableDevelopmentGoal.value))
-        resourceService.createResource(id = "SDG_2", label = "Zero hunger", classes = setOf(Classes.sustainableDevelopmentGoal.value))
-        resourceService.createResource(id = "SDG_3", label = "Good health and well-being", classes = setOf(Classes.sustainableDevelopmentGoal.value))
-        resourceService.createResource(id = "SDG_4", label = "Quality education", classes = setOf(Classes.sustainableDevelopmentGoal.value))
+        resourceService.createResource(id = ThingId("R123"), label = "Author with id", classes = setOf(Classes.author))
+        resourceService.createResource(id = ThingId("SDG_1"), label = "No poverty", classes = setOf(Classes.sustainableDevelopmentGoal))
+        resourceService.createResource(id = ThingId("SDG_2"), label = "Zero hunger", classes = setOf(Classes.sustainableDevelopmentGoal))
+        resourceService.createResource(id = ThingId("SDG_3"), label = "Good health and well-being", classes = setOf(Classes.sustainableDevelopmentGoal))
+        resourceService.createResource(id = ThingId("SDG_4"), label = "Quality education", classes = setOf(Classes.sustainableDevelopmentGoal))
 
         statementService.createStatement(
             subject = resourceService.createResource(
-                id = "R456",
+                id = ThingId("R456"),
                 label = "Author with id and orcid",
-                classes = setOf("Author")
+                classes = setOf(Classes.author)
             ),
             predicate = Predicates.hasORCID,
             `object` = literalService.createLiteral(label = "1111-2222-3333-4444")
@@ -176,9 +179,9 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
 
         statementService.createStatement(
             subject = resourceService.createResource(
-                id = "R4567",
+                id = ThingId("R4567"),
                 label = "Author with orcid",
-                classes = setOf("Author")
+                classes = setOf(Classes.author)
             ),
             predicate = Predicates.hasORCID,
             `object` = literalService.createLiteral(label = "0000-1111-2222-3333")

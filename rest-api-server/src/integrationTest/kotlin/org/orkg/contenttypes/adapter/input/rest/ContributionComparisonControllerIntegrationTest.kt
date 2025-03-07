@@ -7,9 +7,10 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.createClasses
 import org.orkg.createLiteral
-import org.orkg.createPredicate
+import org.orkg.createPredicates
 import org.orkg.createResource
 import org.orkg.createStatement
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.LiteralUseCases
@@ -57,19 +58,24 @@ internal class ContributionComparisonControllerIntegrationTest : MockMvcBaseTest
         assertThat(statementService.findAll(tempPageable)).hasSize(0)
         assertThat(classService.findAll(tempPageable)).hasSize(0)
 
-        predicateService.createPredicate(Predicates.yearPublished)
-        predicateService.createPredicate(Predicates.hasContribution)
+        predicateService.createPredicates(
+            Predicates.yearPublished,
+            Predicates.hasContribution,
+        )
 
-        classService.createClasses("Paper", "Contribution")
+        classService.createClasses(
+            Classes.paper,
+            Classes.contribution,
+        )
     }
 
     @Test
     fun fetchContributionInformation() {
-        val cont1 = resourceService.createResource(setOf("Contribution"), label = "Contribution 1")
-        val cont2 = resourceService.createResource(setOf("Contribution"), label = "Contribution 2")
+        val cont1 = resourceService.createResource(setOf(Classes.contribution), label = "Contribution 1")
+        val cont2 = resourceService.createResource(setOf(Classes.contribution), label = "Contribution 2")
 
-        val paper1 = resourceService.createResource(setOf("Paper"), label = "Paper 1")
-        val paper2 = resourceService.createResource(setOf("Paper"), label = "Paper 2")
+        val paper1 = resourceService.createResource(setOf(Classes.paper), label = "Paper 1")
+        val paper2 = resourceService.createResource(setOf(Classes.paper), label = "Paper 2")
 
         val year1 = literalService.createLiteral(label = "2022")
         val year2 = literalService.createLiteral(label = "2023")
@@ -98,9 +104,9 @@ internal class ContributionComparisonControllerIntegrationTest : MockMvcBaseTest
 
     @Test
     fun passingLessThanTwoIDsShouldRaiseAnError() {
-        val cont1 = resourceService.createResource(setOf("Contribution"), label = "Contribution 1")
+        val cont1 = resourceService.createResource(setOf(Classes.contribution), label = "Contribution 1")
 
-        val paper1 = resourceService.createResource(setOf("Paper"), label = "Paper 1")
+        val paper1 = resourceService.createResource(setOf(Classes.paper), label = "Paper 1")
 
         val year1 = literalService.createLiteral(label = "2022")
 

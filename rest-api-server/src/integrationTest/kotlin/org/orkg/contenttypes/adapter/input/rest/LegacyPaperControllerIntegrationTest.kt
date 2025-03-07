@@ -12,8 +12,10 @@ import org.orkg.contenttypes.input.LegacyCreatePaperUseCase.PaperDefinition
 import org.orkg.contenttypes.input.LegacyPaperUseCases
 import org.orkg.createClasses
 import org.orkg.createPredicate
+import org.orkg.createPredicates
 import org.orkg.createResource
 import org.orkg.createStatement
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.ClassUseCases
@@ -61,23 +63,32 @@ internal class LegacyPaperControllerIntegrationTest : MockMvcBaseTest("papers") 
         assertThat(resourceService.findAll(tempPageable)).hasSize(0)
         assertThat(classService.findAll(tempPageable)).hasSize(0)
 
-        predicateService.createPredicate(Predicates.hasDOI)
-        predicateService.createPredicate(Predicates.hasAuthors)
-        predicateService.createPredicate(Predicates.monthPublished)
-        predicateService.createPredicate(Predicates.yearPublished)
-        predicateService.createPredicate(Predicates.hasResearchField)
-        predicateService.createPredicate(Predicates.hasContribution)
-        predicateService.createPredicate(Predicates.hasResearchProblem)
-        predicateService.createPredicate(Predicates.hasEvaluation)
-        predicateService.createPredicate(Predicates.hasURL)
-        predicateService.createPredicate(Predicates.hasORCID)
-        predicateService.createPredicate(Predicates.hasVenue)
-        predicateService.createPredicate(Predicates.hasListElement)
+        predicateService.createPredicates(
+            Predicates.hasDOI,
+            Predicates.hasAuthors,
+            Predicates.monthPublished,
+            Predicates.yearPublished,
+            Predicates.hasResearchField,
+            Predicates.hasContribution,
+            Predicates.hasResearchProblem,
+            Predicates.hasEvaluation,
+            Predicates.hasURL,
+            Predicates.hasORCID,
+            Predicates.hasVenue,
+            Predicates.hasListElement,
+        )
 
-        classService.createClasses("Paper", "Contribution", "Problem", "ResearchField", "Author", "Venue")
+        classService.createClasses(
+            Classes.paper,
+            Classes.contribution,
+            Classes.problem,
+            Classes.researchField,
+            Classes.author,
+            Classes.venue,
+        )
 
-        resourceService.createResource(id = "R12", label = "Computer Science")
-        resourceService.createResource(id = "CUSTOM_ID", label = "Question Answering over Linked Data")
+        resourceService.createResource(id = ThingId("R12"), label = "Computer Science")
+        resourceService.createResource(id = ThingId("CUSTOM_ID"), label = "Question Answering over Linked Data")
     }
 
     @Test
@@ -345,8 +356,8 @@ internal class LegacyPaperControllerIntegrationTest : MockMvcBaseTest("papers") 
     @TestWithMockUser
     fun creatingAPaperTwiceWorksAsExpected() {
         resourceService.createResource(
-            id = "R106",
-            classes = setOf("ResearchField"),
+            id = ThingId("R106"),
+            classes = setOf(Classes.researchField),
             label = "Some research field required by the example data"
         )
 
@@ -373,9 +384,9 @@ internal class LegacyPaperControllerIntegrationTest : MockMvcBaseTest("papers") 
         val predicate1 = predicateService.createPredicate(label = "Predicate 1")
         val predicate2 = predicateService.createPredicate(label = "Predicate 2")
 
-        val relatedPaper1 = resourceService.createResource(setOf("Paper"), label = "Paper 1")
-        val relatedPaper2 = resourceService.createResource(setOf("Paper"), label = "Paper 2")
-        val unrelatedPaper = resourceService.createResource(setOf("Paper"), label = "Paper 3")
+        val relatedPaper1 = resourceService.createResource(setOf(Classes.paper), label = "Paper 1")
+        val relatedPaper2 = resourceService.createResource(setOf(Classes.paper), label = "Paper 2")
+        val unrelatedPaper = resourceService.createResource(setOf(Classes.paper), label = "Paper 3")
         val intermediateResource = resourceService.createResource(label = "Not interesting")
         val unrelatedResource = resourceService.createResource(label = "Some resource")
         val id = resourceService.createResource(label = "Our resource")

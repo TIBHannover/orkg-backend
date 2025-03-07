@@ -3,11 +3,13 @@ package org.orkg.graph.adapter.input.rest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.orkg.common.ThingId
 import org.orkg.createClass
 import org.orkg.createClasses
 import org.orkg.createLiteral
 import org.orkg.createPredicate
 import org.orkg.createResource
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.LiteralUseCases
@@ -52,17 +54,17 @@ internal class StatisticsControllerIntegrationTest : MockMvcBaseTest("statistics
 
     @Test
     fun index() {
-        classService.createClasses("Paper")
+        classService.createClasses(Classes.paper)
         classService.createClass(label = "Awesome class")
         resourceService.createResource(
-            id = "R11",
+            id = ThingId("R11"),
             label = "Research field"
         )
         resourceService.createResource(label = "Python")
         resourceService.createResource(label = "C#")
-        resourceService.createResource(classes = setOf("Paper"), label = "Paper 212")
-        resourceService.createResource(classes = setOf("Paper"), label = "Paper 222")
-        resourceService.createResource(classes = setOf("Paper"), label = "Paper 432")
+        resourceService.createResource(classes = setOf(Classes.paper), label = "Paper 212")
+        resourceService.createResource(classes = setOf(Classes.paper), label = "Paper 222")
+        resourceService.createResource(classes = setOf(Classes.paper), label = "Paper 432")
 
         predicateService.createPredicate(Predicates.hasResearchProblem)
         predicateService.createPredicate(Predicates.hasContribution)

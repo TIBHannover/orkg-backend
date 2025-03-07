@@ -16,9 +16,10 @@ import org.orkg.createContributor
 import org.orkg.createLiteral
 import org.orkg.createObservatory
 import org.orkg.createOrganization
-import org.orkg.createPredicate
+import org.orkg.createPredicates
 import org.orkg.createResource
 import org.orkg.createStatement
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.LiteralUseCases
@@ -72,7 +73,7 @@ internal class VisualizationControllerIntegrationTest : MockMvcBaseTest("visuali
         assertThat(organizationService.findAll()).hasSize(0)
         assertThat(organizationService.findAllConferences()).hasSize(0)
 
-        listOf(
+        predicateService.createPredicates(
             Predicates.hasAuthors,
             Predicates.hasEvaluation,
             Predicates.hasORCID,
@@ -80,25 +81,34 @@ internal class VisualizationControllerIntegrationTest : MockMvcBaseTest("visuali
             Predicates.hasWebsite,
             Predicates.description,
             Predicates.hasListElement
-        ).forEach { predicateService.createPredicate(it) }
+        )
 
-        classService.createClasses("Visualization", "Contribution", "Problem", "ResearchField", "Author", "Venue", "Result")
+        classService.createClasses(
+            Classes.visualization,
+            Classes.contribution,
+            Classes.problem,
+            Classes.researchField,
+            Classes.author,
+            Classes.venue
+        )
 
         // Example specific entities
 
+        classService.createClasses(ThingId("Result"))
+
         resourceService.createResource(
-            id = "R12",
+            id = ThingId("R12"),
             label = "Computer Science",
-            classes = setOf("ResearchField")
+            classes = setOf(Classes.researchField)
         )
 
-        resourceService.createResource(id = "R123", label = "Author with id", classes = setOf("Author"))
+        resourceService.createResource(id = ThingId("R123"), label = "Author with id", classes = setOf(Classes.author))
 
         statementService.createStatement(
             subject = resourceService.createResource(
-                id = "R456",
+                id = ThingId("R456"),
                 label = "Author with id and orcid",
-                classes = setOf("Author")
+                classes = setOf(Classes.author)
             ),
             predicate = Predicates.hasORCID,
             `object` = literalService.createLiteral(label = "1111-2222-3333-4444")
@@ -106,9 +116,9 @@ internal class VisualizationControllerIntegrationTest : MockMvcBaseTest("visuali
 
         statementService.createStatement(
             subject = resourceService.createResource(
-                id = "R4567",
+                id = ThingId("R4567"),
                 label = "Author with orcid",
-                classes = setOf("Author")
+                classes = setOf(Classes.author)
             ),
             predicate = Predicates.hasORCID,
             `object` = literalService.createLiteral(label = "0000-1111-2222-3333")

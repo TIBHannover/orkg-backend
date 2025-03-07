@@ -14,6 +14,7 @@ import org.orkg.createContributor
 import org.orkg.createObservatory
 import org.orkg.createOrganization
 import org.orkg.createResource
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.mediastorage.domain.ImageData
@@ -58,7 +59,7 @@ internal class OrganizationControllerIntegrationTest : MockMvcBaseTest("organiza
         assertThat(resourceService.findAll(PageRequest.of(0, 10))).hasSize(0)
         assertThat(classService.findAll(PageRequest.of(0, 10))).hasSize(0)
 
-        classService.createClasses("ResearchField")
+        classService.createClasses(Classes.researchField)
     }
 
     @AfterEach
@@ -127,7 +128,7 @@ internal class OrganizationControllerIntegrationTest : MockMvcBaseTest("organiza
         val contributorId = contributorService.createContributor()
         val organizationId = service.createOrganization(createdBy = contributorId)
         val researchField = resourceService.createResource(
-            classes = setOf("ResearchField")
+            classes = setOf(Classes.researchField)
         )
         observatoryService.createObservatory(
             organizations = setOf(organizationId),

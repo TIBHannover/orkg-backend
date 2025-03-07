@@ -37,7 +37,7 @@ import org.orkg.createContributor
 import org.orkg.createLiteral
 import org.orkg.createObservatory
 import org.orkg.createOrganization
-import org.orkg.createPredicate
+import org.orkg.createPredicates
 import org.orkg.createResource
 import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.Classes
@@ -107,7 +107,7 @@ internal class RosettaStoneStatementControllerIntegrationTest : MockMvcBaseTest(
         assertThat(organizationService.findAllConferences()).hasSize(0)
         assertThat(rosettaStoneStatementService.findAll(tempPageable)).hasSize(0)
 
-        listOf(
+        predicateService.createPredicates(
             Predicates.description,
             Predicates.exampleOfUsage,
             Predicates.placeholder,
@@ -127,36 +127,40 @@ internal class RosettaStoneStatementControllerIntegrationTest : MockMvcBaseTest(
             Predicates.hasListElement,
             Predicates.hasSubjectPosition,
             Predicates.hasObjectPosition,
-        ).forEach { predicateService.createPredicate(it) }
+        )
 
-        setOf(
+        classService.createClasses(
             Classes.rosettaNodeShape,
             Classes.propertyShape,
             Classes.researchField,
-        ).forEach { classService.createClass(label = it.value, id = it.value) }
+        )
 
-        Literals.XSD.entries.forEach {
+        Literals.XSD.entries.forEach { xsd ->
             classService.createClass(
-                label = it.`class`.value,
-                id = it.`class`.value,
-                uri = ParsedIRI(it.uri)
+                label = xsd.`class`.value,
+                id = xsd.`class`,
+                uri = ParsedIRI(xsd.uri)
             )
         }
 
         resourceService.createResource(
-            id = "R12",
+            id = ThingId("R12"),
             label = "Computer Science",
-            classes = setOf(Classes.researchField.value)
+            classes = setOf(Classes.researchField)
         )
 
         // Example specific entities
 
-        classService.createClasses("C123", "C28", "C25")
+        classService.createClasses(
+            ThingId("C123"),
+            ThingId("C28"),
+            ThingId("C25"),
+        )
 
-        resourceService.createResource(id = "R789")
-        resourceService.createResource(id = "R174")
-        resourceService.createResource(id = "R258", classes = setOf("C28"))
-        resourceService.createResource(id = "R369", classes = setOf("C28"))
+        resourceService.createResource(id = ThingId("R789"))
+        resourceService.createResource(id = ThingId("R174"))
+        resourceService.createResource(id = ThingId("R258"), classes = setOf(ThingId("C28")))
+        resourceService.createResource(id = ThingId("R369"), classes = setOf(ThingId("C28")))
 
         literalService.createLiteral(id = ThingId("L123"), label = "123456")
         literalService.createLiteral(id = ThingId("L456"), label = "5", datatype = Literals.XSD.INT.prefixedUri)

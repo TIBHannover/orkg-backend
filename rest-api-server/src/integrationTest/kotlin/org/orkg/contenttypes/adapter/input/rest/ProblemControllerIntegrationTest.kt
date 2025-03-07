@@ -8,10 +8,11 @@ import org.orkg.createClasses
 import org.orkg.createContributor
 import org.orkg.createList
 import org.orkg.createLiteral
-import org.orkg.createPredicate
+import org.orkg.createPredicates
 import org.orkg.createResource
 import org.orkg.createStatement
 import org.orkg.graph.adapter.input.rest.testing.fixtures.resourceResponseFields
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.ClassUseCases
@@ -63,23 +64,31 @@ internal class ProblemControllerIntegrationTest : MockMvcBaseTest("research-prob
         resourceService.deleteAll()
         classService.deleteAll()
 
-        classService.createClasses("Problem", "Contribution", "Author", "Paper")
-        predicateService.createPredicate(Predicates.hasResearchProblem)
-        predicateService.createPredicate(Predicates.hasAuthors)
-        predicateService.createPredicate(Predicates.hasContribution)
-        predicateService.createPredicate(Predicates.hasListElement)
+        classService.createClasses(
+            Classes.problem,
+            Classes.contribution,
+            Classes.author,
+            Classes.paper,
+        )
+
+        predicateService.createPredicates(
+            Predicates.hasResearchProblem,
+            Predicates.hasAuthors,
+            Predicates.hasContribution,
+            Predicates.hasListElement,
+        )
     }
 
     @Test
     fun getUsersPerProblem() {
         val predicate = Predicates.hasResearchProblem
         val problem = resourceService.createResource(
-            classes = setOf("Problem"),
+            classes = setOf(Classes.problem),
             label = "save the world"
         )
         val contributorId = contributorService.createContributor()
         val contribution = resourceService.createResource(
-            classes = setOf("Contribution"),
+            classes = setOf(Classes.contribution),
             label = "Be healthy",
             userId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL
@@ -116,22 +125,22 @@ internal class ProblemControllerIntegrationTest : MockMvcBaseTest("research-prob
     @Test
     fun getAuthorsPerProblem() {
         // Create authors
-        val author1 = resourceService.createResource(setOf("Author"), label = "Author A")
+        val author1 = resourceService.createResource(setOf(Classes.author), label = "Author A")
         val author2 = literalService.createLiteral(label = "Author B")
         // Create papers
-        val paper1 = resourceService.createResource(setOf("Paper"), label = "Paper 1")
-        val paper2 = resourceService.createResource(setOf("Paper"), label = "Paper 2")
-        val paper3 = resourceService.createResource(setOf("Paper"), label = "Paper 3")
-        val paper4 = resourceService.createResource(setOf("Paper"), label = "Paper 4")
+        val paper1 = resourceService.createResource(setOf(Classes.paper), label = "Paper 1")
+        val paper2 = resourceService.createResource(setOf(Classes.paper), label = "Paper 2")
+        val paper3 = resourceService.createResource(setOf(Classes.paper), label = "Paper 3")
+        val paper4 = resourceService.createResource(setOf(Classes.paper), label = "Paper 4")
         // Create contributions
-        val cont1 = resourceService.createResource(setOf("Contribution"), label = "Contribution 1 of Paper 1")
-        val cont2 = resourceService.createResource(setOf("Contribution"), label = "Contribution 2 of Paper 1")
-        val cont3 = resourceService.createResource(setOf("Contribution"), label = "Contribution 1 of Paper 2")
-        val cont4 = resourceService.createResource(setOf("Contribution"), label = "Contribution 1 of Paper 3")
-        val cont5 = resourceService.createResource(setOf("Contribution"), label = "Contribution 1 of Paper 4")
+        val cont1 = resourceService.createResource(setOf(Classes.contribution), label = "Contribution 1 of Paper 1")
+        val cont2 = resourceService.createResource(setOf(Classes.contribution), label = "Contribution 2 of Paper 1")
+        val cont3 = resourceService.createResource(setOf(Classes.contribution), label = "Contribution 1 of Paper 2")
+        val cont4 = resourceService.createResource(setOf(Classes.contribution), label = "Contribution 1 of Paper 3")
+        val cont5 = resourceService.createResource(setOf(Classes.contribution), label = "Contribution 1 of Paper 4")
         // Create problems
-        val problem1 = resourceService.createResource(setOf("Problem"), label = "Problem X")
-        val problem2 = resourceService.createResource(setOf("Problem"), label = "Problem Y")
+        val problem1 = resourceService.createResource(setOf(Classes.problem), label = "Problem X")
+        val problem2 = resourceService.createResource(setOf(Classes.problem), label = "Problem Y")
 
         // Link authors to papers
         val paper1AuthorsList = listService.createList("Authors", listOf(author1, author2))

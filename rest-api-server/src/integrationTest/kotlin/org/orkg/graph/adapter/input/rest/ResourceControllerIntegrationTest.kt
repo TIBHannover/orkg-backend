@@ -12,6 +12,7 @@ import org.orkg.createPredicate
 import org.orkg.createResource
 import org.orkg.createStatement
 import org.orkg.graph.adapter.input.rest.testing.fixtures.resourceResponseFields
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Visibility
@@ -136,7 +137,7 @@ internal class ResourceControllerIntegrationTest : MockMvcBaseTest("resources") 
     fun addWithExistingIds() {
         val resource = mapOf("label" to "bar", "id" to "Test")
 
-        service.createResource(id = "Test", label = "foo")
+        service.createResource(id = ThingId("Test"), label = "foo")
 
         post("/api/resources")
             .content(resource)
@@ -148,7 +149,7 @@ internal class ResourceControllerIntegrationTest : MockMvcBaseTest("resources") 
     @TestWithMockUser
     fun edit() {
         val oldClass = classService.createClass(label = "class")
-        val resource = service.createResource(classes = setOf(oldClass.value), label = "foo")
+        val resource = service.createResource(classes = setOf(oldClass), label = "foo")
         val newLabel = "bar"
         val update = mapOf(
             "label" to newLabel,
@@ -168,7 +169,7 @@ internal class ResourceControllerIntegrationTest : MockMvcBaseTest("resources") 
     @TestWithMockUser
     fun editResourceClass() {
         val oldClass = classService.createClass(label = "class")
-        val resource = service.createResource(classes = setOf(oldClass.value), label = "test")
+        val resource = service.createResource(classes = setOf(oldClass), label = "test")
 
         val newClass = classService.createClass("clazz")
         val update = mapOf("classes" to listOf(newClass))
@@ -185,7 +186,7 @@ internal class ResourceControllerIntegrationTest : MockMvcBaseTest("resources") 
     @TestWithMockUser
     fun editResourceClassesIsEmpty() {
         val oldClass = classService.createClass(label = "class")
-        val resource = service.createResource(classes = setOf(oldClass.value), label = "test")
+        val resource = service.createResource(classes = setOf(oldClass), label = "test")
 
         val update = mapOf("classes" to emptyList<ThingId>())
 
@@ -200,7 +201,7 @@ internal class ResourceControllerIntegrationTest : MockMvcBaseTest("resources") 
     @TestWithMockUser
     fun editResourceClassesAreInvalid() {
         val oldClass = classService.createClass(label = "class")
-        val resource = service.createResource(classes = setOf(oldClass.value), label = "test")
+        val resource = service.createResource(classes = setOf(oldClass), label = "test")
 
         val update = mapOf("classes" to setOf(ThingId("DoesNotExist")))
 
@@ -261,7 +262,7 @@ internal class ResourceControllerIntegrationTest : MockMvcBaseTest("resources") 
     @Test
     fun testSharedIndicatorWhenResourcesWithClassExclusion() {
         val id = classService.createClass(label = "Class 1")
-        val classes = setOf(id.value)
+        val classes = setOf(id)
         service.createResource(classes = classes, label = "Resource 1")
         service.createResource(classes = classes, label = "Resource 2")
 
@@ -272,7 +273,7 @@ internal class ResourceControllerIntegrationTest : MockMvcBaseTest("resources") 
         statementService.createStatement(con1, predicate, resId)
         statementService.createStatement(con2, predicate, resId)
         val id2 = classService.createClass(label = "Class 2")
-        service.createResource(classes = setOf(id2.value), label = "Another Resource")
+        service.createResource(classes = setOf(id2), label = "Another Resource")
 
         get("/api/resources")
             .param("q", "Resource")
@@ -299,8 +300,8 @@ internal class ResourceControllerIntegrationTest : MockMvcBaseTest("resources") 
     fun createTemplateAndTypedResource(value: String): ThingId {
         // create required classes and predicates
         val nodeShapeClass = classService.createClass(
-            id = "NodeShape",
-            label = "Node shape"
+            label = "Node shape",
+            id = Classes.nodeShape
         )
         val throwAwayClass = classService.createClass(label = "Templated Class")
         val templateLabelPredicate = predicateService.createPredicate(
@@ -316,8 +317,8 @@ internal class ResourceControllerIntegrationTest : MockMvcBaseTest("resources") 
             label = "property"
         )
         val propertyShapeClass = classService.createClass(
-            id = "PropertyShape",
-            label = "Property shape"
+            label = "Property shape",
+            id = Classes.propertyShape
         )
         val throwAwayProperty = predicateService.createPredicate(label = "Temp property")
         val pathPredicate = predicateService.createPredicate(
@@ -326,21 +327,21 @@ internal class ResourceControllerIntegrationTest : MockMvcBaseTest("resources") 
         )
         // create the template
         val template = service.createResource(
-            classes = setOf(nodeShapeClass.value),
+            classes = setOf(nodeShapeClass),
             label = "Throw-way template"
         )
         val labelFormat = literalService.createLiteral(label = "xx{$throwAwayProperty}xx")
         statementService.createStatement(template, templateLabelPredicate, labelFormat)
         statementService.createStatement(template, targetClassPredicate, throwAwayClass)
         val templateComponent = service.createResource(
-            classes = setOf(propertyShapeClass.value),
+            classes = setOf(propertyShapeClass),
             label = "component 1"
         )
         statementService.createStatement(template, propertyPredicate, templateComponent)
         statementService.createStatement(templateComponent, pathPredicate, throwAwayProperty)
         // Create resource and type it
         val templatedResource = service.createResource(
-            classes = setOf(throwAwayClass.value),
+            classes = setOf(throwAwayClass),
             label = "Fancy resource"
         )
         val someValue = literalService.createLiteral(label = value)

@@ -12,9 +12,10 @@ import org.orkg.contenttypes.output.LabelAndClassService
 import org.orkg.createClass
 import org.orkg.createClasses
 import org.orkg.createLiteral
-import org.orkg.createPredicate
+import org.orkg.createPredicates
 import org.orkg.createResource
 import org.orkg.createStatement
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.LiteralUseCases
@@ -69,60 +70,64 @@ internal class BenchmarkControllerIntegrationTest : MockMvcBaseTest("benchmarks"
         assertThat(statementService.findAll(tempPageable)).hasSize(0)
         assertThat(classService.findAll(tempPageable)).hasSize(0)
 
-        predicateService.createPredicate(Predicates.hasResearchField)
-        predicateService.createPredicate(Predicates.hasContribution)
-        predicateService.createPredicate(Predicates.hasResearchProblem)
-        predicateService.createPredicate(Predicates.hasSubfield)
+        predicateService.createPredicates(
+            Predicates.hasResearchField,
+            Predicates.hasContribution,
+            Predicates.hasResearchProblem,
+            Predicates.hasSubfield,
+            ThingId(labelsAndClasses.benchmarkPredicate),
+            ThingId(labelsAndClasses.datasetPredicate),
+            ThingId(labelsAndClasses.sourceCodePredicate),
+            ThingId(labelsAndClasses.modelPredicate),
+            ThingId(labelsAndClasses.metricPredicate),
+            ThingId(labelsAndClasses.quantityValuePredicate),
+            ThingId(labelsAndClasses.quantityPredicate),
+            ThingId(labelsAndClasses.numericValuePredicate),
+        )
 
-        listOf(
-            labelsAndClasses.benchmarkPredicate,
-            labelsAndClasses.datasetPredicate,
-            labelsAndClasses.sourceCodePredicate,
-            labelsAndClasses.modelPredicate,
-            labelsAndClasses.metricPredicate,
-            labelsAndClasses.quantityValuePredicate,
-            labelsAndClasses.quantityPredicate,
-            labelsAndClasses.numericValuePredicate
-        ).forEach { predicateService.createPredicate(ThingId(it)) }
-
-        classService.createClasses("Paper", "Problem", "ResearchField", "Contribution")
+        classService.createClasses(
+            Classes.paper,
+            Classes.problem,
+            Classes.researchField,
+            Classes.contribution,
+        )
 
         classService.createClass(
             label = "Quantity",
-            labelsAndClasses.quantityClass,
+            id = ThingId(labelsAndClasses.quantityClass),
             uri = ParsedIRI("http://qudt.org/2.1/schema/qudt/Quantity")
         )
         classService.createClass(
             label = "Quantity",
-            labelsAndClasses.quantityValueClass,
+            id = ThingId(labelsAndClasses.quantityValueClass),
             uri = ParsedIRI("http://qudt.org/2.1/schema/qudt/QuantityValue")
         )
         classService.createClass(
             label = "Quantity Kind",
-            labelsAndClasses.metricClass,
+            id = ThingId(labelsAndClasses.metricClass),
             uri = ParsedIRI("http://qudt.org/2.1/schema/qudt/QuantityKind")
         )
-        classService.createClass("Dataset", labelsAndClasses.datasetClass)
-        classService.createClass("Benchmark", labelsAndClasses.benchmarkClass)
-        classService.createClass("Model", labelsAndClasses.modelClass)
+        classService.createClass("Dataset", ThingId(labelsAndClasses.datasetClass))
+        classService.createClass("Benchmark", ThingId(labelsAndClasses.benchmarkClass))
+        classService.createClass("Model", ThingId(labelsAndClasses.modelClass))
     }
 
     @Test
     fun fetchResearchFieldsWithBenchmarks() {
         val fieldWithBenchmarkLabel = "Field 1"
-        val fieldWithBenchmark = resourceService.createResource(setOf("ResearchField"), label = fieldWithBenchmarkLabel)
-        val fieldWithoutBenchmark = resourceService.createResource(setOf("ResearchField"), label = "Field 2")
+        val fieldWithBenchmark = resourceService.createResource(setOf(Classes.researchField), label = fieldWithBenchmarkLabel)
+        val fieldWithoutBenchmark = resourceService.createResource(setOf(Classes.researchField), label = "Field 2")
 
-        val benchPaper1 = resourceService.createResource(setOf("Paper"), label = "Paper 1")
-        val benchPaper2 = resourceService.createResource(setOf("Paper"), label = "Paper 2")
-        val normalPaper = resourceService.createResource(setOf("Paper"), label = "Paper 3")
+        val benchPaper1 = resourceService.createResource(setOf(Classes.paper), label = "Paper 1")
+        val benchPaper2 = resourceService.createResource(setOf(Classes.paper), label = "Paper 2")
+        val normalPaper = resourceService.createResource(setOf(Classes.paper), label = "Paper 3")
 
-        val benchCont1 = resourceService.createResource(setOf("Contribution"), label = "Contribution of Paper 1")
-        val benchCont2 = resourceService.createResource(setOf("Contribution"), label = "Contribution of Paper 2")
-        val normalCont1 = resourceService.createResource(setOf("Contribution"), label = "Contribution of Paper 3")
+        val benchCont1 = resourceService.createResource(setOf(Classes.contribution), label = "Contribution of Paper 1")
+        val benchCont2 = resourceService.createResource(setOf(Classes.contribution), label = "Contribution of Paper 2")
+        val normalCont1 = resourceService.createResource(setOf(Classes.contribution), label = "Contribution of Paper 3")
 
-        val bench1 = resourceService.createResource(setOf(labelsAndClasses.benchmarkClass), label = "Benchmark 1")
-        val bench2 = resourceService.createResource(setOf(labelsAndClasses.benchmarkClass), label = "Benchmark 2")
+        val bench1 = resourceService.createResource(setOf(ThingId(labelsAndClasses.benchmarkClass)), label = "Benchmark 1")
+        val bench2 = resourceService.createResource(setOf(ThingId(labelsAndClasses.benchmarkClass)), label = "Benchmark 2")
 
         statementService.createStatement(benchPaper1, Predicates.hasResearchField, fieldWithBenchmark)
         statementService.createStatement(benchPaper2, Predicates.hasResearchField, fieldWithBenchmark)
@@ -167,23 +172,23 @@ internal class BenchmarkControllerIntegrationTest : MockMvcBaseTest("benchmarks"
      */
     @Test
     fun fetchBenchmarkSummaryForResearchField() {
-        val fieldWithDataset = resourceService.createResource(setOf("ResearchField"), label = "Field with a dataset")
+        val fieldWithDataset = resourceService.createResource(setOf(Classes.researchField), label = "Field with a dataset")
 
-        val benchPaper = resourceService.createResource(setOf("Paper"), label = "Paper 1")
+        val benchPaper = resourceService.createResource(setOf(Classes.paper), label = "Paper 1")
 
-        val benchCont = resourceService.createResource(setOf("Contribution"), label = "Contribution of Paper 1")
+        val benchCont = resourceService.createResource(setOf(Classes.contribution), label = "Contribution of Paper 1")
 
-        val benchmark = resourceService.createResource(setOf(labelsAndClasses.benchmarkClass), label = "Benchmark 1")
+        val benchmark = resourceService.createResource(setOf(ThingId(labelsAndClasses.benchmarkClass)), label = "Benchmark 1")
 
-        val dataset1 = resourceService.createResource(setOf(labelsAndClasses.datasetClass), label = "Dataset 1")
-        val dataset2 = resourceService.createResource(setOf(labelsAndClasses.datasetClass), label = "Dataset 2")
+        val dataset1 = resourceService.createResource(setOf(ThingId(labelsAndClasses.datasetClass)), label = "Dataset 1")
+        val dataset2 = resourceService.createResource(setOf(ThingId(labelsAndClasses.datasetClass)), label = "Dataset 2")
 
         val codes = (1..5).map {
             literalService.createLiteral(label = "https://some-code-$it.cool")
         }
 
-        val problem1 = resourceService.createResource(setOf("Problem"), label = "Problem 1")
-        val problem2 = resourceService.createResource(setOf("Problem"), label = "Problem 2")
+        val problem1 = resourceService.createResource(setOf(Classes.problem), label = "Problem 1")
+        val problem2 = resourceService.createResource(setOf(Classes.problem), label = "Problem 2")
 
         statementService.createStatement(benchPaper, Predicates.hasResearchField, fieldWithDataset)
         statementService.createStatement(benchPaper, Predicates.hasContribution, benchCont)
@@ -229,23 +234,23 @@ internal class BenchmarkControllerIntegrationTest : MockMvcBaseTest("benchmarks"
 
     @Test
     fun fetchBenchmarkSummaries() {
-        val field1 = resourceService.createResource(setOf("ResearchField"), label = "Field with a dataset #1")
+        val field1 = resourceService.createResource(setOf(Classes.researchField), label = "Field with a dataset #1")
 
-        val benchPaper = resourceService.createResource(setOf("Paper"), label = "Paper 1")
+        val benchPaper = resourceService.createResource(setOf(Classes.paper), label = "Paper 1")
 
-        val benchCont = resourceService.createResource(setOf("Contribution"), label = "Contribution of Paper 1")
+        val benchCont = resourceService.createResource(setOf(Classes.contribution), label = "Contribution of Paper 1")
 
-        val benchmark = resourceService.createResource(setOf(labelsAndClasses.benchmarkClass), label = "Benchmark 1")
+        val benchmark = resourceService.createResource(setOf(ThingId(labelsAndClasses.benchmarkClass)), label = "Benchmark 1")
 
-        val dataset1 = resourceService.createResource(setOf(labelsAndClasses.datasetClass), label = "Dataset 1")
-        val dataset2 = resourceService.createResource(setOf(labelsAndClasses.datasetClass), label = "Dataset 2")
+        val dataset1 = resourceService.createResource(setOf(ThingId(labelsAndClasses.datasetClass)), label = "Dataset 1")
+        val dataset2 = resourceService.createResource(setOf(ThingId(labelsAndClasses.datasetClass)), label = "Dataset 2")
 
         val codes = (1..5).map {
             literalService.createLiteral(label = "https://some-code-$it.cool")
         }
 
-        val problem1 = resourceService.createResource(setOf("Problem"), label = "Problem 1")
-        val problem2 = resourceService.createResource(setOf("Problem"), label = "Problem 2")
+        val problem1 = resourceService.createResource(setOf(Classes.problem), label = "Problem 1")
+        val problem2 = resourceService.createResource(setOf(Classes.problem), label = "Problem 2")
 
         statementService.createStatement(benchPaper, Predicates.hasResearchField, field1)
         statementService.createStatement(benchPaper, Predicates.hasContribution, benchCont)
@@ -281,30 +286,30 @@ internal class BenchmarkControllerIntegrationTest : MockMvcBaseTest("benchmarks"
 
     @Test
     fun aggregateProblemsThatBelongToMultipleResearchFieldsWhenFetchingSummary() {
-        val field1 = resourceService.createResource(setOf("ResearchField"), label = "Field #1 with a problem #1")
-        val field2 = resourceService.createResource(setOf("ResearchField"), label = "Field #2 with a problem #1")
+        val field1 = resourceService.createResource(setOf(Classes.researchField), label = "Field #1 with a problem #1")
+        val field2 = resourceService.createResource(setOf(Classes.researchField), label = "Field #2 with a problem #1")
 
-        val benchPaper = resourceService.createResource(setOf("Paper"), label = "Paper 1")
-        val dummyPaper = resourceService.createResource(setOf("Paper"), label = "Paper 2")
+        val benchPaper = resourceService.createResource(setOf(Classes.paper), label = "Paper 1")
+        val dummyPaper = resourceService.createResource(setOf(Classes.paper), label = "Paper 2")
 
-        val benchCont = resourceService.createResource(setOf("Contribution"), label = "Contribution of Paper 1")
-        val dummyCont = resourceService.createResource(setOf("Contribution"), label = "Contribution of Paper 2")
+        val benchCont = resourceService.createResource(setOf(Classes.contribution), label = "Contribution of Paper 1")
+        val dummyCont = resourceService.createResource(setOf(Classes.contribution), label = "Contribution of Paper 2")
 
-        val benchmark = resourceService.createResource(setOf(labelsAndClasses.benchmarkClass), label = "Benchmark #1")
+        val benchmark = resourceService.createResource(setOf(ThingId(labelsAndClasses.benchmarkClass)), label = "Benchmark #1")
         val dummyBenchmark = resourceService.createResource(
-            classes = setOf(labelsAndClasses.benchmarkClass),
+            classes = setOf(ThingId(labelsAndClasses.benchmarkClass)),
             label = "Benchmark #2"
         )
 
-        val dataset1 = resourceService.createResource(setOf(labelsAndClasses.datasetClass), label = "Dataset 1")
-        val dataset2 = resourceService.createResource(setOf(labelsAndClasses.datasetClass), label = "Dataset 2")
+        val dataset1 = resourceService.createResource(setOf(ThingId(labelsAndClasses.datasetClass)), label = "Dataset 1")
+        val dataset2 = resourceService.createResource(setOf(ThingId(labelsAndClasses.datasetClass)), label = "Dataset 2")
 
         val codes = (1..5).map {
             literalService.createLiteral(label = "https://some-code-$it.cool")
         }
 
-        val problem1 = resourceService.createResource(setOf("Problem"), label = "Problem 1")
-        val problem2 = resourceService.createResource(setOf("Problem"), label = "Problem 2")
+        val problem1 = resourceService.createResource(setOf(Classes.problem), label = "Problem 1")
+        val problem2 = resourceService.createResource(setOf(Classes.problem), label = "Problem 2")
 
         statementService.createStatement(benchPaper, Predicates.hasResearchField, field1)
         statementService.createStatement(dummyPaper, Predicates.hasResearchField, field2)
@@ -361,18 +366,18 @@ internal class BenchmarkControllerIntegrationTest : MockMvcBaseTest("benchmarks"
 
     @Test
     fun fetchResearchProblemsForADataset() {
-        val paper = resourceService.createResource(setOf("Paper"), label = "Paper")
+        val paper = resourceService.createResource(setOf(Classes.paper), label = "Paper")
 
-        val dataset = resourceService.createResource(setOf(labelsAndClasses.datasetClass), label = "Dataset")
+        val dataset = resourceService.createResource(setOf(ThingId(labelsAndClasses.datasetClass)), label = "Dataset")
 
-        val benchmark1 = resourceService.createResource(setOf(labelsAndClasses.benchmarkClass), label = "Benchmark 1")
-        val benchmark2 = resourceService.createResource(setOf(labelsAndClasses.benchmarkClass), label = "Benchmark 2")
+        val benchmark1 = resourceService.createResource(setOf(ThingId(labelsAndClasses.benchmarkClass)), label = "Benchmark 1")
+        val benchmark2 = resourceService.createResource(setOf(ThingId(labelsAndClasses.benchmarkClass)), label = "Benchmark 2")
 
-        val cont1 = resourceService.createResource(setOf("Contribution"), label = "Contribution 1")
-        val cont2 = resourceService.createResource(setOf("Contribution"), label = "Contribution 2")
+        val cont1 = resourceService.createResource(setOf(Classes.contribution), label = "Contribution 1")
+        val cont2 = resourceService.createResource(setOf(Classes.contribution), label = "Contribution 2")
 
-        val problem1 = resourceService.createResource(setOf("Problem"), label = "Problem 1")
-        val problem2 = resourceService.createResource(setOf("Problem"), label = "Problem 2")
+        val problem1 = resourceService.createResource(setOf(Classes.problem), label = "Problem 1")
+        val problem2 = resourceService.createResource(setOf(Classes.problem), label = "Problem 2")
 
         statementService.createStatement(benchmark1, ThingId(labelsAndClasses.datasetPredicate), dataset)
         statementService.createStatement(benchmark2, ThingId(labelsAndClasses.datasetPredicate), dataset)
@@ -406,30 +411,30 @@ internal class BenchmarkControllerIntegrationTest : MockMvcBaseTest("benchmarks"
 
     @Test
     fun fetchDatasetForResearchProblem() {
-        val problem = resourceService.createResource(setOf("Problem"), label = "Problem with a dataset")
+        val problem = resourceService.createResource(setOf(Classes.problem), label = "Problem with a dataset")
 
-        val paper1 = resourceService.createResource(setOf("Paper"), label = "Paper 1")
-        val paper2 = resourceService.createResource(setOf("Paper"), label = "Paper 2")
+        val paper1 = resourceService.createResource(setOf(Classes.paper), label = "Paper 1")
+        val paper2 = resourceService.createResource(setOf(Classes.paper), label = "Paper 2")
 
         val contributionOfPaper1 = resourceService.createResource(
-            classes = setOf("Contribution"),
+            classes = setOf(Classes.contribution),
             label = "Contribution of Paper 1"
         )
         val contributionOfPaper2 = resourceService.createResource(
-            classes = setOf("Contribution"),
+            classes = setOf(Classes.contribution),
             label = "Contribution of Paper 2"
         )
 
-        val benchmark1 = resourceService.createResource(setOf(labelsAndClasses.benchmarkClass), label = "Benchmark P1")
-        val benchmark2 = resourceService.createResource(setOf(labelsAndClasses.benchmarkClass), label = "Benchmark P2")
+        val benchmark1 = resourceService.createResource(setOf(ThingId(labelsAndClasses.benchmarkClass)), label = "Benchmark P1")
+        val benchmark2 = resourceService.createResource(setOf(ThingId(labelsAndClasses.benchmarkClass)), label = "Benchmark P2")
 
         val codes = (1..3).map {
             literalService.createLiteral(label = "https://some-code-$it.cool")
         }
-        val models = (1..4).map { resourceService.createResource(setOf(labelsAndClasses.modelClass), label = "Model $it") }
+        val models = (1..4).map { resourceService.createResource(setOf(ThingId(labelsAndClasses.modelClass)), label = "Model $it") }
 
-        val dataset1 = resourceService.createResource(setOf(labelsAndClasses.datasetClass), label = "Dataset 1")
-        val dataset2 = resourceService.createResource(setOf(labelsAndClasses.datasetClass), label = "Dataset 2")
+        val dataset1 = resourceService.createResource(setOf(ThingId(labelsAndClasses.datasetClass)), label = "Dataset 1")
+        val dataset2 = resourceService.createResource(setOf(ThingId(labelsAndClasses.datasetClass)), label = "Dataset 2")
 
         statementService.createStatement(paper1, Predicates.hasContribution, contributionOfPaper1)
         statementService.createStatement(paper2, Predicates.hasContribution, contributionOfPaper2)
@@ -476,17 +481,17 @@ internal class BenchmarkControllerIntegrationTest : MockMvcBaseTest("benchmarks"
 
     @Test
     fun fetchDatasetSummary() {
-        val dataset = resourceService.createResource(setOf(labelsAndClasses.datasetClass), label = "some dataset")
+        val dataset = resourceService.createResource(setOf(ThingId(labelsAndClasses.datasetClass)), label = "some dataset")
 
-        val problem1 = resourceService.createResource(setOf("Problem"), label = "Fancy problem")
-        val problem2 = resourceService.createResource(setOf("Problem"), label = "not so fancy problem")
+        val problem1 = resourceService.createResource(setOf(Classes.problem), label = "Fancy problem")
+        val problem2 = resourceService.createResource(setOf(Classes.problem), label = "not so fancy problem")
 
-        val paper = resourceService.createResource(setOf("Paper"), label = "paper")
-        val contribution1 = resourceService.createResource(setOf("Contribution"), label = "Contribution 1")
-        val contribution2 = resourceService.createResource(setOf("Contribution"), label = "Contribution 2")
+        val paper = resourceService.createResource(setOf(Classes.paper), label = "paper")
+        val contribution1 = resourceService.createResource(setOf(Classes.contribution), label = "Contribution 1")
+        val contribution2 = resourceService.createResource(setOf(Classes.contribution), label = "Contribution 2")
 
-        val benchmark1 = resourceService.createResource(setOf(labelsAndClasses.benchmarkClass), label = "Benchmark 1")
-        val benchmark2 = resourceService.createResource(setOf(labelsAndClasses.benchmarkClass), label = "Benchmark 2")
+        val benchmark1 = resourceService.createResource(setOf(ThingId(labelsAndClasses.benchmarkClass)), label = "Benchmark 1")
+        val benchmark2 = resourceService.createResource(setOf(ThingId(labelsAndClasses.benchmarkClass)), label = "Benchmark 2")
 
         val codes1 = (1..3).map {
             literalService.createLiteral(label = "https://some-code-$it.cool")
@@ -495,30 +500,30 @@ internal class BenchmarkControllerIntegrationTest : MockMvcBaseTest("benchmarks"
             literalService.createLiteral(label = "https://some-code-$it-$it.cool")
         }
 
-        val model1 = resourceService.createResource(setOf(labelsAndClasses.modelClass), label = "Model 1")
-        val model2 = resourceService.createResource(setOf(labelsAndClasses.modelClass), label = "Model 2")
+        val model1 = resourceService.createResource(setOf(ThingId(labelsAndClasses.modelClass)), label = "Model 1")
+        val model2 = resourceService.createResource(setOf(ThingId(labelsAndClasses.modelClass)), label = "Model 2")
 
         val scoreOfM1B1E1 = literalService.createLiteral(label = "2.55")
         val scoreOfM1B1E2 = literalService.createLiteral(label = "4548")
         val scoreOfM1B2E1 = literalService.createLiteral(label = "3M")
 
-        val quantityB1E1 = resourceService.createResource(setOf(labelsAndClasses.quantityClass), label = "Quantity 1")
-        val quantityB1E2 = resourceService.createResource(setOf(labelsAndClasses.quantityClass), label = "Quantity 2")
-        val quantityB2E1 = resourceService.createResource(setOf(labelsAndClasses.quantityClass), label = "Quantity 1")
+        val quantityB1E1 = resourceService.createResource(setOf(ThingId(labelsAndClasses.quantityClass)), label = "Quantity 1")
+        val quantityB1E2 = resourceService.createResource(setOf(ThingId(labelsAndClasses.quantityClass)), label = "Quantity 2")
+        val quantityB2E1 = resourceService.createResource(setOf(ThingId(labelsAndClasses.quantityClass)), label = "Quantity 1")
 
-        val metric1 = resourceService.createResource(setOf(labelsAndClasses.metricClass), label = "Metric 1")
-        val metric2 = resourceService.createResource(setOf(labelsAndClasses.metricClass), label = "Metric 2")
+        val metric1 = resourceService.createResource(setOf(ThingId(labelsAndClasses.metricClass)), label = "Metric 1")
+        val metric2 = resourceService.createResource(setOf(ThingId(labelsAndClasses.metricClass)), label = "Metric 2")
 
         val quantityValueB1E1 = resourceService.createResource(
-            classes = setOf(labelsAndClasses.quantityValueClass),
+            classes = setOf(ThingId(labelsAndClasses.quantityValueClass)),
             label = "Quantity Value 1"
         )
         val quantityValueB1E2 = resourceService.createResource(
-            classes = setOf(labelsAndClasses.quantityValueClass),
+            classes = setOf(ThingId(labelsAndClasses.quantityValueClass)),
             label = "Quantity Value 2"
         )
         val quantityValueB2E1 = resourceService.createResource(
-            classes = setOf(labelsAndClasses.quantityValueClass),
+            classes = setOf(ThingId(labelsAndClasses.quantityValueClass)),
             label = "Quantity Value 3"
         )
 
@@ -580,17 +585,17 @@ internal class BenchmarkControllerIntegrationTest : MockMvcBaseTest("benchmarks"
 
     @Test
     fun fetchDatasetSummaryWithoutModels() {
-        val dataset = resourceService.createResource(setOf(labelsAndClasses.datasetClass), label = "some dataset")
+        val dataset = resourceService.createResource(setOf(ThingId(labelsAndClasses.datasetClass)), label = "some dataset")
 
-        val problem1 = resourceService.createResource(setOf("Problem"), label = "Fancy problem")
-        val problem2 = resourceService.createResource(setOf("Problem"), label = "not so fancy problem")
+        val problem1 = resourceService.createResource(setOf(Classes.problem), label = "Fancy problem")
+        val problem2 = resourceService.createResource(setOf(Classes.problem), label = "not so fancy problem")
 
-        val paper = resourceService.createResource(setOf("Paper"), label = "paper")
-        val contribution1 = resourceService.createResource(setOf("Contribution"), label = "Contribution 1")
-        val contribution2 = resourceService.createResource(setOf("Contribution"), label = "Contribution 2")
+        val paper = resourceService.createResource(setOf(Classes.paper), label = "paper")
+        val contribution1 = resourceService.createResource(setOf(Classes.contribution), label = "Contribution 1")
+        val contribution2 = resourceService.createResource(setOf(Classes.contribution), label = "Contribution 2")
 
-        val benchmark1 = resourceService.createResource(setOf(labelsAndClasses.benchmarkClass), label = "Benchmark 1")
-        val benchmark2 = resourceService.createResource(setOf(labelsAndClasses.benchmarkClass), label = "Benchmark 2")
+        val benchmark1 = resourceService.createResource(setOf(ThingId(labelsAndClasses.benchmarkClass)), label = "Benchmark 1")
+        val benchmark2 = resourceService.createResource(setOf(ThingId(labelsAndClasses.benchmarkClass)), label = "Benchmark 2")
 
         val codes1 = (1..3).map {
             literalService.createLiteral(label = "https://some-code-$it.cool")
@@ -603,23 +608,23 @@ internal class BenchmarkControllerIntegrationTest : MockMvcBaseTest("benchmarks"
         val scoreOfM1B1E2 = literalService.createLiteral(label = "4548")
         val scoreOfM1B2E1 = literalService.createLiteral(label = "3.2B")
 
-        val quantityB1E1 = resourceService.createResource(setOf(labelsAndClasses.quantityClass), label = "Quantity 1")
-        val quantityB1E2 = resourceService.createResource(setOf(labelsAndClasses.quantityClass), label = "Quantity 2")
-        val quantityB2E1 = resourceService.createResource(setOf(labelsAndClasses.quantityClass), label = "Quantity 1")
+        val quantityB1E1 = resourceService.createResource(setOf(ThingId(labelsAndClasses.quantityClass)), label = "Quantity 1")
+        val quantityB1E2 = resourceService.createResource(setOf(ThingId(labelsAndClasses.quantityClass)), label = "Quantity 2")
+        val quantityB2E1 = resourceService.createResource(setOf(ThingId(labelsAndClasses.quantityClass)), label = "Quantity 1")
 
-        val metric1 = resourceService.createResource(setOf(labelsAndClasses.metricClass), label = "Metric 1")
-        val metric2 = resourceService.createResource(setOf(labelsAndClasses.metricClass), label = "Metric 2")
+        val metric1 = resourceService.createResource(setOf(ThingId(labelsAndClasses.metricClass)), label = "Metric 1")
+        val metric2 = resourceService.createResource(setOf(ThingId(labelsAndClasses.metricClass)), label = "Metric 2")
 
         val quantityValueB1E1 = resourceService.createResource(
-            classes = setOf(labelsAndClasses.quantityValueClass),
+            classes = setOf(ThingId(labelsAndClasses.quantityValueClass)),
             label = "Quantity Value 1"
         )
         val quantityValueB1E2 = resourceService.createResource(
-            classes = setOf(labelsAndClasses.quantityValueClass),
+            classes = setOf(ThingId(labelsAndClasses.quantityValueClass)),
             label = "Quantity Value 2"
         )
         val quantityValueB2E1 = resourceService.createResource(
-            classes = setOf(labelsAndClasses.quantityValueClass),
+            classes = setOf(ThingId(labelsAndClasses.quantityValueClass)),
             label = "Quantity Value 3"
         )
 
@@ -670,42 +675,42 @@ internal class BenchmarkControllerIntegrationTest : MockMvcBaseTest("benchmarks"
     fun fetchDatasetSummaryWithModelsWithoutCode() {
         // This is a regression test for the bug reported here https://gitlab.com/TIBHannover/orkg/orkg-papers/-/issues/14#note_1426964102
 
-        val dataset = resourceService.createResource(setOf(labelsAndClasses.datasetClass), label = "some dataset")
+        val dataset = resourceService.createResource(setOf(ThingId(labelsAndClasses.datasetClass)), label = "some dataset")
 
-        val problem1 = resourceService.createResource(setOf("Problem"), label = "Fancy problem")
-        val problem2 = resourceService.createResource(setOf("Problem"), label = "not so fancy problem")
+        val problem1 = resourceService.createResource(setOf(Classes.problem), label = "Fancy problem")
+        val problem2 = resourceService.createResource(setOf(Classes.problem), label = "not so fancy problem")
 
-        val paper = resourceService.createResource(setOf("Paper"), label = "paper")
-        val contribution1 = resourceService.createResource(setOf("Contribution"), label = "Contribution 1")
-        val contribution2 = resourceService.createResource(setOf("Contribution"), label = "Contribution 2")
+        val paper = resourceService.createResource(setOf(Classes.paper), label = "paper")
+        val contribution1 = resourceService.createResource(setOf(Classes.contribution), label = "Contribution 1")
+        val contribution2 = resourceService.createResource(setOf(Classes.contribution), label = "Contribution 2")
 
-        val benchmark1 = resourceService.createResource(setOf(labelsAndClasses.benchmarkClass), label = "Benchmark 1")
-        val benchmark2 = resourceService.createResource(setOf(labelsAndClasses.benchmarkClass), label = "Benchmark 2")
+        val benchmark1 = resourceService.createResource(setOf(ThingId(labelsAndClasses.benchmarkClass)), label = "Benchmark 1")
+        val benchmark2 = resourceService.createResource(setOf(ThingId(labelsAndClasses.benchmarkClass)), label = "Benchmark 2")
 
-        val model1 = resourceService.createResource(setOf(labelsAndClasses.modelClass), label = "Model 1")
-        val model2 = resourceService.createResource(setOf(labelsAndClasses.modelClass), label = "Model 2")
+        val model1 = resourceService.createResource(setOf(ThingId(labelsAndClasses.modelClass)), label = "Model 1")
+        val model2 = resourceService.createResource(setOf(ThingId(labelsAndClasses.modelClass)), label = "Model 2")
 
         val scoreOfM1B1E1 = literalService.createLiteral(label = "2.55")
         val scoreOfM1B1E2 = literalService.createLiteral(label = "4548")
         val scoreOfM1B2E1 = literalService.createLiteral(label = "3M")
 
-        val quantityB1E1 = resourceService.createResource(setOf(labelsAndClasses.quantityClass), label = "Quantity 1")
-        val quantityB1E2 = resourceService.createResource(setOf(labelsAndClasses.quantityClass), label = "Quantity 2")
-        val quantityB2E1 = resourceService.createResource(setOf(labelsAndClasses.quantityClass), label = "Quantity 1")
+        val quantityB1E1 = resourceService.createResource(setOf(ThingId(labelsAndClasses.quantityClass)), label = "Quantity 1")
+        val quantityB1E2 = resourceService.createResource(setOf(ThingId(labelsAndClasses.quantityClass)), label = "Quantity 2")
+        val quantityB2E1 = resourceService.createResource(setOf(ThingId(labelsAndClasses.quantityClass)), label = "Quantity 1")
 
-        val metric1 = resourceService.createResource(setOf(labelsAndClasses.metricClass), label = "Metric 1")
-        val metric2 = resourceService.createResource(setOf(labelsAndClasses.metricClass), label = "Metric 2")
+        val metric1 = resourceService.createResource(setOf(ThingId(labelsAndClasses.metricClass)), label = "Metric 1")
+        val metric2 = resourceService.createResource(setOf(ThingId(labelsAndClasses.metricClass)), label = "Metric 2")
 
         val quantityValueB1E1 = resourceService.createResource(
-            classes = setOf(labelsAndClasses.quantityValueClass),
+            classes = setOf(ThingId(labelsAndClasses.quantityValueClass)),
             label = "Quantity Value 1"
         )
         val quantityValueB1E2 = resourceService.createResource(
-            classes = setOf(labelsAndClasses.quantityValueClass),
+            classes = setOf(ThingId(labelsAndClasses.quantityValueClass)),
             label = "Quantity Value 2"
         )
         val quantityValueB2E1 = resourceService.createResource(
-            classes = setOf(labelsAndClasses.quantityValueClass),
+            classes = setOf(ThingId(labelsAndClasses.quantityValueClass)),
             label = "Quantity Value 3"
         )
 

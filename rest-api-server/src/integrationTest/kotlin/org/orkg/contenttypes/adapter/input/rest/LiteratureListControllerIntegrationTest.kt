@@ -31,7 +31,7 @@ import org.orkg.createContributor
 import org.orkg.createLiteral
 import org.orkg.createObservatory
 import org.orkg.createOrganization
-import org.orkg.createPredicate
+import org.orkg.createPredicates
 import org.orkg.createResource
 import org.orkg.createStatement
 import org.orkg.graph.domain.Classes
@@ -93,62 +93,64 @@ internal class LiteratureListControllerIntegrationTest : MockMvcBaseTest("litera
         assertThat(organizationService.findAll()).hasSize(0)
         assertThat(organizationService.findAllConferences()).hasSize(0)
 
-        predicateService.createPredicate(Predicates.description)
-        predicateService.createPredicate(Predicates.hasAuthors)
-        predicateService.createPredicate(Predicates.hasContent)
-        predicateService.createPredicate(Predicates.hasEntry)
-        predicateService.createPredicate(Predicates.hasEvaluation)
-        predicateService.createPredicate(Predicates.hasHeadingLevel)
-        predicateService.createPredicate(Predicates.hasLink)
-        predicateService.createPredicate(Predicates.hasListElement)
-        predicateService.createPredicate(Predicates.hasORCID)
-        predicateService.createPredicate(Predicates.hasResearchField)
-        predicateService.createPredicate(Predicates.hasSection)
-        predicateService.createPredicate(Predicates.hasURL)
-        predicateService.createPredicate(Predicates.hasWebsite)
-        predicateService.createPredicate(Predicates.sustainableDevelopmentGoal)
+        predicateService.createPredicates(
+            Predicates.description,
+            Predicates.hasAuthors,
+            Predicates.hasContent,
+            Predicates.hasEntry,
+            Predicates.hasEvaluation,
+            Predicates.hasHeadingLevel,
+            Predicates.hasLink,
+            Predicates.hasListElement,
+            Predicates.hasORCID,
+            Predicates.hasResearchField,
+            Predicates.hasSection,
+            Predicates.hasURL,
+            Predicates.hasWebsite,
+            Predicates.sustainableDevelopmentGoal,
+        )
 
         classService.createClasses(
-            "LiteratureList",
-            "Contribution",
-            "Paper",
-            "Dataset",
-            "ResearchField",
-            "Author",
-            "Software",
-            Classes.sustainableDevelopmentGoal.value
+            Classes.literatureList,
+            Classes.contribution,
+            Classes.paper,
+            Classes.dataset,
+            Classes.researchField,
+            Classes.author,
+            Classes.software,
+            Classes.sustainableDevelopmentGoal,
         )
 
         resourceService.createResource(
-            id = "R12",
+            id = ThingId("R12"),
             label = "Computer Science",
-            classes = setOf(Classes.researchField.value)
+            classes = setOf(Classes.researchField)
         )
         resourceService.createResource(
-            id = "R194",
+            id = ThingId("R194"),
             label = "Engineering",
-            classes = setOf(Classes.researchField.value)
+            classes = setOf(Classes.researchField)
         )
 
         // Example specific entities
 
-        classService.createClasses("C123")
+        classService.createClasses(ThingId("C123"))
 
-        resourceService.createResource(id = "R3003", label = "Some resource", classes = setOf("Paper"))
-        resourceService.createResource(id = "R3004", label = "Some other resource", classes = setOf("Software"))
-        resourceService.createResource(id = "R3005", label = "Some dataset resource", classes = setOf("Dataset"))
+        resourceService.createResource(id = ThingId("R3003"), label = "Some resource", classes = setOf(Classes.paper))
+        resourceService.createResource(id = ThingId("R3004"), label = "Some other resource", classes = setOf(Classes.software))
+        resourceService.createResource(id = ThingId("R3005"), label = "Some dataset resource", classes = setOf(Classes.dataset))
 
-        resourceService.createResource(id = "R123", label = "Author with id", classes = setOf("Author"))
-        resourceService.createResource(id = "SDG_1", label = "No poverty", classes = setOf(Classes.sustainableDevelopmentGoal.value))
-        resourceService.createResource(id = "SDG_2", label = "Zero hunger", classes = setOf(Classes.sustainableDevelopmentGoal.value))
-        resourceService.createResource(id = "SDG_3", label = "Good health and well-being", classes = setOf(Classes.sustainableDevelopmentGoal.value))
-        resourceService.createResource(id = "SDG_4", label = "Quality education", classes = setOf(Classes.sustainableDevelopmentGoal.value))
+        resourceService.createResource(id = ThingId("R123"), label = "Author with id", classes = setOf(Classes.author))
+        resourceService.createResource(id = ThingId("SDG_1"), label = "No poverty", classes = setOf(Classes.sustainableDevelopmentGoal))
+        resourceService.createResource(id = ThingId("SDG_2"), label = "Zero hunger", classes = setOf(Classes.sustainableDevelopmentGoal))
+        resourceService.createResource(id = ThingId("SDG_3"), label = "Good health and well-being", classes = setOf(Classes.sustainableDevelopmentGoal))
+        resourceService.createResource(id = ThingId("SDG_4"), label = "Quality education", classes = setOf(Classes.sustainableDevelopmentGoal))
 
         statementService.createStatement(
             subject = resourceService.createResource(
-                id = "R456",
+                id = ThingId("R456"),
                 label = "Author with id and orcid",
-                classes = setOf("Author")
+                classes = setOf(Classes.author)
             ),
             predicate = Predicates.hasORCID,
             `object` = literalService.createLiteral(label = "1111-2222-3333-4444")
@@ -156,9 +158,9 @@ internal class LiteratureListControllerIntegrationTest : MockMvcBaseTest("litera
 
         statementService.createStatement(
             subject = resourceService.createResource(
-                id = "R4567",
+                id = ThingId("R4567"),
                 label = "Author with orcid",
-                classes = setOf("Author")
+                classes = setOf(Classes.author)
             ),
             predicate = Predicates.hasORCID,
             `object` = literalService.createLiteral(label = "0000-1111-2222-3333")

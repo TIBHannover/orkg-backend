@@ -100,19 +100,19 @@ internal class TableControllerIntegrationTest : MockMvcBaseTest("tables") {
         )
 
         resourceService.createResource(
-            id = "R12",
+            id = ThingId("R12"),
             label = "Computer Science",
-            classes = setOf(Classes.researchField.value)
+            classes = setOf(Classes.researchField)
         )
 
         // Example specific entities
 
-        classService.createClass(id = "C123", label = "some class")
-        resourceService.createResource(id = "R123", label = "some resource")
+        classService.createClass(label = "some class", id = ThingId("C123"))
+        resourceService.createResource(id = ThingId("R123"), label = "some resource")
         predicateService.createPredicate(id = ThingId("P123"), label = "some predicate")
         literalService.createLiteral(id = ThingId("L123"), label = "other header name")
 
-        classService.createClass(id = "Result", label = "Result")
+        classService.createClass(label = "Result", id = ThingId("Result"))
 
         val contributorId = contributorService.createContributor()
 

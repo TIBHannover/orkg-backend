@@ -4,6 +4,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.orkg.common.ThingId
 import org.orkg.createClass
 import org.orkg.graph.adapter.input.rest.testing.fixtures.classResponseFields
 import org.orkg.graph.input.ClassUseCases
@@ -64,17 +65,17 @@ internal class ClassControllerIntegrationTest : MockMvcBaseTest("classes") {
     @Test
     fun fetchByURI() {
         // Arrange
-        val id = "dummy"
+        val id = ThingId("dummy")
         val label = "dummy label"
         val uri = ParsedIRI("https://example.org/exists")
-        service.createClass(id = id, label = label, uri = uri)
+        service.createClass(label = label, id = id, uri = uri)
 
         // Act and Assert
         documentedGetRequestTo("/api/classes")
             .param("uri", uri.toString())
             .perform()
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.id").value(id))
+            .andExpect(jsonPath("$.id").value(id.value))
             .andExpect(jsonPath("$.label").value(label))
             .andExpect(jsonPath("$.uri").value(uri.toString()))
             .andDo(

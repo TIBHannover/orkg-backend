@@ -9,10 +9,11 @@ import org.junit.jupiter.api.Test
 import org.orkg.createClasses
 import org.orkg.createList
 import org.orkg.createLiteral
-import org.orkg.createPredicate
+import org.orkg.createPredicates
 import org.orkg.createResource
 import org.orkg.createStatement
 import org.orkg.graph.adapter.input.rest.testing.fixtures.resourceResponseFields
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.LiteralService
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.ClassUseCases
@@ -60,14 +61,21 @@ internal class LegacyComparisonControllerIntegrationTest : MockMvcBaseTest("comp
         literalService.deleteAll()
 
         // Init classes
-        classService.createClasses("Author", "Paper", "Contribution", "Comparison")
+        classService.createClasses(
+            Classes.author,
+            Classes.paper,
+            Classes.contribution,
+            Classes.comparison,
+        )
 
         // Init predicates
-        predicateService.createPredicate(Predicates.hasAuthors)
-        predicateService.createPredicate(Predicates.hasContribution)
-        predicateService.createPredicate(Predicates.comparesContribution)
-        predicateService.createPredicate(Predicates.yearPublished)
-        predicateService.createPredicate(Predicates.hasListElement)
+        predicateService.createPredicates(
+            Predicates.hasAuthors,
+            Predicates.hasContribution,
+            Predicates.comparesContribution,
+            Predicates.yearPublished,
+            Predicates.hasListElement,
+        )
     }
 
     @Test
@@ -76,22 +84,22 @@ internal class LegacyComparisonControllerIntegrationTest : MockMvcBaseTest("comp
         val author1 = literalService.createLiteral(label = "Duplicate Author")
         val author2 = literalService.createLiteral(label = "Duplicate Author")
         val authorNotNeeded = literalService.createLiteral(label = "Ignore me")
-        val authorResource = resourceService.createResource(label = "Famous author", classes = setOf("Author"))
+        val authorResource = resourceService.createResource(label = "Famous author", classes = setOf(Classes.author))
         // create papers
-        val paper1 = resourceService.createResource(label = "Paper 1", classes = setOf("Paper"))
-        val paper2 = resourceService.createResource(label = "Paper 2", classes = setOf("Paper"))
-        val paper3 = resourceService.createResource(label = "Paper 3", classes = setOf("Paper"))
-        val paper4 = resourceService.createResource(label = "Paper 4", classes = setOf("Paper"))
+        val paper1 = resourceService.createResource(label = "Paper 1", classes = setOf(Classes.paper))
+        val paper2 = resourceService.createResource(label = "Paper 2", classes = setOf(Classes.paper))
+        val paper3 = resourceService.createResource(label = "Paper 3", classes = setOf(Classes.paper))
+        val paper4 = resourceService.createResource(label = "Paper 4", classes = setOf(Classes.paper))
 
         // create year
         val year = literalService.createLiteral(label = "2018")
 
         // create contributions
-        val cont1 = resourceService.createResource(label = "Contribution of Paper 1", classes = setOf("Contribution"))
-        val cont2 = resourceService.createResource(label = "Contribution of Paper 2", classes = setOf("Contribution"))
-        val cont3 = resourceService.createResource(label = "Contribution of Paper 3", classes = setOf("Contribution"))
+        val cont1 = resourceService.createResource(label = "Contribution of Paper 1", classes = setOf(Classes.contribution))
+        val cont2 = resourceService.createResource(label = "Contribution of Paper 2", classes = setOf(Classes.contribution))
+        val cont3 = resourceService.createResource(label = "Contribution of Paper 3", classes = setOf(Classes.contribution))
         // create comparison
-        val comparison = resourceService.createResource(label = "Comparison", classes = setOf("Comparison"))
+        val comparison = resourceService.createResource(label = "Comparison", classes = setOf(Classes.comparison))
 
         // Link authors to papers
         val paper1AuthorsList = listService.createList("Authors", listOf(author1))

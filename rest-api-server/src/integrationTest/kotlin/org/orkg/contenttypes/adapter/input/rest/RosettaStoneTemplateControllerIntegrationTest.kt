@@ -32,7 +32,7 @@ import org.orkg.createClasses
 import org.orkg.createContributor
 import org.orkg.createObservatory
 import org.orkg.createOrganization
-import org.orkg.createPredicate
+import org.orkg.createPredicates
 import org.orkg.createResource
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.FormattedLabel
@@ -87,7 +87,7 @@ internal class RosettaStoneTemplateControllerIntegrationTest : MockMvcBaseTest("
         assertThat(organizationService.findAll()).hasSize(0)
         assertThat(organizationService.findAllConferences()).hasSize(0)
 
-        listOf(
+        predicateService.createPredicates(
             Predicates.description,
             Predicates.exampleOfUsage,
             Predicates.hasAuthor,
@@ -111,35 +111,46 @@ internal class RosettaStoneTemplateControllerIntegrationTest : MockMvcBaseTest("
             Predicates.templateLabelFormat,
             Predicates.hasSubjectPosition,
             Predicates.hasObjectPosition,
-        ).forEach { predicateService.createPredicate(it) }
+        )
 
-        setOf(
+        classService.createClasses(
             Classes.rosettaNodeShape,
             Classes.propertyShape,
             Classes.problem,
             Classes.researchField,
-        ).forEach { classService.createClass(label = it.value, id = it.value) }
+        )
 
-        Literals.XSD.entries.forEach {
-            classService.createClass(label = it.`class`.value, id = it.`class`.value, uri = ParsedIRI(it.uri))
+        Literals.XSD.entries.forEach { xsd ->
+            classService.createClass(
+                label = xsd.`class`.value,
+                id = xsd.`class`,
+                uri = ParsedIRI(xsd.uri)
+            )
         }
 
         resourceService.createResource(
-            id = "R12",
+            id = ThingId("R12"),
             label = "Computer Science",
-            classes = setOf("ResearchField")
+            classes = setOf(Classes.researchField)
         )
 
         // Example specific entities
 
-        classService.createClasses("C123", "C24", "C25", "C27", "C28", "C456")
+        classService.createClasses(
+            ThingId("C123"),
+            ThingId("C24"),
+            ThingId("C25"),
+            ThingId("C27"),
+            ThingId("C28"),
+            ThingId("C456"),
+        )
 
-        resourceService.createResource(id = "R15", classes = setOf(Classes.problem.value))
-        resourceService.createResource(id = "R16", classes = setOf(Classes.problem.value))
+        resourceService.createResource(id = ThingId("R15"), classes = setOf(Classes.problem))
+        resourceService.createResource(id = ThingId("R16"), classes = setOf(Classes.problem))
         resourceService.createResource(
-            id = "R13",
+            id = ThingId("R13"),
             label = "Engineering",
-            classes = setOf("ResearchField")
+            classes = setOf(Classes.researchField)
         )
 
         val contributorId = contributorService.createContributor()
@@ -198,7 +209,7 @@ internal class RosettaStoneTemplateControllerIntegrationTest : MockMvcBaseTest("
                 property.order shouldBe 0
                 property.minCount shouldBe 1
                 property.maxCount shouldBe 4
-                property.path shouldBe ObjectIdAndLabel(Predicates.hasSubjectPosition, "label")
+                property.path shouldBe ObjectIdAndLabel(Predicates.hasSubjectPosition, "hasSubjectPosition")
                 property.`class` shouldBe ObjectIdAndLabel(ThingId("C28"), "C28")
                 property.createdAt shouldNotBe null
                 property.createdBy shouldBe ContributorId(MockUserId.USER)
@@ -211,7 +222,7 @@ internal class RosettaStoneTemplateControllerIntegrationTest : MockMvcBaseTest("
                 property.order shouldBe 1
                 property.minCount shouldBe 1
                 property.maxCount shouldBe 2
-                property.path shouldBe ObjectIdAndLabel(Predicates.hasObjectPosition, "label")
+                property.path shouldBe ObjectIdAndLabel(Predicates.hasObjectPosition, "hasObjectPosition")
                 property.createdAt shouldNotBe null
                 property.createdBy shouldBe ContributorId(MockUserId.USER)
             }
@@ -224,7 +235,7 @@ internal class RosettaStoneTemplateControllerIntegrationTest : MockMvcBaseTest("
                 property.minCount shouldBe 1
                 property.maxCount shouldBe 2
                 property.pattern shouldBe "\\d+"
-                property.path shouldBe ObjectIdAndLabel(Predicates.hasObjectPosition, "label")
+                property.path shouldBe ObjectIdAndLabel(Predicates.hasObjectPosition, "hasObjectPosition")
                 property.datatype shouldBe ClassReferenceRepresentation(Classes.string, "String", ParsedIRI(Literals.XSD.STRING.uri))
                 property.createdAt shouldNotBe null
                 property.createdBy shouldBe ContributorId(MockUserId.USER)
@@ -239,7 +250,7 @@ internal class RosettaStoneTemplateControllerIntegrationTest : MockMvcBaseTest("
                 property.maxCount shouldBe 2
                 property.minInclusive shouldBe RealNumber(-1)
                 property.maxInclusive shouldBe RealNumber(10)
-                property.path shouldBe ObjectIdAndLabel(Predicates.hasObjectPosition, "label")
+                property.path shouldBe ObjectIdAndLabel(Predicates.hasObjectPosition, "hasObjectPosition")
                 property.datatype shouldBe ClassReferenceRepresentation(Classes.integer, "Integer", ParsedIRI(Literals.XSD.INT.uri))
                 property.createdAt shouldNotBe null
                 property.createdBy shouldBe ContributorId(MockUserId.USER)
@@ -252,7 +263,7 @@ internal class RosettaStoneTemplateControllerIntegrationTest : MockMvcBaseTest("
                 property.order shouldBe 4
                 property.minCount shouldBe 1
                 property.maxCount shouldBe 2
-                property.path shouldBe ObjectIdAndLabel(Predicates.hasObjectPosition, "label")
+                property.path shouldBe ObjectIdAndLabel(Predicates.hasObjectPosition, "hasObjectPosition")
                 property.datatype shouldBe ClassReferenceRepresentation(ThingId("C25"), "C25", null)
                 property.createdAt shouldNotBe null
                 property.createdBy shouldBe ContributorId(MockUserId.USER)
@@ -265,7 +276,7 @@ internal class RosettaStoneTemplateControllerIntegrationTest : MockMvcBaseTest("
                 property.order shouldBe 5
                 property.minCount shouldBe 3
                 property.maxCount shouldBe 4
-                property.path shouldBe ObjectIdAndLabel(Predicates.hasObjectPosition, "label")
+                property.path shouldBe ObjectIdAndLabel(Predicates.hasObjectPosition, "hasObjectPosition")
                 property.`class` shouldBe ObjectIdAndLabel(ThingId("C28"), "C28")
                 property.createdAt shouldNotBe null
                 property.createdBy shouldBe ContributorId(MockUserId.USER)
@@ -305,7 +316,7 @@ internal class RosettaStoneTemplateControllerIntegrationTest : MockMvcBaseTest("
                 property.order shouldBe 0
                 property.minCount shouldBe 2
                 property.maxCount shouldBe 5
-                property.path shouldBe ObjectIdAndLabel(Predicates.hasSubjectPosition, "label")
+                property.path shouldBe ObjectIdAndLabel(Predicates.hasSubjectPosition, "hasSubjectPosition")
                 property.`class` shouldBe ObjectIdAndLabel(ThingId("C28"), "C28")
                 property.createdAt shouldNotBe null
                 property.createdBy shouldBe ContributorId(MockUserId.USER)
@@ -318,7 +329,7 @@ internal class RosettaStoneTemplateControllerIntegrationTest : MockMvcBaseTest("
                 property.order shouldBe 1
                 property.minCount shouldBe 2
                 property.maxCount shouldBe 3
-                property.path shouldBe ObjectIdAndLabel(Predicates.hasObjectPosition, "label")
+                property.path shouldBe ObjectIdAndLabel(Predicates.hasObjectPosition, "hasObjectPosition")
                 property.createdAt shouldNotBe null
                 property.createdBy shouldBe ContributorId(MockUserId.USER)
             }
@@ -331,7 +342,7 @@ internal class RosettaStoneTemplateControllerIntegrationTest : MockMvcBaseTest("
                 property.minCount shouldBe 2
                 property.maxCount shouldBe 3
                 property.pattern shouldBe "\\w+"
-                property.path shouldBe ObjectIdAndLabel(Predicates.hasObjectPosition, "label")
+                property.path shouldBe ObjectIdAndLabel(Predicates.hasObjectPosition, "hasObjectPosition")
                 property.datatype shouldBe ClassReference(Classes.string, "String", ParsedIRI(Literals.XSD.STRING.uri))
                 property.createdAt shouldNotBe null
                 property.createdBy shouldBe ContributorId(MockUserId.USER)
@@ -346,7 +357,7 @@ internal class RosettaStoneTemplateControllerIntegrationTest : MockMvcBaseTest("
                 property.maxCount shouldBe 3
                 property.minInclusive shouldBe RealNumber(0)
                 property.maxInclusive shouldBe RealNumber(11)
-                property.path shouldBe ObjectIdAndLabel(Predicates.hasObjectPosition, "label")
+                property.path shouldBe ObjectIdAndLabel(Predicates.hasObjectPosition, "hasObjectPosition")
                 property.datatype shouldBe ClassReference(Classes.integer, "Integer", ParsedIRI(Literals.XSD.INT.uri))
                 property.createdAt shouldNotBe null
                 property.createdBy shouldBe ContributorId(MockUserId.USER)
@@ -359,7 +370,7 @@ internal class RosettaStoneTemplateControllerIntegrationTest : MockMvcBaseTest("
                 property.order shouldBe 4
                 property.minCount shouldBe 2
                 property.maxCount shouldBe 3
-                property.path shouldBe ObjectIdAndLabel(Predicates.hasObjectPosition, "label")
+                property.path shouldBe ObjectIdAndLabel(Predicates.hasObjectPosition, "hasObjectPosition")
                 property.datatype shouldBe ClassReference(ThingId("C25"), "C25", null)
                 property.createdAt shouldNotBe null
                 property.createdBy shouldBe ContributorId(MockUserId.USER)
@@ -372,7 +383,7 @@ internal class RosettaStoneTemplateControllerIntegrationTest : MockMvcBaseTest("
                 property.order shouldBe 5
                 property.minCount shouldBe 4
                 property.maxCount shouldBe 5
-                property.path shouldBe ObjectIdAndLabel(Predicates.hasObjectPosition, "label")
+                property.path shouldBe ObjectIdAndLabel(Predicates.hasObjectPosition, "hasObjectPosition")
                 property.`class` shouldBe ObjectIdAndLabel(ThingId("C28"), "C28")
                 property.createdAt shouldNotBe null
                 property.createdBy shouldBe ContributorId(MockUserId.USER)

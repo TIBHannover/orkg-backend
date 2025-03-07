@@ -38,7 +38,7 @@ import org.orkg.createContributor
 import org.orkg.createLiteral
 import org.orkg.createObservatory
 import org.orkg.createOrganization
-import org.orkg.createPredicate
+import org.orkg.createPredicates
 import org.orkg.createResource
 import org.orkg.createStatement
 import org.orkg.graph.domain.Classes
@@ -103,7 +103,7 @@ internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparison
         assertThat(organizationService.findAll()).hasSize(0)
         assertThat(organizationService.findAllConferences()).hasSize(0)
 
-        listOf(
+        predicateService.createPredicates(
             Predicates.hasAuthors,
             Predicates.hasSubject,
             Predicates.comparesContribution,
@@ -117,55 +117,55 @@ internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparison
             Predicates.hasListElement,
             Predicates.sustainableDevelopmentGoal,
             Predicates.hasVisualization,
-        ).forEach { predicateService.createPredicate(it) }
+        )
 
         classService.createClasses(
-            "Comparison",
-            "Contribution",
-            "Problem",
-            "ResearchField",
-            "Author",
-            "Venue",
-            "Result",
-            Classes.sustainableDevelopmentGoal.value,
-            Classes.visualization.value,
+            Classes.contribution,
+            Classes.problem,
+            Classes.researchField,
+            Classes.author,
+            Classes.venue,
+            Classes.sustainableDevelopmentGoal,
+            Classes.visualization,
         )
 
         resourceService.createResource(
-            id = "R12",
+            id = ThingId("R12"),
             label = "Computer Science",
-            classes = setOf("ResearchField")
+            classes = setOf(Classes.researchField)
         )
 
         resourceService.createResource(
-            id = "R13",
+            id = ThingId("R13"),
             label = "Engineering",
-            classes = setOf("ResearchField")
+            classes = setOf(Classes.researchField)
         )
 
         // Example specific entities
 
-        resourceService.createResource(id = "R6541", label = "Contribution 1", classes = setOf(Classes.contribution.value))
-        resourceService.createResource(id = "R5364", label = "Contribution 2", classes = setOf(Classes.contribution.value))
-        resourceService.createResource(id = "R9786", label = "Contribution 3", classes = setOf(Classes.contribution.value))
-        resourceService.createResource(id = "R3120", label = "Contribution 4", classes = setOf(Classes.contribution.value))
-        resourceService.createResource(id = "R7864", label = "Contribution 5", classes = setOf(Classes.contribution.value))
+        classService.createClasses(ThingId("Result"))
 
-        resourceService.createResource(id = "R6571", label = "Visualization 1", classes = setOf(Classes.visualization.value))
-        resourceService.createResource(id = "R1354", label = "Visualization 2", classes = setOf(Classes.visualization.value))
+        resourceService.createResource(id = ThingId("R6541"), label = "Contribution 1", classes = setOf(Classes.contribution))
+        resourceService.createResource(id = ThingId("R5364"), label = "Contribution 2", classes = setOf(Classes.contribution))
+        resourceService.createResource(id = ThingId("R9786"), label = "Contribution 3", classes = setOf(Classes.contribution))
+        resourceService.createResource(id = ThingId("R3120"), label = "Contribution 4", classes = setOf(Classes.contribution))
+        resourceService.createResource(id = ThingId("R7864"), label = "Contribution 5", classes = setOf(Classes.contribution))
 
-        resourceService.createResource(id = "R123", label = "Author with id", classes = setOf("Author"))
-        resourceService.createResource(id = "R124", label = "Other author with id", classes = setOf("Author"))
+        resourceService.createResource(id = ThingId("R6571"), label = "Visualization 1", classes = setOf(Classes.visualization))
+        resourceService.createResource(id = ThingId("R1354"), label = "Visualization 2", classes = setOf(Classes.visualization))
 
-        resourceService.createResource(id = "SDG_1", label = "No poverty", classes = setOf(Classes.sustainableDevelopmentGoal.value))
-        resourceService.createResource(id = "SDG_2", label = "Zero hunger", classes = setOf(Classes.sustainableDevelopmentGoal.value))
-        resourceService.createResource(id = "SDG_3", label = "Good health and well-being", classes = setOf(Classes.sustainableDevelopmentGoal.value))
+        resourceService.createResource(id = ThingId("R123"), label = "Author with id", classes = setOf(Classes.author))
+        resourceService.createResource(id = ThingId("R124"), label = "Other author with id", classes = setOf(Classes.author))
+
+        resourceService.createResource(id = ThingId("SDG_1"), label = "No poverty", classes = setOf(Classes.sustainableDevelopmentGoal))
+        resourceService.createResource(id = ThingId("SDG_2"), label = "Zero hunger", classes = setOf(Classes.sustainableDevelopmentGoal))
+        resourceService.createResource(id = ThingId("SDG_3"), label = "Good health and well-being", classes = setOf(Classes.sustainableDevelopmentGoal))
 
         statementService.createStatement(
             subject = resourceService.createResource(
-                id = "R456",
+                id = ThingId("R456"),
                 label = "Author with id and orcid",
-                classes = setOf("Author")
+                classes = setOf(Classes.author)
             ),
             predicate = Predicates.hasORCID,
             `object` = literalService.createLiteral(label = "1111-2222-3333-4444")
@@ -173,9 +173,9 @@ internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparison
 
         statementService.createStatement(
             subject = resourceService.createResource(
-                id = "R4567",
+                id = ThingId("R4567"),
                 label = "Author with orcid",
-                classes = setOf("Author")
+                classes = setOf(Classes.author)
             ),
             predicate = Predicates.hasORCID,
             `object` = literalService.createLiteral(label = "0000-1111-2222-3333")

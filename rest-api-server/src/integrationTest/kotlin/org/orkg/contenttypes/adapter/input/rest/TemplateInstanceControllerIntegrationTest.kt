@@ -22,7 +22,7 @@ import org.orkg.createContributor
 import org.orkg.createLiteral
 import org.orkg.createObservatory
 import org.orkg.createOrganization
-import org.orkg.createPredicate
+import org.orkg.createPredicates
 import org.orkg.createResource
 import org.orkg.createStatement
 import org.orkg.graph.domain.Classes
@@ -83,7 +83,7 @@ internal class TemplateInstanceControllerIntegrationTest : MockMvcBaseTest("temp
         assertThat(organizationService.findAll()).hasSize(0)
         assertThat(organizationService.findAllConferences()).hasSize(0)
 
-        listOf(
+        predicateService.createPredicates(
             Predicates.hasAuthor,
             Predicates.hasAuthors,
             Predicates.hasResearchField,
@@ -105,19 +105,27 @@ internal class TemplateInstanceControllerIntegrationTest : MockMvcBaseTest("temp
             Predicates.hasResearchProblem,
             Predicates.hasURL,
             Predicates.placeholder
-        ).forEach { predicateService.createPredicate(it) }
+        )
 
-        classService.createClasses(Classes.nodeShape.value, Classes.propertyShape.value, "Problem", "ResearchField")
+        classService.createClasses(
+            Classes.nodeShape,
+            Classes.propertyShape,
+            Classes.problem,
+            Classes.researchField
+        )
 
         resourceService.createResource(
-            id = "R12",
+            id = ThingId("R12"),
             label = "Computer Science",
-            classes = setOf("ResearchField")
+            classes = setOf(Classes.researchField)
         )
 
         // Example specific entities
 
-        classService.createClasses("String", "Test")
+        classService.createClasses(
+            Classes.string,
+            ThingId("Test")
+        )
 
         val contributorId = contributorService.createContributor()
 
@@ -170,8 +178,8 @@ internal class TemplateInstanceControllerIntegrationTest : MockMvcBaseTest("temp
         )
         statementService.createStatement(
             subject = resourceService.createResource(
-                id = "R6458",
-                classes = setOf(targetClass.value)
+                id = ThingId("R6458"),
+                classes = setOf(targetClass)
             ),
             predicate = Predicates.hasURL,
             `object` = literalService.createLiteral()

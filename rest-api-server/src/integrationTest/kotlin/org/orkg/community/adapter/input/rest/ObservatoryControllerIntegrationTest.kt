@@ -5,6 +5,7 @@ import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.orkg.common.ThingId
 import org.orkg.community.input.ContributorUseCases
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
@@ -14,6 +15,7 @@ import org.orkg.createObservatory
 import org.orkg.createOrganization
 import org.orkg.createResource
 import org.orkg.graph.adapter.input.rest.ResourceControllerIntegrationTest.RestDoc.pageOfDetailedResourcesResponseFields
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
@@ -54,7 +56,13 @@ internal class ObservatoryControllerIntegrationTest : MockMvcBaseTest("observato
         assertThat(service.findAll()).hasSize(0)
         assertThat(classService.findAll(PageRequest.of(0, 10))).hasSize(0)
 
-        classService.createClasses("ResearchField", "Paper", "Comparison", "Problem", "SomeClass")
+        classService.createClasses(
+            Classes.researchField,
+            Classes.paper,
+            Classes.comparison,
+            Classes.problem,
+            ThingId("SomeClass")
+        )
     }
 
     @AfterEach
@@ -71,7 +79,7 @@ internal class ObservatoryControllerIntegrationTest : MockMvcBaseTest("observato
         val contributorId = contributorService.createContributor()
         val organizationId = service.createOrganization(createdBy = contributorId)
         val researchField = resourceService.createResource(
-            classes = setOf("ResearchField")
+            classes = setOf(Classes.researchField)
         )
         observatoryService.createObservatory(
             organizations = setOf(organizationId),
@@ -94,7 +102,7 @@ internal class ObservatoryControllerIntegrationTest : MockMvcBaseTest("observato
         val contributorId = contributorService.createContributor()
         val organizationId = service.createOrganization(createdBy = contributorId)
         val researchField = resourceService.createResource(
-            classes = setOf("ResearchField")
+            classes = setOf(Classes.researchField)
         )
         val observatoryId = observatoryService.createObservatory(
             organizations = setOf(organizationId),
@@ -120,14 +128,14 @@ internal class ObservatoryControllerIntegrationTest : MockMvcBaseTest("observato
         val contributorId = contributorService.createContributor()
         val organizationId = service.createOrganization(createdBy = contributorId)
         val researchField = resourceService.createResource(
-            classes = setOf("ResearchField")
+            classes = setOf(Classes.researchField)
         )
         val observatoryId = observatoryService.createObservatory(
             organizations = setOf(organizationId),
             researchField = researchField
         )
         resourceService.createResource(
-            classes = setOf("Paper"),
+            classes = setOf(Classes.paper),
             organizationId = organizationId,
             observatoryId = observatoryId
         )
@@ -152,14 +160,14 @@ internal class ObservatoryControllerIntegrationTest : MockMvcBaseTest("observato
         val contributorId = contributorService.createContributor()
         val organizationId = service.createOrganization(createdBy = contributorId)
         val researchField = resourceService.createResource(
-            classes = setOf("ResearchField")
+            classes = setOf(Classes.researchField)
         )
         val observatoryId = observatoryService.createObservatory(
             organizations = setOf(organizationId),
             researchField = researchField
         )
         resourceService.createResource(
-            classes = setOf("Problem"),
+            classes = setOf(Classes.problem),
             organizationId = organizationId,
             observatoryId = observatoryId
         )
@@ -184,14 +192,14 @@ internal class ObservatoryControllerIntegrationTest : MockMvcBaseTest("observato
         val contributorId = contributorService.createContributor()
         val organizationId = service.createOrganization(createdBy = contributorId)
         val researchField = resourceService.createResource(
-            classes = setOf("ResearchField")
+            classes = setOf(Classes.researchField)
         )
         val observatoryId = observatoryService.createObservatory(
             organizations = setOf(organizationId),
             researchField = researchField
         )
         val resourceId = resourceService.createResource(
-            classes = setOf("SomeClass"),
+            classes = setOf(ThingId("SomeClass")),
             organizationId = organizationId,
             observatoryId = observatoryId
         )
@@ -209,14 +217,14 @@ internal class ObservatoryControllerIntegrationTest : MockMvcBaseTest("observato
         val contributorId = contributorService.createContributor()
         val organizationId = service.createOrganization(createdBy = contributorId)
         val researchField = resourceService.createResource(
-            classes = setOf("ResearchField")
+            classes = setOf(Classes.researchField)
         )
         val observatoryId = observatoryService.createObservatory(
             organizations = setOf(organizationId),
             researchField = researchField
         )
         resourceService.createResource(
-            classes = setOf("SomeClass"),
+            classes = setOf(ThingId("SomeClass")),
             organizationId = organizationId,
             observatoryId = observatoryId
         )

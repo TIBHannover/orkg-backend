@@ -15,7 +15,6 @@ import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
-import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateClassUseCase
 import org.orkg.graph.input.CreateListUseCase
 import org.orkg.graph.input.CreateLiteralUseCase
@@ -30,48 +29,29 @@ import java.time.OffsetDateTime
 
 // Classes
 
-fun CreateClassUseCase.createClasses(vararg classes: Pair<String, String>) =
-    classes.forEach {
-        createClass(
-            id = it.first,
-            contributorId = ContributorId.UNKNOWN,
-            label = it.second
-        )
-    }
-
-fun CreateClassUseCase.createClasses(vararg classes: String) =
-    classes.forEach {
-        createClass(
-            id = it,
-            contributorId = ContributorId.UNKNOWN,
-            label = it
-        )
-    }
-
 fun CreateClassUseCase.createClasses(vararg classes: ThingId) =
-    classes.forEach { id -> createClass(id = id.value, label = id.value) }
+    classes.forEach { id -> createClass(id = id, label = id.value) }
 
 fun CreateClassUseCase.createClass(
-    label: String,
-    id: String? = null,
+    label: String = "label",
+    id: ThingId? = null,
     contributorId: ContributorId = ContributorId.UNKNOWN,
     uri: ParsedIRI? = null,
     modifiable: Boolean = true,
-): ThingId =
-    create(
-        CreateClassUseCase.CreateCommand(
-            id = id?.let(::ThingId),
-            contributorId = contributorId,
-            label = label,
-            uri = uri,
-            modifiable = modifiable
-        )
+) = create(
+    CreateClassUseCase.CreateCommand(
+        id = id,
+        contributorId = contributorId,
+        label = label,
+        uri = uri,
+        modifiable = modifiable
     )
+)
 
 // Predicates
 
-fun CreatePredicateUseCase.createPredicates(vararg classes: ThingId) =
-    classes.forEach { id -> createPredicate(id = id, label = id.value) }
+fun CreatePredicateUseCase.createPredicates(vararg predicates: ThingId) =
+    predicates.forEach { id -> createPredicate(id = id, label = id.value) }
 
 fun CreatePredicateUseCase.createPredicate(
     id: ThingId? = null,
@@ -90,21 +70,21 @@ fun CreatePredicateUseCase.createPredicate(
 // Resources
 
 fun CreateResourceUseCase.createResource(
-    classes: Set<String> = setOf(),
-    id: String? = null,
+    classes: Set<ThingId> = setOf(),
+    id: ThingId? = null,
     label: String = "label",
-    extractionMethod: ExtractionMethod? = null,
+    extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     userId: ContributorId = ContributorId.UNKNOWN,
     observatoryId: ObservatoryId = ObservatoryId.UNKNOWN,
     organizationId: OrganizationId = OrganizationId.UNKNOWN,
     modifiable: Boolean = true,
 ): ThingId = create(
     CreateResourceUseCase.CreateCommand(
-        id = id?.let(::ThingId),
+        id = id,
         contributorId = userId,
         label = label,
-        classes = classes.map(::ThingId).toSet(),
-        extractionMethod = extractionMethod ?: ExtractionMethod.UNKNOWN,
+        classes = classes,
+        extractionMethod = extractionMethod,
         observatoryId = observatoryId,
         organizationId = organizationId,
         modifiable = modifiable
@@ -119,9 +99,18 @@ fun CreateLiteralUseCase.createLiteral(
     datatype: String = Literals.XSD.STRING.prefixedUri,
     contributorId: ContributorId = ContributorId.UNKNOWN,
     modifiable: Boolean = true,
-): ThingId = create(CreateLiteralUseCase.CreateCommand(id, contributorId, label, datatype, modifiable))
+): ThingId = create(
+    CreateLiteralUseCase.CreateCommand(
+        id = id,
+        contributorId = contributorId,
+        label = label,
+        datatype = datatype,
+        modifiable = modifiable,
+    )
+)
 
 // Contributors
+
 fun ContributorUseCases.createContributor(
     id: ContributorId = ContributorId(MockUserId.USER),
     name: String = "Example User",
@@ -132,7 +121,16 @@ fun ContributorUseCases.createContributor(
     isCurator: Boolean = false,
     isAdmin: Boolean = false,
 ): ContributorId = create(
-    CreateContributorUseCase.CreateCommand(id, name, joinedAt, organizationId, observatoryId, emailMD5, isCurator, isAdmin)
+    CreateContributorUseCase.CreateCommand(
+        id = id,
+        name = name,
+        joinedAt = joinedAt,
+        organizationId = organizationId,
+        observatoryId = observatoryId,
+        emailMD5 = emailMD5,
+        isCurator = isCurator,
+        isAdmin = isAdmin
+    )
 )
 
 // Organizations
@@ -145,7 +143,15 @@ fun OrganizationUseCases.createOrganization(
     type: OrganizationType = OrganizationType.GENERAL,
     id: OrganizationId? = null,
     logoId: ImageId? = null,
-) = this.create(id, organizationName, createdBy, url, displayId, type, logoId)
+) = create(
+    id = id,
+    organizationName = organizationName,
+    createdBy = createdBy,
+    url = url,
+    displayId = displayId,
+    type = type,
+    logoId = logoId
+)
 
 // Observatories
 
@@ -157,7 +163,7 @@ fun ObservatoryUseCases.createObservatory(
     researchField: ThingId = ThingId("R123"),
     displayId: String = name.toDisplayId(),
     sustainableDevelopmentGoals: Set<ThingId> = emptySet(),
-) = this.create(
+) = create(
     CreateObservatoryUseCase.CreateCommand(
         id = id,
         name = name,
@@ -172,8 +178,8 @@ fun ObservatoryUseCases.createObservatory(
 // Lists
 
 fun ListUseCases.createList(
-    label: String,
-    elements: List<ThingId>,
+    label: String = "label",
+    elements: List<ThingId> = emptyList(),
     id: ThingId? = null,
     contributorId: ContributorId = ContributorId.UNKNOWN,
 ) = create(
@@ -191,13 +197,16 @@ fun StatementUseCases.createStatement(
     subject: ThingId,
     predicate: ThingId,
     `object`: ThingId,
-): StatementId = create(
+    contributorId: ContributorId = ContributorId.UNKNOWN,
+    modifiable: Boolean = true,
+) = create(
     CreateCommand(
-        contributorId = ContributorId.UNKNOWN,
+        contributorId = contributorId,
         subjectId = subject,
         predicateId = predicate,
-        objectId = `object`
+        objectId = `object`,
+        modifiable = modifiable
     )
 )
 
-private fun String.toDisplayId() = this.lowercase().replace(Regex("[^a-zA-Z0-9_]"), "_")
+private fun String.toDisplayId() = lowercase().replace(Regex("[^a-zA-Z0-9_]"), "_")

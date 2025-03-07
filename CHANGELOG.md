@@ -6,6 +6,48 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added content-type endpoint for creating tables.
+  (See: [!1236](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1236))
+- Added support for listing possible values of metric parameters.
+  (See: [!1237](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1237))
+- Added a `multivalue` flag to metric parameter descriptions to indicate whether a metric parameter can accept multiple values.
+  (See: [!1239](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1239))
+- Added `content-type-count` metric.
+  (See: [!1240](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1240))
+- Added `content-type-count` metric.
+  (See: [!1240](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1240))
+- Added `rosetta-stone-statement-count` metric.
+  (See: [!1241](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1241))
+- Added support for managing visualizations on comparisons.
+  (See: [!1242](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1242))
+- Added the following new filtering parameters to content-type metrics
+  (See: [!1238](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1238),
+        [!1241](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1241)):
+
+| Metric name                             | Parameters                                                                                              |
+|-----------------------------------------|---------------------------------------------------------------------------------------------------------|
+| `paper-count`                           | `organization_id`, `created_by`, `created_at_start`, `created_at_end`, `visibility`, `verified`, `sdg`  |
+| `comparison-count`                      | `organization_id`, `created_by`, `created_at_start`, `created_at_end`, `visibility`, `published`, `sdg` |
+| `visualization-count`                   | `organization_id`, `created_by`, `created_at_start`, `created_at_end`, `visibility`                     |
+| `literature-list-count`                 | `organization_id`, `created_by`, `created_at_start`, `created_at_end`, `visibility`, `published`, `sdg` |
+| `smart-review-count`                    | `organization_id`, `created_by`, `created_at_start`, `created_at_end`, `visibility`, `published`, `sdg` |
+| `template-count metrics`                | `organization_id`, `created_by`, `created_at_start`, `created_at_end`, `visibility`                     |
+| `rosetta-stone-template-count`          | `observatory_id`, `organization_id`, `created_by`, `created_at_start`, `created_at_end`, `visibility`   |
+| `rosetta-stone-statement-version-count` | `observatory_id`, `organization_id`, `created_by`, `created_at_start`, `created_at_end`, `visibility`   |
+### Changed
+- The `published` filtering parameter for count metrics `comparison-count`, `literature-list-count` and `smart-review-count` is now configurable, and its default value was changed from `false` to `null`.
+### Fixed
+- Fixed datatype not being validated when updating a literal.
+  (See: [!1227](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1227))
+- Fixed literal value not being validated against datatype when updating a literal.
+  (See: [!1227](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1227))
+- Fixed new author names not being validated for content-type endpoints.
+  (See: [!1229](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1229))
+- Fixed descriptions of visualizations not being validated.
+  (See: [!1230](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1230))
+- Fixed visualizations not being linked when publishing a comparisons.
+  (See: [!1242](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1242))
 
 ## [0.77.4] - 2025-02-18
 ### Fixed

@@ -115,7 +115,8 @@ internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparison
             Predicates.hasWebsite,
             Predicates.description,
             Predicates.hasListElement,
-            Predicates.sustainableDevelopmentGoal
+            Predicates.sustainableDevelopmentGoal,
+            Predicates.hasVisualization,
         ).forEach { predicateService.createPredicate(it) }
 
         classService.createClasses(
@@ -126,7 +127,8 @@ internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparison
             "Author",
             "Venue",
             "Result",
-            Classes.sustainableDevelopmentGoal.value
+            Classes.sustainableDevelopmentGoal.value,
+            Classes.visualization.value,
         )
 
         resourceService.createResource(
@@ -148,6 +150,9 @@ internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparison
         resourceService.createResource(id = "R9786", label = "Contribution 3", classes = setOf(Classes.contribution.value))
         resourceService.createResource(id = "R3120", label = "Contribution 4", classes = setOf(Classes.contribution.value))
         resourceService.createResource(id = "R7864", label = "Contribution 5", classes = setOf(Classes.contribution.value))
+
+        resourceService.createResource(id = "R6571", label = "Visualization 1", classes = setOf(Classes.visualization.value))
+        resourceService.createResource(id = "R1354", label = "Visualization 2", classes = setOf(Classes.visualization.value))
 
         resourceService.createResource(id = "R123", label = "Author with id", classes = setOf("Author"))
         resourceService.createResource(id = "R124", label = "Other author with id", classes = setOf("Author"))
@@ -335,7 +340,10 @@ internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparison
                     )
                 )
             )
-            it.visualizations shouldBe emptyList()
+            it.visualizations shouldContainExactlyInAnyOrder listOf(
+                LabeledObjectRepresentation(ThingId("R6571"), "Visualization 1"),
+                LabeledObjectRepresentation(ThingId("R1354"), "Visualization 2"),
+            )
             it.relatedFigures shouldBe emptyList()
             it.relatedResources shouldBe emptyList()
             it.references shouldContainExactly listOf("https://orkg.org/resources/R1000", "paper citation")
@@ -467,7 +475,10 @@ internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparison
                     )
                 )
             )
-            it.visualizations shouldBe emptyList()
+            it.visualizations shouldContainExactlyInAnyOrder listOf(
+                ObjectIdAndLabel(ThingId("R1354"), "Visualization 2"),
+                ObjectIdAndLabel(ThingId("R6571"), "Visualization 1"),
+            )
             it.relatedFigures shouldBe emptyList()
             it.relatedResources shouldBe emptyList()
             it.references shouldContainExactly listOf("other paper citation", "paper citation")

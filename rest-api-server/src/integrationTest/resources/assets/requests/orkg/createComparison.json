@@ -92,6 +92,10 @@
             }
         ]
     },
+    "visualizations": [
+        "R6571",
+        "R1354"
+    ],
     "references": [
         "https://orkg.org/resources/R1000",
         "paper citation"

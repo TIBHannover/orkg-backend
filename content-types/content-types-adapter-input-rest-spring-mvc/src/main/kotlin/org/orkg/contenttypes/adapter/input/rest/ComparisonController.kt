@@ -304,6 +304,7 @@ class ComparisonController(
         val contributions: List<ThingId>,
         val config: ComparisonConfig,
         val data: ComparisonData,
+        val visualizations: List<ThingId>?,
         val references: List<String>,
         @Size(max = 1)
         val observatories: List<ObservatoryId>,
@@ -325,6 +326,7 @@ class ComparisonController(
                 contributions = contributions,
                 config = config,
                 data = data,
+                visualizations = visualizations.orEmpty(),
                 references = references,
                 observatories = observatories,
                 organizations = organizations,
@@ -348,6 +350,7 @@ class ComparisonController(
         val contributions: List<ThingId>?,
         val config: ComparisonConfig?,
         val data: ComparisonData?,
+        val visualizations: List<ThingId>?,
         val references: List<String>?,
         @Size(max = 1)
         val observatories: List<ObservatoryId>?,
@@ -371,6 +374,7 @@ class ComparisonController(
                 contributions = contributions,
                 config = config,
                 data = data,
+                visualizations = visualizations,
                 references = references,
                 observatories = observatories,
                 organizations = organizations,

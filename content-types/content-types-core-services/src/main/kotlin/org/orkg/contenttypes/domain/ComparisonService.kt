@@ -57,6 +57,9 @@ import org.orkg.contenttypes.domain.actions.comparisons.ComparisonTableUpdater
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonVersionCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonVersionDoiPublisher
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonVersionHistoryUpdater
+import org.orkg.contenttypes.domain.actions.comparisons.ComparisonVisualizationCreator
+import org.orkg.contenttypes.domain.actions.comparisons.ComparisonVisualizationUpdater
+import org.orkg.contenttypes.domain.actions.comparisons.ComparisonVisualizationValidator
 import org.orkg.contenttypes.domain.actions.execute
 import org.orkg.contenttypes.input.ComparisonContributionsUseCases
 import org.orkg.contenttypes.input.ComparisonUseCases
@@ -207,6 +210,7 @@ class ComparisonService(
             DescriptionValidator { it.description },
             LabelCollectionValidator("references") { it.references },
             ComparisonContributionValidator(resourceRepository) { it.contributions },
+            ComparisonVisualizationValidator(resourceRepository) { it.visualizations },
             ResearchFieldValidator(resourceRepository, { it.researchFields }),
             ObservatoryValidator(observatoryRepository, { it.observatories }),
             OrganizationOrConferenceValidator(organizationRepository, conferenceSeriesRepository, { it.organizations }),
@@ -220,6 +224,7 @@ class ComparisonService(
             ComparisonReferencesCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
             ComparisonIsAnonymizedCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
             ComparisonContributionCreator(unsafeStatementUseCases),
+            ComparisonVisualizationCreator(unsafeStatementUseCases),
             ComparisonTableCreator(comparisonTableRepository)
         )
         return steps.execute(command, CreateComparisonState()).comparisonId!!
@@ -355,6 +360,7 @@ class ComparisonService(
             ComparisonModifiableValidator(),
             VisibilityValidator(contributorRepository, { it.contributorId }, { it.comparison!! }, { it.visibility }),
             ComparisonContributionValidator(resourceRepository) { it.contributions },
+            ComparisonVisualizationValidator(resourceRepository) { it.visualizations },
             ResearchFieldValidator(resourceRepository, { it.researchFields }),
             ObservatoryValidator(observatoryRepository, { it.observatories }),
             OrganizationOrConferenceValidator(organizationRepository, conferenceSeriesRepository, { it.organizations }),
@@ -366,6 +372,7 @@ class ComparisonService(
             ComparisonAuthorUpdater(unsafeResourceUseCases, statementService, unsafeStatementUseCases, unsafeLiteralUseCases, listService, listRepository),
             ComparisonSDGUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
             ComparisonContributionUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
+            ComparisonVisualizationUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
             ComparisonReferencesUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
             ComparisonIsAnonymizedUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
             ComparisonTableUpdater(comparisonTableRepository)

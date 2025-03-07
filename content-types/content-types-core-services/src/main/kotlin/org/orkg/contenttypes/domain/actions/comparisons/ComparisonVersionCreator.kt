@@ -35,6 +35,7 @@ class ComparisonVersionCreator(
             contributions = comparison.contributions.ids,
             config = state.config!!,
             data = state.data!!,
+            visualizations = comparison.visualizations.ids,
             references = comparison.references,
             observatories = comparison.observatories,
             organizations = comparison.organizations,
@@ -51,6 +52,7 @@ class ComparisonVersionCreator(
             ComparisonReferencesCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
             ComparisonIsAnonymizedCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
             ComparisonContributionCreator(unsafeStatementUseCases),
+            ComparisonVisualizationCreator(unsafeStatementUseCases),
             ComparisonVersionTableCreator(comparisonPublishedRepository),
             ComparisonPublicationInfoCreator(unsafeStatementUseCases, unsafeLiteralUseCases)
         )

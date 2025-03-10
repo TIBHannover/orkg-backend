@@ -1,0 +1,13 @@
+= Community
+
+[[contributors]]
+include::community/contributors.adoc[leveloffset=+1]
+
+[[organizations]]
+include::community/organizations.adoc[leveloffset=+1]
+
+[[observatories]]
+include::community/observatories.adoc[leveloffset=+1]
+
+[[observatory-filters]]
+include::community/observatory-filters.adoc[leveloffset=+1]

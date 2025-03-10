@@ -1,5 +1,3 @@
-= Content-Types
-
 Content-Types represent a collection of concepts in the knowledge graph.
 They can be seen as a collection of <<Resources,resources>>, <<Literals,literals>> and <<Predicates,predicates>>.
 The provided endpoints allow to operate across multiple concepts.

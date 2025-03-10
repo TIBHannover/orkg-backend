@@ -24,159 +24,32 @@ include::../_default-attributes.adoc[]
 ** <<license,Reproducibility Score License>>
 ====
 
-// General instructions on how to use the api
-
 [[overview]]
-include::parts/overview.adoc[leveloffset=+1]
+include::chapters/overview.adoc[leveloffset=+1]
 
-[[authentication]]
-include::parts/auth.adoc[leveloffset=+1]
+[[getting-started]]
+include::chapters/getting-started.adoc[leveloffset=+1]
 
-[[content-negotiation]]
-include::parts/content-negotiation.adoc[leveloffset=+1]
+[[community]]
+include::chapters/community.adoc[leveloffset=+1]
 
-// Common metadata
-
-[[contributors]]
-include::parts/contributors.adoc[leveloffset=+1]
-
-[[organizations]]
-include::parts/organizations.adoc[leveloffset=+1]
-
-[[observatories]]
-include::parts/observatories.adoc[leveloffset=+1]
-
-[[observatory-filters]]
-include::parts/observatory-filters.adoc[leveloffset=+1]
-
-// Basic building blocks of the graph
-
-[[classes]]
-include::parts/classes.adoc[leveloffset=+1]
-
-[[resources]]
-include::parts/resources.adoc[leveloffset=+1]
-
-[[predicates]]
-include::parts/predicates.adoc[leveloffset=+1]
-
-[[literals]]
-include::parts/literals.adoc[leveloffset=+1]
-
-[[things]]
-include::parts/things.adoc[leveloffset=+1]
-
-[[statements]]
-include::parts/statements.adoc[leveloffset=+1]
-
-[[bulk-statements]]
-include::parts/bulk-statements.adoc[leveloffset=+1]
-
-[[lists]]
-include::parts/lists.adoc[leveloffset=+1]
-
-// technically a content-type
-[[tables]]
-include::parts/tables.adoc[leveloffset=+1]
-
-// Resources with special properties
-
-[[research-fields]]
-include::parts/research-fields.adoc[leveloffset=+1]
-
-[[problems]]
-include::parts/research-problems.adoc[leveloffset=+1]
-
-// Content-types
+[[graph]]
+include::chapters/graph.adoc[leveloffset=+1]
 
 [[content-types]]
-include::parts/content-types.adoc[leveloffset=+1]
+include::chapters/content-types.adoc[leveloffset=+1]
 
-[[papers]]
-include::parts/papers.adoc[leveloffset=+1]
+[[rosetta-stone]]
+include::chapters/rosetta-stone.adoc[leveloffset=+1]
 
-[[contributions]]
-include::parts/contributions.adoc[leveloffset=+1]
+[[research-fields-and-research-problems]]
+include::chapters/research-fields-and-research-problems.adoc[leveloffset=+1]
 
-[[comparisons]]
-include::parts/comparisons.adoc[leveloffset=+1]
+[[curation-and-statistics]]
+include::chapters/curation-and-statistics.adoc[leveloffset=+1]
 
-[[comparisons-related-figures]]
-include::parts/comparison-related-figures.adoc[leveloffset=+1]
+[[integrations]]
+include::chapters/integrations.adoc[leveloffset=+1]
 
-[[comparison-related-resources]]
-include::parts/comparison-related-resources.adoc[leveloffset=+1]
-
-[[visualizations]]
-include::parts/visualizations.adoc[leveloffset=+1]
-
-[[literature-lists]]
-include::parts/literature-lists.adoc[leveloffset=+1]
-
-[[literature-list-sections]]
-include::parts/literature-list-sections.adoc[leveloffset=+1]
-
-[[smart-reviews]]
-include::parts/smart-reviews.adoc[leveloffset=+1]
-
-[[smart-review-sections]]
-include::parts/smart-review-sections.adoc[leveloffset=+1]
-
-[[datasets-benchmarks]]
-include::parts/datasets-benchmarks.adoc[leveloffset=+1]
-
-[[templates]]
-include::parts/templates.adoc[leveloffset=+1]
-
-[[template-properties]]
-include::parts/template-properties.adoc[leveloffset=+1]
-
-[[template-instances]]
-include::parts/template-instances.adoc[leveloffset=+1]
-
-// Rosetta Stone
-
-[[rosetta-stone-templates]]
-include::parts/rosetta-stone-templates.adoc[leveloffset=+1]
-
-[[rosetta-stone-statements]]
-include::parts/rosetta-stone-statements.adoc[leveloffset=+1]
-
-// Curation & Statistics
-
-[[curation]]
-include::parts/curation.adoc[leveloffset=+1]
-
-[[statistics]]
-include::parts/statistics.adoc[leveloffset=+1]
-
-[[reproducibility-score]]
-include::parts/reproducibility-score.adoc[leveloffset=+1]
-
-// Integration
-
-[[rdf-integration]]
-include::parts/rdf.adoc[leveloffset=+1]
-
-[[widget]]
-include::parts/widget.adoc[leveloffset=+1]
-
-[[external-sources]]
-include::parts/external-sources.adoc[leveloffset=+1]
-
-// Glossary
-
-[[representations]]
-include::parts/representations.adoc[leveloffset=+1]
-
-[[sorting-and-pagination]]
-include::parts/sorting-and-pagination.adoc[leveloffset=+1]
-
-[[identifiers]]
-include::parts/identifiers.adoc[leveloffset=+1]
-
-[[visibility-filter]]
-include::parts/visibility-filters.adoc[leveloffset=+1]
-
-[[filter-config]]
-include::parts/filter-configs.adoc[leveloffset=+1]
+[[appendix]]
+include::chapters/appendix.adoc[leveloffset=+1]

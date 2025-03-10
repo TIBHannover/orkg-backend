@@ -1,0 +1,25 @@
+= Graph Entities
+
+[[classes]]
+include::graph/classes.adoc[leveloffset=+1]
+
+[[resources]]
+include::graph/resources.adoc[leveloffset=+1]
+
+[[predicates]]
+include::graph/predicates.adoc[leveloffset=+1]
+
+[[literals]]
+include::graph/literals.adoc[leveloffset=+1]
+
+[[things]]
+include::graph/things.adoc[leveloffset=+1]
+
+[[statements]]
+include::graph/statements.adoc[leveloffset=+1]
+
+[[bulk-statements]]
+include::graph/bulk-statements.adoc[leveloffset=+1]
+
+[[lists]]
+include::graph/lists.adoc[leveloffset=+1]

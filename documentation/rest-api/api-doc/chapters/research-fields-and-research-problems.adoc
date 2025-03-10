@@ -1,0 +1,7 @@
+= Research Fields and Research Problems
+
+[[research-fields]]
+include::research-fields-and-research-problems/research-fields.adoc[leveloffset=+1]
+
+[[problems]]
+include::research-fields-and-research-problems/research-problems.adoc[leveloffset=+1]

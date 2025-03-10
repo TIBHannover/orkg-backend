@@ -1,0 +1,16 @@
+= Appendix
+
+[[representations]]
+include::appendix/representations.adoc[leveloffset=+1]
+
+[[sorting-and-pagination]]
+include::appendix/sorting-and-pagination.adoc[leveloffset=+1]
+
+[[identifiers]]
+include::appendix/identifiers.adoc[leveloffset=+1]
+
+[[visibility-filter]]
+include::appendix/visibility-filters.adoc[leveloffset=+1]
+
+[[filter-config]]
+include::appendix/filter-configs.adoc[leveloffset=+1]

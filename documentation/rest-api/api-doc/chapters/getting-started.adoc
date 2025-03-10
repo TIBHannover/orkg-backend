@@ -1,0 +1,7 @@
+# Getting Started
+
+[[authentication]]
+include::getting-started/auth.adoc[leveloffset=+1]
+
+[[content-negotiation]]
+include::getting-started/content-negotiation.adoc[leveloffset=+1]

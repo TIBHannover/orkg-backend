@@ -67,6 +67,7 @@ html.dark-theme #doc {
 
 #toc.toc2 {
   width: calc(var(--toc-width) - 1.7em);
+  height: auto;
 }
 
 #toc {
@@ -101,7 +102,8 @@ a:hover {
 }
 
 body.fixed-toc #toc {
-    height: calc(100% - 3.4rem);
+    max-height: calc(100% - 3.4rem);
+    height: auto;
 }
 
 .doc #header .details {

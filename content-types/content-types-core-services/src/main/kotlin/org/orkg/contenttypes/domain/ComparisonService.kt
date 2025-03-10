@@ -12,6 +12,7 @@ import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.domain.actions.Action
+import org.orkg.contenttypes.domain.actions.ContributionIdsValidator
 import org.orkg.contenttypes.domain.actions.CreateComparisonCommand
 import org.orkg.contenttypes.domain.actions.CreateComparisonState
 import org.orkg.contenttypes.domain.actions.DescriptionValidator
@@ -26,13 +27,13 @@ import org.orkg.contenttypes.domain.actions.SDGValidator
 import org.orkg.contenttypes.domain.actions.UpdateComparisonCommand
 import org.orkg.contenttypes.domain.actions.UpdateComparisonState
 import org.orkg.contenttypes.domain.actions.VisibilityValidator
+import org.orkg.contenttypes.domain.actions.VisualizationIdsValidator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonAuthorCreateValidator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonAuthorCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonAuthorUpdateValidator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonAuthorUpdater
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonContributionCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonContributionUpdater
-import org.orkg.contenttypes.domain.actions.comparisons.ComparisonContributionValidator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonDescriptionCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonDescriptionUpdater
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonExistenceValidator
@@ -59,7 +60,6 @@ import org.orkg.contenttypes.domain.actions.comparisons.ComparisonVersionDoiPubl
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonVersionHistoryUpdater
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonVisualizationCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonVisualizationUpdater
-import org.orkg.contenttypes.domain.actions.comparisons.ComparisonVisualizationValidator
 import org.orkg.contenttypes.domain.actions.execute
 import org.orkg.contenttypes.input.ComparisonContributionsUseCases
 import org.orkg.contenttypes.input.ComparisonUseCases
@@ -209,8 +209,8 @@ class ComparisonService(
             LabelValidator("title") { it.title },
             DescriptionValidator { it.description },
             LabelCollectionValidator("references") { it.references },
-            ComparisonContributionValidator(resourceRepository) { it.contributions },
-            ComparisonVisualizationValidator(resourceRepository) { it.visualizations },
+            ContributionIdsValidator(resourceRepository) { it.contributions },
+            VisualizationIdsValidator(resourceRepository) { it.visualizations },
             ResearchFieldValidator(resourceRepository, { it.researchFields }),
             ObservatoryValidator(observatoryRepository, { it.observatories }),
             OrganizationOrConferenceValidator(organizationRepository, conferenceSeriesRepository, { it.organizations }),
@@ -359,8 +359,8 @@ class ComparisonService(
             ComparisonExistenceValidator(this),
             ComparisonModifiableValidator(),
             VisibilityValidator(contributorRepository, { it.contributorId }, { it.comparison!! }, { it.visibility }),
-            ComparisonContributionValidator(resourceRepository) { it.contributions },
-            ComparisonVisualizationValidator(resourceRepository) { it.visualizations },
+            ContributionIdsValidator(resourceRepository) { it.contributions },
+            VisualizationIdsValidator(resourceRepository) { it.visualizations },
             ResearchFieldValidator(resourceRepository, { it.researchFields }),
             ObservatoryValidator(observatoryRepository, { it.observatories }),
             OrganizationOrConferenceValidator(organizationRepository, conferenceSeriesRepository, { it.organizations }),

@@ -10,14 +10,14 @@
 
 == Model
 
-* xref:reference/model/paper.adoc[Paper]
-* xref:reference/model/comparison.adoc[Comparison]
-* xref:reference/model/visualization.adoc[Visualization]
-* xref:reference/model/literature-list.adoc[Literature-List]
-* xref:reference/model/smart-review.adoc[Smart Review]
-* xref:reference/model/template.adoc[Template]
-* xref:reference/model/rosetta-stone-template.adoc[Rosetta Stone Template]
+* xref:reference/model/paper-model.adoc[Paper]
+* xref:reference/model/comparison-model.adoc[Comparison]
+* xref:reference/model/visualization-model.adoc[Visualization]
+* xref:reference/model/literature-list-model.adoc[Literature-List]
+* xref:reference/model/smart-review-model.adoc[Smart Review]
+* xref:reference/model/template-model.adoc[Template]
+* xref:reference/model/rosetta-stone-template-model.adoc[Rosetta Stone Template]
 
 == Internal Model
 
-* xref:reference/internal-model/rosetta-stone-statement.adoc[Rosetta Stone Statement]
+* xref:reference/internal-model/rosetta-stone-statement-model.adoc[Rosetta Stone Statement]

@@ -280,44 +280,27 @@ tasks {
         args("--spring.profiles.active=development")
     }
 
-    register("populatePostgresDatabase").configure {
+    registerBootRunTask("populatePostgresDatabase") {
         group = "datagen"
         description = "Populates the postgres database with live data and randomly generates required user information."
-        doFirst {
-            named<BootRun>("bootRun").configure {
-                args("--spring.profiles.active=development,datagen")
-            }
-        }
-        finalizedBy("bootRun")
+        args("--spring.profiles.active=development,datagen")
     }
 
-    register("profileNeo4jRepositories").configure {
+    registerBootRunTask("profileNeo4jRepositories") {
         group = "profiling"
         description = "Profiles neo4j repositories."
-        doFirst {
-            named<BootRun>("bootRun").configure {
-                args("--spring.profiles.active=development,profileRepositories,profileNeo4jRepositories")
-            }
-        }
-        finalizedBy("bootRun")
+        args("--spring.profiles.active=development,profileRepositories,profileNeo4jRepositories")
     }
 
-    register("runListMigrations").configure {
+    registerBootRunTask("runListMigrations") {
         group = "migration"
         description = "Migrates the current database to use list entities."
-        doFirst {
-            named<BootRun>("bootRun").configure {
-                args("--spring.profiles.active=development,listMigrations")
-            }
-        }
-        finalizedBy("bootRun")
+        args("--spring.profiles.active=development,listMigrations")
     }
 
-    register<BootRun>("runComparisonMigrations") {
+    registerBootRunTask("runComparisonMigrations") {
         group = "migration"
         description = "Migrates the current database model for comparisons to a head and published version model."
-        mainClass.set(bootRun.get().mainClass)
-        classpath(bootRun.get().classpath)
         args("--spring.profiles.active=development,comparisonMigrations")
     }
 
@@ -326,6 +309,15 @@ tasks {
             html.required.set(true)
         }
     }
+}
+
+private fun TaskContainer.registerBootRunTask(
+    name: String,
+    configuration: BootRun.() -> Unit,
+) = register<BootRun>(name) {
+    mainClass.set(bootRun.get().mainClass)
+    classpath(bootRun.get().classpath)
+    apply(configuration)
 }
 
 kapt {

@@ -12,14 +12,18 @@
         {
             "name": "Author with orcid",
             "identifiers": {
-                "orcid": ["0000-1111-2222-3333"]
+                "orcid": [
+                    "0000-1111-2222-3333"
+                ]
             }
         },
         {
             "name": "Author with id and orcid",
             "id": "R456",
             "identifiers": {
-                "orcid": ["1111-2222-3333-4444"]
+                "orcid": [
+                    "1111-2222-3333-4444"
+                ]
             }
         },
         {
@@ -30,9 +34,15 @@
             "name": "Author that just has a name"
         }
     ],
-    "sdgs": ["SDG_1", "SDG_2"],
+    "sdgs": [
+        "SDG_1",
+        "SDG_2"
+    ],
     "contributions": [
-        "R6541", "R5364", "R9786", "R3120"
+        "R6541",
+        "R5364",
+        "R9786",
+        "R3120"
     ],
     "config": {
         "contributions": [
@@ -67,7 +77,9 @@
                 [
                     {
                         "_class": "resource",
-                        "classes": ["Problem"],
+                        "classes": [
+                            "Problem"
+                        ],
                         "id": "R192326",
                         "label": "Covid-19 Pandemic Ontology Development",
                         "path": [
@@ -88,7 +100,9 @@
                 "id": "P32",
                 "label": "research problem",
                 "n_contributions": 2,
-                "similar_predicates": ["P15"]
+                "similar_predicates": [
+                    "P15"
+                ]
             }
         ]
     },

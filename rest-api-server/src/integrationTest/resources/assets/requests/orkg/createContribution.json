@@ -2,7 +2,9 @@
     "resources": {
         "#temp1": {
             "label": "MOTO",
-            "classes": ["Result"]
+            "classes": [
+                "Result"
+            ]
         }
     },
     "literals": {
@@ -20,7 +22,10 @@
     "lists": {
         "#temp4": {
             "label": "list",
-            "elements": ["#temp1", "C123"]
+            "elements": [
+                "#temp1",
+                "C123"
+            ]
         }
     },
     "contribution": {

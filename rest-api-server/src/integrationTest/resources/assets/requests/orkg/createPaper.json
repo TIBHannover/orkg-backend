@@ -1,115 +1,134 @@
 {
-  "title": "example paper",
-  "research_fields": [
-    "R12"
-  ],
-  "identifiers": {
-    "doi": ["10.48550/arXiv.2304.05327"]
-  },
-  "publication_info": {
-    "published_month": 5,
-    "published_year": 2015,
-    "published_in": "conference",
-    "url": "https://www.example.org"
-  },
-  "authors": [
-    {
-      "name": "Author with id",
-      "id": "R123"
+    "title": "example paper",
+    "research_fields": [
+        "R12"
+    ],
+    "identifiers": {
+        "doi": [
+            "10.48550/arXiv.2304.05327"
+        ]
     },
-    {
-      "name": "Author with orcid",
-      "identifiers": {
-        "orcid": ["0000-1111-2222-3333"]
-      }
+    "publication_info": {
+        "published_month": 5,
+        "published_year": 2015,
+        "published_in": "conference",
+        "url": "https://www.example.org"
     },
-    {
-      "name": "Author with id and orcid",
-      "id": "R456",
-      "identifiers": {
-        "orcid": ["1111-2222-3333-4444"]
-      }
-    },
-    {
-      "name": "Author with homepage",
-      "homepage": "https://example.org/author"
-    },
-    {
-      "name": "Author that just has a name"
-    }
-  ],
-  "sdgs": ["SDG_1", "SDG_2"],
-  "mentionings": ["R3003", "R3004"],
-  "observatories": [
-    "1afefdd0-5c09-4c9c-b718-2b35316b56f3"
-  ],
-  "organizations": [
-    "edc18168-c4ee-4cb8-a98a-136f748e912e"
-  ],
-  "contents": {
-    "resources": {
-      "#temp1": {
-        "label": "MOTO",
-        "classes": ["Result"]
-      }
-    },
-    "literals": {
-      "#temp2": {
-        "label": "0.1",
-        "data_type": "xsd:decimal"
-      }
-    },
-    "predicates": {
-      "#temp3": {
-        "label": "hasResult",
-        "description": "has result"
-      }
-    },
-    "lists": {
-      "#temp4": {
-        "label": "list",
-        "elements": ["#temp1", "C123"]
-      }
-    },
-    "contributions": [
-      {
-        "label": "Contribution 1",
-        "classes": ["C123"],
-        "statements": {
-          "P32": [
-            {
-              "id": "R3003"
-            }
-          ],
-          "HAS_EVALUATION": [
-            {
-              "id": "#temp1"
-            },
-            {
-              "id": "R3004",
-              "statements": {
-                "#temp3": [
-                  {
-                    "id": "R3003"
-                  },
-                  {
-                    "id": "#temp2"
-                  },
-                  {
-                    "id": "#temp4"
-                  }
-                ],
-                "P32": [
-                  {
-                    "id": "#temp2"
-                  }
+    "authors": [
+        {
+            "name": "Author with id",
+            "id": "R123"
+        },
+        {
+            "name": "Author with orcid",
+            "identifiers": {
+                "orcid": [
+                    "0000-1111-2222-3333"
                 ]
-              }
             }
-          ]
+        },
+        {
+            "name": "Author with id and orcid",
+            "id": "R456",
+            "identifiers": {
+                "orcid": [
+                    "1111-2222-3333-4444"
+                ]
+            }
+        },
+        {
+            "name": "Author with homepage",
+            "homepage": "https://example.org/author"
+        },
+        {
+            "name": "Author that just has a name"
         }
-      }
-    ]
-  },
-  "extraction_method": "MANUAL"
+    ],
+    "sdgs": [
+        "SDG_1",
+        "SDG_2"
+    ],
+    "mentionings": [
+        "R3003",
+        "R3004"
+    ],
+    "observatories": [
+        "1afefdd0-5c09-4c9c-b718-2b35316b56f3"
+    ],
+    "organizations": [
+        "edc18168-c4ee-4cb8-a98a-136f748e912e"
+    ],
+    "contents": {
+        "resources": {
+            "#temp1": {
+                "label": "MOTO",
+                "classes": [
+                    "Result"
+                ]
+            }
+        },
+        "literals": {
+            "#temp2": {
+                "label": "0.1",
+                "data_type": "xsd:decimal"
+            }
+        },
+        "predicates": {
+            "#temp3": {
+                "label": "hasResult",
+                "description": "has result"
+            }
+        },
+        "lists": {
+            "#temp4": {
+                "label": "list",
+                "elements": [
+                    "#temp1",
+                    "C123"
+                ]
+            }
+        },
+        "contributions": [
+            {
+                "label": "Contribution 1",
+                "classes": [
+                    "C123"
+                ],
+                "statements": {
+                    "P32": [
+                        {
+                            "id": "R3003"
+                        }
+                    ],
+                    "HAS_EVALUATION": [
+                        {
+                            "id": "#temp1"
+                        },
+                        {
+                            "id": "R3004",
+                            "statements": {
+                                "#temp3": [
+                                    {
+                                        "id": "R3003"
+                                    },
+                                    {
+                                        "id": "#temp2"
+                                    },
+                                    {
+                                        "id": "#temp4"
+                                    }
+                                ],
+                                "P32": [
+                                    {
+                                        "id": "#temp2"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "extraction_method": "MANUAL"
 }

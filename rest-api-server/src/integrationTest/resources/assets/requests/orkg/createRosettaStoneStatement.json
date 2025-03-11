@@ -1,20 +1,43 @@
 {
     "template_id": "$templateId",
     "context": "R789",
-    "subjects": ["R258", "R369", "#temp1"],
+    "subjects": [
+        "R258",
+        "R369",
+        "#temp1"
+    ],
     "objects": [
-        ["R174", "#temp2", "#temp3"],
-        ["L123", "#temp4"],
-        ["L456", "#temp5"],
-        ["L789", "#temp6"],
-        ["R258", "R369", "#temp7"]
+        [
+            "R174",
+            "#temp2",
+            "#temp3"
+        ],
+        [
+            "L123",
+            "#temp4"
+        ],
+        [
+            "L456",
+            "#temp5"
+        ],
+        [
+            "L789",
+            "#temp6"
+        ],
+        [
+            "R258",
+            "R369",
+            "#temp7"
+        ]
     ],
     "certainty": "HIGH",
     "negated": false,
     "resources": {
         "#temp1": {
             "label": "Subject Resource",
-            "classes": ["C28"]
+            "classes": [
+                "C28"
+            ]
         }
     },
     "predicates": {
@@ -46,7 +69,10 @@
     "lists": {
         "#temp7": {
             "label": "list",
-            "elements": ["#temp1", "C123"]
+            "elements": [
+                "#temp1",
+                "C123"
+            ]
         }
     },
     "observatories": [

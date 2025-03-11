@@ -1,66 +1,66 @@
 {
-  "data": {
-    "attributes": {
-      "doi": "10.7484/182",
-      "event": "draft",
-      "creators": [
-        {
-          "name": "Josiah Stinkney Carberry",
-          "nameIdentifiers": [
-            {
-              "schemeUri": "https://orcid.org",
-              "nameIdentifier": "https://orcid.org/0000-0002-1825-0097",
-              "nameIdentifierScheme": "ORCID"
-            }
-          ],
-          "nameType":"Personal"
+    "data": {
+        "attributes": {
+            "doi": "10.7484/182",
+            "event": "draft",
+            "creators": [
+                {
+                    "name": "Josiah Stinkney Carberry",
+                    "nameIdentifiers": [
+                        {
+                            "schemeUri": "https://orcid.org",
+                            "nameIdentifier": "https://orcid.org/0000-0002-1825-0097",
+                            "nameIdentifierScheme": "ORCID"
+                        }
+                    ],
+                    "nameType": "Personal"
+                },
+                {
+                    "name": "Author 2",
+                    "nameIdentifiers": [],
+                    "nameType": "Personal"
+                }
+            ],
+            "titles": [
+                {
+                    "title": "Paper title",
+                    "lang": "en"
+                }
+            ],
+            "publicationYear": 2023,
+            "subjects": [
+                {
+                    "subject": "Paper subject",
+                    "lang": "en"
+                }
+            ],
+            "types": {
+                "resourceType": "Paper",
+                "resourceTypeGeneral": "Dataset"
+            },
+            "relatedIdentifiers": [
+                {
+                    "relatedIdentifier": "https://doi.org/10.48366/r609337",
+                    "relatedIdentifierType": "DOI",
+                    "relationType": "IsVariantFormOf"
+                }
+            ],
+            "rightsList": [
+                {
+                    "rights": "Creative Commons Attribution-ShareAlike 4.0 International License.",
+                    "rightsUri": "https://creativecommons.org/licenses/by-sa/4.0/"
+                }
+            ],
+            "descriptions": [
+                {
+                    "description": "Description of the paper",
+                    "descriptionType": "Abstract"
+                }
+            ],
+            "url": "https://example.org",
+            "language": "en",
+            "publisher": "Open Research Knowledge Graph"
         },
-        {
-          "name": "Author 2",
-          "nameIdentifiers": [],
-          "nameType": "Personal"
-        }
-      ],
-      "titles": [
-        {
-          "title": "Paper title",
-          "lang": "en"
-        }
-      ],
-      "publicationYear": 2023,
-      "subjects": [
-        {
-          "subject": "Paper subject",
-          "lang": "en"
-        }
-      ],
-      "types": {
-        "resourceType": "Paper",
-        "resourceTypeGeneral": "Dataset"
-      },
-      "relatedIdentifiers": [
-        {
-          "relatedIdentifier": "https://doi.org/10.48366/r609337",
-          "relatedIdentifierType": "DOI",
-          "relationType": "IsVariantFormOf"
-        }
-      ],
-      "rightsList": [
-        {
-          "rights": "Creative Commons Attribution-ShareAlike 4.0 International License.",
-          "rightsUri": "https://creativecommons.org/licenses/by-sa/4.0/"
-        }
-      ],
-      "descriptions": [
-        {
-          "description": "Description of the paper",
-          "descriptionType": "Abstract"
-        }
-      ],
-      "url": "https://example.org",
-      "language": "en",
-      "publisher": "Open Research Knowledge Graph"
-    },
-    "type": "dois"
-  }
+        "type": "dois"
+    }
 }

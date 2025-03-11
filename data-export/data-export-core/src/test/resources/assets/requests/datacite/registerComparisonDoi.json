@@ -1,70 +1,68 @@
 {
-  "data": {
-    "attributes": {
-      "creators": [
-        {
-          "name": "Josiah Stinkney Carberry",
-          "nameIdentifiers": [
-            {
-              "schemeUri": "https://orcid.org",
-              "nameIdentifier": "https://orcid.org/0000-0002-1825-0097",
-              "nameIdentifierScheme": "ORCID"
-            }
-          ],
-          "nameType": "Personal"
+    "data": {
+        "attributes": {
+            "creators": [
+                {
+                    "name": "Josiah Stinkney Carberry",
+                    "nameIdentifiers": [
+                        {
+                            "schemeUri": "https://orcid.org",
+                            "nameIdentifier": "https://orcid.org/0000-0002-1825-0097",
+                            "nameIdentifierScheme": "ORCID"
+                        }
+                    ],
+                    "nameType": "Personal"
+                },
+                {
+                    "name": "Author 2",
+                    "nameIdentifiers": [],
+                    "nameType": "Personal"
+                }
+            ],
+            "titles": [
+                {
+                    "title": "Dummy Comparison Title",
+                    "lang": "en"
+                }
+            ],
+            "publicationYear": 2023,
+            "subjects": [
+                {
+                    "subject": "Research Field 1",
+                    "lang": "en"
+                },
+                {
+                    "subject": "Research Field 2",
+                    "lang": "en"
+                }
+            ],
+            "types": {
+                "resourceType": "Comparison",
+                "resourceTypeGeneral": "Dataset"
+            },
+            "relatedIdentifiers": [
+                {
+                    "relatedIdentifier": "https://doi.org/test/doi",
+                    "relatedIdentifierType": "DOI",
+                    "relationType": "IsVariantFormOf"
+                }
+            ],
+            "rightsList": [
+                {
+                    "rights": "Creative Commons Attribution-ShareAlike 4.0 International License.",
+                    "rightsUri": "https://creativecommons.org/licenses/by-sa/4.0/"
+                }
+            ],
+            "descriptions": [
+                {
+                    "description": "Some description about the contents",
+                    "descriptionType": "Abstract"
+                }
+            ],
+            "url": "https://orkg.org/comparison/R8186",
+            "language": "en",
+            "publisher": "Open Research Knowledge Graph"
         },
-        {
-          "name": "Author 2",
-          "nameIdentifiers": [
-
-          ],
-          "nameType": "Personal"
-        }
-      ],
-      "titles": [
-        {
-          "title": "Dummy Comparison Title",
-          "lang": "en"
-        }
-      ],
-      "publicationYear": 2023,
-      "subjects": [
-        {
-          "subject": "Research Field 1",
-          "lang": "en"
-        },
-        {
-          "subject": "Research Field 2",
-          "lang": "en"
-        }
-      ],
-      "types": {
-        "resourceType": "Comparison",
-        "resourceTypeGeneral": "Dataset"
-      },
-      "relatedIdentifiers": [
-        {
-          "relatedIdentifier": "https://doi.org/test/doi",
-          "relatedIdentifierType": "DOI",
-          "relationType": "IsVariantFormOf"
-        }
-      ],
-      "rightsList": [
-        {
-          "rights": "Creative Commons Attribution-ShareAlike 4.0 International License.",
-          "rightsUri": "https://creativecommons.org/licenses/by-sa/4.0/"
-        }
-      ],
-      "descriptions": [
-        {
-          "description": "Some description about the contents",
-          "descriptionType": "Abstract"
-        }
-      ],
-      "url": "https://orkg.org/comparison/R8186",
-      "language": "en",
-      "publisher": "Open Research Knowledge Graph"
-    },
-    "type": "dois"
-  }
+        "type": "dois"
+    }
 }

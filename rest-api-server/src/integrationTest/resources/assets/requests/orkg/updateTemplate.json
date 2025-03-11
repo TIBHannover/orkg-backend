@@ -4,8 +4,12 @@
     "formatted_label": "{P34}",
     "target_class": "C456",
     "relations": {
-        "research_fields": ["R13"],
-        "research_problems": ["R16"],
+        "research_fields": [
+            "R13"
+        ],
+        "research_problems": [
+            "R16"
+        ],
         "predicate": "P31"
     },
     "properties": [

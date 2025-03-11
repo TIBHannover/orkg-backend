@@ -4,9 +4,15 @@
         "R194"
     ],
     "identifiers": {
-        "doi": ["10.48550/arXiv.2304.05328"],
-        "isbn": ["978-123456789-0"],
-        "issn": ["1234-5678"]
+        "doi": [
+            "10.48550/arXiv.2304.05328"
+        ],
+        "isbn": [
+            "978-123456789-0"
+        ],
+        "issn": [
+            "1234-5678"
+        ]
     },
     "publication_info": {
         "published_month": 6,
@@ -22,14 +28,18 @@
         {
             "name": "Author with orcid",
             "identifiers": {
-                "orcid": ["0000-1111-2222-3333"]
+                "orcid": [
+                    "0000-1111-2222-3333"
+                ]
             }
         },
         {
             "name": "Author with id and orcid",
             "id": "R456",
             "identifiers": {
-                "orcid": ["4444-3333-2222-1111"]
+                "orcid": [
+                    "4444-3333-2222-1111"
+                ]
             }
         },
         {
@@ -40,8 +50,14 @@
             "name": "Another author that just has a name"
         }
     ],
-    "sdgs": ["SDG_3", "SDG_4"],
-    "mentionings": ["R3004", "R3005"],
+    "sdgs": [
+        "SDG_3",
+        "SDG_4"
+    ],
+    "mentionings": [
+        "R3004",
+        "R3005"
+    ],
     "observatories": [
         "1afefdd0-5c09-4c9c-b718-2b35316b56f3"
     ],

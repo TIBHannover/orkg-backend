@@ -1,18 +1,41 @@
 {
-    "subjects": ["R369", "R258", "#temp1"],
+    "subjects": [
+        "R369",
+        "R258",
+        "#temp1"
+    ],
     "objects": [
-        ["#temp2", "R174", "#temp3"],
-        ["#temp4", "L123"],
-        ["#temp5", "L456"],
-        ["#temp6", "L789"],
-        ["R369", "R258", "#temp7"]
+        [
+            "#temp2",
+            "R174",
+            "#temp3"
+        ],
+        [
+            "#temp4",
+            "L123"
+        ],
+        [
+            "#temp5",
+            "L456"
+        ],
+        [
+            "#temp6",
+            "L789"
+        ],
+        [
+            "R369",
+            "R258",
+            "#temp7"
+        ]
     ],
     "certainty": "MODERATE",
     "negated": false,
     "resources": {
         "#temp1": {
             "label": "Updated Subject Resource",
-            "classes": ["C28"]
+            "classes": [
+                "C28"
+            ]
         }
     },
     "predicates": {
@@ -44,7 +67,10 @@
     "lists": {
         "#temp7": {
             "label": "list",
-            "elements": ["C123", "#temp1"]
+            "elements": [
+                "C123",
+                "#temp1"
+            ]
         }
     },
     "observatories": [

@@ -4,8 +4,12 @@
     "formatted_label": "{P32}",
     "target_class": "C123",
     "relations": {
-        "research_fields": ["R12"],
-        "research_problems": ["R15"],
+        "research_fields": [
+            "R12"
+        ],
+        "research_problems": [
+            "R15"
+        ],
         "predicate": "P32"
     },
     "properties": [

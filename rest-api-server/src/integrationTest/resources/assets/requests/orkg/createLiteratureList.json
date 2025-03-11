@@ -11,14 +11,18 @@
         {
             "name": "Author with orcid",
             "identifiers": {
-                "orcid": ["0000-1111-2222-3333"]
+                "orcid": [
+                    "0000-1111-2222-3333"
+                ]
             }
         },
         {
             "name": "Author with id and orcid",
             "id": "R456",
             "identifiers": {
-                "orcid": ["1111-2222-3333-4444"]
+                "orcid": [
+                    "1111-2222-3333-4444"
+                ]
             }
         },
         {
@@ -29,7 +33,10 @@
             "name": "Author that just has a name"
         }
     ],
-    "sdgs": ["SDG_1", "SDG_2"],
+    "sdgs": [
+        "SDG_1",
+        "SDG_2"
+    ],
     "observatories": [
         "1afefdd0-5c09-4c9c-b718-2b35316b56f3"
     ],

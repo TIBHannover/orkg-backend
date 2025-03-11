@@ -43,43 +43,50 @@
         {
             "label": null,
             "data": [
-                "#temp3", "L123"
+                "#temp3",
+                "L123"
             ]
         },
         {
             "label": "row 1",
             "data": [
-                "#temp1", "#temp2"
+                "#temp1",
+                "#temp2"
             ]
         },
         {
             "label": "row 2",
             "data": [
-                "R123", "#temp4"
+                "R123",
+                "#temp4"
             ]
         },
         {
             "label": "row 3",
             "data": [
-                "C123", "P123"
+                "C123",
+                "P123"
             ]
         },
         {
             "label": "row 4",
             "data": [
-                "#temp5", null
+                "#temp5",
+                null
             ]
         },
         {
             "label": "row 5",
             "data": [
-                null, "#temp6"
+                null,
+                "#temp6"
             ]
         },
         {
             "label": "row 6",
             "data": [
-                null, null
+                null,
+                null
             ]
         }
     ],

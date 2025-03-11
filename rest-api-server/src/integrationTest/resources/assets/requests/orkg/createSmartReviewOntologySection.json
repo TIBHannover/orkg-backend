@@ -1,5 +1,10 @@
 {
     "heading": "new ontology section heading",
-    "entities": ["R1", "P1"],
-    "predicates": ["P1"]
+    "entities": [
+        "R1",
+        "P1"
+    ],
+    "predicates": [
+        "P1"
+    ]
 }

@@ -41,7 +41,7 @@ operation::research-fields-get-problems-per-field[snippets='path-parameters,curl
 
 A `GET` request to `/api/research-fields/{id}/subfields/research-problems` returns a <<sorting-and-pagination,paged>> list of research problem <<resources,resources>> belonging to a given research field and its subfields.
 
-All path and request parameters are exactly the same as on the <<research-fields-fetch,endpoint without subfields>>.
+All path and request parameters are exactly the same as on the <<research-fields-list-research-problems,endpoint without subfields>>.
 
 
 == Research Fields and Contributors
@@ -60,7 +60,7 @@ operation::research-fields-get-contributors-per-field[snippets='path-parameters,
 === Listing Contributors of Research Fields and their Subfields
 
 A `GET` request to `/api/research-fields/{id}/subfields/contributors` returns a <<sorting-and-pagination,paged>> list of contributors that contributed to a given research field and its subfields.
-All path and request parameters are exactly the same as on the <<research-fields-list-comparisons,endpoint without subfields>>.
+All path and request parameters are exactly the same as on the <<research-fields-list-contributors,endpoint without subfields>>.
 
 
 == Research Fields and Papers

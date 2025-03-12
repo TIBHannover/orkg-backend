@@ -6,9 +6,21 @@ They can be attached to <<Resources,resources>> to indicate that the resource be
 [[classes-fetch]]
 == Fetching Classes
 
-A `GET` request provides information about a class.
+The Open Research Knowledge Graph REST API provides two methods for fetching individual classes.
 
-operation::classes-fetch[snippets='path-parameters,curl-request,http-response,response-fields']
+[[classes-fetch-by-id]]
+=== Fetching Classes by ID
+
+A `GET` request provides information about a class by ID.
+
+operation::classes-get-single[snippets='path-parameters,curl-request,http-response,response-fields']
+
+[[classes-fetch-by-uri]]
+=== Fetching Classes by URI
+
+A `GET` request provides information about a class by URI.
+
+operation::classes-get-single-by-uri[snippets='query-parameters,curl-request,http-response,response-fields']
 
 [[classes-list]]
 == Listing Classes

@@ -6,17 +6,11 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.createClass
-import org.orkg.graph.adapter.input.rest.testing.fixtures.classResponseFields
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
 import org.orkg.testing.spring.MockMvcBaseTest
-import org.orkg.testing.spring.restdocs.pageableDetailedFieldParameters
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
-import org.springframework.restdocs.payload.ResponseFieldsSnippet
-import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -48,18 +42,9 @@ internal class ClassControllerIntegrationTest : MockMvcBaseTest("classes") {
     fun fetch() {
         val id = service.createClass(label = "research contribution")
 
-        documentedGetRequestTo("/api/classes/{id}", id)
+        get("/api/classes/{id}", id)
             .perform()
             .andExpect(status().isOk)
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the class.")
-                    ),
-                    responseFields(classResponseFields())
-                )
-            )
-            .andDo(generateDefaultDocSnippets())
     }
 
     @Test
@@ -71,19 +56,13 @@ internal class ClassControllerIntegrationTest : MockMvcBaseTest("classes") {
         service.createClass(label = label, id = id, uri = uri)
 
         // Act and Assert
-        documentedGetRequestTo("/api/classes")
+        get("/api/classes")
             .param("uri", uri.toString())
             .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id").value(id.value))
             .andExpect(jsonPath("$.label").value(label))
             .andExpect(jsonPath("$.uri").value(uri.toString()))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(classResponseFields())
-                )
-            )
-            .andDo(generateDefaultDocSnippets())
     }
 
     @Test
@@ -91,16 +70,10 @@ internal class ClassControllerIntegrationTest : MockMvcBaseTest("classes") {
         val id1 = service.createClass(label = "class1")
         val id2 = service.createClass(label = "class2")
 
-        documentedGetRequestTo("/api/classes")
+        get("/api/classes")
             .param("ids", "$id1", "$id2")
             .perform()
             .andExpect(status().isOk)
-            .andDo(
-                documentationHandler.document(
-                    classListDetailedResponseFields()
-                )
-            )
-            .andDo(generateDefaultDocSnippets())
     }
 
     @Test
@@ -124,11 +97,4 @@ internal class ClassControllerIntegrationTest : MockMvcBaseTest("classes") {
             .perform()
             .andExpect(status().isOk)
     }
-
-    fun classListDetailedResponseFields(): ResponseFieldsSnippet =
-        responseFields(pageableDetailedFieldParameters())
-            .andWithPrefix(
-                "content[].",
-                classResponseFields()
-            ).andWithPrefix("")
 }

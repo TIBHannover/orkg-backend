@@ -66,6 +66,83 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
     private lateinit var clock: Clock
 
     @Test
+    fun getSingle() {
+        val `class` = createClass()
+        every { classService.findById(any()) } returns Optional.of(`class`)
+        every {
+            statementService.findAll(
+                pageable = PageRequests.SINGLE,
+                subjectId = `class`.id,
+                predicateId = Predicates.description,
+                objectClasses = setOf(Classes.literal)
+            )
+        } returns pageOf()
+
+        documentedGetRequestTo("/api/classes/{id}", `class`.id)
+            .perform()
+            .andExpect(status().isOk)
+            .andExpectClass()
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the class to retrieve."),
+                    ),
+                    responseFields(classResponseFields())
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { classService.findById(any()) }
+        verify(exactly = 1) {
+            statementService.findAll(
+                pageable = PageRequests.SINGLE,
+                subjectId = `class`.id,
+                predicateId = Predicates.description,
+                objectClasses = setOf(Classes.literal)
+            )
+        }
+    }
+
+    @Test
+    fun getSingleByUri() {
+        val `class` = createClass()
+        every { classService.findByURI(any()) } returns Optional.of(`class`)
+        every {
+            statementService.findAll(
+                pageable = PageRequests.SINGLE,
+                subjectId = `class`.id,
+                predicateId = Predicates.description,
+                objectClasses = setOf(Classes.literal)
+            )
+        } returns pageOf()
+
+        documentedGetRequestTo("/api/classes")
+            .param("uri", `class`.uri.toString())
+            .perform()
+            .andExpect(status().isOk)
+            .andExpectClass()
+            .andDo(
+                documentationHandler.document(
+                    queryParameters(
+                        parameterWithName("uri").description("The URI of the class to retrieve")
+                    ),
+                    responseFields(classResponseFields())
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { classService.findByURI(any()) }
+        verify(exactly = 1) {
+            statementService.findAll(
+                pageable = PageRequests.SINGLE,
+                subjectId = `class`.id,
+                predicateId = Predicates.description,
+                objectClasses = setOf(Classes.literal)
+            )
+        }
+    }
+
+    @Test
     @DisplayName("Given several classes, when filtering by no parameters, then status is 200 OK and classes are returned")
     fun getPaged() {
         every { classService.findAll(any()) } returns pageOf(createClass())

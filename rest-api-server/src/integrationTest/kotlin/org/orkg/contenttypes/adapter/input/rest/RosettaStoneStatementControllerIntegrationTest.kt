@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
+import org.orkg.common.PageRequests
 import org.orkg.common.RealNumber
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.Assets.requestJson
@@ -60,7 +61,6 @@ import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
-import org.springframework.data.domain.PageRequest
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @Neo4jContainerIntegrationTest
@@ -95,17 +95,16 @@ internal class RosettaStoneStatementControllerIntegrationTest : MockMvcBaseTest(
 
     @BeforeEach
     fun setup() {
-        val tempPageable = PageRequest.of(0, 1)
-
         cleanup()
 
-        assertThat(predicateService.findAll(tempPageable)).hasSize(0)
-        assertThat(resourceService.findAll(tempPageable)).hasSize(0)
-        assertThat(classService.findAll(tempPageable)).hasSize(0)
-        assertThat(observatoryService.findAll(tempPageable)).hasSize(0)
+        assertThat(predicateService.findAll(PageRequests.SINGLE)).hasSize(0)
+        assertThat(resourceService.findAll(PageRequests.SINGLE)).hasSize(0)
+        assertThat(classService.findAll(PageRequests.SINGLE)).hasSize(0)
+        assertThat(literalService.findAll(PageRequests.SINGLE)).hasSize(0)
+        assertThat(observatoryService.findAll(PageRequests.SINGLE)).hasSize(0)
         assertThat(organizationService.findAll()).hasSize(0)
         assertThat(organizationService.findAllConferences()).hasSize(0)
-        assertThat(rosettaStoneStatementService.findAll(tempPageable)).hasSize(0)
+        assertThat(rosettaStoneStatementService.findAll(PageRequests.SINGLE)).hasSize(0)
 
         predicateService.createPredicates(
             Predicates.description,
@@ -185,6 +184,7 @@ internal class RosettaStoneStatementControllerIntegrationTest : MockMvcBaseTest(
         predicateService.deleteAll()
         resourceService.deleteAll()
         classService.deleteAll()
+        literalService.deleteAll()
         observatoryService.deleteAll()
         organizationService.deleteAll()
         contributorService.deleteAll()

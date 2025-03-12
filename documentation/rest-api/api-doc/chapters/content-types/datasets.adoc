@@ -1,0 +1,25 @@
+= Datasets
+
+Certain statistics can be obtained through the dataset endpoint of the rest API.
+Some datasets are imported into the ORKG.
+
+[[dataset-summaries-fetch]]
+== Listing Dataset Summaries
+
+A `GET` request returns a <<sorting-and-pagination,paged>> list of dataset summaries.
+
+operation::datasets-fetch-dataset-summary[snippets='path-parameters,curl-request,http-response,response-fields']
+
+[[datasets-by-research-problem]]
+== Listing Datasets by Research Problem
+
+A `GET` request returns a <<sorting-and-pagination,paged>> list of datasets for a research problem.
+
+operation::datasets-fetch-dataset-for-research-problem[snippets='path-parameters,curl-request,http-response,response-fields']
+
+[[research-problems-by-dataset]]
+== Listing Research Problems by Dataset
+
+A `GET` request returns a <<sorting-and-pagination,paged>> list of research fields associated with a given dataset.
+
+operation::datasets-fetch-research-problems-for-a-dataset[snippets='path-parameters,curl-request,http-response,response-fields']

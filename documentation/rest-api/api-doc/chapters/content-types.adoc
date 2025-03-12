@@ -2,6 +2,9 @@
 
 include::content-types/content-types.adoc[leveloffset=+1]
 
+[[benchmarks]]
+include::content-types/benchmarks.adoc[leveloffset=+1]
+
 [[contributions]]
 include::content-types/contributions.adoc[leveloffset=+1]
 
@@ -14,8 +17,8 @@ include::content-types/comparison-related-figures.adoc[leveloffset=+1]
 [[comparison-related-resources]]
 include::content-types/comparison-related-resources.adoc[leveloffset=+1]
 
-[[datasets-benchmarks]]
-include::content-types/datasets-benchmarks.adoc[leveloffset=+1]
+[[datasets]]
+include::content-types/datasets.adoc[leveloffset=+1]
 
 [[literature-lists]]
 include::content-types/literature-lists.adoc[leveloffset=+1]

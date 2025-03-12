@@ -8,7 +8,6 @@ import org.orkg.common.ContributorId
 import org.orkg.createPredicate
 import org.orkg.createResource
 import org.orkg.createStatement
-import org.orkg.graph.adapter.input.rest.testing.fixtures.predicateResponseFields
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
@@ -18,9 +17,6 @@ import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
-import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -57,18 +53,9 @@ internal class PredicateControllerIntegrationTest : MockMvcBaseTest("predicates"
     fun fetch() {
         val id = service.createPredicate(label = "has name")
 
-        documentedGetRequestTo("/api/predicates/{id}", id)
+        get("/api/predicates/{id}", id)
             .perform()
             .andExpect(status().isOk)
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the predicate.")
-                    ),
-                    responseFields(predicateResponseFields())
-                )
-            )
-            .andDo(generateDefaultDocSnippets())
     }
 
     @Test
@@ -123,17 +110,9 @@ internal class PredicateControllerIntegrationTest : MockMvcBaseTest("predicates"
     fun deletePredicateSuccess() {
         val id = service.createPredicate(label = "bye bye", contributorId = ContributorId(MockUserId.USER))
 
-        documentedDeleteRequestTo("/api/predicates/{id}", id)
+        delete("/api/predicates/{id}", id)
             .perform()
             .andExpect(status().isNoContent)
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the predicate.")
-                    )
-                )
-            )
-            .andDo(generateDefaultDocSnippets())
     }
 
     @Test

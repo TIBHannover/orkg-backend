@@ -10,7 +10,7 @@ IDs always start with "P", followed by a number.
 
 A `GET` request provides information about a predicate.
 
-operation::predicates-fetch[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::predicates-get-single[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[predicates-list]]
 == Listing Predicates
@@ -58,7 +58,7 @@ The response will be `204 NO CONTENT` when successful.
 4. If the performing user is not the creator of the predicate and does not have the curator role, the return status will be `403 FORBIDDEN`.
 ====
 
-operation::predicates-delete-predicate-success[snippets='path-parameters,curl-request,http-response']
+operation::predicates-delete[snippets='path-parameters,curl-request,http-response']
 
 [[predicates-import]]
 == Importing Predicates

@@ -29,6 +29,7 @@ import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectPredicate
+import org.orkg.testing.annotations.TestWithMockCurator
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
@@ -73,6 +74,45 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
 
     @Autowired
     private lateinit var clock: Clock
+
+    @Test
+    fun getSingle() {
+        val predicate = createPredicate()
+
+        every { predicateService.findById(any()) } returns Optional.of(predicate)
+        every {
+            statementService.findAll(
+                pageable = PageRequests.SINGLE,
+                subjectId = predicate.id,
+                predicateId = Predicates.description,
+                objectClasses = setOf(Classes.literal)
+            )
+        } returns pageOf()
+
+        documentedGetRequestTo("/api/predicates/{id}", predicate.id)
+            .perform()
+            .andExpect(status().isOk)
+            .andExpectPredicate()
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the predicate to retrieve."),
+                    ),
+                    responseFields(predicateResponseFields())
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { predicateService.findById(any()) }
+        verify(exactly = 1) {
+            statementService.findAll(
+                pageable = PageRequests.SINGLE,
+                subjectId = predicate.id,
+                predicateId = Predicates.description,
+                objectClasses = setOf(Classes.literal)
+            )
+        }
+    }
 
     @Test
     @TestWithMockUser
@@ -334,5 +374,28 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
                 objectClasses = setOf(Classes.literal)
             )
         }
+    }
+
+    @Test
+    @TestWithMockCurator
+    fun delete() {
+        val predicate = createPredicate()
+        val contributorId = ContributorId(MockUserId.CURATOR)
+
+        every { predicateService.delete(predicate.id, contributorId) } just runs
+
+        documentedDeleteRequestTo("/api/predicates/{id}", predicate.id)
+            .perform()
+            .andExpect(status().isNoContent)
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the predicate.")
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { predicateService.delete(predicate.id, contributorId) }
     }
 }

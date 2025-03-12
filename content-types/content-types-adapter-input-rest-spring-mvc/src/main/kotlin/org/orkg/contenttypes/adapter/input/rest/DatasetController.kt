@@ -2,10 +2,8 @@ package org.orkg.contenttypes.adapter.input.rest
 
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Dataset
-import org.orkg.contenttypes.domain.DatasetNotFound
 import org.orkg.contenttypes.domain.DatasetSummary
 import org.orkg.contenttypes.domain.ResearchProblem
-import org.orkg.contenttypes.domain.ResearchProblemNotFound
 import org.orkg.contenttypes.input.DatasetUseCases
 import org.orkg.contenttypes.input.ResearchProblemUseCases
 import org.springframework.data.domain.Page
@@ -24,18 +22,14 @@ class DatasetController(
         @PathVariable id: ThingId,
         pageable: Pageable,
     ): Page<Dataset> =
-        retrieveDatasets
-            .findAllDatasetsByResearchProblemId(id, pageable)
-            .orElseThrow { ResearchProblemNotFound(id) }
+        retrieveDatasets.findAllDatasetsByResearchProblemId(id, pageable)
 
     @GetMapping("/api/datasets/{id}/problems")
     fun findAllByDatasetId(
         @PathVariable id: ThingId,
         pageable: Pageable,
     ): Page<ResearchProblem> =
-        retrieveProblems
-            .findAllByDatasetId(id, pageable)
-            .orElseThrow { DatasetNotFound(id) }
+        retrieveProblems.findAllByDatasetId(id, pageable)
 
     @GetMapping("/api/datasets/{id}/problem/{problemId}/summary")
     fun findAllDatasetSummariesByIdAndResearchProblemId(
@@ -43,7 +37,5 @@ class DatasetController(
         @PathVariable problemId: ThingId,
         pageable: Pageable,
     ): Page<DatasetSummary> =
-        retrieveDatasets
-            .findAllDatasetSummariesByIdAndResearchProblemId(id, problemId, pageable)
-            .orElseThrow { DatasetNotFound(id) }
+        retrieveDatasets.findAllDatasetSummariesByIdAndResearchProblemId(id, problemId, pageable)
 }

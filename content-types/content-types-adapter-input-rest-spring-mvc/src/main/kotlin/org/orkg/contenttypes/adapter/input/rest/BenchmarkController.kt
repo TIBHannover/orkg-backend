@@ -5,7 +5,6 @@ import org.orkg.contenttypes.domain.BenchmarkSummary
 import org.orkg.contenttypes.domain.ResearchField
 import org.orkg.contenttypes.input.BenchmarkUseCases
 import org.orkg.contenttypes.input.ResearchFieldUseCases
-import org.orkg.graph.domain.ResearchFieldNotFound
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.GetMapping
@@ -26,13 +25,9 @@ class BenchmarkController(
         @PathVariable id: ThingId,
         pageable: Pageable,
     ): Page<BenchmarkSummary> =
-        retrieveBenchmarks
-            .findAllBenchmarkSummariesByResearchFieldId(id, pageable)
-            .orElseThrow { ResearchFieldNotFound(id) }
+        retrieveBenchmarks.findAllBenchmarkSummariesByResearchFieldId(id, pageable)
 
     @GetMapping("/api/benchmarks/summary")
     fun findAllBenchmarkSummaries(pageable: Pageable): Page<BenchmarkSummary> =
-        retrieveBenchmarks
-            .findAllBenchmarkSummaries(pageable)
-            .orElseThrow { RuntimeException() }
+        retrieveBenchmarks.findAllBenchmarkSummaries(pageable)
 }

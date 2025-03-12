@@ -25,7 +25,6 @@ import org.springframework.restdocs.request.RequestDocumentation.parameterWithNa
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import java.util.Optional
 
 @ContextConfiguration(
     classes = [
@@ -74,17 +73,15 @@ internal class BenchmarkControllerUnitTest : MockMvcBaseTest("benchmarks") {
     fun fetchBenchmarkSummaryForResearchField() {
         val researchFieldId = ThingId("R11")
 
-        every { retrieveBenchmarks.findAllBenchmarkSummariesByResearchFieldId(researchFieldId, any()) } returns Optional.of(
-            pageOf(
-                BenchmarkSummary(
-                    researchProblem = ResearchProblem(id = ThingId("R456"), label = "Problem 1"),
-                    researchFields = listOf(
-                        ResearchField(id = "R11", label = "Science")
-                    ),
-                    totalPapers = 567,
-                    totalDatasets = 2,
-                    totalCodes = 231
-                )
+        every { retrieveBenchmarks.findAllBenchmarkSummariesByResearchFieldId(researchFieldId, any()) } returns pageOf(
+            BenchmarkSummary(
+                researchProblem = ResearchProblem(id = ThingId("R456"), label = "Problem 1"),
+                researchFields = listOf(
+                    ResearchField(id = "R11", label = "Science")
+                ),
+                totalPapers = 567,
+                totalDatasets = 2,
+                totalCodes = 231
             )
         )
 
@@ -118,17 +115,15 @@ internal class BenchmarkControllerUnitTest : MockMvcBaseTest("benchmarks") {
     @Test
     @DisplayName("Given a set of benchmarks, when fetching their summaries, then status is 200 OK and benchmark summaries are returned")
     fun fetchBenchmarkSummaries() {
-        every { retrieveBenchmarks.findAllBenchmarkSummaries(any()) } returns Optional.of(
-            pageOf(
-                BenchmarkSummary(
-                    researchProblem = ResearchProblem(id = ThingId("R456"), label = "Problem 1"),
-                    researchFields = listOf(
-                        ResearchField(id = "R11", label = "Science")
-                    ),
-                    totalPapers = 567,
-                    totalDatasets = 2,
-                    totalCodes = 231
-                )
+        every { retrieveBenchmarks.findAllBenchmarkSummaries(any()) } returns pageOf(
+            BenchmarkSummary(
+                researchProblem = ResearchProblem(id = ThingId("R456"), label = "Problem 1"),
+                researchFields = listOf(
+                    ResearchField(id = "R11", label = "Science")
+                ),
+                totalPapers = 567,
+                totalDatasets = 2,
+                totalCodes = 231
             )
         )
 

@@ -130,11 +130,8 @@ class ResearchProblemService(
         .findAllContributorsPerProblem(problemId, pageable)
         .content
 
-    override fun findAllByDatasetId(id: ThingId, pageable: Pageable): Optional<Page<ResearchProblem>> {
-        val dataset = resourceService.findById(id)
-        if (!dataset.isPresent) return Optional.empty()
-        return Optional.of(researchProblemQueries.findAllByDatasetId(id, pageable))
-    }
+    override fun findAllByDatasetId(id: ThingId, pageable: Pageable): Page<ResearchProblem> =
+        researchProblemQueries.findAllByDatasetId(id, pageable)
 
     private fun findAllListedEntitiesBasedOnClassByProblem(
         classesList: List<String>,

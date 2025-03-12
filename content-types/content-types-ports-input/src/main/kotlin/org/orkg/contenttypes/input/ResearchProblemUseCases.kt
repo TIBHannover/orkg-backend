@@ -29,5 +29,5 @@ interface RetrieveResearchProblemUseCase {
 
     fun findAllContributorsPerProblem(problemId: ThingId, pageable: Pageable): List<ContributorPerProblem>
 
-    fun findAllByDatasetId(id: ThingId, pageable: Pageable): Optional<Page<ResearchProblem>>
+    fun findAllByDatasetId(id: ThingId, pageable: Pageable): Page<ResearchProblem>
 }

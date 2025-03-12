@@ -820,12 +820,6 @@ class ResearchProblemNotFound(id: ThingId) :
         """Research problem "$id" not found."""
     )
 
-class DatasetNotFound(id: ThingId) :
-    SimpleMessageException(
-        HttpStatus.NOT_FOUND,
-        """Dataset "$id" not found."""
-    )
-
 class OrphanOrcidValue(orcid: String) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,

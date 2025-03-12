@@ -25,7 +25,6 @@ import org.springframework.restdocs.request.RequestDocumentation.parameterWithNa
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import java.util.Optional
 
 @ContextConfiguration(
     classes = [
@@ -49,15 +48,13 @@ internal class DatasetControllerUnitTest : MockMvcBaseTest("datasets") {
     fun fetchDatasetForResearchProblem() {
         val researchProblemId = ThingId("R1655")
 
-        every { retrieveDatasets.findAllDatasetsByResearchProblemId(researchProblemId, any()) } returns Optional.of(
-            pageOf(
-                Dataset(
-                    id = ThingId("R123"),
-                    label = "Dataset 1",
-                    totalPapers = 567,
-                    totalModels = 25,
-                    totalCodes = 231
-                )
+        every { retrieveDatasets.findAllDatasetsByResearchProblemId(researchProblemId, any()) } returns pageOf(
+            Dataset(
+                id = ThingId("R123"),
+                label = "Dataset 1",
+                totalPapers = 567,
+                totalModels = 25,
+                totalCodes = 231
             )
         )
 
@@ -89,11 +86,9 @@ internal class DatasetControllerUnitTest : MockMvcBaseTest("datasets") {
     fun fetchResearchProblemsForADataset() {
         val datasetId = ThingId("R123")
 
-        every { retrieveProblems.findAllByDatasetId(datasetId, any()) } returns Optional.of(
-            pageOf(
-                ResearchProblem(id = ThingId("R456"), label = "Problem 1"),
-                ResearchProblem(id = ThingId("R789"), label = "Problem 2")
-            )
+        every { retrieveProblems.findAllByDatasetId(datasetId, any()) } returns pageOf(
+            ResearchProblem(id = ThingId("R456"), label = "Problem 1"),
+            ResearchProblem(id = ThingId("R789"), label = "Problem 2")
         )
 
         documentedGetRequestTo("/api/datasets/{id}/problems", datasetId)
@@ -122,22 +117,20 @@ internal class DatasetControllerUnitTest : MockMvcBaseTest("datasets") {
         val datasetId = ThingId("R123")
         val researchProblemId = ThingId("R1655")
 
-        every { retrieveDatasets.findAllDatasetSummariesByIdAndResearchProblemId(datasetId, researchProblemId, any()) } returns Optional.of(
-            pageOf(
-                DatasetSummary(
-                    modelName = "Model 1",
-                    modelId = ThingId("R153"),
-                    score = "132",
-                    metric = "Metric 1",
-                    paperId = ThingId("R789"),
-                    paperTitle = "Fancy paper title",
-                    paperMonth = 3,
-                    paperYear = 2025,
-                    codeURLs = listOf(
-                        "https://some-code-1.cool",
-                        "https://some-code-2.cool",
-                    ),
-                )
+        every { retrieveDatasets.findAllDatasetSummariesByIdAndResearchProblemId(datasetId, researchProblemId, any()) } returns pageOf(
+            DatasetSummary(
+                modelName = "Model 1",
+                modelId = ThingId("R153"),
+                score = "132",
+                metric = "Metric 1",
+                paperId = ThingId("R789"),
+                paperTitle = "Fancy paper title",
+                paperMonth = 3,
+                paperYear = 2025,
+                codeURLs = listOf(
+                    "https://some-code-1.cool",
+                    "https://some-code-2.cool",
+                ),
             )
         )
 

@@ -2,7 +2,6 @@ package org.orkg.graph.adapter.output.neo4j
 
 import org.neo4j.cypherdsl.core.Condition
 import org.neo4j.cypherdsl.core.Cypher.anonParameter
-import org.neo4j.cypherdsl.core.Cypher.call
 import org.neo4j.cypherdsl.core.Cypher.coalesce
 import org.neo4j.cypherdsl.core.Cypher.collect
 import org.neo4j.cypherdsl.core.Cypher.count
@@ -17,6 +16,8 @@ import org.neo4j.cypherdsl.core.Cypher.size
 import org.neo4j.cypherdsl.core.Cypher.toLower
 import org.neo4j.cypherdsl.core.Cypher.union
 import org.neo4j.cypherdsl.core.Cypher.unwind
+import org.neo4j.cypherdsl.core.Node
+import org.neo4j.cypherdsl.core.RelationshipPattern
 import org.neo4j.cypherdsl.core.renderer.Renderer
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
@@ -300,28 +301,49 @@ class SpringDataNeo4jResourceAdapter(
         organizationId: OrganizationId?,
     ) = cypherQueryBuilderFactory.newBuilder(Uncached)
         .withCommonQuery {
-            val node = node("Resource", includeClasses.map { it.value }).named("node")
+            val patterns: (Node) -> Collection<RelationshipPattern> = { node ->
+                listOfNotNull(
+                    baseClass?.let {
+                        node.relationshipTo(node("Class"), INSTANCE_OF)
+                            .relationshipTo(node("Class").withProperties("id", anonParameter(it.value)), SUBCLASS_OF)
+                            .length(0, null)
+                    },
+                )
+            }
+            val node = name("node")
+            val nodes = name("nodes")
+            val resource = node("Resource", includeClasses.map { it.value }).named(node)
+            val matchResources = matchDistinct(resource, patterns)
             val match = label?.let { searchString ->
-                val labelCondition = includeClasses.toCondition {
-                    node.hasLabels(*includeClasses.map { it.value }.toTypedArray())
-                }
                 when (searchString) {
                     is ExactSearchString -> {
-                        call("db.index.fulltext.queryNodes")
+                        // Collecting resources before using the fulltext index introduces additional overhead.
+                        // It is possible to remove this overhead when not needed (every time we do not filter by includeClasses or baseClass).
+                        // However, it would further increase code complexity.
+                        // See also: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1247
+                        matchResources
+                            .with(collect(node).`as`(nodes))
+                            .call("db.index.fulltext.queryNodes")
                             .withArgs(anonParameter(FULLTEXT_INDEX_FOR_LABEL), anonParameter(searchString.query))
                             .yield("node")
-                            .where(toLower(node.property("label")).eq(toLower(anonParameter(searchString.input))).and(labelCondition))
+                            .where(toLower(node.property("label")).eq(toLower(anonParameter(searchString.input))).and(node.`in`(nodes)))
                             .with(node)
                     }
                     is FuzzySearchString -> {
-                        call("db.index.fulltext.queryNodes")
+                        // Collecting resources before using the fulltext index introduces additional overhead.
+                        // It is possible to remove this overhead when not needed (every time we do not filter by includeClasses or baseClass).
+                        // However, it would further increase code complexity.
+                        // See also: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1247
+                        matchResources
+                            .with(collect(node).`as`(nodes))
+                            .call("db.index.fulltext.queryNodes")
                             .withArgs(anonParameter(FULLTEXT_INDEX_FOR_LABEL), anonParameter(searchString.query))
                             .yield("node", "score")
-                            .where(size(node.property("label")).gte(anonParameter(searchString.input.length)).and(labelCondition))
+                            .where(size(node.property("label")).gte(anonParameter(searchString.input.length)).and(node.`in`(nodes)))
                             .with(node, name("score"))
                     }
                 }
-            } ?: match(node).with(node)
+            } ?: matchResources
             match.where(
                 visibility.toCondition { filter ->
                     filter.targets.map { node.property("visibility").eq(literalOf<String>(it.name)) }
@@ -330,15 +352,9 @@ class SpringDataNeo4jResourceAdapter(
                 createdBy.toCondition { node.property("created_by").eq(anonParameter(it.value.toString())) },
                 createdAtStart.toCondition { node.property("created_at").gte(anonParameter(it.format(ISO_OFFSET_DATE_TIME))) },
                 createdAtEnd.toCondition { node.property("created_at").lte(anonParameter(it.format(ISO_OFFSET_DATE_TIME))) },
-                excludeClasses.toCondition { classes -> classes.map { node.hasLabels(it.value).not() }.reduce(Condition::and) },
+                excludeClasses.toCondition { classes -> classes.map { resource.hasLabels(it.value).not() }.reduce(Condition::and) },
                 observatoryId.toCondition { node.property("observatory_id").eq(anonParameter(it.value.toString())) },
                 organizationId.toCondition { node.property("organization_id").eq(anonParameter(it.value.toString())) },
-                baseClass.toCondition {
-                    node.relationshipTo(node("Class"), INSTANCE_OF)
-                        .relationshipTo(node("Class").withProperties("id", anonParameter(it.value)), SUBCLASS_OF)
-                        .length(0, null)
-                        .asCondition()
-                }
             )
         }
         .withQuery { commonQuery ->

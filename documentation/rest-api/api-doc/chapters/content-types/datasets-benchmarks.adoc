@@ -3,32 +3,45 @@
 Some datasets and benchmarks on said datasets are imported into the ORKG.
 Certain statistics can be obtained through the benchmark endpoint of the rest API.
 
-[[research-fields-with-bechmark-list]]
-== Listing Research Fields with Benchmarks
-
-A `GET` request lists all the research fields with benchmarks (i.e., all research fields that have papers containing benchmarks in their contributions).
-
-operation::benchmarks-fetch-research-fields-with-benchmarks[snippets='curl-request,http-response']
-
-
-[[benchmarks-by-field-list]]
-== Listing Benchmarks by Research Field
-
-A `GET` request lists benchmarks under a certain research field.
-
-operation::benchmarks-fetch-benchmark-summary-for-research-field[snippets='path-parameters,curl-request,http-response']
-
-
 [[benchmarks-summary]]
 == Listing Benchmark Summaries
 
-A `GET` request lists the datasets for a research problem (a.k.a. Benchmark Summary)
+A `GET` request returns a <<sorting-and-pagination,paged>> list of benchmark summaries.
 
-operation::benchmarks-fetch-dataset-for-research-problem[snippets='path-parameters,curl-request,http-response']
+operation::benchmarks-fetch-benchmark-summaries[snippets='curl-request,http-response,response-fields']
+
+[[benchmarks-by-field-list]]
+== Listing Benchmarks Summaries by Research Field
+
+A `GET` request returns a <<sorting-and-pagination,paged>> list of benchmark summaries under a certain research field.
+
+operation::benchmarks-fetch-benchmark-summary-for-research-field[snippets='path-parameters,curl-request,http-response,response-fields']
+
+[[research-fields-with-bechmark-list]]
+== Listing Research Fields with Benchmarks
+
+A `GET` request returns a <<sorting-and-pagination,paged>> list of all the research fields associated with benchmarks.
+This includes all research fields that have papers containing benchmarks in their contributions.
+
+operation::benchmarks-fetch-research-fields-with-benchmarks[snippets='curl-request,http-response,response-fields']
 
 [[benchmark-unpacked]]
-== Listing Benchmarks (Unpacked)
+== Listing Dataset Summaries
 
-A `GET` request lists summary for a dataset (a.k.a. Benchmark unpacked).
+A `GET` request returns a <<sorting-and-pagination,paged>> list of dataset summaries.
 
-operation::benchmarks-fetch-dataset-summary[snippets='path-parameters,curl-request,http-response']
+operation::benchmarks-fetch-dataset-summary[snippets='path-parameters,curl-request,http-response,response-fields']
+
+[[benchmarks-datasets-by-research-problem]]
+== Listing Datasets by Research Problem
+
+A `GET` request returns a <<sorting-and-pagination,paged>> list of datasets for a research problem.
+
+operation::benchmarks-fetch-dataset-for-research-problem[snippets='path-parameters,curl-request,http-response,response-fields']
+
+[[research-problems-by-dataset]]
+== Listing Research Problems by Dataset
+
+A `GET` request returns a <<sorting-and-pagination,paged>> list of research fields associated with a given dataset.
+
+operation::benchmarks-fetch-research-problems-for-a-dataset[snippets='path-parameters,curl-request,http-response,response-fields']

@@ -24,13 +24,8 @@ import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
 import org.orkg.testing.spring.MockMvcBaseTest
-import org.orkg.testing.spring.restdocs.pageableDetailedFieldParameters
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
-import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
-import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -140,19 +135,13 @@ internal class BenchmarkControllerIntegrationTest : MockMvcBaseTest("benchmarks"
         statementService.createStatement(benchCont1, ThingId(labelsAndClasses.benchmarkPredicate), bench1)
         statementService.createStatement(benchCont2, ThingId(labelsAndClasses.benchmarkPredicate), bench2)
 
-        documentedGetRequestTo("/api/research-fields/benchmarks")
+        get("/api/research-fields/benchmarks")
             .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(1)))
             .andExpect(jsonPath("$.content[0].label", equalTo(fieldWithBenchmarkLabel)))
             .andExpect(jsonPath("$.number").value(0)) // page number
             .andExpect(jsonPath("$.totalElements").value(1))
-            .andDo(
-                documentationHandler.document(
-                    researchFieldPageResponseFields()
-                )
-            )
-            .andDo(generateDefaultDocSnippets())
     }
 
     /**
@@ -204,7 +193,7 @@ internal class BenchmarkControllerIntegrationTest : MockMvcBaseTest("benchmarks"
         statementService.createStatement(benchmark, ThingId(labelsAndClasses.datasetPredicate), dataset1)
         statementService.createStatement(benchmark, ThingId(labelsAndClasses.datasetPredicate), dataset2)
 
-        documentedGetRequestTo("/api/benchmarks/summary/research-field/{id}", fieldWithDataset)
+        get("/api/benchmarks/summary/research-field/{id}", fieldWithDataset)
             .param("sort", "problem.id", "ASC")
             .perform()
             .andExpect(status().isOk)
@@ -221,15 +210,6 @@ internal class BenchmarkControllerIntegrationTest : MockMvcBaseTest("benchmarks"
             .andExpect(jsonPath("$.content[1].total_codes", equalTo(5)))
             .andExpect(jsonPath("$.number").value(0)) // page number
             .andExpect(jsonPath("$.totalElements").value(2))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the research field.")
-                    ),
-                    benchmarkPageResponseFields()
-                )
-            )
-            .andDo(generateDefaultDocSnippets())
     }
 
     @Test
@@ -266,7 +246,7 @@ internal class BenchmarkControllerIntegrationTest : MockMvcBaseTest("benchmarks"
         statementService.createStatement(benchmark, ThingId(labelsAndClasses.datasetPredicate), dataset1)
         statementService.createStatement(benchmark, ThingId(labelsAndClasses.datasetPredicate), dataset2)
 
-        documentedGetRequestTo("/api/benchmarks/summary")
+        get("/api/benchmarks/summary")
             .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
@@ -276,12 +256,6 @@ internal class BenchmarkControllerIntegrationTest : MockMvcBaseTest("benchmarks"
             .andExpect(jsonPath("$.content[0].total_codes", equalTo(5)))
             .andExpect(jsonPath("$.number").value(0)) // page number
             .andExpect(jsonPath("$.totalElements").value(2))
-            .andDo(
-                documentationHandler.document(
-                    benchmarkPageResponseFields()
-                )
-            )
-            .andDo(generateDefaultDocSnippets())
     }
 
     @Test
@@ -335,7 +309,7 @@ internal class BenchmarkControllerIntegrationTest : MockMvcBaseTest("benchmarks"
 
         statementService.createStatement(dummyBenchmark, ThingId(labelsAndClasses.datasetPredicate), dataset2)
 
-        documentedGetRequestTo("/api/benchmarks/summary")
+        get("/api/benchmarks/summary")
             .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
@@ -356,12 +330,6 @@ internal class BenchmarkControllerIntegrationTest : MockMvcBaseTest("benchmarks"
             .andExpect(jsonPath("$.content[?(@.research_problem.id==\"${problem2.value}\")].total_codes", equalTo(listOf(5))))
             .andExpect(jsonPath("$.number").value(0)) // page number
             .andExpect(jsonPath("$.totalElements").value(2))
-            .andDo(
-                documentationHandler.document(
-                    benchmarkPageResponseFields()
-                )
-            )
-            .andDo(generateDefaultDocSnippets())
     }
 
     @Test
@@ -392,21 +360,12 @@ internal class BenchmarkControllerIntegrationTest : MockMvcBaseTest("benchmarks"
         statementService.createStatement(paper, Predicates.hasContribution, cont1)
         statementService.createStatement(paper, Predicates.hasContribution, cont2)
 
-        documentedGetRequestTo("/api/datasets/{id}/problems", dataset)
+        get("/api/datasets/{id}/problems", dataset)
             .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
             .andExpect(jsonPath("$.number").value(0)) // page number
             .andExpect(jsonPath("$.totalElements").value(2))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the dataset.")
-                    ),
-                    researchProblemPageResponseFields()
-                )
-            )
-            .andDo(generateDefaultDocSnippets())
     }
 
     @Test
@@ -455,7 +414,7 @@ internal class BenchmarkControllerIntegrationTest : MockMvcBaseTest("benchmarks"
         statementService.createStatement(benchmark1, ThingId(labelsAndClasses.datasetPredicate), dataset1)
         statementService.createStatement(benchmark2, ThingId(labelsAndClasses.datasetPredicate), dataset2)
 
-        documentedGetRequestTo("/api/datasets/research-problem/{id}", problem)
+        get("/api/datasets/research-problem/{id}", problem)
             .param("sort", "totalModels,DESC")
             .perform()
             .andExpect(status().isOk)
@@ -468,15 +427,6 @@ internal class BenchmarkControllerIntegrationTest : MockMvcBaseTest("benchmarks"
             .andExpect(jsonPath("$.content[1].total_codes", equalTo(3)))
             .andExpect(jsonPath("$.number").value(0)) // page number
             .andExpect(jsonPath("$.totalElements").value(2))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the research problem.")
-                    ),
-                    datasetListResponseFields()
-                )
-            )
-            .andDo(generateDefaultDocSnippets())
     }
 
     @Test
@@ -565,22 +515,12 @@ internal class BenchmarkControllerIntegrationTest : MockMvcBaseTest("benchmarks"
         statementService.createStatement(benchmark1, ThingId(labelsAndClasses.datasetPredicate), dataset)
         statementService.createStatement(benchmark2, ThingId(labelsAndClasses.datasetPredicate), dataset)
 
-        documentedGetRequestTo("/api/datasets/{id}/problem/{researchProblemId}/summary", dataset, problem1)
+        get("/api/datasets/{id}/problem/{researchProblemId}/summary", dataset, problem1)
             .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
             .andExpect(jsonPath("$.number").value(0)) // page number
             .andExpect(jsonPath("$.totalElements").value(2))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the dataset."),
-                        parameterWithName("researchProblemId").description("The identifier of the research problem.")
-                    ),
-                    datasetSummaryPageResponseFields()
-                )
-            )
-            .andDo(generateDefaultDocSnippets())
     }
 
     @Test
@@ -752,74 +692,4 @@ internal class BenchmarkControllerIntegrationTest : MockMvcBaseTest("benchmarks"
             .andExpect(jsonPath("$.number").value(0)) // page number
             .andExpect(jsonPath("$.totalElements").value(2))
     }
-
-    private fun researchFieldResponseFields() =
-        listOf(
-            fieldWithPath("id").description("Research field ID").type(String::class).optional(),
-            fieldWithPath("label").description("Research field label").type(String::class).optional()
-        )
-
-    private fun researchFieldPageResponseFields() =
-        responseFields(pageableDetailedFieldParameters())
-            .andWithPrefix("content[].", researchFieldResponseFields())
-            .andWithPrefix("")
-
-    private fun researchProblemResponseFields() =
-        listOf(
-            fieldWithPath("id").description("Research problem ID"),
-            fieldWithPath("label").description("Research problem label")
-        )
-
-    private fun researchProblemPageResponseFields() =
-        responseFields(pageableDetailedFieldParameters())
-            .andWithPrefix("content[].", researchProblemResponseFields())
-            .andWithPrefix("")
-
-    private fun benchmarkResponseFields() =
-        listOf(
-            fieldWithPath("total_papers").description("Total number of papers"),
-            fieldWithPath("total_datasets").description("Total number of datasets related"),
-            fieldWithPath("total_codes").description("Total number of code urls"),
-            fieldWithPath("research_problem").description("Research problem concerned with this research field"),
-            fieldWithPath("research_fields").description("List of RFs for a benchmark summary").optional()
-        )
-
-    private fun benchmarkPageResponseFields() =
-        responseFields(pageableDetailedFieldParameters())
-            .andWithPrefix("content[].", benchmarkResponseFields())
-            .andWithPrefix("content[].research_fields.[].", researchFieldResponseFields())
-            .andWithPrefix("content[].research_problem.", researchProblemResponseFields())
-            .andWithPrefix("")
-
-    private fun datasetResponseFields() =
-        listOf(
-            fieldWithPath("id").description("Id of the dataset"),
-            fieldWithPath("label").description("The label of the dataset"),
-            fieldWithPath("total_papers").description("Total number of papers"),
-            fieldWithPath("total_models").description("Total number of models"),
-            fieldWithPath("total_codes").description("Total number of code urls")
-        )
-
-    private fun datasetListResponseFields() =
-        responseFields(pageableDetailedFieldParameters())
-            .andWithPrefix("content[].", datasetResponseFields())
-            .andWithPrefix("")
-
-    private fun datasetSummaryResponseFields() =
-        listOf(
-            fieldWithPath("model_name").description("The model name used on the dataset").optional(),
-            fieldWithPath("model_id").description("The model id used on the dataset").optional(),
-            fieldWithPath("metric").description("The metric used in the evaluation"),
-            fieldWithPath("score").description("the score of the evaluation with the corresponding metric"),
-            fieldWithPath("paper_id").description("The paper id is where the evaluation is published"),
-            fieldWithPath("paper_title").description("The paper title is where the evaluation is published"),
-            fieldWithPath("paper_month").description("The month when the paper was published").optional(),
-            fieldWithPath("paper_year").description("The year when the paper was published").optional(),
-            fieldWithPath("code_urls").description("A list of urls for the codes specified in the papers")
-        )
-
-    private fun datasetSummaryPageResponseFields() =
-        responseFields(pageableDetailedFieldParameters())
-            .andWithPrefix("content[].", datasetSummaryResponseFields())
-            .andWithPrefix("")
 }

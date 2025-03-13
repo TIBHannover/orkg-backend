@@ -29,7 +29,7 @@ import org.orkg.contenttypes.domain.LiteralReference
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.domain.PredicateReference
 import org.orkg.contenttypes.domain.ResourceReference
-import org.orkg.contenttypes.input.PublicationInfoDefinition
+import org.orkg.contenttypes.input.PublicationInfoCommand
 import org.orkg.graph.adapter.input.rest.ResourceRepresentation
 import org.orkg.graph.adapter.input.rest.StatementRepresentation
 import org.orkg.graph.adapter.input.rest.ThingRepresentation
@@ -221,12 +221,12 @@ data class VisualizationRepresentation(
     override val jsonClass: String = "visualization",
 ) : ContentTypeRepresentation
 
-data class AuthorDTO(
+data class AuthorRequest(
     val id: ThingId?,
     @field:NotBlank
     val name: String,
     @field:Valid
-    val identifiers: IdentifierMapDTO?,
+    val identifiers: IdentifierMapRequest?,
     val homepage: ParsedIRI?,
 ) {
     fun toAuthor(): Author =
@@ -238,7 +238,7 @@ data class AuthorDTO(
         )
 }
 
-data class PublicationInfoDTO(
+data class PublicationInfoRequest(
     @field:Min(1)
     @field:Max(12)
     @JsonProperty("published_month")
@@ -250,8 +250,8 @@ data class PublicationInfoDTO(
     val publishedIn: String?,
     val url: ParsedIRI?,
 ) {
-    fun toPublicationInfoDefinition(): PublicationInfoDefinition =
-        PublicationInfoDefinition(
+    fun toPublicationInfoCommand(): PublicationInfoCommand =
+        PublicationInfoCommand(
             publishedMonth = publishedMonth,
             publishedYear = publishedYear,
             publishedIn = publishedIn,

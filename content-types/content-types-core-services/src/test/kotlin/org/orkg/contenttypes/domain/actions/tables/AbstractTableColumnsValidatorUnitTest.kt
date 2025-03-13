@@ -13,9 +13,9 @@ import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.TableHeaderValueMustBeLiteral
 import org.orkg.contenttypes.domain.ThingNotDefined
-import org.orkg.contenttypes.input.LiteralDefinition
-import org.orkg.contenttypes.input.RowDefinition
-import org.orkg.contenttypes.input.ThingDefinition
+import org.orkg.contenttypes.input.CreateLiteralCommandPart
+import org.orkg.contenttypes.input.CreateThingCommandPart
+import org.orkg.contenttypes.input.RowCommand
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.domain.ThingNotFound
@@ -36,11 +36,11 @@ internal class AbstractTableColumnsValidatorUnitTest : MockkBaseTest {
     fun `Given a list of table rows, when validating column definitions, it returns success`() {
         val l123 = createLiteral(ThingId("L123"))
         val l456 = createLiteral(ThingId("L456"))
-        val thingDefinitions = mapOf<String, ThingDefinition>(
-            "#temp1" to LiteralDefinition("header1")
+        val thingDefinitions = mapOf<String, CreateThingCommandPart>(
+            "#temp1" to CreateLiteralCommandPart("header1")
         )
         val rows = listOf(
-            RowDefinition(
+            RowCommand(
                 label = "header",
                 data = listOf("L123", "L456", "#temp1")
             )
@@ -66,9 +66,9 @@ internal class AbstractTableColumnsValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a list of table rows, when validating column definitions and temp id cannot be resolved, it throws an exception`() {
-        val thingDefinitions = emptyMap<String, ThingDefinition>()
+        val thingDefinitions = emptyMap<String, CreateThingCommandPart>()
         val rows = listOf(
-            RowDefinition(
+            RowCommand(
                 label = "header",
                 data = listOf("#temp1")
             )
@@ -83,9 +83,9 @@ internal class AbstractTableColumnsValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a list of table rows, when validating column definitions and thing id cannot be resolved, it throws an exception`() {
-        val thingDefinitions = emptyMap<String, ThingDefinition>()
+        val thingDefinitions = emptyMap<String, CreateThingCommandPart>()
         val rows = listOf(
-            RowDefinition(
+            RowCommand(
                 label = "header",
                 data = listOf("L123")
             )
@@ -105,9 +105,9 @@ internal class AbstractTableColumnsValidatorUnitTest : MockkBaseTest {
     @ParameterizedTest
     @MethodSource("nonLiteralThing")
     fun `Given a list of table rows, when validating column definitions and header row contains a non-literal thing, it throws an exception`(thing: Thing) {
-        val thingDefinitions = emptyMap<String, ThingDefinition>()
+        val thingDefinitions = emptyMap<String, CreateThingCommandPart>()
         val rows = listOf(
-            RowDefinition(
+            RowCommand(
                 label = "header",
                 data = listOf(thing.id.value)
             )
@@ -127,9 +127,9 @@ internal class AbstractTableColumnsValidatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a list of table rows, when validating column definitions and header row contains a non-string literal, it throws an exception`() {
         val literal = createLiteral(label = "true", datatype = Literals.XSD.BOOLEAN.prefixedUri)
-        val thingDefinitions = emptyMap<String, ThingDefinition>()
+        val thingDefinitions = emptyMap<String, CreateThingCommandPart>()
         val rows = listOf(
-            RowDefinition(
+            RowCommand(
                 label = "header",
                 data = listOf(literal.id.value)
             )

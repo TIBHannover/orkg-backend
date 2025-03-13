@@ -4,60 +4,60 @@ import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.Literals
 
-data class PublicationInfoDefinition(
+data class PublicationInfoCommand(
     val publishedMonth: Int?,
     val publishedYear: Long?,
     val publishedIn: String?,
     val url: ParsedIRI?,
 )
 
-sealed interface ThingDefinitions {
-    val resources: Map<String, ResourceDefinition>
-    val literals: Map<String, LiteralDefinition>
-    val predicates: Map<String, PredicateDefinition>
-    val classes: Map<String, ClassDefinition>
-    val lists: Map<String, ListDefinition>
+sealed interface CreateThingsCommand {
+    val resources: Map<String, CreateResourceCommandPart>
+    val literals: Map<String, CreateLiteralCommandPart>
+    val predicates: Map<String, CreatePredicateCommandPart>
+    val classes: Map<String, CreateClassCommandPart>
+    val lists: Map<String, CreateListCommandPart>
 
-    fun all(): Map<String, ThingDefinition> =
+    fun all(): Map<String, CreateThingCommandPart> =
         resources + literals + predicates + classes + lists
 }
 
-sealed interface ThingDefinition {
+sealed interface CreateThingCommandPart {
     val label: String
 }
 
-data class ResourceDefinition(
+data class CreateResourceCommandPart(
     override val label: String,
     val classes: Set<ThingId> = emptySet(),
-) : ThingDefinition
+) : CreateThingCommandPart
 
-data class ClassDefinition(
+data class CreateClassCommandPart(
     override val label: String,
     val uri: ParsedIRI? = null,
-) : ThingDefinition
+) : CreateThingCommandPart
 
-data class ListDefinition(
+data class CreateListCommandPart(
     override val label: String,
     val elements: List<String> = emptyList(),
-) : ThingDefinition
+) : CreateThingCommandPart
 
-data class LiteralDefinition(
+data class CreateLiteralCommandPart(
     override val label: String,
     val dataType: String = Literals.XSD.STRING.prefixedUri,
-) : ThingDefinition
+) : CreateThingCommandPart
 
-data class PredicateDefinition(
+data class CreatePredicateCommandPart(
     override val label: String,
     val description: String? = null,
-) : ThingDefinition
+) : CreateThingCommandPart
 
-data class ContributionDefinition(
+data class CreateContributionCommandPart(
     val label: String,
     val classes: Set<ThingId> = emptySet(),
-    val statements: Map<String, List<StatementObjectDefinition>>,
+    val statements: Map<String, List<StatementObject>>,
 ) {
-    data class StatementObjectDefinition(
+    data class StatementObject(
         val id: String,
-        val statements: Map<String, List<StatementObjectDefinition>>? = null,
+        val statements: Map<String, List<StatementObject>>? = null,
     )
 }

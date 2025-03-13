@@ -14,7 +14,7 @@ import org.orkg.contenttypes.domain.EmptyContribution
 import org.orkg.contenttypes.domain.ThingIsNotAClass
 import org.orkg.contenttypes.domain.actions.BakedStatement
 import org.orkg.contenttypes.domain.actions.CreatePaperState
-import org.orkg.contenttypes.input.ContributionDefinition
+import org.orkg.contenttypes.input.CreateContributionCommandPart
 import org.orkg.contenttypes.input.CreatePaperUseCase
 import org.orkg.contenttypes.input.testing.fixtures.createPaperCommand
 import org.orkg.graph.domain.Predicates
@@ -141,7 +141,7 @@ internal class PaperContributionValidatorUnitTest : MockkBaseTest {
         val command = createPaperCommand().copy(
             contents = CreatePaperUseCase.CreateCommand.PaperContents(
                 contributions = listOf(
-                    ContributionDefinition(
+                    CreateContributionCommandPart(
                         label = "Contribution",
                         statements = emptyMap()
                     )

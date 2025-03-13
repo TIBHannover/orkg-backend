@@ -9,7 +9,7 @@ import org.orkg.contenttypes.domain.TemplateProperty
 import org.orkg.contenttypes.domain.TooManyNewRosettaStoneTemplateLabelSections
 import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneTemplateCommand
 import org.orkg.contenttypes.domain.actions.rosettastone.templates.UpdateRosettaStoneTemplateAction.State
-import org.orkg.contenttypes.input.TemplatePropertyDefinition
+import org.orkg.contenttypes.input.TemplatePropertyCommand
 import org.orkg.graph.domain.DynamicLabel
 import org.orkg.graph.domain.DynamicLabel.PlaceholderComponent
 import org.orkg.graph.domain.DynamicLabel.SectionComponent
@@ -34,7 +34,7 @@ class RosettaStoneTemplateFormattedLabelUpdateValidator : UpdateRosettaStoneTemp
                 val placeholder = properties[propertyIndex].let { property ->
                     when (property) {
                         is TemplateProperty -> property.placeholder
-                        is TemplatePropertyDefinition -> property.placeholder
+                        is TemplatePropertyCommand -> property.placeholder
                         else -> null
                     }
                 }

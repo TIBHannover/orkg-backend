@@ -944,7 +944,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             description = "Some description about the template",
             formattedLabel = "{P32}",
             targetClass = ThingId("targetClass"),
-            relations = TemplateController.TemplateRelationsDTO(
+            relations = TemplateController.TemplateRelationsRequestPart(
                 researchFields = listOf(ThingId("R20")),
                 researchProblems = listOf(ThingId("R21")),
                 predicate = ThingId("P22")
@@ -971,7 +971,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             description = "Some description about the template",
             formattedLabel = "{P32}",
             targetClass = ThingId("targetClass"),
-            relations = TemplateController.TemplateRelationsDTO(
+            relations = TemplateController.TemplateRelationsRequestPart(
                 researchFields = listOf(ThingId("R20")),
                 researchProblems = listOf(ThingId("R21")),
                 predicate = ThingId("P22")

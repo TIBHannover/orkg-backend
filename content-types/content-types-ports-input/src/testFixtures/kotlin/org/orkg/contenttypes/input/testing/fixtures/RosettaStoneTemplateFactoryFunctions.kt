@@ -6,11 +6,11 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.RealNumber
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.input.CreateRosettaStoneTemplateUseCase
-import org.orkg.contenttypes.input.NumberLiteralPropertyDefinition
-import org.orkg.contenttypes.input.OtherLiteralPropertyDefinition
-import org.orkg.contenttypes.input.ResourcePropertyDefinition
-import org.orkg.contenttypes.input.StringLiteralPropertyDefinition
-import org.orkg.contenttypes.input.UntypedPropertyDefinition
+import org.orkg.contenttypes.input.NumberLiteralPropertyCommand
+import org.orkg.contenttypes.input.OtherLiteralPropertyCommand
+import org.orkg.contenttypes.input.ResourcePropertyCommand
+import org.orkg.contenttypes.input.StringLiteralPropertyCommand
+import org.orkg.contenttypes.input.UntypedPropertyCommand
 import org.orkg.contenttypes.input.UpdateRosettaStoneTemplateUseCase
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.FormattedLabel
@@ -59,7 +59,7 @@ fun updateRosettaStoneTemplateCommand() = UpdateRosettaStoneTemplateUseCase.Upda
     organizations = listOf(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc"))
 )
 
-fun createSubjectPositionTemplatePropertyCommand() = ResourcePropertyDefinition(
+fun createSubjectPositionTemplatePropertyCommand() = ResourcePropertyCommand(
     label = "subject",
     placeholder = "subject",
     description = "subject resource property description",
@@ -69,7 +69,7 @@ fun createSubjectPositionTemplatePropertyCommand() = ResourcePropertyDefinition(
     `class` = ThingId("C28")
 )
 
-fun createUntypedObjectPositionTemplatePropertyCommand() = UntypedPropertyDefinition(
+fun createUntypedObjectPositionTemplatePropertyCommand() = UntypedPropertyCommand(
     label = "property label",
     placeholder = "property placeholder",
     description = "property description",
@@ -78,7 +78,7 @@ fun createUntypedObjectPositionTemplatePropertyCommand() = UntypedPropertyDefini
     path = Predicates.hasObjectPosition
 )
 
-fun createStringLiteralObjectPositionTemplatePropertyCommand() = StringLiteralPropertyDefinition(
+fun createStringLiteralObjectPositionTemplatePropertyCommand() = StringLiteralPropertyCommand(
     label = "literal property label",
     placeholder = "literal property placeholder",
     description = "literal property description",
@@ -89,7 +89,7 @@ fun createStringLiteralObjectPositionTemplatePropertyCommand() = StringLiteralPr
     datatype = Classes.string,
 )
 
-fun createNumberLiteralObjectPositionTemplatePropertyCommand() = NumberLiteralPropertyDefinition(
+fun createNumberLiteralObjectPositionTemplatePropertyCommand() = NumberLiteralPropertyCommand(
     label = "number literal property label",
     placeholder = "number literal property placeholder",
     description = "number literal property description",
@@ -101,7 +101,7 @@ fun createNumberLiteralObjectPositionTemplatePropertyCommand() = NumberLiteralPr
     datatype = Classes.integer,
 )
 
-fun createOtherLiteralObjectPositionTemplatePropertyCommand() = OtherLiteralPropertyDefinition(
+fun createOtherLiteralObjectPositionTemplatePropertyCommand() = OtherLiteralPropertyCommand(
     label = "literal property label",
     placeholder = "literal property placeholder",
     description = "literal property description",
@@ -111,7 +111,7 @@ fun createOtherLiteralObjectPositionTemplatePropertyCommand() = OtherLiteralProp
     datatype = ThingId("C25"),
 )
 
-fun createResourceObjectPositionTemplatePropertyCommand() = ResourcePropertyDefinition(
+fun createResourceObjectPositionTemplatePropertyCommand() = ResourcePropertyCommand(
     label = "resource property label",
     placeholder = "resource property placeholder",
     description = "resource property description",

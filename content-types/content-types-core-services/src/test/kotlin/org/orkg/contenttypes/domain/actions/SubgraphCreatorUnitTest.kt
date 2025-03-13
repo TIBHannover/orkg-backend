@@ -12,12 +12,12 @@ import org.orkg.common.Either
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.common.testing.fixtures.fixedClock
-import org.orkg.contenttypes.input.ClassDefinition
+import org.orkg.contenttypes.input.CreateClassCommandPart
+import org.orkg.contenttypes.input.CreateListCommandPart
+import org.orkg.contenttypes.input.CreateLiteralCommandPart
 import org.orkg.contenttypes.input.CreatePaperUseCase
-import org.orkg.contenttypes.input.ListDefinition
-import org.orkg.contenttypes.input.LiteralDefinition
-import org.orkg.contenttypes.input.PredicateDefinition
-import org.orkg.contenttypes.input.ResourceDefinition
+import org.orkg.contenttypes.input.CreatePredicateCommandPart
+import org.orkg.contenttypes.input.CreateResourceCommandPart
 import org.orkg.contenttypes.input.testing.fixtures.createRosettaStoneStatementCommand
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
@@ -67,7 +67,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
     @Test
     fun `Given paper contents, when a newly defined resource is valid, it gets created`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val resourceDefinition = ResourceDefinition(
+        val resourceDefinition = CreateResourceCommandPart(
             label = "MOTO",
             classes = setOf(ThingId("R2000"))
         )
@@ -112,7 +112,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
     @Test
     fun `Given paper contents, when a newly defined resource is not validated, it does not get created`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val resourceDefinition = ResourceDefinition(
+        val resourceDefinition = CreateResourceCommandPart(
             label = "MOTO",
             classes = setOf(ThingId("R2000"))
         )
@@ -138,7 +138,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
     @Test
     fun `Given rosetta stone statement contents, when a newly defined class is valid, it gets created`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val classDefinition = ClassDefinition(
+        val classDefinition = CreateClassCommandPart(
             label = "Some class",
             uri = ParsedIRI("https://example.org")
         )
@@ -184,7 +184,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
     @Test
     fun `Given paper contents, when a newly defined class is not validated, it does not get created`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val classDefinition = ClassDefinition(
+        val classDefinition = CreateClassCommandPart(
             label = "Some class",
             uri = ParsedIRI("https://example.org")
         )
@@ -210,7 +210,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
     @Test
     fun `Given paper contents, when a newly defined literal is valid, it gets created`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val literalDefinition = LiteralDefinition(
+        val literalDefinition = CreateLiteralCommandPart(
             label = "1.0",
             dataType = Literals.XSD.INT.prefixedUri
         )
@@ -253,7 +253,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
     @Test
     fun `Given paper contents, when a newly defined literal is not validated, it does not get created`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val literalDefinition = LiteralDefinition(
+        val literalDefinition = CreateLiteralCommandPart(
             label = "1.0",
             dataType = Literals.XSD.INT.prefixedUri
         )
@@ -276,7 +276,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
     @Test
     fun `Given paper contents, when a newly defined predicate is valid, it gets created`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val predicateDefinition = PredicateDefinition(
+        val predicateDefinition = CreatePredicateCommandPart(
             label = "MOTO"
         )
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
@@ -316,7 +316,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
     @Test
     fun `Given paper contents, when a newly defined predicate with description is valid, it gets created`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val predicateDefinition = PredicateDefinition(
+        val predicateDefinition = CreatePredicateCommandPart(
             label = "MOTO",
             description = "Result"
         )
@@ -395,7 +395,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
     @Test
     fun `Given paper contents, when a newly defined predicate is not validated, it does not get created`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val predicateDefinition = PredicateDefinition(
+        val predicateDefinition = CreatePredicateCommandPart(
             label = "MOTO"
         )
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
@@ -417,7 +417,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
     @Test
     fun `Given paper contents, when a newly defined list is valid, it gets created`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val listDefinition = ListDefinition(
+        val listDefinition = CreateListCommandPart(
             label = "MOTO",
             elements = listOf("R2000")
         )
@@ -468,7 +468,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
     @Test
     fun `Given paper contents, when a newly defined list is not validated, it does not get created`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val listDefinition = ListDefinition(
+        val listDefinition = CreateListCommandPart(
             label = "MOTO",
             elements = listOf("R2000")
         )
@@ -494,14 +494,14 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
     @Test
     fun `Given paper contents, when creating new statements with temp ids, it returns success`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val resourceDefinition = ResourceDefinition(
+        val resourceDefinition = CreateResourceCommandPart(
             label = "Subject",
             classes = setOf(ThingId("R2000"))
         )
-        val predicateDefinition = PredicateDefinition(
+        val predicateDefinition = CreatePredicateCommandPart(
             label = "hasValue"
         )
-        val literalDefinition = LiteralDefinition(
+        val literalDefinition = CreateLiteralCommandPart(
             label = "1.0",
             dataType = Literals.XSD.INT.prefixedUri
         )

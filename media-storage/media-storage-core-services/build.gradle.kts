@@ -24,7 +24,6 @@ testing {
                 implementation("io.mockk:mockk-dsl")
                 implementation("io.mockk:mockk-jvm")
                 implementation("org.junit.jupiter:junit-jupiter-api")
-                implementation(project(":community:community-ports-input"))
                 implementation(testFixtures(project(":media-storage:media-storage-core-model")))
             }
         }

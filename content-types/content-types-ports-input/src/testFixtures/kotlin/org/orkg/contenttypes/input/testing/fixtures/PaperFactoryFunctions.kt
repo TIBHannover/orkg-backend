@@ -6,13 +6,13 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Author
-import org.orkg.contenttypes.input.ContributionDefinition
+import org.orkg.contenttypes.input.CreateContributionCommandPart
+import org.orkg.contenttypes.input.CreateLiteralCommandPart
 import org.orkg.contenttypes.input.CreatePaperUseCase
-import org.orkg.contenttypes.input.LiteralDefinition
-import org.orkg.contenttypes.input.PredicateDefinition
-import org.orkg.contenttypes.input.PublicationInfoDefinition
+import org.orkg.contenttypes.input.CreatePredicateCommandPart
+import org.orkg.contenttypes.input.CreateResourceCommandPart
+import org.orkg.contenttypes.input.PublicationInfoCommand
 import org.orkg.contenttypes.input.PublishPaperUseCase
-import org.orkg.contenttypes.input.ResourceDefinition
 import org.orkg.contenttypes.input.UpdatePaperUseCase
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
@@ -24,7 +24,7 @@ fun createPaperCommand() = CreatePaperUseCase.CreateCommand(
     title = "test",
     researchFields = listOf(ThingId("R12")),
     identifiers = mapOf("doi" to listOf("10.1234/56789")),
-    publicationInfo = PublicationInfoDefinition(
+    publicationInfo = PublicationInfoCommand(
         publishedYear = 2015,
         publishedMonth = 5,
         publishedIn = "conference",
@@ -58,56 +58,56 @@ fun createPaperCommand() = CreatePaperUseCase.CreateCommand(
     organizations = listOf(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")),
     contents = CreatePaperUseCase.CreateCommand.PaperContents(
         resources = mapOf(
-            "#temp1" to ResourceDefinition(
+            "#temp1" to CreateResourceCommandPart(
                 label = "MOTO",
                 classes = setOf(ThingId("R2000"))
             )
         ),
         literals = mapOf(
-            "#temp2" to LiteralDefinition(
+            "#temp2" to CreateLiteralCommandPart(
                 label = "0.1",
                 dataType = Literals.XSD.DECIMAL.prefixedUri
             )
         ),
         predicates = mapOf(
-            "#temp3" to PredicateDefinition(
+            "#temp3" to CreatePredicateCommandPart(
                 label = "hasResult",
                 description = "has result"
             ),
-            "#temp4" to PredicateDefinition(
+            "#temp4" to CreatePredicateCommandPart(
                 label = "hasLiteral"
             )
         ),
         contributions = listOf(
-            ContributionDefinition(
+            CreateContributionCommandPart(
                 label = "Contribution 1",
                 classes = setOf(ThingId("C123")),
                 statements = mapOf(
                     Predicates.hasResearchProblem.value to listOf(
-                        ContributionDefinition.StatementObjectDefinition("R3003")
+                        CreateContributionCommandPart.StatementObject("R3003")
                     ),
                     Predicates.hasEvaluation.value to listOf(
-                        ContributionDefinition.StatementObjectDefinition("#temp1")
+                        CreateContributionCommandPart.StatementObject("#temp1")
                     )
                 )
             ),
-            ContributionDefinition(
+            CreateContributionCommandPart(
                 label = "Contribution 2",
                 statements = mapOf(
                     Predicates.hasResearchProblem.value to listOf(
-                        ContributionDefinition.StatementObjectDefinition("R3003")
+                        CreateContributionCommandPart.StatementObject("R3003")
                     ),
                     Predicates.hasEvaluation.value to listOf(
-                        ContributionDefinition.StatementObjectDefinition("#temp1"),
-                        ContributionDefinition.StatementObjectDefinition(
+                        CreateContributionCommandPart.StatementObject("#temp1"),
+                        CreateContributionCommandPart.StatementObject(
                             id = "R3004",
                             statements = mapOf(
                                 "#temp3" to listOf(
-                                    ContributionDefinition.StatementObjectDefinition("R3003"),
-                                    ContributionDefinition.StatementObjectDefinition("#temp2")
+                                    CreateContributionCommandPart.StatementObject("R3003"),
+                                    CreateContributionCommandPart.StatementObject("#temp2")
                                 ),
                                 "#temp4" to listOf(
-                                    ContributionDefinition.StatementObjectDefinition("#temp1")
+                                    CreateContributionCommandPart.StatementObject("#temp1")
                                 )
                             )
                         )
@@ -125,7 +125,7 @@ fun updatePaperCommand() = UpdatePaperUseCase.UpdateCommand(
     title = "test",
     researchFields = listOf(ThingId("R12")),
     identifiers = mapOf("doi" to listOf("10.1234/56789")),
-    publicationInfo = PublicationInfoDefinition(
+    publicationInfo = PublicationInfoCommand(
         publishedYear = 2015,
         publishedMonth = 5,
         publishedIn = "conference",

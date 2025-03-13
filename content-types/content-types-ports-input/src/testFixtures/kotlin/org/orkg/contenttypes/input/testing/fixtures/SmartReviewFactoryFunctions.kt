@@ -13,6 +13,7 @@ import org.orkg.contenttypes.domain.SmartReviewResourceSection
 import org.orkg.contenttypes.domain.SmartReviewSection
 import org.orkg.contenttypes.domain.SmartReviewTextSection
 import org.orkg.contenttypes.domain.SmartReviewVisualizationSection
+import org.orkg.contenttypes.input.AbstractSmartReviewSectionCommand
 import org.orkg.contenttypes.input.CreateSmartReviewSectionUseCase
 import org.orkg.contenttypes.input.CreateSmartReviewUseCase
 import org.orkg.contenttypes.input.DeleteSmartReviewSectionUseCase
@@ -21,7 +22,6 @@ import org.orkg.contenttypes.input.SmartReviewComparisonSectionCommand
 import org.orkg.contenttypes.input.SmartReviewOntologySectionCommand
 import org.orkg.contenttypes.input.SmartReviewPredicateSectionCommand
 import org.orkg.contenttypes.input.SmartReviewResourceSectionCommand
-import org.orkg.contenttypes.input.SmartReviewSectionDefinition
 import org.orkg.contenttypes.input.SmartReviewTextSectionCommand
 import org.orkg.contenttypes.input.SmartReviewVisualizationSectionCommand
 import org.orkg.contenttypes.input.UpdateSmartReviewSectionUseCase
@@ -62,12 +62,12 @@ fun createSmartReviewCommand() = CreateSmartReviewUseCase.CreateCommand(
     organizations = listOf(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")),
     extractionMethod = ExtractionMethod.MANUAL,
     sections = listOf(
-        smartReviewComparisonSectionDefinition(),
-        smartReviewVisualizationSectionDefinition(),
-        smartReviewResourceSectionDefinition(),
-        smartReviewPredicateSectionDefinition(),
-        smartReviewOntologySectionDefinition(),
-        smartReviewTextSectionDefinition()
+        smartReviewComparisonSectionCommand(),
+        smartReviewVisualizationSectionCommand(),
+        smartReviewResourceSectionCommand(),
+        smartReviewPredicateSectionCommand(),
+        smartReviewOntologySectionCommand(),
+        smartReviewTextSectionCommand()
     ),
     references = listOf(
         "@misc{R123456,title = {Fancy title of a super important paper}",
@@ -107,12 +107,12 @@ fun updateSmartReviewCommand() = UpdateSmartReviewUseCase.UpdateCommand(
     organizations = listOf(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")),
     extractionMethod = ExtractionMethod.MANUAL,
     sections = listOf(
-        smartReviewComparisonSectionDefinition(),
-        smartReviewVisualizationSectionDefinition(),
-        smartReviewResourceSectionDefinition(),
-        smartReviewPredicateSectionDefinition(),
-        smartReviewOntologySectionDefinition(),
-        smartReviewTextSectionDefinition()
+        smartReviewComparisonSectionCommand(),
+        smartReviewVisualizationSectionCommand(),
+        smartReviewResourceSectionCommand(),
+        smartReviewPredicateSectionCommand(),
+        smartReviewOntologySectionCommand(),
+        smartReviewTextSectionCommand()
     ),
     references = listOf(
         "@misc{R123456,title = {Fancy title of a super important paper}",
@@ -233,38 +233,38 @@ fun updateSmartReviewTextSectionCommand() =
         text = "text section contents"
     )
 
-fun smartReviewComparisonSectionDefinition(): SmartReviewComparisonSectionCommand =
+fun smartReviewComparisonSectionCommand(): SmartReviewComparisonSectionCommand =
     SmartReviewComparisonSectionCommand(
         heading = "comparison section heading",
         comparison = ThingId("R6416")
     )
 
-fun smartReviewVisualizationSectionDefinition(): SmartReviewVisualizationSectionCommand =
+fun smartReviewVisualizationSectionCommand(): SmartReviewVisualizationSectionCommand =
     SmartReviewVisualizationSectionCommand(
         heading = "visualization section heading",
         visualization = ThingId("R215648")
     )
 
-fun smartReviewResourceSectionDefinition(): SmartReviewResourceSectionCommand =
+fun smartReviewResourceSectionCommand(): SmartReviewResourceSectionCommand =
     SmartReviewResourceSectionCommand(
         heading = "resource section heading",
         resource = ThingId("R14565")
     )
 
-fun smartReviewPredicateSectionDefinition(): SmartReviewPredicateSectionCommand =
+fun smartReviewPredicateSectionCommand(): SmartReviewPredicateSectionCommand =
     SmartReviewPredicateSectionCommand(
         heading = "predicate section heading",
         predicate = ThingId("R15696541")
     )
 
-fun smartReviewOntologySectionDefinition(): SmartReviewOntologySectionCommand =
+fun smartReviewOntologySectionCommand(): SmartReviewOntologySectionCommand =
     SmartReviewOntologySectionCommand(
         heading = "ontology section heading",
         entities = listOf(ThingId("R1"), ThingId("P1")),
         predicates = listOf(ThingId("P1"))
     )
 
-fun smartReviewTextSectionDefinition(): SmartReviewTextSectionCommand =
+fun smartReviewTextSectionCommand(): SmartReviewTextSectionCommand =
     SmartReviewTextSectionCommand(
         heading = "Heading",
         `class` = Classes.introduction,
@@ -277,32 +277,32 @@ fun deleteSmartReviewSectionCommand() = DeleteSmartReviewSectionUseCase.DeleteCo
     sectionId = ThingId("R456")
 )
 
-fun SmartReviewSection.toSmartReviewSectionDefinition(): SmartReviewSectionDefinition =
+fun SmartReviewSection.toSmartReviewSectionCommand(): AbstractSmartReviewSectionCommand =
     when (this) {
-        is SmartReviewComparisonSection -> toSmartReviewComparisonSectionDefinition()
-        is SmartReviewVisualizationSection -> toSmartReviewVisualizationSectionDefinition()
-        is SmartReviewResourceSection -> toSmartReviewResourceSectionDefinition()
-        is SmartReviewPredicateSection -> toSmartReviewPredicateSectionDefinition()
-        is SmartReviewOntologySection -> toSmartReviewOntologySectionDefinition()
-        is SmartReviewTextSection -> toSmartReviewTextSectionDefinition()
+        is SmartReviewComparisonSection -> toSmartReviewComparisonSectionCommand()
+        is SmartReviewVisualizationSection -> toSmartReviewVisualizationSectionCommand()
+        is SmartReviewResourceSection -> toSmartReviewResourceSectionCommand()
+        is SmartReviewPredicateSection -> toSmartReviewPredicateSectionCommand()
+        is SmartReviewOntologySection -> toSmartReviewOntologySectionCommand()
+        is SmartReviewTextSection -> toSmartReviewTextSectionCommand()
     }
 
-fun SmartReviewComparisonSection.toSmartReviewComparisonSectionDefinition(): SmartReviewComparisonSectionCommand =
+fun SmartReviewComparisonSection.toSmartReviewComparisonSectionCommand(): SmartReviewComparisonSectionCommand =
     SmartReviewComparisonSectionCommand(heading, comparison?.id)
 
-fun SmartReviewVisualizationSection.toSmartReviewVisualizationSectionDefinition(): SmartReviewVisualizationSectionCommand =
+fun SmartReviewVisualizationSection.toSmartReviewVisualizationSectionCommand(): SmartReviewVisualizationSectionCommand =
     SmartReviewVisualizationSectionCommand(heading, visualization?.id)
 
-fun SmartReviewResourceSection.toSmartReviewResourceSectionDefinition(): SmartReviewResourceSectionCommand =
+fun SmartReviewResourceSection.toSmartReviewResourceSectionCommand(): SmartReviewResourceSectionCommand =
     SmartReviewResourceSectionCommand(heading, resource?.id)
 
-fun SmartReviewPredicateSection.toSmartReviewPredicateSectionDefinition(): SmartReviewPredicateSectionCommand =
+fun SmartReviewPredicateSection.toSmartReviewPredicateSectionCommand(): SmartReviewPredicateSectionCommand =
     SmartReviewPredicateSectionCommand(heading, predicate?.id)
 
-fun SmartReviewOntologySection.toSmartReviewOntologySectionDefinition(): SmartReviewOntologySectionCommand =
+fun SmartReviewOntologySection.toSmartReviewOntologySectionCommand(): SmartReviewOntologySectionCommand =
     SmartReviewOntologySectionCommand(heading, entities.map { it.id!! }, predicates.map { it.id })
 
-fun SmartReviewTextSection.toSmartReviewTextSectionDefinition(): SmartReviewTextSectionCommand =
+fun SmartReviewTextSection.toSmartReviewTextSectionCommand(): SmartReviewTextSectionCommand =
     SmartReviewTextSectionCommand(heading, classes.single { it in SmartReviewTextSection.types }, text)
 
 fun publishSmartReviewCommand() = PublishSmartReviewUseCase.PublishCommand(

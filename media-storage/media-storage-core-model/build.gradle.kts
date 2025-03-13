@@ -9,7 +9,6 @@ dependencies {
     implementation("org.springframework:spring-web")
 
     testFixturesApi(project(":common:identifiers"))
-    testFixturesApi(project(":community:community-ports-input"))
     testFixturesImplementation("org.springframework:spring-core")
     testFixturesImplementation(testFixtures(project(":common:testing")))
 }

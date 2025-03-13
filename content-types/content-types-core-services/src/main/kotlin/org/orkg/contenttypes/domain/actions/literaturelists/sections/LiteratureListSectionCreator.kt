@@ -4,7 +4,7 @@ import org.orkg.contenttypes.domain.actions.CreateLiteratureListSectionCommand
 import org.orkg.contenttypes.domain.actions.CreateLiteratureListSectionState
 import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyUpdater
 import org.orkg.contenttypes.domain.actions.literaturelists.AbstractLiteratureListSectionCreator
-import org.orkg.contenttypes.input.LiteratureListSectionDefinition
+import org.orkg.contenttypes.input.AbstractLiteratureListSectionCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.StatementUseCases
@@ -34,7 +34,7 @@ class LiteratureListSectionCreator(
     ): CreateLiteratureListSectionState {
         val sectionId = abstractLiteratureListSectionCreator.create(
             contributorId = command.contributorId,
-            section = command as LiteratureListSectionDefinition
+            section = command as AbstractLiteratureListSectionCommand
         )
         if (command.index != null && command.index!! >= 0) {
             val sectionStatements = state.statements[command.literatureListId].orEmpty()

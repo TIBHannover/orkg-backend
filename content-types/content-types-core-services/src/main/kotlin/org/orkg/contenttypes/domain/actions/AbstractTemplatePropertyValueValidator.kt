@@ -21,12 +21,12 @@ import org.orkg.contenttypes.domain.StringLiteralTemplateProperty
 import org.orkg.contenttypes.domain.TemplateProperty
 import org.orkg.contenttypes.domain.TooManyPropertyValues
 import org.orkg.contenttypes.domain.UntypedTemplateProperty
-import org.orkg.contenttypes.input.ClassDefinition
-import org.orkg.contenttypes.input.ListDefinition
-import org.orkg.contenttypes.input.LiteralDefinition
-import org.orkg.contenttypes.input.PredicateDefinition
-import org.orkg.contenttypes.input.ResourceDefinition
-import org.orkg.contenttypes.input.ThingDefinition
+import org.orkg.contenttypes.input.CreateClassCommandPart
+import org.orkg.contenttypes.input.CreateListCommandPart
+import org.orkg.contenttypes.input.CreateLiteralCommandPart
+import org.orkg.contenttypes.input.CreatePredicateCommandPart
+import org.orkg.contenttypes.input.CreateResourceCommandPart
+import org.orkg.contenttypes.input.CreateThingCommandPart
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.output.ClassHierarchyRepository
@@ -46,28 +46,28 @@ class AbstractTemplatePropertyValueValidator(
         }
     }
 
-    internal fun validateObject(property: TemplateProperty, id: String, `object`: ThingDefinition) {
+    internal fun validateObject(property: TemplateProperty, id: String, `object`: CreateThingCommandPart) {
         validateObjectTyping(property, id, `object`)
         validateObjectLabel(property, id, `object`.label)
     }
 
-    private fun validateObjectTyping(property: TemplateProperty, id: String, `object`: ThingDefinition) {
+    private fun validateObjectTyping(property: TemplateProperty, id: String, `object`: CreateThingCommandPart) {
         when (property) {
             is ResourceTemplateProperty -> {
-                if (property.`class`.id == Classes.classes && `object` !is ClassDefinition) {
+                if (property.`class`.id == Classes.classes && `object` !is CreateClassCommandPart) {
                     throw ObjectIsNotAClass(property.id, property.path.id, id)
-                } else if (property.`class`.id == Classes.predicates && `object` !is PredicateDefinition) {
+                } else if (property.`class`.id == Classes.predicates && `object` !is CreatePredicateCommandPart) {
                     throw ObjectIsNotAPredicate(property.id, property.path.id, id)
-                } else if (property.`class`.id == Classes.list && `object` !is ListDefinition) {
+                } else if (property.`class`.id == Classes.list && `object` !is CreateListCommandPart) {
                     throw ObjectIsNotAList(property.id, property.path.id, id)
-                } else if (`object` is LiteralDefinition) {
+                } else if (`object` is CreateLiteralCommandPart) {
                     throw ObjectMustNotBeALiteral(property.id, property.path.id, id)
-                } else if (`object` is ResourceDefinition && property.`class`.id != Classes.resources && !`object`.isInstanceOf(property.`class`.id)) {
+                } else if (`object` is CreateResourceCommandPart && property.`class`.id != Classes.resources && !`object`.isInstanceOf(property.`class`.id)) {
                     throw ResourceIsNotAnInstanceOfTargetClass(property.id, property.path.id, id, property.`class`.id)
                 }
             }
             is LiteralTemplateProperty -> {
-                if (`object` !is LiteralDefinition) {
+                if (`object` !is CreateLiteralCommandPart) {
                     throw ObjectIsNotALiteral(property.id, property.path.id, id)
                 }
                 val xsd = Literals.XSD.fromClass(property.datatype.id)
@@ -118,5 +118,5 @@ class AbstractTemplatePropertyValueValidator(
         }
     }
 
-    private fun ResourceDefinition.isInstanceOf(targetClass: ThingId): Boolean = targetClass in classes || classes.any { `class` -> classHierarchyRepository.existsChild(targetClass, `class`) }
+    private fun CreateResourceCommandPart.isInstanceOf(targetClass: ThingId): Boolean = targetClass in classes || classes.any { `class` -> classHierarchyRepository.existsChild(targetClass, `class`) }
 }

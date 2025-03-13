@@ -27,6 +27,7 @@ import org.orkg.graph.input.ResourceUseCases
 import org.orkg.mediastorage.domain.ImageData
 import org.orkg.mediastorage.domain.InvalidImageData
 import org.orkg.mediastorage.domain.InvalidMimeType
+import org.orkg.mediastorage.domain.RawImage
 import org.orkg.mediastorage.input.CreateImageUseCase
 import org.orkg.mediastorage.input.ImageUseCases
 import org.springframework.data.domain.PageRequest
@@ -136,7 +137,7 @@ class OrganizationController(
         val contributorId = currentUser.contributorId()
         service.update(
             contributorId,
-            UpdateOrganizationUseCases.UpdateOrganizationRequest(
+            UpdateOrganizationUseCases.UpdateOrganizationCommand(
                 id = id,
                 name = request?.name,
                 url = request?.url,
@@ -148,7 +149,7 @@ class OrganizationController(
                     } catch (e: Exception) {
                         throw InvalidMimeType(logo.contentType, e)
                     }
-                    UpdateOrganizationUseCases.RawImage(
+                    RawImage(
                         data = ImageData(bytes),
                         mimeType = mimeType
                     )
@@ -271,7 +272,7 @@ class OrganizationController(
 
 @JvmInline
 value class EncodedImage(val value: String) {
-    fun decodeBase64(): UpdateOrganizationUseCases.RawImage {
+    fun decodeBase64(): RawImage {
         val matcher = encodedImagePattern.matcher(value)
         if (!matcher.matches()) {
             throw InvalidImageEncoding()
@@ -288,6 +289,6 @@ value class EncodedImage(val value: String) {
         } catch (e: IllegalArgumentException) {
             throw InvalidImageData()
         }
-        return UpdateOrganizationUseCases.RawImage(data, mimeType)
+        return RawImage(data, mimeType)
     }
 }

@@ -9,13 +9,13 @@ import org.orkg.contenttypes.domain.SmartReviewVisualizationSection
 import org.orkg.contenttypes.domain.actions.UpdateSmartReviewSectionCommand
 import org.orkg.contenttypes.domain.actions.smartreviews.AbstractSmartReviewSectionUpdater
 import org.orkg.contenttypes.domain.actions.smartreviews.sections.UpdateSmartReviewSectionAction.State
-import org.orkg.contenttypes.input.SmartReviewComparisonSectionDefinition
-import org.orkg.contenttypes.input.SmartReviewOntologySectionDefinition
-import org.orkg.contenttypes.input.SmartReviewPredicateSectionDefinition
-import org.orkg.contenttypes.input.SmartReviewResourceSectionDefinition
-import org.orkg.contenttypes.input.SmartReviewSectionDefinition
-import org.orkg.contenttypes.input.SmartReviewTextSectionDefinition
-import org.orkg.contenttypes.input.SmartReviewVisualizationSectionDefinition
+import org.orkg.contenttypes.input.AbstractSmartReviewComparisonSectionCommand
+import org.orkg.contenttypes.input.AbstractSmartReviewOntologySectionCommand
+import org.orkg.contenttypes.input.AbstractSmartReviewPredicateSectionCommand
+import org.orkg.contenttypes.input.AbstractSmartReviewResourceSectionCommand
+import org.orkg.contenttypes.input.AbstractSmartReviewSectionCommand
+import org.orkg.contenttypes.input.AbstractSmartReviewTextSectionCommand
+import org.orkg.contenttypes.input.AbstractSmartReviewVisualizationSectionCommand
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
@@ -40,39 +40,39 @@ class SmartReviewSectionUpdater(
 
     override fun invoke(command: UpdateSmartReviewSectionCommand, state: State): State {
         val section = state.smartReview!!.sections.single { it.id == command.smartReviewSectionId }
-        if (!(command as SmartReviewSectionDefinition).matchesSmartReviewSection(section)) {
+        if (!(command as AbstractSmartReviewSectionCommand).matchesSmartReviewSection(section)) {
             when (command) {
-                is SmartReviewComparisonSectionDefinition -> abstractSmartReviewSectionUpdater.updateComparisonSection(
+                is AbstractSmartReviewComparisonSectionCommand -> abstractSmartReviewSectionUpdater.updateComparisonSection(
                     contributorId = command.contributorId,
                     newSection = command,
                     oldSection = section as SmartReviewComparisonSection,
                     statements = state.statements
                 )
-                is SmartReviewVisualizationSectionDefinition -> abstractSmartReviewSectionUpdater.updateVisualizationSection(
+                is AbstractSmartReviewVisualizationSectionCommand -> abstractSmartReviewSectionUpdater.updateVisualizationSection(
                     contributorId = command.contributorId,
                     newSection = command,
                     oldSection = section as SmartReviewVisualizationSection,
                     statements = state.statements
                 )
-                is SmartReviewResourceSectionDefinition -> abstractSmartReviewSectionUpdater.updateResourceSection(
+                is AbstractSmartReviewResourceSectionCommand -> abstractSmartReviewSectionUpdater.updateResourceSection(
                     contributorId = command.contributorId,
                     newSection = command,
                     oldSection = section as SmartReviewResourceSection,
                     statements = state.statements
                 )
-                is SmartReviewPredicateSectionDefinition -> abstractSmartReviewSectionUpdater.updatePredicateSection(
+                is AbstractSmartReviewPredicateSectionCommand -> abstractSmartReviewSectionUpdater.updatePredicateSection(
                     contributorId = command.contributorId,
                     newSection = command,
                     oldSection = section as SmartReviewPredicateSection,
                     statements = state.statements
                 )
-                is SmartReviewOntologySectionDefinition -> abstractSmartReviewSectionUpdater.updateOntologySection(
+                is AbstractSmartReviewOntologySectionCommand -> abstractSmartReviewSectionUpdater.updateOntologySection(
                     contributorId = command.contributorId,
                     newSection = command,
                     oldSection = section as SmartReviewOntologySection,
                     statements = state.statements
                 )
-                is SmartReviewTextSectionDefinition -> abstractSmartReviewSectionUpdater.updateTextSection(
+                is AbstractSmartReviewTextSectionCommand -> abstractSmartReviewSectionUpdater.updateTextSection(
                     contributorId = command.contributorId,
                     newSection = command,
                     oldSection = section as SmartReviewTextSection,

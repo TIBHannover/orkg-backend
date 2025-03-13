@@ -147,7 +147,7 @@ class RosettaStoneTemplateController(
                 description = description,
                 formattedLabel = FormattedLabel.of(formattedLabel),
                 exampleUsage = exampleUsage,
-                properties = properties.map { it.toTemplatePropertyDefinition() },
+                properties = properties.map { it.toTemplatePropertyCommand() },
                 observatories = observatories,
                 organizations = organizations
             )
@@ -180,7 +180,7 @@ class RosettaStoneTemplateController(
                 description = description,
                 formattedLabel = formattedLabel?.let { FormattedLabel.of(it) },
                 exampleUsage = exampleUsage,
-                properties = properties?.map { it.toTemplatePropertyDefinition() },
+                properties = properties?.map { it.toTemplatePropertyCommand() },
                 observatories = observatories,
                 organizations = organizations
             )

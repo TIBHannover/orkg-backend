@@ -15,8 +15,8 @@ import org.orkg.contenttypes.domain.testing.fixtures.createOtherLiteralTemplateP
 import org.orkg.contenttypes.domain.testing.fixtures.createResourceTemplateProperty
 import org.orkg.contenttypes.domain.testing.fixtures.createStringLiteralTemplateProperty
 import org.orkg.contenttypes.domain.testing.fixtures.createUntypedTemplateProperty
-import org.orkg.contenttypes.input.TemplatePropertyDefinition
-import org.orkg.contenttypes.input.testing.fixtures.toTemplatePropertyDefinition
+import org.orkg.contenttypes.input.TemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.toTemplatePropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.updateNumberLiteralTemplatePropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.updateOtherLiteralTemplatePropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.updateResourceTemplatePropertyCommand
@@ -27,7 +27,7 @@ internal class TemplatePropertiesValidatorUnitTest : MockkBaseTest {
     private val abstractTemplatePropertyValidator: AbstractTemplatePropertyValidator = mockk()
 
     private val templatePropertiesValidator =
-        TemplatePropertiesValidator<List<TemplatePropertyDefinition>, List<TemplateProperty>>(
+        TemplatePropertiesValidator<List<TemplatePropertyCommand>, List<TemplateProperty>>(
             abstractTemplatePropertyValidator = abstractTemplatePropertyValidator,
             newValueSelector = { it },
             oldValueSelector = { it }
@@ -92,7 +92,7 @@ internal class TemplatePropertiesValidatorUnitTest : MockkBaseTest {
             createOtherLiteralTemplateProperty(),
             createResourceTemplateProperty()
         )
-        val command = state.map { it.toTemplatePropertyDefinition() }
+        val command = state.map { it.toTemplatePropertyCommand() }
 
         templatePropertiesValidator(command, state) shouldBe state
     }

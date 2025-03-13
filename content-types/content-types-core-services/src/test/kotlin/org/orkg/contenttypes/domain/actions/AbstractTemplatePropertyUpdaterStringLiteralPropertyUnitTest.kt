@@ -9,9 +9,9 @@ import org.orkg.common.ContributorId
 import org.orkg.contenttypes.domain.ClassReference
 import org.orkg.contenttypes.domain.testing.fixtures.createOtherLiteralTemplateProperty
 import org.orkg.contenttypes.domain.testing.fixtures.createStringLiteralTemplateProperty
-import org.orkg.contenttypes.input.NumberLiteralPropertyDefinition
-import org.orkg.contenttypes.input.StringLiteralPropertyDefinition
-import org.orkg.contenttypes.input.testing.fixtures.toStringLiteralTemplatePropertyDefinition
+import org.orkg.contenttypes.input.NumberLiteralPropertyCommand
+import org.orkg.contenttypes.input.StringLiteralPropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.toStringLiteralTemplatePropertyCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
@@ -26,7 +26,7 @@ internal class AbstractTemplatePropertyUpdaterStringLiteralPropertyUnitTest : Ab
     fun `Given an updated string literal template property, when there are no changes, it does nothing`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createStringLiteralTemplateProperty()
-        val newProperty = oldProperty.toStringLiteralTemplatePropertyDefinition()
+        val newProperty = oldProperty.toStringLiteralTemplatePropertyCommand()
 
         abstractTemplatePropertyUpdater.update(emptyList(), contributorId, 1, newProperty, oldProperty)
     }
@@ -35,7 +35,7 @@ internal class AbstractTemplatePropertyUpdaterStringLiteralPropertyUnitTest : Ab
     fun `Given an updated string literal template property, when pattern has changed, it updates the pattern`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createStringLiteralTemplateProperty()
-        val newProperty = oldProperty.toStringLiteralTemplatePropertyDefinition().copy(
+        val newProperty = oldProperty.toStringLiteralTemplatePropertyCommand().copy(
             pattern = "[0-9]+"
         )
         val statements = listOf(
@@ -75,7 +75,7 @@ internal class AbstractTemplatePropertyUpdaterStringLiteralPropertyUnitTest : Ab
         val oldProperty = createOtherLiteralTemplateProperty().copy(
             datatype = ClassReference(Classes.string, "String", null)
         )
-        val newProperty = StringLiteralPropertyDefinition(
+        val newProperty = StringLiteralPropertyCommand(
             label = oldProperty.label,
             placeholder = oldProperty.placeholder,
             description = oldProperty.description,
@@ -120,7 +120,7 @@ internal class AbstractTemplatePropertyUpdaterStringLiteralPropertyUnitTest : Ab
     fun `Given an updated literal template property, when new template property is not a string literal property, it deletes all pattern statements`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createStringLiteralTemplateProperty()
-        val newProperty = NumberLiteralPropertyDefinition(
+        val newProperty = NumberLiteralPropertyCommand(
             label = oldProperty.label,
             placeholder = oldProperty.placeholder,
             description = oldProperty.description,

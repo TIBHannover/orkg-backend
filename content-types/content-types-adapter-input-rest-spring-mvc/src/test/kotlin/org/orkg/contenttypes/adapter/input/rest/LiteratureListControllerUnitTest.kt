@@ -705,31 +705,31 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
             title = "Dummy Literature List Label",
             researchFields = listOf(ThingId("R14")),
             authors = listOf(
-                AuthorDTO(
+                AuthorRequest(
                     id = ThingId("R123"),
                     name = "Author with id",
                     identifiers = null,
                     homepage = null
                 ),
-                AuthorDTO(
+                AuthorRequest(
                     id = null,
                     name = "Author with orcid",
-                    identifiers = IdentifierMapDTO(mapOf("orcid" to listOf("0000-1111-2222-3333"))),
+                    identifiers = IdentifierMapRequest(mapOf("orcid" to listOf("0000-1111-2222-3333"))),
                     homepage = null
                 ),
-                AuthorDTO(
+                AuthorRequest(
                     id = ThingId("R456"),
                     name = "Author with id and orcid",
-                    identifiers = IdentifierMapDTO(mapOf("orcid" to listOf("1111-2222-3333-4444"))),
+                    identifiers = IdentifierMapRequest(mapOf("orcid" to listOf("1111-2222-3333-4444"))),
                     homepage = null
                 ),
-                AuthorDTO(
+                AuthorRequest(
                     id = null,
                     name = "Author with homepage",
                     identifiers = null,
                     homepage = ParsedIRI("https://example.org/author")
                 ),
-                AuthorDTO(
+                AuthorRequest(
                     id = null,
                     name = "Author that just has a name",
                     identifiers = null,
@@ -758,31 +758,31 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
             title = "Dummy Literature List Label",
             researchFields = listOf(ThingId("R14")),
             authors = listOf(
-                AuthorDTO(
+                AuthorRequest(
                     id = ThingId("R123"),
                     name = "Author with id",
                     identifiers = null,
                     homepage = null
                 ),
-                AuthorDTO(
+                AuthorRequest(
                     id = null,
                     name = "Author with orcid",
-                    identifiers = IdentifierMapDTO(mapOf("orcid" to listOf("0000-1111-2222-3333"))),
+                    identifiers = IdentifierMapRequest(mapOf("orcid" to listOf("0000-1111-2222-3333"))),
                     homepage = null
                 ),
-                AuthorDTO(
+                AuthorRequest(
                     id = ThingId("R456"),
                     name = "Author with id and orcid",
-                    identifiers = IdentifierMapDTO(mapOf("orcid" to listOf("1111-2222-3333-4444"))),
+                    identifiers = IdentifierMapRequest(mapOf("orcid" to listOf("1111-2222-3333-4444"))),
                     homepage = null
                 ),
-                AuthorDTO(
+                AuthorRequest(
                     id = null,
                     name = "Author with homepage",
                     identifiers = null,
                     homepage = ParsedIRI("https://example.org/author")
                 ),
-                AuthorDTO(
+                AuthorRequest(
                     id = null,
                     name = "Author that just has a name",
                     identifiers = null,

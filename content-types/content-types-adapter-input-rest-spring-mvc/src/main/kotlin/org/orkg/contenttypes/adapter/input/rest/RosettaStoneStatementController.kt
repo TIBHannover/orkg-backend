@@ -152,15 +152,15 @@ class RosettaStoneStatementController(
         val certainty: Certainty,
         val negated: Boolean = false,
         @field:Valid
-        val resources: Map<String, ResourceDefinitionDTO>?,
+        val resources: Map<String, CreateResourceRequestPart>?,
         @field:Valid
-        val literals: Map<String, LiteralDefinitionDTO>?,
+        val literals: Map<String, CreateLiteralRequestPart>?,
         @field:Valid
-        val predicates: Map<String, PredicateDefinitionDTO>?,
+        val predicates: Map<String, CreatePredicateRequestPart>?,
         @field:Valid
-        val classes: Map<String, ClassDefinitionDTO>?,
+        val classes: Map<String, CreateClassRequestPart>?,
         @field:Valid
-        val lists: Map<String, ListDefinitionDTO>?,
+        val lists: Map<String, CreateListRequestPart>?,
         @field:Size(max = 1)
         val observatories: List<ObservatoryId>,
         @field:Size(max = 1)
@@ -196,15 +196,15 @@ class RosettaStoneStatementController(
         val certainty: Certainty,
         val negated: Boolean = false,
         @field:Valid
-        val resources: Map<String, ResourceDefinitionDTO>?,
+        val resources: Map<String, CreateResourceRequestPart>?,
         @field:Valid
-        val literals: Map<String, LiteralDefinitionDTO>?,
+        val literals: Map<String, CreateLiteralRequestPart>?,
         @field:Valid
-        val predicates: Map<String, PredicateDefinitionDTO>?,
+        val predicates: Map<String, CreatePredicateRequestPart>?,
         @field:Valid
-        val classes: Map<String, ClassDefinitionDTO>?,
+        val classes: Map<String, CreateClassRequestPart>?,
         @field:Valid
-        val lists: Map<String, ListDefinitionDTO>?,
+        val lists: Map<String, CreateListRequestPart>?,
         @field:Size(max = 1)
         val observatories: List<ObservatoryId>,
         @field:Size(max = 1)

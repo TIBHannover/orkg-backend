@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.common.testing.fixtures.fixedClock
-import org.orkg.community.input.UpdateOrganizationUseCases
 import org.orkg.mediastorage.input.CreateImageUseCase
 import org.orkg.mediastorage.output.ImageRepository
 import org.orkg.mediastorage.testing.fixtures.loadRawImage
@@ -47,7 +46,7 @@ internal class ImageServiceUnitTest : MockkBaseTest {
 
     @Test
     fun `given an image is created, when the mime type is invalid, then an exception is thrown`() {
-        val image = UpdateOrganizationUseCases.RawImage(ImageData(ByteArray(0)), MimeType.valueOf("application/json"))
+        val image = RawImage(ImageData(ByteArray(0)), MimeType.valueOf("application/json"))
         val contributor = ContributorId(UUID.randomUUID())
 
         shouldThrow<InvalidMimeType> {

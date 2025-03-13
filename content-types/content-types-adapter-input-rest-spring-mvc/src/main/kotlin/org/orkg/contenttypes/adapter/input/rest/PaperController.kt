@@ -17,7 +17,7 @@ import org.orkg.contenttypes.domain.InvalidDOI
 import org.orkg.contenttypes.domain.PaperNotFound
 import org.orkg.contenttypes.domain.PaperWithStatementCount
 import org.orkg.contenttypes.domain.identifiers.DOI
-import org.orkg.contenttypes.input.ContributionDefinition
+import org.orkg.contenttypes.input.CreateContributionCommandPart
 import org.orkg.contenttypes.input.CreateContributionUseCase
 import org.orkg.contenttypes.input.CreatePaperUseCase
 import org.orkg.contenttypes.input.PaperUseCases
@@ -215,11 +215,11 @@ class PaperController(
         @JsonProperty("research_fields")
         val researchFields: List<ThingId>,
         @field:Valid
-        val identifiers: IdentifierMapDTO?,
+        val identifiers: IdentifierMapRequest?,
         @JsonProperty("publication_info")
-        val publicationInfo: PublicationInfoDTO?,
+        val publicationInfo: PublicationInfoRequest?,
         @field:Valid
-        val authors: List<AuthorDTO>,
+        val authors: List<AuthorRequest>,
         @JsonProperty("sdgs")
         val sustainableDevelopmentGoals: Set<ThingId>?,
         val mentionings: Set<ThingId>?,
@@ -228,21 +228,21 @@ class PaperController(
         @field:Size(max = 1)
         val organizations: List<OrganizationId>,
         @field:Valid
-        val contents: PaperContentsDTO?,
+        val contents: PaperContentsRequest?,
         @JsonProperty("extraction_method")
         val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     ) {
-        data class PaperContentsDTO(
+        data class PaperContentsRequest(
             @field:Valid
-            val resources: Map<String, ResourceDefinitionDTO>?,
+            val resources: Map<String, CreateResourceRequestPart>?,
             @field:Valid
-            val literals: Map<String, LiteralDefinitionDTO>?,
+            val literals: Map<String, CreateLiteralRequestPart>?,
             @field:Valid
-            val predicates: Map<String, PredicateDefinitionDTO>?,
+            val predicates: Map<String, CreatePredicateRequestPart>?,
             @field:Valid
-            val lists: Map<String, ListDefinitionDTO>?,
+            val lists: Map<String, CreateListRequestPart>?,
             @field:Valid
-            val contributions: List<ContributionDTO>,
+            val contributions: List<ContributionRequestPart>,
         ) {
             fun toCreateCommand(): CreatePaperUseCase.CreateCommand.PaperContents =
                 CreatePaperUseCase.CreateCommand.PaperContents(
@@ -254,33 +254,33 @@ class PaperController(
                 )
         }
 
-        data class ContributionDTO(
+        data class ContributionRequestPart(
             @field:NotBlank
             val label: String,
             val classes: Set<ThingId>?,
             @field:Valid
             @field:Size(min = 1)
-            val statements: Map<String, List<StatementObjectDefinitionDTO>>,
+            val statements: Map<String, List<StatementObjectRequest>>,
         ) {
-            fun toCreateCommand(): ContributionDefinition =
-                ContributionDefinition(
+            fun toCreateCommand(): CreateContributionCommandPart =
+                CreateContributionCommandPart(
                     label = label,
                     classes = classes.orEmpty(),
                     statements = statements.mapValues { it.value.map { statement -> statement.toCreateCommand() } }
                 )
-        }
 
-        data class StatementObjectDefinitionDTO(
-            val id: String,
-            @field:Valid
-            @field:Size(min = 1)
-            val statements: Map<String, List<StatementObjectDefinitionDTO>>?,
-        ) {
-            fun toCreateCommand(): ContributionDefinition.StatementObjectDefinition =
-                ContributionDefinition.StatementObjectDefinition(
-                    id = id,
-                    statements = statements?.mapValues { it.value.map { statement -> statement.toCreateCommand() } }
-                )
+            data class StatementObjectRequest(
+                val id: String,
+                @field:Valid
+                @field:Size(min = 1)
+                val statements: Map<String, List<StatementObjectRequest>>?,
+            ) {
+                fun toCreateCommand(): CreateContributionCommandPart.StatementObject =
+                    CreateContributionCommandPart.StatementObject(
+                        id = id,
+                        statements = statements?.mapValues { it.value.map { statement -> statement.toCreateCommand() } }
+                    )
+            }
         }
 
         fun toCreateCommand(contributorId: ContributorId): CreatePaperUseCase.CreateCommand =
@@ -289,7 +289,7 @@ class PaperController(
                 title = title,
                 researchFields = researchFields,
                 identifiers = identifiers?.values.orEmpty(),
-                publicationInfo = publicationInfo?.toPublicationInfoDefinition(),
+                publicationInfo = publicationInfo?.toPublicationInfoCommand(),
                 authors = authors.map { it.toAuthor() },
                 sustainableDevelopmentGoals = sustainableDevelopmentGoals.orEmpty(),
                 mentionings = mentionings.orEmpty(),
@@ -307,12 +307,12 @@ class PaperController(
         @JsonProperty("research_fields")
         val researchFields: List<ThingId>?,
         @field:Valid
-        val identifiers: IdentifierMapDTO?,
+        val identifiers: IdentifierMapRequest?,
         @field:Valid
         @JsonProperty("publication_info")
-        val publicationInfo: PublicationInfoDTO?,
+        val publicationInfo: PublicationInfoRequest?,
         @field:Valid
-        val authors: List<AuthorDTO>?,
+        val authors: List<AuthorRequest>?,
         @JsonProperty("sdgs")
         val sustainableDevelopmentGoals: Set<ThingId>?,
         val mentionings: Set<ThingId>?,
@@ -330,7 +330,7 @@ class PaperController(
                 title = title,
                 researchFields = researchFields,
                 identifiers = identifiers?.values,
-                publicationInfo = publicationInfo?.toPublicationInfoDefinition(),
+                publicationInfo = publicationInfo?.toPublicationInfoCommand(),
                 authors = authors?.map { it.toAuthor() },
                 sustainableDevelopmentGoals = sustainableDevelopmentGoals,
                 mentionings = mentionings,
@@ -343,15 +343,15 @@ class PaperController(
 
     data class CreateContributionRequest(
         @field:Valid
-        val resources: Map<String, ResourceDefinitionDTO>?,
+        val resources: Map<String, CreateResourceRequestPart>?,
         @field:Valid
-        val literals: Map<String, LiteralDefinitionDTO>?,
+        val literals: Map<String, CreateLiteralRequestPart>?,
         @field:Valid
-        val predicates: Map<String, PredicateDefinitionDTO>?,
+        val predicates: Map<String, CreatePredicateRequestPart>?,
         @field:Valid
-        val lists: Map<String, ListDefinitionDTO>?,
+        val lists: Map<String, CreateListRequestPart>?,
         @field:Valid
-        val contribution: CreatePaperRequest.ContributionDTO,
+        val contribution: CreatePaperRequest.ContributionRequestPart,
         @JsonProperty("extraction_method")
         val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     ) {
@@ -375,7 +375,7 @@ class PaperController(
         val description: String,
         @field:Valid
         @field:Size(min = 1)
-        val authors: List<AuthorDTO>,
+        val authors: List<AuthorRequest>,
     ) {
         fun toPublishCommand(id: ThingId, contributorId: ContributorId): PublishPaperUseCase.PublishCommand =
             PublishPaperUseCase.PublishCommand(

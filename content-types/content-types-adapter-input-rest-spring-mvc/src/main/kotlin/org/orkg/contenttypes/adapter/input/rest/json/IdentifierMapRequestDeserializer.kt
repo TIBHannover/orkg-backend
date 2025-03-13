@@ -5,15 +5,15 @@ import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonDeserializer
-import org.orkg.contenttypes.adapter.input.rest.IdentifierMapDTO
+import org.orkg.contenttypes.adapter.input.rest.IdentifierMapRequest
 
-class IdentifierMapDTODeserializer : JsonDeserializer<IdentifierMapDTO>() {
+class IdentifierMapRequestDeserializer : JsonDeserializer<IdentifierMapRequest>() {
     private val typeReference = object : TypeReference<Map<String, List<String?>>>() {}
 
     override fun deserialize(
         p: JsonParser,
         ctxt: DeserializationContext,
-    ): IdentifierMapDTO {
+    ): IdentifierMapRequest {
         val value = p.codec.readValue(p, typeReference).mapValues { (key, value) ->
             value.mapIndexed { index, it ->
                 it ?: throw JsonParseException(
@@ -21,7 +21,7 @@ class IdentifierMapDTODeserializer : JsonDeserializer<IdentifierMapDTO>() {
                 )
             }
         }
-        return IdentifierMapDTO(value)
+        return IdentifierMapRequest(value)
     }
 
     private fun fieldPath(jsonParser: JsonParser, key: String, index: Int): String =

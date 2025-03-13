@@ -17,7 +17,7 @@ import org.orkg.contenttypes.domain.actions.CreateSmartReviewSectionCommand
 import org.orkg.contenttypes.domain.actions.CreateSmartReviewSectionState
 import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyUpdater
 import org.orkg.contenttypes.domain.actions.smartreviews.AbstractSmartReviewSectionCreator
-import org.orkg.contenttypes.input.SmartReviewSectionDefinition
+import org.orkg.contenttypes.input.AbstractSmartReviewSectionCommand
 import org.orkg.contenttypes.input.testing.fixtures.createSmartReviewComparisonSectionCommand
 import org.orkg.contenttypes.input.testing.fixtures.createSmartReviewOntologySectionCommand
 import org.orkg.contenttypes.input.testing.fixtures.createSmartReviewPredicateSectionCommand
@@ -54,7 +54,7 @@ internal class SmartReviewSectionCreatorUnitTest : MockkBaseTest {
         every {
             abstractSmartReviewSectionCreator.create(
                 contributorId = command.contributorId,
-                section = command as SmartReviewSectionDefinition
+                section = command as AbstractSmartReviewSectionCommand
             )
         } returns sectionId
         every {
@@ -77,7 +77,7 @@ internal class SmartReviewSectionCreatorUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             abstractSmartReviewSectionCreator.create(
                 contributorId = command.contributorId,
-                section = command as SmartReviewSectionDefinition
+                section = command as AbstractSmartReviewSectionCommand
             )
         }
         verify(exactly = 1) {
@@ -117,7 +117,7 @@ internal class SmartReviewSectionCreatorUnitTest : MockkBaseTest {
         every {
             abstractSmartReviewSectionCreator.create(
                 contributorId = command.contributorId,
-                section = command as SmartReviewSectionDefinition
+                section = command as AbstractSmartReviewSectionCommand
             )
         } returns sectionId
         every {
@@ -139,7 +139,7 @@ internal class SmartReviewSectionCreatorUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             abstractSmartReviewSectionCreator.create(
                 contributorId = command.contributorId,
-                section = command as SmartReviewSectionDefinition
+                section = command as AbstractSmartReviewSectionCommand
             )
         }
         verify(exactly = 1) {
@@ -178,7 +178,7 @@ internal class SmartReviewSectionCreatorUnitTest : MockkBaseTest {
         every {
             abstractSmartReviewSectionCreator.create(
                 contributorId = command.contributorId,
-                section = command as SmartReviewSectionDefinition
+                section = command as AbstractSmartReviewSectionCommand
             )
         } returns sectionId
         every {
@@ -200,7 +200,7 @@ internal class SmartReviewSectionCreatorUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             abstractSmartReviewSectionCreator.create(
                 contributorId = command.contributorId,
-                section = command as SmartReviewSectionDefinition
+                section = command as AbstractSmartReviewSectionCommand
             )
         }
         verify(exactly = 1) {

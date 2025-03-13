@@ -3,7 +3,7 @@ package org.orkg.contenttypes.domain.actions
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.TemplateProperty
-import org.orkg.contenttypes.input.TemplatePropertyDefinition
+import org.orkg.contenttypes.input.TemplatePropertyCommand
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
@@ -31,7 +31,7 @@ class AbstractTemplatePropertiesUpdater(
     internal fun update(
         contributorId: ContributorId,
         subjectId: ThingId,
-        newProperties: List<TemplatePropertyDefinition>,
+        newProperties: List<TemplatePropertyCommand>,
         oldProperties: List<TemplateProperty>,
         statements: Map<ThingId, List<GeneralStatement>>,
     ) {

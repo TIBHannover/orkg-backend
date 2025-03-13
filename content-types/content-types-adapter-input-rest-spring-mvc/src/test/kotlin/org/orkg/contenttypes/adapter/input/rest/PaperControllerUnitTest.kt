@@ -22,9 +22,9 @@ import org.orkg.common.json.CommonJacksonModule
 import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.contenttypes.adapter.input.rest.PaperController.CreateContributionRequest
 import org.orkg.contenttypes.adapter.input.rest.PaperController.CreatePaperRequest
-import org.orkg.contenttypes.adapter.input.rest.PaperController.CreatePaperRequest.ContributionDTO
-import org.orkg.contenttypes.adapter.input.rest.PaperController.CreatePaperRequest.PaperContentsDTO
-import org.orkg.contenttypes.adapter.input.rest.PaperController.CreatePaperRequest.StatementObjectDefinitionDTO
+import org.orkg.contenttypes.adapter.input.rest.PaperController.CreatePaperRequest.ContributionRequestPart
+import org.orkg.contenttypes.adapter.input.rest.PaperController.CreatePaperRequest.ContributionRequestPart.StatementObjectRequest
+import org.orkg.contenttypes.adapter.input.rest.PaperController.CreatePaperRequest.PaperContentsRequest
 import org.orkg.contenttypes.adapter.input.rest.PaperController.UpdatePaperRequest
 import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
 import org.orkg.contenttypes.domain.AmbiguousAuthor
@@ -1362,39 +1362,39 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
         CreatePaperRequest(
             title = "example paper",
             researchFields = listOf(ThingId("R12")),
-            identifiers = IdentifierMapDTO(mapOf("doi" to listOf("10.48550 / arXiv.2304.05327"))),
-            publicationInfo = PublicationInfoDTO(
+            identifiers = IdentifierMapRequest(mapOf("doi" to listOf("10.48550 / arXiv.2304.05327"))),
+            publicationInfo = PublicationInfoRequest(
                 publishedMonth = 5,
                 publishedYear = 2015,
                 publishedIn = "conference",
                 url = ParsedIRI("https://www.example.org")
             ),
             authors = listOf(
-                AuthorDTO(
+                AuthorRequest(
                     id = ThingId("R123"),
                     name = "Author with id",
                     identifiers = null,
                     homepage = null
                 ),
-                AuthorDTO(
+                AuthorRequest(
                     id = null,
                     name = "Author with orcid",
-                    identifiers = IdentifierMapDTO(mapOf("orcid" to listOf("0000-1111-2222-3333"))),
+                    identifiers = IdentifierMapRequest(mapOf("orcid" to listOf("0000-1111-2222-3333"))),
                     homepage = null
                 ),
-                AuthorDTO(
+                AuthorRequest(
                     id = ThingId("R456"),
                     name = "Author with id and orcid",
-                    identifiers = IdentifierMapDTO(mapOf("orcid" to listOf("1111-2222-3333-4444"))),
+                    identifiers = IdentifierMapRequest(mapOf("orcid" to listOf("1111-2222-3333-4444"))),
                     homepage = null
                 ),
-                AuthorDTO(
+                AuthorRequest(
                     id = null,
                     name = "Author with homepage",
                     identifiers = null,
                     homepage = ParsedIRI("https://example.org/author")
                 ),
-                AuthorDTO(
+                AuthorRequest(
                     id = null,
                     name = "Author that just has a name",
                     identifiers = null,
@@ -1409,66 +1409,66 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             organizations = listOf(
                 OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e")
             ),
-            contents = PaperContentsDTO(
+            contents = PaperContentsRequest(
                 resources = mapOf(
-                    "#temp1" to ResourceDefinitionDTO(
+                    "#temp1" to CreateResourceRequestPart(
                         label = "MOTO",
                         classes = setOf(ThingId("Result"))
                     )
                 ),
                 literals = mapOf(
-                    "#temp2" to LiteralDefinitionDTO(
+                    "#temp2" to CreateLiteralRequestPart(
                         label = "0.1",
                         dataType = "xsd:decimal"
                     )
                 ),
                 predicates = mapOf(
-                    "#temp3" to PredicateDefinitionDTO(
+                    "#temp3" to CreatePredicateRequestPart(
                         label = "hasResult",
                         description = "has result"
                     )
                 ),
                 lists = mapOf(
-                    "#temp4" to ListDefinitionDTO(
+                    "#temp4" to CreateListRequestPart(
                         label = "list",
                         elements = listOf("#temp1", "C123")
                     )
                 ),
                 contributions = listOf(
-                    ContributionDTO(
+                    ContributionRequestPart(
                         label = "Contribution 1",
                         classes = setOf(ThingId("C123")),
                         statements = mapOf(
                             "P32" to listOf(
-                                StatementObjectDefinitionDTO(
+                                StatementObjectRequest(
                                     id = "R3003",
                                     statements = null
                                 )
                             ),
                             "HAS_EVALUATION" to listOf(
-                                StatementObjectDefinitionDTO(
+                                StatementObjectRequest(
                                     id = "#temp1",
                                     statements = null
                                 ),
-                                StatementObjectDefinitionDTO(
+                                StatementObjectRequest(
                                     id = "R3004",
                                     statements = mapOf(
                                         "#temp3" to listOf(
-                                            StatementObjectDefinitionDTO(
+                                            StatementObjectRequest(
                                                 id = "R3003",
                                                 statements = null
                                             ),
-                                            StatementObjectDefinitionDTO(
+                                            StatementObjectRequest(
                                                 id = "#temp2",
                                                 statements = null
                                             ),
-                                            StatementObjectDefinitionDTO(
+                                            StatementObjectRequest(
                                                 id = "#temp4",
                                                 statements = null
                                             )
                                         ),
                                         "P32" to listOf(
-                                            StatementObjectDefinitionDTO(
+                                            StatementObjectRequest(
                                                 id = "#temp2",
                                                 statements = null
                                             )
@@ -1487,39 +1487,39 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
         UpdatePaperRequest(
             title = "example paper",
             researchFields = listOf(ThingId("R14")),
-            identifiers = IdentifierMapDTO(mapOf("doi" to listOf("10.48550/arXiv.2304.05327"))),
-            publicationInfo = PublicationInfoDTO(
+            identifiers = IdentifierMapRequest(mapOf("doi" to listOf("10.48550/arXiv.2304.05327"))),
+            publicationInfo = PublicationInfoRequest(
                 publishedMonth = 5,
                 publishedYear = 2015,
                 publishedIn = "conference",
                 url = ParsedIRI("https://www.example.org")
             ),
             authors = listOf(
-                AuthorDTO(
+                AuthorRequest(
                     id = ThingId("R123"),
                     name = "Author with id",
                     identifiers = null,
                     homepage = null
                 ),
-                AuthorDTO(
+                AuthorRequest(
                     id = null,
                     name = "Author with orcid",
-                    identifiers = IdentifierMapDTO(mapOf("orcid" to listOf("0000-1111-2222-3333"))),
+                    identifiers = IdentifierMapRequest(mapOf("orcid" to listOf("0000-1111-2222-3333"))),
                     homepage = null
                 ),
-                AuthorDTO(
+                AuthorRequest(
                     id = ThingId("R456"),
                     name = "Author with id and orcid",
-                    identifiers = IdentifierMapDTO(mapOf("orcid" to listOf("1111-2222-3333-4444"))),
+                    identifiers = IdentifierMapRequest(mapOf("orcid" to listOf("1111-2222-3333-4444"))),
                     homepage = null
                 ),
-                AuthorDTO(
+                AuthorRequest(
                     id = null,
                     name = "Author with homepage",
                     identifiers = null,
                     homepage = ParsedIRI("https://example.org/author")
                 ),
-                AuthorDTO(
+                AuthorRequest(
                     id = null,
                     name = "Author that just has a name",
                     identifiers = null,
@@ -1547,63 +1547,63 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
     private fun createContributionRequest() =
         CreateContributionRequest(
             resources = mapOf(
-                "#temp1" to ResourceDefinitionDTO(
+                "#temp1" to CreateResourceRequestPart(
                     label = "MOTO",
                     classes = setOf(ThingId("Result"))
                 )
             ),
             literals = mapOf(
-                "#temp2" to LiteralDefinitionDTO(
+                "#temp2" to CreateLiteralRequestPart(
                     label = "0.1",
                     dataType = "xsd:decimal"
                 )
             ),
             predicates = mapOf(
-                "#temp3" to PredicateDefinitionDTO(
+                "#temp3" to CreatePredicateRequestPart(
                     label = "hasResult",
                     description = "has result"
                 )
             ),
             lists = mapOf(
-                "#temp4" to ListDefinitionDTO(
+                "#temp4" to CreateListRequestPart(
                     label = "list",
                     elements = listOf("#temp1", "C123")
                 )
             ),
-            contribution = ContributionDTO(
+            contribution = ContributionRequestPart(
                 label = "Contribution 1",
                 classes = setOf(ThingId("C123")),
                 statements = mapOf(
                     "P32" to listOf(
-                        StatementObjectDefinitionDTO(
+                        StatementObjectRequest(
                             id = "R3003",
                             statements = null
                         )
                     ),
                     "HAS_EVALUATION" to listOf(
-                        StatementObjectDefinitionDTO(
+                        StatementObjectRequest(
                             id = "#temp1",
                             statements = null
                         ),
-                        StatementObjectDefinitionDTO(
+                        StatementObjectRequest(
                             id = "R3004",
                             statements = mapOf(
                                 "#temp3" to listOf(
-                                    StatementObjectDefinitionDTO(
+                                    StatementObjectRequest(
                                         id = "R3003",
                                         statements = null
                                     ),
-                                    StatementObjectDefinitionDTO(
+                                    StatementObjectRequest(
                                         id = "#temp2",
                                         statements = null
                                     ),
-                                    StatementObjectDefinitionDTO(
+                                    StatementObjectRequest(
                                         id = "#temp4",
                                         statements = null
                                     )
                                 ),
                                 "P32" to listOf(
-                                    StatementObjectDefinitionDTO(
+                                    StatementObjectRequest(
                                         id = "#temp2",
                                         statements = null
                                     )

@@ -2,9 +2,9 @@ package org.orkg.contenttypes.domain.actions.literaturelists
 
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.input.LiteratureListListSectionDefinition
-import org.orkg.contenttypes.input.LiteratureListSectionDefinition
-import org.orkg.contenttypes.input.LiteratureListTextSectionDefinition
+import org.orkg.contenttypes.input.AbstractLiteratureListListSectionCommand
+import org.orkg.contenttypes.input.AbstractLiteratureListSectionCommand
+import org.orkg.contenttypes.input.AbstractLiteratureListTextSectionCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
@@ -22,16 +22,16 @@ class AbstractLiteratureListSectionCreator(
 ) {
     internal fun create(
         contributorId: ContributorId,
-        section: LiteratureListSectionDefinition,
+        section: AbstractLiteratureListSectionCommand,
     ): ThingId =
         when (section) {
-            is LiteratureListListSectionDefinition -> createListSection(contributorId, section)
-            is LiteratureListTextSectionDefinition -> createTextSection(contributorId, section)
+            is AbstractLiteratureListListSectionCommand -> createListSection(contributorId, section)
+            is AbstractLiteratureListTextSectionCommand -> createTextSection(contributorId, section)
         }
 
     internal fun createListSectionEntry(
         contributorId: ContributorId,
-        entry: LiteratureListListSectionDefinition.Entry,
+        entry: AbstractLiteratureListListSectionCommand.Entry,
     ): ThingId {
         val entryId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
@@ -69,7 +69,7 @@ class AbstractLiteratureListSectionCreator(
 
     private fun createListSection(
         contributorId: ContributorId,
-        section: LiteratureListListSectionDefinition,
+        section: AbstractLiteratureListListSectionCommand,
     ): ThingId {
         val sectionId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
@@ -94,7 +94,7 @@ class AbstractLiteratureListSectionCreator(
 
     private fun createTextSection(
         contributorId: ContributorId,
-        section: LiteratureListTextSectionDefinition,
+        section: AbstractLiteratureListTextSectionCommand,
     ): ThingId {
         val sectionId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(

@@ -10,12 +10,12 @@ import org.orkg.contenttypes.domain.SmartReviewTextSection
 import org.orkg.contenttypes.domain.SmartReviewVisualizationSection
 import org.orkg.contenttypes.domain.actions.SingleStatementPropertyUpdater
 import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyUpdater
-import org.orkg.contenttypes.input.SmartReviewComparisonSectionDefinition
-import org.orkg.contenttypes.input.SmartReviewOntologySectionDefinition
-import org.orkg.contenttypes.input.SmartReviewPredicateSectionDefinition
-import org.orkg.contenttypes.input.SmartReviewResourceSectionDefinition
-import org.orkg.contenttypes.input.SmartReviewTextSectionDefinition
-import org.orkg.contenttypes.input.SmartReviewVisualizationSectionDefinition
+import org.orkg.contenttypes.input.AbstractSmartReviewComparisonSectionCommand
+import org.orkg.contenttypes.input.AbstractSmartReviewOntologySectionCommand
+import org.orkg.contenttypes.input.AbstractSmartReviewPredicateSectionCommand
+import org.orkg.contenttypes.input.AbstractSmartReviewResourceSectionCommand
+import org.orkg.contenttypes.input.AbstractSmartReviewTextSectionCommand
+import org.orkg.contenttypes.input.AbstractSmartReviewVisualizationSectionCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Predicates
@@ -43,7 +43,7 @@ class AbstractSmartReviewSectionUpdater(
 
     internal fun updateComparisonSection(
         contributorId: ContributorId,
-        newSection: SmartReviewComparisonSectionDefinition,
+        newSection: AbstractSmartReviewComparisonSectionCommand,
         oldSection: SmartReviewComparisonSection,
         statements: Map<ThingId, List<GeneralStatement>>,
     ) {
@@ -69,7 +69,7 @@ class AbstractSmartReviewSectionUpdater(
 
     internal fun updateVisualizationSection(
         contributorId: ContributorId,
-        newSection: SmartReviewVisualizationSectionDefinition,
+        newSection: AbstractSmartReviewVisualizationSectionCommand,
         oldSection: SmartReviewVisualizationSection,
         statements: Map<ThingId, List<GeneralStatement>>,
     ) {
@@ -95,7 +95,7 @@ class AbstractSmartReviewSectionUpdater(
 
     internal fun updateResourceSection(
         contributorId: ContributorId,
-        newSection: SmartReviewResourceSectionDefinition,
+        newSection: AbstractSmartReviewResourceSectionCommand,
         oldSection: SmartReviewResourceSection,
         statements: Map<ThingId, List<GeneralStatement>>,
     ) {
@@ -121,7 +121,7 @@ class AbstractSmartReviewSectionUpdater(
 
     internal fun updatePredicateSection(
         contributorId: ContributorId,
-        newSection: SmartReviewPredicateSectionDefinition,
+        newSection: AbstractSmartReviewPredicateSectionCommand,
         oldSection: SmartReviewPredicateSection,
         statements: Map<ThingId, List<GeneralStatement>>,
     ) {
@@ -147,7 +147,7 @@ class AbstractSmartReviewSectionUpdater(
 
     internal fun updateOntologySection(
         contributorId: ContributorId,
-        newSection: SmartReviewOntologySectionDefinition,
+        newSection: AbstractSmartReviewOntologySectionCommand,
         oldSection: SmartReviewOntologySection,
         statements: Map<ThingId, List<GeneralStatement>>,
     ) {
@@ -182,7 +182,7 @@ class AbstractSmartReviewSectionUpdater(
 
     internal fun updateTextSection(
         contributorId: ContributorId,
-        newSection: SmartReviewTextSectionDefinition,
+        newSection: AbstractSmartReviewTextSectionCommand,
         oldSection: SmartReviewTextSection,
         statements: Map<ThingId, List<GeneralStatement>>,
     ) {

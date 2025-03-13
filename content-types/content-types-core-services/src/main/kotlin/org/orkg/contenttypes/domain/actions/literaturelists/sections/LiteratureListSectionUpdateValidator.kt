@@ -7,7 +7,7 @@ import org.orkg.contenttypes.domain.UnrelatedLiteratureListSection
 import org.orkg.contenttypes.domain.actions.UpdateLiteratureListSectionCommand
 import org.orkg.contenttypes.domain.actions.UpdateLiteratureListSectionState
 import org.orkg.contenttypes.domain.actions.literaturelists.AbstractLiteratureListSectionValidator
-import org.orkg.contenttypes.input.LiteratureListSectionDefinition
+import org.orkg.contenttypes.input.AbstractLiteratureListSectionCommand
 import org.orkg.contenttypes.input.UpdateLiteratureListSectionUseCase
 import org.orkg.graph.output.ResourceRepository
 
@@ -27,7 +27,7 @@ class LiteratureListSectionUpdateValidator(
                 throw LiteratureListSectionTypeMismatch.mustBeListSection()
             }
             abstractLiteratureListSectionValidator.validate(
-                section = command as LiteratureListSectionDefinition,
+                section = command as AbstractLiteratureListSectionCommand,
                 validIds = section.entries.map { it.value.id }.toMutableSet()
             )
         } else if (command is UpdateLiteratureListSectionUseCase.UpdateTextSectionCommand) {
@@ -35,7 +35,7 @@ class LiteratureListSectionUpdateValidator(
                 throw LiteratureListSectionTypeMismatch.mustBeTextSection()
             }
             abstractLiteratureListSectionValidator.validate(
-                section = command as LiteratureListSectionDefinition,
+                section = command as AbstractLiteratureListSectionCommand,
                 validIds = mutableSetOf()
             )
         }

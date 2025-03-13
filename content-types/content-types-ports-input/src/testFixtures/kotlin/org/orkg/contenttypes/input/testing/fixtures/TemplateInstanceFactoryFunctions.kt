@@ -3,11 +3,11 @@ package org.orkg.contenttypes.input.testing.fixtures
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.input.ClassDefinition
-import org.orkg.contenttypes.input.ListDefinition
-import org.orkg.contenttypes.input.LiteralDefinition
-import org.orkg.contenttypes.input.PredicateDefinition
-import org.orkg.contenttypes.input.ResourceDefinition
+import org.orkg.contenttypes.input.CreateClassCommandPart
+import org.orkg.contenttypes.input.CreateListCommandPart
+import org.orkg.contenttypes.input.CreateLiteralCommandPart
+import org.orkg.contenttypes.input.CreatePredicateCommandPart
+import org.orkg.contenttypes.input.CreateResourceCommandPart
 import org.orkg.contenttypes.input.UpdateTemplateInstanceUseCase
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
@@ -28,34 +28,34 @@ fun updateTemplateInstanceCommand() = UpdateTemplateInstanceUseCase.UpdateComman
         )
     ),
     resources = mapOf(
-        "#temp1" to ResourceDefinition(
+        "#temp1" to CreateResourceCommandPart(
             label = "MOTO",
             classes = setOf(ThingId("R2000"))
         )
     ),
     literals = mapOf(
-        "#temp2" to LiteralDefinition(
+        "#temp2" to CreateLiteralCommandPart(
             label = "0.1",
             dataType = Literals.XSD.DECIMAL.prefixedUri
         )
     ),
     predicates = mapOf(
-        "#temp3" to PredicateDefinition(
+        "#temp3" to CreatePredicateCommandPart(
             label = "hasResult",
             description = "has result"
         ),
-        "#temp4" to PredicateDefinition(
+        "#temp4" to CreatePredicateCommandPart(
             label = "hasLiteral"
         )
     ),
     lists = mapOf(
-        "#temp5" to ListDefinition(
+        "#temp5" to CreateListCommandPart(
             label = "list",
             elements = listOf("R465")
         )
     ),
     classes = mapOf(
-        "#temp6" to ClassDefinition(
+        "#temp6" to CreateClassCommandPart(
             label = "some class",
             uri = ParsedIRI("https://orkg.org/C1")
         )

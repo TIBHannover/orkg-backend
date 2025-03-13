@@ -4,7 +4,7 @@ import org.orkg.contenttypes.domain.actions.CreateSmartReviewSectionCommand
 import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyUpdater
 import org.orkg.contenttypes.domain.actions.smartreviews.AbstractSmartReviewSectionCreator
 import org.orkg.contenttypes.domain.actions.smartreviews.sections.CreateSmartReviewSectionAction.State
-import org.orkg.contenttypes.input.SmartReviewSectionDefinition
+import org.orkg.contenttypes.input.AbstractSmartReviewSectionCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.StatementUseCases
@@ -31,7 +31,7 @@ class SmartReviewSectionCreator(
     override fun invoke(command: CreateSmartReviewSectionCommand, state: State): State {
         val sectionId = abstractSmartReviewSectionCreator.create(
             contributorId = command.contributorId,
-            section = command as SmartReviewSectionDefinition
+            section = command as AbstractSmartReviewSectionCommand
         )
         if (command.index != null && command.index!! >= 0) {
             val sectionStatements = state.statements[state.contributionId!!].orEmpty()

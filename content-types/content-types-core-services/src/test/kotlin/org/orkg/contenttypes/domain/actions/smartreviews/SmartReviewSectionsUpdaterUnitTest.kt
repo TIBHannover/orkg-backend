@@ -11,8 +11,8 @@ import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyUpdater
 import org.orkg.contenttypes.domain.actions.UpdateSmartReviewState
 import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
-import org.orkg.contenttypes.input.testing.fixtures.smartReviewTextSectionDefinition
-import org.orkg.contenttypes.input.testing.fixtures.toSmartReviewSectionDefinition
+import org.orkg.contenttypes.input.testing.fixtures.smartReviewTextSectionCommand
+import org.orkg.contenttypes.input.testing.fixtures.toSmartReviewSectionCommand
 import org.orkg.contenttypes.input.testing.fixtures.updateSmartReviewCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
@@ -48,7 +48,7 @@ internal class SmartReviewSectionsUpdaterUnitTest : MockkBaseTest {
     fun `Given a smart review update command, when sections are unchanged, it does nothing`() {
         val smartReview = createSmartReview()
         val command = updateSmartReviewCommand().copy(
-            sections = smartReview.sections.map { it.toSmartReviewSectionDefinition() }
+            sections = smartReview.sections.map { it.toSmartReviewSectionCommand() }
         )
         val state = UpdateSmartReviewState(
             smartReview = smartReview
@@ -61,7 +61,7 @@ internal class SmartReviewSectionsUpdaterUnitTest : MockkBaseTest {
     fun `Given a smart review update command, when a section is removed, it deletes the old section`() {
         val smartReview = createSmartReview()
         val command = updateSmartReviewCommand().copy(
-            sections = smartReview.sections.dropLast(1).map { it.toSmartReviewSectionDefinition() }
+            sections = smartReview.sections.dropLast(1).map { it.toSmartReviewSectionCommand() }
         )
         val contributionId = ThingId("R1144651")
         val contributionResource = createResource(contributionId, classes = setOf(Classes.contributionSmartReview))
@@ -120,10 +120,10 @@ internal class SmartReviewSectionsUpdaterUnitTest : MockkBaseTest {
     @Test
     fun `Given a smart review update command, when a section is added, it creates a new section`() {
         val smartReview = createSmartReview()
-        val newSection = smartReviewTextSectionDefinition().copy(text = "new section")
+        val newSection = smartReviewTextSectionCommand().copy(text = "new section")
         val contributionId = ThingId("R1144651")
         val command = updateSmartReviewCommand().copy(
-            sections = smartReview.sections.map { it.toSmartReviewSectionDefinition() } + newSection
+            sections = smartReview.sections.map { it.toSmartReviewSectionCommand() } + newSection
         )
         val contributionResource = createResource(contributionId, classes = setOf(Classes.contributionSmartReview))
         val state = UpdateSmartReviewState(
@@ -170,10 +170,10 @@ internal class SmartReviewSectionsUpdaterUnitTest : MockkBaseTest {
     @Test
     fun `Given a smart review update command, when a section is replaced, it deletes the old section and creates a new one`() {
         val smartReview = createSmartReview()
-        val newSection = smartReviewTextSectionDefinition().copy(text = "new section")
+        val newSection = smartReviewTextSectionCommand().copy(text = "new section")
         val contributionId = ThingId("R1144651")
         val command = updateSmartReviewCommand().copy(
-            sections = smartReview.sections.dropLast(1).map { it.toSmartReviewSectionDefinition() } + newSection
+            sections = smartReview.sections.dropLast(1).map { it.toSmartReviewSectionCommand() } + newSection
         )
         val contributionResource = createResource(contributionId, classes = setOf(Classes.contributionSmartReview))
         val state = UpdateSmartReviewState(

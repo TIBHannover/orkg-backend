@@ -12,12 +12,12 @@ import org.orkg.common.Either
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.ThingIsNotAClass
-import org.orkg.contenttypes.input.ClassDefinition
+import org.orkg.contenttypes.input.CreateClassCommandPart
+import org.orkg.contenttypes.input.CreateListCommandPart
+import org.orkg.contenttypes.input.CreateLiteralCommandPart
 import org.orkg.contenttypes.input.CreatePaperUseCase
-import org.orkg.contenttypes.input.ListDefinition
-import org.orkg.contenttypes.input.LiteralDefinition
-import org.orkg.contenttypes.input.PredicateDefinition
-import org.orkg.contenttypes.input.ResourceDefinition
+import org.orkg.contenttypes.input.CreatePredicateCommandPart
+import org.orkg.contenttypes.input.CreateResourceCommandPart
 import org.orkg.contenttypes.input.testing.fixtures.updateTemplateInstanceCommand
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.InvalidLiteralDatatype
@@ -47,25 +47,25 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
     fun `Given paper contents, when valid, it returns success`() {
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
             resources = mapOf(
-                "#temp1" to ResourceDefinition(
+                "#temp1" to CreateResourceCommandPart(
                     label = "MOTO",
                     classes = setOf(ThingId("C2000"))
                 )
             ),
             literals = mapOf(
-                "#temp2" to LiteralDefinition(
+                "#temp2" to CreateLiteralCommandPart(
                     label = "0.1",
                     dataType = Literals.XSD.DECIMAL.prefixedUri
                 )
             ),
             predicates = mapOf(
-                "#temp3" to PredicateDefinition(
+                "#temp3" to CreatePredicateCommandPart(
                     label = "hasResult",
                     description = "has result"
                 )
             ),
             lists = mapOf(
-                "#temp4" to ListDefinition(
+                "#temp4" to CreateListCommandPart(
                     label = "list",
                     elements = listOf("R123", "#temp1")
                 )
@@ -102,7 +102,7 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
     fun `Given paper contents, when specified class id for resource is not resolvable, it throws an exception`() {
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
             resources = mapOf(
-                "#temp1" to ResourceDefinition(
+                "#temp1" to CreateResourceCommandPart(
                     label = "MOTO",
                     classes = setOf(ThingId("R2000"))
                 )
@@ -129,7 +129,7 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
     fun `Given paper contents, when specified class id for resource does not resolve to a class, it throws an exception`() {
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
             resources = mapOf(
-                "#temp1" to ResourceDefinition(
+                "#temp1" to CreateResourceCommandPart(
                     label = "MOTO",
                     classes = setOf(ThingId("R2000"))
                 )
@@ -157,7 +157,7 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
     fun `Given paper contents, when specified class id for a resource is reserved, it throws an exception`() {
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
             resources = mapOf(
-                "#temp1" to ResourceDefinition(
+                "#temp1" to CreateResourceCommandPart(
                     label = "MOTO",
                     classes = setOf(reservedClassIds.first())
                 )
@@ -180,7 +180,7 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
     fun `Given paper contents, when label of resource is invalid, it throws an exception`() {
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
             resources = mapOf(
-                "#temp1" to ResourceDefinition(
+                "#temp1" to CreateResourceCommandPart(
                     label = "\n"
                 )
             ),
@@ -203,7 +203,7 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
             resources = emptyMap(),
             literals = mapOf(
-                "#temp1" to LiteralDefinition(
+                "#temp1" to CreateLiteralCommandPart(
                     label = "a".repeat(MAX_LABEL_LENGTH + 1)
                 )
             ),
@@ -225,7 +225,7 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
             resources = emptyMap(),
             literals = mapOf(
-                "#temp1" to LiteralDefinition(
+                "#temp1" to CreateLiteralCommandPart(
                     label = "not a number",
                     dataType = Literals.XSD.DECIMAL.prefixedUri
                 )
@@ -248,7 +248,7 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
             resources = emptyMap(),
             literals = mapOf(
-                "#temp1" to LiteralDefinition(
+                "#temp1" to CreateLiteralCommandPart(
                     label = "imvalid",
                     dataType = "foo_bar:string"
                 )
@@ -272,7 +272,7 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
             resources = emptyMap(),
             literals = emptyMap(),
             predicates = mapOf(
-                "#temp1" to PredicateDefinition(
+                "#temp1" to CreatePredicateCommandPart(
                     label = "\n"
                 )
             ),
@@ -295,7 +295,7 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
             literals = emptyMap(),
             predicates = emptyMap(),
             lists = mapOf(
-                "#temp1" to ListDefinition(
+                "#temp1" to CreateListCommandPart(
                     label = "\n"
                 )
             ),
@@ -319,7 +319,7 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
             predicates = emptyMap(),
             lists = emptyMap(),
             classes = mapOf(
-                "#temp1" to ClassDefinition(
+                "#temp1" to CreateClassCommandPart(
                     label = "\n"
                 )
             )
@@ -343,7 +343,7 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
             predicates = emptyMap(),
             lists = emptyMap(),
             classes = mapOf(
-                "#temp1" to ClassDefinition(
+                "#temp1" to CreateClassCommandPart(
                     label = "irrelevant",
                     uri = uri
                 )
@@ -368,7 +368,7 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
             predicates = emptyMap(),
             lists = emptyMap(),
             classes = mapOf(
-                "#temp1" to ClassDefinition(
+                "#temp1" to CreateClassCommandPart(
                     label = "irrelevant",
                     uri = uri
                 )

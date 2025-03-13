@@ -3,11 +3,11 @@ package org.orkg.contenttypes.adapter.input.rest.json
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonSerializer
 import com.fasterxml.jackson.databind.SerializerProvider
-import org.orkg.contenttypes.adapter.input.rest.IdentifierMapDTO
+import org.orkg.contenttypes.adapter.input.rest.IdentifierMapRequest
 
-class IdentifierMapDTOSerializer : JsonSerializer<IdentifierMapDTO>() {
+class IdentifierMapRequestSerializer : JsonSerializer<IdentifierMapRequest>() {
     override fun serialize(
-        value: IdentifierMapDTO?,
+        value: IdentifierMapRequest?,
         gen: JsonGenerator?,
         serializers: SerializerProvider?,
     ) {

@@ -6,9 +6,9 @@ import org.orkg.contenttypes.domain.EmptyContribution
 import org.orkg.contenttypes.domain.InvalidStatementSubject
 import org.orkg.contenttypes.domain.ThingIsNotAClass
 import org.orkg.contenttypes.domain.ThingIsNotAPredicate
-import org.orkg.contenttypes.input.ContributionDefinition
-import org.orkg.contenttypes.input.ContributionDefinition.StatementObjectDefinition
-import org.orkg.contenttypes.input.ThingDefinitions
+import org.orkg.contenttypes.input.CreateContributionCommandPart
+import org.orkg.contenttypes.input.CreateContributionCommandPart.StatementObject
+import org.orkg.contenttypes.input.CreateThingsCommand
 import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.Label
@@ -24,8 +24,8 @@ abstract class ContributionValidator(
         bakedStatements: MutableSet<BakedStatement>,
         validatedIds: MutableMap<String, Either<String, Thing>>,
         tempIds: Set<String>,
-        thingDefinitions: ThingDefinitions,
-        contributionDefinitions: List<ContributionDefinition>,
+        thingDefinitions: CreateThingsCommand,
+        contributionDefinitions: List<CreateContributionCommandPart>,
     ) {
         contributionDefinitions.forEachIndexed { index, contribution ->
             Label.ofOrNull(contribution.label) ?: throw InvalidLabel()
@@ -57,10 +57,10 @@ abstract class ContributionValidator(
 
     internal fun bakeStatements(
         subject: String,
-        definitions: Map<String, List<StatementObjectDefinition>>,
+        definitions: Map<String, List<StatementObject>>,
         tempIds: Set<String>,
-        thingDefinitions: ThingDefinitions,
-        contributionDefinitions: List<ContributionDefinition>,
+        thingDefinitions: CreateThingsCommand,
+        contributionDefinitions: List<CreateContributionCommandPart>,
         validatedIds: MutableMap<String, Either<String, Thing>>,
         destination: MutableSet<BakedStatement>,
     ) {

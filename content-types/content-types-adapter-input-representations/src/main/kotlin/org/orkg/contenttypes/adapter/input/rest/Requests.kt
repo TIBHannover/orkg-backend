@@ -7,77 +7,77 @@ import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.RealNumber
 import org.orkg.common.ThingId
 import org.orkg.common.validation.NullableNotBlank
-import org.orkg.contenttypes.input.ClassDefinition
-import org.orkg.contenttypes.input.ListDefinition
-import org.orkg.contenttypes.input.LiteralDefinition
-import org.orkg.contenttypes.input.NumberLiteralPropertyDefinition
-import org.orkg.contenttypes.input.OtherLiteralPropertyDefinition
-import org.orkg.contenttypes.input.PredicateDefinition
-import org.orkg.contenttypes.input.ResourceDefinition
-import org.orkg.contenttypes.input.ResourcePropertyDefinition
-import org.orkg.contenttypes.input.RowDefinition
-import org.orkg.contenttypes.input.StringLiteralPropertyDefinition
-import org.orkg.contenttypes.input.TemplatePropertyDefinition
-import org.orkg.contenttypes.input.UntypedPropertyDefinition
+import org.orkg.contenttypes.input.CreateClassCommandPart
+import org.orkg.contenttypes.input.CreateListCommandPart
+import org.orkg.contenttypes.input.CreateLiteralCommandPart
+import org.orkg.contenttypes.input.CreatePredicateCommandPart
+import org.orkg.contenttypes.input.CreateResourceCommandPart
+import org.orkg.contenttypes.input.NumberLiteralPropertyCommand
+import org.orkg.contenttypes.input.OtherLiteralPropertyCommand
+import org.orkg.contenttypes.input.ResourcePropertyCommand
+import org.orkg.contenttypes.input.RowCommand
+import org.orkg.contenttypes.input.StringLiteralPropertyCommand
+import org.orkg.contenttypes.input.TemplatePropertyCommand
+import org.orkg.contenttypes.input.UntypedPropertyCommand
 import org.orkg.graph.domain.Literals
 
-data class ListDefinitionDTO(
+data class CreateListRequestPart(
     @field:NotBlank
     val label: String,
     val elements: List<String>,
 ) {
-    fun toCreateCommand(): ListDefinition =
-        ListDefinition(
+    fun toCreateCommand(): CreateListCommandPart =
+        CreateListCommandPart(
             label = label,
             elements = elements
         )
 }
 
-data class LiteralDefinitionDTO(
+data class CreateLiteralRequestPart(
     @field:NotBlank
     val label: String,
     @JsonProperty("data_type")
     val dataType: String?,
 ) {
-    fun toCreateCommand(): LiteralDefinition =
-        LiteralDefinition(
+    fun toCreateCommand(): CreateLiteralCommandPart =
+        CreateLiteralCommandPart(
             label = label,
             dataType = dataType ?: Literals.XSD.STRING.prefixedUri
         )
 }
 
-data class PredicateDefinitionDTO(
+data class CreatePredicateRequestPart(
     @field:NotBlank
     val label: String,
     @field:NotBlank
     val description: String?,
 ) {
-    fun toCreateCommand(): PredicateDefinition =
-        PredicateDefinition(
+    fun toCreateCommand(): CreatePredicateCommandPart =
+        CreatePredicateCommandPart(
             label = label,
             description = description
         )
 }
 
-data class ResourceDefinitionDTO(
+data class CreateResourceRequestPart(
     @field:NotBlank
     val label: String,
     val classes: Set<ThingId>?,
 ) {
-    fun toCreateCommand(): ResourceDefinition =
-        ResourceDefinition(
+    fun toCreateCommand(): CreateResourceCommandPart =
+        CreateResourceCommandPart(
             label = label,
             classes = classes.orEmpty()
         )
 }
 
-data class ClassDefinitionDTO(
+data class CreateClassRequestPart(
     @field:NotBlank
     val label: String,
     val uri: ParsedIRI? = null,
 ) {
-    fun toCreateCommand(): ClassDefinition =
-        ClassDefinition(
+    fun toCreateCommand(): CreateClassCommandPart =
+        CreateClassCommandPart(
             label = label,
             uri = uri
         )
@@ -91,7 +91,7 @@ sealed interface TemplatePropertyRequest {
     val maxCount: Int?
     val path: ThingId
 
-    fun toTemplatePropertyDefinition(): TemplatePropertyDefinition
+    fun toTemplatePropertyCommand(): TemplatePropertyCommand
 }
 
 data class UntypedPropertyRequest(
@@ -106,8 +106,8 @@ data class UntypedPropertyRequest(
     override val maxCount: Int?,
     override val path: ThingId,
 ) : TemplatePropertyRequest {
-    override fun toTemplatePropertyDefinition(): TemplatePropertyDefinition =
-        UntypedPropertyDefinition(label, placeholder, description, minCount, maxCount, path)
+    override fun toTemplatePropertyCommand(): TemplatePropertyCommand =
+        UntypedPropertyCommand(label, placeholder, description, minCount, maxCount, path)
 }
 
 data class StringLiteralPropertyRequest(
@@ -124,8 +124,8 @@ data class StringLiteralPropertyRequest(
     override val path: ThingId,
     val datatype: ThingId,
 ) : TemplatePropertyRequest {
-    override fun toTemplatePropertyDefinition(): TemplatePropertyDefinition =
-        StringLiteralPropertyDefinition(label, placeholder, description, minCount, maxCount, pattern, path, datatype)
+    override fun toTemplatePropertyCommand(): TemplatePropertyCommand =
+        StringLiteralPropertyCommand(label, placeholder, description, minCount, maxCount, pattern, path, datatype)
 }
 
 data class NumberLiteralPropertyRequest(
@@ -145,8 +145,8 @@ data class NumberLiteralPropertyRequest(
     override val path: ThingId,
     val datatype: ThingId,
 ) : TemplatePropertyRequest {
-    override fun toTemplatePropertyDefinition(): TemplatePropertyDefinition =
-        NumberLiteralPropertyDefinition(label, placeholder, description, minCount, maxCount, minInclusive, maxInclusive, path, datatype)
+    override fun toTemplatePropertyCommand(): TemplatePropertyCommand =
+        NumberLiteralPropertyCommand(label, placeholder, description, minCount, maxCount, minInclusive, maxInclusive, path, datatype)
 }
 
 data class OtherLiteralPropertyRequest(
@@ -162,8 +162,8 @@ data class OtherLiteralPropertyRequest(
     override val path: ThingId,
     val datatype: ThingId,
 ) : TemplatePropertyRequest {
-    override fun toTemplatePropertyDefinition(): TemplatePropertyDefinition =
-        OtherLiteralPropertyDefinition(label, placeholder, description, minCount, maxCount, path, datatype)
+    override fun toTemplatePropertyCommand(): TemplatePropertyCommand =
+        OtherLiteralPropertyCommand(label, placeholder, description, minCount, maxCount, path, datatype)
 }
 
 data class ResourcePropertyRequest(
@@ -179,19 +179,19 @@ data class ResourcePropertyRequest(
     override val path: ThingId,
     val `class`: ThingId,
 ) : TemplatePropertyRequest {
-    override fun toTemplatePropertyDefinition(): TemplatePropertyDefinition =
-        ResourcePropertyDefinition(label, placeholder, description, minCount, maxCount, path, `class`)
+    override fun toTemplatePropertyCommand(): TemplatePropertyCommand =
+        ResourcePropertyCommand(label, placeholder, description, minCount, maxCount, path, `class`)
 }
 
-data class IdentifierMapDTO(
+data class IdentifierMapRequest(
     val values: Map<String, List<String>>,
 )
 
-data class RowDefinitionDTO(
+data class RowRequest(
     @field:NullableNotBlank
     val label: String?,
     val data: List<String?>,
 ) {
-    fun toRowDefinition(): RowDefinition =
-        RowDefinition(label, data)
+    fun toRowCommand(): RowCommand =
+        RowCommand(label, data)
 }

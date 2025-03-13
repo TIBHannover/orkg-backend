@@ -2,10 +2,10 @@ package org.orkg.mediastorage.testing.fixtures
 
 import org.orkg.common.ContributorId
 import org.orkg.common.testing.fixtures.fixedClock
-import org.orkg.community.input.UpdateOrganizationUseCases
 import org.orkg.mediastorage.domain.Image
 import org.orkg.mediastorage.domain.ImageData
 import org.orkg.mediastorage.domain.ImageId
+import org.orkg.mediastorage.domain.RawImage
 import org.springframework.core.io.ClassPathResource
 import org.springframework.util.MimeType
 import java.io.BufferedReader
@@ -30,11 +30,11 @@ fun loadImage(
     return Image(id, image.data, image.mimeType, createdBy, createdAt ?: OffsetDateTime.now(clock))
 }
 
-fun loadRawImage(uri: URI): UpdateOrganizationUseCases.RawImage {
+fun loadRawImage(uri: URI): RawImage {
     uri.inputStream.use {
         val mimeType = Files.probeContentType(Path(uri.path)).let { path -> MimeType.valueOf(path) }
         val data = ImageData(it.readBytes())
-        return UpdateOrganizationUseCases.RawImage(data, mimeType)
+        return RawImage(data, mimeType)
     }
 }
 

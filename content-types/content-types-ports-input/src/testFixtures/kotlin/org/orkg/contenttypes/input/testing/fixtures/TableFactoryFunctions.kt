@@ -5,13 +5,13 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.input.ClassDefinition
+import org.orkg.contenttypes.input.CreateClassCommandPart
+import org.orkg.contenttypes.input.CreateListCommandPart
+import org.orkg.contenttypes.input.CreateLiteralCommandPart
+import org.orkg.contenttypes.input.CreatePredicateCommandPart
+import org.orkg.contenttypes.input.CreateResourceCommandPart
 import org.orkg.contenttypes.input.CreateTableUseCase
-import org.orkg.contenttypes.input.ListDefinition
-import org.orkg.contenttypes.input.LiteralDefinition
-import org.orkg.contenttypes.input.PredicateDefinition
-import org.orkg.contenttypes.input.ResourceDefinition
-import org.orkg.contenttypes.input.RowDefinition
+import org.orkg.contenttypes.input.RowCommand
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
 
@@ -19,44 +19,44 @@ fun createTableCommand() = CreateTableUseCase.CreateCommand(
     contributorId = ContributorId("460d4019-57c8-4d30-9087-e7e5129e1c24"),
     label = "Table Title",
     resources = mapOf(
-        "#temp1" to ResourceDefinition(
+        "#temp1" to CreateResourceCommandPart(
             label = "MOTO",
             classes = setOf(ThingId("Result"))
         )
     ),
     literals = mapOf(
-        "#temp2" to LiteralDefinition("column 1", Literals.XSD.STRING.prefixedUri),
-        "#temp3" to LiteralDefinition("column 2", Literals.XSD.STRING.prefixedUri),
-        "#temp4" to LiteralDefinition("column 3", Literals.XSD.STRING.prefixedUri)
+        "#temp2" to CreateLiteralCommandPart("column 1", Literals.XSD.STRING.prefixedUri),
+        "#temp3" to CreateLiteralCommandPart("column 2", Literals.XSD.STRING.prefixedUri),
+        "#temp4" to CreateLiteralCommandPart("column 3", Literals.XSD.STRING.prefixedUri)
     ),
     predicates = mapOf(
-        "#temp5" to PredicateDefinition(
+        "#temp5" to CreatePredicateCommandPart(
             label = "hasResult",
             description = "has result"
         )
     ),
     lists = mapOf(
-        "#temp6" to ListDefinition(
+        "#temp6" to CreateListCommandPart(
             label = "list",
             elements = listOf("#temp1", "C123")
         )
     ),
     classes = mapOf(
-        "#temp7" to ClassDefinition(
+        "#temp7" to CreateClassCommandPart(
             label = "class",
             uri = ParsedIRI("https://orkg.org/class/C1")
         )
     ),
     rows = listOf(
-        RowDefinition(
+        RowCommand(
             label = "header",
             data = listOf("#temp1", "#temp2", "#temp3")
         ),
-        RowDefinition(
+        RowCommand(
             label = null,
             data = listOf("R456", "#temp4", "#temp5")
         ),
-        RowDefinition(
+        RowCommand(
             label = "row 2",
             data = listOf("#temp6", null, "#temp7")
         )

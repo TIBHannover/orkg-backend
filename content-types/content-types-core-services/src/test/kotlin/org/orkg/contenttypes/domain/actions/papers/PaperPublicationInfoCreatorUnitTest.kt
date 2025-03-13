@@ -13,7 +13,7 @@ import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreatePaperState
-import org.orkg.contenttypes.input.PublicationInfoDefinition
+import org.orkg.contenttypes.input.PublicationInfoCommand
 import org.orkg.contenttypes.input.testing.fixtures.createPaperCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
@@ -70,7 +70,7 @@ internal class PaperPublicationInfoCreatorUnitTest : MockkBaseTest {
         val paperId = ThingId("R123")
         val month = 5
         val command = createPaperCommand().copy(
-            publicationInfo = PublicationInfoDefinition(
+            publicationInfo = PublicationInfoCommand(
                 publishedMonth = month,
                 publishedYear = null,
                 publishedIn = null,
@@ -138,7 +138,7 @@ internal class PaperPublicationInfoCreatorUnitTest : MockkBaseTest {
         val paperId = ThingId("R123")
         val year = 5L
         val command = createPaperCommand().copy(
-            publicationInfo = PublicationInfoDefinition(
+            publicationInfo = PublicationInfoCommand(
                 publishedMonth = null,
                 publishedYear = year,
                 publishedIn = null,
@@ -206,7 +206,7 @@ internal class PaperPublicationInfoCreatorUnitTest : MockkBaseTest {
         val paperId = ThingId("R123")
         val venue = "Conference"
         val command = createPaperCommand().copy(
-            publicationInfo = PublicationInfoDefinition(
+            publicationInfo = PublicationInfoCommand(
                 publishedMonth = null,
                 publishedYear = null,
                 publishedIn = venue,
@@ -273,7 +273,7 @@ internal class PaperPublicationInfoCreatorUnitTest : MockkBaseTest {
         val paperId = ThingId("R123")
         val venue = "Conference"
         val command = createPaperCommand().copy(
-            publicationInfo = PublicationInfoDefinition(
+            publicationInfo = PublicationInfoCommand(
                 publishedMonth = null,
                 publishedYear = null,
                 publishedIn = venue,
@@ -347,7 +347,7 @@ internal class PaperPublicationInfoCreatorUnitTest : MockkBaseTest {
         val paperId = ThingId("R123")
         val url = ParsedIRI("https://orkg.org")
         val command = createPaperCommand().copy(
-            publicationInfo = PublicationInfoDefinition(
+            publicationInfo = PublicationInfoCommand(
                 publishedMonth = null,
                 publishedYear = null,
                 publishedIn = null,

@@ -17,7 +17,7 @@ import org.orkg.contenttypes.domain.actions.CreateLiteratureListSectionCommand
 import org.orkg.contenttypes.domain.actions.CreateLiteratureListSectionState
 import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyUpdater
 import org.orkg.contenttypes.domain.actions.literaturelists.AbstractLiteratureListSectionCreator
-import org.orkg.contenttypes.input.LiteratureListSectionDefinition
+import org.orkg.contenttypes.input.AbstractLiteratureListSectionCommand
 import org.orkg.contenttypes.input.testing.fixtures.createLiteratureListListSectionCommand
 import org.orkg.contenttypes.input.testing.fixtures.createLiteratureListTextSectionCommand
 import org.orkg.graph.domain.Predicates
@@ -49,7 +49,7 @@ internal class LiteratureListSectionCreatorUnitTest : MockkBaseTest {
         every {
             abstractLiteratureListSectionCreator.create(
                 contributorId = command.contributorId,
-                section = command as LiteratureListSectionDefinition
+                section = command as AbstractLiteratureListSectionCommand
             )
         } returns sectionId
         every {
@@ -72,7 +72,7 @@ internal class LiteratureListSectionCreatorUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             abstractLiteratureListSectionCreator.create(
                 contributorId = command.contributorId,
-                section = command as LiteratureListSectionDefinition
+                section = command as AbstractLiteratureListSectionCommand
             )
         }
         verify(exactly = 1) {
@@ -110,7 +110,7 @@ internal class LiteratureListSectionCreatorUnitTest : MockkBaseTest {
         every {
             abstractLiteratureListSectionCreator.create(
                 contributorId = command.contributorId,
-                section = command as LiteratureListSectionDefinition
+                section = command as AbstractLiteratureListSectionCommand
             )
         } returns sectionId
         every {
@@ -132,7 +132,7 @@ internal class LiteratureListSectionCreatorUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             abstractLiteratureListSectionCreator.create(
                 contributorId = command.contributorId,
-                section = command as LiteratureListSectionDefinition
+                section = command as AbstractLiteratureListSectionCommand
             )
         }
         verify(exactly = 1) {
@@ -169,7 +169,7 @@ internal class LiteratureListSectionCreatorUnitTest : MockkBaseTest {
         every {
             abstractLiteratureListSectionCreator.create(
                 contributorId = command.contributorId,
-                section = command as LiteratureListSectionDefinition
+                section = command as AbstractLiteratureListSectionCommand
             )
         } returns sectionId
         every {
@@ -191,7 +191,7 @@ internal class LiteratureListSectionCreatorUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             abstractLiteratureListSectionCreator.create(
                 contributorId = command.contributorId,
-                section = command as LiteratureListSectionDefinition
+                section = command as AbstractLiteratureListSectionCommand
             )
         }
         verify(exactly = 1) {

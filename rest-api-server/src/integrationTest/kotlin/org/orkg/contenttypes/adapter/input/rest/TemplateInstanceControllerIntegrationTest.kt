@@ -14,8 +14,8 @@ import org.orkg.community.input.ContributorUseCases
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
 import org.orkg.contenttypes.input.CreateTemplateUseCase
-import org.orkg.contenttypes.input.StringLiteralPropertyDefinition
-import org.orkg.contenttypes.input.TemplateRelationsDefinition
+import org.orkg.contenttypes.input.StringLiteralPropertyCommand
+import org.orkg.contenttypes.input.TemplateRelationsCommand
 import org.orkg.contenttypes.input.TemplateUseCases
 import org.orkg.createClasses
 import org.orkg.createContributor
@@ -149,13 +149,13 @@ internal class TemplateInstanceControllerIntegrationTest : MockMvcBaseTest("temp
                 description = "Some description about the template",
                 formattedLabel = FormattedLabel.of("{P32}"),
                 targetClass = targetClass,
-                relations = TemplateRelationsDefinition(
+                relations = TemplateRelationsCommand(
                     researchFields = listOf(ThingId("R12")),
                     researchProblems = emptyList(),
                     predicate = null
                 ),
                 properties = listOf(
-                    StringLiteralPropertyDefinition(
+                    StringLiteralPropertyCommand(
                         label = "literal property label",
                         description = "literal property description",
                         placeholder = "literal property placeholder",

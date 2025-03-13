@@ -288,44 +288,44 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
         CreateTableRequest(
             label = "Table Title",
             resources = mapOf(
-                "#temp1" to ResourceDefinitionDTO(
+                "#temp1" to CreateResourceRequestPart(
                     label = "MOTO",
                     classes = setOf(ThingId("Result"))
                 )
             ),
             literals = mapOf(
-                "#temp2" to LiteralDefinitionDTO("column 1", Literals.XSD.STRING.prefixedUri),
-                "#temp3" to LiteralDefinitionDTO("column 2", Literals.XSD.STRING.prefixedUri),
-                "#temp4" to LiteralDefinitionDTO("column 3", Literals.XSD.STRING.prefixedUri)
+                "#temp2" to CreateLiteralRequestPart("column 1", Literals.XSD.STRING.prefixedUri),
+                "#temp3" to CreateLiteralRequestPart("column 2", Literals.XSD.STRING.prefixedUri),
+                "#temp4" to CreateLiteralRequestPart("column 3", Literals.XSD.STRING.prefixedUri)
             ),
             predicates = mapOf(
-                "#temp5" to PredicateDefinitionDTO(
+                "#temp5" to CreatePredicateRequestPart(
                     label = "hasResult",
                     description = "has result"
                 )
             ),
             lists = mapOf(
-                "#temp6" to ListDefinitionDTO(
+                "#temp6" to CreateListRequestPart(
                     label = "list",
                     elements = listOf("#temp1", "C123")
                 )
             ),
             classes = mapOf(
-                "#temp7" to ClassDefinitionDTO(
+                "#temp7" to CreateClassRequestPart(
                     label = "class",
                     uri = ParsedIRI("https://orkg.org/class/C1")
                 )
             ),
             rows = listOf(
-                RowDefinitionDTO(
+                RowRequest(
                     label = "header",
                     data = listOf("#temp1", "#temp2", "#temp3")
                 ),
-                RowDefinitionDTO(
+                RowRequest(
                     label = null,
                     data = listOf("R456", "#temp4", "#temp5")
                 ),
-                RowDefinitionDTO(
+                RowRequest(
                     label = "row 2",
                     data = listOf("#temp6", null, "#temp7")
                 )

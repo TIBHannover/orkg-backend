@@ -132,7 +132,7 @@ internal class OrganizationServiceUnitTest : MockkBaseTest {
     fun `given an organization update command, when repository reports organization not found, it returns an appropriate error`() {
         val id = OrganizationId(UUID.randomUUID())
         val contributorId = ContributorId(UUID.randomUUID())
-        val command = UpdateOrganizationUseCases.UpdateOrganizationRequest(
+        val command = UpdateOrganizationUseCases.UpdateOrganizationCommand(
             id = id,
             name = null,
             url = null,
@@ -154,7 +154,7 @@ internal class OrganizationServiceUnitTest : MockkBaseTest {
         val organization = createOrganization()
         val id = organization.id!!
         val contributorId = ContributorId(UUID.randomUUID())
-        val command = UpdateOrganizationUseCases.UpdateOrganizationRequest(
+        val command = UpdateOrganizationUseCases.UpdateOrganizationCommand(
             id = id,
             name = "newName",
             url = null,
@@ -186,7 +186,7 @@ internal class OrganizationServiceUnitTest : MockkBaseTest {
         val organization = createOrganization()
         val id = organization.id!!
         val contributorId = ContributorId(UUID.randomUUID())
-        val command = UpdateOrganizationUseCases.UpdateOrganizationRequest(
+        val command = UpdateOrganizationUseCases.UpdateOrganizationCommand(
             id = id,
             name = null,
             url = "https://example.org",
@@ -218,7 +218,7 @@ internal class OrganizationServiceUnitTest : MockkBaseTest {
         val organization = createOrganization()
         val id = organization.id!!
         val contributorId = ContributorId(UUID.randomUUID())
-        val command = UpdateOrganizationUseCases.UpdateOrganizationRequest(
+        val command = UpdateOrganizationUseCases.UpdateOrganizationCommand(
             id = id,
             name = null,
             url = null,
@@ -252,7 +252,7 @@ internal class OrganizationServiceUnitTest : MockkBaseTest {
         val image = loadRawImage(testImage)
         val imageId = ImageId(UUID.randomUUID())
         val contributorId = ContributorId(UUID.randomUUID())
-        val command = UpdateOrganizationUseCases.UpdateOrganizationRequest(
+        val command = UpdateOrganizationUseCases.UpdateOrganizationCommand(
             id = id,
             name = null,
             url = null,
@@ -289,7 +289,7 @@ internal class OrganizationServiceUnitTest : MockkBaseTest {
         val image = loadRawImage(testImage)
         val imageId = ImageId(UUID.randomUUID())
         val contributorId = ContributorId(UUID.randomUUID())
-        val command = UpdateOrganizationUseCases.UpdateOrganizationRequest(
+        val command = UpdateOrganizationUseCases.UpdateOrganizationCommand(
             id = id,
             name = "newName",
             url = "https://example.org",
@@ -329,7 +329,7 @@ internal class OrganizationServiceUnitTest : MockkBaseTest {
             logoId = imageId,
         )
         val id = organization.id!!
-        val command = UpdateOrganizationUseCases.UpdateOrganizationRequest(
+        val command = UpdateOrganizationUseCases.UpdateOrganizationCommand(
             id = id,
             name = "newName",
             url = null,

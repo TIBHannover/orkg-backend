@@ -15,28 +15,28 @@ import org.springframework.test.context.ContextConfiguration
 
 @WebMvcTest
 @ContextConfiguration(classes = [CommonSpringConfig::class, ContentTypeSpringConfig::class])
-internal class IdentifierMapDTOJsonTest {
+internal class IdentifierMapRequestJsonTest {
     @Autowired
     private lateinit var objectMapper: ObjectMapper
 
     @Test
-    fun successfullyParsesStringToIdentifierMapDTO() {
-        objectMapper.readValue("""{"field": ["foo"], "list": ["bar"]}""", IdentifierMapDTO::class.java).asClue {
-            it shouldBe IdentifierMapDTO(mapOf("field" to listOf("foo"), "list" to listOf("bar")))
+    fun successfullyParsesStringToIdentifierMapRequest() {
+        objectMapper.readValue("""{"field": ["foo"], "list": ["bar"]}""", IdentifierMapRequest::class.java).asClue {
+            it shouldBe IdentifierMapRequest(mapOf("field" to listOf("foo"), "list" to listOf("bar")))
         }
     }
 
     @Test
-    fun successfullyParsesStringToIdentifierMapDTOWhenNested() {
-        objectMapper.readValue("""{"wrapper":{"field": ["foo"], "list": ["bar"]}}""", object : TypeReference<Map<String, IdentifierMapDTO>>() {}).asClue {
-            it shouldBe mapOf("wrapper" to IdentifierMapDTO(mapOf("field" to listOf("foo"), "list" to listOf("bar"))))
+    fun successfullyParsesStringToIdentifierMapRequestWhenNested() {
+        objectMapper.readValue("""{"wrapper":{"field": ["foo"], "list": ["bar"]}}""", object : TypeReference<Map<String, IdentifierMapRequest>>() {}).asClue {
+            it shouldBe mapOf("wrapper" to IdentifierMapRequest(mapOf("field" to listOf("foo"), "list" to listOf("bar"))))
         }
     }
 
     @Test
     fun throwsErrorWhenListValueIsNull() {
         assertThrows<JsonParseException> {
-            objectMapper.readValue("""{"field": ["foo"], "list": ["bar", null]}""", IdentifierMapDTO::class.java)
+            objectMapper.readValue("""{"field": ["foo"], "list": ["bar", null]}""", IdentifierMapRequest::class.java)
         }.asClue {
             it.originalMessage shouldBe """Field "$.list[1]" is either missing, "null", of invalid type, or contains "null" values."""
         }
@@ -45,7 +45,7 @@ internal class IdentifierMapDTOJsonTest {
     @Test
     fun throwsErrorWhenListValueIsNullAndObjectIsNested() {
         assertThrows<JsonParseException> {
-            objectMapper.readValue("""{"wrapper":{"field": ["foo"], "list": ["bar", null]}}""", object : TypeReference<Map<String, IdentifierMapDTO>>() {})
+            objectMapper.readValue("""{"wrapper":{"field": ["foo"], "list": ["bar", null]}}""", object : TypeReference<Map<String, IdentifierMapRequest>>() {})
         }.asClue {
             it.originalMessage shouldBe """Field "$.wrapper.list[1]" is either missing, "null", of invalid type, or contains "null" values."""
         }

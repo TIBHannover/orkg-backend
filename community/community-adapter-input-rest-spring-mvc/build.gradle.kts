@@ -55,8 +55,8 @@ dependencies {
     api(project(":community:community-ports-output")) // uses repository directly
     api(project(":graph:graph-core-model"))
     api(project(":graph:graph-ports-input"))
+    api(project(":media-storage:media-storage-core-model"))
     api(project(":media-storage:media-storage-ports-input"))
     implementation("org.springframework:spring-core")
-    implementation(project(":media-storage:media-storage-core-model"))
     testFixturesApi("org.springframework.restdocs:spring-restdocs-core")
 }

@@ -2,11 +2,11 @@ package org.orkg.contenttypes.input.testing.fixtures
 
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.input.ContributionDefinition
+import org.orkg.contenttypes.input.CreateContributionCommandPart
 import org.orkg.contenttypes.input.CreateContributionUseCase
-import org.orkg.contenttypes.input.LiteralDefinition
-import org.orkg.contenttypes.input.PredicateDefinition
-import org.orkg.contenttypes.input.ResourceDefinition
+import org.orkg.contenttypes.input.CreateLiteralCommandPart
+import org.orkg.contenttypes.input.CreatePredicateCommandPart
+import org.orkg.contenttypes.input.CreateResourceCommandPart
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
@@ -17,44 +17,44 @@ fun createContributionCommand() = CreateContributionUseCase.CreateCommand(
     paperId = ThingId("R123"),
     extractionMethod = ExtractionMethod.MANUAL,
     resources = mapOf(
-        "#temp1" to ResourceDefinition(
+        "#temp1" to CreateResourceCommandPart(
             label = "MOTO",
             classes = setOf(ThingId("R2000"))
         )
     ),
     literals = mapOf(
-        "#temp2" to LiteralDefinition(
+        "#temp2" to CreateLiteralCommandPart(
             label = "0.1",
             dataType = Literals.XSD.DECIMAL.prefixedUri
         )
     ),
     predicates = mapOf(
-        "#temp3" to PredicateDefinition(
+        "#temp3" to CreatePredicateCommandPart(
             label = "hasResult",
             description = "has result"
         ),
-        "#temp4" to PredicateDefinition(
+        "#temp4" to CreatePredicateCommandPart(
             label = "hasLiteral"
         )
     ),
-    contribution = ContributionDefinition(
+    contribution = CreateContributionCommandPart(
         label = "Contribution 1",
         classes = setOf(ThingId("C123")),
         statements = mapOf(
             Predicates.hasResearchProblem.value to listOf(
-                ContributionDefinition.StatementObjectDefinition("R3003")
+                CreateContributionCommandPart.StatementObject("R3003")
             ),
             Predicates.hasEvaluation.value to listOf(
-                ContributionDefinition.StatementObjectDefinition("#temp1"),
-                ContributionDefinition.StatementObjectDefinition(
+                CreateContributionCommandPart.StatementObject("#temp1"),
+                CreateContributionCommandPart.StatementObject(
                     id = "R3004",
                     statements = mapOf(
                         "#temp3" to listOf(
-                            ContributionDefinition.StatementObjectDefinition("R3003"),
-                            ContributionDefinition.StatementObjectDefinition("#temp2")
+                            CreateContributionCommandPart.StatementObject("R3003"),
+                            CreateContributionCommandPart.StatementObject("#temp2")
                         ),
                         "#temp4" to listOf(
-                            ContributionDefinition.StatementObjectDefinition("#temp1")
+                            CreateContributionCommandPart.StatementObject("#temp1")
                         )
                     )
                 )

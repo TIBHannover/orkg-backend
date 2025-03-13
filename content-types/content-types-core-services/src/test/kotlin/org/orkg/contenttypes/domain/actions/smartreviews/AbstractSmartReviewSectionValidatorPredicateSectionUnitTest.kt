@@ -6,7 +6,7 @@ import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.input.testing.fixtures.smartReviewPredicateSectionDefinition
+import org.orkg.contenttypes.input.testing.fixtures.smartReviewPredicateSectionCommand
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.MAX_LABEL_LENGTH
 import org.orkg.graph.domain.PredicateNotFound
@@ -16,7 +16,7 @@ import java.util.Optional
 internal class AbstractSmartReviewSectionValidatorPredicateSectionUnitTest : AbstractSmartReviewSectionValidatorUnitTest() {
     @Test
     fun `Given a predicate section definition, when validating, it returns success`() {
-        val section = smartReviewPredicateSectionDefinition()
+        val section = smartReviewPredicateSectionCommand()
         val validIds = mutableSetOf<ThingId>()
         val predicate = createPredicate(section.predicate!!)
 
@@ -31,7 +31,7 @@ internal class AbstractSmartReviewSectionValidatorPredicateSectionUnitTest : Abs
 
     @Test
     fun `Given a predicate section definition, when validating, it does not validate the predicate id when it is not set`() {
-        val section = smartReviewPredicateSectionDefinition().copy(predicate = null)
+        val section = smartReviewPredicateSectionCommand().copy(predicate = null)
         val validIds = mutableSetOf<ThingId>()
 
         abstractSmartReviewSectionValidator.validate(section, validIds)
@@ -41,7 +41,7 @@ internal class AbstractSmartReviewSectionValidatorPredicateSectionUnitTest : Abs
 
     @Test
     fun `Given a predicate section definition, when validating, it does not check already valid ids`() {
-        val section = smartReviewPredicateSectionDefinition()
+        val section = smartReviewPredicateSectionCommand()
         val validIds = mutableSetOf(section.predicate!!)
 
         abstractSmartReviewSectionValidator.validate(section, validIds)
@@ -51,7 +51,7 @@ internal class AbstractSmartReviewSectionValidatorPredicateSectionUnitTest : Abs
 
     @Test
     fun `Given a predicate section definition, when heading is invalid, it throws an exception`() {
-        val section = smartReviewPredicateSectionDefinition().copy(
+        val section = smartReviewPredicateSectionCommand().copy(
             heading = "a".repeat(MAX_LABEL_LENGTH + 1)
         )
         val validIds = mutableSetOf<ThingId>()
@@ -61,7 +61,7 @@ internal class AbstractSmartReviewSectionValidatorPredicateSectionUnitTest : Abs
 
     @Test
     fun `Given a predicate section definition, when predicate does not exist, it throws an exception`() {
-        val section = smartReviewPredicateSectionDefinition()
+        val section = smartReviewPredicateSectionCommand()
         val validIds = mutableSetOf<ThingId>()
 
         every { predicateRepository.findById(section.predicate!!) } returns Optional.empty()

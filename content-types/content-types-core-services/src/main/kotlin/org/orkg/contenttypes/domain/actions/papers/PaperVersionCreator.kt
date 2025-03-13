@@ -6,7 +6,7 @@ import org.orkg.contenttypes.domain.actions.PublishPaperCommand
 import org.orkg.contenttypes.domain.actions.execute
 import org.orkg.contenttypes.domain.actions.papers.PublishPaperAction.State
 import org.orkg.contenttypes.domain.ids
-import org.orkg.contenttypes.input.PublicationInfoDefinition
+import org.orkg.contenttypes.input.PublicationInfoCommand
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
@@ -29,7 +29,7 @@ class PaperVersionCreator(
             title = paper.title,
             researchFields = paper.researchFields.ids,
             identifiers = paper.identifiers,
-            publicationInfo = PublicationInfoDefinition(
+            publicationInfo = PublicationInfoCommand(
                 publishedIn = paper.publicationInfo.publishedIn?.label,
                 publishedYear = paper.publicationInfo.publishedYear,
                 publishedMonth = paper.publicationInfo.publishedMonth,

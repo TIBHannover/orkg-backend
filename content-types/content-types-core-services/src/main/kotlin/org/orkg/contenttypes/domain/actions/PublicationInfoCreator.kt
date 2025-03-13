@@ -4,7 +4,7 @@ import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.input.PublicationInfoDefinition
+import org.orkg.contenttypes.input.PublicationInfoCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
@@ -23,7 +23,7 @@ abstract class PublicationInfoCreator(
     protected val unsafeStatementUseCases: UnsafeStatementUseCases,
     protected val unsafeLiteralUseCases: UnsafeLiteralUseCases,
 ) {
-    internal fun create(contributorId: ContributorId, publicationInfo: PublicationInfoDefinition, subjectId: ThingId) {
+    internal fun create(contributorId: ContributorId, publicationInfo: PublicationInfoCommand, subjectId: ThingId) {
         if (publicationInfo.publishedMonth != null) {
             linkPublicationMonth(contributorId, subjectId, publicationInfo.publishedMonth!!)
         }

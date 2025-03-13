@@ -298,7 +298,7 @@ class ComparisonController(
         @JsonProperty("research_fields")
         val researchFields: List<ThingId>,
         @field:Valid
-        val authors: List<AuthorDTO>,
+        val authors: List<AuthorRequest>,
         @JsonProperty("sdgs")
         val sustainableDevelopmentGoals: Set<ThingId>?,
         val contributions: List<ThingId>,
@@ -344,7 +344,7 @@ class ComparisonController(
         @JsonProperty("research_fields")
         val researchFields: List<ThingId>?,
         @field:Valid
-        val authors: List<AuthorDTO>?,
+        val authors: List<AuthorRequest>?,
         @JsonProperty("sdgs")
         val sustainableDevelopmentGoals: Set<ThingId>?,
         val contributions: List<ThingId>?,
@@ -467,7 +467,7 @@ class ComparisonController(
         val description: String,
         @field:Valid
         @field:Size(min = 1)
-        val authors: List<AuthorDTO>,
+        val authors: List<AuthorRequest>,
         @JsonProperty("assign_doi")
         val assignDOI: Boolean,
     ) {

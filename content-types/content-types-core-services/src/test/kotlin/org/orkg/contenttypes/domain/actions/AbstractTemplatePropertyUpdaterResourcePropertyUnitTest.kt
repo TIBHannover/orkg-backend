@@ -7,8 +7,8 @@ import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.contenttypes.domain.testing.fixtures.createResourceTemplateProperty
-import org.orkg.contenttypes.input.OtherLiteralPropertyDefinition
-import org.orkg.contenttypes.input.testing.fixtures.toResourceTemplatePropertyDefinition
+import org.orkg.contenttypes.input.OtherLiteralPropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.toResourceTemplatePropertyCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
@@ -26,7 +26,7 @@ internal class AbstractTemplatePropertyUpdaterResourcePropertyUnitTest : Abstrac
     fun `Given an updated resource template property, when there are no changes, it does nothing`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createResourceTemplateProperty()
-        val newProperty = oldProperty.toResourceTemplatePropertyDefinition()
+        val newProperty = oldProperty.toResourceTemplatePropertyCommand()
 
         abstractTemplatePropertyUpdater.update(emptyList(), contributorId, 4, newProperty, oldProperty)
     }
@@ -35,7 +35,7 @@ internal class AbstractTemplatePropertyUpdaterResourcePropertyUnitTest : Abstrac
     fun `Given an updated resource template property, when label has changed, it updates the label`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createResourceTemplateProperty()
-        val newProperty = oldProperty.toResourceTemplatePropertyDefinition().copy(
+        val newProperty = oldProperty.toResourceTemplatePropertyCommand().copy(
             label = "new label"
         )
 
@@ -66,7 +66,7 @@ internal class AbstractTemplatePropertyUpdaterResourcePropertyUnitTest : Abstrac
     fun `Given an updated resource template property, when placeholder has changed, it updates the placeholder`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createResourceTemplateProperty()
-        val newProperty = oldProperty.toResourceTemplatePropertyDefinition().copy(
+        val newProperty = oldProperty.toResourceTemplatePropertyCommand().copy(
             placeholder = "new placeholder"
         )
         val statements = listOf(
@@ -104,7 +104,7 @@ internal class AbstractTemplatePropertyUpdaterResourcePropertyUnitTest : Abstrac
     fun `Given an updated resource template property, when description has changed, it updates the description`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createResourceTemplateProperty()
-        val newProperty = oldProperty.toResourceTemplatePropertyDefinition().copy(
+        val newProperty = oldProperty.toResourceTemplatePropertyCommand().copy(
             description = "new description"
         )
         val statements = listOf(
@@ -142,7 +142,7 @@ internal class AbstractTemplatePropertyUpdaterResourcePropertyUnitTest : Abstrac
     fun `Given an updated resource template property, when min count has changed, it updates the min count`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createResourceTemplateProperty()
-        val newProperty = oldProperty.toResourceTemplatePropertyDefinition().copy(
+        val newProperty = oldProperty.toResourceTemplatePropertyCommand().copy(
             minCount = 5
         )
         val statements = listOf(
@@ -182,7 +182,7 @@ internal class AbstractTemplatePropertyUpdaterResourcePropertyUnitTest : Abstrac
     fun `Given an updated resource template property, when max count has changed, it updates the max count`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createResourceTemplateProperty()
-        val newProperty = oldProperty.toResourceTemplatePropertyDefinition().copy(
+        val newProperty = oldProperty.toResourceTemplatePropertyCommand().copy(
             maxCount = 5
         )
         val statements = listOf(
@@ -222,7 +222,7 @@ internal class AbstractTemplatePropertyUpdaterResourcePropertyUnitTest : Abstrac
     fun `Given an updated resource template property, when class has changed, it updates the class`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createResourceTemplateProperty()
-        val newProperty = oldProperty.toResourceTemplatePropertyDefinition().copy(
+        val newProperty = oldProperty.toResourceTemplatePropertyCommand().copy(
             `class` = Classes.paper
         )
         val statementToRemove = StatementId("S123")
@@ -266,7 +266,7 @@ internal class AbstractTemplatePropertyUpdaterResourcePropertyUnitTest : Abstrac
     fun `Given an updated resource template property, when changed to a literal template property, it updates the class statement to a datatype statement`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createResourceTemplateProperty()
-        val newProperty = OtherLiteralPropertyDefinition(
+        val newProperty = OtherLiteralPropertyCommand(
             label = oldProperty.label,
             placeholder = oldProperty.placeholder,
             description = oldProperty.description,
@@ -316,7 +316,7 @@ internal class AbstractTemplatePropertyUpdaterResourcePropertyUnitTest : Abstrac
     fun `Given an updated resource template property, when path has changed, it updates the path`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createResourceTemplateProperty()
-        val newProperty = oldProperty.toResourceTemplatePropertyDefinition().copy(
+        val newProperty = oldProperty.toResourceTemplatePropertyCommand().copy(
             path = Predicates.hasLink
         )
         val statements = listOf(
@@ -354,7 +354,7 @@ internal class AbstractTemplatePropertyUpdaterResourcePropertyUnitTest : Abstrac
     fun `Given an updated resource template property, when order has changed, it updates the order`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createResourceTemplateProperty()
-        val newProperty = oldProperty.toResourceTemplatePropertyDefinition()
+        val newProperty = oldProperty.toResourceTemplatePropertyCommand()
         val statements = listOf(
             createStatement(
                 subject = createLiteral(oldProperty.id),

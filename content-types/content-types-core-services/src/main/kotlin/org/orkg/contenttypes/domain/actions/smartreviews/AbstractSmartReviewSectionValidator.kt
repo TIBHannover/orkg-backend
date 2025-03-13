@@ -7,13 +7,13 @@ import org.orkg.contenttypes.domain.InvalidSmartReviewTextSectionType
 import org.orkg.contenttypes.domain.OntologyEntityNotFound
 import org.orkg.contenttypes.domain.SmartReviewTextSection
 import org.orkg.contenttypes.domain.VisualizationNotFound
-import org.orkg.contenttypes.input.SmartReviewComparisonSectionDefinition
-import org.orkg.contenttypes.input.SmartReviewOntologySectionDefinition
-import org.orkg.contenttypes.input.SmartReviewPredicateSectionDefinition
-import org.orkg.contenttypes.input.SmartReviewResourceSectionDefinition
-import org.orkg.contenttypes.input.SmartReviewSectionDefinition
-import org.orkg.contenttypes.input.SmartReviewTextSectionDefinition
-import org.orkg.contenttypes.input.SmartReviewVisualizationSectionDefinition
+import org.orkg.contenttypes.input.AbstractSmartReviewComparisonSectionCommand
+import org.orkg.contenttypes.input.AbstractSmartReviewOntologySectionCommand
+import org.orkg.contenttypes.input.AbstractSmartReviewPredicateSectionCommand
+import org.orkg.contenttypes.input.AbstractSmartReviewResourceSectionCommand
+import org.orkg.contenttypes.input.AbstractSmartReviewSectionCommand
+import org.orkg.contenttypes.input.AbstractSmartReviewTextSectionCommand
+import org.orkg.contenttypes.input.AbstractSmartReviewVisualizationSectionCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Description
 import org.orkg.graph.domain.InvalidDescription
@@ -30,37 +30,37 @@ class AbstractSmartReviewSectionValidator(
     private val predicateRepository: PredicateRepository,
     private val thingRepository: ThingRepository,
 ) {
-    internal fun validate(section: SmartReviewSectionDefinition, validIds: MutableSet<ThingId>) {
+    internal fun validate(section: AbstractSmartReviewSectionCommand, validIds: MutableSet<ThingId>) {
         Label.ofOrNull(section.heading) ?: throw InvalidLabel("heading")
 
         when (section) {
-            is SmartReviewComparisonSectionDefinition -> {
+            is AbstractSmartReviewComparisonSectionCommand -> {
                 validateWithCache(section.comparison, validIds) { comparisonId ->
                     resourceRepository.findById(comparisonId)
                         .filter { Classes.comparison in it.classes || Classes.comparisonPublished in it.classes }
                         .orElseThrow { ComparisonNotFound(comparisonId) }
                 }
             }
-            is SmartReviewVisualizationSectionDefinition -> {
+            is AbstractSmartReviewVisualizationSectionCommand -> {
                 validateWithCache(section.visualization, validIds) { visualizationId ->
                     resourceRepository.findById(visualizationId)
                         .filter { Classes.visualization in it.classes }
                         .orElseThrow { VisualizationNotFound(visualizationId) }
                 }
             }
-            is SmartReviewResourceSectionDefinition -> {
+            is AbstractSmartReviewResourceSectionCommand -> {
                 validateWithCache(section.resource, validIds) { resourceId ->
                     resourceRepository.findById(resourceId)
                         .orElseThrow { ResourceNotFound.withId(resourceId) }
                 }
             }
-            is SmartReviewPredicateSectionDefinition -> {
+            is AbstractSmartReviewPredicateSectionCommand -> {
                 validateWithCache(section.predicate, validIds) { predicateId ->
                     predicateRepository.findById(predicateId)
                         .orElseThrow { PredicateNotFound(predicateId) }
                 }
             }
-            is SmartReviewOntologySectionDefinition -> {
+            is AbstractSmartReviewOntologySectionCommand -> {
                 val entitiesToValidate = section.entities.toSet() - validIds
                 if (entitiesToValidate.isNotEmpty()) {
                     if (!thingRepository.existsAllById(entitiesToValidate)) {
@@ -75,7 +75,7 @@ class AbstractSmartReviewSectionValidator(
                     }
                 }
             }
-            is SmartReviewTextSectionDefinition -> {
+            is AbstractSmartReviewTextSectionCommand -> {
                 Description.ofOrNull(section.text) ?: throw InvalidDescription("text")
                 if (section.`class` != null && section.`class` !in SmartReviewTextSection.types) {
                     throw InvalidSmartReviewTextSectionType(section.`class`!!)

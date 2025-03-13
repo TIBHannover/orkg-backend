@@ -8,8 +8,8 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.contenttypes.domain.testing.fixtures.createOtherLiteralTemplateProperty
 import org.orkg.contenttypes.domain.testing.fixtures.createUntypedTemplateProperty
-import org.orkg.contenttypes.input.UntypedPropertyDefinition
-import org.orkg.contenttypes.input.testing.fixtures.toUntypedTemplatePropertyDefinition
+import org.orkg.contenttypes.input.UntypedPropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.toUntypedTemplatePropertyCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
@@ -27,7 +27,7 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
     fun `Given an updated untyped template property, when there are no changes, it does nothing`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createUntypedTemplateProperty()
-        val newProperty = oldProperty.toUntypedTemplatePropertyDefinition()
+        val newProperty = oldProperty.toUntypedTemplatePropertyCommand()
 
         abstractTemplatePropertyUpdater.update(emptyList(), contributorId, 0, newProperty, oldProperty)
     }
@@ -36,7 +36,7 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
     fun `Given an updated untyped template property, when label has changed, it updates the label`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createUntypedTemplateProperty()
-        val newProperty = oldProperty.toUntypedTemplatePropertyDefinition().copy(
+        val newProperty = oldProperty.toUntypedTemplatePropertyCommand().copy(
             label = "new label"
         )
 
@@ -67,7 +67,7 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
     fun `Given an updated untyped template property, when placeholder has changed, it updates the placeholder`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createUntypedTemplateProperty()
-        val newProperty = oldProperty.toUntypedTemplatePropertyDefinition().copy(
+        val newProperty = oldProperty.toUntypedTemplatePropertyCommand().copy(
             placeholder = "new placeholder"
         )
         val statements = listOf(
@@ -105,7 +105,7 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
     fun `Given an updated untyped template property, when description has changed, it updates the description`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createUntypedTemplateProperty()
-        val newProperty = oldProperty.toUntypedTemplatePropertyDefinition().copy(
+        val newProperty = oldProperty.toUntypedTemplatePropertyCommand().copy(
             description = "new description"
         )
         val statements = listOf(
@@ -143,7 +143,7 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
     fun `Given an updated untyped template property, when min count has changed, it updates the min count`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createUntypedTemplateProperty()
-        val newProperty = oldProperty.toUntypedTemplatePropertyDefinition().copy(
+        val newProperty = oldProperty.toUntypedTemplatePropertyCommand().copy(
             minCount = 5
         )
         val statements = listOf(
@@ -183,7 +183,7 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
     fun `Given an updated untyped template property, when max count has changed, it updates the max count`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createUntypedTemplateProperty()
-        val newProperty = oldProperty.toUntypedTemplatePropertyDefinition().copy(
+        val newProperty = oldProperty.toUntypedTemplatePropertyCommand().copy(
             maxCount = 5
         )
         val statements = listOf(
@@ -223,7 +223,7 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
     fun `Given an updated untyped template property, when old property was a typed template property, it remove all class and datatype statements`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createOtherLiteralTemplateProperty()
-        val newProperty = UntypedPropertyDefinition(
+        val newProperty = UntypedPropertyCommand(
             label = oldProperty.label,
             placeholder = oldProperty.placeholder,
             description = oldProperty.description,
@@ -258,7 +258,7 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
     fun `Given an updated untyped template property, when path has changed, it updates the path`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createUntypedTemplateProperty()
-        val newProperty = oldProperty.toUntypedTemplatePropertyDefinition().copy(
+        val newProperty = oldProperty.toUntypedTemplatePropertyCommand().copy(
             path = Predicates.hasLink
         )
         val statements = listOf(
@@ -296,7 +296,7 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
     fun `Given an updated untyped template property, when order has changed, it updates the order`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createUntypedTemplateProperty()
-        val newProperty = oldProperty.toUntypedTemplatePropertyDefinition()
+        val newProperty = oldProperty.toUntypedTemplatePropertyCommand()
         val statements = listOf(
             createStatement(
                 subject = createResource(oldProperty.id),

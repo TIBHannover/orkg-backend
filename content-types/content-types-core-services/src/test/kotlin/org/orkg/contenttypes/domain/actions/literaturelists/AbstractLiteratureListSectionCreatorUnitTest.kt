@@ -7,9 +7,9 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
-import org.orkg.contenttypes.input.LiteratureListListSectionDefinition
-import org.orkg.contenttypes.input.testing.fixtures.literatureListListSectionDefinition
-import org.orkg.contenttypes.input.testing.fixtures.literatureListTextSectionDefinition
+import org.orkg.contenttypes.input.AbstractLiteratureListListSectionCommand
+import org.orkg.contenttypes.input.testing.fixtures.literatureListListSectionCommand
+import org.orkg.contenttypes.input.testing.fixtures.literatureListTextSectionCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
@@ -37,8 +37,8 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
     fun `Given a list section definition, when creating a section entry with a description, it returns success`() {
         val entry = ThingId("R2315")
         val description = "test description"
-        val section = literatureListListSectionDefinition().copy(
-            entries = listOf(LiteratureListListSectionDefinition.Entry(entry, description))
+        val section = literatureListListSectionCommand().copy(
+            entries = listOf(AbstractLiteratureListListSectionCommand.Entry(entry, description))
         )
         val contributorId = ContributorId(UUID.randomUUID())
         val sectionId = ThingId("R123")
@@ -158,8 +158,8 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a list section definition, when creating a section entry without a description, it returns success`() {
         val entry = ThingId("R2315")
-        val section = literatureListListSectionDefinition().copy(
-            entries = listOf(LiteratureListListSectionDefinition.Entry(entry))
+        val section = literatureListListSectionCommand().copy(
+            entries = listOf(AbstractLiteratureListListSectionCommand.Entry(entry))
         )
         val contributorId = ContributorId(UUID.randomUUID())
         val sectionId = ThingId("R123")
@@ -248,7 +248,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a text section definition, when creating, it returns success`() {
-        val section = literatureListTextSectionDefinition()
+        val section = literatureListTextSectionCommand()
         val contributorId = ContributorId(UUID.randomUUID())
         val sectionId = ThingId("R123")
         val headingSizeId = ThingId("R456")

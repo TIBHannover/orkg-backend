@@ -8,12 +8,12 @@ import org.orkg.contenttypes.domain.StringLiteralTemplateProperty
 import org.orkg.contenttypes.domain.TemplateProperty
 import org.orkg.contenttypes.domain.UntypedTemplateProperty
 import org.orkg.contenttypes.domain.wherePredicate
-import org.orkg.contenttypes.input.LiteralTemplatePropertyDefinition
-import org.orkg.contenttypes.input.NumberLiteralTemplatePropertyDefinition
-import org.orkg.contenttypes.input.ResourceTemplatePropertyDefinition
-import org.orkg.contenttypes.input.StringLiteralTemplatePropertyDefinition
-import org.orkg.contenttypes.input.TemplatePropertyDefinition
-import org.orkg.contenttypes.input.UntypedPropertyDefinition
+import org.orkg.contenttypes.input.LiteralTemplatePropertyCommand
+import org.orkg.contenttypes.input.NumberLiteralTemplatePropertyCommand
+import org.orkg.contenttypes.input.ResourceTemplatePropertyCommand
+import org.orkg.contenttypes.input.StringLiteralTemplatePropertyCommand
+import org.orkg.contenttypes.input.TemplatePropertyCommand
+import org.orkg.contenttypes.input.UntypedPropertyCommand
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
@@ -46,7 +46,7 @@ class AbstractTemplatePropertyUpdater(
         statements: List<GeneralStatement>,
         contributorId: ContributorId,
         order: Int,
-        newProperty: TemplatePropertyDefinition,
+        newProperty: TemplatePropertyCommand,
         oldProperty: TemplateProperty,
     ) {
         if (newProperty.label != oldProperty.label) {
@@ -101,7 +101,7 @@ class AbstractTemplatePropertyUpdater(
             )
         }
 
-        if (newProperty is StringLiteralTemplatePropertyDefinition) {
+        if (newProperty is StringLiteralTemplatePropertyCommand) {
             val oldPattern = if (oldProperty is StringLiteralTemplateProperty) oldProperty.pattern else null
             if (newProperty.pattern != oldPattern) {
                 singleStatementPropertyUpdater.updateOptionalProperty(
@@ -119,7 +119,7 @@ class AbstractTemplatePropertyUpdater(
             }
         }
 
-        if (newProperty is NumberLiteralTemplatePropertyDefinition) {
+        if (newProperty is NumberLiteralTemplatePropertyCommand) {
             val oldMinInclusive = if (oldProperty is NumberLiteralTemplateProperty) oldProperty.minInclusive else null
             if (newProperty.minInclusive != oldMinInclusive || oldProperty is NumberLiteralTemplateProperty && oldProperty.datatype.id != newProperty.datatype) {
                 singleStatementPropertyUpdater.updateOptionalProperty(
@@ -151,7 +151,7 @@ class AbstractTemplatePropertyUpdater(
             }
         }
 
-        if (newProperty is LiteralTemplatePropertyDefinition) {
+        if (newProperty is LiteralTemplatePropertyCommand) {
             if (oldProperty is LiteralTemplateProperty && newProperty.datatype != oldProperty.datatype.id || oldProperty !is LiteralTemplateProperty) {
                 val toRemove = statements.filter { it.predicate.id == Predicates.shDatatype || it.predicate.id == Predicates.shClass }
                 if (toRemove.isNotEmpty()) {
@@ -166,7 +166,7 @@ class AbstractTemplatePropertyUpdater(
                     )
                 )
             }
-        } else if (newProperty is ResourceTemplatePropertyDefinition) {
+        } else if (newProperty is ResourceTemplatePropertyCommand) {
             if (oldProperty is ResourceTemplateProperty && newProperty.`class` != oldProperty.`class`.id || oldProperty !is ResourceTemplateProperty) {
                 val toRemove = statements.filter { it.predicate.id == Predicates.shDatatype || it.predicate.id == Predicates.shClass }
                 if (toRemove.isNotEmpty()) {
@@ -181,7 +181,7 @@ class AbstractTemplatePropertyUpdater(
                     )
                 )
             }
-        } else if (newProperty is UntypedPropertyDefinition && oldProperty !is UntypedTemplateProperty) {
+        } else if (newProperty is UntypedPropertyCommand && oldProperty !is UntypedTemplateProperty) {
             val toRemove = statements.filter { it.predicate.id == Predicates.shDatatype || it.predicate.id == Predicates.shClass }
             if (toRemove.isNotEmpty()) {
                 statementService.deleteAllById(toRemove.map { it.id }.toSet())

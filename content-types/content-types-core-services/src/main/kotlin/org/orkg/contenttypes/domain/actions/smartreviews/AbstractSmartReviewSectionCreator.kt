@@ -3,13 +3,13 @@ package org.orkg.contenttypes.domain.actions.smartreviews
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyCreator
-import org.orkg.contenttypes.input.SmartReviewComparisonSectionDefinition
-import org.orkg.contenttypes.input.SmartReviewOntologySectionDefinition
-import org.orkg.contenttypes.input.SmartReviewPredicateSectionDefinition
-import org.orkg.contenttypes.input.SmartReviewResourceSectionDefinition
-import org.orkg.contenttypes.input.SmartReviewSectionDefinition
-import org.orkg.contenttypes.input.SmartReviewTextSectionDefinition
-import org.orkg.contenttypes.input.SmartReviewVisualizationSectionDefinition
+import org.orkg.contenttypes.input.AbstractSmartReviewComparisonSectionCommand
+import org.orkg.contenttypes.input.AbstractSmartReviewOntologySectionCommand
+import org.orkg.contenttypes.input.AbstractSmartReviewPredicateSectionCommand
+import org.orkg.contenttypes.input.AbstractSmartReviewResourceSectionCommand
+import org.orkg.contenttypes.input.AbstractSmartReviewSectionCommand
+import org.orkg.contenttypes.input.AbstractSmartReviewTextSectionCommand
+import org.orkg.contenttypes.input.AbstractSmartReviewVisualizationSectionCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateLiteralUseCase
@@ -30,20 +30,20 @@ class AbstractSmartReviewSectionCreator(
 ) {
     internal fun create(
         contributorId: ContributorId,
-        section: SmartReviewSectionDefinition,
+        section: AbstractSmartReviewSectionCommand,
     ): ThingId =
         when (section) {
-            is SmartReviewComparisonSectionDefinition -> createComparisonSection(contributorId, section)
-            is SmartReviewVisualizationSectionDefinition -> createVisualizationSection(contributorId, section)
-            is SmartReviewResourceSectionDefinition -> createResourceSection(contributorId, section)
-            is SmartReviewPredicateSectionDefinition -> createPredicateSection(contributorId, section)
-            is SmartReviewOntologySectionDefinition -> createOntologySection(contributorId, section)
-            is SmartReviewTextSectionDefinition -> createTextSection(contributorId, section)
+            is AbstractSmartReviewComparisonSectionCommand -> createComparisonSection(contributorId, section)
+            is AbstractSmartReviewVisualizationSectionCommand -> createVisualizationSection(contributorId, section)
+            is AbstractSmartReviewResourceSectionCommand -> createResourceSection(contributorId, section)
+            is AbstractSmartReviewPredicateSectionCommand -> createPredicateSection(contributorId, section)
+            is AbstractSmartReviewOntologySectionCommand -> createOntologySection(contributorId, section)
+            is AbstractSmartReviewTextSectionCommand -> createTextSection(contributorId, section)
         }
 
     private fun createComparisonSection(
         contributorId: ContributorId,
-        section: SmartReviewComparisonSectionDefinition,
+        section: AbstractSmartReviewComparisonSectionCommand,
     ): ThingId {
         val sectionId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
@@ -67,7 +67,7 @@ class AbstractSmartReviewSectionCreator(
 
     private fun createVisualizationSection(
         contributorId: ContributorId,
-        section: SmartReviewVisualizationSectionDefinition,
+        section: AbstractSmartReviewVisualizationSectionCommand,
     ): ThingId {
         val sectionId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
@@ -91,7 +91,7 @@ class AbstractSmartReviewSectionCreator(
 
     private fun createResourceSection(
         contributorId: ContributorId,
-        section: SmartReviewResourceSectionDefinition,
+        section: AbstractSmartReviewResourceSectionCommand,
     ): ThingId {
         val sectionId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
@@ -115,7 +115,7 @@ class AbstractSmartReviewSectionCreator(
 
     private fun createPredicateSection(
         contributorId: ContributorId,
-        section: SmartReviewPredicateSectionDefinition,
+        section: AbstractSmartReviewPredicateSectionCommand,
     ): ThingId {
         val sectionId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
@@ -139,7 +139,7 @@ class AbstractSmartReviewSectionCreator(
 
     private fun createOntologySection(
         contributorId: ContributorId,
-        section: SmartReviewOntologySectionDefinition,
+        section: AbstractSmartReviewOntologySectionCommand,
     ): ThingId {
         val sectionId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
@@ -165,7 +165,7 @@ class AbstractSmartReviewSectionCreator(
 
     private fun createTextSection(
         contributorId: ContributorId,
-        section: SmartReviewTextSectionDefinition,
+        section: AbstractSmartReviewTextSectionCommand,
     ): ThingId {
         val sectionId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(

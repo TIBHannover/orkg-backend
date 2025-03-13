@@ -44,7 +44,7 @@ interface CreateRosettaStoneTemplateUseCase {
         val description: String,
         val formattedLabel: FormattedLabel,
         val exampleUsage: String,
-        val properties: List<TemplatePropertyDefinition>,
+        val properties: List<TemplatePropertyCommand>,
         val observatories: List<ObservatoryId>,
         val organizations: List<OrganizationId>,
     )
@@ -60,7 +60,7 @@ interface UpdateRosettaStoneTemplateUseCase {
         val description: String?,
         val formattedLabel: FormattedLabel?,
         val exampleUsage: String?,
-        val properties: List<TemplatePropertyDefinition>?,
+        val properties: List<TemplatePropertyCommand>?,
         val observatories: List<ObservatoryId>?,
         val organizations: List<OrganizationId>?,
     )

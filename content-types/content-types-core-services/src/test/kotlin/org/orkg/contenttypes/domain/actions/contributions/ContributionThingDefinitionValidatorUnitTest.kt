@@ -13,7 +13,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.ContributionState
 import org.orkg.contenttypes.domain.actions.CreateContributionCommand
-import org.orkg.contenttypes.input.ContributionDefinition
+import org.orkg.contenttypes.input.CreateContributionCommandPart
 import org.orkg.contenttypes.input.testing.fixtures.createContributionCommand
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
@@ -61,11 +61,11 @@ internal class ContributionThingDefinitionValidatorUnitTest : MockkBaseTest {
             literals = emptyMap(),
             predicates = emptyMap(),
             lists = emptyMap(),
-            contribution = ContributionDefinition(
+            contribution = CreateContributionCommandPart(
                 label = "Contribution 1",
                 statements = mapOf(
                     Predicates.hasResearchProblem.value to listOf(
-                        ContributionDefinition.StatementObjectDefinition("R3003")
+                        CreateContributionCommandPart.StatementObject("R3003")
                     )
                 )
             )

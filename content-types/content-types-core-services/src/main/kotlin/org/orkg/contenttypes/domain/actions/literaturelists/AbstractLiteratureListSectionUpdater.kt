@@ -7,8 +7,8 @@ import org.orkg.contenttypes.domain.LiteratureListTextSection
 import org.orkg.contenttypes.domain.actions.SingleStatementPropertyUpdater
 import org.orkg.contenttypes.domain.actions.tryDelete
 import org.orkg.contenttypes.domain.wherePredicate
-import org.orkg.contenttypes.input.LiteratureListListSectionDefinition
-import org.orkg.contenttypes.input.LiteratureListTextSectionDefinition
+import org.orkg.contenttypes.input.AbstractLiteratureListListSectionCommand
+import org.orkg.contenttypes.input.AbstractLiteratureListTextSectionCommand
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
@@ -57,11 +57,11 @@ class AbstractLiteratureListSectionUpdater(
      */
     internal fun updateListSection(
         contributorId: ContributorId,
-        newSection: LiteratureListListSectionDefinition,
+        newSection: AbstractLiteratureListListSectionCommand,
         oldSection: LiteratureListListSection,
         statements: Map<ThingId, List<GeneralStatement>>,
     ) {
-        if (newSection.entries != oldSection.entries.map { LiteratureListListSectionDefinition.Entry(it.value.id, it.description) }) {
+        if (newSection.entries != oldSection.entries.map { AbstractLiteratureListListSectionCommand.Entry(it.value.id, it.description) }) {
             val connectionIterator = statements[oldSection.id].orEmpty()
                 .filter { it.predicate.id == Predicates.hasEntry }
                 .sortedBy { it.createdAt }
@@ -140,7 +140,7 @@ class AbstractLiteratureListSectionUpdater(
 
     internal fun updateTextSection(
         contributorId: ContributorId,
-        newSection: LiteratureListTextSectionDefinition,
+        newSection: AbstractLiteratureListTextSectionCommand,
         oldSection: LiteratureListTextSection,
         statements: Map<ThingId, List<GeneralStatement>>,
     ) {
@@ -179,8 +179,8 @@ class AbstractLiteratureListSectionUpdater(
         val hasLinkStatement: GeneralStatement,
         val hasDescriptionStatement: GeneralStatement?,
     ) {
-        fun toEntry(): LiteratureListListSectionDefinition.Entry =
-            LiteratureListListSectionDefinition.Entry(
+        fun toEntry(): AbstractLiteratureListListSectionCommand.Entry =
+            AbstractLiteratureListListSectionCommand.Entry(
                 hasLinkStatement.`object`.id,
                 hasDescriptionStatement?.`object`?.label
             )

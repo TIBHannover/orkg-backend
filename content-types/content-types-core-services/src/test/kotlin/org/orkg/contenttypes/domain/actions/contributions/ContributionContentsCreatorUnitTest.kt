@@ -14,8 +14,8 @@ import org.orkg.contenttypes.domain.actions.BakedStatement
 import org.orkg.contenttypes.domain.actions.ContributionCreator
 import org.orkg.contenttypes.domain.actions.ContributionState
 import org.orkg.contenttypes.domain.actions.CreateContributionCommand
-import org.orkg.contenttypes.input.ContributionDefinition
-import org.orkg.contenttypes.input.PredicateDefinition
+import org.orkg.contenttypes.input.CreateContributionCommandPart
+import org.orkg.contenttypes.input.CreatePredicateCommandPart
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.testing.fixtures.createResource
 import java.util.UUID
@@ -32,15 +32,15 @@ internal class ContributionContentsCreatorUnitTest : MockkBaseTest {
             contributorId = ContributorId(UUID.randomUUID()),
             extractionMethod = ExtractionMethod.MANUAL,
             predicates = mapOf(
-                "#temp1" to PredicateDefinition(
+                "#temp1" to CreatePredicateCommandPart(
                     label = "hasResult"
                 )
             ),
-            contribution = ContributionDefinition(
+            contribution = CreateContributionCommandPart(
                 label = "Contribution 1",
                 statements = mapOf(
                     "#temp1" to listOf(
-                        ContributionDefinition.StatementObjectDefinition("R3003")
+                        CreateContributionCommandPart.StatementObject("R3003")
                     )
                 )
             )

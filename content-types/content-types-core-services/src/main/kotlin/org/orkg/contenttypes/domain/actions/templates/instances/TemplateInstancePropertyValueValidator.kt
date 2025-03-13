@@ -9,8 +9,8 @@ import org.orkg.contenttypes.domain.actions.BakedStatement
 import org.orkg.contenttypes.domain.actions.ThingIdValidator
 import org.orkg.contenttypes.domain.actions.UpdateTemplateInstanceCommand
 import org.orkg.contenttypes.domain.actions.UpdateTemplateInstanceState
-import org.orkg.contenttypes.domain.actions.toThingDefinition
-import org.orkg.contenttypes.input.LiteralDefinition
+import org.orkg.contenttypes.domain.actions.toThingCommandPart
+import org.orkg.contenttypes.input.CreateLiteralCommandPart
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.output.ClassHierarchyRepository
 import org.orkg.graph.output.ClassRepository
@@ -45,7 +45,7 @@ class TemplateInstancePropertyValueValidator(
         val templateInstance = state.templateInstance!!
         val validatedIds = state.validatedIds.toMutableMap()
         val thingDefinitions = command.all()
-        val literalDefinitions = mutableMapOf<String, LiteralDefinition>()
+        val literalDefinitions = mutableMapOf<String, CreateLiteralCommandPart>()
 
         validatePropertyPaths(state.template!!, command.statements.keys)
 
@@ -61,7 +61,7 @@ class TemplateInstancePropertyValueValidator(
                 `object`.onLeft { tempId ->
                     val thingDefinition = thingDefinitions[tempId]!!
                     abstractTemplatePropertyValueValidator.validateObject(property, tempId, thingDefinition)
-                    if (property is LiteralTemplateProperty && thingDefinition is LiteralDefinition) {
+                    if (property is LiteralTemplateProperty && thingDefinition is CreateLiteralCommandPart) {
                         literalDefinitions[tempId] = thingDefinition.copy(
                             dataType = Literals.XSD.fromClass(property.datatype.id)?.prefixedUri
                                 ?: classRepository.findById(property.datatype.id).orElse(null)?.uri?.toString()
@@ -72,7 +72,7 @@ class TemplateInstancePropertyValueValidator(
                 }
 
                 `object`.onRight { thing ->
-                    abstractTemplatePropertyValueValidator.validateObject(property, thing.id.value, thing.toThingDefinition(statementRepository))
+                    abstractTemplatePropertyValueValidator.validateObject(property, thing.id.value, thing.toThingCommandPart(statementRepository))
                     val statement = BakedStatement(templateInstance.root.id.value, property.path.id.value, thing.id.value)
                     if (statement in toRemove) {
                         toRemove -= statement

@@ -15,7 +15,7 @@ import org.orkg.contenttypes.domain.EmptyContribution
 import org.orkg.contenttypes.domain.ThingIsNotAClass
 import org.orkg.contenttypes.domain.actions.BakedStatement
 import org.orkg.contenttypes.domain.actions.ContributionState
-import org.orkg.contenttypes.input.ContributionDefinition
+import org.orkg.contenttypes.input.CreateContributionCommandPart
 import org.orkg.contenttypes.input.CreateContributionUseCase
 import org.orkg.contenttypes.input.testing.fixtures.createContributionCommand
 import org.orkg.graph.domain.ExtractionMethod
@@ -142,7 +142,7 @@ internal class ContributionContentsValidatorUnitTest : MockkBaseTest {
             contributorId = ContributorId(UUID.randomUUID()),
             extractionMethod = ExtractionMethod.MANUAL,
             paperId = ThingId("R123"),
-            contribution = ContributionDefinition(
+            contribution = CreateContributionCommandPart(
                 label = "Contribution",
                 statements = emptyMap()
             )

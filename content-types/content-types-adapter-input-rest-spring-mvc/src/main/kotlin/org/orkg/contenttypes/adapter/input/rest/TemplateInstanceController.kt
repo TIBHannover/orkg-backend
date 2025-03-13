@@ -10,7 +10,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId
 import org.orkg.contenttypes.adapter.input.rest.mapping.TemplateInstanceRepresentationAdapter
-import org.orkg.contenttypes.input.LiteralDefinition
+import org.orkg.contenttypes.input.CreateLiteralCommandPart
 import org.orkg.contenttypes.input.TemplateInstanceUseCases
 import org.orkg.contenttypes.input.UpdateTemplateInstanceUseCase
 import org.orkg.graph.domain.ExtractionMethod
@@ -102,15 +102,15 @@ class TemplateInstanceController(
         @field:Valid
         val statements: Map<ThingId, List<String>>,
         @field:Valid
-        val resources: Map<String, ResourceDefinitionDTO>?,
+        val resources: Map<String, CreateResourceRequestPart>?,
         @field:Valid
         val literals: Map<String, String>?,
         @field:Valid
-        val predicates: Map<String, PredicateDefinitionDTO>?,
+        val predicates: Map<String, CreatePredicateRequestPart>?,
         @field:Valid
-        val classes: Map<String, ClassDefinitionDTO>?,
+        val classes: Map<String, CreateClassRequestPart>?,
         @field:Valid
-        val lists: Map<String, ListDefinitionDTO>?,
+        val lists: Map<String, CreateListRequestPart>?,
         @JsonProperty("extraction_method")
         val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     ) {
@@ -125,7 +125,7 @@ class TemplateInstanceController(
                 contributorId = contributorId,
                 statements = statements,
                 resources = resources?.mapValues { it.value.toCreateCommand() }.orEmpty(),
-                literals = literals?.mapValues { LiteralDefinition(it.value) }.orEmpty(),
+                literals = literals?.mapValues { CreateLiteralCommandPart(it.value) }.orEmpty(),
                 predicates = predicates?.mapValues { it.value.toCreateCommand() }.orEmpty(),
                 classes = classes?.mapValues { it.value.toCreateCommand() }.orEmpty(),
                 lists = lists?.mapValues { it.value.toCreateCommand() }.orEmpty(),

@@ -7,11 +7,11 @@ import org.orkg.contenttypes.domain.InvalidDatatype
 import org.orkg.contenttypes.domain.InvalidMaxCount
 import org.orkg.contenttypes.domain.InvalidMinCount
 import org.orkg.contenttypes.domain.InvalidRegexPattern
-import org.orkg.contenttypes.input.LiteralTemplatePropertyDefinition
-import org.orkg.contenttypes.input.NumberLiteralTemplatePropertyDefinition
-import org.orkg.contenttypes.input.ResourceTemplatePropertyDefinition
-import org.orkg.contenttypes.input.StringLiteralTemplatePropertyDefinition
-import org.orkg.contenttypes.input.TemplatePropertyDefinition
+import org.orkg.contenttypes.input.LiteralTemplatePropertyCommand
+import org.orkg.contenttypes.input.NumberLiteralTemplatePropertyCommand
+import org.orkg.contenttypes.input.ResourceTemplatePropertyCommand
+import org.orkg.contenttypes.input.StringLiteralTemplatePropertyCommand
+import org.orkg.contenttypes.input.TemplatePropertyCommand
 import org.orkg.graph.domain.ClassNotFound
 import org.orkg.graph.domain.Description
 import org.orkg.graph.domain.InvalidDescription
@@ -26,7 +26,7 @@ class AbstractTemplatePropertyValidator(
     private val predicateRepository: PredicateRepository,
     private val classRepository: ClassRepository,
 ) {
-    internal fun validate(property: TemplatePropertyDefinition) {
+    internal fun validate(property: TemplatePropertyCommand) {
         Label.ofOrNull(property.label) ?: throw InvalidLabel()
         property.placeholder?.also { Label.ofOrNull(it) ?: throw InvalidLabel("placeholder") }
         property.description?.also { Description.ofOrNull(it) ?: throw InvalidDescription("description") }
@@ -45,7 +45,7 @@ class AbstractTemplatePropertyValidator(
                 }
             }
         }
-        if (property is StringLiteralTemplatePropertyDefinition) {
+        if (property is StringLiteralTemplatePropertyCommand) {
             if (Literals.XSD.fromClass(property.datatype) != Literals.XSD.STRING) {
                 throw InvalidDatatype(property.datatype, Literals.XSD.STRING.`class`)
             }
@@ -56,7 +56,7 @@ class AbstractTemplatePropertyValidator(
                     throw InvalidRegexPattern(pattern, e)
                 }
             }
-        } else if (property is NumberLiteralTemplatePropertyDefinition) {
+        } else if (property is NumberLiteralTemplatePropertyCommand) {
             val xsd = Literals.XSD.fromClass(property.datatype)
             if (xsd?.isNumber != true) {
                 throw InvalidDatatype(property.datatype, *Literals.XSD.entries.filter { it.isNumber }.map { it.`class` }.toTypedArray())
@@ -69,8 +69,8 @@ class AbstractTemplatePropertyValidator(
         }
         predicateRepository.findById(property.path).orElseThrow { PredicateNotFound(property.path) }
         val range = when (property) {
-            is LiteralTemplatePropertyDefinition -> property.datatype
-            is ResourceTemplatePropertyDefinition -> property.`class`
+            is LiteralTemplatePropertyCommand -> property.datatype
+            is ResourceTemplatePropertyCommand -> property.`class`
             else -> null
         }
         if (range != null) {

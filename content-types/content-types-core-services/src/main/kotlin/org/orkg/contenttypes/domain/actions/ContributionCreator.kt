@@ -3,8 +3,8 @@ package org.orkg.contenttypes.domain.actions
 import org.orkg.common.ContributorId
 import org.orkg.common.Either
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.input.ContributionDefinition
-import org.orkg.contenttypes.input.ThingDefinitions
+import org.orkg.contenttypes.input.CreateContributionCommandPart
+import org.orkg.contenttypes.input.CreateThingsCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
@@ -50,8 +50,8 @@ class ContributionCreator(
         paperId: ThingId,
         contributorId: ContributorId,
         extractionMethod: ExtractionMethod,
-        thingDefinitions: ThingDefinitions,
-        contributionDefinitions: List<ContributionDefinition>,
+        thingDefinitions: CreateThingsCommand,
+        contributionDefinitions: List<CreateContributionCommandPart>,
         validatedIds: Map<String, Either<String, Thing>>,
         bakedStatements: Set<BakedStatement>,
     ): List<ThingId> {

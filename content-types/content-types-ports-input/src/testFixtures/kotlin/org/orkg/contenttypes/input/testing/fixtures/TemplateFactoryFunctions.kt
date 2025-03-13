@@ -13,13 +13,13 @@ import org.orkg.contenttypes.domain.TemplateProperty
 import org.orkg.contenttypes.domain.UntypedTemplateProperty
 import org.orkg.contenttypes.input.CreateTemplatePropertyUseCase
 import org.orkg.contenttypes.input.CreateTemplateUseCase
-import org.orkg.contenttypes.input.NumberLiteralPropertyDefinition
-import org.orkg.contenttypes.input.OtherLiteralPropertyDefinition
-import org.orkg.contenttypes.input.ResourcePropertyDefinition
-import org.orkg.contenttypes.input.StringLiteralPropertyDefinition
-import org.orkg.contenttypes.input.TemplatePropertyDefinition
-import org.orkg.contenttypes.input.TemplateRelationsDefinition
-import org.orkg.contenttypes.input.UntypedPropertyDefinition
+import org.orkg.contenttypes.input.NumberLiteralPropertyCommand
+import org.orkg.contenttypes.input.OtherLiteralPropertyCommand
+import org.orkg.contenttypes.input.ResourcePropertyCommand
+import org.orkg.contenttypes.input.StringLiteralPropertyCommand
+import org.orkg.contenttypes.input.TemplatePropertyCommand
+import org.orkg.contenttypes.input.TemplateRelationsCommand
+import org.orkg.contenttypes.input.UntypedPropertyCommand
 import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase
 import org.orkg.contenttypes.input.UpdateTemplateUseCase
 import org.orkg.graph.domain.Classes
@@ -35,7 +35,7 @@ fun createTemplateCommand() = CreateTemplateUseCase.CreateCommand(
     description = "Some description about the template",
     formattedLabel = FormattedLabel.of("{P32}"),
     targetClass = ThingId("targetClass"),
-    relations = createTemplateRelations(),
+    relations = createTemplateRelationsCommand(),
     properties = listOf(
         createUntypedTemplatePropertyCommand(),
         createStringLiteralTemplatePropertyCommand(),
@@ -62,7 +62,7 @@ fun updateTemplateCommand() = UpdateTemplateUseCase.UpdateCommand(
     description = "Updated description about the template",
     formattedLabel = FormattedLabel.of("{P34}"),
     targetClass = ThingId("otherClass"),
-    relations = createTemplateRelations(
+    relations = createTemplateRelationsCommand(
         researchFields = listOf(ThingId("R24")),
         researchProblems = listOf(ThingId("R29")),
         predicate = ThingId("P23")
@@ -210,33 +210,33 @@ fun updateResourceTemplatePropertyCommand() = UpdateTemplatePropertyUseCase.Upda
     `class` = Classes.paper
 )
 
-fun createTemplateRelations(
+fun createTemplateRelationsCommand(
     researchFields: List<ThingId> = listOf(ThingId("R20")),
     researchProblems: List<ThingId> = listOf(ThingId("R21")),
     predicate: ThingId? = ThingId("P22"),
-): TemplateRelationsDefinition =
-    TemplateRelationsDefinition(researchFields, researchProblems, predicate)
+): TemplateRelationsCommand =
+    TemplateRelationsCommand(researchFields, researchProblems, predicate)
 
-fun TemplateProperty.toTemplatePropertyDefinition(): TemplatePropertyDefinition =
+fun TemplateProperty.toTemplatePropertyCommand(): TemplatePropertyCommand =
     when (this) {
-        is UntypedTemplateProperty -> toUntypedTemplatePropertyDefinition()
-        is StringLiteralTemplateProperty -> toStringLiteralTemplatePropertyDefinition()
-        is NumberLiteralTemplateProperty -> toNumberLiteralTemplatePropertyDefinition()
-        is OtherLiteralTemplateProperty -> toOtherLiteralTemplatePropertyDefinition()
-        is ResourceTemplateProperty -> toResourceTemplatePropertyDefinition()
+        is UntypedTemplateProperty -> toUntypedTemplatePropertyCommand()
+        is StringLiteralTemplateProperty -> toStringLiteralTemplatePropertyCommand()
+        is NumberLiteralTemplateProperty -> toNumberLiteralTemplatePropertyCommand()
+        is OtherLiteralTemplateProperty -> toOtherLiteralTemplatePropertyCommand()
+        is ResourceTemplateProperty -> toResourceTemplatePropertyCommand()
     }
 
-fun UntypedTemplateProperty.toUntypedTemplatePropertyDefinition(): UntypedPropertyDefinition =
-    UntypedPropertyDefinition(label, placeholder, description, minCount, maxCount, path.id)
+fun UntypedTemplateProperty.toUntypedTemplatePropertyCommand(): UntypedPropertyCommand =
+    UntypedPropertyCommand(label, placeholder, description, minCount, maxCount, path.id)
 
-fun StringLiteralTemplateProperty.toStringLiteralTemplatePropertyDefinition(): StringLiteralPropertyDefinition =
-    StringLiteralPropertyDefinition(label, placeholder, description, minCount, maxCount, pattern, path.id, datatype.id)
+fun StringLiteralTemplateProperty.toStringLiteralTemplatePropertyCommand(): StringLiteralPropertyCommand =
+    StringLiteralPropertyCommand(label, placeholder, description, minCount, maxCount, pattern, path.id, datatype.id)
 
-fun NumberLiteralTemplateProperty.toNumberLiteralTemplatePropertyDefinition(): NumberLiteralPropertyDefinition =
-    NumberLiteralPropertyDefinition(label, placeholder, description, minCount, maxCount, minInclusive, maxInclusive, path.id, datatype.id)
+fun NumberLiteralTemplateProperty.toNumberLiteralTemplatePropertyCommand(): NumberLiteralPropertyCommand =
+    NumberLiteralPropertyCommand(label, placeholder, description, minCount, maxCount, minInclusive, maxInclusive, path.id, datatype.id)
 
-fun OtherLiteralTemplateProperty.toOtherLiteralTemplatePropertyDefinition(): OtherLiteralPropertyDefinition =
-    OtherLiteralPropertyDefinition(label, placeholder, description, minCount, maxCount, path.id, datatype.id)
+fun OtherLiteralTemplateProperty.toOtherLiteralTemplatePropertyCommand(): OtherLiteralPropertyCommand =
+    OtherLiteralPropertyCommand(label, placeholder, description, minCount, maxCount, path.id, datatype.id)
 
-fun ResourceTemplateProperty.toResourceTemplatePropertyDefinition(): ResourcePropertyDefinition =
-    ResourcePropertyDefinition(label, placeholder, description, minCount, maxCount, path.id, `class`.id)
+fun ResourceTemplateProperty.toResourceTemplatePropertyCommand(): ResourcePropertyCommand =
+    ResourcePropertyCommand(label, placeholder, description, minCount, maxCount, path.id, `class`.id)

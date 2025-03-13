@@ -19,6 +19,7 @@ import org.orkg.contenttypes.adapter.input.rest.mapping.ContentTypeRepresentatio
 import org.orkg.contenttypes.adapter.input.rest.mapping.SmartReviewRepresentationAdapter
 import org.orkg.contenttypes.adapter.input.rest.mapping.StatementListRepresentationAdapter
 import org.orkg.contenttypes.domain.SmartReviewNotFound
+import org.orkg.contenttypes.input.AbstractSmartReviewSectionCommand
 import org.orkg.contenttypes.input.CreateSmartReviewSectionUseCase
 import org.orkg.contenttypes.input.CreateSmartReviewUseCase
 import org.orkg.contenttypes.input.DeleteSmartReviewSectionUseCase
@@ -27,7 +28,6 @@ import org.orkg.contenttypes.input.SmartReviewComparisonSectionCommand
 import org.orkg.contenttypes.input.SmartReviewOntologySectionCommand
 import org.orkg.contenttypes.input.SmartReviewPredicateSectionCommand
 import org.orkg.contenttypes.input.SmartReviewResourceSectionCommand
-import org.orkg.contenttypes.input.SmartReviewSectionDefinition
 import org.orkg.contenttypes.input.SmartReviewTextSectionCommand
 import org.orkg.contenttypes.input.SmartReviewUseCases
 import org.orkg.contenttypes.input.SmartReviewVisualizationSectionCommand
@@ -230,7 +230,7 @@ class SmartReviewController(
         @JsonProperty("research_fields")
         val researchFields: List<ThingId>,
         @field:Valid
-        val authors: List<AuthorDTO>?,
+        val authors: List<AuthorRequest>?,
         @JsonProperty("sdgs")
         val sustainableDevelopmentGoals: Set<ThingId>?,
         @field:Size(max = 1)
@@ -254,7 +254,7 @@ class SmartReviewController(
                 observatories = observatories.orEmpty(),
                 organizations = organizations.orEmpty(),
                 extractionMethod = extractionMethod,
-                sections = sections?.map { it.toSmartReviewSectionDefinition() }.orEmpty(),
+                sections = sections?.map { it.toSmartReviewSectionCommand() }.orEmpty(),
                 references = references.orEmpty()
             )
     }
@@ -266,7 +266,7 @@ class SmartReviewController(
         @JsonProperty("research_fields")
         val researchFields: List<ThingId>?,
         @field:Valid
-        val authors: List<AuthorDTO>?,
+        val authors: List<AuthorRequest>?,
         @JsonProperty("sdgs")
         val sustainableDevelopmentGoals: Set<ThingId>?,
         @field:Size(max = 1)
@@ -292,7 +292,7 @@ class SmartReviewController(
                 observatories = observatories,
                 organizations = organizations,
                 extractionMethod = extractionMethod,
-                sections = sections?.map { it.toSmartReviewSectionDefinition() },
+                sections = sections?.map { it.toSmartReviewSectionCommand() },
                 references = references,
                 visibility = visibility
             )
@@ -312,7 +312,7 @@ class SmartReviewController(
     sealed interface SmartReviewSectionRequest {
         val heading: String
 
-        fun toSmartReviewSectionDefinition(): SmartReviewSectionDefinition
+        fun toSmartReviewSectionCommand(): AbstractSmartReviewSectionCommand
 
         fun toCreateCommand(
             contributorId: ContributorId,
@@ -331,7 +331,7 @@ class SmartReviewController(
         override val heading: String,
         val comparison: ThingId?,
     ) : SmartReviewSectionRequest {
-        override fun toSmartReviewSectionDefinition(): SmartReviewSectionDefinition =
+        override fun toSmartReviewSectionCommand(): AbstractSmartReviewSectionCommand =
             SmartReviewComparisonSectionCommand(heading, comparison)
 
         override fun toCreateCommand(
@@ -365,7 +365,7 @@ class SmartReviewController(
         override val heading: String,
         val visualization: ThingId?,
     ) : SmartReviewSectionRequest {
-        override fun toSmartReviewSectionDefinition(): SmartReviewSectionDefinition =
+        override fun toSmartReviewSectionCommand(): AbstractSmartReviewSectionCommand =
             SmartReviewVisualizationSectionCommand(heading, visualization)
 
         override fun toCreateCommand(
@@ -399,7 +399,7 @@ class SmartReviewController(
         override val heading: String,
         val resource: ThingId?,
     ) : SmartReviewSectionRequest {
-        override fun toSmartReviewSectionDefinition(): SmartReviewSectionDefinition =
+        override fun toSmartReviewSectionCommand(): AbstractSmartReviewSectionCommand =
             SmartReviewResourceSectionCommand(heading, resource)
 
         override fun toCreateCommand(
@@ -433,7 +433,7 @@ class SmartReviewController(
         override val heading: String,
         val predicate: ThingId?,
     ) : SmartReviewSectionRequest {
-        override fun toSmartReviewSectionDefinition(): SmartReviewSectionDefinition =
+        override fun toSmartReviewSectionCommand(): AbstractSmartReviewSectionCommand =
             SmartReviewPredicateSectionCommand(heading, predicate)
 
         override fun toCreateCommand(
@@ -468,7 +468,7 @@ class SmartReviewController(
         val entities: List<ThingId>,
         val predicates: List<ThingId>,
     ) : SmartReviewSectionRequest {
-        override fun toSmartReviewSectionDefinition(): SmartReviewSectionDefinition =
+        override fun toSmartReviewSectionCommand(): AbstractSmartReviewSectionCommand =
             SmartReviewOntologySectionCommand(heading, entities, predicates)
 
         override fun toCreateCommand(
@@ -505,7 +505,7 @@ class SmartReviewController(
         val `class`: ThingId?,
         val text: String,
     ) : SmartReviewSectionRequest {
-        override fun toSmartReviewSectionDefinition(): SmartReviewSectionDefinition =
+        override fun toSmartReviewSectionCommand(): AbstractSmartReviewSectionCommand =
             SmartReviewTextSectionCommand(heading, `class`, text)
 
         override fun toCreateCommand(

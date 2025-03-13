@@ -7,8 +7,8 @@ import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.contenttypes.domain.testing.fixtures.createOtherLiteralTemplateProperty
-import org.orkg.contenttypes.input.ResourcePropertyDefinition
-import org.orkg.contenttypes.input.testing.fixtures.toOtherLiteralTemplatePropertyDefinition
+import org.orkg.contenttypes.input.ResourcePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.toOtherLiteralTemplatePropertyCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
@@ -27,7 +27,7 @@ internal class AbstractTemplatePropertyUpdaterOtherLiteralPropertyUnitTest : Abs
     fun `Given an updated literal template property, when there are no changes, it does nothing`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createOtherLiteralTemplateProperty()
-        val newProperty = oldProperty.toOtherLiteralTemplatePropertyDefinition()
+        val newProperty = oldProperty.toOtherLiteralTemplatePropertyCommand()
 
         abstractTemplatePropertyUpdater.update(emptyList(), contributorId, 3, newProperty, oldProperty)
     }
@@ -36,7 +36,7 @@ internal class AbstractTemplatePropertyUpdaterOtherLiteralPropertyUnitTest : Abs
     fun `Given an updated literal template property, when label has changed, it updates the label`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createOtherLiteralTemplateProperty()
-        val newProperty = oldProperty.toOtherLiteralTemplatePropertyDefinition().copy(
+        val newProperty = oldProperty.toOtherLiteralTemplatePropertyCommand().copy(
             label = "new label"
         )
 
@@ -67,7 +67,7 @@ internal class AbstractTemplatePropertyUpdaterOtherLiteralPropertyUnitTest : Abs
     fun `Given an updated literal template property, when placeholder has changed, it updates the placeholder`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createOtherLiteralTemplateProperty()
-        val newProperty = oldProperty.toOtherLiteralTemplatePropertyDefinition().copy(
+        val newProperty = oldProperty.toOtherLiteralTemplatePropertyCommand().copy(
             placeholder = "new placeholder"
         )
         val statements = listOf(
@@ -105,7 +105,7 @@ internal class AbstractTemplatePropertyUpdaterOtherLiteralPropertyUnitTest : Abs
     fun `Given an updated literal template property, when description has changed, it updates the description`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createOtherLiteralTemplateProperty()
-        val newProperty = oldProperty.toOtherLiteralTemplatePropertyDefinition().copy(
+        val newProperty = oldProperty.toOtherLiteralTemplatePropertyCommand().copy(
             description = "new description"
         )
         val statements = listOf(
@@ -143,7 +143,7 @@ internal class AbstractTemplatePropertyUpdaterOtherLiteralPropertyUnitTest : Abs
     fun `Given an updated literal template property, when min count has changed, it updates the min count`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createOtherLiteralTemplateProperty()
-        val newProperty = oldProperty.toOtherLiteralTemplatePropertyDefinition().copy(
+        val newProperty = oldProperty.toOtherLiteralTemplatePropertyCommand().copy(
             minCount = 5
         )
         val statements = listOf(
@@ -183,7 +183,7 @@ internal class AbstractTemplatePropertyUpdaterOtherLiteralPropertyUnitTest : Abs
     fun `Given an updated literal template property, when max count has changed, it updates the max count`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createOtherLiteralTemplateProperty()
-        val newProperty = oldProperty.toOtherLiteralTemplatePropertyDefinition().copy(
+        val newProperty = oldProperty.toOtherLiteralTemplatePropertyCommand().copy(
             maxCount = 5
         )
         val statements = listOf(
@@ -223,7 +223,7 @@ internal class AbstractTemplatePropertyUpdaterOtherLiteralPropertyUnitTest : Abs
     fun `Given an updated literal template property, when datatype has changed, it updates the datatype`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createOtherLiteralTemplateProperty()
-        val newProperty = oldProperty.toOtherLiteralTemplatePropertyDefinition().copy(
+        val newProperty = oldProperty.toOtherLiteralTemplatePropertyCommand().copy(
             datatype = Classes.string
         )
         val statementToRemove = StatementId("S123")
@@ -267,7 +267,7 @@ internal class AbstractTemplatePropertyUpdaterOtherLiteralPropertyUnitTest : Abs
     fun `Given an updated literal template property, when changed to a resource template property, it updates the datatype statement to a class statement`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createOtherLiteralTemplateProperty()
-        val newProperty = ResourcePropertyDefinition(
+        val newProperty = ResourcePropertyCommand(
             label = oldProperty.label,
             placeholder = oldProperty.placeholder,
             description = oldProperty.description,
@@ -317,7 +317,7 @@ internal class AbstractTemplatePropertyUpdaterOtherLiteralPropertyUnitTest : Abs
     fun `Given an updated literal template property, when path has changed, it updates the path`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createOtherLiteralTemplateProperty()
-        val newProperty = oldProperty.toOtherLiteralTemplatePropertyDefinition().copy(
+        val newProperty = oldProperty.toOtherLiteralTemplatePropertyCommand().copy(
             path = Predicates.hasLink
         )
         val statements = listOf(
@@ -355,7 +355,7 @@ internal class AbstractTemplatePropertyUpdaterOtherLiteralPropertyUnitTest : Abs
     fun `Given an updated literal template property, when order has changed, it updates the order`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createOtherLiteralTemplateProperty()
-        val newProperty = oldProperty.toOtherLiteralTemplatePropertyDefinition()
+        val newProperty = oldProperty.toOtherLiteralTemplatePropertyCommand()
         val statements = listOf(
             createStatement(
                 subject = createResource(oldProperty.id),

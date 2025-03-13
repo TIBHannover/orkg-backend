@@ -4,9 +4,9 @@ import dev.forkhandles.values.ofOrNull
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.InvalidHeadingSize
 import org.orkg.contenttypes.domain.InvalidListSectionEntry
-import org.orkg.contenttypes.input.LiteratureListListSectionDefinition
-import org.orkg.contenttypes.input.LiteratureListSectionDefinition
-import org.orkg.contenttypes.input.LiteratureListTextSectionDefinition
+import org.orkg.contenttypes.input.AbstractLiteratureListListSectionCommand
+import org.orkg.contenttypes.input.AbstractLiteratureListSectionCommand
+import org.orkg.contenttypes.input.AbstractLiteratureListTextSectionCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Description
 import org.orkg.graph.domain.InvalidDescription
@@ -20,8 +20,8 @@ private val allowedListSectionEntryClasses = setOf(Classes.paper, Classes.datase
 class AbstractLiteratureListSectionValidator(
     private val resourceRepository: ResourceRepository,
 ) {
-    internal fun validate(section: LiteratureListSectionDefinition, validIds: MutableSet<ThingId>) {
-        if (section is LiteratureListListSectionDefinition) {
+    internal fun validate(section: AbstractLiteratureListSectionCommand, validIds: MutableSet<ThingId>) {
+        if (section is AbstractLiteratureListListSectionCommand) {
             section.entries.forEach { entry ->
                 entry.description?.let { description ->
                     Description.ofOrNull(description) ?: throw InvalidDescription("description")
@@ -34,7 +34,7 @@ class AbstractLiteratureListSectionValidator(
                     validIds += entry.id
                 }
             }
-        } else if (section is LiteratureListTextSectionDefinition) {
+        } else if (section is AbstractLiteratureListTextSectionCommand) {
             Label.ofOrNull(section.heading) ?: throw InvalidLabel("heading")
             Description.ofOrNull(section.text) ?: throw InvalidDescription("text")
             if (section.headingSize < 1) {

@@ -63,7 +63,7 @@ interface CreatePaperUseCase {
         val title: String,
         val researchFields: List<ThingId>,
         val identifiers: Map<String, List<String>>,
-        val publicationInfo: PublicationInfoDefinition?,
+        val publicationInfo: PublicationInfoCommand?,
         val authors: List<Author>,
         val sustainableDevelopmentGoals: Set<ThingId>,
         val mentionings: Set<ThingId>,
@@ -73,13 +73,13 @@ interface CreatePaperUseCase {
         val extractionMethod: ExtractionMethod,
     ) {
         data class PaperContents(
-            override val resources: Map<String, ResourceDefinition> = emptyMap(),
-            override val literals: Map<String, LiteralDefinition> = emptyMap(),
-            override val predicates: Map<String, PredicateDefinition> = emptyMap(),
-            override val lists: Map<String, ListDefinition> = emptyMap(),
-            val contributions: List<ContributionDefinition>,
-        ) : ThingDefinitions {
-            override val classes: Map<String, ClassDefinition>
+            override val resources: Map<String, CreateResourceCommandPart> = emptyMap(),
+            override val literals: Map<String, CreateLiteralCommandPart> = emptyMap(),
+            override val predicates: Map<String, CreatePredicateCommandPart> = emptyMap(),
+            override val lists: Map<String, CreateListCommandPart> = emptyMap(),
+            val contributions: List<CreateContributionCommandPart>,
+        ) : CreateThingsCommand {
+            override val classes: Map<String, CreateClassCommandPart>
                 get() = emptyMap()
         }
     }
@@ -94,7 +94,7 @@ interface UpdatePaperUseCase {
         val title: String?,
         val researchFields: List<ThingId>?,
         val identifiers: Map<String, List<String>>?,
-        val publicationInfo: PublicationInfoDefinition?,
+        val publicationInfo: PublicationInfoCommand?,
         val authors: List<Author>?,
         val sustainableDevelopmentGoals: Set<ThingId>?,
         val mentionings: Set<ThingId>?,

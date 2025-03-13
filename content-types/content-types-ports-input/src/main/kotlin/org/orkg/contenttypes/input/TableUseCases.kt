@@ -38,19 +38,19 @@ interface CreateTableUseCase {
     data class CreateCommand(
         val contributorId: ContributorId,
         val label: String,
-        override val resources: Map<String, ResourceDefinition>,
-        override val literals: Map<String, LiteralDefinition>,
-        override val predicates: Map<String, PredicateDefinition>,
-        override val classes: Map<String, ClassDefinition>,
-        override val lists: Map<String, ListDefinition>,
-        val rows: List<RowDefinition>,
+        override val resources: Map<String, CreateResourceCommandPart>,
+        override val literals: Map<String, CreateLiteralCommandPart>,
+        override val predicates: Map<String, CreatePredicateCommandPart>,
+        override val classes: Map<String, CreateClassCommandPart>,
+        override val lists: Map<String, CreateListCommandPart>,
+        val rows: List<RowCommand>,
         val observatories: List<ObservatoryId>,
         val organizations: List<OrganizationId>,
         val extractionMethod: ExtractionMethod,
-    ) : ThingDefinitions
+    ) : CreateThingsCommand
 }
 
-data class RowDefinition(
+data class RowCommand(
     val label: String?,
     val data: List<String?>,
 )

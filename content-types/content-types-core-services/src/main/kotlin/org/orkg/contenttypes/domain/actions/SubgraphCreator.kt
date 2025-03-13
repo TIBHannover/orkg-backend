@@ -4,7 +4,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.Either
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.input.ThingDefinitions
+import org.orkg.contenttypes.input.CreateThingsCommand
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Thing
@@ -35,7 +35,7 @@ class SubgraphCreator(
     internal fun createThingsAndStatements(
         contributorId: ContributorId,
         extractionMethod: ExtractionMethod,
-        thingDefinitions: ThingDefinitions,
+        thingDefinitions: CreateThingsCommand,
         validatedIds: Map<String, Either<String, Thing>>,
         bakedStatements: Set<BakedStatement>,
         lookup: MutableMap<String, ThingId> = mutableMapOf(),
@@ -45,7 +45,7 @@ class SubgraphCreator(
     }
 
     internal fun createThings(
-        thingDefinitions: ThingDefinitions,
+        thingDefinitions: CreateThingsCommand,
         validatedIds: Map<String, Either<String, Thing>>,
         contributorId: ContributorId,
         extractionMethod: ExtractionMethod,
@@ -59,7 +59,7 @@ class SubgraphCreator(
     }
 
     private fun createClasses(
-        thingDefinitions: ThingDefinitions,
+        thingDefinitions: CreateThingsCommand,
         validatedIds: Map<String, Either<String, Thing>>,
         lookup: MutableMap<String, ThingId>,
         contributorId: ContributorId,
@@ -78,7 +78,7 @@ class SubgraphCreator(
     }
 
     private fun createResources(
-        thingDefinitions: ThingDefinitions,
+        thingDefinitions: CreateThingsCommand,
         validatedIds: Map<String, Either<String, Thing>>,
         lookup: MutableMap<String, ThingId>,
         contributorId: ContributorId,
@@ -99,7 +99,7 @@ class SubgraphCreator(
     }
 
     private fun createLiterals(
-        thingDefinitions: ThingDefinitions,
+        thingDefinitions: CreateThingsCommand,
         validatedIds: Map<String, Either<String, Thing>>,
         lookup: MutableMap<String, ThingId>,
         contributorId: ContributorId,
@@ -118,7 +118,7 @@ class SubgraphCreator(
     }
 
     private fun createPredicates(
-        thingDefinitions: ThingDefinitions,
+        thingDefinitions: CreateThingsCommand,
         validatedIds: Map<String, Either<String, Thing>>,
         contributorId: ContributorId,
         lookup: MutableMap<String, ThingId>,
@@ -153,7 +153,7 @@ class SubgraphCreator(
     }
 
     private fun createLists(
-        thingDefinitions: ThingDefinitions,
+        thingDefinitions: CreateThingsCommand,
         validatedIds: Map<String, Either<String, Thing>>,
         lookup: MutableMap<String, ThingId>,
         contributorId: ContributorId,

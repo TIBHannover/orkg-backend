@@ -5,10 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Test
-import org.orkg.InitialDataSetup.RequiredClassDefinition
-import org.orkg.InitialDataSetup.RequiredPredicateDefinition
-import org.orkg.InitialDataSetup.RequiredResearchFieldDefinition
-import org.orkg.InitialDataSetup.RequiredResourceDefinition
+import org.orkg.InitialDataSetup.RequiredClassCommand
+import org.orkg.InitialDataSetup.RequiredPredicateCommand
+import org.orkg.InitialDataSetup.RequiredResearchFieldCommand
+import org.orkg.InitialDataSetup.RequiredResourceCommand
 import org.orkg.common.ThingId
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.graph.domain.Classes
@@ -34,10 +34,10 @@ internal class InitialDataJsonTest {
     @Test
     fun verifyInitialDataCanBeLoadedFromConfigurationAndIsFreeOfErrors() {
         assertDoesNotThrow {
-            readDataFile<List<RequiredPredicateDefinition>>("predicates")
-            readDataFile<List<RequiredClassDefinition>>("classes")
-            readDataFile<List<RequiredResourceDefinition>>("resources")
-            readDataFile<RequiredResearchFieldDefinition>("research_fields")
+            readDataFile<List<RequiredPredicateCommand>>("predicates")
+            readDataFile<List<RequiredClassCommand>>("classes")
+            readDataFile<List<RequiredResourceCommand>>("resources")
+            readDataFile<RequiredResearchFieldCommand>("research_fields")
         }
     }
 

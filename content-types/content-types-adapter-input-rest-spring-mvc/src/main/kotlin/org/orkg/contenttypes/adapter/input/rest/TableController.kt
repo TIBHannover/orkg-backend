@@ -91,18 +91,18 @@ class TableController(
         @field:NotBlank
         val label: String,
         @field:Valid
-        val resources: Map<String, ResourceDefinitionDTO>?,
+        val resources: Map<String, CreateResourceRequestPart>?,
         @field:Valid
-        val literals: Map<String, LiteralDefinitionDTO>?,
+        val literals: Map<String, CreateLiteralRequestPart>?,
         @field:Valid
-        val predicates: Map<String, PredicateDefinitionDTO>?,
+        val predicates: Map<String, CreatePredicateRequestPart>?,
         @field:Valid
-        val classes: Map<String, ClassDefinitionDTO>?,
+        val classes: Map<String, CreateClassRequestPart>?,
         @field:Valid
-        val lists: Map<String, ListDefinitionDTO>?,
+        val lists: Map<String, CreateListRequestPart>?,
         @field:Valid
         @field:Size(min = 2)
-        val rows: List<RowDefinitionDTO>,
+        val rows: List<RowRequest>,
         @field:Size(max = 1)
         val observatories: List<ObservatoryId>,
         @field:Size(max = 1)
@@ -119,7 +119,7 @@ class TableController(
                 predicates = predicates?.mapValues { it.value.toCreateCommand() }.orEmpty(),
                 classes = classes?.mapValues { it.value.toCreateCommand() }.orEmpty(),
                 lists = lists?.mapValues { it.value.toCreateCommand() }.orEmpty(),
-                rows = rows.map { it.toRowDefinition() },
+                rows = rows.map { it.toRowCommand() },
                 observatories = observatories,
                 organizations = organizations,
                 extractionMethod = extractionMethod

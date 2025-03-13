@@ -3,9 +3,9 @@ package org.orkg.contenttypes.domain.actions.tables
 import org.orkg.common.Either
 import org.orkg.contenttypes.domain.TableHeaderValueMustBeLiteral
 import org.orkg.contenttypes.domain.actions.ThingIdValidator
-import org.orkg.contenttypes.input.LiteralDefinition
-import org.orkg.contenttypes.input.RowDefinition
-import org.orkg.contenttypes.input.ThingDefinition
+import org.orkg.contenttypes.input.CreateLiteralCommandPart
+import org.orkg.contenttypes.input.CreateThingCommandPart
+import org.orkg.contenttypes.input.RowCommand
 import org.orkg.graph.domain.Literal
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Thing
@@ -15,8 +15,8 @@ class AbstractTableColumnsValidator(
     override val thingRepository: ThingRepository,
 ) : ThingIdValidator {
     internal fun validate(
-        thingDefinitions: Map<String, ThingDefinition>,
-        rows: List<RowDefinition>,
+        thingDefinitions: Map<String, CreateThingCommandPart>,
+        rows: List<RowCommand>,
         tempIds: Set<String>,
         validationCacheIn: Map<String, Either<String, Thing>>,
     ): Map<String, Either<String, Thing>> {
@@ -26,7 +26,7 @@ class AbstractTableColumnsValidator(
 
             `object`.onLeft { tempId ->
                 val definition = thingDefinitions[tempId]!!
-                if (definition !is LiteralDefinition || Literals.XSD.fromString(definition.dataType) != Literals.XSD.STRING) {
+                if (definition !is CreateLiteralCommandPart || Literals.XSD.fromString(definition.dataType) != Literals.XSD.STRING) {
                     throw TableHeaderValueMustBeLiteral(index)
                 }
             }

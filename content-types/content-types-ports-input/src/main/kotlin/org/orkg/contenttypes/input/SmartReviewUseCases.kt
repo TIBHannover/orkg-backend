@@ -70,7 +70,7 @@ interface CreateSmartReviewUseCase {
         val observatories: List<ObservatoryId>,
         val organizations: List<OrganizationId>,
         val extractionMethod: ExtractionMethod,
-        val sections: List<SmartReviewSectionDefinition>,
+        val sections: List<AbstractSmartReviewSectionCommand>,
         val references: List<String>,
     )
 }
@@ -91,7 +91,7 @@ interface CreateSmartReviewSectionUseCase {
         override val heading: String,
         override val comparison: ThingId?,
     ) : CreateCommand,
-        SmartReviewComparisonSectionDefinition
+        AbstractSmartReviewComparisonSectionCommand
 
     data class CreateVisualizationSectionCommand(
         override val contributorId: ContributorId,
@@ -100,7 +100,7 @@ interface CreateSmartReviewSectionUseCase {
         override val heading: String,
         override val visualization: ThingId?,
     ) : CreateCommand,
-        SmartReviewVisualizationSectionDefinition
+        AbstractSmartReviewVisualizationSectionCommand
 
     data class CreateResourceSectionCommand(
         override val contributorId: ContributorId,
@@ -109,7 +109,7 @@ interface CreateSmartReviewSectionUseCase {
         override val heading: String,
         override val resource: ThingId?,
     ) : CreateCommand,
-        SmartReviewResourceSectionDefinition
+        AbstractSmartReviewResourceSectionCommand
 
     data class CreatePredicateSectionCommand(
         override val contributorId: ContributorId,
@@ -118,7 +118,7 @@ interface CreateSmartReviewSectionUseCase {
         override val heading: String,
         override val predicate: ThingId?,
     ) : CreateCommand,
-        SmartReviewPredicateSectionDefinition
+        AbstractSmartReviewPredicateSectionCommand
 
     data class CreateOntologySectionCommand(
         override val contributorId: ContributorId,
@@ -128,7 +128,7 @@ interface CreateSmartReviewSectionUseCase {
         override val entities: List<ThingId>,
         override val predicates: List<ThingId>,
     ) : CreateCommand,
-        SmartReviewOntologySectionDefinition
+        AbstractSmartReviewOntologySectionCommand
 
     data class CreateTextSectionCommand(
         override val contributorId: ContributorId,
@@ -138,7 +138,7 @@ interface CreateSmartReviewSectionUseCase {
         override val `class`: ThingId?,
         override val text: String,
     ) : CreateCommand,
-        SmartReviewTextSectionDefinition
+        AbstractSmartReviewTextSectionCommand
 }
 
 interface UpdateSmartReviewUseCase {
@@ -154,7 +154,7 @@ interface UpdateSmartReviewUseCase {
         val observatories: List<ObservatoryId>?,
         val organizations: List<OrganizationId>?,
         val extractionMethod: ExtractionMethod?,
-        val sections: List<SmartReviewSectionDefinition>?,
+        val sections: List<AbstractSmartReviewSectionCommand>?,
         val references: List<String>?,
         val visibility: Visibility?,
     )
@@ -176,7 +176,7 @@ interface UpdateSmartReviewSectionUseCase {
         override val heading: String,
         override val comparison: ThingId?,
     ) : UpdateCommand,
-        SmartReviewComparisonSectionDefinition
+        AbstractSmartReviewComparisonSectionCommand
 
     data class UpdateVisualizationSectionCommand(
         override val smartReviewSectionId: ThingId,
@@ -185,7 +185,7 @@ interface UpdateSmartReviewSectionUseCase {
         override val heading: String,
         override val visualization: ThingId?,
     ) : UpdateCommand,
-        SmartReviewVisualizationSectionDefinition
+        AbstractSmartReviewVisualizationSectionCommand
 
     data class UpdateResourceSectionCommand(
         override val smartReviewSectionId: ThingId,
@@ -194,7 +194,7 @@ interface UpdateSmartReviewSectionUseCase {
         override val heading: String,
         override val resource: ThingId?,
     ) : UpdateCommand,
-        SmartReviewResourceSectionDefinition
+        AbstractSmartReviewResourceSectionCommand
 
     data class UpdatePredicateSectionCommand(
         override val smartReviewSectionId: ThingId,
@@ -203,7 +203,7 @@ interface UpdateSmartReviewSectionUseCase {
         override val heading: String,
         override val predicate: ThingId?,
     ) : UpdateCommand,
-        SmartReviewPredicateSectionDefinition
+        AbstractSmartReviewPredicateSectionCommand
 
     data class UpdateOntologySectionCommand(
         override val smartReviewSectionId: ThingId,
@@ -213,7 +213,7 @@ interface UpdateSmartReviewSectionUseCase {
         override val entities: List<ThingId>,
         override val predicates: List<ThingId>,
     ) : UpdateCommand,
-        SmartReviewOntologySectionDefinition
+        AbstractSmartReviewOntologySectionCommand
 
     data class UpdateTextSectionCommand(
         override val smartReviewSectionId: ThingId,
@@ -223,7 +223,7 @@ interface UpdateSmartReviewSectionUseCase {
         override val `class`: ThingId?,
         override val text: String,
     ) : UpdateCommand,
-        SmartReviewTextSectionDefinition
+        AbstractSmartReviewTextSectionCommand
 }
 
 interface DeleteSmartReviewSectionUseCase {
@@ -252,14 +252,14 @@ interface PublishSmartReviewUseCase {
     }
 }
 
-sealed interface SmartReviewSectionDefinition {
+sealed interface AbstractSmartReviewSectionCommand {
     val heading: String
 
     fun matchesSmartReviewSection(section: SmartReviewSection): Boolean =
         heading == section.heading
 }
 
-interface SmartReviewComparisonSectionDefinition : SmartReviewSectionDefinition {
+interface AbstractSmartReviewComparisonSectionCommand : AbstractSmartReviewSectionCommand {
     override val heading: String
     val comparison: ThingId?
 
@@ -269,7 +269,7 @@ interface SmartReviewComparisonSectionDefinition : SmartReviewSectionDefinition 
             comparison == section.comparison?.id
 }
 
-interface SmartReviewVisualizationSectionDefinition : SmartReviewSectionDefinition {
+interface AbstractSmartReviewVisualizationSectionCommand : AbstractSmartReviewSectionCommand {
     override val heading: String
     val visualization: ThingId?
 
@@ -279,7 +279,7 @@ interface SmartReviewVisualizationSectionDefinition : SmartReviewSectionDefiniti
             visualization == section.visualization?.id
 }
 
-interface SmartReviewResourceSectionDefinition : SmartReviewSectionDefinition {
+interface AbstractSmartReviewResourceSectionCommand : AbstractSmartReviewSectionCommand {
     override val heading: String
     val resource: ThingId?
 
@@ -289,7 +289,7 @@ interface SmartReviewResourceSectionDefinition : SmartReviewSectionDefinition {
             resource == section.resource?.id
 }
 
-interface SmartReviewPredicateSectionDefinition : SmartReviewSectionDefinition {
+interface AbstractSmartReviewPredicateSectionCommand : AbstractSmartReviewSectionCommand {
     override val heading: String
     val predicate: ThingId?
 
@@ -299,7 +299,7 @@ interface SmartReviewPredicateSectionDefinition : SmartReviewSectionDefinition {
             predicate == section.predicate?.id
 }
 
-interface SmartReviewOntologySectionDefinition : SmartReviewSectionDefinition {
+interface AbstractSmartReviewOntologySectionCommand : AbstractSmartReviewSectionCommand {
     override val heading: String
     val entities: List<ThingId>
     val predicates: List<ThingId>
@@ -311,7 +311,7 @@ interface SmartReviewOntologySectionDefinition : SmartReviewSectionDefinition {
             predicates == section.predicates.map { it.id }
 }
 
-interface SmartReviewTextSectionDefinition : SmartReviewSectionDefinition {
+interface AbstractSmartReviewTextSectionCommand : AbstractSmartReviewSectionCommand {
     override val heading: String
     val `class`: ThingId?
     val text: String
@@ -323,42 +323,34 @@ interface SmartReviewTextSectionDefinition : SmartReviewSectionDefinition {
             text == section.text
 }
 
-sealed interface SmartReviewSectionCommand
-
 data class SmartReviewComparisonSectionCommand(
     override val heading: String,
     override val comparison: ThingId?,
-) : SmartReviewSectionCommand,
-    SmartReviewComparisonSectionDefinition
+) : AbstractSmartReviewComparisonSectionCommand
 
 data class SmartReviewVisualizationSectionCommand(
     override val heading: String,
     override val visualization: ThingId?,
-) : SmartReviewSectionCommand,
-    SmartReviewVisualizationSectionDefinition
+) : AbstractSmartReviewVisualizationSectionCommand
 
 data class SmartReviewResourceSectionCommand(
     override val heading: String,
     override val resource: ThingId?,
-) : SmartReviewSectionCommand,
-    SmartReviewResourceSectionDefinition
+) : AbstractSmartReviewResourceSectionCommand
 
 data class SmartReviewPredicateSectionCommand(
     override val heading: String,
     override val predicate: ThingId?,
-) : SmartReviewSectionCommand,
-    SmartReviewPredicateSectionDefinition
+) : AbstractSmartReviewPredicateSectionCommand
 
 data class SmartReviewOntologySectionCommand(
     override val heading: String,
     override val entities: List<ThingId>,
     override val predicates: List<ThingId>,
-) : SmartReviewSectionCommand,
-    SmartReviewOntologySectionDefinition
+) : AbstractSmartReviewOntologySectionCommand
 
 data class SmartReviewTextSectionCommand(
     override val heading: String,
     override val `class`: ThingId?,
     override val text: String,
-) : SmartReviewSectionCommand,
-    SmartReviewTextSectionDefinition
+) : AbstractSmartReviewTextSectionCommand

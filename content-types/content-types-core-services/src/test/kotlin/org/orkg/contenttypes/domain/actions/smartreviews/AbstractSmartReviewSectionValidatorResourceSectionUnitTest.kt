@@ -6,7 +6,7 @@ import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.input.testing.fixtures.smartReviewResourceSectionDefinition
+import org.orkg.contenttypes.input.testing.fixtures.smartReviewResourceSectionCommand
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.MAX_LABEL_LENGTH
 import org.orkg.graph.domain.ResourceNotFound
@@ -16,7 +16,7 @@ import java.util.Optional
 internal class AbstractSmartReviewSectionValidatorResourceSectionUnitTest : AbstractSmartReviewSectionValidatorUnitTest() {
     @Test
     fun `Given a resource section definition, when validating, it returns success`() {
-        val section = smartReviewResourceSectionDefinition()
+        val section = smartReviewResourceSectionCommand()
         val validIds = mutableSetOf<ThingId>()
         val resource = createResource(section.resource!!)
 
@@ -31,7 +31,7 @@ internal class AbstractSmartReviewSectionValidatorResourceSectionUnitTest : Abst
 
     @Test
     fun `Given a resource section definition, when validating, it does not validate the resource id when it is not set`() {
-        val section = smartReviewResourceSectionDefinition().copy(resource = null)
+        val section = smartReviewResourceSectionCommand().copy(resource = null)
         val validIds = mutableSetOf<ThingId>()
 
         abstractSmartReviewSectionValidator.validate(section, validIds)
@@ -41,7 +41,7 @@ internal class AbstractSmartReviewSectionValidatorResourceSectionUnitTest : Abst
 
     @Test
     fun `Given a resource section definition, when validating, it does not check already valid ids`() {
-        val section = smartReviewResourceSectionDefinition()
+        val section = smartReviewResourceSectionCommand()
         val validIds = mutableSetOf(section.resource!!)
 
         abstractSmartReviewSectionValidator.validate(section, validIds)
@@ -51,7 +51,7 @@ internal class AbstractSmartReviewSectionValidatorResourceSectionUnitTest : Abst
 
     @Test
     fun `Given a resource section definition, when heading is invalid, it throws an exception`() {
-        val section = smartReviewResourceSectionDefinition().copy(
+        val section = smartReviewResourceSectionCommand().copy(
             heading = "a".repeat(MAX_LABEL_LENGTH + 1)
         )
         val validIds = mutableSetOf<ThingId>()
@@ -61,7 +61,7 @@ internal class AbstractSmartReviewSectionValidatorResourceSectionUnitTest : Abst
 
     @Test
     fun `Given a resource section definition, when resource does not exist, it throws an exception`() {
-        val section = smartReviewResourceSectionDefinition()
+        val section = smartReviewResourceSectionCommand()
         val validIds = mutableSetOf<ThingId>()
 
         every { resourceRepository.findById(section.resource!!) } returns Optional.empty()

@@ -14,7 +14,7 @@ import org.orkg.contenttypes.domain.UnrelatedLiteratureListSection
 import org.orkg.contenttypes.domain.actions.UpdateLiteratureListSectionState
 import org.orkg.contenttypes.domain.actions.literaturelists.AbstractLiteratureListSectionValidator
 import org.orkg.contenttypes.domain.testing.fixtures.createLiteratureList
-import org.orkg.contenttypes.input.LiteratureListSectionDefinition
+import org.orkg.contenttypes.input.AbstractLiteratureListSectionCommand
 import org.orkg.contenttypes.input.testing.fixtures.updateLiteratureListListSectionCommand
 import org.orkg.contenttypes.input.testing.fixtures.updateLiteratureListTextSectionCommand
 
@@ -43,7 +43,7 @@ internal class LiteratureListSectionUpdateValidatorUnitTest : MockkBaseTest {
 
         verify(exactly = 1) {
             abstractLiteratureListSectionValidator.validate(
-                section = command as LiteratureListSectionDefinition,
+                section = command as AbstractLiteratureListSectionCommand,
                 validIds = mutableSetOf()
             )
         }
@@ -70,7 +70,7 @@ internal class LiteratureListSectionUpdateValidatorUnitTest : MockkBaseTest {
 
         verify(exactly = 1) {
             abstractLiteratureListSectionValidator.validate(
-                section = command as LiteratureListSectionDefinition,
+                section = command as AbstractLiteratureListSectionCommand,
                 validIds = mutableSetOf(ThingId("R154686"), ThingId("R6416"))
             )
         }

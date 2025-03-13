@@ -4,7 +4,7 @@ import dev.forkhandles.values.ofOrNull
 import org.orkg.common.Either
 import org.orkg.common.toIRIOrNull
 import org.orkg.contenttypes.domain.ThingIsNotAClass
-import org.orkg.contenttypes.input.ThingDefinitions
+import org.orkg.contenttypes.input.CreateThingsCommand
 import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.InvalidLiteralDatatype
@@ -25,7 +25,7 @@ open class ThingDefinitionValidator(
     private val classRepository: ClassRepository,
 ) : ThingIdValidator {
     internal fun validateThingDefinitionsInPlace(
-        thingDefinitions: ThingDefinitions,
+        thingDefinitions: CreateThingsCommand,
         tempIds: Set<String>,
         validatedIds: MutableMap<String, Either<String, Thing>>,
     ) {
@@ -35,7 +35,7 @@ open class ThingDefinitionValidator(
     }
 
     internal fun validateThingDefinitions(
-        thingDefinitions: ThingDefinitions,
+        thingDefinitions: CreateThingsCommand,
         tempIds: Set<String>,
         validatedIds: Map<String, Either<String, Thing>>,
     ): Map<String, Either<String, Thing>> {
@@ -45,7 +45,7 @@ open class ThingDefinitionValidator(
     }
 
     private fun validateIds(
-        thingDefinitions: ThingDefinitions,
+        thingDefinitions: CreateThingsCommand,
         tempIds: Set<String>,
         validatedIds: MutableMap<String, Either<String, Thing>>,
     ) {
@@ -67,7 +67,7 @@ open class ThingDefinitionValidator(
             }
     }
 
-    private fun validateLabels(thingDefinitions: ThingDefinitions) {
+    private fun validateLabels(thingDefinitions: CreateThingsCommand) {
         thingDefinitions.resources.values.forEach {
             Label.ofOrNull(it.label) ?: throw InvalidLabel()
         }
@@ -93,7 +93,7 @@ open class ThingDefinitionValidator(
         }
     }
 
-    private fun validateClassURIs(thingDefinitions: ThingDefinitions) {
+    private fun validateClassURIs(thingDefinitions: CreateThingsCommand) {
         thingDefinitions.classes.values.forEach {
             if (it.uri != null) {
                 if (!it.uri!!.isAbsolute) {

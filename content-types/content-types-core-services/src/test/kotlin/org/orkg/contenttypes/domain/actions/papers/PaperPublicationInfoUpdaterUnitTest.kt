@@ -18,7 +18,7 @@ import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.domain.PublicationInfo
 import org.orkg.contenttypes.domain.actions.UpdatePaperState
 import org.orkg.contenttypes.domain.testing.fixtures.createPaper
-import org.orkg.contenttypes.input.PublicationInfoDefinition
+import org.orkg.contenttypes.input.PublicationInfoCommand
 import org.orkg.contenttypes.input.testing.fixtures.updatePaperCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
@@ -83,7 +83,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             publicationInfo = publicationInfo
         )
         val command = updatePaperCommand().copy(
-            publicationInfo = publicationInfo.toPublicationInfoDefinition()
+            publicationInfo = publicationInfo.toPublicationInfoCommand()
         )
         val state = UpdatePaperState(paper)
 
@@ -106,7 +106,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             )
         )
         val command = updatePaperCommand().copy(
-            publicationInfo = PublicationInfoDefinition(
+            publicationInfo = PublicationInfoCommand(
                 publishedMonth = null,
                 publishedYear = null,
                 publishedIn = null,
@@ -149,7 +149,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
         )
         val month = 5
         val command = updatePaperCommand().copy(
-            publicationInfo = PublicationInfoDefinition(
+            publicationInfo = PublicationInfoCommand(
                 publishedMonth = month,
                 publishedYear = null,
                 publishedIn = null,
@@ -218,7 +218,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             )
         )
         val command = updatePaperCommand().copy(
-            publicationInfo = PublicationInfoDefinition(
+            publicationInfo = PublicationInfoCommand(
                 publishedMonth = 6,
                 publishedYear = null,
                 publishedIn = null,
@@ -303,7 +303,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             publicationInfo = publicationInfo
         )
         val command = updatePaperCommand().copy(
-            publicationInfo = publicationInfo.toPublicationInfoDefinition()
+            publicationInfo = publicationInfo.toPublicationInfoCommand()
         )
         val state = UpdatePaperState(paper)
 
@@ -326,7 +326,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             )
         )
         val command = updatePaperCommand().copy(
-            publicationInfo = PublicationInfoDefinition(
+            publicationInfo = PublicationInfoCommand(
                 publishedMonth = null,
                 publishedYear = null,
                 publishedIn = null,
@@ -369,7 +369,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
         )
         val year: Long = 2023
         val command = updatePaperCommand().copy(
-            publicationInfo = PublicationInfoDefinition(
+            publicationInfo = PublicationInfoCommand(
                 publishedMonth = null,
                 publishedYear = year,
                 publishedIn = null,
@@ -438,7 +438,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             )
         )
         val command = updatePaperCommand().copy(
-            publicationInfo = PublicationInfoDefinition(
+            publicationInfo = PublicationInfoCommand(
                 publishedMonth = null,
                 publishedYear = 2023,
                 publishedIn = null,
@@ -523,7 +523,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             publicationInfo = publicationInfo
         )
         val command = updatePaperCommand().copy(
-            publicationInfo = publicationInfo.toPublicationInfoDefinition()
+            publicationInfo = publicationInfo.toPublicationInfoCommand()
         )
         val state = UpdatePaperState(paper)
 
@@ -546,7 +546,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             )
         )
         val command = updatePaperCommand().copy(
-            publicationInfo = PublicationInfoDefinition(
+            publicationInfo = PublicationInfoCommand(
                 publishedMonth = null,
                 publishedYear = null,
                 publishedIn = null,
@@ -592,7 +592,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
         )
         val venue = "Conference"
         val command = updatePaperCommand().copy(
-            publicationInfo = PublicationInfoDefinition(
+            publicationInfo = PublicationInfoCommand(
                 publishedMonth = null,
                 publishedYear = null,
                 publishedIn = venue,
@@ -668,7 +668,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
         )
         val venue = "Conference"
         val command = updatePaperCommand().copy(
-            publicationInfo = PublicationInfoDefinition(
+            publicationInfo = PublicationInfoCommand(
                 publishedMonth = null,
                 publishedYear = null,
                 publishedIn = venue,
@@ -750,7 +750,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             publicationInfo = publicationInfo
         )
         val command = updatePaperCommand().copy(
-            publicationInfo = publicationInfo.toPublicationInfoDefinition()
+            publicationInfo = publicationInfo.toPublicationInfoCommand()
         )
         val state = UpdatePaperState(paper)
 
@@ -773,7 +773,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             )
         )
         val command = updatePaperCommand().copy(
-            publicationInfo = PublicationInfoDefinition(
+            publicationInfo = PublicationInfoCommand(
                 publishedMonth = null,
                 publishedYear = null,
                 publishedIn = null,
@@ -816,7 +816,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
         )
         val url = ParsedIRI("https://orkg.org/")
         val command = updatePaperCommand().copy(
-            publicationInfo = PublicationInfoDefinition(
+            publicationInfo = PublicationInfoCommand(
                 publishedMonth = null,
                 publishedYear = null,
                 publishedIn = null,
@@ -885,7 +885,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             )
         )
         val command = updatePaperCommand().copy(
-            publicationInfo = PublicationInfoDefinition(
+            publicationInfo = PublicationInfoCommand(
                 publishedMonth = null,
                 publishedYear = null,
                 publishedIn = null,
@@ -958,8 +958,8 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
         }
     }
 
-    private fun PublicationInfo.toPublicationInfoDefinition(): PublicationInfoDefinition =
-        PublicationInfoDefinition(
+    private fun PublicationInfo.toPublicationInfoCommand(): PublicationInfoCommand =
+        PublicationInfoCommand(
             publishedMonth = publishedMonth,
             publishedYear = publishedYear,
             publishedIn = publishedIn?.label,

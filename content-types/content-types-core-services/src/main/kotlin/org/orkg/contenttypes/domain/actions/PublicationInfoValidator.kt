@@ -2,12 +2,12 @@ package org.orkg.contenttypes.domain.actions
 
 import dev.forkhandles.values.ofOrNull
 import org.orkg.contenttypes.domain.InvalidMonth
-import org.orkg.contenttypes.input.PublicationInfoDefinition
+import org.orkg.contenttypes.input.PublicationInfoCommand
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.Label
 
 class PublicationInfoValidator<T, S>(
-    private val valueSelector: (T) -> PublicationInfoDefinition?,
+    private val valueSelector: (T) -> PublicationInfoCommand?,
 ) : Action<T, S> {
     override fun invoke(command: T, state: S): S {
         valueSelector(command)?.also { publicationInfo ->

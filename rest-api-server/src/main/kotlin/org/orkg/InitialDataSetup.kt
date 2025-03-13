@@ -48,15 +48,15 @@ class InitialDataSetup(
     override fun run(args: ApplicationArguments?) {
         logger.info("Begin setting up initial data...")
 
-        createClasses(readFile<List<RequiredClassDefinition>>("$directory/classes.json"))
-        createPredicates(readFile<List<RequiredPredicateDefinition>>("$directory/predicates.json"))
-        createResources(readFile<List<RequiredResourceDefinition>>("$directory/resources.json"))
-        createResearchFields(readFile<RequiredResearchFieldDefinition>("$directory/research_fields.json"))
+        createClasses(readFile<List<RequiredClassCommand>>("$directory/classes.json"))
+        createPredicates(readFile<List<RequiredPredicateCommand>>("$directory/predicates.json"))
+        createResources(readFile<List<RequiredResourceCommand>>("$directory/resources.json"))
+        createResearchFields(readFile<RequiredResearchFieldCommand>("$directory/research_fields.json"))
 
         logger.info("End of initial data setup...")
     }
 
-    private fun createClasses(classes: List<RequiredClassDefinition>) {
+    private fun createClasses(classes: List<RequiredClassCommand>) {
         classes.forEach { (id, label, uri) ->
             val classByURI = uri?.let { classRepository.findByUri(it.toString()) } ?: Optional.empty()
             val classById = classRepository.findById(id)
@@ -72,7 +72,7 @@ class InitialDataSetup(
         }
     }
 
-    private fun createPredicates(predicates: List<RequiredPredicateDefinition>) {
+    private fun createPredicates(predicates: List<RequiredPredicateCommand>) {
         predicates.forEach { (id, label) ->
             if (predicateRepository.findById(id).isEmpty) {
                 predicateRepository.save(Predicate(id, label, OffsetDateTime.now(clock)))
@@ -80,7 +80,7 @@ class InitialDataSetup(
         }
     }
 
-    private fun createResources(resources: List<RequiredResourceDefinition>) {
+    private fun createResources(resources: List<RequiredResourceCommand>) {
         resources.forEach { (id, label, classes) ->
             if (resourceRepository.findById(id).isEmpty) {
                 resourceRepository.save(Resource(id, label, OffsetDateTime.now(clock), classes))
@@ -88,7 +88,7 @@ class InitialDataSetup(
         }
     }
 
-    private fun createResearchFields(researchFields: RequiredResearchFieldDefinition) {
+    private fun createResearchFields(researchFields: RequiredResearchFieldCommand) {
         if (resourceRepository.findAll(PageRequests.SINGLE, includeClasses = setOf(Classes.researchField)).isEmpty) {
             createResearchFields(listOf(researchFields))
         } else {
@@ -96,7 +96,7 @@ class InitialDataSetup(
         }
     }
 
-    private fun createResearchFields(researchFields: List<RequiredResearchFieldDefinition>) {
+    private fun createResearchFields(researchFields: List<RequiredResearchFieldCommand>) {
         researchFields.forEach { researchField ->
             if (resourceRepository.findById(researchField.id).isEmpty) {
                 val resource = Resource(
@@ -126,26 +126,26 @@ class InitialDataSetup(
     private inline fun <reified T> readFile(file: String): T =
         objectMapper.readValue<T>(this::class.java.classLoader.getResource(file)!!)
 
-    data class RequiredClassDefinition(
+    data class RequiredClassCommand(
         val id: ThingId,
         val label: String,
         val uri: ParsedIRI?,
     )
 
-    data class RequiredPredicateDefinition(
+    data class RequiredPredicateCommand(
         val id: ThingId,
         val label: String,
     )
 
-    data class RequiredResourceDefinition(
+    data class RequiredResourceCommand(
         val id: ThingId,
         val label: String,
         val classes: Set<ThingId>,
     )
 
-    data class RequiredResearchFieldDefinition(
+    data class RequiredResearchFieldCommand(
         val id: ThingId,
         val label: String,
-        val subfields: List<RequiredResearchFieldDefinition> = emptyList(),
+        val subfields: List<RequiredResearchFieldCommand> = emptyList(),
     )
 }

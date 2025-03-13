@@ -18,8 +18,8 @@ import org.orkg.contenttypes.domain.actions.BakedStatement
 import org.orkg.contenttypes.domain.actions.UpdateTemplateInstanceState
 import org.orkg.contenttypes.domain.testing.fixtures.createTemplate
 import org.orkg.contenttypes.domain.testing.fixtures.createTemplateInstance
-import org.orkg.contenttypes.input.LiteralDefinition
-import org.orkg.contenttypes.input.ResourceDefinition
+import org.orkg.contenttypes.input.CreateLiteralCommandPart
+import org.orkg.contenttypes.input.CreateResourceCommandPart
 import org.orkg.contenttypes.input.testing.fixtures.updateTemplateInstanceCommand
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
@@ -53,13 +53,13 @@ internal class TemplateInstancePropertyValueValidatorUnitTest : MockkBaseTest {
                 Predicates.hasAuthor to listOf("#temp2", "R1", "R123")
             ),
             resources = mapOf(
-                "#temp2" to ResourceDefinition(
+                "#temp2" to CreateResourceCommandPart(
                     label = "MOTO",
                     classes = setOf(ThingId("C28"))
                 )
             ),
             literals = mapOf(
-                "#temp1" to LiteralDefinition("1") // datatype is irrelevant, as it will be re-assigned by the service
+                "#temp1" to CreateLiteralCommandPart("1") // datatype is irrelevant, as it will be re-assigned by the service
             ),
             predicates = emptyMap(),
             lists = emptyMap(),
@@ -122,7 +122,7 @@ internal class TemplateInstancePropertyValueValidatorUnitTest : MockkBaseTest {
                 BakedStatement("R54631", Predicates.hasWikidataId.value, "L1")
             )
             it.literals shouldBe mapOf(
-                "#temp1" to LiteralDefinition(
+                "#temp1" to CreateLiteralCommandPart(
                     label = "1",
                     dataType = Literals.XSD.INT.prefixedUri
                 )

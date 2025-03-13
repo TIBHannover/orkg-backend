@@ -12,15 +12,15 @@ import org.orkg.contenttypes.domain.TemplateProperty
 import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertyValidator
 import org.orkg.contenttypes.domain.testing.fixtures.createStringLiteralTemplateProperty
 import org.orkg.contenttypes.domain.testing.fixtures.createUntypedTemplateProperty
-import org.orkg.contenttypes.input.TemplatePropertyDefinition
-import org.orkg.contenttypes.input.testing.fixtures.toTemplatePropertyDefinition
+import org.orkg.contenttypes.input.TemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.toTemplatePropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.updateUntypedTemplatePropertyCommand
 
 internal class TemplatePropertyValidatorUnitTest : MockkBaseTest {
     private val abstractTemplatePropertyValidator: AbstractTemplatePropertyValidator = mockk()
 
     private val templatePropertyValidator =
-        TemplatePropertyValidator<TemplatePropertyDefinition, TemplateProperty?>(
+        TemplatePropertyValidator<TemplatePropertyCommand, TemplateProperty?>(
             abstractTemplatePropertyValidator = abstractTemplatePropertyValidator,
             newValueSelector = { it },
             oldValueSelector = { it }
@@ -53,7 +53,7 @@ internal class TemplatePropertyValidatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a template property update command, when new template property is identical to existing template property, it is not validated again`() {
         val state = createUntypedTemplateProperty()
-        val command = state.toTemplatePropertyDefinition()
+        val command = state.toTemplatePropertyCommand()
 
         templatePropertyValidator(command, state) shouldBe state
     }

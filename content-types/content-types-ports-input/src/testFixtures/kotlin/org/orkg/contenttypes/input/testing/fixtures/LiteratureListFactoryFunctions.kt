@@ -9,12 +9,12 @@ import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.LiteratureListListSection
 import org.orkg.contenttypes.domain.LiteratureListSection
 import org.orkg.contenttypes.domain.LiteratureListTextSection
+import org.orkg.contenttypes.input.AbstractLiteratureListListSectionCommand.Entry
+import org.orkg.contenttypes.input.AbstractLiteratureListSectionCommand
 import org.orkg.contenttypes.input.CreateLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.CreateLiteratureListUseCase
 import org.orkg.contenttypes.input.DeleteLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.LiteratureListListSectionCommand
-import org.orkg.contenttypes.input.LiteratureListListSectionDefinition.Entry
-import org.orkg.contenttypes.input.LiteratureListSectionDefinition
 import org.orkg.contenttypes.input.LiteratureListTextSectionCommand
 import org.orkg.contenttypes.input.PublishLiteratureListUseCase
 import org.orkg.contenttypes.input.UpdateLiteratureListSectionUseCase
@@ -54,8 +54,8 @@ fun createLiteratureListCommand() = CreateLiteratureListUseCase.CreateCommand(
     organizations = listOf(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")),
     extractionMethod = ExtractionMethod.MANUAL,
     sections = listOf(
-        literatureListTextSectionDefinition(),
-        literatureListListSectionDefinition()
+        literatureListTextSectionCommand(),
+        literatureListListSectionCommand()
     )
 )
 
@@ -91,8 +91,8 @@ fun updateLiteratureListCommand() = UpdateLiteratureListUseCase.UpdateCommand(
     organizations = listOf(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")),
     extractionMethod = ExtractionMethod.MANUAL,
     sections = listOf(
-        literatureListTextSectionDefinition(),
-        literatureListListSectionDefinition()
+        literatureListTextSectionCommand(),
+        literatureListListSectionCommand()
     ),
     visibility = Visibility.DEFAULT
 )
@@ -135,7 +135,7 @@ fun updateLiteratureListTextSectionCommand() = UpdateLiteratureListSectionUseCas
     text = "updated text section contents"
 )
 
-fun literatureListListSectionDefinition(): LiteratureListListSectionCommand =
+fun literatureListListSectionCommand(): LiteratureListListSectionCommand =
     LiteratureListListSectionCommand(
         entries = listOf(
             Entry(ThingId("R2315"), "dummy description"),
@@ -143,7 +143,7 @@ fun literatureListListSectionDefinition(): LiteratureListListSectionCommand =
         )
     )
 
-fun literatureListTextSectionDefinition(): LiteratureListTextSectionCommand =
+fun literatureListTextSectionCommand(): LiteratureListTextSectionCommand =
     LiteratureListTextSectionCommand(
         heading = "Updated Heading",
         headingSize = 3,
@@ -156,19 +156,19 @@ fun deleteLiteratureListSectionCommand() = DeleteLiteratureListSectionUseCase.De
     sectionId = ThingId("R456")
 )
 
-fun LiteratureListSection.toLiteratureListSectionDefinition(): LiteratureListSectionDefinition =
+fun LiteratureListSection.toLiteratureListSectionCommand(): AbstractLiteratureListSectionCommand =
     when (this) {
-        is LiteratureListListSection -> toLiteratureListListSectionDefinition()
-        is LiteratureListTextSection -> toLiteratureListTextSectionDefinition()
+        is LiteratureListListSection -> toLiteratureListListSectionCommand()
+        is LiteratureListTextSection -> toLiteratureListTextSectionCommand()
     }
 
-fun LiteratureListListSection.toLiteratureListListSectionDefinition(): LiteratureListListSectionCommand =
+fun LiteratureListListSection.toLiteratureListListSectionCommand(): LiteratureListListSectionCommand =
     LiteratureListListSectionCommand(entries.map { Entry(it.value.id, it.description) })
 
-fun LiteratureListTextSection.toLiteratureListTextSectionDefinition(): LiteratureListTextSectionCommand =
+fun LiteratureListTextSection.toLiteratureListTextSectionCommand(): LiteratureListTextSectionCommand =
     LiteratureListTextSectionCommand(heading, headingSize, text)
 
-fun LiteratureListListSection.Entry.toDefinitionEntry(): Entry =
+fun LiteratureListListSection.Entry.toCommandEntry(): Entry =
     Entry(value.id, description)
 
 fun publishLiteratureListCommand() = PublishLiteratureListUseCase.PublishCommand(

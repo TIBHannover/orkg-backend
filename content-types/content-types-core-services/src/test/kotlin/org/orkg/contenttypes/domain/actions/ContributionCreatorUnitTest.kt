@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
-import org.orkg.contenttypes.input.ContributionDefinition
+import org.orkg.contenttypes.input.CreateContributionCommandPart
 import org.orkg.contenttypes.input.CreatePaperUseCase
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
@@ -37,7 +37,7 @@ internal class ContributionCreatorUnitTest : MockkBaseTest {
     fun `Given paper contents, when creating new contributions, it returns success`() {
         val paperId = ThingId("R123")
         val contributorId = ContributorId(UUID.randomUUID())
-        val contributionDefinition = ContributionDefinition(
+        val contributionDefinition = CreateContributionCommandPart(
             label = "MOTO",
             statements = emptyMap()
         )

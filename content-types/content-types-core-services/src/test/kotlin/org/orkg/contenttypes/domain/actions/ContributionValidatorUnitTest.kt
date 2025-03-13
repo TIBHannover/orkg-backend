@@ -10,10 +10,10 @@ import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.InvalidStatementSubject
 import org.orkg.contenttypes.domain.ThingIsNotAPredicate
-import org.orkg.contenttypes.input.ContributionDefinition
+import org.orkg.contenttypes.input.CreateContributionCommandPart
+import org.orkg.contenttypes.input.CreateLiteralCommandPart
 import org.orkg.contenttypes.input.CreatePaperUseCase
-import org.orkg.contenttypes.input.LiteralDefinition
-import org.orkg.contenttypes.input.PredicateDefinition
+import org.orkg.contenttypes.input.CreatePredicateCommandPart
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.ThingNotFound
@@ -31,11 +31,11 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
     @Test
     fun `Given paper contents, when predicate could not be found, it throws an exception`() {
         val statements = mapOf(
-            "P32" to listOf(ContributionDefinition.StatementObjectDefinition("R3003"))
+            "P32" to listOf(CreateContributionCommandPart.StatementObject("R3003"))
         )
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
             contributions = listOf(
-                ContributionDefinition(
+                CreateContributionCommandPart(
                     label = "Contribution 1",
                     statements = statements
                 )
@@ -63,11 +63,11 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
     fun `Given paper contents, when specified predicate id does not resolve to a predicate, it throws an exception`() {
         val id = ThingId("R123")
         val statements = mapOf(
-            id.value to listOf(ContributionDefinition.StatementObjectDefinition("R3003"))
+            id.value to listOf(CreateContributionCommandPart.StatementObject("R3003"))
         )
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
             contributions = listOf(
-                ContributionDefinition(
+                CreateContributionCommandPart(
                     label = "Contribution 1",
                     statements = statements
                 )
@@ -95,11 +95,11 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
     @Test
     fun `Given paper contents, when specified temp id does not resolve to a predicate, it throws an exception`() {
         val statements = mapOf(
-            "#temp1" to listOf(ContributionDefinition.StatementObjectDefinition("R3003"))
+            "#temp1" to listOf(CreateContributionCommandPart.StatementObject("R3003"))
         )
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
             contributions = listOf(
-                ContributionDefinition(
+                CreateContributionCommandPart(
                     label = "Contribution 1",
                     statements = statements
                 )
@@ -122,16 +122,16 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
     @Test
     fun `Given paper contents, when object could not be found, it throws an exception`() {
         val statements = mapOf(
-            "#temp1" to listOf(ContributionDefinition.StatementObjectDefinition("R3003"))
+            "#temp1" to listOf(CreateContributionCommandPart.StatementObject("R3003"))
         )
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
             predicates = mapOf(
-                "#temp1" to PredicateDefinition(
+                "#temp1" to CreatePredicateCommandPart(
                     label = "predicate"
                 )
             ),
             contributions = listOf(
-                ContributionDefinition(
+                CreateContributionCommandPart(
                     label = "Contribution 1",
                     statements = statements
                 )
@@ -161,11 +161,11 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
         val literalId = "L8664"
         val statements = mapOf(
             Predicates.hasEvaluation.value to listOf(
-                ContributionDefinition.StatementObjectDefinition(
+                CreateContributionCommandPart.StatementObject(
                     id = literalId,
                     statements = mapOf(
                         Predicates.hasEvaluation.value to listOf(
-                            ContributionDefinition.StatementObjectDefinition("R3003")
+                            CreateContributionCommandPart.StatementObject("R3003")
                         )
                     )
                 )
@@ -173,7 +173,7 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
         )
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
             contributions = listOf(
-                ContributionDefinition(
+                CreateContributionCommandPart(
                     label = "Contribution 1",
                     statements = statements
                 )
@@ -200,11 +200,11 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
     fun `Given paper contents, when temp id is a literal but has further statements, it throws an exception`() {
         val statements = mapOf(
             Predicates.hasEvaluation.value to listOf(
-                ContributionDefinition.StatementObjectDefinition(
+                CreateContributionCommandPart.StatementObject(
                     id = "#temp1",
                     statements = mapOf(
                         Predicates.hasEvaluation.value to listOf(
-                            ContributionDefinition.StatementObjectDefinition("R3003")
+                            CreateContributionCommandPart.StatementObject("R3003")
                         )
                     )
                 )
@@ -212,10 +212,10 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
         )
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
             literals = mapOf(
-                "#temp1" to LiteralDefinition("label")
+                "#temp1" to CreateLiteralCommandPart("label")
             ),
             contributions = listOf(
-                ContributionDefinition(
+                CreateContributionCommandPart(
                     label = "Contribution 1",
                     statements = statements
                 )
@@ -242,9 +242,9 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
     fun `Given paper contents, when contribution has an invalid label, it throws an exception`() {
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
             contributions = listOf(
-                ContributionDefinition(
+                CreateContributionCommandPart(
                     label = "\n",
-                    statements = mapOf("P32" to listOf(ContributionDefinition.StatementObjectDefinition("R3003")))
+                    statements = mapOf("P32" to listOf(CreateContributionCommandPart.StatementObject("R3003")))
                 )
             )
         )

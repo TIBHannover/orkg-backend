@@ -2,11 +2,11 @@ package org.orkg.contenttypes.domain.actions
 
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.input.LiteralTemplatePropertyDefinition
-import org.orkg.contenttypes.input.NumberLiteralTemplatePropertyDefinition
-import org.orkg.contenttypes.input.ResourceTemplatePropertyDefinition
-import org.orkg.contenttypes.input.StringLiteralTemplatePropertyDefinition
-import org.orkg.contenttypes.input.TemplatePropertyDefinition
+import org.orkg.contenttypes.input.LiteralTemplatePropertyCommand
+import org.orkg.contenttypes.input.NumberLiteralTemplatePropertyCommand
+import org.orkg.contenttypes.input.ResourceTemplatePropertyCommand
+import org.orkg.contenttypes.input.StringLiteralTemplatePropertyCommand
+import org.orkg.contenttypes.input.TemplatePropertyCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
@@ -26,7 +26,7 @@ class AbstractTemplatePropertyCreator(
         contributorId: ContributorId,
         templateId: ThingId,
         order: Int,
-        property: TemplatePropertyDefinition,
+        property: TemplatePropertyCommand,
     ): ThingId {
         val propertyId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
@@ -97,7 +97,7 @@ class AbstractTemplatePropertyCreator(
                 )
             )
         }
-        if (property is StringLiteralTemplatePropertyDefinition) {
+        if (property is StringLiteralTemplatePropertyCommand) {
             property.pattern?.let { pattern ->
                 unsafeStatementUseCases.create(
                     CreateStatementUseCase.CreateCommand(
@@ -113,7 +113,7 @@ class AbstractTemplatePropertyCreator(
                     )
                 )
             }
-        } else if (property is NumberLiteralTemplatePropertyDefinition) {
+        } else if (property is NumberLiteralTemplatePropertyCommand) {
             property.minInclusive?.let { minInclusive ->
                 unsafeStatementUseCases.create(
                     CreateStatementUseCase.CreateCommand(
@@ -149,7 +149,7 @@ class AbstractTemplatePropertyCreator(
                 )
             }
         }
-        if (property is LiteralTemplatePropertyDefinition) {
+        if (property is LiteralTemplatePropertyCommand) {
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
@@ -158,7 +158,7 @@ class AbstractTemplatePropertyCreator(
                     objectId = property.datatype
                 )
             )
-        } else if (property is ResourceTemplatePropertyDefinition) {
+        } else if (property is ResourceTemplatePropertyCommand) {
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,

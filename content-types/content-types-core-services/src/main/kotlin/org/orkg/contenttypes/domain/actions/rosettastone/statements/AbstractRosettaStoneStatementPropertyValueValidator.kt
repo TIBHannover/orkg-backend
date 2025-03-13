@@ -24,9 +24,9 @@ import org.orkg.contenttypes.domain.TooManyPropertyValues
 import org.orkg.contenttypes.domain.TooManySubjectPositionValues
 import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertyValueValidator
 import org.orkg.contenttypes.domain.actions.ThingIdValidator
-import org.orkg.contenttypes.domain.actions.toThingDefinition
+import org.orkg.contenttypes.domain.actions.toThingCommandPart
+import org.orkg.contenttypes.input.CreateThingCommandPart
 import org.orkg.contenttypes.input.RosettaStoneStatementUseCases
-import org.orkg.contenttypes.input.ThingDefinition
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
@@ -56,7 +56,7 @@ class AbstractRosettaStoneStatementPropertyValueValidator(
 
     fun validate(
         templateProperties: List<TemplateProperty>,
-        thingDefinitions: Map<String, ThingDefinition>,
+        thingDefinitions: Map<String, CreateThingCommandPart>,
         validatedIdsIn: Map<String, Either<String, Thing>>,
         tempIds: Set<String>,
         templateId: ThingId,
@@ -102,7 +102,7 @@ class AbstractRosettaStoneStatementPropertyValueValidator(
                             throw NestedRosettaStoneStatement(thing.id, index)
                         }
                     }
-                    validateObject(property, thing.id.value, thing.toThingDefinition(statementRepository))
+                    validateObject(property, thing.id.value, thing.toThingCommandPart(statementRepository))
                 }
             }
         }
@@ -110,7 +110,7 @@ class AbstractRosettaStoneStatementPropertyValueValidator(
         return validatedIds
     }
 
-    private fun validateObject(property: TemplateProperty, id: String, `object`: ThingDefinition) {
+    private fun validateObject(property: TemplateProperty, id: String, `object`: CreateThingCommandPart) {
         try {
             abstractTemplatePropertyValueValidator.validateObject(property, id, `object`)
         } catch (e: LabelDoesNotMatchPattern) {

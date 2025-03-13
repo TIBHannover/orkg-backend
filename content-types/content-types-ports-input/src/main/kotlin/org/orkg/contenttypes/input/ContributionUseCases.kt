@@ -25,13 +25,13 @@ interface CreateContributionUseCase {
         val contributorId: ContributorId,
         val paperId: ThingId,
         val extractionMethod: ExtractionMethod,
-        override val resources: Map<String, ResourceDefinition> = emptyMap(),
-        override val literals: Map<String, LiteralDefinition> = emptyMap(),
-        override val predicates: Map<String, PredicateDefinition> = emptyMap(),
-        override val lists: Map<String, ListDefinition> = emptyMap(),
-        val contribution: ContributionDefinition,
-    ) : ThingDefinitions {
-        override val classes: Map<String, ClassDefinition>
+        override val resources: Map<String, CreateResourceCommandPart> = emptyMap(),
+        override val literals: Map<String, CreateLiteralCommandPart> = emptyMap(),
+        override val predicates: Map<String, CreatePredicateCommandPart> = emptyMap(),
+        override val lists: Map<String, CreateListCommandPart> = emptyMap(),
+        val contribution: CreateContributionCommandPart,
+    ) : CreateThingsCommand {
+        override val classes: Map<String, CreateClassCommandPart>
             get() = emptyMap()
     }
 }

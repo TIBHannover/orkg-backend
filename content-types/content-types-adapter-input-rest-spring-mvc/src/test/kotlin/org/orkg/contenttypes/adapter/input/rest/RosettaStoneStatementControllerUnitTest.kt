@@ -427,28 +427,28 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
             certainty = Certainty.HIGH,
             negated = false,
             resources = mapOf(
-                "#temp1" to ResourceDefinitionDTO(
+                "#temp1" to CreateResourceRequestPart(
                     label = "MOTO",
                     classes = setOf(ThingId("Result"))
                 )
             ),
             literals = mapOf(
-                "#temp2" to LiteralDefinitionDTO("0.1", Literals.XSD.DECIMAL.prefixedUri)
+                "#temp2" to CreateLiteralRequestPart("0.1", Literals.XSD.DECIMAL.prefixedUri)
             ),
             predicates = mapOf(
-                "#temp3" to PredicateDefinitionDTO(
+                "#temp3" to CreatePredicateRequestPart(
                     label = "hasResult",
                     description = "has result"
                 )
             ),
             lists = mapOf(
-                "#temp4" to ListDefinitionDTO(
+                "#temp4" to CreateListRequestPart(
                     label = "list",
                     elements = listOf("#temp1", "C123")
                 )
             ),
             classes = mapOf(
-                "#temp5" to ClassDefinitionDTO(
+                "#temp5" to CreateClassRequestPart(
                     label = "class",
                     uri = ParsedIRI("https://orkg.org/class/C1")
                 )
@@ -472,28 +472,28 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
             certainty = Certainty.HIGH,
             negated = false,
             resources = mapOf(
-                "#temp1" to ResourceDefinitionDTO(
+                "#temp1" to CreateResourceRequestPart(
                     label = "MOTO",
                     classes = setOf(ThingId("Result"))
                 )
             ),
             literals = mapOf(
-                "#temp2" to LiteralDefinitionDTO("0.1", Literals.XSD.DECIMAL.prefixedUri)
+                "#temp2" to CreateLiteralRequestPart("0.1", Literals.XSD.DECIMAL.prefixedUri)
             ),
             predicates = mapOf(
-                "#temp3" to PredicateDefinitionDTO(
+                "#temp3" to CreatePredicateRequestPart(
                     label = "hasResult",
                     description = "has result"
                 )
             ),
             lists = mapOf(
-                "#temp4" to ListDefinitionDTO(
+                "#temp4" to CreateListRequestPart(
                     label = "list",
                     elements = listOf("#temp1", "C123")
                 )
             ),
             classes = mapOf(
-                "#temp5" to ClassDefinitionDTO(
+                "#temp5" to CreateClassRequestPart(
                     label = "class",
                     uri = ParsedIRI("https://orkg.org/class/C1")
                 )

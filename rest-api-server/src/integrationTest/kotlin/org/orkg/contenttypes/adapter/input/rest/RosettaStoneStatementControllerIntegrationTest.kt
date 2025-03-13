@@ -25,13 +25,13 @@ import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
 import org.orkg.contenttypes.domain.Certainty
 import org.orkg.contenttypes.domain.RosettaStoneStatementNotFound
 import org.orkg.contenttypes.input.CreateRosettaStoneTemplateUseCase
-import org.orkg.contenttypes.input.NumberLiteralPropertyDefinition
-import org.orkg.contenttypes.input.OtherLiteralPropertyDefinition
-import org.orkg.contenttypes.input.ResourcePropertyDefinition
+import org.orkg.contenttypes.input.NumberLiteralPropertyCommand
+import org.orkg.contenttypes.input.OtherLiteralPropertyCommand
+import org.orkg.contenttypes.input.ResourcePropertyCommand
 import org.orkg.contenttypes.input.RosettaStoneStatementUseCases
 import org.orkg.contenttypes.input.RosettaStoneTemplateUseCases
-import org.orkg.contenttypes.input.StringLiteralPropertyDefinition
-import org.orkg.contenttypes.input.UntypedPropertyDefinition
+import org.orkg.contenttypes.input.StringLiteralPropertyCommand
+import org.orkg.contenttypes.input.UntypedPropertyCommand
 import org.orkg.createClass
 import org.orkg.createClasses
 import org.orkg.createContributor
@@ -533,7 +533,7 @@ internal class RosettaStoneStatementControllerIntegrationTest : MockMvcBaseTest(
             formattedLabel = FormattedLabel.of("{0} {1} {2} {3} {4} {5}"),
             exampleUsage = "example statement usage",
             properties = listOf(
-                ResourcePropertyDefinition(
+                ResourcePropertyCommand(
                     label = "subject position",
                     placeholder = "subject",
                     description = "subject",
@@ -542,7 +542,7 @@ internal class RosettaStoneStatementControllerIntegrationTest : MockMvcBaseTest(
                     path = Predicates.hasSubjectPosition,
                     `class` = ThingId("C28")
                 ),
-                UntypedPropertyDefinition(
+                UntypedPropertyCommand(
                     label = "property label",
                     placeholder = "property placeholder",
                     description = "property description",
@@ -550,7 +550,7 @@ internal class RosettaStoneStatementControllerIntegrationTest : MockMvcBaseTest(
                     maxCount = 3,
                     path = Predicates.hasObjectPosition
                 ),
-                StringLiteralPropertyDefinition(
+                StringLiteralPropertyCommand(
                     label = "string literal property label",
                     placeholder = "string literal property placeholder",
                     description = "string literal property description",
@@ -560,7 +560,7 @@ internal class RosettaStoneStatementControllerIntegrationTest : MockMvcBaseTest(
                     path = Predicates.hasObjectPosition,
                     datatype = Classes.string
                 ),
-                NumberLiteralPropertyDefinition(
+                NumberLiteralPropertyCommand(
                     label = "number literal property label",
                     placeholder = "number literal property placeholder",
                     description = "number literal property description",
@@ -571,7 +571,7 @@ internal class RosettaStoneStatementControllerIntegrationTest : MockMvcBaseTest(
                     path = Predicates.hasObjectPosition,
                     datatype = Classes.integer
                 ),
-                OtherLiteralPropertyDefinition(
+                OtherLiteralPropertyCommand(
                     label = "literal property label",
                     placeholder = "literal property placeholder",
                     description = "literal property description",
@@ -580,7 +580,7 @@ internal class RosettaStoneStatementControllerIntegrationTest : MockMvcBaseTest(
                     path = Predicates.hasObjectPosition,
                     datatype = ThingId("C25")
                 ),
-                ResourcePropertyDefinition(
+                ResourcePropertyCommand(
                     label = "resource property label",
                     placeholder = "resource property placeholder",
                     description = "resource property description",

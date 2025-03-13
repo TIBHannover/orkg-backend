@@ -66,7 +66,7 @@ interface CreateLiteratureListUseCase {
         val observatories: List<ObservatoryId>,
         val organizations: List<OrganizationId>,
         val extractionMethod: ExtractionMethod,
-        val sections: List<LiteratureListSectionDefinition>,
+        val sections: List<AbstractLiteratureListSectionCommand>,
     )
 }
 
@@ -83,9 +83,9 @@ interface CreateLiteratureListSectionUseCase {
         override val contributorId: ContributorId,
         override val literatureListId: ThingId,
         override val index: Int?,
-        override val entries: List<LiteratureListListSectionDefinition.Entry>,
+        override val entries: List<AbstractLiteratureListListSectionCommand.Entry>,
     ) : CreateCommand,
-        LiteratureListListSectionDefinition
+        AbstractLiteratureListListSectionCommand
 
     data class CreateTextSectionCommand(
         override val contributorId: ContributorId,
@@ -95,7 +95,7 @@ interface CreateLiteratureListSectionUseCase {
         override val headingSize: Int,
         override val text: String,
     ) : CreateCommand,
-        LiteratureListTextSectionDefinition
+        AbstractLiteratureListTextSectionCommand
 }
 
 interface UpdateLiteratureListUseCase {
@@ -111,7 +111,7 @@ interface UpdateLiteratureListUseCase {
         val observatories: List<ObservatoryId>?,
         val organizations: List<OrganizationId>?,
         val extractionMethod: ExtractionMethod?,
-        val sections: List<LiteratureListSectionDefinition>?,
+        val sections: List<AbstractLiteratureListSectionCommand>?,
         val visibility: Visibility?,
     )
 }
@@ -129,9 +129,9 @@ interface UpdateLiteratureListSectionUseCase {
         override val literatureListSectionId: ThingId,
         override val contributorId: ContributorId,
         override val literatureListId: ThingId,
-        override val entries: List<LiteratureListListSectionDefinition.Entry>,
+        override val entries: List<AbstractLiteratureListListSectionCommand.Entry>,
     ) : UpdateCommand,
-        LiteratureListListSectionDefinition
+        AbstractLiteratureListListSectionCommand
 
     data class UpdateTextSectionCommand(
         override val literatureListSectionId: ThingId,
@@ -141,7 +141,7 @@ interface UpdateLiteratureListSectionUseCase {
         override val headingSize: Int,
         override val text: String,
     ) : UpdateCommand,
-        LiteratureListTextSectionDefinition
+        AbstractLiteratureListTextSectionCommand
 }
 
 interface DeleteLiteratureListSectionUseCase {
@@ -164,11 +164,11 @@ interface PublishLiteratureListUseCase {
     )
 }
 
-sealed interface LiteratureListSectionDefinition {
+sealed interface AbstractLiteratureListSectionCommand {
     fun matchesLiteratureListSection(section: LiteratureListSection): Boolean
 }
 
-interface LiteratureListListSectionDefinition : LiteratureListSectionDefinition {
+interface AbstractLiteratureListListSectionCommand : AbstractLiteratureListSectionCommand {
     val entries: List<Entry>
 
     data class Entry(
@@ -180,7 +180,7 @@ interface LiteratureListListSectionDefinition : LiteratureListSectionDefinition 
         section is LiteratureListListSection && section.entries.map { Entry(it.value.id, it.description) } == entries
 }
 
-interface LiteratureListTextSectionDefinition : LiteratureListSectionDefinition {
+interface AbstractLiteratureListTextSectionCommand : AbstractLiteratureListSectionCommand {
     val heading: String
     val headingSize: Int
     val text: String
@@ -192,16 +192,12 @@ interface LiteratureListTextSectionDefinition : LiteratureListSectionDefinition 
             section.text == text
 }
 
-sealed interface LiteratureListSectionCommand
-
 data class LiteratureListListSectionCommand(
-    override val entries: List<LiteratureListListSectionDefinition.Entry>,
-) : LiteratureListSectionCommand,
-    LiteratureListListSectionDefinition
+    override val entries: List<AbstractLiteratureListListSectionCommand.Entry>,
+) : AbstractLiteratureListListSectionCommand
 
 data class LiteratureListTextSectionCommand(
     override val heading: String,
     override val headingSize: Int,
     override val text: String,
-) : LiteratureListSectionCommand,
-    LiteratureListTextSectionDefinition
+) : AbstractLiteratureListTextSectionCommand

@@ -5,10 +5,10 @@ import org.orkg.contenttypes.domain.MissingTableRowValues
 import org.orkg.contenttypes.domain.MissingTableRows
 import org.orkg.contenttypes.domain.TooManyTableRowValues
 import org.orkg.contenttypes.domain.actions.Action
-import org.orkg.contenttypes.input.RowDefinition
+import org.orkg.contenttypes.input.RowCommand
 
 class TableDimensionsValidator<T, S>(
-    private val valueSelector: (T) -> List<RowDefinition>,
+    private val valueSelector: (T) -> List<RowCommand>,
 ) : Action<T, S> {
     override fun invoke(command: T, state: S): S {
         val rows = valueSelector(command)

@@ -37,10 +37,10 @@ import org.orkg.contenttypes.domain.testing.fixtures.createNumberLiteralTemplate
 import org.orkg.contenttypes.domain.testing.fixtures.createRosettaStoneStatement
 import org.orkg.contenttypes.domain.testing.fixtures.createStringLiteralObjectPositionTemplateProperty
 import org.orkg.contenttypes.domain.testing.fixtures.createSubjectPositionTemplateProperty
-import org.orkg.contenttypes.input.LiteralDefinition
-import org.orkg.contenttypes.input.ResourceDefinition
+import org.orkg.contenttypes.input.CreateLiteralCommandPart
+import org.orkg.contenttypes.input.CreateResourceCommandPart
+import org.orkg.contenttypes.input.CreateThingCommandPart
 import org.orkg.contenttypes.input.RosettaStoneStatementUseCases
-import org.orkg.contenttypes.input.ThingDefinition
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Thing
@@ -70,8 +70,8 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
             createStringLiteralObjectPositionTemplateProperty()
         )
         val thingDefinitions = mapOf(
-            "#temp1" to LiteralDefinition("1"),
-            "#temp2" to ResourceDefinition(
+            "#temp1" to CreateLiteralCommandPart("1"),
+            "#temp2" to CreateResourceCommandPart(
                 label = "MOTO",
                 classes = setOf(ThingId("C28"))
             )
@@ -133,7 +133,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
             createSubjectPositionTemplateProperty(),
             createStringLiteralObjectPositionTemplateProperty()
         )
-        val thingDefinitions = emptyMap<String, ThingDefinition>()
+        val thingDefinitions = emptyMap<String, CreateThingCommandPart>()
         val validatedIds: Map<String, Either<String, Thing>> = emptyMap()
         val tempIds = emptySet<String>()
         val templateId = ThingId("R456")
@@ -159,7 +159,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
             createSubjectPositionTemplateProperty(),
             createStringLiteralObjectPositionTemplateProperty()
         )
-        val thingDefinitions = emptyMap<String, ThingDefinition>()
+        val thingDefinitions = emptyMap<String, CreateThingCommandPart>()
         val validatedIds: Map<String, Either<String, Thing>> = emptyMap()
         val tempIds = emptySet<String>()
         val templateId = ThingId("R456")
@@ -336,7 +336,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
             createSubjectPositionTemplateProperty(),
             createStringLiteralObjectPositionTemplateProperty()
         )
-        val thingDefinitions = emptyMap<String, ThingDefinition>()
+        val thingDefinitions = emptyMap<String, CreateThingCommandPart>()
         val validatedIds: Map<String, Either<String, Thing>> = emptyMap()
         val tempIds = emptySet<String>()
         val templateId = ThingId("R456")
@@ -368,7 +368,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
             createStringLiteralObjectPositionTemplateProperty()
         )
         val thingDefinitions = mapOf(
-            "#temp2" to LiteralDefinition("subject")
+            "#temp2" to CreateLiteralCommandPart("subject")
         )
         val validatedIds: Map<String, Either<String, Thing>> = emptyMap()
         val tempIds = setOf("#temp2")
@@ -402,7 +402,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
             createSubjectPositionTemplateProperty(),
             createStringLiteralObjectPositionTemplateProperty()
         )
-        val thingDefinitions = emptyMap<String, ThingDefinition>()
+        val thingDefinitions = emptyMap<String, CreateThingCommandPart>()
         val validatedIds: Map<String, Either<String, Thing>> = emptyMap()
         val tempIds = emptySet<String>()
         val templateId = ThingId("R456")
@@ -434,7 +434,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
             createStringLiteralObjectPositionTemplateProperty()
         )
         val thingDefinitions = mapOf(
-            "#temp2" to LiteralDefinition("subject")
+            "#temp2" to CreateLiteralCommandPart("subject")
         )
         val validatedIds: Map<String, Either<String, Thing>> = emptyMap()
         val tempIds = setOf("#temp2")
@@ -468,7 +468,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
             createSubjectPositionTemplateProperty(),
             createStringLiteralObjectPositionTemplateProperty()
         )
-        val thingDefinitions = emptyMap<String, ThingDefinition>()
+        val thingDefinitions = emptyMap<String, CreateThingCommandPart>()
         val literal = createLiteral(ThingId("L123"), label = "15603")
         val validatedIds: Map<String, Either<String, Thing>> = mapOf(
             "L123" to Either.right(literal),
@@ -507,7 +507,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
             createSubjectPositionTemplateProperty(),
             createNumberLiteralTemplateProperty()
         )
-        val thingDefinitions = emptyMap<String, ThingDefinition>()
+        val thingDefinitions = emptyMap<String, CreateThingCommandPart>()
         val literal = createLiteral(ThingId("L123"), label = "-20")
         val validatedIds: Map<String, Either<String, Thing>> = mapOf(
             "L123" to Either.right(literal),
@@ -547,7 +547,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
             createNumberLiteralTemplateProperty()
         )
         val literal = createLiteral(ThingId("L123"), label = "20")
-        val thingDefinitions = emptyMap<String, ThingDefinition>()
+        val thingDefinitions = emptyMap<String, CreateThingCommandPart>()
         val validatedIds: Map<String, Either<String, Thing>> = mapOf(
             "L123" to Either.right(literal),
             "R123" to Either.right(createResource(ThingId("R123")))

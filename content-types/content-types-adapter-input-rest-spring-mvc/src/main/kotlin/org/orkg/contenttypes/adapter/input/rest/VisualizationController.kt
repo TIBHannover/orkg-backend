@@ -99,7 +99,7 @@ class VisualizationController(
         @field:NotBlank
         val description: String,
         @field:Valid
-        val authors: List<AuthorDTO>,
+        val authors: List<AuthorRequest>,
         @field:Size(max = 1)
         val observatories: List<ObservatoryId>,
         @field:Size(max = 1)

@@ -98,10 +98,10 @@ class ConferenceSeriesController(
         @JsonProperty("display_id")
         val displayId: String,
         val url: String,
-        val metadata: MetadataDTO,
+        val metadata: MetadataRequest,
     )
 
-    data class MetadataDTO(
+    data class MetadataRequest(
         // conference start date
         @JsonProperty("start_date")
         val startDate: LocalDate,

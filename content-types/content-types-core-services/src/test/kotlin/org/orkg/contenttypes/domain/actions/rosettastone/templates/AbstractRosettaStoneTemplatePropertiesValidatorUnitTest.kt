@@ -15,7 +15,7 @@ import org.orkg.contenttypes.domain.InvalidSubjectPositionType
 import org.orkg.contenttypes.domain.MissingPropertyPlaceholder
 import org.orkg.contenttypes.domain.MissingSubjectPosition
 import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertyValidator
-import org.orkg.contenttypes.input.TemplatePropertyDefinition
+import org.orkg.contenttypes.input.TemplatePropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.createNumberLiteralObjectPositionTemplatePropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.createOtherLiteralObjectPositionTemplatePropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.createResourceObjectPositionTemplatePropertyCommand
@@ -51,7 +51,7 @@ internal class AbstractRosettaStoneTemplatePropertiesValidatorUnitTest : MockkBa
 
     @Test
     fun `Given a list of template properties, when no subject position is specified, it throws an exception`() {
-        val properties = emptyList<TemplatePropertyDefinition>()
+        val properties = emptyList<TemplatePropertyCommand>()
 
         assertThrows<MissingSubjectPosition> { abstractRosettaStoneTemplatePropertiesValidator.validate(properties) }
     }

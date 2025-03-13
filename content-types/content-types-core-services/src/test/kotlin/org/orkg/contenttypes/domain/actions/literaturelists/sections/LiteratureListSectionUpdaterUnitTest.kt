@@ -18,11 +18,11 @@ import org.orkg.contenttypes.domain.actions.UpdateLiteratureListSectionState
 import org.orkg.contenttypes.domain.actions.literaturelists.AbstractLiteratureListSectionUpdater
 import org.orkg.contenttypes.domain.testing.fixtures.createLiteratureList
 import org.orkg.contenttypes.domain.testing.fixtures.toGroupedStatements
-import org.orkg.contenttypes.input.LiteratureListListSectionDefinition
-import org.orkg.contenttypes.input.LiteratureListTextSectionDefinition
+import org.orkg.contenttypes.input.AbstractLiteratureListListSectionCommand
+import org.orkg.contenttypes.input.AbstractLiteratureListTextSectionCommand
 import org.orkg.contenttypes.input.UpdateLiteratureListSectionUseCase.UpdateListSectionCommand
 import org.orkg.contenttypes.input.UpdateLiteratureListSectionUseCase.UpdateTextSectionCommand
-import org.orkg.contenttypes.input.testing.fixtures.toDefinitionEntry
+import org.orkg.contenttypes.input.testing.fixtures.toCommandEntry
 import java.util.UUID
 
 internal class LiteratureListSectionUpdaterUnitTest : MockkBaseTest {
@@ -62,7 +62,7 @@ internal class LiteratureListSectionUpdaterUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             abstractLiteratureListSectionUpdater.updateTextSection(
                 contributorId = command.contributorId,
-                newSection = command as LiteratureListTextSectionDefinition,
+                newSection = command as AbstractLiteratureListTextSectionCommand,
                 oldSection = oldSection as LiteratureListTextSection,
                 statements = state.statements
             )
@@ -92,7 +92,7 @@ internal class LiteratureListSectionUpdaterUnitTest : MockkBaseTest {
         )
         val command = oldSection.toUpdateListSectionCommand(contributorId, literatureList.id)
             .shouldBeInstanceOf<UpdateListSectionCommand>()
-            .copy(entries = listOf(LiteratureListListSectionDefinition.Entry(ThingId("other"))))
+            .copy(entries = listOf(AbstractLiteratureListListSectionCommand.Entry(ThingId("other"))))
 
         every { abstractLiteratureListSectionUpdater.updateListSection(any(), any(), any(), any()) } just runs
 
@@ -101,7 +101,7 @@ internal class LiteratureListSectionUpdaterUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             abstractLiteratureListSectionUpdater.updateListSection(
                 contributorId = command.contributorId,
-                newSection = command as LiteratureListListSectionDefinition,
+                newSection = command as AbstractLiteratureListListSectionCommand,
                 oldSection = oldSection as LiteratureListListSection,
                 statements = state.statements
             )
@@ -124,7 +124,7 @@ internal class LiteratureListSectionUpdaterUnitTest : MockkBaseTest {
         literatureListSectionId = id,
         contributorId = contributorId,
         literatureListId = literatureListId,
-        entries = entries.map { it.toDefinitionEntry() }
+        entries = entries.map { it.toCommandEntry() }
     )
 
     private fun LiteratureListTextSection.toUpdateTextSectionCommand(

@@ -15,7 +15,7 @@ import org.orkg.contenttypes.adapter.input.rest.mapping.TemplateRepresentationAd
 import org.orkg.contenttypes.domain.TemplateNotFound
 import org.orkg.contenttypes.input.CreateTemplatePropertyUseCase
 import org.orkg.contenttypes.input.CreateTemplateUseCase
-import org.orkg.contenttypes.input.TemplateRelationsDefinition
+import org.orkg.contenttypes.input.TemplateRelationsCommand
 import org.orkg.contenttypes.input.TemplateUseCases
 import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase
 import org.orkg.contenttypes.input.UpdateTemplateUseCase
@@ -169,7 +169,7 @@ class TemplateController(
         @JsonProperty("target_class")
         val targetClass: ThingId,
         @field:Valid
-        val relations: TemplateRelationsDTO,
+        val relations: TemplateRelationsRequestPart,
         @field:Valid
         val properties: List<TemplatePropertyRequest>,
         @JsonProperty("is_closed")
@@ -188,8 +188,8 @@ class TemplateController(
                 description = description,
                 formattedLabel = formattedLabel?.let { FormattedLabel.of(it) },
                 targetClass = targetClass,
-                relations = relations.toTemplateRelations(),
-                properties = properties.map { it.toTemplatePropertyDefinition() },
+                relations = relations.toTemplateRelationsCommand(),
+                properties = properties.map { it.toTemplatePropertyCommand() },
                 isClosed = isClosed,
                 observatories = observatories,
                 organizations = organizations,
@@ -208,7 +208,7 @@ class TemplateController(
         @JsonProperty("target_class")
         val targetClass: ThingId?,
         @field:Valid
-        val relations: TemplateRelationsDTO?,
+        val relations: TemplateRelationsRequestPart?,
         @field:Valid
         @field:Size(min = 1)
         val properties: List<TemplatePropertyRequest>?,
@@ -230,8 +230,8 @@ class TemplateController(
                 description = description,
                 formattedLabel = formattedLabel?.let { FormattedLabel.of(it) },
                 targetClass = targetClass,
-                relations = relations?.toTemplateRelations(),
-                properties = properties?.map { it.toTemplatePropertyDefinition() },
+                relations = relations?.toTemplateRelationsCommand(),
+                properties = properties?.map { it.toTemplatePropertyCommand() },
                 isClosed = isClosed,
                 observatories = observatories,
                 organizations = organizations,
@@ -439,14 +439,14 @@ class TemplateController(
             `class`
         )
 
-    data class TemplateRelationsDTO(
+    data class TemplateRelationsRequestPart(
         @JsonProperty("research_fields")
         val researchFields: List<ThingId>,
         @JsonProperty("research_problems")
         val researchProblems: List<ThingId>,
         val predicate: ThingId?,
     ) {
-        fun toTemplateRelations(): TemplateRelationsDefinition =
-            TemplateRelationsDefinition(researchFields, researchProblems, predicate)
+        fun toTemplateRelationsCommand(): TemplateRelationsCommand =
+            TemplateRelationsCommand(researchFields, researchProblems, predicate)
     }
 }

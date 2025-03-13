@@ -4,20 +4,20 @@ import io.kotest.assertions.asClue
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
-import org.orkg.contenttypes.input.RowDefinition
+import org.orkg.contenttypes.input.RowCommand
 import org.orkg.graph.domain.InvalidLabel
 
 internal class TableRowsValidatorUnitTest {
-    private val tableRowsValidator = TableRowsValidator<List<RowDefinition>, Unit> { it }
+    private val tableRowsValidator = TableRowsValidator<List<RowCommand>, Unit> { it }
 
     @Test
     fun `Given a list of row definitions, when validating their labels, it returns success`() {
         val rows = listOf(
-            RowDefinition(
+            RowCommand(
                 label = null,
                 data = emptyList()
             ),
-            RowDefinition(
+            RowCommand(
                 label = "contents",
                 data = emptyList()
             )
@@ -28,7 +28,7 @@ internal class TableRowsValidatorUnitTest {
     @Test
     fun `Given a list of row definitions, when row label is invalid, it throws an exception`() {
         val rows = listOf(
-            RowDefinition(
+            RowCommand(
                 label = "\n",
                 data = emptyList()
             )

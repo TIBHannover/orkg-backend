@@ -6,16 +6,16 @@ import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.contenttypes.domain.InvalidMonth
-import org.orkg.contenttypes.input.PublicationInfoDefinition
+import org.orkg.contenttypes.input.PublicationInfoCommand
 import org.orkg.graph.domain.InvalidLabel
 
 internal class PublicationInfoValidatorUnitTest {
-    private val publicationInfoValidator = PublicationInfoValidator<PublicationInfoDefinition, Unit> { it }
+    private val publicationInfoValidator = PublicationInfoValidator<PublicationInfoCommand, Unit> { it }
 
     @Test
     fun `Given a publication info definition, when valid, it returns success`() {
         publicationInfoValidator(
-            PublicationInfoDefinition(
+            PublicationInfoCommand(
                 publishedMonth = 1,
                 publishedYear = 2024,
                 publishedIn = "valid venue",
@@ -29,7 +29,7 @@ internal class PublicationInfoValidatorUnitTest {
     fun `Given a publication info definition, when venue label is invalid, it throws an exception`() {
         assertThrows<InvalidLabel> {
             publicationInfoValidator(
-                PublicationInfoDefinition(
+                PublicationInfoCommand(
                     publishedMonth = null,
                     publishedYear = null,
                     publishedIn = "\n",
@@ -46,7 +46,7 @@ internal class PublicationInfoValidatorUnitTest {
     fun `Given a publication info definition, when publication month is invalid, it throws an exception`() {
         assertThrows<InvalidMonth> {
             publicationInfoValidator(
-                PublicationInfoDefinition(
+                PublicationInfoCommand(
                     publishedMonth = 13,
                     publishedYear = null,
                     publishedIn = null,

@@ -5,25 +5,19 @@ import org.orkg.common.OrganizationId
 import org.orkg.community.domain.Organization
 import org.orkg.community.domain.OrganizationType
 import org.orkg.mediastorage.domain.Image
-import org.orkg.mediastorage.domain.ImageData
 import org.orkg.mediastorage.domain.ImageId
-import org.springframework.util.MimeType
+import org.orkg.mediastorage.domain.RawImage
 import java.util.Optional
 
 interface UpdateOrganizationUseCases {
-    fun update(contributorId: ContributorId, command: UpdateOrganizationRequest)
+    fun update(contributorId: ContributorId, command: UpdateOrganizationCommand)
 
-    data class UpdateOrganizationRequest(
+    data class UpdateOrganizationCommand(
         val id: OrganizationId,
         val name: String?,
         val url: String?,
         val type: OrganizationType?,
         val logo: RawImage?,
-    )
-
-    data class RawImage(
-        val data: ImageData,
-        val mimeType: MimeType,
     )
 }
 
@@ -55,7 +49,7 @@ interface OrganizationUseCases : UpdateOrganizationUseCases {
 
     fun findLogoById(id: OrganizationId): Optional<Image>
 
-    fun updateLogo(id: OrganizationId, image: UpdateOrganizationUseCases.RawImage, contributor: ContributorId?)
+    fun updateLogo(id: OrganizationId, image: RawImage, contributor: ContributorId?)
 
     /**
      * Delete all organizations

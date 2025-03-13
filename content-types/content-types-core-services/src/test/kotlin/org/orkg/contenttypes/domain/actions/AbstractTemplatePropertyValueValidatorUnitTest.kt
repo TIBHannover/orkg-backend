@@ -34,7 +34,7 @@ import org.orkg.contenttypes.domain.testing.fixtures.createOtherLiteralTemplateP
 import org.orkg.contenttypes.domain.testing.fixtures.createResourceTemplateProperty
 import org.orkg.contenttypes.domain.testing.fixtures.createStringLiteralTemplateProperty
 import org.orkg.contenttypes.domain.testing.fixtures.createUntypedTemplateProperty
-import org.orkg.contenttypes.input.LiteralDefinition
+import org.orkg.contenttypes.input.CreateLiteralCommandPart
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
@@ -100,7 +100,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
             `class` = ObjectIdAndLabel(Classes.classes, "Classes")
         )
         val id = "D123"
-        val `object` = createClass(ThingId("D123")).toThingDefinition()
+        val `object` = createClass(ThingId("D123")).toThingCommandPart()
 
         assertDoesNotThrow { abstractTemplatePropertyValueValidator.validateObject(property, id, `object`) }
     }
@@ -112,7 +112,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
             `class` = ObjectIdAndLabel(Classes.classes, "Classes")
         )
         val id = "R123"
-        val `object` = createResource(ThingId("R123")).toThingDefinition()
+        val `object` = createResource(ThingId("R123")).toThingCommandPart()
 
         shouldThrow<ObjectIsNotAClass> {
             abstractTemplatePropertyValueValidator.validateObject(property, id, `object`)
@@ -128,7 +128,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
             `class` = ObjectIdAndLabel(Classes.predicates, "Predicates")
         )
         val id = "P123"
-        val `object` = createPredicate(ThingId("P123")).toThingDefinition()
+        val `object` = createPredicate(ThingId("P123")).toThingCommandPart()
 
         assertDoesNotThrow { abstractTemplatePropertyValueValidator.validateObject(property, id, `object`) }
     }
@@ -140,7 +140,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
             `class` = ObjectIdAndLabel(Classes.predicates, "Predicates")
         )
         val id = "R123"
-        val `object` = createResource(ThingId("R123")).toThingDefinition()
+        val `object` = createResource(ThingId("R123")).toThingCommandPart()
 
         shouldThrow<ObjectIsNotAPredicate> {
             abstractTemplatePropertyValueValidator.validateObject(property, id, `object`)
@@ -156,7 +156,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
             `class` = ObjectIdAndLabel(Classes.list, "List")
         )
         val id = "R123"
-        val `object` = createResource(ThingId("R123"), classes = setOf(Classes.list)).toThingDefinition()
+        val `object` = createResource(ThingId("R123"), classes = setOf(Classes.list)).toThingCommandPart()
 
         assertDoesNotThrow { abstractTemplatePropertyValueValidator.validateObject(property, id, `object`) }
     }
@@ -168,7 +168,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
             `class` = ObjectIdAndLabel(Classes.list, "List")
         )
         val id = "R123"
-        val `object` = createResource(ThingId("R123")).toThingDefinition()
+        val `object` = createResource(ThingId("R123")).toThingCommandPart()
 
         shouldThrow<ObjectIsNotAList> {
             abstractTemplatePropertyValueValidator.validateObject(property, id, `object`)
@@ -184,7 +184,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
             `class` = ObjectIdAndLabel(ThingId("C123"), "Dummy")
         )
         val id = "R123"
-        val `object` = createResource(ThingId("R123"), classes = setOf(ThingId("C123"))).toThingDefinition()
+        val `object` = createResource(ThingId("R123"), classes = setOf(ThingId("C123"))).toThingCommandPart()
 
         abstractTemplatePropertyValueValidator.validateObject(property, id, `object`)
     }
@@ -196,7 +196,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
             `class` = ObjectIdAndLabel(ThingId("C123"), "Dummy")
         )
         val id = "R123"
-        val `object` = createResource(ThingId("R123")).toThingDefinition()
+        val `object` = createResource(ThingId("R123")).toThingCommandPart()
 
         shouldThrow<ResourceIsNotAnInstanceOfTargetClass> {
             abstractTemplatePropertyValueValidator.validateObject(property, id, `object`)
@@ -212,7 +212,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
             `class` = ObjectIdAndLabel(ThingId("C123"), "Dummy")
         )
         val id = "R123"
-        val `object` = createResource(ThingId("R123"), classes = setOf(ThingId("Subclass"))).toThingDefinition()
+        val `object` = createResource(ThingId("R123"), classes = setOf(ThingId("Subclass"))).toThingCommandPart()
 
         every { classHierarchyRepository.existsChild(ThingId("C123"), ThingId("Subclass")) } returns true
 
@@ -228,7 +228,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
             `class` = ObjectIdAndLabel(ThingId("C123"), "Dummy")
         )
         val id = "R123"
-        val `object` = createResource(ThingId("R123"), classes = setOf(ThingId("Subclass"))).toThingDefinition()
+        val `object` = createResource(ThingId("R123"), classes = setOf(ThingId("Subclass"))).toThingCommandPart()
 
         every { classHierarchyRepository.existsChild(ThingId("C123"), ThingId("Subclass")) } returns false
 
@@ -248,7 +248,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
             `class` = ObjectIdAndLabel(Classes.author, "Author")
         )
         val id = "L123"
-        val `object` = createLiteral(ThingId("L123")).toThingDefinition()
+        val `object` = createLiteral(ThingId("L123")).toThingCommandPart()
 
         shouldThrow<ObjectMustNotBeALiteral> {
             abstractTemplatePropertyValueValidator.validateObject(property, id, `object`)
@@ -261,7 +261,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
     fun `Given a literal template property, when object value is not a literal, it throws an exception`() {
         val property = createOtherLiteralTemplateProperty()
         val id = "R123"
-        val `object` = createResource(ThingId("R123")).toThingDefinition()
+        val `object` = createResource(ThingId("R123")).toThingCommandPart()
 
         shouldThrow<ObjectIsNotALiteral> {
             abstractTemplatePropertyValueValidator.validateObject(property, id, `object`)
@@ -277,7 +277,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
             datatype = ClassReference(Classes.string, "String", ParsedIRI(Literals.XSD.STRING.uri))
         )
         val id = "L123"
-        val `object` = createLiteral(ThingId("L123")).toThingDefinition()
+        val `object` = createLiteral(ThingId("L123")).toThingCommandPart()
 
         shouldThrow<LabelDoesNotMatchPattern> {
             abstractTemplatePropertyValueValidator.validateObject(property, id, `object`)
@@ -294,7 +294,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
             datatype = ClassReference(Classes.string, "String", ParsedIRI(Literals.XSD.STRING.uri))
         )
         val id = "L123"
-        val `object` = createLiteral(ThingId("L123"), label = "word").toThingDefinition()
+        val `object` = createLiteral(ThingId("L123"), label = "word").toThingCommandPart()
 
         assertDoesNotThrow { abstractTemplatePropertyValueValidator.validateObject(property, id, `object`) }
     }
@@ -308,7 +308,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
             datatype = ClassReference(Classes.integer, "Integer", ParsedIRI(Literals.XSD.INT.uri))
         )
         val id = "#temp1"
-        val `object` = LiteralDefinition(
+        val `object` = CreateLiteralCommandPart(
             label = "5",
             dataType = Literals.XSD.INT.prefixedUri
         )
@@ -324,7 +324,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
             datatype = ClassReference(Classes.integer, "Integer", ParsedIRI(Literals.XSD.INT.uri))
         )
         val id = "#temp1"
-        val `object` = LiteralDefinition(
+        val `object` = CreateLiteralCommandPart(
             label = "5",
             dataType = Literals.XSD.INT.prefixedUri
         )
@@ -343,7 +343,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
             maxInclusive = RealNumber(5)
         )
         val id = "#temp1"
-        val `object` = LiteralDefinition(
+        val `object` = CreateLiteralCommandPart(
             label = "10",
             dataType = Literals.XSD.INT.prefixedUri
         )
@@ -364,7 +364,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
             datatype = ClassReference(Classes.decimal, "Decimal", ParsedIRI(Literals.XSD.DECIMAL.uri))
         )
         val id = "#temp1"
-        val `object` = LiteralDefinition(
+        val `object` = CreateLiteralCommandPart(
             label = "5.0",
             dataType = Literals.XSD.DECIMAL.prefixedUri
         )
@@ -380,7 +380,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
             datatype = ClassReference(Classes.decimal, "Decimal", ParsedIRI(Literals.XSD.DECIMAL.uri))
         )
         val id = "#temp1"
-        val `object` = LiteralDefinition(
+        val `object` = CreateLiteralCommandPart(
             label = "5.0",
             dataType = Literals.XSD.DECIMAL.prefixedUri
         )
@@ -400,7 +400,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
             datatype = ClassReference(Classes.decimal, "Decimal", ParsedIRI(Literals.XSD.DECIMAL.uri))
         )
         val id = "#temp1"
-        val `object` = LiteralDefinition(
+        val `object` = CreateLiteralCommandPart(
             label = "10.0",
             dataType = Literals.XSD.DECIMAL.prefixedUri
         )
@@ -421,7 +421,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
             datatype = ClassReference(Classes.float, "Float", ParsedIRI(Literals.XSD.FLOAT.uri))
         )
         val id = "#temp1"
-        val `object` = LiteralDefinition(
+        val `object` = CreateLiteralCommandPart(
             label = "5.0",
             dataType = Literals.XSD.FLOAT.prefixedUri
         )
@@ -437,7 +437,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
             datatype = ClassReference(Classes.float, "Float", ParsedIRI(Literals.XSD.FLOAT.uri))
         )
         val id = "#temp1"
-        val `object` = LiteralDefinition(
+        val `object` = CreateLiteralCommandPart(
             label = "5.0",
             dataType = Literals.XSD.FLOAT.prefixedUri
         )
@@ -457,7 +457,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
             datatype = ClassReference(Classes.float, "Float", ParsedIRI(Literals.XSD.FLOAT.uri))
         )
         val id = "#temp1"
-        val `object` = LiteralDefinition(
+        val `object` = CreateLiteralCommandPart(
             label = "10.0",
             dataType = Literals.XSD.FLOAT.prefixedUri
         )
@@ -476,7 +476,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
             datatype = ClassReference(Classes.integer, "Integer", ParsedIRI(Literals.XSD.INT.uri))
         )
         val id = "#temp1"
-        val `object` = LiteralDefinition(
+        val `object` = CreateLiteralCommandPart(
             label = "not a number",
             dataType = Literals.XSD.INT.prefixedUri
         )
@@ -496,7 +496,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
             datatype = ClassReference(Classes.software, "Software", ParsedIRI(uri))
         )
         val id = "#temp1"
-        val `object` = LiteralDefinition(
+        val `object` = CreateLiteralCommandPart(
             label = "some value",
             dataType = uri
         )
@@ -511,7 +511,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
             datatype = ClassReference(Classes.software, "Software", null)
         )
         val id = "#temp1"
-        val `object` = LiteralDefinition(
+        val `object` = CreateLiteralCommandPart(
             label = "some value",
             dataType = "unknown"
         )
@@ -530,7 +530,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
             datatype = ClassReference(Classes.software, "Software", null)
         )
         val id = "#temp1"
-        val `object` = LiteralDefinition(
+        val `object` = CreateLiteralCommandPart(
             label = "some value",
             dataType = "$ORKG_CLASS_NS${Classes.software}"
         )
@@ -545,7 +545,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
             datatype = ClassReference(Classes.software, "Software", null)
         )
         val id = "#temp1"
-        val `object` = LiteralDefinition(
+        val `object` = CreateLiteralCommandPart(
             label = "some value",
             dataType = "unknown"
         )

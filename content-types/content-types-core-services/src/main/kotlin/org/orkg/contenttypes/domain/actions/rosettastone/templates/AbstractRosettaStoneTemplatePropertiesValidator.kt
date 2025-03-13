@@ -7,8 +7,8 @@ import org.orkg.contenttypes.domain.InvalidSubjectPositionType
 import org.orkg.contenttypes.domain.MissingPropertyPlaceholder
 import org.orkg.contenttypes.domain.MissingSubjectPosition
 import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertyValidator
-import org.orkg.contenttypes.input.LiteralTemplatePropertyDefinition
-import org.orkg.contenttypes.input.TemplatePropertyDefinition
+import org.orkg.contenttypes.input.LiteralTemplatePropertyCommand
+import org.orkg.contenttypes.input.TemplatePropertyCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.PredicateRepository
@@ -21,7 +21,7 @@ class AbstractRosettaStoneTemplatePropertiesValidator(
         classRepository: ClassRepository,
     ) : this(AbstractTemplatePropertyValidator(predicateRepository, classRepository))
 
-    internal fun validate(properties: List<TemplatePropertyDefinition>) {
+    internal fun validate(properties: List<TemplatePropertyCommand>) {
         if (properties.isEmpty()) {
             throw MissingSubjectPosition()
         }
@@ -33,7 +33,7 @@ class AbstractRosettaStoneTemplatePropertiesValidator(
             if (subject.minCount == null || subject.minCount!! < 1) {
                 throw InvalidSubjectPositionCardinality()
             }
-            if (subject is LiteralTemplatePropertyDefinition) {
+            if (subject is LiteralTemplatePropertyCommand) {
                 throw InvalidSubjectPositionType()
             }
         }

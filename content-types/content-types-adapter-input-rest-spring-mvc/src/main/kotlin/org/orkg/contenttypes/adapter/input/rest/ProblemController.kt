@@ -1,11 +1,11 @@
 package org.orkg.contenttypes.adapter.input.rest
 
-import org.orkg.common.ContributorId
 import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.RequireCuratorRole
 import org.orkg.common.contributorId
 import org.orkg.community.input.RetrieveContributorUseCase
+import org.orkg.contenttypes.adapter.input.rest.mapping.ContributorWithContributionCountRepresentationAdapter
 import org.orkg.contenttypes.adapter.input.rest.mapping.FieldPerProblemRepresentationAdapter
 import org.orkg.contenttypes.adapter.input.rest.mapping.LegacyAuthorRepresentationAdapter
 import org.orkg.contenttypes.input.AuthorUseCases
@@ -23,7 +23,6 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
-import org.springframework.http.ResponseEntity
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -39,13 +38,14 @@ import org.springframework.web.bind.annotation.RestController
 class ProblemController(
     private val service: ResearchProblemUseCases,
     private val resourceService: ResourceUseCases,
-    private val contributorService: RetrieveContributorUseCase,
+    override val contributorService: RetrieveContributorUseCase,
     private val authorService: AuthorUseCases,
     override val statementService: StatementUseCases,
     override val formattedLabelService: FormattedLabelUseCases,
 ) : ResourceRepresentationAdapter,
     LegacyAuthorRepresentationAdapter,
-    FieldPerProblemRepresentationAdapter {
+    FieldPerProblemRepresentationAdapter,
+    ContributorWithContributionCountRepresentationAdapter {
     @GetMapping("/{id}/fields")
     fun findAllResearchFields(
         @PathVariable id: ThingId,
@@ -81,16 +81,8 @@ class ProblemController(
     fun findAllContributorsPerProblem(
         @PathVariable id: ThingId,
         pageable: Pageable,
-    ): ResponseEntity<Iterable<Any>> {
-        val contributors = service.findAllContributorsPerProblem(id, pageable).map {
-            val user = contributorService.findById(ContributorId(it.user)).get()
-            object {
-                val user = user
-                val contributions = it.freq
-            }
-        }
-        return ResponseEntity.ok(contributors)
-    }
+    ): List<ContributorWithContributionCountRepresentation> =
+        service.findAllContributorsPerProblem(id, pageable).mapToContributorWithContributionCountRepresentation()
 
     @GetMapping("/{id}/authors")
     fun findAllByProblemId(

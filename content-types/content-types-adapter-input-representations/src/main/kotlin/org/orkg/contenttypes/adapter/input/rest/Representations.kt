@@ -18,6 +18,7 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.RealNumber
 import org.orkg.common.ThingId
+import org.orkg.community.domain.Contributor
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.Certainty
 import org.orkg.contenttypes.domain.ClassReference
@@ -701,4 +702,9 @@ data class TableRepresentation(
 data class ComparisonAuthorRepresentation(
     val author: org.orkg.graph.adapter.input.rest.AuthorRepresentation,
     val info: Iterable<ComparisonAuthorInfo>,
+)
+
+data class ContributorWithContributionCountRepresentation(
+    val user: Contributor,
+    val contributions: Long,
 )

@@ -11,12 +11,10 @@ import org.orkg.createLiteral
 import org.orkg.createPredicates
 import org.orkg.createResource
 import org.orkg.createStatement
-import org.orkg.graph.adapter.input.rest.testing.fixtures.resourceResponseFields
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.ClassUseCases
-import org.orkg.graph.input.CreateStatementUseCase.CreateCommand
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
@@ -24,14 +22,7 @@ import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
 import org.orkg.testing.spring.MockMvcBaseTest
-import org.orkg.testing.spring.restdocs.pageableDetailedFieldParameters
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
-import org.springframework.restdocs.payload.ResponseFieldsSnippet
-import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.pathParameters
-import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -94,32 +85,17 @@ internal class ProblemControllerIntegrationTest : MockMvcBaseTest("research-prob
             extractionMethod = ExtractionMethod.MANUAL
         )
 
-        statementService.create(
-            CreateCommand(
-                contributorId = contributorId,
-                subjectId = contribution,
-                predicateId = predicate,
-                objectId = problem
-            )
+        statementService.createStatement(
+            contributorId = contributorId,
+            subject = contribution,
+            predicate = predicate,
+            `object` = problem
         )
 
-        documentedGetRequestTo("/api/problems/{id}/users", problem)
+        get("/api/problems/{id}/users", problem)
             .param("size", "4")
             .perform()
             .andExpect(status().isOk)
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the research problem.")
-                    ),
-                    queryParameters(
-                        parameterWithName("page").description("Page number of items to fetch (default: 1)").optional(),
-                        parameterWithName("size").description("Number of items to fetch per page (default: 10)").optional()
-                    ),
-                    listOfUsersPerProblemResponseFields()
-                )
-            )
-            .andDo(generateDefaultDocSnippets())
     }
 
     @Test
@@ -167,7 +143,7 @@ internal class ProblemControllerIntegrationTest : MockMvcBaseTest("research-prob
         statementService.createStatement(cont4, Predicates.hasResearchProblem, problem1)
         statementService.createStatement(cont5, Predicates.hasResearchProblem, problem2)
 
-        documentedGetRequestTo("/api/problems/{id}/authors", problem1)
+        get("/api/problems/{id}/authors", problem1)
             .param("page", "0")
             .param("size", "1")
             .perform()
@@ -175,44 +151,5 @@ internal class ProblemControllerIntegrationTest : MockMvcBaseTest("research-prob
             .andExpect(jsonPath("$.content", hasSize<Int>(1)))
             .andExpect(jsonPath("$.totalElements").value(2))
             .andExpect(jsonPath("$.content[0].papers").value(2))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the research problem.")
-                    ),
-                    authorsOfPaperResponseFields()
-                )
-            )
-            .andDo(generateDefaultDocSnippets())
     }
-
-    private fun authorsOfPaperResponseFields() =
-        responseFields(pageableDetailedFieldParameters())
-            .andWithPrefix(
-                "content[].",
-                listOf(
-                    fieldWithPath("author").description("The author which is using the research problem"),
-                    fieldWithPath("author.value").type("string").description("author name"),
-                    fieldWithPath("author.value").type("resource").description("the author resource object"),
-                    fieldWithPath("papers").description("The number of papers composed by the author"),
-                ),
-            )
-            .andWithPrefix("content[].author.value.", resourceResponseFields())
-            .andWithPrefix("")
-
-    private fun usersPerProblemResponseFields() = listOf(
-        fieldWithPath("user").description("The user object"),
-        fieldWithPath("user.id").description("The UUID of the user in the system"),
-        fieldWithPath("user.gravatar_id").description("The gravatar id of the user"),
-        fieldWithPath("user.display_name").description("The user's display name"),
-        fieldWithPath("user.avatar_url").description("The user's avatar url (gravatar url)"),
-        fieldWithPath("user.joined_at").description("the datetime when the user was created"),
-        fieldWithPath("user.organization_id").description("the organization id that this user belongs to").optional(),
-        fieldWithPath("user.observatory_id").description("the observatory id that this user belongs to").optional(),
-        fieldWithPath("contributions").description("The number of contributions this user created")
-    )
-
-    fun listOfUsersPerProblemResponseFields(): ResponseFieldsSnippet =
-        responseFields(fieldWithPath("[]").description("A list of users"))
-            .andWithPrefix("[].", usersPerProblemResponseFields())
 }

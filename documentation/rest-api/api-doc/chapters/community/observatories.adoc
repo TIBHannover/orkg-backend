@@ -14,9 +14,12 @@ operation::observatories-fetch[snippets='path-parameters,curl-request,http-respo
 [[observatories-list]]
 == Listing Observatories
 
-A `GET` request lists all organizations:
+A `GET` request returns a <<sorting-and-pagination,paged>> list of <<observatories-fetch,observatories>>.
+If no paging request parameters are provided, the default values will be used.
 
-operation::observatories-index[snippets='curl-request']
+NOTE: Request parameters cannot be combined for this endpoint.
+
+operation::observatories-index[snippets='query-parameters,curl-request']
 
 [[observatories-create]]
 == Creating Observatories

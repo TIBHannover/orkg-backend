@@ -28,6 +28,7 @@ import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.ResponseFieldsSnippet
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
+import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import orkg.orkg.community.testing.fixtures.observatoryResponseFields
@@ -91,6 +92,10 @@ internal class ObservatoryControllerIntegrationTest : MockMvcBaseTest("observato
             .andExpect(status().isOk)
             .andDo(
                 documentationHandler.document(
+                    queryParameters(
+                        parameterWithName("q").description("A search term that must be contained in the label. (optional)").optional(),
+                        parameterWithName("research_field").description("Filter for research field id. (optional)").optional(),
+                    ),
                     pageOfObservatoryResponseFields()
                 )
             )

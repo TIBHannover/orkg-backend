@@ -17,8 +17,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (See: [!1239](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1239))
 - Added `content-type-count` metric.
   (See: [!1240](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1240))
-- Added `content-type-count` metric.
-  (See: [!1240](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1240))
 - Added `rosetta-stone-statement-count` metric.
   (See: [!1241](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1241))
 - Added support for managing visualizations on comparisons.

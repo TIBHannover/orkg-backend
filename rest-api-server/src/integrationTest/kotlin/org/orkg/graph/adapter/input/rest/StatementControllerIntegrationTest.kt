@@ -8,8 +8,6 @@ import org.orkg.createLiteral
 import org.orkg.createPredicate
 import org.orkg.createResource
 import org.orkg.createStatement
-import org.orkg.graph.adapter.input.rest.testing.fixtures.predicateResponseFields
-import org.orkg.graph.adapter.input.rest.testing.fixtures.resourceResponseFields
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
@@ -19,10 +17,6 @@ import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
-import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
-import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -190,18 +184,9 @@ internal class StatementControllerIntegrationTest : MockMvcBaseTest("statements"
         statementService.createStatement(r1, p2, r3)
         statementService.createStatement(r2, p1, r4)
 
-        documentedGetRequestTo("/api/statements/{id}/bundle", r1)
+        get("/api/statements/{id}/bundle", r1)
             .perform()
             .andExpect(status().isOk)
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the root of the bundle.")
-                    ),
-                    bundleResponseFields()
-                )
-            )
-            .andDo(generateDefaultDocSnippets())
     }
 
     @Test
@@ -245,23 +230,4 @@ internal class StatementControllerIntegrationTest : MockMvcBaseTest("statements"
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.statements", hasSize<Int>(9)))
     }
-
-    private fun bundleResponseFields() =
-        responseFields(
-            listOf(
-                fieldWithPath("root").description("The root ID of the object"),
-                fieldWithPath("statements").description("The bundle of statements")
-            )
-        )
-            .andWithPrefix("statements[].", statementFields())
-            .andWithPrefix("statements[].subject.", resourceResponseFields())
-            .andWithPrefix("statements[].predicate.", predicateResponseFields())
-            .andWithPrefix("statements[].object.", resourceResponseFields())
-
-    private fun statementFields() = listOf(
-        fieldWithPath("id").description("The statement ID"),
-        fieldWithPath("created_at").description("The statement creation datetime"),
-        fieldWithPath("created_by").description("The ID of the user that created the statement. All zeros if unknown."),
-        fieldWithPath("modifiable").description("Whether this statement can be modified.")
-    )
 }

@@ -81,14 +81,7 @@ operation::statements-delete-by-id_is-no-content[snippets='path-parameters,curl-
 [[statements-fetch-as-bundle]]
 == Fetching Statements as Bundles
 
-A `GET` request that fetches the entire subgraph of a certain entity and returns all the statements as a bundle.
+A `Bundle` is a collection of statements that represent the subgraph starting from a specified entity in the graph.
+A `GET` request fetches a subgraph of a certain entity and returns all the statements as a bundle.
 
-A `Bundle` is a collection of statements that represents the sub-graph starting from a certain `Thing` in the KG.
-
-When fetching a bundle of statements, filtering is possible via specifying certain parameters in the request.
-The number of levels in the tree being fetched can be filtered using the two query parameters `minLevel` & `minLevel`.
-Furthermore, to be able to further control which statements to fetch, a black/white listing operation can be introduced via the query parameters `blacklist` & `whitelist` - this filter applies to classes of subjects and objects of statements only -
-
-The endpoint also provide the parameter `includeFirst` which by default is `True` meaning it will not apply black/white listing on first level.
-
-operation::statements-fetch-bundle[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::statements-get-bundle[snippets='path-parameters,query-parameters,curl-request,http-response,response-fields']

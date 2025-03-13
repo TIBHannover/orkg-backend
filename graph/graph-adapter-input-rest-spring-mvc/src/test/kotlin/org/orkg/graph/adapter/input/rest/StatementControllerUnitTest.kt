@@ -20,6 +20,8 @@ import org.orkg.common.json.CommonJacksonModule
 import org.orkg.graph.adapter.input.rest.StatementController.CreateStatementRequest
 import org.orkg.graph.adapter.input.rest.json.GraphJacksonModule
 import org.orkg.graph.adapter.input.rest.testing.fixtures.statementResponseFields
+import org.orkg.graph.domain.Bundle
+import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.StatementId
@@ -36,6 +38,7 @@ import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.MockUserId
+import org.orkg.testing.andExpectBundle
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectStatement
 import org.orkg.testing.annotations.TestWithMockUser
@@ -50,6 +53,7 @@ import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
+import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.queryParameters
@@ -430,6 +434,61 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
         verify(exactly = 1) { statementService.findById(id) }
         verify(exactly = 1) { statementService.findAllDescriptionsById(any()) }
         verify(exactly = 1) { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) }
+    }
+
+    @Test
+    @DisplayName("Given a statement, when it is fetched by id and service succeeds, then status is 200 OK and statement is returned")
+    fun getBundle() {
+        val id = ThingId("R1")
+        val bundleConfiguration = BundleConfiguration(
+            minLevel = 1,
+            maxLevel = 5,
+            blacklist = listOf(Classes.researchField),
+            whitelist = listOf()
+        )
+        val includeFirst = true
+
+        every {
+            statementService.fetchAsBundle(
+                thingId = id,
+                configuration = bundleConfiguration,
+                includeFirst = any(),
+                sort = any()
+            )
+        } returns Bundle(id, mutableListOf(createStatement()))
+        every { statementService.findAllDescriptionsById(any()) } returns emptyMap()
+
+        documentedGetRequestTo("/api/statements/{id}/bundle", id)
+            .param("minLevel", bundleConfiguration.minLevel.toString())
+            .param("maxLevel", bundleConfiguration.maxLevel.toString())
+            .param("blacklist", bundleConfiguration.blacklist.joinToString(","))
+            .param("whitelist", bundleConfiguration.whitelist.joinToString(","))
+            .param("includeFirst", includeFirst.toString())
+            .perform()
+            .andExpect(status().isOk)
+            .andExpectBundle()
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the root of the bundle.")
+                    ),
+                    queryParameters(
+                        parameterWithName("minLevel").description("The minimum hops a statement must be away from the root entity, in order to be included in the bundle. (optional)"),
+                        parameterWithName("maxLevel").description("The maximum hops a statement can be away from the root entity, in order to be included in the bundle. (optional)"),
+                        parameterWithName("blacklist").description("A set of class ids that will prevent subgraph expansion. No resource in the resulting bundle will be an instance of the provided classes. (optional)"),
+                        parameterWithName("whitelist").description("A set of class ids that are exclusively used for subgraph expansion. All resources in the resulting bundle are an instance of one of the provided classes. If not provided, all resources will be considered for subgraph expansion. (optional)"),
+                        parameterWithName("includeFirst").description("Whether to additionally include first level statements, regardless of other filters. (optional, default: true)"),
+                    ),
+                    responseFields(
+                        fieldWithPath("root").description("The root ID of the object."),
+                        subsectionWithPath("statements[]").description("The list of statements.")
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { statementService.fetchAsBundle(id, bundleConfiguration, any(), any()) }
+        verify(exactly = 1) { statementService.findAllDescriptionsById(any()) }
     }
 
     @Nested

@@ -17,10 +17,9 @@ import org.orkg.contenttypes.input.ResearchFieldUseCases
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
-import org.orkg.testing.spring.restdocs.ignorePageableFieldsExceptContent
+import org.orkg.testing.spring.restdocs.pagedResponseFields
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.context.ContextConfiguration
@@ -56,10 +55,9 @@ internal class BenchmarkControllerUnitTest : MockMvcBaseTest("benchmarks") {
             .andExpect(status().isOk)
             .andDo(
                 documentationHandler.document(
-                    responseFields(
-                        fieldWithPath("content[].id").description("The identifier of the research field.").optional(),
-                        fieldWithPath("content[].label").description("The label of the research field.").optional(),
-                        *ignorePageableFieldsExceptContent()
+                    pagedResponseFields(
+                        fieldWithPath("id").description("The identifier of the research field.").optional(),
+                        fieldWithPath("label").description("The label of the research field.").optional(),
                     )
                 )
             )
@@ -93,17 +91,16 @@ internal class BenchmarkControllerUnitTest : MockMvcBaseTest("benchmarks") {
                     pathParameters(
                         parameterWithName("id").description("The identifier of the research field.")
                     ),
-                    responseFields(
-                        fieldWithPath("content[].total_papers").description("The total number of papers."),
-                        fieldWithPath("content[].total_datasets").description("The total number of datasets related."),
-                        fieldWithPath("content[].total_codes").description("The total number of code urls."),
-                        fieldWithPath("content[].research_problem").description("Research problem concerned with this research field."),
-                        fieldWithPath("content[].research_problem.id").description("The identifier of the research problem."),
-                        fieldWithPath("content[].research_problem.label").description("The label of the research problem."),
-                        fieldWithPath("content[].research_fields").description("List of research fields for a benchmark summary"),
-                        fieldWithPath("content[].research_fields[].id").description("The identifier of the research field.").optional(),
-                        fieldWithPath("content[].research_fields[].label").description("The label of the research field.").optional(),
-                        *ignorePageableFieldsExceptContent()
+                    pagedResponseFields(
+                        fieldWithPath("total_papers").description("The total number of papers."),
+                        fieldWithPath("total_datasets").description("The total number of datasets related."),
+                        fieldWithPath("total_codes").description("The total number of code urls."),
+                        fieldWithPath("research_problem").description("Research problem concerned with this research field."),
+                        fieldWithPath("research_problem.id").description("The identifier of the research problem."),
+                        fieldWithPath("research_problem.label").description("The label of the research problem."),
+                        fieldWithPath("research_fields").description("List of research fields for a benchmark summary"),
+                        fieldWithPath("research_fields[].id").description("The identifier of the research field.").optional(),
+                        fieldWithPath("research_fields[].label").description("The label of the research field.").optional(),
                     )
                 )
             )
@@ -132,17 +129,16 @@ internal class BenchmarkControllerUnitTest : MockMvcBaseTest("benchmarks") {
             .andExpect(status().isOk)
             .andDo(
                 documentationHandler.document(
-                    responseFields(
-                        fieldWithPath("content[].total_papers").description("The total number of papers."),
-                        fieldWithPath("content[].total_datasets").description("The total number of datasets related."),
-                        fieldWithPath("content[].total_codes").description("The total number of code urls."),
-                        fieldWithPath("content[].research_problem").description("Research problem concerned with this research field."),
-                        fieldWithPath("content[].research_problem.id").description("The identifier of the research problem."),
-                        fieldWithPath("content[].research_problem.label").description("The label of the research problem."),
-                        fieldWithPath("content[].research_fields").description("List of research fields for a benchmark summary"),
-                        fieldWithPath("content[].research_fields[].id").description("The identifier of the research field.").optional(),
-                        fieldWithPath("content[].research_fields[].label").description("The label of the research field.").optional(),
-                        *ignorePageableFieldsExceptContent()
+                    pagedResponseFields(
+                        fieldWithPath("total_papers").description("The total number of papers."),
+                        fieldWithPath("total_datasets").description("The total number of datasets related."),
+                        fieldWithPath("total_codes").description("The total number of code urls."),
+                        fieldWithPath("research_problem").description("Research problem concerned with this research field."),
+                        fieldWithPath("research_problem.id").description("The identifier of the research problem."),
+                        fieldWithPath("research_problem.label").description("The label of the research problem."),
+                        fieldWithPath("research_fields").description("List of research fields for a benchmark summary"),
+                        fieldWithPath("research_fields[].id").description("The identifier of the research field.").optional(),
+                        fieldWithPath("research_fields[].label").description("The label of the research field.").optional(),
                     )
                 )
             )

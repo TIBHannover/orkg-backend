@@ -30,7 +30,7 @@ import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.configuration.SecurityTestConfiguration
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
-import org.orkg.testing.spring.restdocs.ignorePageableFieldsExceptContent
+import org.orkg.testing.spring.restdocs.pagedResponseFields
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageImpl
@@ -89,10 +89,9 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
                     pathParameters(
                         parameterWithName("id").description("The identifier of the parent class.")
                     ),
-                    responseFields(
-                        subsectionWithPath("content[].class").description("The child <<classes,class>>."),
-                        fieldWithPath("content[].child_count").description("The count of child classes of the child class."),
-                        *ignorePageableFieldsExceptContent()
+                    pagedResponseFields(
+                        subsectionWithPath("class").description("The child <<classes,class>>."),
+                        fieldWithPath("child_count").description("The count of child classes of the child class."),
                     )
                 )
             )
@@ -629,10 +628,9 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
                     pathParameters(
                         parameterWithName("id").description("The identifier of the class.")
                     ),
-                    responseFields(
-                        subsectionWithPath("content[].class").description("The <<classes,class>> in the hierarchy."),
-                        fieldWithPath("content[].parent_id").description("The parent id of the class."),
-                        *ignorePageableFieldsExceptContent()
+                    pagedResponseFields(
+                        subsectionWithPath("class").description("The <<classes,class>> in the hierarchy."),
+                        fieldWithPath("parent_id").description("The parent id of the class."),
                     )
                 )
             )

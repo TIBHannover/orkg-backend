@@ -26,7 +26,7 @@ import org.orkg.testing.MockUserId
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
-import org.orkg.testing.spring.restdocs.ignorePageableFieldsExceptContent
+import org.orkg.testing.spring.restdocs.pagedResponseFields
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
@@ -127,12 +127,11 @@ internal class ProblemControllerUnitTest : MockMvcBaseTest("research-problems") 
                     pathParameters(
                         parameterWithName("id").description("The identifier of the research problem.")
                     ),
-                    responseFields(
-                        fieldWithPath("content[].author").description("The author which is using the research problem"),
-                        fieldWithPath("content[].author.value").type("String").description("The name of the author."),
-                        subsectionWithPath("content[].author.value").type("Resource").description("The author <<resources-fetch,resource>>."),
-                        fieldWithPath("content[].papers").description("The number of papers composed by the author."),
-                        *ignorePageableFieldsExceptContent()
+                    pagedResponseFields(
+                        fieldWithPath("author").description("The author which is using the research problem"),
+                        fieldWithPath("author.value").type("String").description("The name of the author."),
+                        subsectionWithPath("author.value").type("Resource").description("The author <<resources-fetch,resource>>."),
+                        fieldWithPath("papers").description("The number of papers composed by the author.")
                     )
                 )
             )

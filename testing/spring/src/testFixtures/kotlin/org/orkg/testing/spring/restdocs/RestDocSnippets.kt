@@ -1,8 +1,11 @@
 package org.orkg.testing.spring.restdocs
 
 import org.springframework.restdocs.payload.FieldDescriptor
+import org.springframework.restdocs.payload.PayloadDocumentation.applyPathPrefix
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
+import org.springframework.restdocs.payload.ResponseFieldsSnippet
 import org.springframework.restdocs.snippet.AbstractDescriptor
 import java.time.OffsetDateTime
 
@@ -38,30 +41,30 @@ fun pageableDetailedFieldParameters(): List<FieldDescriptor> = listOf(
     fieldWithPath("totalPages").description("The number of total pages.").deprecated("page.total_pages"),
 )
 
-fun ignorePageableFieldsExceptContent(): Array<FieldDescriptor> = arrayOf(
-    subsectionWithPath("pageable").ignored(),
-    *(
-        listOf(
-            "empty",
-            "first",
-            "last",
-            "number",
-            "numberOfElements",
-            "size",
-            "sort",
-            "sort.empty",
-            "sort.sorted",
-            "sort.unsorted",
-            "totalElements",
-            "totalPages",
-            "page",
-            "page.number",
-            "page.size",
-            "page.total_elements",
-            "page.total_pages",
-        ).map { fieldWithPath(it).ignored() }.toTypedArray()
-    )
-)
+fun pagedResponseFields(vararg fieldDescriptor: FieldDescriptor): ResponseFieldsSnippet {
+    val responseFields = applyPathPrefix("content[].", fieldDescriptor.asList())
+    responseFields += subsectionWithPath("pageable").ignored()
+    responseFields += listOf(
+        "empty",
+        "first",
+        "last",
+        "number",
+        "numberOfElements",
+        "size",
+        "sort",
+        "sort.empty",
+        "sort.sorted",
+        "sort.unsorted",
+        "totalElements",
+        "totalPages",
+        "page",
+        "page.number",
+        "page.size",
+        "page.total_elements",
+        "page.total_pages",
+    ).map { fieldWithPath(it).ignored() }
+    return responseFields(responseFields)
+}
 
 /**
  * Template field descriptor for timestamps.

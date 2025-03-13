@@ -28,12 +28,9 @@ import org.orkg.testing.andExpectResource
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
-import org.orkg.testing.spring.restdocs.ignorePageableFieldsExceptContent
 import org.orkg.testing.toAsciidoc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType.APPLICATION_JSON
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
-import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.queryParameters
@@ -109,10 +106,6 @@ internal class ResearchFieldControllerUnitTest : MockMvcBaseTest("research-field
                         *legacyVisibilityFilterRequestParameters(),
                         visibilityFilterRequestParameter(),
                     ),
-                    responseFields(
-                        subsectionWithPath("content").description("A (sorted) array of content type <<resource-representation,resources>>."),
-                        *ignorePageableFieldsExceptContent(),
-                    ),
                 )
             )
             .andDo(generateDefaultDocSnippets())
@@ -166,10 +159,6 @@ internal class ResearchFieldControllerUnitTest : MockMvcBaseTest("research-field
                 documentationHandler.document(
                     pathParameters(
                         parameterWithName("id").description("The identifier of the research field.")
-                    ),
-                    responseFields(
-                        subsectionWithPath("content").description("A (sorted) array of problems resources."),
-                        *ignorePageableFieldsExceptContent(),
                     )
                 )
             )
@@ -200,10 +189,6 @@ internal class ResearchFieldControllerUnitTest : MockMvcBaseTest("research-field
                     pathParameters(
                         parameterWithName("id").description("The identifier of the research field.")
                     ),
-                    responseFields(
-                        subsectionWithPath("content").description("A (sorted) array of paper resources."),
-                        *ignorePageableFieldsExceptContent(),
-                    )
                 )
             )
             .andDo(generateDefaultDocSnippets())
@@ -240,10 +225,6 @@ internal class ResearchFieldControllerUnitTest : MockMvcBaseTest("research-field
                 documentationHandler.document(
                     pathParameters(
                         parameterWithName("id").description("The identifier of the research field.")
-                    ),
-                    responseFields(
-                        subsectionWithPath("content").description("A (sorted) array of comparison resources."),
-                        *ignorePageableFieldsExceptContent(),
                     )
                 )
             )
@@ -285,10 +266,6 @@ internal class ResearchFieldControllerUnitTest : MockMvcBaseTest("research-field
                     pathParameters(
                         parameterWithName("id").description("The identifier of the research field.")
                     ),
-                    responseFields(
-                        subsectionWithPath("content").description("A (sorted) array of contributors."), // TODO: link to contributors
-                        *ignorePageableFieldsExceptContent(),
-                    )
                 )
             )
             .andDo(generateDefaultDocSnippets())

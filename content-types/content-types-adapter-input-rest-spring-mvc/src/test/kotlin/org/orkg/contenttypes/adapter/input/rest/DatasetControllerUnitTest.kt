@@ -17,10 +17,9 @@ import org.orkg.contenttypes.input.ResearchProblemUseCases
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
-import org.orkg.testing.spring.restdocs.ignorePageableFieldsExceptContent
+import org.orkg.testing.spring.restdocs.pagedResponseFields
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.context.ContextConfiguration
@@ -66,13 +65,12 @@ internal class DatasetControllerUnitTest : MockMvcBaseTest("datasets") {
                     pathParameters(
                         parameterWithName("id").description("The identifier of the research problem.")
                     ),
-                    responseFields(
-                        fieldWithPath("content[].id").description("The identifier of the dataset."),
-                        fieldWithPath("content[].label").description("The label of the dataset."),
-                        fieldWithPath("content[].total_papers").description("The total number of papers."),
-                        fieldWithPath("content[].total_models").description("The total number of models."),
-                        fieldWithPath("content[].total_codes").description("The total number of code urls."),
-                        *ignorePageableFieldsExceptContent()
+                    pagedResponseFields(
+                        fieldWithPath("id").description("The identifier of the dataset."),
+                        fieldWithPath("label").description("The label of the dataset."),
+                        fieldWithPath("total_papers").description("The total number of papers."),
+                        fieldWithPath("total_models").description("The total number of models."),
+                        fieldWithPath("total_codes").description("The total number of code urls."),
                     )
                 )
             )
@@ -99,10 +97,9 @@ internal class DatasetControllerUnitTest : MockMvcBaseTest("datasets") {
                     pathParameters(
                         parameterWithName("id").description("The identifier of the dataset.")
                     ),
-                    responseFields(
-                        fieldWithPath("content[].id").description("The identifier of the research problem."),
-                        fieldWithPath("content[].label").description("The label of the research problem."),
-                        *ignorePageableFieldsExceptContent()
+                    pagedResponseFields(
+                        fieldWithPath("id").description("The identifier of the research problem."),
+                        fieldWithPath("label").description("The label of the research problem."),
                     )
                 )
             )
@@ -143,17 +140,16 @@ internal class DatasetControllerUnitTest : MockMvcBaseTest("datasets") {
                         parameterWithName("id").description("The identifier of the dataset."),
                         parameterWithName("researchProblemId").description("The identifier of the research problem.")
                     ),
-                    responseFields(
-                        fieldWithPath("content[].model_name").description("The model name used on the dataset. (optional)").optional(),
-                        fieldWithPath("content[].model_id").description("The model id used on the dataset. (optional)").optional(),
-                        fieldWithPath("content[].metric").description("The metric used in the evaluation."),
-                        fieldWithPath("content[].score").description("the score of the evaluation with the corresponding metric."),
-                        fieldWithPath("content[].paper_id").description("The paper id is where the evaluation is published."),
-                        fieldWithPath("content[].paper_title").description("The paper title is where the evaluation is published."),
-                        fieldWithPath("content[].paper_month").description("The month when the paper was published. (optional)").optional(),
-                        fieldWithPath("content[].paper_year").description("The year when the paper was published. (optional)").optional(),
-                        fieldWithPath("content[].code_urls").description("A list of urls for the codes specified in the papers."),
-                        *ignorePageableFieldsExceptContent()
+                    pagedResponseFields(
+                        fieldWithPath("model_name").description("The model name used on the dataset. (optional)").optional(),
+                        fieldWithPath("model_id").description("The model id used on the dataset. (optional)").optional(),
+                        fieldWithPath("metric").description("The metric used in the evaluation."),
+                        fieldWithPath("score").description("the score of the evaluation with the corresponding metric."),
+                        fieldWithPath("paper_id").description("The paper id is where the evaluation is published."),
+                        fieldWithPath("paper_title").description("The paper title is where the evaluation is published."),
+                        fieldWithPath("paper_month").description("The month when the paper was published. (optional)").optional(),
+                        fieldWithPath("paper_year").description("The year when the paper was published. (optional)").optional(),
+                        fieldWithPath("code_urls").description("A list of urls for the codes specified in the papers."),
                     )
                 )
             )

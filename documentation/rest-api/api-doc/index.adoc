@@ -9,21 +9,6 @@
 include::../_default-attributes.adoc[]
 :pagination_note: This is a paginated, and sortable call, check the table below for allowed keys for sorting <<sorting-and-pagination>>.
 
-[IMPORTANT]
-====
-* Deprecated paging fields will be removed on 15.05.2025.
-* Response body contents for all POST, PUT and PATCH requests will be removed on 15.05.2025. Instead, clients must fetch the updated entity by following the location header.
-* The following endpoints will be removed on 15.05.2025:
-** <<research-fields-fetch,Listing Content-Types of Research Fields>>
-** <<research-fields-fetch-with-subfields,Listing Content-Types of Research Fields and their Subfields>>
-** <<research-fields-list-papers,Listing Papers of Research Fields>>
-** <<research-fields-list-papers-including-subfields,Listing Papers of Research Field and their Subfields>>
-** <<research-fields-list-comparisons,Listing Comparisons of Research Fields>>
-** <<research-fields-list-comparisons-including-subfields,Listing Comparisons of Research Field and their Subfields>>
-** <<research-fields-statistics,Listing Statistics about Research Fields>>
-** <<license,Reproducibility Score License>>
-====
-
 [[overview]]
 include::chapters/overview.adoc[leveloffset=+1]
 

@@ -1,0 +1,22 @@
+= HTTP verbs
+
+The {orkg} REST API tries to adhere as closely as possible to standard
+HTTP and REST conventions in its use of HTTP verbs.
+|===
+| Verb | Usage
+
+| `GET`
+| Used to retrieve a resource
+
+| `POST`
+| Used to create a new resource
+
+| `PATCH`
+| Used to update an existing resource
+
+| `PUT`
+| Used to replace an existing resource
+
+| `DELETE`
+| Used to delete a resource
+|===

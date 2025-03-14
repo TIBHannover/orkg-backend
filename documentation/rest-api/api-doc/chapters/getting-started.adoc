@@ -1,7 +1,23 @@
-# Getting Started
+= Getting Started
+
+[[overview-http-verbs]]
+include::getting-started/http-verbs.adoc[leveloffset=+1]
+
+[[overview-http-status-codes]]
+include::getting-started/http-status-codes.adoc[leveloffset=+1]
 
 [[authentication]]
 include::getting-started/auth.adoc[leveloffset=+1]
 
 [[content-negotiation]]
 include::getting-started/content-negotiation.adoc[leveloffset=+1]
+
+////
+=== Schema
+=== Root endpoint
+=== Client errors
+=== HTTP redirects
+=== Hypermedia
+=== Conditional requests
+=== Cross origin resource sharing
+////

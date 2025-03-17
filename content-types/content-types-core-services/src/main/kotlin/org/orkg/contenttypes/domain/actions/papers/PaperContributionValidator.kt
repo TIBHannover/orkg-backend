@@ -1,20 +1,25 @@
 package org.orkg.contenttypes.domain.actions.papers
 
-import org.orkg.contenttypes.domain.actions.BakedStatement
 import org.orkg.contenttypes.domain.actions.ContributionValidator
 import org.orkg.contenttypes.domain.actions.CreatePaperCommand
-import org.orkg.contenttypes.domain.actions.CreatePaperState
+import org.orkg.contenttypes.domain.actions.papers.CreatePaperAction.State
 import org.orkg.graph.output.ThingRepository
 
-class PaperContributionValidator(thingRepository: ThingRepository) :
-    ContributionValidator(thingRepository),
-    CreatePaperAction {
-    override operator fun invoke(command: CreatePaperCommand, state: CreatePaperState): CreatePaperState {
-        val bakedStatements: MutableSet<BakedStatement> = mutableSetOf()
-        val validatedIds = state.validatedIds.toMutableMap()
-        command.contents?.let {
-            validate(bakedStatements, validatedIds, state.tempIds, it, it.contributions)
+class PaperContributionValidator(
+    private val contributionValidator: ContributionValidator,
+) : CreatePaperAction {
+    constructor(thingRepository: ThingRepository) : this(ContributionValidator(thingRepository))
+
+    override fun invoke(command: CreatePaperCommand, state: State): State {
+        if (command.contents == null) {
+            return state
         }
-        return state.copy(bakedStatements = bakedStatements, validatedIds = validatedIds)
+        val result = contributionValidator.validate(
+            validatedIdsIn = state.validatedIds,
+            tempIds = state.tempIds,
+            thingDefinitions = command.contents!!,
+            contributionDefinitions = command.contents!!.contributions
+        )
+        return state.copy(bakedStatements = result.bakedStatements, validatedIds = result.validatedIds)
     }
 }

@@ -17,16 +17,17 @@ import org.orkg.graph.domain.Predicate
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.output.ThingRepository
 
-abstract class ContributionValidator(
+class ContributionValidator(
     override val thingRepository: ThingRepository,
 ) : ThingIdValidator {
     internal fun validate(
-        bakedStatements: MutableSet<BakedStatement>,
-        validatedIds: MutableMap<String, Either<String, Thing>>,
+        validatedIdsIn: Map<String, Either<String, Thing>>,
         tempIds: Set<String>,
         thingDefinitions: CreateThingsCommand,
         contributionDefinitions: List<CreateContributionCommandPart>,
-    ) {
+    ): Result {
+        val bakedStatements = mutableSetOf<BakedStatement>()
+        val validatedIds = validatedIdsIn.toMutableMap()
         contributionDefinitions.forEachIndexed { index, contribution ->
             Label.ofOrNull(contribution.label) ?: throw InvalidLabel()
             if (contribution.statements.isEmpty()) {
@@ -53,6 +54,7 @@ abstract class ContributionValidator(
                 destination = bakedStatements
             )
         }
+        return Result(validatedIds, bakedStatements)
     }
 
     internal fun bakeStatements(
@@ -108,4 +110,9 @@ abstract class ContributionValidator(
 
     private val Either<String, Thing>.id: String
         get() = fold({ it }, { it.id.value })
+
+    data class Result(
+        val validatedIds: Map<String, Either<String, Thing>>,
+        val bakedStatements: Set<BakedStatement>,
+    )
 }

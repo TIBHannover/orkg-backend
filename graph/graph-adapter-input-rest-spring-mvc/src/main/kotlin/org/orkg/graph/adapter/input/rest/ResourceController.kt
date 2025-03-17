@@ -235,44 +235,44 @@ class ResourceController(
         visibility = visibility ?: VisibilityFilter.fromFlags(featured, unlisted),
         pageable = pageable
     ).mapToResourceRepresentation(capabilities)
+
+    data class CreateResourceRequest(
+        val id: ThingId?,
+        val label: String,
+        val classes: Set<ThingId> = emptySet(),
+        @JsonProperty("extraction_method")
+        val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
+    )
+
+    data class UpdateResourceRequest(
+        val id: ThingId?,
+        val label: String?,
+        val classes: Set<ThingId>?,
+        @JsonProperty("observatory_id")
+        val observatoryId: ObservatoryId?,
+        @JsonProperty("organization_id")
+        val organizationId: OrganizationId?,
+        @JsonProperty("extraction_method")
+        val extractionMethod: ExtractionMethod?,
+        val visibility: Visibility?,
+    ) {
+        fun toUpdateCommand(id: ThingId, contributorId: ContributorId): UpdateResourceUseCase.UpdateCommand =
+            UpdateResourceUseCase.UpdateCommand(
+                id = id,
+                contributorId = contributorId,
+                label = label,
+                classes = classes,
+                observatoryId = observatoryId,
+                organizationId = organizationId,
+                extractionMethod = extractionMethod,
+                visibility = visibility
+            )
+    }
+
+    data class UpdateResourceObservatoryRequest(
+        @JsonProperty("observatory_id")
+        val observatoryId: ObservatoryId,
+        @JsonProperty("organization_id")
+        val organizationId: OrganizationId,
+    )
 }
-
-data class CreateResourceRequest(
-    val id: ThingId?,
-    val label: String,
-    val classes: Set<ThingId> = emptySet(),
-    @JsonProperty("extraction_method")
-    val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
-)
-
-data class UpdateResourceRequest(
-    val id: ThingId?,
-    val label: String?,
-    val classes: Set<ThingId>?,
-    @JsonProperty("observatory_id")
-    val observatoryId: ObservatoryId?,
-    @JsonProperty("organization_id")
-    val organizationId: OrganizationId?,
-    @JsonProperty("extraction_method")
-    val extractionMethod: ExtractionMethod?,
-    val visibility: Visibility?,
-) {
-    fun toUpdateCommand(id: ThingId, contributorId: ContributorId): UpdateResourceUseCase.UpdateCommand =
-        UpdateResourceUseCase.UpdateCommand(
-            id = id,
-            contributorId = contributorId,
-            label = label,
-            classes = classes,
-            observatoryId = observatoryId,
-            organizationId = organizationId,
-            extractionMethod = extractionMethod,
-            visibility = visibility
-        )
-}
-
-data class UpdateResourceObservatoryRequest(
-    @JsonProperty("observatory_id")
-    val observatoryId: ObservatoryId,
-    @JsonProperty("organization_id")
-    val organizationId: OrganizationId,
-)

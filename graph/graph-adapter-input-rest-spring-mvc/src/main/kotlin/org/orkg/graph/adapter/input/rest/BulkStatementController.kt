@@ -11,7 +11,6 @@ import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UpdateStatementUseCase
-import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -36,9 +35,9 @@ class BulkStatementController(
         @RequestParam("ids") resourceIds: List<ThingId>,
         pageable: Pageable,
         capabilities: MediaTypeCapabilities,
-    ): List<BulkGetStatementsResponse> =
+    ): List<BulkStatementRepresentation> =
         resourceIds.pmap {
-            BulkGetStatementsResponse(
+            BulkStatementRepresentation(
                 id = it,
                 statements = statementService.findAll(subjectId = it, pageable = pageable)
                     .mapToStatementRepresentation(capabilities)
@@ -50,9 +49,9 @@ class BulkStatementController(
         @RequestParam("ids") resourceIds: List<ThingId>,
         pageable: Pageable,
         capabilities: MediaTypeCapabilities,
-    ): List<BulkGetStatementsResponse> =
+    ): List<BulkStatementRepresentation> =
         resourceIds.pmap {
-            BulkGetStatementsResponse(
+            BulkStatementRepresentation(
                 id = it,
                 statements = statementService.findAll(objectId = it, pageable = pageable)
                     .mapToStatementRepresentation(capabilities)
@@ -72,7 +71,7 @@ class BulkStatementController(
     @PutMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun update(
         @RequestParam("ids") statementsIds: List<StatementId>,
-        @RequestBody(required = true) statementEditRequest: BulkStatementEditRequest,
+        @RequestBody(required = true) statementEditRequest: BulkStatementUpdateRequest,
         currentUser: Authentication?,
         capabilities: MediaTypeCapabilities,
     ): Iterable<BulkPutStatementResponse> =
@@ -90,24 +89,20 @@ class BulkStatementController(
         }
             .mapToStatementRepresentation(capabilities)
             .map { BulkPutStatementResponse(it.id, it) }
+
+    data class BulkStatementUpdateRequest(
+        @JsonProperty("subject_id")
+        val subjectId: ThingId? = null,
+        @JsonProperty("predicate_id")
+        val predicateId: ThingId? = null,
+        @JsonProperty("object_id")
+        val objectId: ThingId? = null,
+    )
 }
 
-data class BulkGetStatementsResponse(
-    val id: ThingId,
-    val statements: Page<StatementRepresentation>,
-)
-
+@Deprecated("To be removed")
 data class BulkPutStatementResponse(
     @JsonProperty("id")
     val statementId: StatementId,
     val statement: StatementRepresentation,
-)
-
-data class BulkStatementEditRequest(
-    @JsonProperty("subject_id")
-    val subjectId: ThingId? = null,
-    @JsonProperty("predicate_id")
-    val predicateId: ThingId? = null,
-    @JsonProperty("object_id")
-    val objectId: ThingId? = null,
 )

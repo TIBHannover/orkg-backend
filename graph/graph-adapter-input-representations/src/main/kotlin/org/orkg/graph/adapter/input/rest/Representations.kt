@@ -12,6 +12,7 @@ import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.Visibility
+import org.springframework.data.domain.Page
 import java.time.OffsetDateTime
 
 typealias PathRepresentation = List<List<ThingRepresentation>>
@@ -207,24 +208,34 @@ data class FieldWithFreqRepresentation(
 
 data class ChildClassRepresentation(
     val `class`: ClassRepresentation,
-    @JsonProperty("child_count")
+    @get:JsonProperty("child_count")
     val childCount: Long,
 )
 
 data class ClassHierarchyEntryRepresentation(
     val `class`: ClassRepresentation,
-    @JsonProperty("parent_id")
+    @get:JsonProperty("parent_id")
     val parentId: ThingId?,
 )
 
 data class ResearchFieldWithChildCountRepresentation(
     val resource: ResourceRepresentation,
-    @JsonProperty("child_count")
+    @get:JsonProperty("child_count")
     val childCount: Long,
 )
 
 data class ResearchFieldHierarchyEntryRepresentation(
     val resource: ResourceRepresentation,
-    @JsonProperty("parent_ids")
+    @get:JsonProperty("parent_ids")
     val parentIds: Set<ThingId>,
+)
+
+data class BulkStatementRepresentation(
+    val id: ThingId,
+    val statements: Page<StatementRepresentation>,
+)
+
+data class CountResponse(
+    @get:JsonProperty("count")
+    val count: Long,
 )

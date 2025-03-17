@@ -199,7 +199,7 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
     @Test
     @TestWithMockUser
     fun `When creating a resource, and service reports invalid class collection, then status is 400 BAD REQUEST`() {
-        val command = CreateResourceRequest(
+        val command = ResourceController.CreateResourceRequest(
             id = null,
             label = "irrelevant",
             classes = setOf(Classes.list)

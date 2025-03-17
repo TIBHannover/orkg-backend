@@ -138,19 +138,14 @@ class ClassHierarchyController(
         pageable: Pageable,
     ): Page<ClassHierarchyEntryRepresentation> =
         service.findClassHierarchy(id, pageable).mapToClassHierarchyEntryRepresentation()
+
+    data class CreateChildrenRequest(
+        @JsonProperty("child_ids")
+        val childIds: Set<ThingId>,
+    )
+
+    data class CreateParentRequest(
+        @JsonProperty("parent_id")
+        val parentId: ThingId,
+    )
 }
-
-data class CreateChildrenRequest(
-    @JsonProperty("child_ids")
-    val childIds: Set<ThingId>,
-)
-
-data class CountResponse(
-    @JsonProperty("count")
-    val count: Long,
-)
-
-data class CreateParentRequest(
-    @JsonProperty("parent_id")
-    val parentId: ThingId,
-)

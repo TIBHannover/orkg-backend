@@ -17,11 +17,11 @@ import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ResourceRepository
 
-abstract class PublicationInfoCreator(
-    protected val unsafeResourceUseCases: UnsafeResourceUseCases,
-    protected val resourceRepository: ResourceRepository,
-    protected val unsafeStatementUseCases: UnsafeStatementUseCases,
-    protected val unsafeLiteralUseCases: UnsafeLiteralUseCases,
+class PublicationInfoCreator(
+    private val unsafeResourceUseCases: UnsafeResourceUseCases,
+    private val resourceRepository: ResourceRepository,
+    private val unsafeStatementUseCases: UnsafeStatementUseCases,
+    private val unsafeLiteralUseCases: UnsafeLiteralUseCases,
 ) {
     internal fun create(contributorId: ContributorId, publicationInfo: PublicationInfoCommand, subjectId: ThingId) {
         if (publicationInfo.publishedMonth != null) {
@@ -38,7 +38,7 @@ abstract class PublicationInfoCreator(
         }
     }
 
-    protected fun linkPublicationMonth(
+    internal fun linkPublicationMonth(
         contributorId: ContributorId,
         subjectId: ThingId,
         publishedMonth: Int,
@@ -60,7 +60,7 @@ abstract class PublicationInfoCreator(
         )
     }
 
-    protected fun linkPublicationYear(
+    internal fun linkPublicationYear(
         contributorId: ContributorId,
         subjectId: ThingId,
         publishedYear: Long,
@@ -82,7 +82,7 @@ abstract class PublicationInfoCreator(
         )
     }
 
-    protected fun linkPublicationVenue(
+    internal fun linkPublicationVenue(
         contributorId: ContributorId,
         subjectId: ThingId,
         publishedIn: String,
@@ -108,7 +108,7 @@ abstract class PublicationInfoCreator(
         )
     }
 
-    protected fun linkPublicationUrl(
+    internal fun linkPublicationUrl(
         contributorId: ContributorId,
         subjectId: ThingId,
         url: ParsedIRI,

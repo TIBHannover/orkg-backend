@@ -2,8 +2,6 @@ package org.orkg.contenttypes.domain.actions.papers
 
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.string.shouldBeEqualIgnoringCase
-import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
@@ -11,49 +9,30 @@ import io.mockk.runs
 import io.mockk.verify
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.Test
-import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.domain.PublicationInfo
+import org.orkg.contenttypes.domain.actions.PublicationInfoCreator
 import org.orkg.contenttypes.domain.actions.UpdatePaperState
 import org.orkg.contenttypes.domain.testing.fixtures.createPaper
 import org.orkg.contenttypes.input.PublicationInfoCommand
 import org.orkg.contenttypes.input.testing.fixtures.updatePaperCommand
 import org.orkg.graph.domain.Classes
-import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
-import org.orkg.graph.input.CreateLiteralUseCase
-import org.orkg.graph.input.CreateResourceUseCase
-import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.graph.input.UnsafeLiteralUseCases
-import org.orkg.graph.input.UnsafeResourceUseCases
-import org.orkg.graph.input.UnsafeStatementUseCases
-import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
-import org.orkg.testing.pageOf
-import org.springframework.data.domain.Page
 
 internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
-    private val resourceRepository: ResourceRepository = mockk()
-    private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
-    private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
-    private val unsafeLiteralUseCases: UnsafeLiteralUseCases = mockk()
+    private val publicationInfoCreator: PublicationInfoCreator = mockk()
 
-    private val paperPublicationInfoUpdater = PaperPublicationInfoUpdater(
-        unsafeResourceUseCases = unsafeResourceUseCases,
-        resourceRepository = resourceRepository,
-        statementService = statementService,
-        unsafeStatementUseCases = unsafeStatementUseCases,
-        unsafeLiteralUseCases = unsafeLiteralUseCases
-    )
+    private val paperPublicationInfoUpdater = PaperPublicationInfoUpdater(statementService, publicationInfoCreator)
 
     @Test
     fun `Given a paper update command, when updating with empty publication info, it does nothing`() {
@@ -157,27 +136,14 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             )
         )
         val state = UpdatePaperState(paper)
-        val monthLiteralId = ThingId("L132")
 
         every {
-            unsafeLiteralUseCases.create(
-                CreateLiteralUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    label = month.toString(),
-                    datatype = Literals.XSD.INT.prefixedUri
-                )
+            publicationInfoCreator.linkPublicationMonth(
+                contributorId = command.contributorId,
+                subjectId = command.paperId,
+                publishedMonth = month
             )
-        } returns monthLiteralId
-        every {
-            unsafeStatementUseCases.create(
-                CreateStatementUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = command.paperId,
-                    predicateId = Predicates.monthPublished,
-                    objectId = monthLiteralId
-                )
-            )
-        } returns StatementId("S1")
+        } just runs
 
         val result = paperPublicationInfoUpdater(command, state)
 
@@ -187,22 +153,10 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
         }
 
         verify(exactly = 1) {
-            unsafeLiteralUseCases.create(
-                CreateLiteralUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    label = month.toString(),
-                    datatype = Literals.XSD.INT.prefixedUri
-                )
-            )
-        }
-        verify(exactly = 1) {
-            unsafeStatementUseCases.create(
-                CreateStatementUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = command.paperId,
-                    predicateId = Predicates.monthPublished,
-                    objectId = monthLiteralId
-                )
+            publicationInfoCreator.linkPublicationMonth(
+                contributorId = command.contributorId,
+                subjectId = command.paperId,
+                publishedMonth = month
             )
         }
     }
@@ -229,7 +183,6 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             label = paper.publicationInfo.publishedMonth.toString(),
             datatype = Literals.XSD.INT.prefixedUri
         )
-        val newMonthLiteralId = ThingId("L534")
         val statementId = StatementId("S1")
         val statements = listOf(
             createStatement(
@@ -243,24 +196,12 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
 
         every { statementService.deleteAllById(setOf(statementId)) } just runs
         every {
-            unsafeLiteralUseCases.create(
-                CreateLiteralUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    label = command.publicationInfo!!.publishedMonth.toString(),
-                    datatype = Literals.XSD.INT.prefixedUri
-                )
+            publicationInfoCreator.linkPublicationMonth(
+                contributorId = command.contributorId,
+                subjectId = command.paperId,
+                publishedMonth = command.publicationInfo!!.publishedMonth!!
             )
-        } returns newMonthLiteralId
-        every {
-            unsafeStatementUseCases.create(
-                CreateStatementUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = command.paperId,
-                    predicateId = Predicates.monthPublished,
-                    objectId = newMonthLiteralId
-                )
-            )
-        } returns StatementId("S1")
+        } just runs
 
         val result = paperPublicationInfoUpdater(command, state)
 
@@ -271,22 +212,10 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { statementService.deleteAllById(setOf(statementId)) }
         verify(exactly = 1) {
-            unsafeLiteralUseCases.create(
-                CreateLiteralUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    label = command.publicationInfo!!.publishedMonth.toString(),
-                    datatype = Literals.XSD.INT.prefixedUri
-                )
-            )
-        }
-        verify(exactly = 1) {
-            unsafeStatementUseCases.create(
-                CreateStatementUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = command.paperId,
-                    predicateId = Predicates.monthPublished,
-                    objectId = newMonthLiteralId
-                )
+            publicationInfoCreator.linkPublicationMonth(
+                contributorId = command.contributorId,
+                subjectId = command.paperId,
+                publishedMonth = command.publicationInfo!!.publishedMonth!!
             )
         }
     }
@@ -377,27 +306,14 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             )
         )
         val state = UpdatePaperState(paper)
-        val yearLiteralId = ThingId("L645")
 
         every {
-            unsafeLiteralUseCases.create(
-                CreateLiteralUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    label = command.publicationInfo!!.publishedYear.toString(),
-                    datatype = Literals.XSD.INT.prefixedUri
-                )
+            publicationInfoCreator.linkPublicationYear(
+                contributorId = command.contributorId,
+                subjectId = command.paperId,
+                publishedYear = year
             )
-        } returns yearLiteralId
-        every {
-            unsafeStatementUseCases.create(
-                CreateStatementUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = command.paperId,
-                    predicateId = Predicates.yearPublished,
-                    objectId = yearLiteralId
-                )
-            )
-        } returns StatementId("S1")
+        } just runs
 
         val result = paperPublicationInfoUpdater(command, state)
 
@@ -407,22 +323,10 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
         }
 
         verify(exactly = 1) {
-            unsafeLiteralUseCases.create(
-                CreateLiteralUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    label = command.publicationInfo!!.publishedYear.toString(),
-                    datatype = Literals.XSD.INT.prefixedUri
-                )
-            )
-        }
-        verify(exactly = 1) {
-            unsafeStatementUseCases.create(
-                CreateStatementUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = command.paperId,
-                    predicateId = Predicates.yearPublished,
-                    objectId = yearLiteralId
-                )
+            publicationInfoCreator.linkPublicationYear(
+                contributorId = command.contributorId,
+                subjectId = command.paperId,
+                publishedYear = year
             )
         }
     }
@@ -449,7 +353,6 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             label = paper.publicationInfo.publishedYear.toString(),
             datatype = Literals.XSD.INT.prefixedUri
         )
-        val newYearLiteralId = ThingId("L4351")
         val statementId = StatementId("S1")
         val statements = listOf(
             createStatement(
@@ -463,24 +366,12 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
 
         every { statementService.deleteAllById(setOf(statementId)) } just runs
         every {
-            unsafeLiteralUseCases.create(
-                CreateLiteralUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    label = command.publicationInfo!!.publishedYear.toString(),
-                    datatype = Literals.XSD.INT.prefixedUri
-                )
+            publicationInfoCreator.linkPublicationYear(
+                contributorId = command.contributorId,
+                subjectId = command.paperId,
+                publishedYear = command.publicationInfo!!.publishedYear!!
             )
-        } returns newYearLiteralId
-        every {
-            unsafeStatementUseCases.create(
-                CreateStatementUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = command.paperId,
-                    predicateId = Predicates.yearPublished,
-                    objectId = newYearLiteralId
-                )
-            )
-        } returns StatementId("S1")
+        } just runs
 
         val result = paperPublicationInfoUpdater(command, state)
 
@@ -491,22 +382,10 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { statementService.deleteAllById(setOf(statementId)) }
         verify(exactly = 1) {
-            unsafeLiteralUseCases.create(
-                CreateLiteralUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    label = command.publicationInfo!!.publishedYear.toString(),
-                    datatype = Literals.XSD.INT.prefixedUri
-                )
-            )
-        }
-        verify(exactly = 1) {
-            unsafeStatementUseCases.create(
-                CreateStatementUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = command.paperId,
-                    predicateId = Predicates.yearPublished,
-                    objectId = newYearLiteralId
-                )
+            publicationInfoCreator.linkPublicationYear(
+                contributorId = command.contributorId,
+                subjectId = command.paperId,
+                publishedYear = command.publicationInfo!!.publishedYear!!
             )
         }
     }
@@ -600,31 +479,14 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             )
         )
         val state = UpdatePaperState(paper)
-        val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
-            contributorId = command.contributorId,
-            label = venue,
-            classes = setOf(Classes.venue)
-        )
-        val venueId = ThingId("R456")
 
         every {
-            resourceRepository.findAll(
-                includeClasses = setOf(Classes.venue),
-                label = any(),
-                pageable = PageRequests.SINGLE
+            publicationInfoCreator.linkPublicationVenue(
+                contributorId = command.contributorId,
+                subjectId = command.paperId,
+                publishedIn = venue
             )
-        } returns Page.empty()
-        every { unsafeResourceUseCases.create(resourceCreateCommand) } returns venueId
-        every {
-            unsafeStatementUseCases.create(
-                CreateStatementUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = command.paperId,
-                    predicateId = Predicates.hasVenue,
-                    objectId = venueId
-                )
-            )
-        } returns StatementId("S1")
+        } just runs
 
         val result = paperPublicationInfoUpdater(command, state)
 
@@ -634,106 +496,10 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
         }
 
         verify(exactly = 1) {
-            resourceRepository.findAll(
-                includeClasses = setOf(Classes.venue),
-                label = withArg {
-                    it.shouldBeInstanceOf<ExactSearchString>()
-                    it.input shouldBeEqualIgnoringCase venue
-                },
-                pageable = PageRequests.SINGLE
-            )
-        }
-        verify(exactly = 1) { unsafeResourceUseCases.create(resourceCreateCommand) }
-        verify(exactly = 1) {
-            unsafeStatementUseCases.create(
-                CreateStatementUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = command.paperId,
-                    predicateId = Predicates.hasVenue,
-                    objectId = venueId
-                )
-            )
-        }
-    }
-
-    @Test
-    fun `Given a paper update command, when updating publication venue with a new value, it reuses an existing venue resource`() {
-        val paper = createPaper().copy(
-            publicationInfo = PublicationInfo(
-                publishedMonth = null,
-                publishedYear = null,
-                publishedIn = null,
-                url = null
-            )
-        )
-        val venue = "Conference"
-        val command = updatePaperCommand().copy(
-            publicationInfo = PublicationInfoCommand(
-                publishedMonth = null,
-                publishedYear = null,
-                publishedIn = venue,
-                url = null
-            )
-        )
-        val state = UpdatePaperState(paper)
-        val venueResource = createResource(
-            label = venue,
-            classes = setOf(Classes.venue)
-        )
-
-        every {
-            resourceRepository.findAll(
-                includeClasses = setOf(Classes.venue),
-                label = any(),
-                pageable = PageRequests.SINGLE
-            )
-        } returns pageOf(venueResource)
-        every {
-            unsafeStatementUseCases.create(
-                CreateStatementUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = command.paperId,
-                    predicateId = Predicates.hasVenue,
-                    objectId = venueResource.id
-                )
-            )
-        } returns StatementId("S1")
-        every {
-            unsafeStatementUseCases.create(
-                CreateStatementUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = command.paperId,
-                    predicateId = Predicates.hasVenue,
-                    objectId = venueResource.id
-                )
-            )
-        } returns StatementId("S2")
-
-        val result = paperPublicationInfoUpdater(command, state)
-
-        result.asClue {
-            it.paper shouldBe paper
-            it.authors.size shouldBe 0
-        }
-
-        verify(exactly = 1) {
-            resourceRepository.findAll(
-                includeClasses = setOf(Classes.venue),
-                label = withArg {
-                    it.shouldBeInstanceOf<ExactSearchString>()
-                    it.input shouldBeEqualIgnoringCase venue
-                },
-                pageable = PageRequests.SINGLE
-            )
-        }
-        verify(exactly = 1) {
-            unsafeStatementUseCases.create(
-                CreateStatementUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = command.paperId,
-                    predicateId = Predicates.hasVenue,
-                    objectId = venueResource.id
-                )
+            publicationInfoCreator.linkPublicationVenue(
+                contributorId = command.contributorId,
+                subjectId = command.paperId,
+                publishedIn = venue
             )
         }
     }
@@ -824,27 +590,14 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             )
         )
         val state = UpdatePaperState(paper)
-        val urlLiteralId = ThingId("L4356")
 
         every {
-            unsafeLiteralUseCases.create(
-                CreateLiteralUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    label = url.toString(),
-                    datatype = Literals.XSD.URI.prefixedUri
-                )
+            publicationInfoCreator.linkPublicationUrl(
+                contributorId = command.contributorId,
+                subjectId = command.paperId,
+                url = url
             )
-        } returns urlLiteralId
-        every {
-            unsafeStatementUseCases.create(
-                CreateStatementUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = command.paperId,
-                    predicateId = Predicates.hasURL,
-                    objectId = urlLiteralId
-                )
-            )
-        } returns StatementId("S1")
+        } just runs
 
         val result = paperPublicationInfoUpdater(command, state)
 
@@ -854,22 +607,10 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
         }
 
         verify(exactly = 1) {
-            unsafeLiteralUseCases.create(
-                CreateLiteralUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    label = url.toString(),
-                    datatype = Literals.XSD.URI.prefixedUri
-                )
-            )
-        }
-        verify(exactly = 1) {
-            unsafeStatementUseCases.create(
-                CreateStatementUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = command.paperId,
-                    predicateId = Predicates.hasURL,
-                    objectId = urlLiteralId
-                )
+            publicationInfoCreator.linkPublicationUrl(
+                contributorId = command.contributorId,
+                subjectId = command.paperId,
+                url = url
             )
         }
     }
@@ -896,7 +637,6 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             label = paper.publicationInfo.url.toString(),
             datatype = Literals.XSD.URI.prefixedUri
         )
-        val newUrlLiteralId = ThingId("L15436")
         val statementId = StatementId("S1")
         val statements = listOf(
             createStatement(
@@ -910,24 +650,12 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
 
         every { statementService.deleteAllById(setOf(statementId)) } just runs
         every {
-            unsafeLiteralUseCases.create(
-                CreateLiteralUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    label = command.publicationInfo!!.url.toString(),
-                    datatype = Literals.XSD.URI.prefixedUri
-                )
+            publicationInfoCreator.linkPublicationUrl(
+                contributorId = command.contributorId,
+                subjectId = command.paperId,
+                url = command.publicationInfo!!.url!!
             )
-        } returns newUrlLiteralId
-        every {
-            unsafeStatementUseCases.create(
-                CreateStatementUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = command.paperId,
-                    predicateId = Predicates.hasURL,
-                    objectId = newUrlLiteralId
-                )
-            )
-        } returns StatementId("S1")
+        } just runs
 
         val result = paperPublicationInfoUpdater(command, state)
 
@@ -938,22 +666,10 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { statementService.deleteAllById(setOf(statementId)) }
         verify(exactly = 1) {
-            unsafeLiteralUseCases.create(
-                CreateLiteralUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    label = command.publicationInfo!!.url.toString(),
-                    datatype = Literals.XSD.URI.prefixedUri
-                )
-            )
-        }
-        verify(exactly = 1) {
-            unsafeStatementUseCases.create(
-                CreateStatementUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = command.paperId,
-                    predicateId = Predicates.hasURL,
-                    objectId = newUrlLiteralId
-                )
+            publicationInfoCreator.linkPublicationUrl(
+                contributorId = command.contributorId,
+                subjectId = command.paperId,
+                url = command.publicationInfo!!.url!!
             )
         }
     }

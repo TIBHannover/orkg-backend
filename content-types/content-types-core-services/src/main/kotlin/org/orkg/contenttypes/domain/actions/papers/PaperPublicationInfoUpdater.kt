@@ -5,7 +5,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.actions.PublicationInfoCreator
 import org.orkg.contenttypes.domain.actions.UpdatePaperCommand
-import org.orkg.contenttypes.domain.actions.UpdatePaperState
+import org.orkg.contenttypes.domain.actions.papers.UpdatePaperAction.State
 import org.orkg.contenttypes.domain.ids
 import org.orkg.contenttypes.domain.wherePredicate
 import org.orkg.graph.domain.GeneralStatement
@@ -17,14 +17,21 @@ import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ResourceRepository
 
 class PaperPublicationInfoUpdater(
-    unsafeResourceUseCases: UnsafeResourceUseCases,
-    resourceRepository: ResourceRepository,
     private val statementService: StatementUseCases,
-    unsafeStatementUseCases: UnsafeStatementUseCases,
-    unsafeLiteralUseCases: UnsafeLiteralUseCases,
-) : PublicationInfoCreator(unsafeResourceUseCases, resourceRepository, unsafeStatementUseCases, unsafeLiteralUseCases),
-    UpdatePaperAction {
-    override fun invoke(command: UpdatePaperCommand, state: UpdatePaperState): UpdatePaperState {
+    private val publicationInfoCreator: PublicationInfoCreator,
+) : UpdatePaperAction {
+    constructor(
+        statementService: StatementUseCases,
+        unsafeResourceUseCases: UnsafeResourceUseCases,
+        resourceRepository: ResourceRepository,
+        unsafeStatementUseCases: UnsafeStatementUseCases,
+        unsafeLiteralUseCases: UnsafeLiteralUseCases,
+    ) : this(
+        statementService,
+        PublicationInfoCreator(unsafeResourceUseCases, resourceRepository, unsafeStatementUseCases, unsafeLiteralUseCases)
+    )
+
+    override fun invoke(command: UpdatePaperCommand, state: State): State {
         if (command.publicationInfo != null) {
             if (state.paper?.publicationInfo?.publishedMonth != command.publicationInfo!!.publishedMonth) {
                 updateOrLinkPublicationMonth(
@@ -73,7 +80,7 @@ class PaperPublicationInfoUpdater(
         }
 
         if (newMonth != null) {
-            linkPublicationMonth(contributorId, subjectId, newMonth)
+            publicationInfoCreator.linkPublicationMonth(contributorId, subjectId, newMonth)
         }
     }
 
@@ -88,7 +95,7 @@ class PaperPublicationInfoUpdater(
         }
 
         if (newYear != null) {
-            linkPublicationYear(contributorId, subjectId, newYear)
+            publicationInfoCreator.linkPublicationYear(contributorId, subjectId, newYear)
         }
     }
 
@@ -103,7 +110,7 @@ class PaperPublicationInfoUpdater(
         }
 
         if (newVenue != null) {
-            linkPublicationVenue(contributorId, subjectId, newVenue)
+            publicationInfoCreator.linkPublicationVenue(contributorId, subjectId, newVenue)
         }
     }
 
@@ -118,7 +125,7 @@ class PaperPublicationInfoUpdater(
         }
 
         if (newUrl != null) {
-            linkPublicationUrl(contributorId, subjectId, newUrl)
+            publicationInfoCreator.linkPublicationUrl(contributorId, subjectId, newUrl)
         }
     }
 }

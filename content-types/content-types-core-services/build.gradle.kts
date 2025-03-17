@@ -6,7 +6,6 @@ plugins {
 }
 
 dependencies {
-    api("org.eclipse.rdf4j:rdf4j-common-io")
     api("org.jbibtex:jbibtex")
     api("org.springframework.data:spring-data-commons")
     api("org.springframework:spring-beans")
@@ -25,6 +24,7 @@ dependencies {
     api(project(":graph:graph-ports-output"))
     api(project(":statistics:statistics-core-model"))
     implementation("dev.forkhandles:values4k")
+    implementation("org.eclipse.rdf4j:rdf4j-common-io")
     implementation(project(":common:datatypes"))
     implementation(project(":common:pagination"))
     implementation(project(":graph:graph-core-constants"))

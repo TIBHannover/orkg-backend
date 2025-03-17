@@ -225,7 +225,7 @@ class PaperService(
             PaperIdentifierUpdater(statementService, unsafeStatementUseCases, unsafeLiteralUseCases),
             PaperAuthorListUpdater(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService, listRepository),
             PaperResearchFieldUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
-            PaperPublicationInfoUpdater(unsafeResourceUseCases, resourceRepository, statementService, unsafeStatementUseCases, unsafeLiteralUseCases),
+            PaperPublicationInfoUpdater(statementService, unsafeResourceUseCases, resourceRepository, unsafeStatementUseCases, unsafeLiteralUseCases),
             PaperSDGUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
             PaperMentioningsUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases)
         )

@@ -1,6 +1,6 @@
 package org.orkg.contenttypes.domain.actions.literaturelists
 
-import org.orkg.contenttypes.domain.actions.AuthorUpdater
+import org.orkg.contenttypes.domain.actions.AbstractAuthorListUpdater
 import org.orkg.contenttypes.domain.actions.UpdateLiteratureListCommand
 import org.orkg.contenttypes.domain.actions.UpdateLiteratureListState
 import org.orkg.graph.input.ListUseCases
@@ -9,8 +9,8 @@ import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ListRepository
 
-class LiteratureListAuthorUpdater(
-    private val authorUpdater: AuthorUpdater,
+class LiteratureListAuthorListUpdater(
+    private val authorUpdater: AbstractAuthorListUpdater,
 ) : UpdateLiteratureListAction {
     constructor(
         unsafeResourceUseCases: UnsafeResourceUseCases,
@@ -19,7 +19,7 @@ class LiteratureListAuthorUpdater(
         listService: ListUseCases,
         listRepository: ListRepository,
     ) : this(
-        AuthorUpdater(
+        AbstractAuthorListUpdater(
             unsafeResourceUseCases,
             unsafeStatementUseCases,
             unsafeLiteralUseCases,

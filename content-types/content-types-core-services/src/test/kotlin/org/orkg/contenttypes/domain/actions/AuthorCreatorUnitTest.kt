@@ -30,8 +30,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
     private val unsafeLiteralUseCases: UnsafeLiteralUseCases = mockk()
     private val listService: ListUseCases = mockk()
 
-    private val authorCreator =
-        object : AuthorCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService) {}
+    private val authorCreator = AbstractAuthorListCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService)
 
     @Test
     fun `Given a list of authors, when linking an existing author to the subject resource, it returns success`() {

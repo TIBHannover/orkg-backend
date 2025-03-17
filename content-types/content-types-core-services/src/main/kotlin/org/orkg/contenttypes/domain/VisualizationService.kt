@@ -13,8 +13,8 @@ import org.orkg.contenttypes.domain.actions.ObservatoryValidator
 import org.orkg.contenttypes.domain.actions.OrganizationValidator
 import org.orkg.contenttypes.domain.actions.VisualizationState
 import org.orkg.contenttypes.domain.actions.execute
-import org.orkg.contenttypes.domain.actions.visualizations.VisualizationAuthorCreator
-import org.orkg.contenttypes.domain.actions.visualizations.VisualizationAuthorValidator
+import org.orkg.contenttypes.domain.actions.visualizations.VisualizationAuthorListCreator
+import org.orkg.contenttypes.domain.actions.visualizations.VisualizationAuthorListValidator
 import org.orkg.contenttypes.domain.actions.visualizations.VisualizationDescriptionCreator
 import org.orkg.contenttypes.domain.actions.visualizations.VisualizationResourceCreator
 import org.orkg.contenttypes.input.VisualizationUseCases
@@ -87,10 +87,10 @@ class VisualizationService(
             DescriptionValidator { it.description },
             ObservatoryValidator(observatoryRepository, { it.observatories }),
             OrganizationValidator(organizationRepository, { it.organizations }),
-            VisualizationAuthorValidator(resourceRepository, statementRepository),
+            VisualizationAuthorListValidator(resourceRepository, statementRepository),
             VisualizationResourceCreator(unsafeResourceUseCases),
             VisualizationDescriptionCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
-            VisualizationAuthorCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService)
+            VisualizationAuthorListCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService)
         )
         return steps.execute(command, VisualizationState()).visualizationId!!
     }

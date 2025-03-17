@@ -20,10 +20,10 @@ import org.orkg.graph.testing.fixtures.createStatement
 import java.util.UUID
 
 internal class AuthorUpdaterUnitTest : MockkBaseTest {
-    private val authorCreator: AuthorCreator = mockk()
+    private val authorCreator: AbstractAuthorListCreator = mockk()
     private val listRepository: ListRepository = mockk()
 
-    private val authorUpdater = AuthorUpdater(listRepository, authorCreator)
+    private val authorUpdater = AbstractAuthorListUpdater(listRepository, authorCreator)
 
     @Test
     fun `Given a subject resource without author list, it creates a new author list`() {

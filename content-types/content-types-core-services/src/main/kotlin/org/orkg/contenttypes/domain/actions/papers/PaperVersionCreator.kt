@@ -44,12 +44,12 @@ class PaperVersionCreator(
             contents = null
         )
         val steps = listOf(
-            PaperAuthorCreateValidator(resourceRepository, statementRepository),
+            PaperAuthorListCreateValidator(resourceRepository, statementRepository),
             PaperSnapshotResourceCreator(unsafeResourceUseCases),
             PaperIdentifierCreator(unsafeStatementUseCases, unsafeLiteralUseCases),
             PaperSDGCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
             PaperMentioningsCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
-            PaperAuthorCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService),
+            PaperAuthorListCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService),
             PaperResearchFieldCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
             PaperPublicationInfoCreator(unsafeResourceUseCases, resourceRepository, unsafeStatementUseCases, unsafeLiteralUseCases)
         )

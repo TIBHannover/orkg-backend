@@ -43,10 +43,10 @@ class ComparisonVersionCreator(
             extractionMethod = comparison.extractionMethod
         )
         val steps = listOf(
-            ComparisonAuthorCreateValidator(resourceRepository, statementRepository),
+            ComparisonAuthorListCreateValidator(resourceRepository, statementRepository),
             ComparisonVersionResourceCreator(unsafeResourceUseCases),
             ComparisonDescriptionCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
-            ComparisonAuthorCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService),
+            ComparisonAuthorListCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService),
             ComparisonSDGCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
             ComparisonResearchFieldCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
             ComparisonReferencesCreator(unsafeLiteralUseCases, unsafeStatementUseCases),

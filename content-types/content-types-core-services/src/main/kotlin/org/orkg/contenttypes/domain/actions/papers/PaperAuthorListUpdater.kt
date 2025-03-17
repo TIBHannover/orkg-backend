@@ -1,17 +1,17 @@
-package org.orkg.contenttypes.domain.actions.smartreviews
+package org.orkg.contenttypes.domain.actions.papers
 
-import org.orkg.contenttypes.domain.actions.AuthorUpdater
-import org.orkg.contenttypes.domain.actions.UpdateSmartReviewCommand
-import org.orkg.contenttypes.domain.actions.smartreviews.UpdateSmartReviewAction.State
+import org.orkg.contenttypes.domain.actions.AbstractAuthorListUpdater
+import org.orkg.contenttypes.domain.actions.UpdatePaperCommand
+import org.orkg.contenttypes.domain.actions.UpdatePaperState
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ListRepository
 
-class SmartReviewAuthorUpdater(
-    private val authorUpdater: AuthorUpdater,
-) : UpdateSmartReviewAction {
+class PaperAuthorListUpdater(
+    private val authorUpdater: AbstractAuthorListUpdater,
+) : UpdatePaperAction {
     constructor(
         unsafeResourceUseCases: UnsafeResourceUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
@@ -19,7 +19,7 @@ class SmartReviewAuthorUpdater(
         listService: ListUseCases,
         listRepository: ListRepository,
     ) : this(
-        AuthorUpdater(
+        AbstractAuthorListUpdater(
             unsafeResourceUseCases,
             unsafeStatementUseCases,
             unsafeLiteralUseCases,
@@ -28,9 +28,9 @@ class SmartReviewAuthorUpdater(
         )
     )
 
-    override fun invoke(command: UpdateSmartReviewCommand, state: State): State {
-        if (command.authors != null && command.authors != state.smartReview!!.authors) {
-            authorUpdater.update(state.statements, command.contributorId, state.authors, command.smartReviewId)
+    override operator fun invoke(command: UpdatePaperCommand, state: UpdatePaperState): UpdatePaperState {
+        if (command.authors != null && command.authors != state.paper!!.authors) {
+            authorUpdater.update(state.statements, command.contributorId, state.authors, command.paperId)
         }
         return state
     }

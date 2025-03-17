@@ -9,15 +9,15 @@ import io.mockk.runs
 import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.orkg.common.testing.fixtures.MockkBaseTest
-import org.orkg.contenttypes.domain.actions.AuthorUpdater
+import org.orkg.contenttypes.domain.actions.AbstractAuthorListUpdater
 import org.orkg.contenttypes.domain.actions.UpdateSmartReviewState
 import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
 import org.orkg.contenttypes.input.testing.fixtures.updateSmartReviewCommand
 
 internal class SmartReviewAuthorUpdaterUnitTest : MockkBaseTest {
-    private val authorUpdater: AuthorUpdater = mockk()
+    private val authorUpdater: AbstractAuthorListUpdater = mockk()
 
-    private val smartReviewAuthorUpdater = SmartReviewAuthorUpdater(authorUpdater)
+    private val smartReviewAuthorUpdater = SmartReviewAuthorListUpdater(authorUpdater)
 
     @Test
     fun `Given a smart review update command, it updates the authors`() {

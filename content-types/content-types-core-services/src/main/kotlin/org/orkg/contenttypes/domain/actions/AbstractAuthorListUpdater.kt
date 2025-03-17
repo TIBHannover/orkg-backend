@@ -12,9 +12,9 @@ import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ListRepository
 
-class AuthorUpdater(
+class AbstractAuthorListUpdater(
     private val listRepository: ListRepository,
-    private val authorCreator: AuthorCreator,
+    private val authorCreator: AbstractAuthorListCreator,
 ) {
     constructor(
         unsafeResourceUseCases: UnsafeResourceUseCases,
@@ -24,7 +24,7 @@ class AuthorUpdater(
         listRepository: ListRepository,
     ) : this(
         listRepository,
-        object : AuthorCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService) {}
+        AbstractAuthorListCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService),
     )
 
     internal fun update(

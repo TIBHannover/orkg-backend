@@ -28,10 +28,10 @@ import org.orkg.contenttypes.domain.actions.UpdateComparisonCommand
 import org.orkg.contenttypes.domain.actions.UpdateComparisonState
 import org.orkg.contenttypes.domain.actions.VisibilityValidator
 import org.orkg.contenttypes.domain.actions.VisualizationIdsValidator
-import org.orkg.contenttypes.domain.actions.comparisons.ComparisonAuthorCreateValidator
-import org.orkg.contenttypes.domain.actions.comparisons.ComparisonAuthorCreator
-import org.orkg.contenttypes.domain.actions.comparisons.ComparisonAuthorUpdateValidator
-import org.orkg.contenttypes.domain.actions.comparisons.ComparisonAuthorUpdater
+import org.orkg.contenttypes.domain.actions.comparisons.ComparisonAuthorListCreateValidator
+import org.orkg.contenttypes.domain.actions.comparisons.ComparisonAuthorListCreator
+import org.orkg.contenttypes.domain.actions.comparisons.ComparisonAuthorListUpdateValidator
+import org.orkg.contenttypes.domain.actions.comparisons.ComparisonAuthorListUpdater
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonContributionCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonContributionUpdater
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonDescriptionCreator
@@ -214,10 +214,10 @@ class ComparisonService(
             ObservatoryValidator(observatoryRepository, { it.observatories }),
             OrganizationOrConferenceValidator(organizationRepository, conferenceSeriesRepository, { it.organizations }),
             SDGValidator({ it.sustainableDevelopmentGoals }),
-            ComparisonAuthorCreateValidator(resourceRepository, statementRepository),
+            ComparisonAuthorListCreateValidator(resourceRepository, statementRepository),
             ComparisonResourceCreator(unsafeResourceUseCases),
             ComparisonDescriptionCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
-            ComparisonAuthorCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService),
+            ComparisonAuthorListCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService),
             ComparisonSDGCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
             ComparisonResearchFieldCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
             ComparisonReferencesCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
@@ -363,11 +363,11 @@ class ComparisonService(
             ObservatoryValidator(observatoryRepository, { it.observatories }),
             OrganizationOrConferenceValidator(organizationRepository, conferenceSeriesRepository, { it.organizations }),
             SDGValidator({ it.sustainableDevelopmentGoals }),
-            ComparisonAuthorUpdateValidator(resourceRepository, statementRepository),
+            ComparisonAuthorListUpdateValidator(resourceRepository, statementRepository),
             ComparisonResourceUpdater(unsafeResourceUseCases),
             ComparisonDescriptionUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
             ComparisonResearchFieldUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
-            ComparisonAuthorUpdater(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService, listRepository),
+            ComparisonAuthorListUpdater(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService, listRepository),
             ComparisonSDGUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
             ComparisonContributionUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
             ComparisonVisualizationUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),

@@ -32,10 +32,10 @@ import org.orkg.contenttypes.domain.actions.contributions.ContributionPaperValid
 import org.orkg.contenttypes.domain.actions.contributions.ContributionTempIdValidator
 import org.orkg.contenttypes.domain.actions.contributions.ContributionThingDefinitionValidator
 import org.orkg.contenttypes.domain.actions.execute
-import org.orkg.contenttypes.domain.actions.papers.PaperAuthorCreateValidator
-import org.orkg.contenttypes.domain.actions.papers.PaperAuthorCreator
-import org.orkg.contenttypes.domain.actions.papers.PaperAuthorUpdateValidator
-import org.orkg.contenttypes.domain.actions.papers.PaperAuthorUpdater
+import org.orkg.contenttypes.domain.actions.papers.PaperAuthorListCreateValidator
+import org.orkg.contenttypes.domain.actions.papers.PaperAuthorListCreator
+import org.orkg.contenttypes.domain.actions.papers.PaperAuthorListUpdateValidator
+import org.orkg.contenttypes.domain.actions.papers.PaperAuthorListUpdater
 import org.orkg.contenttypes.domain.actions.papers.PaperContributionCreator
 import org.orkg.contenttypes.domain.actions.papers.PaperContributionValidator
 import org.orkg.contenttypes.domain.actions.papers.PaperExistenceValidator
@@ -180,14 +180,14 @@ class PaperService(
             OrganizationValidator(organizationRepository, { it.organizations }),
             SDGValidator({ it.sustainableDevelopmentGoals }),
             ResourceValidator(resourceRepository, { it.mentionings }),
-            PaperAuthorCreateValidator(resourceRepository, statementRepository),
+            PaperAuthorListCreateValidator(resourceRepository, statementRepository),
             PaperThingDefinitionValidator(thingRepository, classRepository),
             PaperContributionValidator(thingRepository),
             PaperResourceCreator(unsafeResourceUseCases),
             PaperIdentifierCreator(unsafeStatementUseCases, unsafeLiteralUseCases),
             PaperSDGCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
             PaperMentioningsCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
-            PaperAuthorCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService),
+            PaperAuthorListCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService),
             PaperResearchFieldCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
             PaperPublicationInfoCreator(unsafeResourceUseCases, resourceRepository, unsafeStatementUseCases, unsafeLiteralUseCases),
             PaperContributionCreator(unsafeClassUseCases, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, unsafePredicateUseCases, statementRepository, listService)
@@ -220,10 +220,10 @@ class PaperService(
             ResourceValidator(resourceRepository, { it.mentionings }, { it.paper!!.mentionings.ids }),
             PaperTitleUpdateValidator(resourceService),
             PaperIdentifierUpdateValidator(statementRepository),
-            PaperAuthorUpdateValidator(resourceRepository, statementRepository),
+            PaperAuthorListUpdateValidator(resourceRepository, statementRepository),
             PaperResourceUpdater(unsafeResourceUseCases),
             PaperIdentifierUpdater(statementService, unsafeStatementUseCases, unsafeLiteralUseCases),
-            PaperAuthorUpdater(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService, listRepository),
+            PaperAuthorListUpdater(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService, listRepository),
             PaperResearchFieldUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
             PaperPublicationInfoUpdater(unsafeResourceUseCases, resourceRepository, statementService, unsafeStatementUseCases, unsafeLiteralUseCases),
             PaperSDGUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),

@@ -17,11 +17,11 @@ import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
-abstract class AuthorCreator(
-    protected val unsafeResourceUseCases: UnsafeResourceUseCases,
-    protected val unsafeStatementUseCases: UnsafeStatementUseCases,
-    protected val unsafeLiteralUseCases: UnsafeLiteralUseCases,
-    protected val listService: ListUseCases,
+class AbstractAuthorListCreator(
+    private val unsafeResourceUseCases: UnsafeResourceUseCases,
+    private val unsafeStatementUseCases: UnsafeStatementUseCases,
+    private val unsafeLiteralUseCases: UnsafeLiteralUseCases,
+    private val listService: ListUseCases,
 ) {
     internal fun create(contributorId: ContributorId, authors: List<Author>, subjectId: ThingId) {
         val authorIds = authors.map { author ->

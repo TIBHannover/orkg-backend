@@ -32,10 +32,10 @@ import org.orkg.contenttypes.domain.actions.UpdateSmartReviewSectionState
 import org.orkg.contenttypes.domain.actions.UpdateSmartReviewState
 import org.orkg.contenttypes.domain.actions.VisibilityValidator
 import org.orkg.contenttypes.domain.actions.execute
-import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewAuthorCreateValidator
-import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewAuthorCreator
-import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewAuthorUpdateValidator
-import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewAuthorUpdater
+import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewAuthorListCreateValidator
+import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewAuthorListCreator
+import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewAuthorListUpdateValidator
+import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewAuthorListUpdater
 import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewChangelogCreator
 import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewContributionCreator
 import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewExistenceValidator
@@ -190,7 +190,7 @@ class SmartReviewService(
             LabelValidator("title") { it.title },
             BibTeXReferencesValidator({ it.references }),
             ResearchFieldValidator(resourceRepository, { it.researchFields }),
-            SmartReviewAuthorCreateValidator(resourceRepository, statementRepository),
+            SmartReviewAuthorListCreateValidator(resourceRepository, statementRepository),
             SDGValidator({ it.sustainableDevelopmentGoals }),
             OrganizationValidator(organizationRepository, { it.organizations }),
             ObservatoryValidator(observatoryRepository, { it.observatories }),
@@ -199,7 +199,7 @@ class SmartReviewService(
             SmartReviewContributionCreator(unsafeResourceUseCases, unsafeStatementUseCases),
             SmartReviewReferencesCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
             SmartReviewResearchFieldCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
-            SmartReviewAuthorCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService),
+            SmartReviewAuthorListCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService),
             SmartReviewSDGCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
             SmartReviewSectionsCreator(unsafeLiteralUseCases, unsafeResourceUseCases, unsafeStatementUseCases)
         )
@@ -224,7 +224,7 @@ class SmartReviewService(
             BibTeXReferencesValidator({ it.references }),
             VisibilityValidator(contributorRepository, { it.contributorId }, { it.smartReview!! }, { it.visibility }),
             ResearchFieldValidator(resourceRepository, { it.researchFields }, { it.smartReview!!.researchFields.ids }),
-            SmartReviewAuthorUpdateValidator(resourceRepository, statementRepository),
+            SmartReviewAuthorListUpdateValidator(resourceRepository, statementRepository),
             SDGValidator({ it.sustainableDevelopmentGoals }, { it.smartReview!!.sustainableDevelopmentGoals.ids }),
             OrganizationValidator(organizationRepository, { it.organizations }, { it.smartReview!!.organizations }),
             ObservatoryValidator(observatoryRepository, { it.observatories }, { it.smartReview!!.observatories }),
@@ -232,7 +232,7 @@ class SmartReviewService(
             SmartReviewResourceUpdater(unsafeResourceUseCases),
             SmartReviewReferencesUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
             SmartReviewResearchFieldUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
-            SmartReviewAuthorUpdater(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService, listRepository),
+            SmartReviewAuthorListUpdater(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService, listRepository),
             SmartReviewSDGUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
             SmartReviewSectionsUpdater(unsafeLiteralUseCases, resourceService, unsafeResourceUseCases, statementService, unsafeStatementUseCases)
         )

@@ -34,7 +34,7 @@ internal class AuthorValidatorUnitTest : MockkBaseTest {
     private val resourceRepository: ResourceRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
 
-    private val authorValidator = AuthorValidator(resourceRepository, statementRepository)
+    private val authorValidator = AbstractAuthorListValidator(resourceRepository, statementRepository)
 
     @Test
     fun `Given a list of authors, when validating, it returns success`() {

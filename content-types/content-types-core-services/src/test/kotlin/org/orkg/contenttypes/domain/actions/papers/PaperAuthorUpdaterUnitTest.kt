@@ -7,15 +7,15 @@ import io.mockk.runs
 import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.orkg.common.testing.fixtures.MockkBaseTest
-import org.orkg.contenttypes.domain.actions.AuthorUpdater
+import org.orkg.contenttypes.domain.actions.AbstractAuthorListUpdater
 import org.orkg.contenttypes.domain.actions.UpdatePaperState
 import org.orkg.contenttypes.domain.testing.fixtures.createPaper
 import org.orkg.contenttypes.input.testing.fixtures.updatePaperCommand
 
 internal class PaperAuthorUpdaterUnitTest : MockkBaseTest {
-    private val authorUpdater: AuthorUpdater = mockk()
+    private val authorUpdater: AbstractAuthorListUpdater = mockk()
 
-    private val paperAuthorUpdater = PaperAuthorUpdater(authorUpdater)
+    private val paperAuthorUpdater = PaperAuthorListUpdater(authorUpdater)
 
     @Test
     fun `Given a paper update command, it updates the authors`() {

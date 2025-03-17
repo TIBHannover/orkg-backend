@@ -14,7 +14,7 @@ import org.orkg.graph.domain.Label
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 
-class AuthorValidator(
+class AbstractAuthorListValidator(
     private val resourceRepository: ResourceRepository,
     private val statementRepository: StatementRepository,
     private val property: String = "authors",

@@ -30,10 +30,10 @@ import org.orkg.contenttypes.domain.actions.UpdateLiteratureListSectionState
 import org.orkg.contenttypes.domain.actions.UpdateLiteratureListState
 import org.orkg.contenttypes.domain.actions.VisibilityValidator
 import org.orkg.contenttypes.domain.actions.execute
-import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListAuthorCreateValidator
-import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListAuthorCreator
-import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListAuthorUpdateValidator
-import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListAuthorUpdater
+import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListAuthorListCreateValidator
+import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListAuthorListCreator
+import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListAuthorListUpdateValidator
+import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListAuthorListUpdater
 import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListChangelogCreator
 import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListExistenceValidator
 import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListModifiableValidator
@@ -159,14 +159,14 @@ class LiteratureListService(
         val steps = listOf(
             LabelValidator("title") { it.title },
             ResearchFieldValidator(resourceRepository, { it.researchFields }),
-            LiteratureListAuthorCreateValidator(resourceRepository, statementRepository),
+            LiteratureListAuthorListCreateValidator(resourceRepository, statementRepository),
             SDGValidator({ it.sustainableDevelopmentGoals }),
             OrganizationValidator(organizationRepository, { it.organizations }),
             ObservatoryValidator(observatoryRepository, { it.observatories }),
             LiteratureListSectionsCreateValidator(resourceRepository),
             LiteratureListResourceCreator(unsafeResourceUseCases),
             LiteratureListResearchFieldCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
-            LiteratureListAuthorCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService),
+            LiteratureListAuthorListCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService),
             LiteratureListSDGCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
             LiteratureListSectionsCreator(unsafeLiteralUseCases, unsafeResourceUseCases, unsafeStatementUseCases)
         )
@@ -207,14 +207,14 @@ class LiteratureListService(
             LabelValidator("title") { it.title },
             VisibilityValidator(contributorRepository, { it.contributorId }, { it.literatureList!! }, { it.visibility }),
             ResearchFieldValidator(resourceRepository, { it.researchFields }, { it.literatureList!!.researchFields.ids }),
-            LiteratureListAuthorUpdateValidator(resourceRepository, statementRepository),
+            LiteratureListAuthorListUpdateValidator(resourceRepository, statementRepository),
             SDGValidator({ it.sustainableDevelopmentGoals }, { it.literatureList!!.sustainableDevelopmentGoals.ids }),
             OrganizationValidator(organizationRepository, { it.organizations }, { it.literatureList!!.organizations }),
             ObservatoryValidator(observatoryRepository, { it.observatories }, { it.literatureList!!.observatories }),
             LiteratureListSectionsUpdateValidator(resourceRepository),
             LiteratureListResourceUpdater(unsafeResourceUseCases),
             LiteratureListResearchFieldUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
-            LiteratureListAuthorUpdater(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService, listRepository),
+            LiteratureListAuthorListUpdater(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService, listRepository),
             LiteratureListSDGUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
             LiteratureListSectionsUpdater(unsafeLiteralUseCases, resourceService, unsafeResourceUseCases, statementService, unsafeStatementUseCases)
         )

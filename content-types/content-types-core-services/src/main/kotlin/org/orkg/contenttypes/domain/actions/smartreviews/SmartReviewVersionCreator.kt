@@ -36,10 +36,10 @@ class SmartReviewVersionCreator(
             references = smartReview.references
         )
         val steps = listOf(
-            SmartReviewAuthorCreateValidator(resourceRepository, statementRepository),
+            SmartReviewAuthorListCreateValidator(resourceRepository, statementRepository),
             SmartReviewVersionResourceCreator(unsafeResourceUseCases),
             SmartReviewResearchFieldCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
-            SmartReviewAuthorCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService),
+            SmartReviewAuthorListCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService),
             SmartReviewSDGCreator(unsafeLiteralUseCases, unsafeStatementUseCases)
         )
         return state.copy(

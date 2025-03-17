@@ -35,10 +35,10 @@ class LiteratureListVersionCreator(
             sections = emptyList()
         )
         val steps = listOf(
-            LiteratureListAuthorCreateValidator(resourceRepository, statementRepository),
+            LiteratureListAuthorListCreateValidator(resourceRepository, statementRepository),
             LiteratureListVersionResourceCreator(unsafeResourceUseCases),
             LiteratureListResearchFieldCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
-            LiteratureListAuthorCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService),
+            LiteratureListAuthorListCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService),
             LiteratureListSDGCreator(unsafeLiteralUseCases, unsafeStatementUseCases)
         )
         return state.copy(

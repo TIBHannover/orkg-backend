@@ -1,6 +1,6 @@
 package org.orkg.contenttypes.domain.actions.comparisons
 
-import org.orkg.contenttypes.domain.actions.AuthorUpdater
+import org.orkg.contenttypes.domain.actions.AbstractAuthorListUpdater
 import org.orkg.contenttypes.domain.actions.UpdateComparisonCommand
 import org.orkg.contenttypes.domain.actions.comparisons.UpdateComparisonAction.State
 import org.orkg.graph.input.ListUseCases
@@ -9,8 +9,8 @@ import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ListRepository
 
-class ComparisonAuthorUpdater(
-    private val authorUpdater: AuthorUpdater,
+class ComparisonAuthorListUpdater(
+    private val authorUpdater: AbstractAuthorListUpdater,
 ) : UpdateComparisonAction {
     constructor(
         unsafeResourceUseCases: UnsafeResourceUseCases,
@@ -19,7 +19,7 @@ class ComparisonAuthorUpdater(
         listService: ListUseCases,
         listRepository: ListRepository,
     ) : this(
-        AuthorUpdater(
+        AbstractAuthorListUpdater(
             unsafeResourceUseCases,
             unsafeStatementUseCases,
             unsafeLiteralUseCases,

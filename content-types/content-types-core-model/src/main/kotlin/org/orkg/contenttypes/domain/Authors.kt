@@ -1,6 +1,5 @@
 package org.orkg.contenttypes.domain
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.Resource
@@ -20,11 +19,8 @@ data class ComparisonAuthor(
 )
 
 data class ComparisonAuthorInfo(
-    @JsonProperty("paper_id")
     val paperId: ThingId,
-    @JsonProperty("author_index")
     val authorIndex: Int,
-    @JsonProperty("paper_year")
     val paperYear: Int?,
 )
 

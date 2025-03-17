@@ -7,7 +7,6 @@ plugins {
 }
 
 dependencies {
-    api("com.fasterxml.jackson.core:jackson-annotations")
     api("com.fasterxml.jackson.core:jackson-databind")
     api("org.eclipse.rdf4j:rdf4j-common-io")
     api("org.springframework.boot:spring-boot")

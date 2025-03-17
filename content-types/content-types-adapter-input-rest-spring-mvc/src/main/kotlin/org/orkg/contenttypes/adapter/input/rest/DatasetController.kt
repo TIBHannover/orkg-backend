@@ -1,8 +1,7 @@
 package org.orkg.contenttypes.adapter.input.rest
 
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.domain.Dataset
-import org.orkg.contenttypes.domain.DatasetSummary
+import org.orkg.contenttypes.adapter.input.rest.mapping.DatasetRepresentationAdapter
 import org.orkg.contenttypes.domain.ResearchProblem
 import org.orkg.contenttypes.input.DatasetUseCases
 import org.orkg.contenttypes.input.ResearchProblemUseCases
@@ -16,13 +15,14 @@ import org.springframework.web.bind.annotation.RestController
 class DatasetController(
     private val retrieveDatasets: DatasetUseCases,
     private val retrieveProblems: ResearchProblemUseCases,
-) {
+) : DatasetRepresentationAdapter {
     @GetMapping("/api/datasets/research-problem/{id}")
     fun findAllDatasetsByResearchProblemId(
         @PathVariable id: ThingId,
         pageable: Pageable,
-    ): Page<Dataset> =
+    ): Page<DatasetRepresentation> =
         retrieveDatasets.findAllDatasetsByResearchProblemId(id, pageable)
+            .mapToDatasetRepresentation()
 
     @GetMapping("/api/datasets/{id}/problems")
     fun findAllByDatasetId(
@@ -36,6 +36,7 @@ class DatasetController(
         @PathVariable id: ThingId,
         @PathVariable problemId: ThingId,
         pageable: Pageable,
-    ): Page<DatasetSummary> =
+    ): Page<DatasetSummaryRepresentation> =
         retrieveDatasets.findAllDatasetSummariesByIdAndResearchProblemId(id, problemId, pageable)
+            .mapToDatasetSummaryRepresentation()
 }

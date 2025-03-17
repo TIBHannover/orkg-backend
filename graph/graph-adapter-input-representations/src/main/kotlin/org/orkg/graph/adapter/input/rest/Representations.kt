@@ -181,18 +181,18 @@ data class BundleRepresentation(
     val bundle: List<StatementRepresentation>,
 )
 
-sealed interface AuthorRepresentation {
+sealed interface SimpleAuthorRepresentation {
     data class ResourceAuthorRepresentation(
         val value: ResourceRepresentation,
-    ) : AuthorRepresentation
+    ) : SimpleAuthorRepresentation
 
     data class LiteralAuthorRepresentation(
         val value: String,
-    ) : AuthorRepresentation
+    ) : SimpleAuthorRepresentation
 }
 
 data class PaperAuthorRepresentation(
-    val author: AuthorRepresentation,
+    val author: SimpleAuthorRepresentation,
     val papers: Int,
 )
 

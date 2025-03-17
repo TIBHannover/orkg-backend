@@ -1,16 +1,18 @@
 package org.orkg.contenttypes.adapter.input.rest.mapping
 
 import org.orkg.common.MediaTypeCapabilities
+import org.orkg.contenttypes.adapter.input.rest.ComparisonAuthorInfoRepresentation
 import org.orkg.contenttypes.adapter.input.rest.ComparisonAuthorRepresentation
 import org.orkg.contenttypes.domain.ComparisonAuthor
+import org.orkg.contenttypes.domain.ComparisonAuthorInfo
 import org.orkg.contenttypes.domain.PaperAuthor
 import org.orkg.contenttypes.domain.SimpleAuthor
 import org.orkg.contenttypes.domain.SimpleAuthor.LiteralAuthor
 import org.orkg.contenttypes.domain.SimpleAuthor.ResourceAuthor
-import org.orkg.graph.adapter.input.rest.AuthorRepresentation
-import org.orkg.graph.adapter.input.rest.AuthorRepresentation.LiteralAuthorRepresentation
-import org.orkg.graph.adapter.input.rest.AuthorRepresentation.ResourceAuthorRepresentation
 import org.orkg.graph.adapter.input.rest.PaperAuthorRepresentation
+import org.orkg.graph.adapter.input.rest.SimpleAuthorRepresentation
+import org.orkg.graph.adapter.input.rest.SimpleAuthorRepresentation.LiteralAuthorRepresentation
+import org.orkg.graph.adapter.input.rest.SimpleAuthorRepresentation.ResourceAuthorRepresentation
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
 import org.orkg.graph.domain.FormattedLabels
 import org.orkg.graph.domain.StatementCounts
@@ -39,22 +41,28 @@ interface LegacyAuthorRepresentationAdapter : ResourceRepresentationAdapter {
         usageCounts: StatementCounts,
         formattedLabels: FormattedLabels,
     ): ComparisonAuthorRepresentation =
-        ComparisonAuthorRepresentation(author.toAuthorRepresentation(usageCounts, formattedLabels), info)
+        ComparisonAuthorRepresentation(
+            author.toSimpleAuthorRepresentation(usageCounts, formattedLabels),
+            info.map { it.toComparisonAuthorInfoRepresentation() }
+        )
 
     fun PaperAuthor.toPaperAuthorRepresentation(
         usageCounts: StatementCounts,
         formattedLabels: FormattedLabels,
     ): PaperAuthorRepresentation =
-        PaperAuthorRepresentation(author.toAuthorRepresentation(usageCounts, formattedLabels), papers)
+        PaperAuthorRepresentation(author.toSimpleAuthorRepresentation(usageCounts, formattedLabels), papers)
 
-    fun SimpleAuthor.toAuthorRepresentation(
+    fun SimpleAuthor.toSimpleAuthorRepresentation(
         usageCounts: StatementCounts,
         formattedLabels: FormattedLabels,
-    ): AuthorRepresentation =
+    ): SimpleAuthorRepresentation =
         when (this) {
             is ResourceAuthor -> ResourceAuthorRepresentation(
                 value.toResourceRepresentation(usageCounts, formattedLabels)
             )
             is LiteralAuthor -> LiteralAuthorRepresentation(value)
         }
+
+    fun ComparisonAuthorInfo.toComparisonAuthorInfoRepresentation(): ComparisonAuthorInfoRepresentation =
+        ComparisonAuthorInfoRepresentation(paperId, authorIndex, paperYear)
 }

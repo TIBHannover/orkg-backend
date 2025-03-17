@@ -1,7 +1,7 @@
 package org.orkg.contenttypes.adapter.input.rest
 
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.domain.BenchmarkSummary
+import org.orkg.contenttypes.adapter.input.rest.mapping.BenchmarkSummaryRepresentationAdapter
 import org.orkg.contenttypes.domain.ResearchField
 import org.orkg.contenttypes.input.BenchmarkUseCases
 import org.orkg.contenttypes.input.ResearchFieldUseCases
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController
 class BenchmarkController(
     private val retrieveResearchField: ResearchFieldUseCases,
     private val retrieveBenchmarks: BenchmarkUseCases,
-) {
+) : BenchmarkSummaryRepresentationAdapter {
     @GetMapping("/api/research-fields/benchmarks")
     fun findAllWithBenchmarks(pageable: Pageable): Page<ResearchField> =
         retrieveResearchField.findAllWithBenchmarks(pageable)
@@ -24,10 +24,12 @@ class BenchmarkController(
     fun findAllBenchmarkSummariesByResearchFieldId(
         @PathVariable id: ThingId,
         pageable: Pageable,
-    ): Page<BenchmarkSummary> =
+    ): Page<BenchmarkSummaryRepresentation> =
         retrieveBenchmarks.findAllBenchmarkSummariesByResearchFieldId(id, pageable)
+            .mapToBenchmarkSummaryRepresentation()
 
     @GetMapping("/api/benchmarks/summary")
-    fun findAllBenchmarkSummaries(pageable: Pageable): Page<BenchmarkSummary> =
+    fun findAllBenchmarkSummaries(pageable: Pageable): Page<BenchmarkSummaryRepresentation> =
         retrieveBenchmarks.findAllBenchmarkSummaries(pageable)
+            .mapToBenchmarkSummaryRepresentation()
 }

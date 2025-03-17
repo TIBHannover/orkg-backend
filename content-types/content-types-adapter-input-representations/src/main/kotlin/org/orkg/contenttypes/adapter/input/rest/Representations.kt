@@ -22,15 +22,17 @@ import org.orkg.community.domain.Contributor
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.Certainty
 import org.orkg.contenttypes.domain.ClassReference
-import org.orkg.contenttypes.domain.ComparisonAuthorInfo
 import org.orkg.contenttypes.domain.ComparisonConfig
 import org.orkg.contenttypes.domain.ComparisonData
 import org.orkg.contenttypes.domain.LiteralReference
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.domain.PredicateReference
+import org.orkg.contenttypes.domain.ResearchField
+import org.orkg.contenttypes.domain.ResearchProblem
 import org.orkg.contenttypes.domain.ResourceReference
 import org.orkg.contenttypes.input.PublicationInfoCommand
 import org.orkg.graph.adapter.input.rest.ResourceRepresentation
+import org.orkg.graph.adapter.input.rest.SimpleAuthorRepresentation
 import org.orkg.graph.adapter.input.rest.StatementRepresentation
 import org.orkg.graph.adapter.input.rest.ThingRepresentation
 import org.orkg.graph.domain.ExtractionMethod
@@ -700,11 +702,74 @@ data class TableRepresentation(
 }
 
 data class ComparisonAuthorRepresentation(
-    val author: org.orkg.graph.adapter.input.rest.AuthorRepresentation,
-    val info: Iterable<ComparisonAuthorInfo>,
+    val author: SimpleAuthorRepresentation,
+    val info: List<ComparisonAuthorInfoRepresentation>,
+)
+
+data class ComparisonAuthorInfoRepresentation(
+    @get:JsonProperty("paper_id")
+    val paperId: ThingId,
+    @get:JsonProperty("author_index")
+    val authorIndex: Int,
+    @get:JsonProperty("paper_year")
+    val paperYear: Int?,
 )
 
 data class ContributorWithContributionCountRepresentation(
     val user: Contributor,
     val contributions: Long,
+)
+
+data class BenchmarkSummaryRepresentation(
+    @get:JsonProperty("research_problem")
+    val researchProblem: ResearchProblem,
+    @get:JsonProperty("research_fields")
+    val researchFields: List<ResearchField> = emptyList(),
+    @get:JsonProperty("total_papers")
+    val totalPapers: Int,
+    @get:JsonProperty("total_datasets")
+    val totalDatasets: Int,
+    @get:JsonProperty("total_codes")
+    val totalCodes: Int,
+)
+
+data class DatasetRepresentation(
+    val id: ThingId,
+    val label: String,
+    @get:JsonProperty("total_models")
+    val totalModels: Int,
+    @get:JsonProperty("total_papers")
+    val totalPapers: Int,
+    @get:JsonProperty("total_codes")
+    val totalCodes: Int,
+)
+
+data class DatasetSummaryRepresentation(
+    @get:JsonProperty("model_name")
+    val modelName: String?,
+    @get:JsonProperty("model_id")
+    val modelId: ThingId?,
+    val score: String,
+    val metric: String,
+    @get:JsonProperty("paper_id")
+    val paperId: ThingId,
+    @get:JsonProperty("paper_title")
+    val paperTitle: String,
+    @get:JsonProperty("paper_month")
+    val paperMonth: Int?,
+    @get:JsonProperty("paper_year")
+    val paperYear: Int?,
+    @get:JsonProperty("code_urls")
+    val codeURLs: List<String>,
+)
+
+data class ContributionInfoRepresentation(
+    val id: ThingId,
+    val label: String,
+    @get:JsonProperty("paper_title")
+    val paperTitle: String,
+    @get:JsonProperty("paper_year")
+    val paperYear: Int?,
+    @get:JsonProperty("paper_id")
+    val paperId: ThingId,
 )

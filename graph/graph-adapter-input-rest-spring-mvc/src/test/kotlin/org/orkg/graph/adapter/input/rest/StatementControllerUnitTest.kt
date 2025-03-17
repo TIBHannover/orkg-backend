@@ -459,11 +459,11 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
         every { statementService.findAllDescriptionsById(any()) } returns emptyMap()
 
         documentedGetRequestTo("/api/statements/{id}/bundle", id)
-            .param("minLevel", bundleConfiguration.minLevel.toString())
-            .param("maxLevel", bundleConfiguration.maxLevel.toString())
+            .param("min_level", bundleConfiguration.minLevel.toString())
+            .param("max_level", bundleConfiguration.maxLevel.toString())
             .param("blacklist", bundleConfiguration.blacklist.joinToString(","))
             .param("whitelist", bundleConfiguration.whitelist.joinToString(","))
-            .param("includeFirst", includeFirst.toString())
+            .param("include_first", includeFirst.toString())
             .perform()
             .andExpect(status().isOk)
             .andExpectBundle()
@@ -473,11 +473,11 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
                         parameterWithName("id").description("The identifier of the root of the bundle.")
                     ),
                     queryParameters(
-                        parameterWithName("minLevel").description("The minimum hops a statement must be away from the root entity, in order to be included in the bundle. (optional)"),
-                        parameterWithName("maxLevel").description("The maximum hops a statement can be away from the root entity, in order to be included in the bundle. (optional)"),
+                        parameterWithName("min_level").description("The minimum hops a statement must be away from the root entity, in order to be included in the bundle. (optional)"),
+                        parameterWithName("max_level").description("The maximum hops a statement can be away from the root entity, in order to be included in the bundle. (optional)"),
                         parameterWithName("blacklist").description("A set of class ids that will prevent subgraph expansion. No resource in the resulting bundle will be an instance of the provided classes. (optional)"),
                         parameterWithName("whitelist").description("A set of class ids that are exclusively used for subgraph expansion. All resources in the resulting bundle are an instance of one of the provided classes. If not provided, all resources will be considered for subgraph expansion. (optional)"),
-                        parameterWithName("includeFirst").description("Whether to additionally include first level statements, regardless of other filters. (optional, default: true)"),
+                        parameterWithName("include_first").description("Whether to additionally include first level statements, regardless of other filters. (optional, default: true)"),
                     ),
                     responseFields(
                         fieldWithPath("root").description("The root ID of the object."),

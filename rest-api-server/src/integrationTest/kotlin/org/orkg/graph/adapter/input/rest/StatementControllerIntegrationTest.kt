@@ -2,8 +2,10 @@ package org.orkg.graph.adapter.input.rest
 
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.hasSize
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.orkg.common.PageRequests
 import org.orkg.createLiteral
 import org.orkg.createPredicate
 import org.orkg.createResource
@@ -16,7 +18,6 @@ import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.domain.PageRequest
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -36,17 +37,20 @@ internal class StatementControllerIntegrationTest : MockMvcBaseTest("statements"
 
     @BeforeEach
     fun setup() {
-        val tempPageable = PageRequest.of(0, 10)
+        cleanup()
 
+        assertThat(statementService.findAll(PageRequests.SINGLE)).hasSize(0)
+        assertThat(resourceService.findAll(PageRequests.SINGLE)).hasSize(0)
+        assertThat(predicateService.findAll(PageRequests.SINGLE)).hasSize(0)
+        assertThat(literalService.findAll(PageRequests.SINGLE)).hasSize(0)
+    }
+
+    @AfterEach
+    fun cleanup() {
         statementService.deleteAll()
         resourceService.deleteAll()
         predicateService.deleteAll()
         literalService.deleteAll()
-
-        assertThat(statementService.findAll(tempPageable)).hasSize(0)
-        assertThat(resourceService.findAll(tempPageable)).hasSize(0)
-        assertThat(predicateService.findAll(tempPageable)).hasSize(0)
-        assertThat(literalService.findAll(tempPageable)).hasSize(0)
     }
 
     @Test

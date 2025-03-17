@@ -55,12 +55,20 @@ class LegacyPaperController(
             .body(resourceService.findById(id).mapToResourceRepresentation(capabilities).get())
     }
 
-    @GetMapping
+    @GetMapping(params = ["linked_to"])
     fun findAllPapersRelatedToResource(
-        @RequestParam("linkedTo", required = true) id: ThingId,
+        @RequestParam("linked_to", required = true) id: ThingId,
         pageable: Pageable,
         capabilities: MediaTypeCapabilities,
     ): Page<PaperResourceWithPathRepresentation> =
         service.findAllPapersRelatedToResource(id, pageable)
             .mapToPaperResourceWithPathRepresentation(capabilities)
+
+    @GetMapping(params = ["linkedTo"])
+    fun findAllPapersRelatedToResourceLegacy(
+        @RequestParam("linkedTo", required = true) id: ThingId,
+        pageable: Pageable,
+        capabilities: MediaTypeCapabilities,
+    ): Page<PaperResourceWithPathRepresentation> =
+        findAllPapersRelatedToResource(id, pageable, capabilities)
 }

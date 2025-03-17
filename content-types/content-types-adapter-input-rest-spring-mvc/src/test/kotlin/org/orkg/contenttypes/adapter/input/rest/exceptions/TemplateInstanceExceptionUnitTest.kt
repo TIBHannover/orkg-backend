@@ -481,7 +481,7 @@ internal class TemplateInstanceExceptionUnitTest : MockMvcBaseTest("tables") {
         @GetMapping("/unknown-template-properties")
         fun unknownTemplateProperties(
             @RequestParam templateId: ThingId,
-            @RequestParam("unknownProperties") unknownProperties: Set<ThingId>,
+            @RequestParam unknownProperties: Set<ThingId>,
         ): Unit = throw UnknownTemplateProperties(templateId, unknownProperties)
 
         @GetMapping("/missing-property-values")

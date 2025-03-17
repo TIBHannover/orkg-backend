@@ -143,24 +143,28 @@ class StatementController(
     @GetMapping("/{id}/bundle")
     fun fetchAsBundle(
         @PathVariable id: ThingId,
-        @RequestParam("minLevel", required = false) minLevel: Int?,
-        @RequestParam("maxLevel", required = false) maxLevel: Int?,
+        @RequestParam("min_level", required = false) minLevel: Int?,
+        @RequestParam("max_level", required = false) maxLevel: Int?,
         @RequestParam("blacklist", required = false, defaultValue = "") blacklist: List<ThingId>,
         @RequestParam("whitelist", required = false, defaultValue = "") whitelist: List<ThingId>,
-        @RequestParam("includeFirst", required = false, defaultValue = "true") includeFirst: Boolean,
+        @RequestParam("include_first", required = false) includeFirst: Boolean?,
+        // legacy CamelCase parameters
+        @RequestParam("minLevel", required = false) minLevelLegacy: Int?,
+        @RequestParam("maxLevel", required = false) maxLevelLegacy: Int?,
+        @RequestParam("includeFirst", required = false, defaultValue = "true") includeFirstLegacy: Boolean,
         sort: Sort,
         capabilities: MediaTypeCapabilities,
     ): BundleRepresentation =
         statementService.fetchAsBundle(
-            id,
-            BundleConfiguration(
-                minLevel,
-                maxLevel,
-                blacklist,
-                whitelist
+            thingId = id,
+            configuration = BundleConfiguration(
+                minLevel = minLevel ?: minLevelLegacy,
+                maxLevel = maxLevel ?: maxLevelLegacy,
+                blacklist = blacklist,
+                whitelist = whitelist
             ),
-            includeFirst,
-            sort
+            includeFirst = includeFirst ?: includeFirstLegacy,
+            sort = sort
         ).toBundleRepresentation(capabilities)
 
     data class CreateStatementRequest(

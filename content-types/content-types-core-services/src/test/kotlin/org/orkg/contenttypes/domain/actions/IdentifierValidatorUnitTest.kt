@@ -22,7 +22,7 @@ import org.springframework.data.domain.Page
 internal class IdentifierValidatorUnitTest : MockkBaseTest {
     private val statementRepository: StatementRepository = mockk()
 
-    private val identifierCreateValidator = object : IdentifierValidator(statementRepository) {}
+    private val identifierCreateValidator = IdentifierValidator(statementRepository)
 
     @Test
     fun `Given a map of identifiers, when searching for existing resources, it returns success`() {

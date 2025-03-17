@@ -214,7 +214,7 @@ class LiteratureListService(
             LiteratureListSectionsUpdateValidator(resourceRepository),
             LiteratureListResourceUpdater(unsafeResourceUseCases),
             LiteratureListResearchFieldUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
-            LiteratureListAuthorUpdater(unsafeResourceUseCases, statementService, unsafeStatementUseCases, unsafeLiteralUseCases, listService, listRepository),
+            LiteratureListAuthorUpdater(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService, listRepository),
             LiteratureListSDGUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
             LiteratureListSectionsUpdater(unsafeLiteralUseCases, resourceService, unsafeResourceUseCases, statementService, unsafeStatementUseCases)
         )

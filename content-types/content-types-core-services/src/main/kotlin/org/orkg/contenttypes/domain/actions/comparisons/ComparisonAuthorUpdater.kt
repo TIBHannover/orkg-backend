@@ -2,9 +2,8 @@ package org.orkg.contenttypes.domain.actions.comparisons
 
 import org.orkg.contenttypes.domain.actions.AuthorUpdater
 import org.orkg.contenttypes.domain.actions.UpdateComparisonCommand
-import org.orkg.contenttypes.domain.actions.UpdateComparisonState
+import org.orkg.contenttypes.domain.actions.comparisons.UpdateComparisonAction.State
 import org.orkg.graph.input.ListUseCases
-import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
@@ -15,7 +14,6 @@ class ComparisonAuthorUpdater(
 ) : UpdateComparisonAction {
     constructor(
         unsafeResourceUseCases: UnsafeResourceUseCases,
-        statementService: StatementUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
         unsafeLiteralUseCases: UnsafeLiteralUseCases,
         listService: ListUseCases,
@@ -23,7 +21,6 @@ class ComparisonAuthorUpdater(
     ) : this(
         AuthorUpdater(
             unsafeResourceUseCases,
-            statementService,
             unsafeStatementUseCases,
             unsafeLiteralUseCases,
             listService,
@@ -31,9 +28,9 @@ class ComparisonAuthorUpdater(
         )
     )
 
-    override operator fun invoke(command: UpdateComparisonCommand, state: UpdateComparisonState): UpdateComparisonState {
+    override fun invoke(command: UpdateComparisonCommand, state: State): State {
         if (command.authors != null && command.authors != state.comparison!!.authors) {
-            authorUpdater.update(command.contributorId, state.authors, command.comparisonId)
+            authorUpdater.update(state.statements, command.contributorId, state.authors, command.comparisonId)
         }
         return state
     }

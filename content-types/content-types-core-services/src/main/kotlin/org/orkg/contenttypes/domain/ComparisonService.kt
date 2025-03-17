@@ -39,7 +39,6 @@ import org.orkg.contenttypes.domain.actions.comparisons.ComparisonDescriptionUpd
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonExistenceValidator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonIsAnonymizedCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonIsAnonymizedUpdater
-import org.orkg.contenttypes.domain.actions.comparisons.ComparisonModifiableValidator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonPublishableValidator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonReferencesCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonReferencesUpdater
@@ -356,8 +355,7 @@ class ComparisonService(
             LabelValidator("title") { it.title },
             DescriptionValidator { it.description },
             LabelCollectionValidator("references") { it.references },
-            ComparisonExistenceValidator(this),
-            ComparisonModifiableValidator(),
+            ComparisonExistenceValidator(this, resourceRepository),
             VisibilityValidator(contributorRepository, { it.contributorId }, { it.comparison!! }, { it.visibility }),
             ContributionIdsValidator(resourceRepository) { it.contributions },
             VisualizationIdsValidator(resourceRepository) { it.visualizations },
@@ -369,7 +367,7 @@ class ComparisonService(
             ComparisonResourceUpdater(unsafeResourceUseCases),
             ComparisonDescriptionUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
             ComparisonResearchFieldUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
-            ComparisonAuthorUpdater(unsafeResourceUseCases, statementService, unsafeStatementUseCases, unsafeLiteralUseCases, listService, listRepository),
+            ComparisonAuthorUpdater(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService, listRepository),
             ComparisonSDGUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
             ComparisonContributionUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
             ComparisonVisualizationUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),

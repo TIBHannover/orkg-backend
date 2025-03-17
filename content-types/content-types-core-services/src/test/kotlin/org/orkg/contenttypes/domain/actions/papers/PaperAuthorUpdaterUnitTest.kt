@@ -22,11 +22,11 @@ internal class PaperAuthorUpdaterUnitTest : MockkBaseTest {
         val command = updatePaperCommand()
         val state = UpdatePaperState(paper = createPaper())
 
-        every { authorUpdater.update(command.contributorId, state.authors, command.paperId) } just runs
+        every { authorUpdater.update(state.statements, command.contributorId, state.authors, command.paperId) } just runs
 
         paperAuthorUpdater(command, state)
 
-        verify(exactly = 1) { authorUpdater.update(command.contributorId, state.authors, command.paperId) }
+        verify(exactly = 1) { authorUpdater.update(state.statements, command.contributorId, state.authors, command.paperId) }
     }
 
     @Test

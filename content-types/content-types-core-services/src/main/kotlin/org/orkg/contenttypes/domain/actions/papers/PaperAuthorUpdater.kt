@@ -4,7 +4,6 @@ import org.orkg.contenttypes.domain.actions.AuthorUpdater
 import org.orkg.contenttypes.domain.actions.UpdatePaperCommand
 import org.orkg.contenttypes.domain.actions.UpdatePaperState
 import org.orkg.graph.input.ListUseCases
-import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
@@ -15,7 +14,6 @@ class PaperAuthorUpdater(
 ) : UpdatePaperAction {
     constructor(
         unsafeResourceUseCases: UnsafeResourceUseCases,
-        statementService: StatementUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
         unsafeLiteralUseCases: UnsafeLiteralUseCases,
         listService: ListUseCases,
@@ -23,7 +21,6 @@ class PaperAuthorUpdater(
     ) : this(
         AuthorUpdater(
             unsafeResourceUseCases,
-            statementService,
             unsafeStatementUseCases,
             unsafeLiteralUseCases,
             listService,
@@ -33,7 +30,7 @@ class PaperAuthorUpdater(
 
     override operator fun invoke(command: UpdatePaperCommand, state: UpdatePaperState): UpdatePaperState {
         if (command.authors != null && command.authors != state.paper!!.authors) {
-            authorUpdater.update(command.contributorId, state.authors, command.paperId)
+            authorUpdater.update(state.statements, command.contributorId, state.authors, command.paperId)
         }
         return state
     }

@@ -25,7 +25,7 @@ internal class SmartReviewAuthorUpdaterUnitTest : MockkBaseTest {
         val smartReview = createSmartReview()
         val state = UpdateSmartReviewState(smartReview = smartReview)
 
-        every { authorUpdater.update(command.contributorId, state.authors, command.smartReviewId) } just runs
+        every { authorUpdater.update(state.statements, command.contributorId, state.authors, command.smartReviewId) } just runs
 
         smartReviewAuthorUpdater(command, state).asClue {
             it.smartReview shouldBe smartReview
@@ -33,7 +33,7 @@ internal class SmartReviewAuthorUpdaterUnitTest : MockkBaseTest {
             it.authors shouldBe state.authors
         }
 
-        verify(exactly = 1) { authorUpdater.update(command.contributorId, state.authors, command.smartReviewId) }
+        verify(exactly = 1) { authorUpdater.update(state.statements, command.contributorId, state.authors, command.smartReviewId) }
     }
 
     @Test

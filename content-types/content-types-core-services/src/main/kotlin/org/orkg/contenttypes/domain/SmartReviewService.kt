@@ -232,7 +232,7 @@ class SmartReviewService(
             SmartReviewResourceUpdater(unsafeResourceUseCases),
             SmartReviewReferencesUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
             SmartReviewResearchFieldUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
-            SmartReviewAuthorUpdater(unsafeResourceUseCases, statementService, unsafeStatementUseCases, unsafeLiteralUseCases, listService, listRepository),
+            SmartReviewAuthorUpdater(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService, listRepository),
             SmartReviewSDGUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
             SmartReviewSectionsUpdater(unsafeLiteralUseCases, resourceService, unsafeResourceUseCases, statementService, unsafeStatementUseCases)
         )

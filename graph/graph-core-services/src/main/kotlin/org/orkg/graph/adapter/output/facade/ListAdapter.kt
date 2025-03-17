@@ -105,6 +105,14 @@ class ListAdapter(
 
     override fun deleteById(id: ThingId) {
         if (existsById(id)) {
+            // make sure orphan literals get deleted
+            val statements = statementRepository.findAll(
+                subjectId = id,
+                predicateId = Predicates.hasListElement,
+                pageable = PageRequests.ALL
+            )
+            statementRepository.deleteByStatementIds(statements.map { it.id }.toSet())
+            // delete root resource
             resourceRepository.deleteById(id)
         }
     }

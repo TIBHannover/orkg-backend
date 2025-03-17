@@ -7,42 +7,23 @@ import io.mockk.runs
 import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
-import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.Author
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Predicates
-import org.orkg.graph.input.ListUseCases
-import org.orkg.graph.input.StatementUseCases
-import org.orkg.graph.input.UnsafeLiteralUseCases
-import org.orkg.graph.input.UnsafeResourceUseCases
-import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ListRepository
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
-import org.orkg.testing.pageOf
 import java.util.UUID
 
 internal class AuthorUpdaterUnitTest : MockkBaseTest {
-    private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
-    private val statementService: StatementUseCases = mockk()
-    private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
-    private val unsafeLiteralUseCases: UnsafeLiteralUseCases = mockk()
-    private val listService: ListUseCases = mockk()
     private val authorCreator: AuthorCreator = mockk()
     private val listRepository: ListRepository = mockk()
 
-    private val authorUpdater = AuthorUpdater(
-        unsafeResourceUseCases,
-        statementService,
-        unsafeStatementUseCases,
-        unsafeLiteralUseCases,
-        listService,
-        listRepository,
-        authorCreator
-    )
+    private val authorUpdater = AuthorUpdater(listRepository, authorCreator)
 
     @Test
     fun `Given a subject resource without author list, it creates a new author list`() {
@@ -55,25 +36,12 @@ internal class AuthorUpdaterUnitTest : MockkBaseTest {
             )
         )
         val contributorId = ContributorId(UUID.randomUUID())
+        val statements = emptyMap<ThingId, List<GeneralStatement>>()
 
-        every {
-            statementService.findAll(
-                subjectId = subjectId,
-                predicateId = Predicates.hasAuthors,
-                pageable = PageRequests.SINGLE
-            )
-        } returns pageOf()
         every { authorCreator.create(contributorId, authors, subjectId) } just runs
 
-        authorUpdater.update(contributorId, authors, subjectId)
+        authorUpdater.update(statements, contributorId, authors, subjectId)
 
-        verify(exactly = 1) {
-            statementService.findAll(
-                subjectId = subjectId,
-                predicateId = Predicates.hasAuthors,
-                pageable = PageRequests.SINGLE
-            )
-        }
         verify(exactly = 1) { authorCreator.create(contributorId, authors, subjectId) }
     }
 
@@ -89,32 +57,21 @@ internal class AuthorUpdaterUnitTest : MockkBaseTest {
         )
         val authorListId = ThingId("R1456")
         val contributorId = ContributorId(UUID.randomUUID())
-
-        every {
-            statementService.findAll(
-                subjectId = subjectId,
-                predicateId = Predicates.hasAuthors,
-                pageable = PageRequests.SINGLE
-            )
-        } returns pageOf(
-            createStatement(
-                subject = createResource(subjectId),
-                predicate = createPredicate(Predicates.hasAuthors),
-                `object` = createResource(authorListId, classes = setOf(Classes.list))
+        val statements = mapOf(
+            subjectId to listOf(
+                createStatement(
+                    subject = createResource(subjectId),
+                    predicate = createPredicate(Predicates.hasAuthors),
+                    `object` = createResource(authorListId, classes = setOf(Classes.list))
+                )
             )
         )
+
         every { listRepository.deleteById(authorListId) } just runs
         every { authorCreator.create(contributorId, authors, subjectId) } just runs
 
-        authorUpdater.update(contributorId, authors, subjectId)
+        authorUpdater.update(statements, contributorId, authors, subjectId)
 
-        verify(exactly = 1) {
-            statementService.findAll(
-                subjectId = subjectId,
-                predicateId = Predicates.hasAuthors,
-                pageable = PageRequests.SINGLE
-            )
-        }
         verify(exactly = 1) { listRepository.deleteById(authorListId) }
         verify(exactly = 1) { authorCreator.create(contributorId, authors, subjectId) }
     }

@@ -50,7 +50,7 @@ data class TemplatedResource(
      * and the set of property/value pairs
      */
     fun composeFormattedLabel(): String {
-        val pattern = """\{\w*}""".toRegex()
+        val pattern = """\{[a-zA-Z0-9:_-]+}""".toRegex()
         val matches = pattern.findAll(format)
         var formattedString = format
         matches.forEach {

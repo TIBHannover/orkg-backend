@@ -118,7 +118,7 @@ dependencies {
     runtimeOnly(project(":content-types:content-types-adapter-output-web"))
     runtimeOnly(project(":content-types:content-types-core-model"))
     runtimeOnly(project(":content-types:content-types-core-services"))
-    implementation(project(":content-types:content-types-ports-input"))
+    runtimeOnly(project(":content-types:content-types-ports-input"))
     runtimeOnly(project(":content-types:content-types-ports-output"))
 
     runtimeOnly(project(":data-export:data-export-adapters"))

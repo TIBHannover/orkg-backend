@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added backwards compatible snake_case query parameters to the following endpoints:
+  (See: [!1258](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1258))
+  - /api/statements/{id}/bundles
+  - /api/papers?linked_to={id}
+### Fixed
+- Fixed regex pattern for formatted label placeholders.
+- Minor fixes to api documentation.
+### Removed
+- Removed cache warmup.
 
 ## [0.78.0] - 2025-03-07
 ### Added

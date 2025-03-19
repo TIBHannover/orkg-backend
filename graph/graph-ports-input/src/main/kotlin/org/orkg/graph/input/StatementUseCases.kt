@@ -5,7 +5,6 @@ import org.orkg.common.ThingId
 import org.orkg.graph.domain.Bundle
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.GeneralStatement
-import org.orkg.graph.domain.PredicateUsageCount
 import org.orkg.graph.domain.StatementId
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -43,13 +42,9 @@ interface RetrieveStatementUseCase {
 
     fun findById(statementId: StatementId): Optional<GeneralStatement>
 
-    fun count(): Long
-
     fun countStatementsInPaperSubgraph(paperId: ThingId): Long
 
     fun fetchAsBundle(thingId: ThingId, configuration: BundleConfiguration, includeFirst: Boolean, sort: Sort): Bundle
-
-    fun countPredicateUsage(pageable: Pageable): Page<PredicateUsageCount>
 
     fun countIncomingStatementsById(id: ThingId): Long
 

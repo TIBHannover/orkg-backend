@@ -8,7 +8,6 @@ import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.collections.shouldContainInOrder
 import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.comparables.shouldBeLessThan
-import io.kotest.matchers.longs.shouldBeGreaterThanOrEqual
 import io.kotest.matchers.maps.shouldContainExactly
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -25,7 +24,6 @@ import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literal
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicate
-import org.orkg.graph.domain.PredicateUsageCount
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.ResourceContributor
@@ -38,7 +36,6 @@ import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.LiteralRepository
-import org.orkg.graph.output.OwnershipInfo
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
@@ -799,83 +796,6 @@ fun <
                 }
             }
         }
-        context("by subject ids") {
-            val expectedCount = 3
-            val statements = fabricator.random<List<GeneralStatement>>().toMutableList()
-            val ids = (0 until expectedCount).map {
-                // we generate the following mapping:
-                // index(0) -> id(0)
-                // index(1) -> id(1)
-                // index(2) -> id(1)
-                val id = it.coerceAtMost(1).toLong()
-                val subject = createResource(
-                    id = ThingId("R$id"),
-                    // We need to fix the time here, to make equality work.
-                    createdAt = OffsetDateTime.parse("2023-01-24T16:09:18.557233+01:00")
-                )
-                statements[it] = statements[it].copy(
-                    subject = subject
-                )
-                subject.id
-            }
-            statements.forEach(saveStatement)
-            val expected = statements.take(expectedCount)
-
-            val result = repository.findAllBySubjects(ids, PageRequest.of(0, 5))
-
-            it("returns the correct result") {
-                result shouldNotBe null
-                result.content shouldNotBe null
-                result.content.size shouldBe expectedCount
-                result.content shouldContainAll expected
-            }
-            it("pages the result correctly") {
-                result.size shouldBe 5
-                result.number shouldBe 0
-                result.totalPages shouldBe 1
-                result.totalElements shouldBe expectedCount
-            }
-            xit("sorts the results by creation date by default") {
-                result.content.zipWithNext { a, b ->
-                    a.createdAt!! shouldBeLessThan b.createdAt!!
-                }
-            }
-        }
-        context("by object ids") {
-            val expectedCount = 3
-            val statements = fabricator.random<List<GeneralStatement>>().toMutableList()
-            val ids = (0 until 2).map {
-                val id = ThingId("R$it")
-                val `object` = createResource(id = id)
-                statements[it] = statements[it].copy(`object` = `object`)
-                if (it == 1) {
-                    statements[it + 1] = statements[it + 1].copy(`object` = `object`)
-                }
-                id
-            }
-            statements.forEach(saveStatement)
-            val expected = statements.take(expectedCount)
-
-            val result = repository.findAllByObjects(ids, PageRequest.of(0, 5))
-
-            it("returns the correct result") {
-                result shouldNotBe null
-                result.content shouldNotBe null
-                result.content.size shouldBe expectedCount
-                result.content shouldContainAll expected
-            }
-            it("pages the result correctly") {
-                result.size shouldBe 5
-                result.number shouldBe 0
-                result.totalPages shouldBe 1
-                result.totalElements shouldBe expectedCount
-            }
-            xit("sorts the results by creation date by default") {
-                result.content.zipWithNext { a, b ->
-                    a.createdAt!! shouldBeLessThan b.createdAt!!
-                }
-            }
-        }
         context("as a bundle") {
             context("with a minimum level of hops") {
                 val statement1 = fabricator.random<GeneralStatement>()
@@ -1170,61 +1090,6 @@ fun <
             val lower = repository.findByDOI(doi.lowercase(), setOf(Classes.paper, Classes.comparison))
             lower.isPresent shouldBe true
             lower.get() shouldBe resource1
-        }
-    }
-
-    describe("counting predicate usage") {
-        context("for all predicates") {
-            context("when no statements exist") {
-                val result = repository.countPredicateUsage(PageRequest.of(0, 5))
-
-                it("returns the correct result") {
-                    result shouldNotBe null
-                    result.content shouldNotBe null
-                    result.content.size shouldBe 0
-                }
-                it("pages the result correctly") {
-                    result.size shouldBe 5
-                    result.number shouldBe 0
-                    result.totalPages shouldBe 0
-                    result.totalElements shouldBe 0
-                }
-            }
-            context("when several statements exist") {
-                val statements = fabricator.random<MutableList<GeneralStatement>>()
-                statements[1] = statements[1].copy(
-                    predicate = statements[0].predicate
-                )
-                statements[2] = statements[2].copy(
-                    predicate = statements[0].predicate
-                )
-                statements.forEach(saveStatement)
-
-                val expected = statements.drop(3)
-                    .map { PredicateUsageCount(it.predicate.id, 1) }
-                    .plus(PredicateUsageCount(statements[0].predicate.id, 3))
-                    .sortedWith(compareByDescending<PredicateUsageCount> { it.count }.thenBy { it.id })
-
-                val result = repository.countPredicateUsage(PageRequest.of(0, 5))
-
-                it("returns the correct result") {
-                    result shouldNotBe null
-                    result.content shouldNotBe null
-                    result.content.size shouldBe 5
-                    result.content shouldContainAll expected.take(5)
-                }
-                it("pages the result correctly") {
-                    result.size shouldBe 5
-                    result.number shouldBe 0
-                    result.totalPages shouldBe 2
-                    result.totalElements shouldBe 10
-                }
-                it("sorts the results by creation date by default") {
-                    result.content.zipWithNext { a, b ->
-                        a.count shouldBeGreaterThanOrEqual b.count
-                    }
-                }
-            }
         }
     }
 
@@ -1764,41 +1629,6 @@ fun <
                 result.content.zipWithNext { a, b ->
                     a.value.toString() shouldBeLessThan b.value.toString()
                 }
-            }
-        }
-    }
-
-    describe("determining ownership") {
-        context("when multiple ids are given") {
-            it("returns the correct result") {
-                val statements = fabricator.random<List<GeneralStatement>>()
-                statements.forEach(saveStatement)
-                val allStatementIds = statements.map { it.id }.toSet()
-                val expected = statements.map { OwnershipInfo(it.id, it.createdBy) }.toSet()
-
-                val actual = repository.determineOwnership(allStatementIds)
-
-                actual shouldBe expected
-            }
-        }
-        context("when one id is given") {
-            it("returns the correct result") {
-                val statement = fabricator.random<GeneralStatement>()
-                saveStatement(statement)
-                val expected = setOf(statement).map { OwnershipInfo(it.id, it.createdBy) }.toSet()
-
-                val actual = repository.determineOwnership(setOf(statement.id))
-
-                actual shouldBe expected
-            }
-        }
-        context("when no id is given") {
-            it("returns the correct result") {
-                val expected = emptySet<OwnershipInfo>()
-
-                val actual = repository.determineOwnership(emptySet())
-
-                actual shouldBe expected
             }
         }
     }

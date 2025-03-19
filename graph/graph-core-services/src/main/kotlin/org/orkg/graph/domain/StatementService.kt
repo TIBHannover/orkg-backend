@@ -97,8 +97,6 @@ class StatementService(
         return id
     }
 
-    override fun count(): Long = statementRepository.count()
-
     /**
      * Deletes a statement.
      *
@@ -175,9 +173,6 @@ class StatementService(
             false -> createBundle(thingId, configuration, sort)
         }
     }
-
-    override fun countPredicateUsage(pageable: Pageable) =
-        statementRepository.countPredicateUsage(pageable)
 
     override fun countIncomingStatementsById(id: ThingId) =
         statementRepository.countIncomingStatementsById(id)

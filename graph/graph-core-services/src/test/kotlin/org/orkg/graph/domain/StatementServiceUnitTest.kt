@@ -20,7 +20,6 @@ import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.graph.input.CreateStatementUseCase.CreateCommand
 import org.orkg.graph.input.UpdateStatementUseCase
 import org.orkg.graph.output.LiteralRepository
-import org.orkg.graph.output.OwnershipInfo
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.output.ThingRepository
@@ -841,55 +840,6 @@ internal class StatementServiceUnitTest :
             }
         }
         describe("deleting multiple statements") {
-            // Disabled because functionality has temporarily been removed
-            xcontext("all statements are owned by contributor") {
-                val statementIds = (1..4).map { StatementId("S$it") }.toSet()
-                val contributorId = randomContributorId()
-                val fakeResult = statementIds.map { OwnershipInfo(it, contributorId) }.toSet()
-                every { statementRepository.determineOwnership(statementIds) } returns fakeResult
-
-                it("deletes the statements") {
-                    every { statementRepository.deleteByStatementIds(any()) } just Runs
-
-                    withContext(Dispatchers.IO) {
-//                    service.delete(statementIds, contributorId)
-                    }
-
-                    verify(exactly = 1) {
-                        statementRepository.determineOwnership(statementIds)
-                        statementRepository.deleteByStatementIds(statementIds)
-                    }
-                }
-            }
-            // Disabled because functionality has temporarily been removed
-            xcontext("at least one statement is not owned by the contributor") {
-                val ownedStatementIds = (1..4).map { StatementId("S$it") }.toSet()
-                val contributorId = randomContributorId()
-                val fakeResult = ownedStatementIds.map { OwnershipInfo(it, contributorId) }
-                    .plus(OwnershipInfo(StatementId("S_other"), randomContributorId()))
-                    .toSet()
-                val allStatementIds = fakeResult.map(OwnershipInfo::statementId).toSet()
-                every { statementRepository.determineOwnership(allStatementIds) } returns fakeResult
-
-                it("deletes no statements, but does not complain") {
-                    withContext(Dispatchers.IO) {
-//                    service.delete(allStatementIds, contributorId)
-                    }
-
-                    verify(exactly = 1) { statementRepository.determineOwnership(allStatementIds) }
-                }
-
-                it("deletes all statements if the user is a curator") {
-                    every { statementRepository.deleteByStatementIds(allStatementIds) } just Runs
-
-                    withContext(Dispatchers.IO) {
-//                    service.delete(allStatementIds, contributorId)
-                    }
-
-                    verify(exactly = 1) { statementRepository.determineOwnership(allStatementIds) }
-                    verify(exactly = 1) { statementRepository.deleteByStatementIds(allStatementIds) }
-                }
-            }
             context("where at least one statement has a list as a subject and hasListElement as a predicate") {
                 val ids = (1..4).map { StatementId("S$it") }.toSet()
                 val fakeStatements = ids.map {

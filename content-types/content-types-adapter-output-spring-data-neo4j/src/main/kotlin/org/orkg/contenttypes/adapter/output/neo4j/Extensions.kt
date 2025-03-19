@@ -24,7 +24,6 @@ import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import java.util.function.BiFunction
 
-private const val RELATED = "RELATED"
 private val reservedRosettaStoneStatementLabels = setOf(
     Classes.thing,
     Classes.resource,

@@ -12,7 +12,6 @@ import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literal
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicate
-import org.orkg.graph.domain.PredicateUsageCount
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.ResourceContributor
@@ -22,7 +21,6 @@ import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
-import org.orkg.graph.output.OwnershipInfo
 import org.orkg.graph.output.StatementRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -131,20 +129,6 @@ class InMemoryStatementRepository(private val inMemoryGraph: InMemoryGraph) :
                 }
         }.count().toLong()
 
-    override fun findAllBySubjects(
-        subjectIds: List<ThingId>,
-        pageable: Pageable,
-    ) = findAllFilteredAndPaged(pageable) {
-        it.subject.id in subjectIds
-    }
-
-    override fun findAllByObjects(
-        objectIds: List<ThingId>,
-        pageable: Pageable,
-    ) = findAllFilteredAndPaged(pageable) {
-        it.`object`.id in objectIds
-    }
-
     override fun fetchAsBundle(id: ThingId, configuration: BundleConfiguration, sort: Sort): Iterable<GeneralStatement> =
         entities.values.find { it.subject.id == id }?.let {
             val exclude = mutableSetOf<GeneralStatement>()
@@ -223,22 +207,6 @@ class InMemoryStatementRepository(private val inMemoryGraph: InMemoryGraph) :
         return if (isAscending) result else -result
     }
 
-    override fun countPredicateUsage(pageable: Pageable): Page<PredicateUsageCount> {
-        val predicateIdToUsageCount = mutableMapOf<ThingId, Long>()
-        entities.values.forEach {
-            predicateIdToUsageCount.compute(it.predicate.id) { _, value ->
-                if (value == null) {
-                    1
-                } else {
-                    value + 1
-                }
-            }
-        }
-        return predicateIdToUsageCount.entries.map { PredicateUsageCount(it.key, it.value) }
-            .sortedWith(compareByDescending<PredicateUsageCount> { it.count }.thenBy { it.id })
-            .paged(pageable)
-    }
-
     override fun deleteAll() {
         entities.clear()
     }
@@ -255,9 +223,6 @@ class InMemoryStatementRepository(private val inMemoryGraph: InMemoryGraph) :
         entities.groupBy { it.subject.id }
             .filter { it.value.any { statement -> statement.`object` is Literal } && it.key in ids }
             .mapValues { it.value.first().`object`.label }
-
-    override fun determineOwnership(statementIds: Set<StatementId>): Set<OwnershipInfo> =
-        entities.filter { it.id in statementIds }.map { OwnershipInfo(it.id, it.createdBy) }.toSet()
 
     override fun findDOIByContributionId(id: ThingId): Optional<Literal> =
         Optional.ofNullable(

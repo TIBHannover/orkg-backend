@@ -12,7 +12,7 @@ abstract class AbstractCustomProcedureMigration(
     private val validationQuery: String,
     private val validationIntervalMs: Long = 100,
 ) : JavaBasedMigration {
-    val migrationQuery: String by lazy { loadQuery() }
+    private val migrationQuery: String by lazy { loadQuery() }
 
     override fun apply(context: MigrationContext) {
         val systemDBContext = context.getSessionConfig { it.withDatabase("system") }

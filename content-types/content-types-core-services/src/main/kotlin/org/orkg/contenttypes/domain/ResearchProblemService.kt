@@ -5,14 +5,12 @@ import org.orkg.contenttypes.input.ResearchProblemUseCases
 import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.contenttypes.output.FindResearchProblemQuery
 import org.orkg.contenttypes.output.ResearchProblemRepository
-import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ContributorPerProblem
 import org.orkg.graph.domain.DetailsPerProblem
 import org.orkg.graph.domain.FieldWithFreq
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
-import org.orkg.graph.input.ResourceUseCases
 import org.orkg.spring.data.annotations.TransactionalOnNeo4j
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
@@ -20,19 +18,14 @@ import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import java.time.format.DateTimeFormatter
 import java.util.Locale
-import java.util.Optional
 
 @Service
 @TransactionalOnNeo4j
 class ResearchProblemService(
     private val researchProblemRepository: ResearchProblemRepository,
-    private val resourceService: ResourceUseCases,
     private val researchProblemQueries: FindResearchProblemQuery,
     private val comparisonRepository: ComparisonRepository,
 ) : ResearchProblemUseCases {
-    override fun findById(id: ThingId): Optional<Resource> =
-        resourceService.findById(id).filter { Classes.problem in it.classes }
-
     override fun findAllResearchFields(problemId: ThingId): List<FieldWithFreq> = researchProblemRepository.findAllResearchFieldsWithPaperCountByProblemId(problemId).map {
         FieldWithFreq(it.field, it.freq)
     }

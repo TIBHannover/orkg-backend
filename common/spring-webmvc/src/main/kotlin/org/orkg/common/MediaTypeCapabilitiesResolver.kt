@@ -46,8 +46,8 @@ class MediaTypeCapabilitiesResolver(
         }
         MimeTypeUtils.sortBySpecificity(mediaTypesToUse)
         return mediaTypesToUse.firstOrNull { it.isConcrete }
-            ?.let { MediaTypeCapabilities.Companion.parse(it, mediaTypeCapabilityRegistry.getSupportedCapabilities(it)) }
-            ?: MediaTypeCapabilities.Companion.EMPTY
+            ?.let { MediaTypeCapabilities.parse(it, mediaTypeCapabilityRegistry.getSupportedCapabilities(it)) }
+            ?: MediaTypeCapabilities.EMPTY
     }
 
     private fun getMostSpecificMediaType(acceptType: MediaType, produceType: MediaType): MediaType {

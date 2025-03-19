@@ -7,7 +7,6 @@ import org.neo4j.cypherdsl.core.Cypher.asExpression
 import org.neo4j.cypherdsl.core.Cypher.call
 import org.neo4j.cypherdsl.core.Cypher.collect
 import org.neo4j.cypherdsl.core.Cypher.count
-import org.neo4j.cypherdsl.core.Cypher.countDistinct
 import org.neo4j.cypherdsl.core.Cypher.exists
 import org.neo4j.cypherdsl.core.Cypher.listOf
 import org.neo4j.cypherdsl.core.Cypher.literalOf
@@ -43,7 +42,6 @@ import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literal
-import org.orkg.graph.domain.PredicateUsageCount
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.ResourceContributor
@@ -52,7 +50,6 @@ import org.orkg.graph.domain.SearchFilter.Operator
 import org.orkg.graph.domain.SearchFilter.Value
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.VisibilityFilter
-import org.orkg.graph.output.OwnershipInfo
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.spring.data.annotations.TransactionalOnNeo4j
@@ -323,32 +320,6 @@ class SpringDataNeo4jStatementAdapter(
             .all()
             .toMap()
 
-    override fun determineOwnership(statementIds: Set<StatementId>): Set<OwnershipInfo> =
-        cypherQueryBuilderFactory.newBuilder()
-            .withQuery {
-                val id = name("id")
-                val statementId = name("statementId")
-                val owner = name("owner")
-                val r = name("rel")
-                val subject = node("Thing")
-                val `object` = node("Thing")
-                unwind(parameter("statementIds"))
-                    .`as`(id)
-                    .with(id)
-                    .match(
-                        subject.relationshipTo(`object`, RELATED)
-                            .withProperties("statement_id", id)
-                            .named(r)
-                    )
-                    .returning(r.property("statement_id").`as`(statementId), r.property("created_by").`as`(owner))
-            }
-            .withParameters("statementIds" to statementIds.map(StatementId::value))
-            .mappedBy { _, record ->
-                OwnershipInfo(record["statementId"].toStatementId(), record["owner"].toContributorId())
-            }
-            .all()
-            .toSet()
-
     override fun findByStatementId(id: StatementId): Optional<GeneralStatement> = cypherQueryBuilderFactory.newBuilder()
         .withQuery {
             val r = name("rel")
@@ -501,22 +472,6 @@ class SpringDataNeo4jStatementAdapter(
         .one()
         .orElse(0)
 
-    override fun findAllBySubjects(subjectIds: List<ThingId>, pageable: Pageable): Page<GeneralStatement> =
-        findAllFilteredAndPaged(
-            parameters = mapOf("subjectIds" to subjectIds.map { it.value }),
-            pageable = pageable
-        ) { subject, _, _ ->
-            subject.property("id").`in`(parameter("subjectIds"))
-        }
-
-    override fun findAllByObjects(objectIds: List<ThingId>, pageable: Pageable): Page<GeneralStatement> =
-        findAllFilteredAndPaged(
-            parameters = mapOf("objectIds" to objectIds.map { it.value }),
-            pageable = pageable
-        ) { _, _, `object` ->
-            `object`.property("id").`in`(parameter("objectIds"))
-        }
-
     override fun fetchAsBundle(id: ThingId, configuration: BundleConfiguration, sort: Sort): Iterable<GeneralStatement> =
         cypherQueryBuilderFactory.newBuilder()
             .withQuery {
@@ -557,24 +512,6 @@ class SpringDataNeo4jStatementAdapter(
         .fetchAs<Boolean>()
         .one()
         .orElse(false)
-
-    override fun countPredicateUsage(pageable: Pageable): Page<PredicateUsageCount> = cypherQueryBuilderFactory.newBuilder()
-        .withCommonQuery {
-            match(anyNode().relationshipTo(anyNode(), RELATED).named("rel"))
-        }
-        .withQuery { commonQuery ->
-            val r = name("rel")
-            val c = name("c")
-            val id = name("id")
-            commonQuery.with(r.property("predicate_id").`as`(id), count(r).`as`(c))
-                .orderBy(c.descending(), id.ascending())
-                .returning(id, c)
-        }
-        .withCountQuery { commonQuery ->
-            commonQuery.returning(countDistinct(name("rel").property("predicate_id")))
-        }
-        .mappedBy { _, record -> PredicateUsageCount(ThingId(record["id"].asString()), record["c"].asLong()) }
-        .fetch(pageable)
 
     override fun findDOIByContributionId(id: ThingId): Optional<Literal> = cypherQueryBuilderFactory.newBuilder()
         .withQuery {

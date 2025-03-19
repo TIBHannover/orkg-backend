@@ -7,19 +7,16 @@ import org.orkg.contenttypes.input.ResearchFieldUseCases
 import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.contenttypes.output.FindResearchFieldsQuery
 import org.orkg.contenttypes.output.ResearchFieldRepository
-import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.PaperCountPerResearchProblem
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
-import org.orkg.graph.input.ResourceUseCases
 import org.orkg.spring.data.annotations.TransactionalOnNeo4j
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import java.util.Locale
-import java.util.Optional
 
 @Service
 @TransactionalOnNeo4j
@@ -28,11 +25,7 @@ class ResearchFieldService(
     private val researchFieldsQuery: FindResearchFieldsQuery,
     private val contributorRepository: RetrieveContributorUseCase,
     private val comparisonRepository: ComparisonRepository,
-    private val resourceService: ResourceUseCases,
 ) : ResearchFieldUseCases {
-    override fun findById(id: ThingId): Optional<Resource> =
-        resourceService.findById(id).filter { Classes.researchField in it.classes }
-
     override fun findAllPaperCountsPerResearchProblem(
         id: ThingId,
         pageable: Pageable,
@@ -114,108 +107,6 @@ class ResearchFieldService(
                 pageable
             )
             VisibilityFilter.DELETED -> researchFieldRepository.findAllProblemsByResearchFieldAndVisibility(
-                id,
-                Visibility.DELETED,
-                includeSubFields,
-                pageable
-            )
-        }
-
-    override fun findAllVisualizationsByResearchField(
-        id: ThingId,
-        visibility: VisibilityFilter,
-        includeSubFields: Boolean,
-        pageable: Pageable,
-    ): Page<Resource> =
-        when (visibility) {
-            VisibilityFilter.ALL_LISTED -> researchFieldRepository.findAllListedVisualizationsByResearchField(id, includeSubFields, pageable)
-            VisibilityFilter.UNLISTED -> researchFieldRepository.findAllVisualizationsByResearchFieldAndVisibility(
-                id,
-                Visibility.UNLISTED,
-                includeSubFields,
-                pageable
-            )
-            VisibilityFilter.FEATURED -> researchFieldRepository.findAllVisualizationsByResearchFieldAndVisibility(
-                id,
-                Visibility.FEATURED,
-                includeSubFields,
-                pageable
-            )
-            VisibilityFilter.NON_FEATURED -> researchFieldRepository.findAllVisualizationsByResearchFieldAndVisibility(
-                id,
-                Visibility.DEFAULT,
-                includeSubFields,
-                pageable
-            )
-            VisibilityFilter.DELETED -> researchFieldRepository.findAllVisualizationsByResearchFieldAndVisibility(
-                id,
-                Visibility.DELETED,
-                includeSubFields,
-                pageable
-            )
-        }
-
-    override fun findAllSmartReviewsByResearchField(
-        id: ThingId,
-        visibility: VisibilityFilter,
-        includeSubFields: Boolean,
-        pageable: Pageable,
-    ): Page<Resource> =
-        when (visibility) {
-            VisibilityFilter.ALL_LISTED -> researchFieldRepository.findAllListedSmartReviewsByResearchField(id, includeSubFields, pageable)
-            VisibilityFilter.UNLISTED -> researchFieldRepository.findAllSmartReviewsByResearchFieldAndVisibility(
-                id,
-                Visibility.UNLISTED,
-                includeSubFields,
-                pageable
-            )
-            VisibilityFilter.FEATURED -> researchFieldRepository.findAllSmartReviewsByResearchFieldAndVisibility(
-                id,
-                Visibility.FEATURED,
-                includeSubFields,
-                pageable
-            )
-            VisibilityFilter.NON_FEATURED -> researchFieldRepository.findAllSmartReviewsByResearchFieldAndVisibility(
-                id,
-                Visibility.DEFAULT,
-                includeSubFields,
-                pageable
-            )
-            VisibilityFilter.DELETED -> researchFieldRepository.findAllSmartReviewsByResearchFieldAndVisibility(
-                id,
-                Visibility.DELETED,
-                includeSubFields,
-                pageable
-            )
-        }
-
-    override fun findAllLiteratureListsByResearchField(
-        id: ThingId,
-        visibility: VisibilityFilter,
-        includeSubFields: Boolean,
-        pageable: Pageable,
-    ): Page<Resource> =
-        when (visibility) {
-            VisibilityFilter.ALL_LISTED -> researchFieldRepository.findAllListedLiteratureListsByResearchField(id, includeSubFields, pageable)
-            VisibilityFilter.UNLISTED -> researchFieldRepository.findAllLiteratureListsByResearchFieldAndVisibility(
-                id,
-                Visibility.UNLISTED,
-                includeSubFields,
-                pageable
-            )
-            VisibilityFilter.FEATURED -> researchFieldRepository.findAllLiteratureListsByResearchFieldAndVisibility(
-                id,
-                Visibility.FEATURED,
-                includeSubFields,
-                pageable
-            )
-            VisibilityFilter.NON_FEATURED -> researchFieldRepository.findAllLiteratureListsByResearchFieldAndVisibility(
-                id,
-                Visibility.DEFAULT,
-                includeSubFields,
-                pageable
-            )
-            VisibilityFilter.DELETED -> researchFieldRepository.findAllLiteratureListsByResearchFieldAndVisibility(
                 id,
                 Visibility.DELETED,
                 includeSubFields,

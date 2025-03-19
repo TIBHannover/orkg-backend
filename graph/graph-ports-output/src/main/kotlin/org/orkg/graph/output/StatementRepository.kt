@@ -7,7 +7,6 @@ import org.orkg.common.ThingId
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literal
-import org.orkg.graph.domain.PredicateUsageCount
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.ResourceContributor
 import org.orkg.graph.domain.SearchFilter
@@ -27,10 +26,6 @@ interface StatementReadRepository : EntityRepository<GeneralStatement, Statement
     fun countAllIncomingStatementsById(ids: Set<ThingId>): Map<ThingId, Long>
 
     fun countIncomingStatementsById(id: ThingId): Long
-
-    fun countPredicateUsage(pageable: Pageable): Page<PredicateUsageCount>
-
-    fun determineOwnership(statementIds: Set<StatementId>): Set<OwnershipInfo>
 
     fun fetchAsBundle(
         id: ThingId,
@@ -52,11 +47,6 @@ interface StatementReadRepository : EntityRepository<GeneralStatement, Statement
         objectLabel: String? = null,
     ): Page<GeneralStatement>
 
-    fun findAllByObjects(
-        objectIds: List<ThingId>,
-        pageable: Pageable,
-    ): Page<GeneralStatement>
-
     fun findAllByStatementIdIn(
         ids: Set<StatementId>,
         pageable: Pageable,
@@ -67,11 +57,6 @@ interface StatementReadRepository : EntityRepository<GeneralStatement, Statement
         doi: String,
         pageable: Pageable,
     ): Page<Resource>
-
-    fun findAllBySubjects(
-        subjectIds: List<ThingId>,
-        pageable: Pageable,
-    ): Page<GeneralStatement>
 
     fun findAllContributorsByResourceId(
         id: ThingId,

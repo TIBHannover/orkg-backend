@@ -14,13 +14,11 @@ import org.neo4j.cypherdsl.core.ExposesWith
 import org.neo4j.cypherdsl.core.Expression
 import org.neo4j.cypherdsl.core.FunctionInvocation
 import org.neo4j.cypherdsl.core.PatternElement
-import org.neo4j.cypherdsl.core.ResultStatement
 import org.neo4j.cypherdsl.core.SortItem
 import org.neo4j.cypherdsl.core.StatementBuilder
 import org.neo4j.cypherdsl.core.SymbolicName
 import org.neo4j.driver.Record
 import org.neo4j.driver.Value
-import org.neo4j.driver.types.MapAccessor
 import org.neo4j.driver.types.Node
 import org.neo4j.driver.types.TypeSystem
 import org.orkg.common.ContributorId
@@ -202,8 +200,6 @@ internal fun startNode(symbolicName: SymbolicName): FunctionInvocation =
 internal fun endNode(symbolicName: SymbolicName): FunctionInvocation =
     FunctionInvocation.create({ "endNode" }, symbolicName)
 
-internal operator fun MapAccessor.get(symbolicName: SymbolicName): Value = this[symbolicName.value]
-
 fun paperNode() = node("Paper")
 
 fun comparisonNode() = node("Comparison")
@@ -211,9 +207,6 @@ fun comparisonNode() = node("Comparison")
 fun problemNode() = node("Problem")
 
 fun contributionNode() = node("Contribution")
-
-fun ExposesWith.withSortableFields(node: String) =
-    withSortableFields(name(node))
 
 fun ExposesWith.withSortableFields(node: SymbolicName) =
     with(
@@ -223,13 +216,10 @@ fun ExposesWith.withSortableFields(node: SymbolicName) =
         node.property("created_at").`as`("created_at")
     )
 
-internal fun StatementBuilder.TerminalExposesOrderBy.build(pageable: Pageable): ResultStatement =
-    orderBy(pageable.sort.toSortItems()).skip(pageable.offset).limit(pageable.pageSize).build()
-
 fun Sort.toSortItems(
     node: Expression,
     vararg knownProperties: String,
-): kotlin.collections.List<SortItem> = toSortItems(
+): List<SortItem> = toSortItems(
     propertyMappings = knownProperties.associateWith { node.property(it) },
     knownProperties = knownProperties
 )
@@ -237,7 +227,7 @@ fun Sort.toSortItems(
 fun Sort.toSortItems(
     propertyMappings: Map<String, Expression>? = null,
     vararg knownProperties: String,
-): kotlin.collections.List<SortItem> =
+): List<SortItem> =
     map { sort ->
         if (knownProperties.isNotEmpty() && sort.property !in knownProperties) {
             throw UnknownSortingProperty(sort.property)

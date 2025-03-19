@@ -152,13 +152,9 @@ class ListMigrationRunner(
                 if (entryStatements.content.isEmpty()) {
                     return@map null
                 }
-                val objects = statementRepository.findAllBySubjects(
-                    subjectIds = entryStatements.content.map { it.`object`.id },
-                    pageable = PageRequests.ALL
-                ).associateBy { it.subject.id }
                 val entries = entryStatements
                     .sortedBy { it.createdAt }
-                    .map { objects[it.`object`.id]!!.`object`.id }
+                    .map { it.`object`.id }
                 entryStatements.forEach {
                     statementRepository.delete(it)
                     resourceRepository.deleteById(it.`object`.id)

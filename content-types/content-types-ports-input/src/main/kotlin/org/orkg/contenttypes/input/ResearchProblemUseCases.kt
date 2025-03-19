@@ -9,13 +9,10 @@ import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.VisibilityFilter
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import java.util.Optional
 
 interface ResearchProblemUseCases : RetrieveResearchProblemUseCase
 
 interface RetrieveResearchProblemUseCase {
-    fun findById(id: ThingId): Optional<Resource>
-
     fun findAllResearchFields(problemId: ThingId): List<FieldWithFreq>
 
     fun findAllEntitiesBasedOnClassByProblem(

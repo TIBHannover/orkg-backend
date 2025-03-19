@@ -20,6 +20,7 @@ class ComparisonDescriptionUpdater(
     override fun invoke(command: UpdateComparisonCommand, state: State): State {
         if (command.description != null && command.description != state.comparison!!.description) {
             singleStatementPropertyUpdater.updateRequiredProperty(
+                statements = state.statements[command.comparisonId].orEmpty(),
                 contributorId = command.contributorId,
                 subjectId = command.comparisonId,
                 predicateId = Predicates.description,

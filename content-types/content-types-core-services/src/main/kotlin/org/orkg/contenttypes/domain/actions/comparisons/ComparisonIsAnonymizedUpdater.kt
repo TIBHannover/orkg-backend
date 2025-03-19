@@ -21,6 +21,7 @@ class ComparisonIsAnonymizedUpdater(
     override fun invoke(command: UpdateComparisonCommand, state: State): State {
         if (command.isAnonymized != null && command.isAnonymized != state.comparison!!.isAnonymized) {
             singleStatementPropertyUpdater.updateRequiredProperty(
+                statements = state.statements[command.comparisonId].orEmpty(),
                 contributorId = command.contributorId,
                 subjectId = command.comparisonId,
                 predicateId = Predicates.isAnonymized,

@@ -82,13 +82,13 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
         val validatedIds = mutableMapOf<String, Either<String, Thing>>()
         val tempIds = setOf("#temp1", "#temp2", "#temp3", "#temp4")
 
-        thingDefinitionValidator.validateThingDefinitionsInPlace(
+        val result = thingDefinitionValidator.validateThingDefinitions(
             thingDefinitions = contents,
             tempIds = tempIds,
             validatedIds = validatedIds
         )
 
-        validatedIds shouldBe mapOf(
+        result shouldBe mapOf(
             "#temp1" to Either.left("#temp1"),
             "R123" to Either.right(r123),
             "C2000" to Either.right(c2000)
@@ -115,7 +115,7 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
         every { thingRepository.findById(any()) } returns Optional.empty()
 
         assertThrows<ThingNotFound> {
-            thingDefinitionValidator.validateThingDefinitionsInPlace(
+            thingDefinitionValidator.validateThingDefinitions(
                 thingDefinitions = contents,
                 tempIds = emptySet(),
                 validatedIds = mutableMapOf()
@@ -143,7 +143,7 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
         every { thingRepository.findById(any()) } returns Optional.of(resource)
 
         assertThrows<ThingIsNotAClass> {
-            thingDefinitionValidator.validateThingDefinitionsInPlace(
+            thingDefinitionValidator.validateThingDefinitions(
                 thingDefinitions = contents,
                 tempIds = emptySet(),
                 validatedIds = mutableMapOf()
@@ -168,7 +168,7 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
         )
 
         assertThrows<ReservedClass> {
-            thingDefinitionValidator.validateThingDefinitionsInPlace(
+            thingDefinitionValidator.validateThingDefinitions(
                 thingDefinitions = contents,
                 tempIds = emptySet(),
                 validatedIds = mutableMapOf()
@@ -190,7 +190,7 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
         )
 
         assertThrows<InvalidLabel> {
-            thingDefinitionValidator.validateThingDefinitionsInPlace(
+            thingDefinitionValidator.validateThingDefinitions(
                 thingDefinitions = contents,
                 tempIds = emptySet(),
                 validatedIds = mutableMapOf()
@@ -212,7 +212,7 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
         )
 
         assertThrows<InvalidLiteralLabel> {
-            thingDefinitionValidator.validateThingDefinitionsInPlace(
+            thingDefinitionValidator.validateThingDefinitions(
                 thingDefinitions = contents,
                 tempIds = emptySet(),
                 validatedIds = mutableMapOf()
@@ -235,7 +235,7 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
         )
 
         assertThrows<InvalidLiteralLabel> {
-            thingDefinitionValidator.validateThingDefinitionsInPlace(
+            thingDefinitionValidator.validateThingDefinitions(
                 thingDefinitions = contents,
                 tempIds = emptySet(),
                 validatedIds = mutableMapOf()
@@ -258,7 +258,7 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
         )
 
         assertThrows<InvalidLiteralDatatype> {
-            thingDefinitionValidator.validateThingDefinitionsInPlace(
+            thingDefinitionValidator.validateThingDefinitions(
                 thingDefinitions = contents,
                 tempIds = emptySet(),
                 validatedIds = mutableMapOf()
@@ -280,7 +280,7 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
         )
 
         assertThrows<InvalidLabel> {
-            thingDefinitionValidator.validateThingDefinitionsInPlace(
+            thingDefinitionValidator.validateThingDefinitions(
                 thingDefinitions = contents,
                 tempIds = emptySet(),
                 validatedIds = mutableMapOf()
@@ -303,7 +303,7 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
         )
 
         assertThrows<InvalidLabel> {
-            thingDefinitionValidator.validateThingDefinitionsInPlace(
+            thingDefinitionValidator.validateThingDefinitions(
                 thingDefinitions = contents,
                 tempIds = emptySet(),
                 validatedIds = mutableMapOf()
@@ -326,7 +326,7 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
         )
 
         assertThrows<InvalidLabel> {
-            thingDefinitionValidator.validateThingDefinitionsInPlace(
+            thingDefinitionValidator.validateThingDefinitions(
                 thingDefinitions = contents,
                 tempIds = emptySet(),
                 validatedIds = mutableMapOf()
@@ -351,7 +351,7 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
         )
 
         assertThrows<URINotAbsolute> {
-            thingDefinitionValidator.validateThingDefinitionsInPlace(
+            thingDefinitionValidator.validateThingDefinitions(
                 thingDefinitions = contents,
                 tempIds = emptySet(),
                 validatedIds = mutableMapOf()
@@ -379,7 +379,7 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
         every { classRepository.findByUri(uri.toString()) } returns Optional.of(`class`)
 
         assertThrows<URIAlreadyInUse> {
-            thingDefinitionValidator.validateThingDefinitionsInPlace(
+            thingDefinitionValidator.validateThingDefinitions(
                 thingDefinitions = contents,
                 tempIds = emptySet(),
                 validatedIds = mutableMapOf()

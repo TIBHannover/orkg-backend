@@ -7,10 +7,8 @@ import io.mockk.runs
 import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
-import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
-import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
@@ -23,7 +21,6 @@ import org.orkg.graph.input.UpdateLiteralUseCase.UpdateCommand
 import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createStatement
-import org.orkg.testing.pageOf
 import java.util.UUID
 
 internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
@@ -38,159 +35,6 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
         unsafeStatementUseCases,
         singleStatementPropertyCreator
     )
-
-    @Test
-    fun `Given a new literal label, when a statement already exists, it updates the literal`() {
-        val subjectId = ThingId("R123")
-        val contributorId = ContributorId(UUID.randomUUID())
-        val description = "some description"
-        val literal = createLiteral()
-        val updateLiteralCommand = UpdateCommand(
-            id = literal.id,
-            contributorId = contributorId,
-            label = description,
-            datatype = Literals.XSD.INT.prefixedUri
-        )
-
-        every {
-            statementService.findAll(
-                subjectId = subjectId,
-                predicateId = Predicates.description,
-                objectClasses = setOf(Classes.literal),
-                pageable = PageRequests.SINGLE
-            )
-        } returns pageOf(
-            createStatement(
-                predicate = createPredicate(Predicates.description),
-                `object` = literal
-            )
-        )
-
-        every { unsafeLiteralUseCases.update(updateLiteralCommand) } just runs
-
-        singleStatementPropertyUpdater.updateRequiredProperty(
-            contributorId = contributorId,
-            subjectId = subjectId,
-            predicateId = Predicates.description,
-            label = description,
-            datatype = Literals.XSD.INT.prefixedUri
-        )
-
-        verify(exactly = 1) {
-            statementService.findAll(
-                subjectId = subjectId,
-                predicateId = Predicates.description,
-                objectClasses = setOf(Classes.literal),
-                pageable = PageRequests.SINGLE
-            )
-        }
-        verify(exactly = 1) { unsafeLiteralUseCases.update(updateLiteralCommand) }
-    }
-
-    @Test
-    fun `Given a new literal label, when no statements exist, it creates a new statement`() {
-        val subjectId = ThingId("R123")
-        val contributorId = ContributorId(UUID.randomUUID())
-        val description = "some description"
-
-        every {
-            statementService.findAll(
-                subjectId = subjectId,
-                predicateId = Predicates.description,
-                objectClasses = setOf(Classes.literal),
-                pageable = PageRequests.SINGLE
-            )
-        } returns pageOf()
-        every {
-            singleStatementPropertyCreator.create(
-                contributorId = contributorId,
-                subjectId = subjectId,
-                predicateId = Predicates.description,
-                label = description,
-                datatype = Literals.XSD.INT.prefixedUri
-            )
-        } just runs
-
-        singleStatementPropertyUpdater.updateRequiredProperty(
-            contributorId = contributorId,
-            subjectId = subjectId,
-            predicateId = Predicates.description,
-            label = description,
-            datatype = Literals.XSD.INT.prefixedUri
-        )
-
-        verify(exactly = 1) {
-            statementService.findAll(
-                subjectId = subjectId,
-                predicateId = Predicates.description,
-                objectClasses = setOf(Classes.literal),
-                pageable = PageRequests.SINGLE
-            )
-        }
-        verify(exactly = 1) {
-            singleStatementPropertyCreator.create(
-                contributorId = contributorId,
-                subjectId = subjectId,
-                predicateId = Predicates.description,
-                label = description,
-                datatype = Literals.XSD.INT.prefixedUri
-            )
-        }
-    }
-
-    @Test
-    fun `Given a new literal label, when more than one statement already exist, it deletes all but one and updates the literal`() {
-        val subjectId = ThingId("R123")
-        val contributorId = ContributorId(UUID.randomUUID())
-        val description = "some description"
-        val literal = createLiteral()
-        val updateLiteralCommand = UpdateCommand(
-            id = literal.id,
-            contributorId = contributorId,
-            label = description,
-            datatype = Literals.XSD.INT.prefixedUri
-        )
-
-        every {
-            statementService.findAll(
-                subjectId = subjectId,
-                predicateId = Predicates.description,
-                objectClasses = setOf(Classes.literal),
-                pageable = PageRequests.SINGLE
-            )
-        } returns pageOf(
-            createStatement(
-                predicate = createPredicate(Predicates.description),
-                `object` = literal
-            ),
-            createStatement(
-                id = StatementId("S456"),
-                predicate = createPredicate(Predicates.description),
-                `object` = createLiteral(ThingId("L132"), label = "other")
-            )
-        )
-        every { unsafeLiteralUseCases.update(updateLiteralCommand) } just runs
-        every { statementService.deleteAllById(setOf(StatementId("S456"))) } just runs
-
-        singleStatementPropertyUpdater.updateRequiredProperty(
-            contributorId = contributorId,
-            subjectId = subjectId,
-            predicateId = Predicates.description,
-            label = description,
-            datatype = Literals.XSD.INT.prefixedUri
-        )
-
-        verify(exactly = 1) {
-            statementService.findAll(
-                subjectId = subjectId,
-                predicateId = Predicates.description,
-                objectClasses = setOf(Classes.literal),
-                pageable = PageRequests.SINGLE
-            )
-        }
-        verify(exactly = 1) { unsafeLiteralUseCases.update(updateLiteralCommand) }
-        verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S456"))) }
-    }
 
     @Test
     fun `Given a new literal label and a list of statements, when a statement already exists, it updates the literal`() {

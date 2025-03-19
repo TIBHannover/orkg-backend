@@ -12,10 +12,14 @@ class PaperThingDefinitionValidator(
 ) : ThingDefinitionValidator(thingRepository, classRepository),
     CreatePaperAction {
     override operator fun invoke(command: CreatePaperCommand, state: CreatePaperState): CreatePaperState {
-        val validatedIds = state.validatedIds.toMutableMap()
-        if (command.contents != null) {
-            validateThingDefinitionsInPlace(command.contents!!, state.tempIds, validatedIds)
+        if (command.contents == null) {
+            return state
         }
+        val validatedIds = validateThingDefinitions(
+            thingDefinitions = command.contents!!,
+            tempIds = state.tempIds,
+            validatedIds = state.validatedIds
+        )
         return state.copy(validatedIds = validatedIds)
     }
 }

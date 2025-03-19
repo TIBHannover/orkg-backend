@@ -12,8 +12,11 @@ class ContributionThingDefinitionValidator(
 ) : ThingDefinitionValidator(thingRepository, classRepository),
     ContributionAction {
     override operator fun invoke(command: CreateContributionCommand, state: ContributionState): ContributionState {
-        val validatedIds = state.validatedIds.toMutableMap()
-        validateThingDefinitionsInPlace(command, state.tempIds, validatedIds)
+        val validatedIds = validateThingDefinitions(
+            thingDefinitions = command,
+            tempIds = state.tempIds,
+            validatedIds = state.validatedIds
+        )
         return state.copy(validatedIds = validatedIds)
     }
 }

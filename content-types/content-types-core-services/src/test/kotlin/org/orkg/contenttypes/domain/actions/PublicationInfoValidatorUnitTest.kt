@@ -13,7 +13,7 @@ internal class PublicationInfoValidatorUnitTest {
     private val publicationInfoValidator = PublicationInfoValidator<PublicationInfoCommand, Unit> { it }
 
     @Test
-    fun `Given a publication info definition, when valid, it returns success`() {
+    fun `Given a publication info command, when valid, it returns success`() {
         publicationInfoValidator(
             PublicationInfoCommand(
                 publishedMonth = 1,
@@ -26,7 +26,7 @@ internal class PublicationInfoValidatorUnitTest {
     }
 
     @Test
-    fun `Given a publication info definition, when venue label is invalid, it throws an exception`() {
+    fun `Given a publication info command, when venue label is invalid, it throws an exception`() {
         assertThrows<InvalidLabel> {
             publicationInfoValidator(
                 PublicationInfoCommand(
@@ -43,7 +43,7 @@ internal class PublicationInfoValidatorUnitTest {
     }
 
     @Test
-    fun `Given a publication info definition, when publication month is invalid, it throws an exception`() {
+    fun `Given a publication info command, when publication month is invalid, it throws an exception`() {
         assertThrows<InvalidMonth> {
             publicationInfoValidator(
                 PublicationInfoCommand(

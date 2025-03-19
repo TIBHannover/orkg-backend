@@ -12,7 +12,7 @@ import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.StatementRepository
 
-class RosettaStoneStatementThingDefinitionUpdateCreator(
+class RosettaStoneStatementThingsCommandUpdateCreator(
     private val subgraphCreator: SubgraphCreator,
 ) : UpdateRosettaStoneStatementAction {
     constructor(
@@ -38,7 +38,7 @@ class RosettaStoneStatementThingDefinitionUpdateCreator(
     override fun invoke(command: UpdateRosettaStoneStatementCommand, state: State): State {
         val tempId2Thing: MutableMap<String, ThingId> = mutableMapOf()
         subgraphCreator.createThings(
-            thingDefinitions = command,
+            thingsCommand = command,
             validatedIds = state.validatedIds,
             contributorId = command.contributorId,
             extractionMethod = command.extractionMethod,

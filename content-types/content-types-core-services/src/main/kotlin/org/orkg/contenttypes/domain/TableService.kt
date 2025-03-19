@@ -21,8 +21,8 @@ import org.orkg.contenttypes.domain.actions.tables.TableResourceCreator
 import org.orkg.contenttypes.domain.actions.tables.TableRowsCreator
 import org.orkg.contenttypes.domain.actions.tables.TableRowsValidator
 import org.orkg.contenttypes.domain.actions.tables.TableTempIdCreateValidator
-import org.orkg.contenttypes.domain.actions.tables.TableThingDefinitionCreateCreator
-import org.orkg.contenttypes.domain.actions.tables.TableThingDefinitionCreateValidator
+import org.orkg.contenttypes.domain.actions.tables.TableThingsCommandCreateCreator
+import org.orkg.contenttypes.domain.actions.tables.TableThingsCommandCreateValidator
 import org.orkg.contenttypes.input.TableUseCases
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
@@ -96,11 +96,11 @@ class TableService(
             TableRowsValidator { it.rows },
             ObservatoryValidator(observatoryRepository, { it.observatories }),
             OrganizationValidator(organizationRepository, { it.organizations }),
-            TableThingDefinitionCreateValidator(thingRepository, classRepository),
+            TableThingsCommandCreateValidator(thingRepository, classRepository),
             TableColumnsCreateValidator(thingRepository),
             TableCellsCreateValidator(thingRepository),
             TableResourceCreator(unsafeResourceUseCases),
-            TableThingDefinitionCreateCreator(unsafeClassUseCases, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, unsafePredicateUseCases, statementRepository, listService),
+            TableThingsCommandCreateCreator(unsafeClassUseCases, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, unsafePredicateUseCases, statementRepository, listService),
             TableColumnsCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases),
             TableRowsCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases),
             TableCellsCreator(unsafeResourceUseCases, unsafeStatementUseCases)

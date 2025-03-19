@@ -34,7 +34,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
     )
 
     @Test
-    fun `Given a list section definition, when creating a section entry with a description, it returns success`() {
+    fun `Given a list section command, when creating a section entry with a description, it returns success`() {
         val entry = ThingId("R2315")
         val description = "test description"
         val section = literatureListListSectionCommand().copy(
@@ -156,7 +156,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given a list section definition, when creating a section entry without a description, it returns success`() {
+    fun `Given a list section command, when creating a section entry without a description, it returns success`() {
         val entry = ThingId("R2315")
         val section = literatureListListSectionCommand().copy(
             entries = listOf(AbstractLiteratureListListSectionCommand.Entry(entry))
@@ -247,7 +247,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given a text section definition, when creating, it returns success`() {
+    fun `Given a text section command, when creating, it returns success`() {
         val section = literatureListTextSectionCommand()
         val contributorId = ContributorId(UUID.randomUUID())
         val sectionId = ThingId("R123")

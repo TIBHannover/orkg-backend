@@ -13,7 +13,7 @@ import org.orkg.graph.domain.MAX_LABEL_LENGTH
 
 internal class AbstractSmartReviewSectionValidatorLiteratureListTextSectionUnitTest : AbstractSmartReviewSectionValidatorUnitTest() {
     @Test
-    fun `Given a text section definition, when validating, it returns success`() {
+    fun `Given a text section command, when validating, it returns success`() {
         val section = smartReviewTextSectionCommand()
         val validIds = mutableSetOf<ThingId>()
 
@@ -23,7 +23,7 @@ internal class AbstractSmartReviewSectionValidatorLiteratureListTextSectionUnitT
     }
 
     @Test
-    fun `Given a text section definition, when heading is invalid, it throws an exception`() {
+    fun `Given a text section command, when heading is invalid, it throws an exception`() {
         val section = smartReviewTextSectionCommand().copy(
             heading = "a".repeat(MAX_LABEL_LENGTH + 1)
         )
@@ -33,7 +33,7 @@ internal class AbstractSmartReviewSectionValidatorLiteratureListTextSectionUnitT
     }
 
     @Test
-    fun `Given a text section definition, when text is invalid, it throws an exception`() {
+    fun `Given a text section command, when text is invalid, it throws an exception`() {
         val section = smartReviewTextSectionCommand().copy(
             text = "a".repeat(MAX_LABEL_LENGTH + 1)
         )
@@ -43,7 +43,7 @@ internal class AbstractSmartReviewSectionValidatorLiteratureListTextSectionUnitT
     }
 
     @Test
-    fun `Given a text section definition, when type is invalid, it throws an exception`() {
+    fun `Given a text section command, when type is invalid, it throws an exception`() {
         val section = smartReviewTextSectionCommand().copy(
             `class` = Classes.comparison
         )

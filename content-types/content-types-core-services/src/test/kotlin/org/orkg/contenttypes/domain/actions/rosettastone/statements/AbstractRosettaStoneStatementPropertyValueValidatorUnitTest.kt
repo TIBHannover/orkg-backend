@@ -69,7 +69,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
             createSubjectPositionTemplateProperty(),
             createStringLiteralObjectPositionTemplateProperty()
         )
-        val thingDefinitions = mapOf(
+        val thingsCommand = mapOf(
             "#temp1" to CreateLiteralCommandPart("1"),
             "#temp2" to CreateResourceCommandPart(
                 label = "MOTO",
@@ -110,7 +110,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
 
         val result = abstractRosettaStoneStatementPropertyValueValidator.validate(
             templateProperties = templateProperties,
-            thingDefinitions = thingDefinitions,
+            thingsCommand = thingsCommand,
             validatedIdsIn = validatedIds,
             tempIds = tempIds,
             templateId = templateId,
@@ -133,7 +133,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
             createSubjectPositionTemplateProperty(),
             createStringLiteralObjectPositionTemplateProperty()
         )
-        val thingDefinitions = emptyMap<String, CreateThingCommandPart>()
+        val thingsCommand = emptyMap<String, CreateThingCommandPart>()
         val validatedIds: Map<String, Either<String, Thing>> = emptyMap()
         val tempIds = emptySet<String>()
         val templateId = ThingId("R456")
@@ -143,7 +143,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
         shouldThrow<MissingInputPositions> {
             abstractRosettaStoneStatementPropertyValueValidator.validate(
                 templateProperties = templateProperties,
-                thingDefinitions = thingDefinitions,
+                thingsCommand = thingsCommand,
                 validatedIdsIn = validatedIds,
                 tempIds = tempIds,
                 templateId = templateId,
@@ -159,7 +159,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
             createSubjectPositionTemplateProperty(),
             createStringLiteralObjectPositionTemplateProperty()
         )
-        val thingDefinitions = emptyMap<String, CreateThingCommandPart>()
+        val thingsCommand = emptyMap<String, CreateThingCommandPart>()
         val validatedIds: Map<String, Either<String, Thing>> = emptyMap()
         val tempIds = emptySet<String>()
         val templateId = ThingId("R456")
@@ -172,7 +172,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
         shouldThrow<TooManyInputPositions> {
             abstractRosettaStoneStatementPropertyValueValidator.validate(
                 templateProperties = templateProperties,
-                thingDefinitions = thingDefinitions,
+                thingsCommand = thingsCommand,
                 validatedIdsIn = validatedIds,
                 tempIds = tempIds,
                 templateId = templateId,
@@ -210,7 +210,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
         assertThrows<NestedRosettaStoneStatement> {
             abstractRosettaStoneStatementPropertyValueValidator.validate(
                 templateProperties = templateProperties,
-                thingDefinitions = emptyMap(),
+                thingsCommand = emptyMap(),
                 validatedIdsIn = emptyMap(),
                 tempIds = emptySet(),
                 templateId = templateId,
@@ -244,7 +244,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
 
         val result = abstractRosettaStoneStatementPropertyValueValidator.validate(
             templateProperties = templateProperties,
-            thingDefinitions = emptyMap(),
+            thingsCommand = emptyMap(),
             validatedIdsIn = emptyMap(),
             tempIds = emptySet(),
             templateId = templateId,
@@ -282,7 +282,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
         assertThrows<RosettaStoneStatementNotFound> {
             abstractRosettaStoneStatementPropertyValueValidator.validate(
                 templateProperties = templateProperties,
-                thingDefinitions = emptyMap(),
+                thingsCommand = emptyMap(),
                 validatedIdsIn = emptyMap(),
                 tempIds = emptySet(),
                 templateId = templateId,
@@ -316,7 +316,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
         assertThrows<RosettaStoneStatementVersionNotFound> {
             abstractRosettaStoneStatementPropertyValueValidator.validate(
                 templateProperties = templateProperties,
-                thingDefinitions = emptyMap(),
+                thingsCommand = emptyMap(),
                 validatedIdsIn = emptyMap(),
                 tempIds = emptySet(),
                 templateId = templateId,
@@ -336,7 +336,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
             createSubjectPositionTemplateProperty(),
             createStringLiteralObjectPositionTemplateProperty()
         )
-        val thingDefinitions = emptyMap<String, CreateThingCommandPart>()
+        val thingsCommand = emptyMap<String, CreateThingCommandPart>()
         val validatedIds: Map<String, Either<String, Thing>> = emptyMap()
         val tempIds = emptySet<String>()
         val templateId = ThingId("R456")
@@ -349,7 +349,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
         shouldThrow<MissingSubjectPositionValue> {
             abstractRosettaStoneStatementPropertyValueValidator.validate(
                 templateProperties = templateProperties,
-                thingDefinitions = thingDefinitions,
+                thingsCommand = thingsCommand,
                 validatedIdsIn = validatedIds,
                 tempIds = tempIds,
                 templateId = templateId,
@@ -367,7 +367,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
             createSubjectPositionTemplateProperty(),
             createStringLiteralObjectPositionTemplateProperty()
         )
-        val thingDefinitions = mapOf(
+        val thingsCommand = mapOf(
             "#temp2" to CreateLiteralCommandPart("subject")
         )
         val validatedIds: Map<String, Either<String, Thing>> = emptyMap()
@@ -383,7 +383,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
         shouldThrow<MissingObjectPositionValue> {
             abstractRosettaStoneStatementPropertyValueValidator.validate(
                 templateProperties = templateProperties,
-                thingDefinitions = thingDefinitions,
+                thingsCommand = thingsCommand,
                 validatedIdsIn = validatedIds,
                 tempIds = tempIds,
                 templateId = templateId,
@@ -402,7 +402,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
             createSubjectPositionTemplateProperty(),
             createStringLiteralObjectPositionTemplateProperty()
         )
-        val thingDefinitions = emptyMap<String, CreateThingCommandPart>()
+        val thingsCommand = emptyMap<String, CreateThingCommandPart>()
         val validatedIds: Map<String, Either<String, Thing>> = emptyMap()
         val tempIds = emptySet<String>()
         val templateId = ThingId("R456")
@@ -415,7 +415,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
         shouldThrow<TooManySubjectPositionValues> {
             abstractRosettaStoneStatementPropertyValueValidator.validate(
                 templateProperties = templateProperties,
-                thingDefinitions = thingDefinitions,
+                thingsCommand = thingsCommand,
                 validatedIdsIn = validatedIds,
                 tempIds = tempIds,
                 templateId = templateId,
@@ -433,7 +433,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
             createSubjectPositionTemplateProperty(),
             createStringLiteralObjectPositionTemplateProperty()
         )
-        val thingDefinitions = mapOf(
+        val thingsCommand = mapOf(
             "#temp2" to CreateLiteralCommandPart("subject")
         )
         val validatedIds: Map<String, Either<String, Thing>> = emptyMap()
@@ -449,7 +449,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
         shouldThrow<TooManyObjectPositionValues> {
             abstractRosettaStoneStatementPropertyValueValidator.validate(
                 templateProperties = templateProperties,
-                thingDefinitions = thingDefinitions,
+                thingsCommand = thingsCommand,
                 validatedIdsIn = validatedIds,
                 tempIds = tempIds,
                 templateId = templateId,
@@ -468,7 +468,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
             createSubjectPositionTemplateProperty(),
             createStringLiteralObjectPositionTemplateProperty()
         )
-        val thingDefinitions = emptyMap<String, CreateThingCommandPart>()
+        val thingsCommand = emptyMap<String, CreateThingCommandPart>()
         val literal = createLiteral(ThingId("L123"), label = "15603")
         val validatedIds: Map<String, Either<String, Thing>> = mapOf(
             "L123" to Either.right(literal),
@@ -488,7 +488,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
         shouldThrow<ObjectPositionValueDoesNotMatchPattern> {
             abstractRosettaStoneStatementPropertyValueValidator.validate(
                 templateProperties = templateProperties,
-                thingDefinitions = thingDefinitions,
+                thingsCommand = thingsCommand,
                 validatedIdsIn = validatedIds,
                 tempIds = tempIds,
                 templateId = templateId,
@@ -507,7 +507,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
             createSubjectPositionTemplateProperty(),
             createNumberLiteralTemplateProperty()
         )
-        val thingDefinitions = emptyMap<String, CreateThingCommandPart>()
+        val thingsCommand = emptyMap<String, CreateThingCommandPart>()
         val literal = createLiteral(ThingId("L123"), label = "-20")
         val validatedIds: Map<String, Either<String, Thing>> = mapOf(
             "L123" to Either.right(literal),
@@ -527,7 +527,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
         shouldThrow<ObjectPositionValueTooLow> {
             abstractRosettaStoneStatementPropertyValueValidator.validate(
                 templateProperties = templateProperties,
-                thingDefinitions = thingDefinitions,
+                thingsCommand = thingsCommand,
                 validatedIdsIn = validatedIds,
                 tempIds = tempIds,
                 templateId = templateId,
@@ -547,7 +547,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
             createNumberLiteralTemplateProperty()
         )
         val literal = createLiteral(ThingId("L123"), label = "20")
-        val thingDefinitions = emptyMap<String, CreateThingCommandPart>()
+        val thingsCommand = emptyMap<String, CreateThingCommandPart>()
         val validatedIds: Map<String, Either<String, Thing>> = mapOf(
             "L123" to Either.right(literal),
             "R123" to Either.right(createResource(ThingId("R123")))
@@ -566,7 +566,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
         shouldThrow<ObjectPositionValueTooHigh> {
             abstractRosettaStoneStatementPropertyValueValidator.validate(
                 templateProperties = templateProperties,
-                thingDefinitions = thingDefinitions,
+                thingsCommand = thingsCommand,
                 validatedIdsIn = validatedIds,
                 tempIds = tempIds,
                 templateId = templateId,

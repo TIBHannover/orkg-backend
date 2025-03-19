@@ -37,11 +37,11 @@ import org.orkg.graph.testing.fixtures.createResource
 import java.util.Optional
 
 @Nested
-internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
+internal class ThingsCommandValidatorUnitTest : MockkBaseTest {
     private val thingRepository: ThingRepository = mockk()
     private val classRepository: ClassRepository = mockk()
 
-    private val thingDefinitionValidator = object : ThingDefinitionValidator(thingRepository, classRepository) {}
+    private val thingsCommandValidator = object : ThingsCommandValidator(thingRepository, classRepository) {}
 
     @Test
     fun `Given paper contents, when valid, it returns success`() {
@@ -82,8 +82,8 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
         val validatedIds = mutableMapOf<String, Either<String, Thing>>()
         val tempIds = setOf("#temp1", "#temp2", "#temp3", "#temp4")
 
-        val result = thingDefinitionValidator.validateThingDefinitions(
-            thingDefinitions = contents,
+        val result = thingsCommandValidator.validate(
+            thingsCommand = contents,
             tempIds = tempIds,
             validatedIds = validatedIds
         )
@@ -115,8 +115,8 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
         every { thingRepository.findById(any()) } returns Optional.empty()
 
         assertThrows<ThingNotFound> {
-            thingDefinitionValidator.validateThingDefinitions(
-                thingDefinitions = contents,
+            thingsCommandValidator.validate(
+                thingsCommand = contents,
                 tempIds = emptySet(),
                 validatedIds = mutableMapOf()
             )
@@ -143,8 +143,8 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
         every { thingRepository.findById(any()) } returns Optional.of(resource)
 
         assertThrows<ThingIsNotAClass> {
-            thingDefinitionValidator.validateThingDefinitions(
-                thingDefinitions = contents,
+            thingsCommandValidator.validate(
+                thingsCommand = contents,
                 tempIds = emptySet(),
                 validatedIds = mutableMapOf()
             )
@@ -168,8 +168,8 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
         )
 
         assertThrows<ReservedClass> {
-            thingDefinitionValidator.validateThingDefinitions(
-                thingDefinitions = contents,
+            thingsCommandValidator.validate(
+                thingsCommand = contents,
                 tempIds = emptySet(),
                 validatedIds = mutableMapOf()
             )
@@ -190,8 +190,8 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
         )
 
         assertThrows<InvalidLabel> {
-            thingDefinitionValidator.validateThingDefinitions(
-                thingDefinitions = contents,
+            thingsCommandValidator.validate(
+                thingsCommand = contents,
                 tempIds = emptySet(),
                 validatedIds = mutableMapOf()
             )
@@ -212,8 +212,8 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
         )
 
         assertThrows<InvalidLiteralLabel> {
-            thingDefinitionValidator.validateThingDefinitions(
-                thingDefinitions = contents,
+            thingsCommandValidator.validate(
+                thingsCommand = contents,
                 tempIds = emptySet(),
                 validatedIds = mutableMapOf()
             )
@@ -235,8 +235,8 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
         )
 
         assertThrows<InvalidLiteralLabel> {
-            thingDefinitionValidator.validateThingDefinitions(
-                thingDefinitions = contents,
+            thingsCommandValidator.validate(
+                thingsCommand = contents,
                 tempIds = emptySet(),
                 validatedIds = mutableMapOf()
             )
@@ -258,8 +258,8 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
         )
 
         assertThrows<InvalidLiteralDatatype> {
-            thingDefinitionValidator.validateThingDefinitions(
-                thingDefinitions = contents,
+            thingsCommandValidator.validate(
+                thingsCommand = contents,
                 tempIds = emptySet(),
                 validatedIds = mutableMapOf()
             )
@@ -280,8 +280,8 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
         )
 
         assertThrows<InvalidLabel> {
-            thingDefinitionValidator.validateThingDefinitions(
-                thingDefinitions = contents,
+            thingsCommandValidator.validate(
+                thingsCommand = contents,
                 tempIds = emptySet(),
                 validatedIds = mutableMapOf()
             )
@@ -303,8 +303,8 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
         )
 
         assertThrows<InvalidLabel> {
-            thingDefinitionValidator.validateThingDefinitions(
-                thingDefinitions = contents,
+            thingsCommandValidator.validate(
+                thingsCommand = contents,
                 tempIds = emptySet(),
                 validatedIds = mutableMapOf()
             )
@@ -326,8 +326,8 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
         )
 
         assertThrows<InvalidLabel> {
-            thingDefinitionValidator.validateThingDefinitions(
-                thingDefinitions = contents,
+            thingsCommandValidator.validate(
+                thingsCommand = contents,
                 tempIds = emptySet(),
                 validatedIds = mutableMapOf()
             )
@@ -335,7 +335,7 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given thing definitions, when specified class uri is not absolute, it throws an exception`() {
+    fun `Given a things command, when specified class uri is not absolute, it throws an exception`() {
         val uri = ParsedIRI("invalid")
         val contents = updateTemplateInstanceCommand().copy(
             resources = emptyMap(),
@@ -351,8 +351,8 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
         )
 
         assertThrows<URINotAbsolute> {
-            thingDefinitionValidator.validateThingDefinitions(
-                thingDefinitions = contents,
+            thingsCommandValidator.validate(
+                thingsCommand = contents,
                 tempIds = emptySet(),
                 validatedIds = mutableMapOf()
             )
@@ -360,7 +360,7 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given thing definitions, when specified class uri already exists, it throws an exception`() {
+    fun `Given a things command, when specified class uri already exists, it throws an exception`() {
         val uri = ParsedIRI("https://orkg.org/class/C1")
         val contents = updateTemplateInstanceCommand().copy(
             resources = emptyMap(),
@@ -379,8 +379,8 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
         every { classRepository.findByUri(uri.toString()) } returns Optional.of(`class`)
 
         assertThrows<URIAlreadyInUse> {
-            thingDefinitionValidator.validateThingDefinitions(
-                thingDefinitions = contents,
+            thingsCommandValidator.validate(
+                thingsCommand = contents,
                 tempIds = emptySet(),
                 validatedIds = mutableMapOf()
             )

@@ -31,7 +31,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
         AbstractTemplatePropertyCreator(unsafeResourceUseCases, unsafeLiteralUseCases, unsafeStatementUseCases)
 
     @Test
-    fun `Given an untyped template property definition, when creating, it returns success`() {
+    fun `Given an untyped template property command, when creating, it returns success`() {
         val property = createUntypedTemplatePropertyCommand()
         val order = 3
         val propertyId = ThingId("R1325")
@@ -67,7 +67,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given a string literal template property definition, when creating, it returns success`() {
+    fun `Given a string literal template property command, when creating, it returns success`() {
         val property = createStringLiteralTemplatePropertyCommand()
         val order = 4
         val propertyId = ThingId("R1325")
@@ -160,7 +160,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given a string literal template property definition, when pattern is not set, it does not create a statement for it`() {
+    fun `Given a string literal template property command, when pattern is not set, it does not create a statement for it`() {
         val property = createStringLiteralTemplatePropertyCommand().copy(pattern = null)
         val order = 4
         val propertyId = ThingId("R1325")
@@ -216,7 +216,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given a literal template property definition, when creating, it returns success`() {
+    fun `Given a literal template property command, when creating, it returns success`() {
         val property = createOtherLiteralTemplatePropertyCommand()
         val order = 4
         val propertyId = ThingId("R1325")
@@ -272,7 +272,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given a number literal template property definition, when creating, it returns success`() {
+    fun `Given a number literal template property command, when creating, it returns success`() {
         val property = createNumberLiteralTemplatePropertyCommand()
         val order = 4
         val propertyId = ThingId("R1325")
@@ -406,7 +406,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given a number literal template property definition, when minInclusive and maxInclusive are not set, it does not create statements for them`() {
+    fun `Given a number literal template property command, when minInclusive and maxInclusive are not set, it does not create statements for them`() {
         val property = createNumberLiteralTemplatePropertyCommand().copy(
             minInclusive = null,
             maxInclusive = null
@@ -465,7 +465,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given a resource template property definition, when creating, it returns success`() {
+    fun `Given a resource template property command, when creating, it returns success`() {
         val property = createResourceTemplatePropertyCommand()
         val order = 1
         val propertyId = ThingId("R1325")

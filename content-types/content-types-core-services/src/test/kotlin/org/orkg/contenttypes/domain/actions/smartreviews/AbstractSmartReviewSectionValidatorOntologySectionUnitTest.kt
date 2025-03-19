@@ -17,7 +17,7 @@ import java.util.Optional
 
 internal class AbstractSmartReviewSectionValidatorOntologySectionUnitTest : AbstractSmartReviewSectionValidatorUnitTest() {
     @Test
-    fun `Given an ontology section definition, when validating, it returns success`() {
+    fun `Given an ontology section command, when validating, it returns success`() {
         val section = smartReviewOntologySectionCommand().copy(predicates = listOf(Predicates.employs))
         val validIds = mutableSetOf<ThingId>()
         val predicate = createPredicate(section.predicates.single())
@@ -34,7 +34,7 @@ internal class AbstractSmartReviewSectionValidatorOntologySectionUnitTest : Abst
     }
 
     @Test
-    fun `Given an ontology section definition, when validating, it does query the thing repository when entity list is empty`() {
+    fun `Given an ontology section command, when validating, it does query the thing repository when entity list is empty`() {
         val section = smartReviewOntologySectionCommand().copy(entities = emptyList())
         val validIds = mutableSetOf<ThingId>()
         val predicate = createPredicate(section.predicates.single())
@@ -49,7 +49,7 @@ internal class AbstractSmartReviewSectionValidatorOntologySectionUnitTest : Abst
     }
 
     @Test
-    fun `Given an ontology section definition, when validating, it does query the predicate repository when predicate list is empty`() {
+    fun `Given an ontology section command, when validating, it does query the predicate repository when predicate list is empty`() {
         val section = smartReviewOntologySectionCommand().copy(predicates = emptyList())
         val validIds = mutableSetOf<ThingId>()
 
@@ -63,7 +63,7 @@ internal class AbstractSmartReviewSectionValidatorOntologySectionUnitTest : Abst
     }
 
     @Test
-    fun `Given an ontology section definition, when validating, it does not check already valid ids`() {
+    fun `Given an ontology section command, when validating, it does not check already valid ids`() {
         val section = smartReviewOntologySectionCommand()
         val validIds = mutableSetOf(ThingId("P1"))
 
@@ -77,7 +77,7 @@ internal class AbstractSmartReviewSectionValidatorOntologySectionUnitTest : Abst
     }
 
     @Test
-    fun `Given an ontology section definition, when heading is invalid, it throws an exception`() {
+    fun `Given an ontology section command, when heading is invalid, it throws an exception`() {
         val section = smartReviewOntologySectionCommand().copy(
             heading = "a".repeat(MAX_LABEL_LENGTH + 1)
         )
@@ -87,7 +87,7 @@ internal class AbstractSmartReviewSectionValidatorOntologySectionUnitTest : Abst
     }
 
     @Test
-    fun `Given an ontology section definition, when entity does not exist, it throws an exception`() {
+    fun `Given an ontology section command, when entity does not exist, it throws an exception`() {
         val section = smartReviewOntologySectionCommand()
         val validIds = mutableSetOf<ThingId>()
 
@@ -99,7 +99,7 @@ internal class AbstractSmartReviewSectionValidatorOntologySectionUnitTest : Abst
     }
 
     @Test
-    fun `Given an ontology section definition, when predicate does not exist, it throws an exception`() {
+    fun `Given an ontology section command, when predicate does not exist, it throws an exception`() {
         val section = smartReviewOntologySectionCommand().copy(predicates = listOf(Predicates.employs))
         val validIds = mutableSetOf<ThingId>()
 

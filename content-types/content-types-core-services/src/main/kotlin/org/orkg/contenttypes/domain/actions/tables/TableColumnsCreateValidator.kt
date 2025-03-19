@@ -11,7 +11,7 @@ class TableColumnsCreateValidator(
 
     override fun invoke(command: CreateTableCommand, state: State): State {
         val validatedIds = abstractTableColumnsValidator.validate(
-            thingDefinitions = command.all(),
+            thingsCommand = command.all(),
             rows = command.rows,
             tempIds = state.tempIds,
             validationCacheIn = state.validatedIds

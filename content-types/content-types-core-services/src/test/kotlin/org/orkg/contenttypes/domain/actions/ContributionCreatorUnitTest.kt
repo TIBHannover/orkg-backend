@@ -37,12 +37,12 @@ internal class ContributionCreatorUnitTest : MockkBaseTest {
     fun `Given paper contents, when creating new contributions, it returns success`() {
         val paperId = ThingId("R123")
         val contributorId = ContributorId(UUID.randomUUID())
-        val contributionDefinition = CreateContributionCommandPart(
+        val contributionCommand = CreateContributionCommandPart(
             label = "MOTO",
             statements = emptyMap()
         )
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
-            contributions = listOf(contributionDefinition)
+            contributions = listOf(contributionCommand)
         )
         val contributionId = ThingId("R456")
 
@@ -50,7 +50,7 @@ internal class ContributionCreatorUnitTest : MockkBaseTest {
             unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
                     contributorId = contributorId,
-                    label = contributionDefinition.label,
+                    label = contributionCommand.label,
                     classes = setOf(Classes.contribution),
                     extractionMethod = ExtractionMethod.MANUAL
                 )
@@ -70,7 +70,7 @@ internal class ContributionCreatorUnitTest : MockkBaseTest {
             subgraphCreator.createThingsAndStatements(
                 contributorId = contributorId,
                 extractionMethod = ExtractionMethod.MANUAL,
-                thingDefinitions = contents,
+                thingsCommand = contents,
                 validatedIds = emptyMap(),
                 bakedStatements = emptySet(),
                 lookup = mutableMapOf("^0" to contributionId)
@@ -81,8 +81,8 @@ internal class ContributionCreatorUnitTest : MockkBaseTest {
             paperId = paperId,
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
-            thingDefinitions = contents,
-            contributionDefinitions = contents.contributions,
+            thingsCommand = contents,
+            contributionCommands = contents.contributions,
             validatedIds = emptyMap(),
             bakedStatements = emptySet()
         )
@@ -93,7 +93,7 @@ internal class ContributionCreatorUnitTest : MockkBaseTest {
             unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
                     contributorId = contributorId,
-                    label = contributionDefinition.label,
+                    label = contributionCommand.label,
                     classes = setOf(Classes.contribution),
                     extractionMethod = ExtractionMethod.MANUAL
                 )
@@ -113,7 +113,7 @@ internal class ContributionCreatorUnitTest : MockkBaseTest {
             subgraphCreator.createThingsAndStatements(
                 contributorId = contributorId,
                 extractionMethod = ExtractionMethod.MANUAL,
-                thingDefinitions = contents,
+                thingsCommand = contents,
                 validatedIds = emptyMap(),
                 bakedStatements = emptySet(),
                 lookup = mutableMapOf("^0" to contributionId)

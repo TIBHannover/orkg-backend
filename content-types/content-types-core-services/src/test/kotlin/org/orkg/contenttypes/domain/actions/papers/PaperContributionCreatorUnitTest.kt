@@ -40,8 +40,8 @@ internal class PaperContributionCreatorUnitTest : MockkBaseTest {
                 paperId = state.paperId!!,
                 contributorId = command.contributorId,
                 extractionMethod = command.extractionMethod,
-                thingDefinitions = command.contents!!,
-                contributionDefinitions = command.contents!!.contributions,
+                thingsCommand = command.contents!!,
+                contributionCommands = command.contents!!.contributions,
                 validatedIds = state.validatedIds,
                 bakedStatements = state.bakedStatements
             )
@@ -62,8 +62,8 @@ internal class PaperContributionCreatorUnitTest : MockkBaseTest {
                 paperId = state.paperId!!,
                 contributorId = command.contributorId,
                 extractionMethod = command.extractionMethod,
-                thingDefinitions = command.contents!!,
-                contributionDefinitions = command.contents!!.contributions,
+                thingsCommand = command.contents!!,
+                contributionCommands = command.contents!!.contributions,
                 validatedIds = state.validatedIds,
                 bakedStatements = state.bakedStatements
             )

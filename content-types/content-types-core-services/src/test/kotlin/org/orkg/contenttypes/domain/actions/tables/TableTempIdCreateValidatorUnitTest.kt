@@ -27,7 +27,7 @@ internal class TableTempIdCreateValidatorUnitTest {
     }
 
     @Test
-    fun `Given a table create command, when it has no new thing definitions, it returns success`() {
+    fun `Given a table create command, when it has no new thing commands, it returns success`() {
         val command = createTableCommand().copy(
             resources = emptyMap(),
             predicates = emptyMap(),

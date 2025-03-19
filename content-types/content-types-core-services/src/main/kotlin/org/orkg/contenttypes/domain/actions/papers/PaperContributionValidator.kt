@@ -17,8 +17,8 @@ class PaperContributionValidator(
         val result = contributionValidator.validate(
             validatedIdsIn = state.validatedIds,
             tempIds = state.tempIds,
-            thingDefinitions = command.contents!!,
-            contributionDefinitions = command.contents!!.contributions
+            thingsCommand = command.contents!!,
+            contributionCommands = command.contents!!.contributions
         )
         return state.copy(bakedStatements = result.bakedStatements, validatedIds = result.validatedIds)
     }

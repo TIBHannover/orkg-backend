@@ -23,15 +23,15 @@ class ContributionValidator(
     internal fun validate(
         validatedIdsIn: Map<String, Either<String, Thing>>,
         tempIds: Set<String>,
-        thingDefinitions: CreateThingsCommand,
-        contributionDefinitions: List<CreateContributionCommandPart>,
+        thingsCommand: CreateThingsCommand,
+        contributionCommands: List<CreateContributionCommandPart>,
     ): Result {
         val bakedStatements = mutableSetOf<BakedStatement>()
         val validatedIds = validatedIdsIn.toMutableMap()
-        contributionDefinitions.forEachIndexed { index, contribution ->
+        contributionCommands.forEachIndexed { index, contribution ->
             Label.ofOrNull(contribution.label) ?: throw InvalidLabel()
             if (contribution.statements.isEmpty()) {
-                if (contributionDefinitions.size == 1) {
+                if (contributionCommands.size == 1) {
                     throw EmptyContribution()
                 } else {
                     throw EmptyContribution(index)
@@ -46,10 +46,10 @@ class ContributionValidator(
             }
             bakeStatements(
                 subject = "^$index",
-                definitions = contribution.statements,
+                statementCommands = contribution.statements,
                 tempIds = tempIds,
-                thingDefinitions = thingDefinitions,
-                contributionDefinitions = contributionDefinitions,
+                thingsCommand = thingsCommand,
+                contributionCommands = contributionCommands,
                 validatedIds = validatedIds,
                 destination = bakedStatements
             )
@@ -59,17 +59,17 @@ class ContributionValidator(
 
     internal fun bakeStatements(
         subject: String,
-        definitions: Map<String, List<StatementObject>>,
+        statementCommands: Map<String, List<StatementObject>>,
         tempIds: Set<String>,
-        thingDefinitions: CreateThingsCommand,
-        contributionDefinitions: List<CreateContributionCommandPart>,
+        thingsCommand: CreateThingsCommand,
+        contributionCommands: List<CreateContributionCommandPart>,
         validatedIds: MutableMap<String, Either<String, Thing>>,
         destination: MutableSet<BakedStatement>,
     ) {
-        definitions.forEach {
+        statementCommands.forEach {
             val validatedPredicate = validateId(it.key, tempIds, validatedIds)
             validatedPredicate.onLeft { tempId ->
-                if (tempId !in thingDefinitions.predicates.keys) {
+                if (tempId !in thingsCommand.predicates.keys) {
                     throw ThingIsNotAPredicate(tempId)
                 }
             }
@@ -81,11 +81,11 @@ class ContributionValidator(
             it.value.forEach { `object` ->
                 val validatedObject = validateId(`object`.id, tempIds, validatedIds)
                 // TODO: Do we disallow linking to existing literals?
-                // TODO: Do we ignore duplicate statement definitions or do we want throw an error?
+                // TODO: Do we ignore duplicate statement commands or do we want throw an error?
                 destination += BakedStatement(subject, validatedPredicate.id, validatedObject.id)
                 if (`object`.statements != null) {
                     validatedObject.onLeft { tempId ->
-                        if (tempId in thingDefinitions.literals.keys) {
+                        if (tempId in thingsCommand.literals.keys) {
                             throw InvalidStatementSubject(validatedObject.id)
                         }
                     }
@@ -96,10 +96,10 @@ class ContributionValidator(
                     }
                     bakeStatements(
                         subject = validatedObject.id,
-                        definitions = `object`.statements!!,
+                        statementCommands = `object`.statements!!,
                         tempIds = tempIds,
-                        thingDefinitions = thingDefinitions,
-                        contributionDefinitions = contributionDefinitions,
+                        thingsCommand = thingsCommand,
+                        contributionCommands = contributionCommands,
                         validatedIds = validatedIds,
                         destination = destination
                     )

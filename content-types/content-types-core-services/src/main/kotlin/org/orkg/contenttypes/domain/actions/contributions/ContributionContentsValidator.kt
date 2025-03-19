@@ -14,8 +14,8 @@ class ContributionContentsValidator(
         val result = contributionValidator.validate(
             validatedIdsIn = state.validatedIds,
             tempIds = state.tempIds,
-            thingDefinitions = command,
-            contributionDefinitions = listOf(command.contribution)
+            thingsCommand = command,
+            contributionCommands = listOf(command.contribution)
         )
         return state.copy(bakedStatements = result.bakedStatements, validatedIds = result.validatedIds)
     }

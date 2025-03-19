@@ -41,7 +41,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
     )
 
     @Test
-    fun `Given a comparison section definition, when creating a comparison section with a linked comparison, it returns success`() {
+    fun `Given a comparison section command, when creating a comparison section with a linked comparison, it returns success`() {
         val section = smartReviewComparisonSectionCommand()
         val contributorId = ContributorId(UUID.randomUUID())
 
@@ -80,7 +80,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given a comparison section definition, when creating a comparison section without a linked comparison, it returns success`() {
+    fun `Given a comparison section command, when creating a comparison section without a linked comparison, it returns success`() {
         val section = smartReviewComparisonSectionCommand().copy(comparison = null)
         val contributorId = ContributorId(UUID.randomUUID())
 
@@ -99,7 +99,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given a visualization section definition, when creating a visualization section with a linked visualization, it returns success`() {
+    fun `Given a visualization section command, when creating a visualization section with a linked visualization, it returns success`() {
         val section = smartReviewVisualizationSectionCommand()
         val contributorId = ContributorId(UUID.randomUUID())
 
@@ -138,7 +138,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given a visualization section definition, when creating a visualization section without a linked visualization, it returns success`() {
+    fun `Given a visualization section command, when creating a visualization section without a linked visualization, it returns success`() {
         val section = smartReviewVisualizationSectionCommand().copy(visualization = null)
         val contributorId = ContributorId(UUID.randomUUID())
 
@@ -157,7 +157,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given a resource section definition, when creating a resource section with a linked resource, it returns success`() {
+    fun `Given a resource section command, when creating a resource section with a linked resource, it returns success`() {
         val section = smartReviewResourceSectionCommand()
         val contributorId = ContributorId(UUID.randomUUID())
 
@@ -196,7 +196,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given a resource section definition, when creating a resource section without a linked resource, it returns success`() {
+    fun `Given a resource section command, when creating a resource section without a linked resource, it returns success`() {
         val section = smartReviewResourceSectionCommand().copy(resource = null)
         val contributorId = ContributorId(UUID.randomUUID())
 
@@ -215,7 +215,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given a predicate section definition, when creating a predicate section with a linked predicate, it returns success`() {
+    fun `Given a predicate section command, when creating a predicate section with a linked predicate, it returns success`() {
         val section = smartReviewPredicateSectionCommand()
         val contributorId = ContributorId(UUID.randomUUID())
 
@@ -254,7 +254,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given a predicate section definition, when creating a predicate section without a linked predicate, it returns success`() {
+    fun `Given a predicate section command, when creating a predicate section without a linked predicate, it returns success`() {
         val section = smartReviewPredicateSectionCommand().copy(predicate = null)
         val contributorId = ContributorId(UUID.randomUUID())
 
@@ -273,7 +273,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given an ontology section definition, when creating, it returns success`() {
+    fun `Given an ontology section command, when creating, it returns success`() {
         val section = smartReviewOntologySectionCommand()
         val contributorId = ContributorId(UUID.randomUUID())
 
@@ -324,7 +324,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given a text section definition, when creating, it returns success`() {
+    fun `Given a text section command, when creating, it returns success`() {
         val section = smartReviewTextSectionCommand()
         val contributorId = ContributorId(UUID.randomUUID())
 

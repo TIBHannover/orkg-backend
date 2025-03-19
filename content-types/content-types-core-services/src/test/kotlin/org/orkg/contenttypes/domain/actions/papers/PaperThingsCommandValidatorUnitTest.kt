@@ -19,14 +19,14 @@ import org.orkg.graph.testing.fixtures.createClass
 import java.util.Optional
 
 @Nested
-internal class PaperThingDefinitionValidatorUnitTest : MockkBaseTest {
+internal class PaperThingsCommandValidatorUnitTest : MockkBaseTest {
     private val thingRepository: ThingRepository = mockk()
     private val classRepository: ClassRepository = mockk()
 
-    private val paperThingDefinitionValidator = PaperThingDefinitionValidator(thingRepository, classRepository)
+    private val paperThingsCommandValidator = PaperThingsCommandValidator(thingRepository, classRepository)
 
     @Test
-    fun `Given a paper create command, when validating its thing definitions, it returns success`() {
+    fun `Given a paper create command, when validating its thing commands, it returns success`() {
         val command = createPaperCommand()
         val state = CreatePaperState()
 
@@ -34,7 +34,7 @@ internal class PaperThingDefinitionValidatorUnitTest : MockkBaseTest {
 
         every { thingRepository.findById(`class`.id) } returns Optional.of(`class`)
 
-        val result = paperThingDefinitionValidator(command, state)
+        val result = paperThingsCommandValidator(command, state)
 
         result.asClue {
             it.tempIds.size shouldBe 0
@@ -62,7 +62,7 @@ internal class PaperThingDefinitionValidatorUnitTest : MockkBaseTest {
         }
         val state = CreatePaperState()
 
-        val result = paperThingDefinitionValidator(command, state)
+        val result = paperThingsCommandValidator(command, state)
 
         result.asClue {
             it.tempIds.size shouldBe 0

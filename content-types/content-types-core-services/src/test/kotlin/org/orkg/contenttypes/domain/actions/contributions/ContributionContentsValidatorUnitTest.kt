@@ -62,8 +62,8 @@ internal class ContributionContentsValidatorUnitTest : MockkBaseTest {
             contributionValidator.validate(
                 validatedIdsIn = state.validatedIds,
                 tempIds = state.tempIds,
-                thingDefinitions = command,
-                contributionDefinitions = listOf(command.contribution)
+                thingsCommand = command,
+                contributionCommands = listOf(command.contribution)
             )
         } returns ContributionValidator.Result(validatedIds, bakedStatements)
 
@@ -80,8 +80,8 @@ internal class ContributionContentsValidatorUnitTest : MockkBaseTest {
             contributionValidator.validate(
                 validatedIdsIn = state.validatedIds,
                 tempIds = state.tempIds,
-                thingDefinitions = command,
-                contributionDefinitions = listOf(command.contribution)
+                thingsCommand = command,
+                contributionCommands = listOf(command.contribution)
             )
         }
     }

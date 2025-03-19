@@ -40,8 +40,8 @@ class ContributionContentsCreator(
                 paperId = command.paperId,
                 contributorId = command.contributorId,
                 extractionMethod = command.extractionMethod,
-                thingDefinitions = command,
-                contributionDefinitions = listOf(command.contribution),
+                thingsCommand = command,
+                contributionCommands = listOf(command.contribution),
                 validatedIds = state.validatedIds,
                 bakedStatements = state.bakedStatements
             ).single()

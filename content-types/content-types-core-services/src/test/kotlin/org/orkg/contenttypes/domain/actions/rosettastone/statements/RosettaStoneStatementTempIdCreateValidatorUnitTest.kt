@@ -25,7 +25,7 @@ internal class RosettaStoneStatementTempIdCreateValidatorUnitTest {
     }
 
     @Test
-    fun `Given a rosetta stone statement create command, when it has no new thing definitions, it returns success`() {
+    fun `Given a rosetta stone statement create command, when it has no new thing commands, it returns success`() {
         val command = createRosettaStoneStatementCommand().copy(
             resources = emptyMap(),
             predicates = emptyMap(),

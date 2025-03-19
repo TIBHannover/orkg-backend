@@ -50,13 +50,13 @@ class ContributionCreator(
         paperId: ThingId,
         contributorId: ContributorId,
         extractionMethod: ExtractionMethod,
-        thingDefinitions: CreateThingsCommand,
-        contributionDefinitions: List<CreateContributionCommandPart>,
+        thingsCommand: CreateThingsCommand,
+        contributionCommands: List<CreateContributionCommandPart>,
         validatedIds: Map<String, Either<String, Thing>>,
         bakedStatements: Set<BakedStatement>,
     ): List<ThingId> {
         val contributionLookup = mutableMapOf<String, ThingId>()
-        val contributions = contributionDefinitions.mapIndexed { index, contribution ->
+        val contributions = contributionCommands.mapIndexed { index, contribution ->
             val contributionId = unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
                     contributorId = contributorId,
@@ -80,7 +80,7 @@ class ContributionCreator(
         subgraphCreator.createThingsAndStatements(
             contributorId = contributorId,
             extractionMethod = extractionMethod,
-            thingDefinitions = thingDefinitions,
+            thingsCommand = thingsCommand,
             validatedIds = validatedIds,
             bakedStatements = bakedStatements,
             lookup = contributionLookup

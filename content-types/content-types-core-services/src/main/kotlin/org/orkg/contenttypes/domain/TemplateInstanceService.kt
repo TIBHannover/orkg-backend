@@ -14,7 +14,7 @@ import org.orkg.contenttypes.domain.actions.templates.instances.TemplateInstance
 import org.orkg.contenttypes.domain.actions.templates.instances.TemplateInstanceSubjectValidator
 import org.orkg.contenttypes.domain.actions.templates.instances.TemplateInstanceTempIdValidator
 import org.orkg.contenttypes.domain.actions.templates.instances.TemplateInstanceTemplateValidator
-import org.orkg.contenttypes.domain.actions.templates.instances.TemplateInstanceThingDefinitionValidator
+import org.orkg.contenttypes.domain.actions.templates.instances.TemplateInstanceThingsCommandValidator
 import org.orkg.contenttypes.input.TemplateInstanceUseCases
 import org.orkg.contenttypes.input.TemplateUseCases
 import org.orkg.contenttypes.input.UpdateTemplateInstanceUseCase
@@ -100,7 +100,7 @@ class TemplateInstanceService(
             TemplateInstanceTempIdValidator(),
             TemplateInstanceTemplateValidator(templateService),
             TemplateInstanceSubjectValidator(resourceRepository, this),
-            TemplateInstanceThingDefinitionValidator(thingRepository, classRepository),
+            TemplateInstanceThingsCommandValidator(thingRepository, classRepository),
             TemplateInstancePropertyValueValidator(thingRepository, classRepository, statementRepository, classHierarchyRepository),
             TemplateInstanceSubjectUpdater(resourceRepository),
             TemplateInstancePropertyValueUpdater(unsafeClassUseCases, unsafeResourceUseCases, statementService, unsafeStatementUseCases, unsafeLiteralUseCases, unsafePredicateUseCases, statementRepository, listService)

@@ -61,8 +61,8 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
         val result = contributionValidator.validate(
             tempIds = tempIds,
             validatedIdsIn = validatedIds,
-            thingDefinitions = command.contents!!,
-            contributionDefinitions = command.contents!!.contributions,
+            thingsCommand = command.contents!!,
+            contributionCommands = command.contents!!.contributions,
         )
 
         result.asClue {
@@ -111,8 +111,8 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
             contributionValidator.validate(
                 tempIds = tempIds,
                 validatedIdsIn = validatedIds,
-                thingDefinitions = command.contents!!,
-                contributionDefinitions = command.contents!!.contributions,
+                thingsCommand = command.contents!!,
+                contributionCommands = command.contents!!.contributions,
             )
         }
 
@@ -139,8 +139,8 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
             contributionValidator.validate(
                 tempIds = tempIds,
                 validatedIdsIn = validatedIds,
-                thingDefinitions = command.contents!!,
-                contributionDefinitions = command.contents!!.contributions,
+                thingsCommand = command.contents!!,
+                contributionCommands = command.contents!!.contributions,
             )
         }
 
@@ -165,8 +165,8 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
             contributionValidator.validate(
                 tempIds = emptySet(),
                 validatedIdsIn = emptyMap(),
-                thingDefinitions = command.contents!!,
-                contributionDefinitions = command.contents!!.contributions,
+                thingsCommand = command.contents!!,
+                contributionCommands = command.contents!!.contributions,
             )
         }.asClue {
             it.message shouldBe exception.message
@@ -192,10 +192,10 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
         assertThrows<ThingNotFound> {
             contributionValidator.bakeStatements(
                 subject = "#temp1",
-                definitions = statements,
+                statementCommands = statements,
                 tempIds = setOf("#temp1", "#temp2", "#temp3", "#temp4"),
-                thingDefinitions = contents,
-                contributionDefinitions = contents.contributions,
+                thingsCommand = contents,
+                contributionCommands = contents.contributions,
                 validatedIds = mutableMapOf(),
                 destination = mutableSetOf()
             )
@@ -225,10 +225,10 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
         assertThrows<ThingIsNotAPredicate> {
             contributionValidator.bakeStatements(
                 subject = "#temp1",
-                definitions = statements,
+                statementCommands = statements,
                 tempIds = emptySet(),
-                thingDefinitions = contents,
-                contributionDefinitions = contents.contributions,
+                thingsCommand = contents,
+                contributionCommands = contents.contributions,
                 validatedIds = mutableMapOf(),
                 destination = mutableSetOf()
             )
@@ -254,10 +254,10 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
         assertThrows<ThingIsNotAPredicate> {
             contributionValidator.bakeStatements(
                 subject = "#temp1",
-                definitions = statements,
+                statementCommands = statements,
                 tempIds = emptySet(),
-                thingDefinitions = contents,
-                contributionDefinitions = contents.contributions,
+                thingsCommand = contents,
+                contributionCommands = contents.contributions,
                 validatedIds = mutableMapOf("#temp1" to Either.left("#temp1")),
                 destination = mutableSetOf()
             )
@@ -289,10 +289,10 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
         assertThrows<ThingNotFound> {
             contributionValidator.bakeStatements(
                 subject = "#temp1",
-                definitions = statements,
+                statementCommands = statements,
                 tempIds = emptySet(),
-                thingDefinitions = contents,
-                contributionDefinitions = contents.contributions,
+                thingsCommand = contents,
+                contributionCommands = contents.contributions,
                 validatedIds = mutableMapOf("#temp1" to Either.left("#temp1")),
                 destination = mutableSetOf()
             )
@@ -328,10 +328,10 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
         assertThrows<InvalidStatementSubject> {
             contributionValidator.bakeStatements(
                 subject = "#temp1",
-                definitions = statements,
+                statementCommands = statements,
                 tempIds = setOf("#temp1"),
-                thingDefinitions = contents,
-                contributionDefinitions = contents.contributions,
+                thingsCommand = contents,
+                contributionCommands = contents.contributions,
                 validatedIds = mutableMapOf(
                     literalId to Either.right(createLiteral(ThingId(literalId))),
                     Predicates.hasEvaluation.value to Either.right(createPredicate(Predicates.hasEvaluation))
@@ -370,10 +370,10 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
         assertThrows<InvalidStatementSubject> {
             contributionValidator.bakeStatements(
                 subject = "#temp1",
-                definitions = statements,
+                statementCommands = statements,
                 tempIds = setOf("#temp1"),
-                thingDefinitions = contents,
-                contributionDefinitions = contents.contributions,
+                thingsCommand = contents,
+                contributionCommands = contents.contributions,
                 validatedIds = mutableMapOf(
                     "#temp1" to Either.left("#temp1"),
                     Predicates.hasEvaluation.value to Either.right(createPredicate(Predicates.hasEvaluation))
@@ -398,8 +398,8 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
             contributionValidator.validate(
                 validatedIdsIn = emptyMap(),
                 tempIds = emptySet(),
-                thingDefinitions = contents,
-                contributionDefinitions = contents.contributions
+                thingsCommand = contents,
+                contributionCommands = contents.contributions
             )
         }
     }

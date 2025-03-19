@@ -28,7 +28,7 @@ internal class AbstractLiteratureListSectionValidatorUnitTest : MockkBaseTest {
     private val abstractLiteratureListSectionValidator = AbstractLiteratureListSectionValidator(resourceRepository)
 
     @Test
-    fun `Given a list section definition, when validating, it returns success`() {
+    fun `Given a list section command, when validating, it returns success`() {
         val section = literatureListListSectionCommand()
         val validIds = mutableSetOf<ThingId>()
 
@@ -48,7 +48,7 @@ internal class AbstractLiteratureListSectionValidatorUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given a list section definition, when validating, it does not validate an id twice`() {
+    fun `Given a list section command, when validating, it does not validate an id twice`() {
         val section = literatureListListSectionCommand().copy(
             entries = listOf(
                 Entry(ThingId("R2315")),
@@ -69,7 +69,7 @@ internal class AbstractLiteratureListSectionValidatorUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given a list section definition, when validating, it does not check already valid ids`() {
+    fun `Given a list section command, when validating, it does not check already valid ids`() {
         val section = literatureListListSectionCommand()
         val validIds = mutableSetOf(ThingId("R2315"))
 
@@ -85,7 +85,7 @@ internal class AbstractLiteratureListSectionValidatorUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given a list section definition, when description is invalid, it throws an exception`() {
+    fun `Given a list section command, when description is invalid, it throws an exception`() {
         val section = literatureListListSectionCommand().copy(
             entries = listOf(Entry(ThingId("R2315"), "a".repeat(MAX_LABEL_LENGTH + 1)))
         )
@@ -95,7 +95,7 @@ internal class AbstractLiteratureListSectionValidatorUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given a list section definition, when resource is not allowed, it throws an exception`() {
+    fun `Given a list section command, when resource is not allowed, it throws an exception`() {
         val section = literatureListListSectionCommand()
         val validIds = mutableSetOf<ThingId>()
 
@@ -109,7 +109,7 @@ internal class AbstractLiteratureListSectionValidatorUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given a text section definition, when validating, it returns success`() {
+    fun `Given a text section command, when validating, it returns success`() {
         val section = literatureListTextSectionCommand()
         val validIds = mutableSetOf<ThingId>()
 
@@ -119,7 +119,7 @@ internal class AbstractLiteratureListSectionValidatorUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given a text section definition, when heading is invalid, it throws an exception`() {
+    fun `Given a text section command, when heading is invalid, it throws an exception`() {
         val section = literatureListTextSectionCommand().copy(heading = "\n")
         val validIds = mutableSetOf<ThingId>()
 
@@ -129,7 +129,7 @@ internal class AbstractLiteratureListSectionValidatorUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given a text section definition, when text is invalid, it throws an exception`() {
+    fun `Given a text section command, when text is invalid, it throws an exception`() {
         val section = literatureListTextSectionCommand().copy(text = "\n")
         val validIds = mutableSetOf<ThingId>()
 
@@ -139,7 +139,7 @@ internal class AbstractLiteratureListSectionValidatorUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given a text section definition, when heading size is too low, it throws an exception`() {
+    fun `Given a text section command, when heading size is too low, it throws an exception`() {
         val section = literatureListTextSectionCommand().copy(headingSize = 0)
         val validIds = mutableSetOf<ThingId>()
 

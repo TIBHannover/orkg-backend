@@ -67,13 +67,13 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
     @Test
     fun `Given paper contents, when a newly defined resource is valid, it gets created`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val resourceDefinition = CreateResourceCommandPart(
+        val resourceCommand = CreateResourceCommandPart(
             label = "MOTO",
             classes = setOf(ThingId("R2000"))
         )
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
             resources = mapOf(
-                "#temp1" to resourceDefinition
+                "#temp1" to resourceCommand
             ),
             contributions = emptyList()
         )
@@ -82,8 +82,8 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
                     contributorId = contributorId,
-                    label = resourceDefinition.label,
-                    classes = resourceDefinition.classes,
+                    label = resourceCommand.label,
+                    classes = resourceCommand.classes,
                     extractionMethod = ExtractionMethod.MANUAL
                 )
             )
@@ -92,7 +92,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         subgraphCreator.createThingsAndStatements(
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
-            thingDefinitions = contents,
+            thingsCommand = contents,
             validatedIds = mapOf("#temp1" to Either.left("#temp1")),
             bakedStatements = emptySet()
         )
@@ -101,8 +101,8 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
                     contributorId = contributorId,
-                    label = resourceDefinition.label,
-                    classes = resourceDefinition.classes,
+                    label = resourceCommand.label,
+                    classes = resourceCommand.classes,
                     extractionMethod = ExtractionMethod.MANUAL
                 )
             )
@@ -112,13 +112,13 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
     @Test
     fun `Given paper contents, when a newly defined resource is not validated, it does not get created`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val resourceDefinition = CreateResourceCommandPart(
+        val resourceCommand = CreateResourceCommandPart(
             label = "MOTO",
             classes = setOf(ThingId("R2000"))
         )
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
             resources = mapOf(
-                "#temp1" to resourceDefinition
+                "#temp1" to resourceCommand
             ),
             literals = emptyMap(),
             predicates = emptyMap(),
@@ -129,7 +129,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         subgraphCreator.createThingsAndStatements(
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
-            thingDefinitions = contents,
+            thingsCommand = contents,
             validatedIds = emptyMap(),
             bakedStatements = emptySet()
         )
@@ -138,7 +138,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
     @Test
     fun `Given rosetta stone statement contents, when a newly defined class is valid, it gets created`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val classDefinition = CreateClassCommandPart(
+        val classCommand = CreateClassCommandPart(
             label = "Some class",
             uri = ParsedIRI("https://example.org")
         )
@@ -148,7 +148,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             predicates = emptyMap(),
             lists = emptyMap(),
             classes = mapOf(
-                "#temp1" to classDefinition
+                "#temp1" to classCommand
             )
         )
 
@@ -156,8 +156,8 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             unsafeClassUseCases.create(
                 CreateClassUseCase.CreateCommand(
                     contributorId = contributorId,
-                    label = classDefinition.label,
-                    uri = classDefinition.uri
+                    label = classCommand.label,
+                    uri = classCommand.uri
                 )
             )
         } returns ThingId("C123")
@@ -165,7 +165,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         subgraphCreator.createThingsAndStatements(
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
-            thingDefinitions = contents,
+            thingsCommand = contents,
             validatedIds = mapOf("#temp1" to Either.left("#temp1")),
             bakedStatements = emptySet()
         )
@@ -174,8 +174,8 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             unsafeClassUseCases.create(
                 CreateClassUseCase.CreateCommand(
                     contributorId = contributorId,
-                    label = classDefinition.label,
-                    uri = classDefinition.uri
+                    label = classCommand.label,
+                    uri = classCommand.uri
                 )
             )
         }
@@ -184,7 +184,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
     @Test
     fun `Given paper contents, when a newly defined class is not validated, it does not get created`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val classDefinition = CreateClassCommandPart(
+        val classCommand = CreateClassCommandPart(
             label = "Some class",
             uri = ParsedIRI("https://example.org")
         )
@@ -194,14 +194,14 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             predicates = emptyMap(),
             lists = emptyMap(),
             classes = mapOf(
-                "#temp1" to classDefinition
+                "#temp1" to classCommand
             )
         )
 
         subgraphCreator.createThingsAndStatements(
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
-            thingDefinitions = contents,
+            thingsCommand = contents,
             validatedIds = emptyMap(),
             bakedStatements = emptySet()
         )
@@ -210,13 +210,13 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
     @Test
     fun `Given paper contents, when a newly defined literal is valid, it gets created`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val literalDefinition = CreateLiteralCommandPart(
+        val literalCommand = CreateLiteralCommandPart(
             label = "1.0",
             dataType = Literals.XSD.INT.prefixedUri
         )
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
             literals = mapOf(
-                "#temp1" to literalDefinition
+                "#temp1" to literalCommand
             ),
             contributions = emptyList()
         )
@@ -225,8 +225,8 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
-                    label = literalDefinition.label,
-                    datatype = literalDefinition.dataType
+                    label = literalCommand.label,
+                    datatype = literalCommand.dataType
                 )
             )
         } returns ThingId("L1")
@@ -234,7 +234,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         subgraphCreator.createThingsAndStatements(
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
-            thingDefinitions = contents,
+            thingsCommand = contents,
             validatedIds = mapOf("#temp1" to Either.left("#temp1")),
             bakedStatements = emptySet()
         )
@@ -243,8 +243,8 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
-                    label = literalDefinition.label,
-                    datatype = literalDefinition.dataType
+                    label = literalCommand.label,
+                    datatype = literalCommand.dataType
                 )
             )
         }
@@ -253,13 +253,13 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
     @Test
     fun `Given paper contents, when a newly defined literal is not validated, it does not get created`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val literalDefinition = CreateLiteralCommandPart(
+        val literalCommand = CreateLiteralCommandPart(
             label = "1.0",
             dataType = Literals.XSD.INT.prefixedUri
         )
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
             literals = mapOf(
-                "#temp1" to literalDefinition
+                "#temp1" to literalCommand
             ),
             contributions = emptyList()
         )
@@ -267,7 +267,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         subgraphCreator.createThingsAndStatements(
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
-            thingDefinitions = contents,
+            thingsCommand = contents,
             validatedIds = emptyMap(),
             bakedStatements = emptySet()
         )
@@ -276,12 +276,12 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
     @Test
     fun `Given paper contents, when a newly defined predicate is valid, it gets created`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val predicateDefinition = CreatePredicateCommandPart(
+        val predicateCommand = CreatePredicateCommandPart(
             label = "MOTO"
         )
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
             predicates = mapOf(
-                "#temp1" to predicateDefinition
+                "#temp1" to predicateCommand
             ),
             contributions = emptyList()
         )
@@ -290,7 +290,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             unsafePredicateUseCases.create(
                 CreatePredicateUseCase.CreateCommand(
                     contributorId = contributorId,
-                    label = predicateDefinition.label
+                    label = predicateCommand.label
                 )
             )
         } returns ThingId("R456")
@@ -298,7 +298,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         subgraphCreator.createThingsAndStatements(
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
-            thingDefinitions = contents,
+            thingsCommand = contents,
             validatedIds = mapOf("#temp1" to Either.left("#temp1")),
             bakedStatements = emptySet()
         )
@@ -307,7 +307,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             unsafePredicateUseCases.create(
                 CreatePredicateUseCase.CreateCommand(
                     contributorId = contributorId,
-                    label = predicateDefinition.label
+                    label = predicateCommand.label
                 )
             )
         }
@@ -316,13 +316,13 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
     @Test
     fun `Given paper contents, when a newly defined predicate with description is valid, it gets created`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val predicateDefinition = CreatePredicateCommandPart(
+        val predicateCommand = CreatePredicateCommandPart(
             label = "MOTO",
             description = "Result"
         )
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
             predicates = mapOf(
-                "#temp1" to predicateDefinition
+                "#temp1" to predicateCommand
             ),
             contributions = emptyList()
         )
@@ -333,7 +333,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             unsafePredicateUseCases.create(
                 CreatePredicateUseCase.CreateCommand(
                     contributorId = contributorId,
-                    label = predicateDefinition.label
+                    label = predicateCommand.label
                 )
             )
         } returns predicateId
@@ -341,7 +341,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
-                    label = predicateDefinition.description!!
+                    label = predicateCommand.description!!
                 )
             )
         } returns literal
@@ -359,7 +359,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         subgraphCreator.createThingsAndStatements(
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
-            thingDefinitions = contents,
+            thingsCommand = contents,
             validatedIds = mapOf("#temp1" to Either.left("#temp1")),
             bakedStatements = emptySet()
         )
@@ -368,7 +368,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             unsafePredicateUseCases.create(
                 CreatePredicateUseCase.CreateCommand(
                     contributorId = contributorId,
-                    label = predicateDefinition.label
+                    label = predicateCommand.label
                 )
             )
         }
@@ -376,7 +376,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
-                    label = predicateDefinition.description!!
+                    label = predicateCommand.description!!
                 )
             )
         }
@@ -395,12 +395,12 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
     @Test
     fun `Given paper contents, when a newly defined predicate is not validated, it does not get created`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val predicateDefinition = CreatePredicateCommandPart(
+        val predicateCommand = CreatePredicateCommandPart(
             label = "MOTO"
         )
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
             predicates = mapOf(
-                "#temp1" to predicateDefinition
+                "#temp1" to predicateCommand
             ),
             contributions = emptyList()
         )
@@ -408,7 +408,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         subgraphCreator.createThingsAndStatements(
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
-            thingDefinitions = contents,
+            thingsCommand = contents,
             validatedIds = emptyMap(),
             bakedStatements = emptySet()
         )
@@ -417,13 +417,13 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
     @Test
     fun `Given paper contents, when a newly defined list is valid, it gets created`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val listDefinition = CreateListCommandPart(
+        val listCommand = CreateListCommandPart(
             label = "MOTO",
             elements = listOf("R2000")
         )
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
             lists = mapOf(
-                "#temp1" to listDefinition
+                "#temp1" to listCommand
             ),
             contributions = emptyList()
         )
@@ -437,7 +437,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         every {
             listService.create(
                 CreateListUseCase.CreateCommand(
-                    label = listDefinition.label,
+                    label = listCommand.label,
                     elements = emptyList(),
                     contributorId = contributorId
                 )
@@ -448,7 +448,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         subgraphCreator.createThingsAndStatements(
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
-            thingDefinitions = contents,
+            thingsCommand = contents,
             validatedIds = mapOf("#temp1" to Either.left("#temp1")),
             bakedStatements = emptySet()
         )
@@ -456,7 +456,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             listService.create(
                 CreateListUseCase.CreateCommand(
-                    label = listDefinition.label,
+                    label = listCommand.label,
                     elements = emptyList(),
                     contributorId = contributorId
                 )
@@ -468,14 +468,14 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
     @Test
     fun `Given paper contents, when a newly defined list is not validated, it does not get created`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val listDefinition = CreateListCommandPart(
+        val listCommand = CreateListCommandPart(
             label = "MOTO",
             elements = listOf("R2000")
         )
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
             resources = emptyMap(),
             lists = mapOf(
-                "#temp1" to listDefinition
+                "#temp1" to listCommand
             ),
             literals = emptyMap(),
             predicates = emptyMap(),
@@ -485,7 +485,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         subgraphCreator.createThingsAndStatements(
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
-            thingDefinitions = contents,
+            thingsCommand = contents,
             validatedIds = emptyMap(),
             bakedStatements = emptySet()
         )
@@ -494,26 +494,26 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
     @Test
     fun `Given paper contents, when creating new statements with temp ids, it returns success`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val resourceDefinition = CreateResourceCommandPart(
+        val resourceCommand = CreateResourceCommandPart(
             label = "Subject",
             classes = setOf(ThingId("R2000"))
         )
-        val predicateDefinition = CreatePredicateCommandPart(
+        val predicateCommand = CreatePredicateCommandPart(
             label = "hasValue"
         )
-        val literalDefinition = CreateLiteralCommandPart(
+        val literalCommand = CreateLiteralCommandPart(
             label = "1.0",
             dataType = Literals.XSD.INT.prefixedUri
         )
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
             resources = mapOf(
-                "#temp1" to resourceDefinition
+                "#temp1" to resourceCommand
             ),
             predicates = mapOf(
-                "#temp2" to predicateDefinition
+                "#temp2" to predicateCommand
             ),
             literals = mapOf(
-                "#temp3" to literalDefinition
+                "#temp3" to literalCommand
             ),
             contributions = emptyList()
         )
@@ -525,8 +525,8 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
                     contributorId = contributorId,
-                    label = resourceDefinition.label,
-                    classes = resourceDefinition.classes,
+                    label = resourceCommand.label,
+                    classes = resourceCommand.classes,
                     extractionMethod = ExtractionMethod.MANUAL
                 )
             )
@@ -535,7 +535,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             unsafePredicateUseCases.create(
                 CreatePredicateUseCase.CreateCommand(
                     contributorId = contributorId,
-                    label = predicateDefinition.label
+                    label = predicateCommand.label
                 )
             )
         } returns predicateId
@@ -543,8 +543,8 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
-                    label = literalDefinition.label,
-                    datatype = literalDefinition.dataType
+                    label = literalCommand.label,
+                    datatype = literalCommand.dataType
                 )
             )
         } returns literal
@@ -562,7 +562,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         subgraphCreator.createThingsAndStatements(
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
-            thingDefinitions = contents,
+            thingsCommand = contents,
             validatedIds = mapOf(
                 "#temp1" to Either.left("#temp1"),
                 "#temp2" to Either.left("#temp2"),
@@ -575,8 +575,8 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
                     contributorId = contributorId,
-                    label = resourceDefinition.label,
-                    classes = resourceDefinition.classes,
+                    label = resourceCommand.label,
+                    classes = resourceCommand.classes,
                     extractionMethod = ExtractionMethod.MANUAL
                 )
             )
@@ -585,7 +585,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             unsafePredicateUseCases.create(
                 CreatePredicateUseCase.CreateCommand(
                     contributorId = contributorId,
-                    label = predicateDefinition.label
+                    label = predicateCommand.label
                 )
             )
         }
@@ -593,8 +593,8 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
-                    label = literalDefinition.label,
-                    datatype = literalDefinition.dataType
+                    label = literalCommand.label,
+                    datatype = literalCommand.dataType
                 )
             )
         }
@@ -639,7 +639,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         subgraphCreator.createThingsAndStatements(
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
-            thingDefinitions = contents,
+            thingsCommand = contents,
             validatedIds = emptyMap(),
             bakedStatements = setOf(BakedStatement("R1000", "R2000", "R3000")),
         )
@@ -689,7 +689,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         subgraphCreator.createThingsAndStatements(
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
-            thingDefinitions = contents,
+            thingsCommand = contents,
             validatedIds = emptyMap(),
             bakedStatements = setOf(BakedStatement("R1000", "R2000", "R3000")),
         )

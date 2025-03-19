@@ -9,18 +9,18 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.Either
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreateTableState
-import org.orkg.contenttypes.domain.actions.ThingDefinitionValidator
+import org.orkg.contenttypes.domain.actions.ThingsCommandValidator
 import org.orkg.contenttypes.input.testing.fixtures.createTableCommand
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.testing.fixtures.createResource
 
-internal class TableThingDefinitionCreateValidatorUnitTest : MockkBaseTest {
-    private val thingDefinitionValidator: ThingDefinitionValidator = mockk()
+internal class TableThingsCommandCreateValidatorUnitTest : MockkBaseTest {
+    private val thingsCommandValidator: ThingsCommandValidator = mockk()
 
-    private val tableThingDefinitionCreateValidator = TableThingDefinitionCreateValidator(thingDefinitionValidator)
+    private val tableThingsCommandCreateValidator = TableThingsCommandCreateValidator(thingsCommandValidator)
 
     @Test
-    fun `Given a table create command, when validating its thing definitions, it returns success`() {
+    fun `Given a table create command, when validating its thing commands, it returns success`() {
         val command = createTableCommand()
         val state = CreateTableState()
 
@@ -29,14 +29,14 @@ internal class TableThingDefinitionCreateValidatorUnitTest : MockkBaseTest {
         )
 
         every {
-            thingDefinitionValidator.validateThingDefinitions(
-                thingDefinitions = command,
+            thingsCommandValidator.validate(
+                thingsCommand = command,
                 tempIds = state.tempIds,
                 validatedIds = state.validatedIds
             )
         } returns validatedIds
 
-        val result = tableThingDefinitionCreateValidator(command, state)
+        val result = tableThingsCommandCreateValidator(command, state)
 
         result.asClue {
             it.tableId shouldBe state.tableId
@@ -48,8 +48,8 @@ internal class TableThingDefinitionCreateValidatorUnitTest : MockkBaseTest {
         }
 
         verify(exactly = 1) {
-            thingDefinitionValidator.validateThingDefinitions(
-                thingDefinitions = command,
+            thingsCommandValidator.validate(
+                thingsCommand = command,
                 tempIds = state.tempIds,
                 validatedIds = state.validatedIds
             )

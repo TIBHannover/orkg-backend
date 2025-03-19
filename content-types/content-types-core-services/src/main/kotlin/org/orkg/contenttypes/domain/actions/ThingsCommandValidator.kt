@@ -20,31 +20,31 @@ import org.orkg.graph.domain.reservedClassIds
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ThingRepository
 
-open class ThingDefinitionValidator(
+open class ThingsCommandValidator(
     override val thingRepository: ThingRepository,
     private val classRepository: ClassRepository,
 ) : ThingIdValidator {
-    internal fun validateThingDefinitions(
-        thingDefinitions: CreateThingsCommand,
+    internal fun validate(
+        thingsCommand: CreateThingsCommand,
         tempIds: Set<String>,
         validatedIds: Map<String, Either<String, Thing>>,
     ): Map<String, Either<String, Thing>> {
         val result = validatedIds.toMutableMap()
-        validateIds(thingDefinitions, tempIds, result)
-        validateLabels(thingDefinitions)
-        validateClassURIs(thingDefinitions)
+        validateIds(thingsCommand, tempIds, result)
+        validateLabels(thingsCommand)
+        validateClassURIs(thingsCommand)
         return result
     }
 
     private fun validateIds(
-        thingDefinitions: CreateThingsCommand,
+        thingsCommand: CreateThingsCommand,
         tempIds: Set<String>,
         validatedIds: MutableMap<String, Either<String, Thing>>,
     ) {
-        thingDefinitions.lists.values
+        thingsCommand.lists.values
             .flatMap { it.elements }
             .forEach { validateId(it, tempIds, validatedIds) }
-        thingDefinitions.resources.values
+        thingsCommand.resources.values
             .flatMap { it.classes }
             .toSet()
             .forEach {
@@ -59,11 +59,11 @@ open class ThingDefinitionValidator(
             }
     }
 
-    private fun validateLabels(thingDefinitions: CreateThingsCommand) {
-        thingDefinitions.resources.values.forEach {
+    private fun validateLabels(thingsCommand: CreateThingsCommand) {
+        thingsCommand.resources.values.forEach {
             Label.ofOrNull(it.label) ?: throw InvalidLabel()
         }
-        thingDefinitions.literals.values.forEach {
+        thingsCommand.literals.values.forEach {
             if (it.label.length > MAX_LABEL_LENGTH) {
                 throw InvalidLiteralLabel()
             }
@@ -74,19 +74,19 @@ open class ThingDefinitionValidator(
                 throw InvalidLiteralDatatype()
             }
         }
-        thingDefinitions.predicates.values.forEach {
+        thingsCommand.predicates.values.forEach {
             Label.ofOrNull(it.label) ?: throw InvalidLabel()
         }
-        thingDefinitions.classes.values.forEach {
+        thingsCommand.classes.values.forEach {
             Label.ofOrNull(it.label) ?: throw InvalidLabel()
         }
-        thingDefinitions.lists.values.forEach {
+        thingsCommand.lists.values.forEach {
             Label.ofOrNull(it.label) ?: throw InvalidLabel()
         }
     }
 
-    private fun validateClassURIs(thingDefinitions: CreateThingsCommand) {
-        thingDefinitions.classes.values.forEach {
+    private fun validateClassURIs(thingsCommand: CreateThingsCommand) {
+        thingsCommand.classes.values.forEach {
             if (it.uri != null) {
                 if (!it.uri!!.isAbsolute) {
                     throw URINotAbsolute(it.uri!!)

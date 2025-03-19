@@ -44,8 +44,8 @@ class TemplateInstancePropertyValueValidator(
         val toAdd = mutableSetOf<BakedStatement>()
         val templateInstance = state.templateInstance!!
         val validatedIds = state.validatedIds.toMutableMap()
-        val thingDefinitions = command.all()
-        val literalDefinitions = mutableMapOf<String, CreateLiteralCommandPart>()
+        val thingsCommand = command.all()
+        val literalCommands = mutableMapOf<String, CreateLiteralCommandPart>()
 
         validatePropertyPaths(state.template!!, command.statements.keys)
 
@@ -59,10 +59,10 @@ class TemplateInstancePropertyValueValidator(
                 val `object` = validateId(objectId, state.tempIds, validatedIds)
 
                 `object`.onLeft { tempId ->
-                    val thingDefinition = thingDefinitions[tempId]!!
-                    abstractTemplatePropertyValueValidator.validateObject(property, tempId, thingDefinition)
-                    if (property is LiteralTemplateProperty && thingDefinition is CreateLiteralCommandPart) {
-                        literalDefinitions[tempId] = thingDefinition.copy(
+                    val thingCommand = thingsCommand[tempId]!!
+                    abstractTemplatePropertyValueValidator.validateObject(property, tempId, thingCommand)
+                    if (property is LiteralTemplateProperty && thingCommand is CreateLiteralCommandPart) {
+                        literalCommands[tempId] = thingCommand.copy(
                             dataType = Literals.XSD.fromClass(property.datatype.id)?.prefixedUri
                                 ?: classRepository.findById(property.datatype.id).orElse(null)?.uri?.toString()
                                 ?: Literals.XSD.STRING.prefixedUri
@@ -87,7 +87,7 @@ class TemplateInstancePropertyValueValidator(
             validatedIds = validatedIds,
             statementsToAdd = toAdd,
             statementsToRemove = toRemove,
-            literals = literalDefinitions
+            literals = literalCommands
         )
     }
 

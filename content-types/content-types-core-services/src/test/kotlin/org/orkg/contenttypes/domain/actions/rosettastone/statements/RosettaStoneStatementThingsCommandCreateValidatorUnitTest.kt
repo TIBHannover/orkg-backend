@@ -9,18 +9,18 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.Either
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreateRosettaStoneStatementState
-import org.orkg.contenttypes.domain.actions.ThingDefinitionValidator
+import org.orkg.contenttypes.domain.actions.ThingsCommandValidator
 import org.orkg.contenttypes.input.testing.fixtures.createRosettaStoneStatementCommand
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.testing.fixtures.createResource
 
-internal class RosettaStoneStatementThingDefinitionCreateValidatorUnitTest : MockkBaseTest {
-    private val thingDefinitionValidator: ThingDefinitionValidator = mockk()
+internal class RosettaStoneStatementThingsCommandCreateValidatorUnitTest : MockkBaseTest {
+    private val thingsCommandValidator: ThingsCommandValidator = mockk()
 
-    private val stoneStatementThingDefinitionCreateValidator = RosettaStoneStatementThingDefinitionCreateValidator(thingDefinitionValidator)
+    private val rosettaStoneStatementThingsCommandCreateValidator = RosettaStoneStatementThingsCommandCreateValidator(thingsCommandValidator)
 
     @Test
-    fun `Given a rosetta stone statement create command, when validating its thing definitions, it returns success`() {
+    fun `Given a rosetta stone statement create command, when validating its thing commands, it returns success`() {
         val command = createRosettaStoneStatementCommand()
         val state = CreateRosettaStoneStatementState()
 
@@ -29,14 +29,14 @@ internal class RosettaStoneStatementThingDefinitionCreateValidatorUnitTest : Moc
         )
 
         every {
-            thingDefinitionValidator.validateThingDefinitions(
-                thingDefinitions = command,
+            thingsCommandValidator.validate(
+                thingsCommand = command,
                 tempIds = state.tempIds,
                 validatedIds = state.validatedIds
             )
         } returns validatedIds
 
-        val result = stoneStatementThingDefinitionCreateValidator(command, state)
+        val result = rosettaStoneStatementThingsCommandCreateValidator(command, state)
 
         result.asClue {
             it.rosettaStoneTemplate shouldBe state.rosettaStoneTemplate
@@ -46,8 +46,8 @@ internal class RosettaStoneStatementThingDefinitionCreateValidatorUnitTest : Moc
         }
 
         verify(exactly = 1) {
-            thingDefinitionValidator.validateThingDefinitions(
-                thingDefinitions = command,
+            thingsCommandValidator.validate(
+                thingsCommand = command,
                 tempIds = state.tempIds,
                 validatedIds = state.validatedIds
             )

@@ -15,7 +15,7 @@ import java.util.Optional
 
 internal class AbstractSmartReviewSectionValidatorResourceSectionUnitTest : AbstractSmartReviewSectionValidatorUnitTest() {
     @Test
-    fun `Given a resource section definition, when validating, it returns success`() {
+    fun `Given a resource section command, when validating, it returns success`() {
         val section = smartReviewResourceSectionCommand()
         val validIds = mutableSetOf<ThingId>()
         val resource = createResource(section.resource!!)
@@ -30,7 +30,7 @@ internal class AbstractSmartReviewSectionValidatorResourceSectionUnitTest : Abst
     }
 
     @Test
-    fun `Given a resource section definition, when validating, it does not validate the resource id when it is not set`() {
+    fun `Given a resource section command, when validating, it does not validate the resource id when it is not set`() {
         val section = smartReviewResourceSectionCommand().copy(resource = null)
         val validIds = mutableSetOf<ThingId>()
 
@@ -40,7 +40,7 @@ internal class AbstractSmartReviewSectionValidatorResourceSectionUnitTest : Abst
     }
 
     @Test
-    fun `Given a resource section definition, when validating, it does not check already valid ids`() {
+    fun `Given a resource section command, when validating, it does not check already valid ids`() {
         val section = smartReviewResourceSectionCommand()
         val validIds = mutableSetOf(section.resource!!)
 
@@ -50,7 +50,7 @@ internal class AbstractSmartReviewSectionValidatorResourceSectionUnitTest : Abst
     }
 
     @Test
-    fun `Given a resource section definition, when heading is invalid, it throws an exception`() {
+    fun `Given a resource section command, when heading is invalid, it throws an exception`() {
         val section = smartReviewResourceSectionCommand().copy(
             heading = "a".repeat(MAX_LABEL_LENGTH + 1)
         )
@@ -60,7 +60,7 @@ internal class AbstractSmartReviewSectionValidatorResourceSectionUnitTest : Abst
     }
 
     @Test
-    fun `Given a resource section definition, when resource does not exist, it throws an exception`() {
+    fun `Given a resource section command, when resource does not exist, it throws an exception`() {
         val section = smartReviewResourceSectionCommand()
         val validIds = mutableSetOf<ThingId>()
 

@@ -35,36 +35,36 @@ class SubgraphCreator(
     internal fun createThingsAndStatements(
         contributorId: ContributorId,
         extractionMethod: ExtractionMethod,
-        thingDefinitions: CreateThingsCommand,
+        thingsCommand: CreateThingsCommand,
         validatedIds: Map<String, Either<String, Thing>>,
         bakedStatements: Set<BakedStatement>,
         lookup: MutableMap<String, ThingId> = mutableMapOf(),
     ) {
-        createThings(thingDefinitions, validatedIds, contributorId, extractionMethod, lookup)
+        createThings(thingsCommand, validatedIds, contributorId, extractionMethod, lookup)
         createStatements(bakedStatements, lookup, contributorId)
     }
 
     internal fun createThings(
-        thingDefinitions: CreateThingsCommand,
+        thingsCommand: CreateThingsCommand,
         validatedIds: Map<String, Either<String, Thing>>,
         contributorId: ContributorId,
         extractionMethod: ExtractionMethod,
         lookup: MutableMap<String, ThingId> = mutableMapOf(),
     ) {
-        createClasses(thingDefinitions, validatedIds, lookup, contributorId)
-        createResources(thingDefinitions, validatedIds, lookup, contributorId, extractionMethod)
-        createLiterals(thingDefinitions, validatedIds, lookup, contributorId)
-        createPredicates(thingDefinitions, validatedIds, contributorId, lookup)
-        createLists(thingDefinitions, validatedIds, lookup, contributorId)
+        createClasses(thingsCommand, validatedIds, lookup, contributorId)
+        createResources(thingsCommand, validatedIds, lookup, contributorId, extractionMethod)
+        createLiterals(thingsCommand, validatedIds, lookup, contributorId)
+        createPredicates(thingsCommand, validatedIds, contributorId, lookup)
+        createLists(thingsCommand, validatedIds, lookup, contributorId)
     }
 
     private fun createClasses(
-        thingDefinitions: CreateThingsCommand,
+        thingsCommand: CreateThingsCommand,
         validatedIds: Map<String, Either<String, Thing>>,
         lookup: MutableMap<String, ThingId>,
         contributorId: ContributorId,
     ) {
-        thingDefinitions.classes.forEach {
+        thingsCommand.classes.forEach {
             if (it.key.isTempId && it.key in validatedIds) {
                 lookup[it.key] = unsafeClassUseCases.create(
                     CreateClassUseCase.CreateCommand(
@@ -78,13 +78,13 @@ class SubgraphCreator(
     }
 
     private fun createResources(
-        thingDefinitions: CreateThingsCommand,
+        thingsCommand: CreateThingsCommand,
         validatedIds: Map<String, Either<String, Thing>>,
         lookup: MutableMap<String, ThingId>,
         contributorId: ContributorId,
         extractionMethod: ExtractionMethod,
     ) {
-        thingDefinitions.resources.forEach {
+        thingsCommand.resources.forEach {
             if (it.key.isTempId && it.key in validatedIds) {
                 lookup[it.key] = unsafeResourceUseCases.create(
                     CreateResourceUseCase.CreateCommand(
@@ -99,12 +99,12 @@ class SubgraphCreator(
     }
 
     private fun createLiterals(
-        thingDefinitions: CreateThingsCommand,
+        thingsCommand: CreateThingsCommand,
         validatedIds: Map<String, Either<String, Thing>>,
         lookup: MutableMap<String, ThingId>,
         contributorId: ContributorId,
     ) {
-        thingDefinitions.literals.forEach {
+        thingsCommand.literals.forEach {
             if (it.key.isTempId && it.key in validatedIds) {
                 lookup[it.key] = unsafeLiteralUseCases.create(
                     CreateLiteralUseCase.CreateCommand(
@@ -118,12 +118,12 @@ class SubgraphCreator(
     }
 
     private fun createPredicates(
-        thingDefinitions: CreateThingsCommand,
+        thingsCommand: CreateThingsCommand,
         validatedIds: Map<String, Either<String, Thing>>,
         contributorId: ContributorId,
         lookup: MutableMap<String, ThingId>,
     ) {
-        thingDefinitions.predicates.forEach {
+        thingsCommand.predicates.forEach {
             if (it.key.isTempId && it.key in validatedIds) {
                 val predicate = unsafePredicateUseCases.create(
                     CreatePredicateUseCase.CreateCommand(
@@ -153,12 +153,12 @@ class SubgraphCreator(
     }
 
     private fun createLists(
-        thingDefinitions: CreateThingsCommand,
+        thingsCommand: CreateThingsCommand,
         validatedIds: Map<String, Either<String, Thing>>,
         lookup: MutableMap<String, ThingId>,
         contributorId: ContributorId,
     ) {
-        val lists = thingDefinitions.lists.filter { it.key.isTempId && it.key in validatedIds }
+        val lists = thingsCommand.lists.filter { it.key.isTempId && it.key in validatedIds }
         // create all lists without contents first, so other lists can reference them
         lists.forEach {
             lookup[it.key] = listService.create(

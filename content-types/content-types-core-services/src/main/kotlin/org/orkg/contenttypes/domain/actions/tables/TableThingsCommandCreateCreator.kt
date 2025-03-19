@@ -1,9 +1,9 @@
-package org.orkg.contenttypes.domain.actions.rosettastone.statements
+package org.orkg.contenttypes.domain.actions.tables
 
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.domain.actions.CreateRosettaStoneStatementCommand
+import org.orkg.contenttypes.domain.actions.CreateTableCommand
 import org.orkg.contenttypes.domain.actions.SubgraphCreator
-import org.orkg.contenttypes.domain.actions.rosettastone.statements.CreateRosettaStoneStatementAction.State
+import org.orkg.contenttypes.domain.actions.tables.CreateTableAction.State
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.UnsafeClassUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
@@ -12,9 +12,9 @@ import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.StatementRepository
 
-class RosettaStoneStatementThingDefinitionCreateCreator(
+class TableThingsCommandCreateCreator(
     private val subgraphCreator: SubgraphCreator,
-) : CreateRosettaStoneStatementAction {
+) : CreateTableAction {
     constructor(
         unsafeClassUseCases: UnsafeClassUseCases,
         unsafeResourceUseCases: UnsafeResourceUseCases,
@@ -35,15 +35,15 @@ class RosettaStoneStatementThingDefinitionCreateCreator(
         )
     )
 
-    override fun invoke(command: CreateRosettaStoneStatementCommand, state: State): State {
-        val tempId2Thing: MutableMap<String, ThingId> = mutableMapOf()
+    override fun invoke(command: CreateTableCommand, state: State): State {
+        val tempIdToThing = mutableMapOf<String, ThingId>()
         subgraphCreator.createThings(
-            thingDefinitions = command,
+            thingsCommand = command,
             validatedIds = state.validatedIds,
             contributorId = command.contributorId,
             extractionMethod = command.extractionMethod,
-            lookup = tempId2Thing
+            lookup = tempIdToThing
         )
-        return state.copy(tempId2Thing = tempId2Thing)
+        return state.copy(tempIdToThing = tempIdToThing)
     }
 }

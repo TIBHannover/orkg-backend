@@ -30,13 +30,13 @@ internal class TemplateInstancePropertyValueUpdaterUnitTest : MockkBaseTest {
         val state = UpdateTemplateInstanceState(
             statementsToAdd = setOf(BakedStatement("R123", "P123", "L123"))
         )
-        val thingDefinitions = command.copy(literals = state.literals)
+        val thingsCommand = command.copy(literals = state.literals)
 
         every {
             subgraphCreator.createThingsAndStatements(
                 contributorId = command.contributorId,
                 extractionMethod = command.extractionMethod,
-                thingDefinitions = thingDefinitions,
+                thingsCommand = thingsCommand,
                 validatedIds = state.validatedIds,
                 bakedStatements = state.statementsToAdd
             )
@@ -58,7 +58,7 @@ internal class TemplateInstancePropertyValueUpdaterUnitTest : MockkBaseTest {
             subgraphCreator.createThingsAndStatements(
                 contributorId = command.contributorId,
                 extractionMethod = command.extractionMethod,
-                thingDefinitions = thingDefinitions,
+                thingsCommand = thingsCommand,
                 validatedIds = state.validatedIds,
                 bakedStatements = state.statementsToAdd
             )

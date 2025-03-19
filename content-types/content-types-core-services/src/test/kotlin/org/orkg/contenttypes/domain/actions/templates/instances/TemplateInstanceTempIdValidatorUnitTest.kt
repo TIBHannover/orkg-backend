@@ -29,7 +29,7 @@ internal class TemplateInstanceTempIdValidatorUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given a template instance update command, when it has no new thing definitions, it returns success`() {
+    fun `Given a template instance update command, when it has no new thing commands, it returns success`() {
         val command = updateTemplateInstanceCommand().copy(
             resources = emptyMap(),
             predicates = emptyMap(),

@@ -56,7 +56,7 @@ class AbstractRosettaStoneStatementPropertyValueValidator(
 
     fun validate(
         templateProperties: List<TemplateProperty>,
-        thingDefinitions: Map<String, CreateThingCommandPart>,
+        thingsCommand: Map<String, CreateThingCommandPart>,
         validatedIdsIn: Map<String, Either<String, Thing>>,
         tempIds: Set<String>,
         templateId: ThingId,
@@ -89,7 +89,7 @@ class AbstractRosettaStoneStatementPropertyValueValidator(
                 val `object` = validateId(objectId, tempIds, validatedIds)
 
                 `object`.onLeft { tempId ->
-                    validateObject(property, tempId, thingDefinitions[tempId]!!)
+                    validateObject(property, tempId, thingsCommand[tempId]!!)
                 }
 
                 `object`.onRight { thing ->

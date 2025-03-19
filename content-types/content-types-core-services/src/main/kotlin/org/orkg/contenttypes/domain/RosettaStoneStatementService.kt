@@ -25,10 +25,10 @@ import org.orkg.contenttypes.domain.actions.rosettastone.statements.RosettaStone
 import org.orkg.contenttypes.domain.actions.rosettastone.statements.RosettaStoneStatementTempIdUpdateValidator
 import org.orkg.contenttypes.domain.actions.rosettastone.statements.RosettaStoneStatementTemplateCreateValidator
 import org.orkg.contenttypes.domain.actions.rosettastone.statements.RosettaStoneStatementTemplateUpdateValidator
-import org.orkg.contenttypes.domain.actions.rosettastone.statements.RosettaStoneStatementThingDefinitionCreateCreator
-import org.orkg.contenttypes.domain.actions.rosettastone.statements.RosettaStoneStatementThingDefinitionCreateValidator
-import org.orkg.contenttypes.domain.actions.rosettastone.statements.RosettaStoneStatementThingDefinitionUpdateCreator
-import org.orkg.contenttypes.domain.actions.rosettastone.statements.RosettaStoneStatementThingDefinitionUpdateValidator
+import org.orkg.contenttypes.domain.actions.rosettastone.statements.RosettaStoneStatementThingsCommandCreateCreator
+import org.orkg.contenttypes.domain.actions.rosettastone.statements.RosettaStoneStatementThingsCommandCreateValidator
+import org.orkg.contenttypes.domain.actions.rosettastone.statements.RosettaStoneStatementThingsCommandUpdateCreator
+import org.orkg.contenttypes.domain.actions.rosettastone.statements.RosettaStoneStatementThingsCommandUpdateValidator
 import org.orkg.contenttypes.domain.actions.rosettastone.statements.RosettaStoneStatementUpdater
 import org.orkg.contenttypes.input.RosettaStoneStatementUseCases
 import org.orkg.contenttypes.input.RosettaStoneTemplateUseCases
@@ -109,9 +109,9 @@ class RosettaStoneStatementService(
             RosettaStoneStatementContextValidator(resourceRepository),
             ObservatoryValidator(observatoryRepository, { it.observatories }),
             OrganizationValidator(organizationRepository, { it.organizations }),
-            RosettaStoneStatementThingDefinitionCreateValidator(thingRepository, classRepository),
+            RosettaStoneStatementThingsCommandCreateValidator(thingRepository, classRepository),
             RosettaStoneStatementPropertyValueCreateValidator(thingRepository, statementRepository, classHierarchyRepository, this),
-            RosettaStoneStatementThingDefinitionCreateCreator(unsafeClassUseCases, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, unsafePredicateUseCases, statementRepository, listService),
+            RosettaStoneStatementThingsCommandCreateCreator(unsafeClassUseCases, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, unsafePredicateUseCases, statementRepository, listService),
             RosettaStoneStatementCreator(repository, thingRepository, clock)
         )
         return steps.execute(command, CreateRosettaStoneStatementState()).rosettaStoneStatementId!!
@@ -125,9 +125,9 @@ class RosettaStoneStatementService(
             RosettaStoneStatementTemplateUpdateValidator(rosettaStoneTemplateService),
             ObservatoryValidator(observatoryRepository, { it.observatories }, { it.observatories }),
             OrganizationValidator(organizationRepository, { it.organizations }, { it.organizations }),
-            RosettaStoneStatementThingDefinitionUpdateValidator(thingRepository, classRepository),
+            RosettaStoneStatementThingsCommandUpdateValidator(thingRepository, classRepository),
             RosettaStoneStatementPropertyValueUpdateValidator(thingRepository, statementRepository, classHierarchyRepository, this),
-            RosettaStoneStatementThingDefinitionUpdateCreator(unsafeClassUseCases, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, unsafePredicateUseCases, statementRepository, listService),
+            RosettaStoneStatementThingsCommandUpdateCreator(unsafeClassUseCases, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, unsafePredicateUseCases, statementRepository, listService),
             RosettaStoneStatementUpdater(repository, thingRepository, clock)
         )
         return steps.execute(command, UpdateRosettaStoneStatementState()).rosettaStoneStatementId!!

@@ -40,8 +40,8 @@ class PaperContributionCreator(
                 paperId = state.paperId!!,
                 contributorId = command.contributorId,
                 extractionMethod = command.extractionMethod,
-                thingDefinitions = it,
-                contributionDefinitions = it.contributions,
+                thingsCommand = it,
+                contributionCommands = it.contributions,
                 validatedIds = state.validatedIds,
                 bakedStatements = state.bakedStatements
             )

@@ -56,7 +56,7 @@ class TemplateInstancePropertyValueUpdater(
                 subgraphCreator.createThingsAndStatements(
                     contributorId = command.contributorId,
                     extractionMethod = command.extractionMethod,
-                    thingDefinitions = command.copy(literals = state.literals),
+                    thingsCommand = command.copy(literals = state.literals),
                     validatedIds = validatedIds,
                     bakedStatements = statementsToAdd
                 )

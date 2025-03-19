@@ -9,20 +9,20 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.orkg.common.Either
 import org.orkg.common.testing.fixtures.MockkBaseTest
-import org.orkg.contenttypes.domain.actions.ThingDefinitionValidator
+import org.orkg.contenttypes.domain.actions.ThingsCommandValidator
 import org.orkg.contenttypes.domain.actions.UpdateTemplateInstanceState
 import org.orkg.contenttypes.input.testing.fixtures.updateTemplateInstanceCommand
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.testing.fixtures.createResource
 
 @Nested
-internal class TemplateInstanceThingDefinitionValidatorUnitTest : MockkBaseTest {
-    private val thingDefinitionValidator: ThingDefinitionValidator = mockk()
+internal class TemplateInstanceThingsCommandValidatorUnitTest : MockkBaseTest {
+    private val thingsCommandValidator: ThingsCommandValidator = mockk()
 
-    private val templateInstanceThingDefinitionValidator = TemplateInstanceThingDefinitionValidator(thingDefinitionValidator)
+    private val templateInstanceThingsCommandValidator = TemplateInstanceThingsCommandValidator(thingsCommandValidator)
 
     @Test
-    fun `Given a template instance update command, when validating its thing definitions, it returns success`() {
+    fun `Given a template instance update command, when validating its thing commands, it returns success`() {
         val command = updateTemplateInstanceCommand()
         val state = UpdateTemplateInstanceState()
 
@@ -31,14 +31,14 @@ internal class TemplateInstanceThingDefinitionValidatorUnitTest : MockkBaseTest 
         )
 
         every {
-            thingDefinitionValidator.validateThingDefinitions(
-                thingDefinitions = command,
+            thingsCommandValidator.validate(
+                thingsCommand = command,
                 tempIds = state.tempIds,
                 validatedIds = state.validatedIds
             )
         } returns validatedIds
 
-        val result = templateInstanceThingDefinitionValidator(command, state)
+        val result = templateInstanceThingsCommandValidator(command, state)
 
         result.asClue {
             it.template shouldBe state.template
@@ -51,8 +51,8 @@ internal class TemplateInstanceThingDefinitionValidatorUnitTest : MockkBaseTest 
         }
 
         verify(exactly = 1) {
-            thingDefinitionValidator.validateThingDefinitions(
-                thingDefinitions = command,
+            thingsCommandValidator.validate(
+                thingsCommand = command,
                 tempIds = state.tempIds,
                 validatedIds = state.validatedIds
             )

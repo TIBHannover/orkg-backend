@@ -24,14 +24,14 @@ import java.util.Optional
 import java.util.UUID
 
 @Nested
-internal class ContributionThingDefinitionValidatorUnitTest : MockkBaseTest {
+internal class ContributionThingsCommandValidatorUnitTest : MockkBaseTest {
     private val thingRepository: ThingRepository = mockk()
     private val classRepository: ClassRepository = mockk()
 
-    private val contributionThingDefinitionValidator = ContributionThingDefinitionValidator(thingRepository, classRepository)
+    private val contributionThingsCommandValidator = ContributionThingsCommandValidator(thingRepository, classRepository)
 
     @Test
-    fun `Given a contribution create command, when validating its thing definitions, it returns success`() {
+    fun `Given a contribution create command, when validating its thing commands, it returns success`() {
         val command = createContributionCommand()
         val state = ContributionState()
 
@@ -39,7 +39,7 @@ internal class ContributionThingDefinitionValidatorUnitTest : MockkBaseTest {
 
         every { thingRepository.findById(`class`.id) } returns Optional.of(`class`)
 
-        val result = contributionThingDefinitionValidator(command, state)
+        val result = contributionThingsCommandValidator(command, state)
 
         result.asClue {
             it.tempIds.size shouldBe 0
@@ -72,7 +72,7 @@ internal class ContributionThingDefinitionValidatorUnitTest : MockkBaseTest {
         )
         val state = ContributionState()
 
-        val result = contributionThingDefinitionValidator(command, state)
+        val result = contributionThingsCommandValidator(command, state)
 
         result.asClue {
             it.tempIds.size shouldBe 0

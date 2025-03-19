@@ -27,7 +27,7 @@ class RosettaStoneStatementPropertyValueCreateValidator(
     override fun invoke(command: CreateRosettaStoneStatementCommand, state: State): State {
         val validatedIds = abstractRosettaStoneStatementPropertyValueValidator.validate(
             templateProperties = state.rosettaStoneTemplate!!.properties,
-            thingDefinitions = command.all(),
+            thingsCommand = command.all(),
             validatedIdsIn = state.validatedIds,
             tempIds = state.tempIds,
             templateId = command.templateId,

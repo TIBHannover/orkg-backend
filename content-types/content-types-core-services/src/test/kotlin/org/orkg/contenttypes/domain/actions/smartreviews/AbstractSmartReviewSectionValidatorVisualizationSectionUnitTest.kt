@@ -16,7 +16,7 @@ import java.util.Optional
 
 internal class AbstractSmartReviewSectionValidatorVisualizationSectionUnitTest : AbstractSmartReviewSectionValidatorUnitTest() {
     @Test
-    fun `Given a visualization section definition, when validating, it returns success`() {
+    fun `Given a visualization section command, when validating, it returns success`() {
         val section = smartReviewVisualizationSectionCommand()
         val validIds = mutableSetOf<ThingId>()
         val resource = createResource(section.visualization!!, classes = setOf(Classes.visualization))
@@ -31,7 +31,7 @@ internal class AbstractSmartReviewSectionValidatorVisualizationSectionUnitTest :
     }
 
     @Test
-    fun `Given a visualization section definition, when validating, it does not validate the visualization id when it is not set`() {
+    fun `Given a visualization section command, when validating, it does not validate the visualization id when it is not set`() {
         val section = smartReviewVisualizationSectionCommand().copy(visualization = null)
         val validIds = mutableSetOf<ThingId>()
 
@@ -41,7 +41,7 @@ internal class AbstractSmartReviewSectionValidatorVisualizationSectionUnitTest :
     }
 
     @Test
-    fun `Given a visualization section definition, when validating, it does not check already valid ids`() {
+    fun `Given a visualization section command, when validating, it does not check already valid ids`() {
         val section = smartReviewVisualizationSectionCommand()
         val validIds = mutableSetOf(section.visualization!!)
 
@@ -51,7 +51,7 @@ internal class AbstractSmartReviewSectionValidatorVisualizationSectionUnitTest :
     }
 
     @Test
-    fun `Given a visualization section definition, when heading is invalid, it throws an exception`() {
+    fun `Given a visualization section command, when heading is invalid, it throws an exception`() {
         val section = smartReviewVisualizationSectionCommand().copy(
             heading = "a".repeat(MAX_LABEL_LENGTH + 1)
         )
@@ -61,7 +61,7 @@ internal class AbstractSmartReviewSectionValidatorVisualizationSectionUnitTest :
     }
 
     @Test
-    fun `Given a visualization section definition, when resource is not a visualization, it throws an exception`() {
+    fun `Given a visualization section command, when resource is not a visualization, it throws an exception`() {
         val section = smartReviewVisualizationSectionCommand()
         val validIds = mutableSetOf<ThingId>()
         val resource = createResource(section.visualization!!, classes = setOf(Classes.comparison))
@@ -74,7 +74,7 @@ internal class AbstractSmartReviewSectionValidatorVisualizationSectionUnitTest :
     }
 
     @Test
-    fun `Given a visualization section definition, when visualization does not exist, it throws an exception`() {
+    fun `Given a visualization section command, when visualization does not exist, it throws an exception`() {
         val section = smartReviewVisualizationSectionCommand()
         val validIds = mutableSetOf<ThingId>()
 

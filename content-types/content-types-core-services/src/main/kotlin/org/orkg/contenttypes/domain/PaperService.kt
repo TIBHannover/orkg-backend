@@ -30,7 +30,7 @@ import org.orkg.contenttypes.domain.actions.contributions.ContributionContentsCr
 import org.orkg.contenttypes.domain.actions.contributions.ContributionContentsValidator
 import org.orkg.contenttypes.domain.actions.contributions.ContributionPaperValidator
 import org.orkg.contenttypes.domain.actions.contributions.ContributionTempIdValidator
-import org.orkg.contenttypes.domain.actions.contributions.ContributionThingDefinitionValidator
+import org.orkg.contenttypes.domain.actions.contributions.ContributionThingsCommandValidator
 import org.orkg.contenttypes.domain.actions.execute
 import org.orkg.contenttypes.domain.actions.papers.PaperAuthorListCreateValidator
 import org.orkg.contenttypes.domain.actions.papers.PaperAuthorListCreator
@@ -56,7 +56,7 @@ import org.orkg.contenttypes.domain.actions.papers.PaperResourceUpdater
 import org.orkg.contenttypes.domain.actions.papers.PaperSDGCreator
 import org.orkg.contenttypes.domain.actions.papers.PaperSDGUpdater
 import org.orkg.contenttypes.domain.actions.papers.PaperTempIdValidator
-import org.orkg.contenttypes.domain.actions.papers.PaperThingDefinitionValidator
+import org.orkg.contenttypes.domain.actions.papers.PaperThingsCommandValidator
 import org.orkg.contenttypes.domain.actions.papers.PaperTitleCreateValidator
 import org.orkg.contenttypes.domain.actions.papers.PaperTitleUpdateValidator
 import org.orkg.contenttypes.domain.actions.papers.PaperVersionArchiver
@@ -181,7 +181,7 @@ class PaperService(
             SDGValidator({ it.sustainableDevelopmentGoals }),
             ResourceValidator(resourceRepository, { it.mentionings }),
             PaperAuthorListCreateValidator(resourceRepository, statementRepository),
-            PaperThingDefinitionValidator(thingRepository, classRepository),
+            PaperThingsCommandValidator(thingRepository, classRepository),
             PaperContributionValidator(thingRepository),
             PaperResourceCreator(unsafeResourceUseCases),
             PaperIdentifierCreator(unsafeStatementUseCases, unsafeLiteralUseCases),
@@ -199,7 +199,7 @@ class PaperService(
         val steps = listOf(
             ContributionTempIdValidator(),
             ContributionPaperValidator(resourceRepository),
-            ContributionThingDefinitionValidator(thingRepository, classRepository),
+            ContributionThingsCommandValidator(thingRepository, classRepository),
             ContributionContentsValidator(thingRepository),
             ContributionContentsCreator(unsafeClassUseCases, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, unsafePredicateUseCases, statementRepository, listService)
         )

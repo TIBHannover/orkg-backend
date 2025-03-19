@@ -16,7 +16,7 @@ import java.util.Optional
 
 internal class AbstractSmartReviewSectionValidatorComparisonSectionUnitTest : AbstractSmartReviewSectionValidatorUnitTest() {
     @Test
-    fun `Given a comparison section definition, when validating, it returns success`() {
+    fun `Given a comparison section command, when validating, it returns success`() {
         val section = smartReviewComparisonSectionCommand()
         val validIds = mutableSetOf<ThingId>()
         val resource = createResource(section.comparison!!, classes = setOf(Classes.comparison))
@@ -31,7 +31,7 @@ internal class AbstractSmartReviewSectionValidatorComparisonSectionUnitTest : Ab
     }
 
     @Test
-    fun `Given a comparison section definition for a published comparison, when validating, it returns success`() {
+    fun `Given a comparison section command for a published comparison, when validating, it returns success`() {
         val section = smartReviewComparisonSectionCommand()
         val validIds = mutableSetOf<ThingId>()
         val resource = createResource(section.comparison!!, classes = setOf(Classes.comparisonPublished))
@@ -46,7 +46,7 @@ internal class AbstractSmartReviewSectionValidatorComparisonSectionUnitTest : Ab
     }
 
     @Test
-    fun `Given a comparison section definition, when validating, it does not validate the comparison id when it is not set`() {
+    fun `Given a comparison section command, when validating, it does not validate the comparison id when it is not set`() {
         val section = smartReviewComparisonSectionCommand().copy(comparison = null)
         val validIds = mutableSetOf<ThingId>()
 
@@ -56,7 +56,7 @@ internal class AbstractSmartReviewSectionValidatorComparisonSectionUnitTest : Ab
     }
 
     @Test
-    fun `Given a comparison section definition, when validating, it does not check already valid ids`() {
+    fun `Given a comparison section command, when validating, it does not check already valid ids`() {
         val section = smartReviewComparisonSectionCommand()
         val validIds = mutableSetOf(section.comparison!!)
 
@@ -66,7 +66,7 @@ internal class AbstractSmartReviewSectionValidatorComparisonSectionUnitTest : Ab
     }
 
     @Test
-    fun `Given a comparison section definition, when heading is invalid, it throws an exception`() {
+    fun `Given a comparison section command, when heading is invalid, it throws an exception`() {
         val section = smartReviewComparisonSectionCommand().copy(
             heading = "a".repeat(MAX_LABEL_LENGTH + 1)
         )
@@ -76,7 +76,7 @@ internal class AbstractSmartReviewSectionValidatorComparisonSectionUnitTest : Ab
     }
 
     @Test
-    fun `Given a comparison section definition, when resource is not a comparison, it throws an exception`() {
+    fun `Given a comparison section command, when resource is not a comparison, it throws an exception`() {
         val section = smartReviewComparisonSectionCommand()
         val validIds = mutableSetOf<ThingId>()
         val resource = createResource(section.comparison!!, classes = setOf(Classes.visualization))
@@ -89,7 +89,7 @@ internal class AbstractSmartReviewSectionValidatorComparisonSectionUnitTest : Ab
     }
 
     @Test
-    fun `Given a comparison section definition, when comparison does not exist, it throws an exception`() {
+    fun `Given a comparison section command, when comparison does not exist, it throws an exception`() {
         val section = smartReviewComparisonSectionCommand()
         val validIds = mutableSetOf<ThingId>()
 

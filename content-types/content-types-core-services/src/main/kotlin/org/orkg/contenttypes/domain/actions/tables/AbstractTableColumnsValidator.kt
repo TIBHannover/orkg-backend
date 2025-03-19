@@ -15,7 +15,7 @@ class AbstractTableColumnsValidator(
     override val thingRepository: ThingRepository,
 ) : ThingIdValidator {
     internal fun validate(
-        thingDefinitions: Map<String, CreateThingCommandPart>,
+        thingsCommand: Map<String, CreateThingCommandPart>,
         rows: List<RowCommand>,
         tempIds: Set<String>,
         validationCacheIn: Map<String, Either<String, Thing>>,
@@ -25,8 +25,8 @@ class AbstractTableColumnsValidator(
             val `object` = validateId(id!!, tempIds, validationCache)
 
             `object`.onLeft { tempId ->
-                val definition = thingDefinitions[tempId]!!
-                if (definition !is CreateLiteralCommandPart || Literals.XSD.fromString(definition.dataType) != Literals.XSD.STRING) {
+                val command = thingsCommand[tempId]!!
+                if (command !is CreateLiteralCommandPart || Literals.XSD.fromString(command.dataType) != Literals.XSD.STRING) {
                     throw TableHeaderValueMustBeLiteral(index)
                 }
             }

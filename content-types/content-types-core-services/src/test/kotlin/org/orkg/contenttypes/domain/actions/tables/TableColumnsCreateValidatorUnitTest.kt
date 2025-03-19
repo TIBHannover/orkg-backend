@@ -20,7 +20,7 @@ internal class TableColumnsCreateValidatorUnitTest : MockkBaseTest {
     private val tableColumnsCreateValidator = TableColumnsCreateValidator(abstractTableColumnsValidator)
 
     @Test
-    fun `Given a table create command, when validating its thing definitions, it returns success`() {
+    fun `Given a table create command, when validating its thing commands, it returns success`() {
         val command = createTableCommand()
         val state = CreateTableState(
             tempIds = setOf("#temp1"),
@@ -36,7 +36,7 @@ internal class TableColumnsCreateValidatorUnitTest : MockkBaseTest {
 
         every {
             abstractTableColumnsValidator.validate(
-                thingDefinitions = command.all(),
+                thingsCommand = command.all(),
                 rows = command.rows,
                 tempIds = state.tempIds,
                 validationCacheIn = state.validatedIds
@@ -56,7 +56,7 @@ internal class TableColumnsCreateValidatorUnitTest : MockkBaseTest {
 
         verify(exactly = 1) {
             abstractTableColumnsValidator.validate(
-                thingDefinitions = command.all(),
+                thingsCommand = command.all(),
                 rows = command.rows,
                 tempIds = state.tempIds,
                 validationCacheIn = state.validatedIds

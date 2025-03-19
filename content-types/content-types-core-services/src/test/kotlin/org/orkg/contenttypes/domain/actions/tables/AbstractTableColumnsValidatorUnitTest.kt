@@ -36,7 +36,7 @@ internal class AbstractTableColumnsValidatorUnitTest : MockkBaseTest {
     fun `Given a list of table rows, when validating column definitions, it returns success`() {
         val l123 = createLiteral(ThingId("L123"))
         val l456 = createLiteral(ThingId("L456"))
-        val thingDefinitions = mapOf<String, CreateThingCommandPart>(
+        val thingsCommand = mapOf<String, CreateThingCommandPart>(
             "#temp1" to CreateLiteralCommandPart("header1")
         )
         val rows = listOf(
@@ -53,7 +53,7 @@ internal class AbstractTableColumnsValidatorUnitTest : MockkBaseTest {
 
         every { thingRepository.findById(ThingId("L456")) } returns Optional.of(l456)
 
-        val result = abstractTableColumnsValidator.validate(thingDefinitions, rows, tempIds, validatedIds)
+        val result = abstractTableColumnsValidator.validate(thingsCommand, rows, tempIds, validatedIds)
 
         result shouldBe mapOf(
             "L123" to Either.right(l123),
@@ -66,7 +66,7 @@ internal class AbstractTableColumnsValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a list of table rows, when validating column definitions and temp id cannot be resolved, it throws an exception`() {
-        val thingDefinitions = emptyMap<String, CreateThingCommandPart>()
+        val thingsCommand = emptyMap<String, CreateThingCommandPart>()
         val rows = listOf(
             RowCommand(
                 label = "header",
@@ -77,13 +77,13 @@ internal class AbstractTableColumnsValidatorUnitTest : MockkBaseTest {
         val validatedIds = emptyMap<String, Either<String, Thing>>()
 
         shouldThrow<ThingNotDefined> {
-            abstractTableColumnsValidator.validate(thingDefinitions, rows, tempIds, validatedIds)
+            abstractTableColumnsValidator.validate(thingsCommand, rows, tempIds, validatedIds)
         }
     }
 
     @Test
     fun `Given a list of table rows, when validating column definitions and thing id cannot be resolved, it throws an exception`() {
-        val thingDefinitions = emptyMap<String, CreateThingCommandPart>()
+        val thingsCommand = emptyMap<String, CreateThingCommandPart>()
         val rows = listOf(
             RowCommand(
                 label = "header",
@@ -96,7 +96,7 @@ internal class AbstractTableColumnsValidatorUnitTest : MockkBaseTest {
         every { thingRepository.findById(ThingId("L123")) } returns Optional.empty()
 
         shouldThrow<ThingNotFound> {
-            abstractTableColumnsValidator.validate(thingDefinitions, rows, tempIds, validatedIds)
+            abstractTableColumnsValidator.validate(thingsCommand, rows, tempIds, validatedIds)
         }
 
         verify(exactly = 1) { thingRepository.findById(ThingId("L123")) }
@@ -105,7 +105,7 @@ internal class AbstractTableColumnsValidatorUnitTest : MockkBaseTest {
     @ParameterizedTest
     @MethodSource("nonLiteralThing")
     fun `Given a list of table rows, when validating column definitions and header row contains a non-literal thing, it throws an exception`(thing: Thing) {
-        val thingDefinitions = emptyMap<String, CreateThingCommandPart>()
+        val thingsCommand = emptyMap<String, CreateThingCommandPart>()
         val rows = listOf(
             RowCommand(
                 label = "header",
@@ -118,7 +118,7 @@ internal class AbstractTableColumnsValidatorUnitTest : MockkBaseTest {
         every { thingRepository.findById(thing.id) } returns Optional.of(thing)
 
         shouldThrow<TableHeaderValueMustBeLiteral> {
-            abstractTableColumnsValidator.validate(thingDefinitions, rows, tempIds, validatedIds)
+            abstractTableColumnsValidator.validate(thingsCommand, rows, tempIds, validatedIds)
         }
 
         verify(exactly = 1) { thingRepository.findById(thing.id) }
@@ -127,7 +127,7 @@ internal class AbstractTableColumnsValidatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a list of table rows, when validating column definitions and header row contains a non-string literal, it throws an exception`() {
         val literal = createLiteral(label = "true", datatype = Literals.XSD.BOOLEAN.prefixedUri)
-        val thingDefinitions = emptyMap<String, CreateThingCommandPart>()
+        val thingsCommand = emptyMap<String, CreateThingCommandPart>()
         val rows = listOf(
             RowCommand(
                 label = "header",
@@ -140,7 +140,7 @@ internal class AbstractTableColumnsValidatorUnitTest : MockkBaseTest {
         every { thingRepository.findById(literal.id) } returns Optional.of(literal)
 
         shouldThrow<TableHeaderValueMustBeLiteral> {
-            abstractTableColumnsValidator.validate(thingDefinitions, rows, tempIds, validatedIds)
+            abstractTableColumnsValidator.validate(thingsCommand, rows, tempIds, validatedIds)
         }
 
         verify(exactly = 1) { thingRepository.findById(literal.id) }

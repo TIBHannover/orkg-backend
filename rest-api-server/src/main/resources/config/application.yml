@@ -11,7 +11,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8888/realms/orkg
+          issuer-uri: "${orkg.keycloak.host}/realms/${orkg.keycloak.realm}"
   cache:
     type: caffeine
     caffeine:
@@ -81,8 +81,8 @@ orkg:
   oauth:
     legacy-client-id: "orkg-client"
     legacy-client-secret: "secret"
-    token-endpoint: "http://localhost:8888/realms/orkg/protocol/openid-connect/token"
-    registration-endpoint: "http://localhost:8888/realms/orkg/clients-registrations/openid-connect"
+    token-endpoint: "${orkg.keycloak.host}/realms/${orkg.keycloak.realm}/protocol/openid-connect/token"
+    registration-endpoint: "${orkg.keycloak.host}/realms/${orkg.keycloak.realm}/clients-registrations/openid-connect"
 management:
   endpoints:
     enabled-by-default: false

@@ -116,8 +116,3 @@ interface StatementWriteRepository {
 interface StatementRepository :
     StatementReadRepository,
     StatementWriteRepository
-
-data class OwnershipInfo(
-    val statementId: StatementId,
-    val owner: ContributorId,
-)

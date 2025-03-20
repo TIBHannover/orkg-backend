@@ -56,6 +56,37 @@ class ContentTypeService(
             authorName = authorName,
         ).pmap { it.toContentType() }
 
+    override fun findAllAsResource(
+        pageable: Pageable,
+        classes: Set<ContentTypeClass>,
+        visibility: VisibilityFilter?,
+        createdBy: ContributorId?,
+        createdAtStart: OffsetDateTime?,
+        createdAtEnd: OffsetDateTime?,
+        observatoryId: ObservatoryId?,
+        organizationId: OrganizationId?,
+        researchField: ThingId?,
+        includeSubfields: Boolean,
+        sustainableDevelopmentGoal: ThingId?,
+        authorId: ThingId?,
+        authorName: String?,
+    ): Page<Resource> =
+        repository.findAll(
+            pageable = pageable,
+            classes = classes,
+            visibility = visibility,
+            createdBy = createdBy,
+            createdAtStart = createdAtStart,
+            createdAtEnd = createdAtEnd,
+            observatoryId = observatoryId,
+            organizationId = organizationId,
+            researchField = researchField,
+            includeSubfields = includeSubfields,
+            sustainableDevelopmentGoal = sustainableDevelopmentGoal,
+            authorId = authorId,
+            authorName = authorName,
+        )
+
     internal fun Resource.toContentType(): ContentType =
         when {
             Classes.paper in classes -> paperService.run { toPaper() }

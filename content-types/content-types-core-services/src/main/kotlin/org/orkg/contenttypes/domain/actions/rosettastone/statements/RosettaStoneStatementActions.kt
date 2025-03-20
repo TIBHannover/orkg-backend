@@ -15,7 +15,7 @@ interface CreateRosettaStoneStatementAction : Action<CreateRosettaStoneStatement
         val rosettaStoneStatementId: ThingId? = null,
         val tempIds: Set<String> = emptySet(),
         val validatedIds: Map<String, Either<String, Thing>> = emptyMap(),
-        val tempId2Thing: Map<String, ThingId> = emptyMap(),
+        val tempIdToThing: Map<String, ThingId> = emptyMap(),
     )
 }
 
@@ -26,6 +26,6 @@ interface UpdateRosettaStoneStatementAction : Action<UpdateRosettaStoneStatement
         val rosettaStoneStatementId: ThingId? = null,
         val tempIds: Set<String> = emptySet(),
         val validatedIds: Map<String, Either<String, Thing>> = emptyMap(),
-        val tempId2Thing: Map<String, ThingId> = emptyMap(),
+        val tempIdToThing: Map<String, ThingId> = emptyMap(),
     )
 }

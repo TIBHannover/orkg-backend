@@ -44,14 +44,14 @@ class StatementCollectionPropertyUpdater(
         objects: Set<ThingId>,
     ) {
         // Find out what already exists and what needs to be created or removed
-        val objectId2statementId = statements.wherePredicate(predicateId)
+        val objectIdToStatementId = statements.wherePredicate(predicateId)
             .associate { it.`object`.id to it.id }
-        val toRemove = objectId2statementId.keys - objects
-        val toAdd = objects - objectId2statementId.keys
+        val toRemove = objectIdToStatementId.keys - objects
+        val toAdd = objects - objectIdToStatementId.keys
 
         // Remove unwanted object statements
         if (toRemove.isNotEmpty()) {
-            statementService.deleteAllById(toRemove.map { objectId2statementId[it]!! }.toSet())
+            statementService.deleteAllById(toRemove.map { objectIdToStatementId[it]!! }.toSet())
         }
 
         // Create new object statements
@@ -158,14 +158,14 @@ class StatementCollectionPropertyUpdater(
         datatype: String = Literals.XSD.STRING.prefixedUri,
     ) {
         // Find out what already exists and what needs to be created or removed
-        val objectId2statementId = statements.wherePredicate(predicateId)
+        val objectIdToStatementId = statements.wherePredicate(predicateId)
             .groupBy { it.`object`.label }
-        val toRemove = objectId2statementId.keys - literals
-        val toAdd = literals - objectId2statementId.keys
+        val toRemove = objectIdToStatementId.keys - literals
+        val toAdd = literals - objectIdToStatementId.keys
 
         // Remove unwanted object statements
         if (toRemove.isNotEmpty()) {
-            statementService.deleteAllById(toRemove.map { objectId2statementId[it]!! }.flatten().map { it.id }.toSet())
+            statementService.deleteAllById(toRemove.map { objectIdToStatementId[it]!! }.flatten().map { it.id }.toSet())
         }
 
         // Create new object statements

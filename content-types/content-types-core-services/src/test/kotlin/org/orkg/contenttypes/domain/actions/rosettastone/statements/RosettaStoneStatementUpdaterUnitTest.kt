@@ -62,7 +62,7 @@ internal class RosettaStoneStatementUpdaterUnitTest : MockkBaseTest {
                 "#temp4" to Either.left("#temp4"),
                 "#temp5" to Either.left("#temp5")
             ),
-            tempId2Thing = mapOf(
+            tempIdToThing = mapOf(
                 "#temp1" to ThingId("Temp1"),
                 "#temp2" to ThingId("Temp2"),
                 "#temp3" to ThingId("Temp3"),
@@ -93,7 +93,7 @@ internal class RosettaStoneStatementUpdaterUnitTest : MockkBaseTest {
             it.rosettaStoneStatementId shouldBe rosettaStoneStatementVersionId
             it.tempIds shouldBe state.tempIds
             it.validatedIds shouldBe state.validatedIds
-            it.tempId2Thing shouldBe state.tempId2Thing
+            it.tempIdToThing shouldBe state.tempIdToThing
         }
 
         verify(exactly = 1) { rosettaStoneStatementRepository.nextIdentity() }

@@ -33,11 +33,11 @@ class LiteratureListSectionsUpdater(
     ): UpdateLiteratureListState {
         command.sections?.let { sections ->
             val oldSections = state.literatureList!!.sections.toMutableList()
-            val new2old = sections.associateWith { newSection ->
+            val newToOld = sections.associateWith { newSection ->
                 oldSections.firstOrNull { newSection.matchesLiteratureListSection(it) }?.also { oldSections.remove(it) }
             }
             val sectionIds = sections.map { newSection ->
-                new2old[newSection]?.id ?: abstractLiteratureListSectionCreator.create(command.contributorId, newSection)
+                newToOld[newSection]?.id ?: abstractLiteratureListSectionCreator.create(command.contributorId, newSection)
             }
             if (sectionIds != state.literatureList.sections.map { it.id }) {
                 statementCollectionPropertyUpdater.update(

@@ -36,11 +36,11 @@ class AbstractTemplatePropertiesUpdater(
         statements: Map<ThingId, List<GeneralStatement>>,
     ) {
         val properties = oldProperties.toMutableList()
-        val new2old = newProperties.associateWith { newProperty ->
+        val newToOld = newProperties.associateWith { newProperty ->
             properties.firstOrNull { newProperty.matchesProperty(it) }?.also { properties.remove(it) }
         }
         newProperties.forEachIndexed { index, newProperty ->
-            val oldProperty = new2old[newProperty]
+            val oldProperty = newToOld[newProperty]
             if (oldProperty != null) {
                 if (oldProperty.order != index.toLong()) {
                     abstractTemplatePropertyUpdater.update(

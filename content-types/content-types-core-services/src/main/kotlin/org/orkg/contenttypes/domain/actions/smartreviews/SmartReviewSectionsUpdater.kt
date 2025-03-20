@@ -30,11 +30,11 @@ class SmartReviewSectionsUpdater(
     override fun invoke(command: UpdateSmartReviewCommand, state: State): State {
         command.sections?.let { sections ->
             val oldSections = state.smartReview!!.sections.toMutableList()
-            val new2old = sections.associateWith { newSection ->
+            val newToOld = sections.associateWith { newSection ->
                 oldSections.firstOrNull { newSection.matchesSmartReviewSection(it) }?.also { oldSections.remove(it) }
             }
             val sectionIds = sections.map { newSection ->
-                new2old[newSection]?.id ?: abstractSmartReviewSectionCreator.create(command.contributorId, newSection)
+                newToOld[newSection]?.id ?: abstractSmartReviewSectionCreator.create(command.contributorId, newSection)
             }
             if (sectionIds != state.smartReview.sections.map { it.id }) {
                 val contributionId = state.statements.findContributionId(command.smartReviewId)!!

@@ -36,14 +36,14 @@ class RosettaStoneStatementThingsCommandUpdateCreator(
     )
 
     override fun invoke(command: UpdateRosettaStoneStatementCommand, state: State): State {
-        val tempId2Thing: MutableMap<String, ThingId> = mutableMapOf()
+        val tempIdToThing: MutableMap<String, ThingId> = mutableMapOf()
         subgraphCreator.createThings(
             thingsCommand = command,
             validatedIds = state.validatedIds,
             contributorId = command.contributorId,
             extractionMethod = command.extractionMethod,
-            lookup = tempId2Thing
+            lookup = tempIdToThing
         )
-        return state.copy(tempId2Thing = tempId2Thing)
+        return state.copy(tempIdToThing = tempIdToThing)
     }
 }

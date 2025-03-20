@@ -1,0 +1,36 @@
+= World: Access to the system, controlled.
+
+[abstract]
+*World* is an abstraction over stateful operations on the JVM, to control the "outside world" of a program,
+specifically all components that can have a side effect which could influence the behavior of another part of the system.
+These components include randomness, environment variables, time, and the file system.
+Its main use is in testing, when control is required to isolate tests, access specific code paths in an isolated and controlled manner, or ensure determinism.
+Direct access to the system is possible for more flexibility or realistic interaction, but needs to be declared explicitly.
+This project is not (and never aims to be) a full sandbox solution, and should not be used for that purpose.
+
+== Status
+
+The _World_ implementation is currently used in ORKG to control test behavior,
+and the features reflect the needs of that project.
+It is mature enough to be used in other projects,
+but it does not have a stable API,
+so interfaces might change without warning.
+
+The list of features includes:
+
+Randomness::
+Randomness can be controlled by random number generators (RNG) with fixed seeds.
+A seed is always given; if not, a default value is used.
+Access to the system RNG is provided via the same interfaces.
+
+Environment variables::
+Environments can be controlled by implementations which abstract the access to environment variables.
+The default implementation is backed by a `Map` and read-only after creation.
+Access to the system's environment variables is provided via the same interface.
+It is possible to chain several environments,
+so information not found in the outer one is looked up in following environment in the chain.
+
+The implementation currently *lacks* the following features:
+
+* Controlled time and date
+* Controlled file system

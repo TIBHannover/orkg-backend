@@ -1,0 +1,58 @@
+services:
+  api:
+    environment:
+      SPRING_PROFILES_ACTIVE: development
+      # Enable JMX
+      JDK_JAVA_OPTIONS: >-
+        -Dcom.sun.management.jmxremote
+        -Dcom.sun.management.jmxremote.port=9090
+        -Dcom.sun.management.jmxremote.rmi.port=9090
+        -Dcom.sun.management.jmxremote.authenticate=false
+        -Dcom.sun.management.jmxremote.ssl=false
+      # Enable remote debugging
+      JAVA_TOOL_OPTIONS: >-
+        -agentlib:jdwp=transport=dt_socket,address=*:9999,server=y,suspend=n
+    ports:
+      - '127.0.0.1:8080:8080'
+      - '127.0.0.1:9090:9090' # JMX
+      - '127.0.0.1:9999:9999' # Remote debugging
+
+  neo4j:
+    ports:
+      - '127.0.0.1:7474:7474' # HTTP
+      - '127.0.0.1:7687:7687' # BOLT
+    environment:
+      NEO4J_AUTH: none
+
+  postgres:
+    ports:
+      - '127.0.0.1:5432:5432'
+
+  keycloak:
+    ports:
+      - "127.0.0.1:8888:8080"  # Port re-mapped to prevent conflict with API
+
+  # There should be little need to expose the database for Keycloak directly.
+  # But if so, uncomment the following lines:
+  #keycloak-postgres:
+  #  expose:
+  #    - '5433'
+  #  ports:
+  #    - '127.0.0.1:5433:5432'
+
+  mailserver:
+    ports:
+      - "127.0.0.1:8025:8025"  # User interface
+
+  debughost:
+    profiles:
+      - debug
+    image: buildpack-deps:curl
+    stdin_open: true
+    tty: true
+    networks:
+      - auth
+      - database
+      - mail
+      - rest-api
+      - simcomp

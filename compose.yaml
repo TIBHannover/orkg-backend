@@ -9,22 +9,8 @@ services:
       SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUERURI: "http://keycloak:8080/realms/orkg"
       SPRING_DATASOURCE_URL: 'jdbc:postgresql://postgres/postgres'
       SPRING_NEO4J_URI: 'bolt://neo4j:7687'
-      SPRING_PROFILES_ACTIVE: development
       #ORKG_SIMCOMP_HOST: 'http://simcomp:4321' # defaults to https://orkg.org/simcomp
       ORKG_RANKING_PAPERS_LOG_FILE: /home/cnb/logs/paper-ranking.log
-      JDK_JAVA_OPTIONS: >-
-        -Dcom.sun.management.jmxremote
-        -Dcom.sun.management.jmxremote.port=9090
-        -Dcom.sun.management.jmxremote.rmi.port=9090
-        -Dcom.sun.management.jmxremote.authenticate=false
-        -Dcom.sun.management.jmxremote.ssl=false
-      JAVA_TOOL_OPTIONS: >-
-        -agentlib:jdwp=transport=dt_socket,address=*:9999,server=y,suspend=n
-    ports:
-      - '127.0.0.1:8080:8080'
-      #- '::1:8080:8080'
-      - '127.0.0.1:9090:9090' # JMX
-      - '127.0.0.1:9999:9999' # Remote debugging
     networks:
       - auth
       - mail
@@ -39,19 +25,13 @@ services:
 
   neo4j:
     image: neo4j:5-community
-    ports:
-      - '127.0.0.1:7474:7474' # HTTP
-      #- '::1:7474:7474'
-      - '127.0.0.1:7687:7687' # BOLT
-      #- '::1:7687:7687'
     environment:
       NEO4J_PLUGINS: '["apoc", "apoc-extended"]'
-      NEO4J_AUTH: none
       NEO4J_initial_dbms_default__database: orkg
       NEO4J_server_memory_heap_max__size: 4G
       NEO4J_db_transaction_timeout: 30s
     healthcheck:
-      test: [ "CMD", "/var/lib/neo4j/bin/cypher-shell", "-u", "$${NEO4J_USERNAME}", "-p", "$${NEO4J_PASSWORD}", "MATCH () RETURN count(*) as count" ]
+      test: [ "CMD-SHELL", "/var/lib/neo4j/bin/cypher-shell -u $$(echo $$NEO4J_AUTH | cut -d/ -f1) -p $$(echo $$NEO4J_AUTH | cut -d/ -f2) 'RETURN \"OK\"'" ]
       interval: 5s
       timeout: 10s
       retries: 10
@@ -62,17 +42,13 @@ services:
 
   postgres:
     image: postgres:17
-    expose:
-      - '5432'
-    ports:
-      - '127.0.0.1:5432:5432'
-      #- '::1:5432:5432'
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
       PGDATA: /var/lib/postgresql/data/pgdata
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U $${POSTGRES_USER}" ]
+      test: [ "CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}" ]
       interval: 5s
       timeout: 10s
       retries: 10
@@ -87,8 +63,6 @@ services:
       - start
       - --optimized
       - --import-realm
-    ports:
-      - '127.0.0.1:8888:8080' # Port re-mapped to prevent conflict with API
     environment:
       KC_BOOTSTRAP_ADMIN_USERNAME: admin
       KC_BOOTSTRAP_ADMIN_PASSWORD: admin
@@ -112,11 +86,6 @@ services:
 
   keycloak-postgres:
     image: postgres:17
-    expose:
-      - '5433'
-    ports:
-      - '127.0.0.1:5433:5432'
-      #- '::1:5432:5432'
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -137,9 +106,6 @@ services:
   mailserver:
     image: axllent/mailpit:v1.21
     restart: unless-stopped
-    ports:
-      - 1025:1025  # SMTP
-      - 8025:8025  # User interface
     environment:
       # MP_MAX_MESSAGES: 5000
       MP_DATABASE: /data/mailpit.db
@@ -149,19 +115,6 @@ services:
       - mailpit-data:/data
     networks:
       - mail
-
-  debughost:
-    profiles:
-      - debug
-    image: buildpack-deps:curl
-    stdin_open: true
-    tty: true
-    networks:
-      - auth
-      - database
-      - mail
-      - rest-api
-      - simcomp
 
 networks:
   auth:

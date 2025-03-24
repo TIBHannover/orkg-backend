@@ -15,11 +15,10 @@ class PaperContributionValidator(
             return state
         }
         val result = contributionValidator.validate(
-            validatedIdsIn = state.validatedIds,
-            tempIds = state.tempIds,
-            thingsCommand = command.contents!!,
+            validationCacheIn = state.validationCache,
+            thingCommands = command.contents!!.all(),
             contributionCommands = command.contents!!.contributions
         )
-        return state.copy(bakedStatements = result.bakedStatements, validatedIds = result.validatedIds)
+        return state.copy(bakedStatements = result.bakedStatements, validationCache = result.validationCache)
     }
 }

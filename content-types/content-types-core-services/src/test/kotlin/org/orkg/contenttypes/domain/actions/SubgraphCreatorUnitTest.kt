@@ -8,7 +8,6 @@ import io.mockk.verify
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
-import org.orkg.common.Either
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.common.testing.fixtures.fixedClock
@@ -19,6 +18,7 @@ import org.orkg.contenttypes.input.CreatePaperUseCase
 import org.orkg.contenttypes.input.CreatePredicateCommandPart
 import org.orkg.contenttypes.input.CreateResourceCommandPart
 import org.orkg.contenttypes.input.testing.fixtures.createRosettaStoneStatementCommand
+import org.orkg.contenttypes.input.testing.fixtures.from
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
@@ -93,7 +93,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
             thingsCommand = contents,
-            validatedIds = mapOf("#temp1" to Either.left("#temp1")),
+            validationCache = mapOf("#temp1" from contents),
             bakedStatements = emptySet()
         )
 
@@ -130,7 +130,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
             thingsCommand = contents,
-            validatedIds = emptyMap(),
+            validationCache = emptyMap(),
             bakedStatements = emptySet()
         )
     }
@@ -166,7 +166,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
             thingsCommand = contents,
-            validatedIds = mapOf("#temp1" to Either.left("#temp1")),
+            validationCache = mapOf("#temp1" from contents),
             bakedStatements = emptySet()
         )
 
@@ -202,7 +202,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
             thingsCommand = contents,
-            validatedIds = emptyMap(),
+            validationCache = emptyMap(),
             bakedStatements = emptySet()
         )
     }
@@ -235,7 +235,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
             thingsCommand = contents,
-            validatedIds = mapOf("#temp1" to Either.left("#temp1")),
+            validationCache = mapOf("#temp1" from contents),
             bakedStatements = emptySet()
         )
 
@@ -268,7 +268,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
             thingsCommand = contents,
-            validatedIds = emptyMap(),
+            validationCache = emptyMap(),
             bakedStatements = emptySet()
         )
     }
@@ -299,7 +299,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
             thingsCommand = contents,
-            validatedIds = mapOf("#temp1" to Either.left("#temp1")),
+            validationCache = mapOf("#temp1" from contents),
             bakedStatements = emptySet()
         )
 
@@ -360,7 +360,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
             thingsCommand = contents,
-            validatedIds = mapOf("#temp1" to Either.left("#temp1")),
+            validationCache = mapOf("#temp1" from contents),
             bakedStatements = emptySet()
         )
 
@@ -409,7 +409,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
             thingsCommand = contents,
-            validatedIds = emptyMap(),
+            validationCache = emptyMap(),
             bakedStatements = emptySet()
         )
     }
@@ -449,7 +449,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
             thingsCommand = contents,
-            validatedIds = mapOf("#temp1" to Either.left("#temp1")),
+            validationCache = mapOf("#temp1" from contents),
             bakedStatements = emptySet()
         )
 
@@ -486,7 +486,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
             thingsCommand = contents,
-            validatedIds = emptyMap(),
+            validationCache = emptyMap(),
             bakedStatements = emptySet()
         )
     }
@@ -563,10 +563,10 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
             thingsCommand = contents,
-            validatedIds = mapOf(
-                "#temp1" to Either.left("#temp1"),
-                "#temp2" to Either.left("#temp2"),
-                "#temp3" to Either.left("#temp3")
+            validationCache = mapOf(
+                "#temp1" from contents,
+                "#temp2" from contents,
+                "#temp3" from contents
             ),
             bakedStatements = setOf(BakedStatement("#temp1", "#temp2", "#temp3"))
         )
@@ -640,7 +640,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
             thingsCommand = contents,
-            validatedIds = emptyMap(),
+            validationCache = emptyMap(),
             bakedStatements = setOf(BakedStatement("R1000", "R2000", "R3000")),
         )
 
@@ -690,7 +690,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
             thingsCommand = contents,
-            validatedIds = emptyMap(),
+            validationCache = emptyMap(),
             bakedStatements = setOf(BakedStatement("R1000", "R2000", "R3000")),
         )
 

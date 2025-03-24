@@ -4,6 +4,7 @@ import dev.forkhandles.values.ofOrNull
 import org.orkg.common.Either
 import org.orkg.common.toIRIOrNull
 import org.orkg.contenttypes.domain.ThingIsNotAClass
+import org.orkg.contenttypes.input.CreateThingCommandPart
 import org.orkg.contenttypes.input.CreateThingsCommand
 import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.InvalidLabel
@@ -20,17 +21,21 @@ import org.orkg.graph.domain.reservedClassIds
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ThingRepository
 
-open class ThingsCommandValidator(
-    override val thingRepository: ThingRepository,
+class ThingsCommandValidator(
+    private val thingIdValidator: ThingIdValidator,
     private val classRepository: ClassRepository,
-) : ThingIdValidator {
+) {
+    constructor(
+        thingRepository: ThingRepository,
+        classRepository: ClassRepository,
+    ) : this(ThingIdValidator(thingRepository), classRepository)
+
     internal fun validate(
         thingsCommand: CreateThingsCommand,
-        tempIds: Set<String>,
-        validatedIds: Map<String, Either<String, Thing>>,
-    ): Map<String, Either<String, Thing>> {
-        val result = validatedIds.toMutableMap()
-        validateIds(thingsCommand, tempIds, result)
+        validationCache: Map<String, Either<CreateThingCommandPart, Thing>>,
+    ): Map<String, Either<CreateThingCommandPart, Thing>> {
+        val result = validationCache.toMutableMap()
+        validateIds(thingsCommand, result)
         validateLabels(thingsCommand)
         validateClassURIs(thingsCommand)
         return result
@@ -38,12 +43,12 @@ open class ThingsCommandValidator(
 
     private fun validateIds(
         thingsCommand: CreateThingsCommand,
-        tempIds: Set<String>,
-        validatedIds: MutableMap<String, Either<String, Thing>>,
+        validationCache: MutableMap<String, Either<CreateThingCommandPart, Thing>>,
     ) {
+        val thingCommands = thingsCommand.all()
         thingsCommand.lists.values
             .flatMap { it.elements }
-            .forEach { validateId(it, tempIds, validatedIds) }
+            .forEach { thingIdValidator.validate(it, thingCommands, validationCache) }
         thingsCommand.resources.values
             .flatMap { it.classes }
             .toSet()
@@ -51,7 +56,7 @@ open class ThingsCommandValidator(
                 if (it in reservedClassIds) {
                     throw ReservedClass(it)
                 }
-                validateId(it.value, tempIds, validatedIds).onRight { thing ->
+                thingIdValidator.validate(it.value, thingCommands, validationCache).onRight { thing ->
                     if (thing !is Class) {
                         throw ThingIsNotAClass(thing.id)
                     }

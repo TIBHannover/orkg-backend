@@ -8,14 +8,14 @@ import org.orkg.contenttypes.domain.actions.Action
 import org.orkg.contenttypes.domain.actions.BakedStatement
 import org.orkg.contenttypes.domain.actions.CreatePaperCommand
 import org.orkg.contenttypes.domain.actions.UpdatePaperCommand
+import org.orkg.contenttypes.input.CreateThingCommandPart
 import org.orkg.contenttypes.input.PublishPaperUseCase
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Thing
 
 interface CreatePaperAction : Action<CreatePaperCommand, CreatePaperAction.State> {
     data class State(
-        val tempIds: Set<String> = emptySet(),
-        val validatedIds: Map<String, Either<String, Thing>> = emptyMap(),
+        val validationCache: Map<String, Either<CreateThingCommandPart, Thing>> = emptyMap(),
         val bakedStatements: Set<BakedStatement> = emptySet(),
         val authors: List<Author> = emptyList(),
         val paperId: ThingId? = null,

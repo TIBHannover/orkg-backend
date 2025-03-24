@@ -9,13 +9,12 @@ class TableColumnsCreateValidator(
 ) : CreateTableAction {
     constructor(thingRepository: ThingRepository) : this(AbstractTableColumnsValidator(thingRepository))
 
-    override fun invoke(command: CreateTableCommand, state: State): State {
-        val validatedIds = abstractTableColumnsValidator.validate(
-            thingsCommand = command.all(),
-            rows = command.rows,
-            tempIds = state.tempIds,
-            validationCacheIn = state.validatedIds
+    override fun invoke(command: CreateTableCommand, state: State): State =
+        state.copy(
+            validationCache = abstractTableColumnsValidator.validate(
+                rows = command.rows,
+                thingCommands = command.all(),
+                validationCacheIn = state.validationCache
+            )
         )
-        return state.copy(validatedIds = validatedIds)
-    }
 }

@@ -24,16 +24,15 @@ class RosettaStoneStatementPropertyValueUpdateValidator(
         )
     )
 
-    override fun invoke(command: UpdateRosettaStoneStatementCommand, state: State): State {
-        val validatedIds = abstractRosettaStoneStatementPropertyValueValidator.validate(
-            templateProperties = state.rosettaStoneTemplate!!.properties,
-            thingsCommand = command.all(),
-            validatedIdsIn = state.validatedIds,
-            tempIds = state.tempIds,
-            templateId = state.rosettaStoneTemplate.id,
-            subjects = command.subjects,
-            objects = command.objects
+    override fun invoke(command: UpdateRosettaStoneStatementCommand, state: State): State =
+        state.copy(
+            validationCache = abstractRosettaStoneStatementPropertyValueValidator.validate(
+                templateProperties = state.rosettaStoneTemplate!!.properties,
+                thingCommands = command.all(),
+                validationCacheIn = state.validationCache,
+                templateId = state.rosettaStoneTemplate.id,
+                subjects = command.subjects,
+                objects = command.objects
+            )
         )
-        return state.copy(validatedIds = validatedIds)
-    }
 }

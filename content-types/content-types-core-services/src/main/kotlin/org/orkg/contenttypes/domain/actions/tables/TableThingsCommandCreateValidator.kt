@@ -16,10 +16,9 @@ class TableThingsCommandCreateValidator(
 
     override fun invoke(command: CreateTableCommand, state: State): State =
         state.copy(
-            validatedIds = thingsCommandValidator.validate(
+            validationCache = thingsCommandValidator.validate(
                 thingsCommand = command,
-                tempIds = state.tempIds,
-                validatedIds = state.validatedIds
+                validationCache = state.validationCache
             )
         )
 }

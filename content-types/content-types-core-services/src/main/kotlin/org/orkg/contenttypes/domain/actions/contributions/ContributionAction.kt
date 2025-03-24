@@ -6,12 +6,12 @@ import org.orkg.contenttypes.domain.actions.Action
 import org.orkg.contenttypes.domain.actions.BakedStatement
 import org.orkg.contenttypes.domain.actions.CreateContributionCommand
 import org.orkg.contenttypes.domain.actions.contributions.ContributionAction.State
+import org.orkg.contenttypes.input.CreateThingCommandPart
 import org.orkg.graph.domain.Thing
 
 interface ContributionAction : Action<CreateContributionCommand, State> {
     data class State(
-        val tempIds: Set<String> = emptySet(),
-        val validatedIds: Map<String, Either<String, Thing>> = emptyMap(),
+        val validationCache: Map<String, Either<CreateThingCommandPart, Thing>> = emptyMap(),
         val bakedStatements: Set<BakedStatement> = emptySet(),
         val contributionId: ThingId? = null,
     )

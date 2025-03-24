@@ -4,6 +4,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.Either
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.input.CreateContributionCommandPart
+import org.orkg.contenttypes.input.CreateThingCommandPart
 import org.orkg.contenttypes.input.CreateThingsCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
@@ -52,7 +53,7 @@ class ContributionCreator(
         extractionMethod: ExtractionMethod,
         thingsCommand: CreateThingsCommand,
         contributionCommands: List<CreateContributionCommandPart>,
-        validatedIds: Map<String, Either<String, Thing>>,
+        validationCache: Map<String, Either<CreateThingCommandPart, Thing>>,
         bakedStatements: Set<BakedStatement>,
     ): List<ThingId> {
         val contributionLookup = mutableMapOf<String, ThingId>()
@@ -81,7 +82,7 @@ class ContributionCreator(
             contributorId = contributorId,
             extractionMethod = extractionMethod,
             thingsCommand = thingsCommand,
-            validatedIds = validatedIds,
+            validationCache = validationCache,
             bakedStatements = bakedStatements,
             lookup = contributionLookup
         )

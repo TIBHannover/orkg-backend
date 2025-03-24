@@ -2,10 +2,12 @@ package org.orkg.contenttypes.domain.actions
 
 import org.orkg.contenttypes.domain.DuplicateTempIds
 import org.orkg.contenttypes.domain.InvalidTempId
-import org.orkg.contenttypes.input.CreateThingsCommand
 
-open class TempIdValidator {
-    internal fun validate(ids: List<String>) {
+class TempIdValidator<T, S>(
+    private val valueSelector: (T) -> List<String>?,
+) : Action<T, S> {
+    override fun invoke(command: T, state: S): S {
+        val ids = valueSelector(command) ?: return state
         ids.forEach {
             if (!it.startsWith('#') || it.length < 2) {
                 throw InvalidTempId(it)
@@ -17,8 +19,6 @@ open class TempIdValidator {
         if (duplicates.isNotEmpty()) {
             throw DuplicateTempIds(duplicates)
         }
+        return state
     }
-
-    internal fun CreateThingsCommand.tempIds(): List<String> =
-        listOf(resources.keys, literals.keys, predicates.keys, classes.keys, lists.keys).flatten()
 }

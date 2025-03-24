@@ -7,16 +7,18 @@ import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ThingRepository
 
 class ContributionThingsCommandValidator(
-    thingRepository: ThingRepository,
-    classRepository: ClassRepository,
-) : ThingsCommandValidator(thingRepository, classRepository),
-    ContributionAction {
-    override operator fun invoke(command: CreateContributionCommand, state: ContributionState): ContributionState {
-        val validatedIds = validate(
-            thingsCommand = command,
-            tempIds = state.tempIds,
-            validatedIds = state.validatedIds
+    private val thingsCommandValidator: ThingsCommandValidator,
+) : ContributionAction {
+    constructor(
+        thingRepository: ThingRepository,
+        classRepository: ClassRepository,
+    ) : this(ThingsCommandValidator(thingRepository, classRepository))
+
+    override operator fun invoke(command: CreateContributionCommand, state: ContributionState): ContributionState =
+        state.copy(
+            validationCache = thingsCommandValidator.validate(
+                thingsCommand = command,
+                validationCache = state.validationCache
+            )
         )
-        return state.copy(validatedIds = validatedIds)
-    }
 }

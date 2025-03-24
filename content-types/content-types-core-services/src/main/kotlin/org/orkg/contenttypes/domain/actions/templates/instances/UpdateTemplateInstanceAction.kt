@@ -8,14 +8,14 @@ import org.orkg.contenttypes.domain.actions.BakedStatement
 import org.orkg.contenttypes.domain.actions.UpdateTemplateInstanceCommand
 import org.orkg.contenttypes.domain.actions.templates.instances.UpdateTemplateInstanceAction.State
 import org.orkg.contenttypes.input.CreateLiteralCommandPart
+import org.orkg.contenttypes.input.CreateThingCommandPart
 import org.orkg.graph.domain.Thing
 
 interface UpdateTemplateInstanceAction : Action<UpdateTemplateInstanceCommand, State> {
     data class State(
         val template: Template? = null,
         val templateInstance: TemplateInstance? = null,
-        val tempIds: Set<String> = emptySet(),
-        val validatedIds: Map<String, Either<String, Thing>> = emptyMap(),
+        val validationCache: Map<String, Either<CreateThingCommandPart, Thing>> = emptyMap(),
         val statementsToAdd: Set<BakedStatement> = emptySet(),
         val statementsToRemove: Set<BakedStatement> = emptySet(),
         val literals: Map<String, CreateLiteralCommandPart> = emptyMap(),

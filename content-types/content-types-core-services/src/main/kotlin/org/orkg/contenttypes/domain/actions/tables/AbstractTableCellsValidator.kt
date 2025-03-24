@@ -2,23 +2,26 @@ package org.orkg.contenttypes.domain.actions.tables
 
 import org.orkg.common.Either
 import org.orkg.contenttypes.domain.actions.ThingIdValidator
+import org.orkg.contenttypes.input.CreateThingCommandPart
 import org.orkg.contenttypes.input.RowCommand
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.output.ThingRepository
 
 class AbstractTableCellsValidator(
-    override val thingRepository: ThingRepository,
-) : ThingIdValidator {
+    private val thingIdValidator: ThingIdValidator,
+) {
+    constructor(thingRepository: ThingRepository) : this(ThingIdValidator(thingRepository))
+
     internal fun validate(
         rows: List<RowCommand>,
-        tempIds: Set<String>,
-        validationCacheIn: Map<String, Either<String, Thing>>,
-    ): Map<String, Either<String, Thing>> {
+        thingCommands: Map<String, CreateThingCommandPart>,
+        validationCacheIn: Map<String, Either<CreateThingCommandPart, Thing>>,
+    ): Map<String, Either<CreateThingCommandPart, Thing>> {
         val validationCache = validationCacheIn.toMutableMap()
         rows.asSequence().drop(1).forEach { row ->
             row.data.forEach { id ->
                 if (id != null) {
-                    validateId(id, tempIds, validationCache)
+                    thingIdValidator.validate(id, thingCommands, validationCache)
                 }
             }
         }

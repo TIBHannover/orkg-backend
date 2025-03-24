@@ -71,7 +71,7 @@ internal class ContributionCreatorUnitTest : MockkBaseTest {
                 contributorId = contributorId,
                 extractionMethod = ExtractionMethod.MANUAL,
                 thingsCommand = contents,
-                validatedIds = emptyMap(),
+                validationCache = emptyMap(),
                 bakedStatements = emptySet(),
                 lookup = mutableMapOf("^0" to contributionId)
             )
@@ -83,7 +83,7 @@ internal class ContributionCreatorUnitTest : MockkBaseTest {
             extractionMethod = ExtractionMethod.MANUAL,
             thingsCommand = contents,
             contributionCommands = contents.contributions,
-            validatedIds = emptyMap(),
+            validationCache = emptyMap(),
             bakedStatements = emptySet()
         )
 
@@ -114,7 +114,7 @@ internal class ContributionCreatorUnitTest : MockkBaseTest {
                 contributorId = contributorId,
                 extractionMethod = ExtractionMethod.MANUAL,
                 thingsCommand = contents,
-                validatedIds = emptyMap(),
+                validationCache = emptyMap(),
                 bakedStatements = emptySet(),
                 lookup = mutableMapOf("^0" to contributionId)
             )

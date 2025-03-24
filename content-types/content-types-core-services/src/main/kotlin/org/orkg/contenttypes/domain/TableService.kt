@@ -11,6 +11,7 @@ import org.orkg.contenttypes.domain.actions.CreateTableState
 import org.orkg.contenttypes.domain.actions.LabelValidator
 import org.orkg.contenttypes.domain.actions.ObservatoryValidator
 import org.orkg.contenttypes.domain.actions.OrganizationValidator
+import org.orkg.contenttypes.domain.actions.TempIdValidator
 import org.orkg.contenttypes.domain.actions.execute
 import org.orkg.contenttypes.domain.actions.tables.TableCellsCreateValidator
 import org.orkg.contenttypes.domain.actions.tables.TableCellsCreator
@@ -20,7 +21,6 @@ import org.orkg.contenttypes.domain.actions.tables.TableDimensionsValidator
 import org.orkg.contenttypes.domain.actions.tables.TableResourceCreator
 import org.orkg.contenttypes.domain.actions.tables.TableRowsCreator
 import org.orkg.contenttypes.domain.actions.tables.TableRowsValidator
-import org.orkg.contenttypes.domain.actions.tables.TableTempIdCreateValidator
 import org.orkg.contenttypes.domain.actions.tables.TableThingsCommandCreateCreator
 import org.orkg.contenttypes.domain.actions.tables.TableThingsCommandCreateValidator
 import org.orkg.contenttypes.input.TableUseCases
@@ -91,7 +91,7 @@ class TableService(
     override fun create(command: CreateTableCommand): ThingId {
         val steps = listOf(
             LabelValidator { it.label },
-            TableTempIdCreateValidator(),
+            TempIdValidator { it.tempIds() },
             TableDimensionsValidator { it.rows },
             TableRowsValidator { it.rows },
             ObservatoryValidator(observatoryRepository, { it.observatories }),

@@ -18,7 +18,9 @@ import org.orkg.contenttypes.input.CreateContributionCommandPart
 import org.orkg.contenttypes.input.CreateLiteralCommandPart
 import org.orkg.contenttypes.input.CreatePaperUseCase
 import org.orkg.contenttypes.input.CreatePredicateCommandPart
+import org.orkg.contenttypes.input.CreateThingCommandPart
 import org.orkg.contenttypes.input.testing.fixtures.createPaperCommand
+import org.orkg.contenttypes.input.testing.fixtures.from
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Thing
@@ -39,13 +41,12 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
     fun `Given a paper create command, when validating its contributions, it returns success`() {
         val command = createPaperCommand()
         val resource = createResource(id = ThingId("R3003"))
-        val tempIds = setOf("#temp1", "#temp2", "#temp3", "#temp4")
-        val validatedIds = mapOf<String, Either<String, Thing>>(
+        val validationCache = mapOf<String, Either<CreateThingCommandPart, Thing>>(
             "R3003" to Either.right(resource),
-            "#temp1" to Either.left("#temp1"),
-            "#temp2" to Either.left("#temp2"),
-            "#temp3" to Either.left("#temp3"),
-            "#temp4" to Either.left("#temp4")
+            "#temp1" from command,
+            "#temp2" from command,
+            "#temp3" from command,
+            "#temp4" from command
         )
 
         val template = createClass(ThingId("C123"))
@@ -59,20 +60,12 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
         every { thingRepository.findById(Predicates.hasEvaluation) } returns Optional.of(hasEvaluation)
 
         val result = contributionValidator.validate(
-            tempIds = tempIds,
-            validatedIdsIn = validatedIds,
-            thingsCommand = command.contents!!,
+            validationCacheIn = validationCache,
+            thingCommands = command.contents!!.all(),
             contributionCommands = command.contents!!.contributions,
         )
 
         result.asClue {
-            it.validatedIds shouldBe validatedIds + mapOf(
-                "C123" to Either.right(template),
-                "R3003" to Either.right(resource),
-                "R3004" to Either.right(`class`),
-                Predicates.hasEvaluation.value to Either.right(hasEvaluation),
-                Predicates.hasResearchProblem.value to Either.right(hasResearchProblem)
-            )
             it.bakedStatements shouldBe setOf(
                 BakedStatement("^0", Predicates.hasResearchProblem.value, "R3003"),
                 BakedStatement("^0", Predicates.hasEvaluation.value, "#temp1"),
@@ -82,6 +75,13 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
                 BakedStatement("R3004", "#temp3", "R3003"),
                 BakedStatement("R3004", "#temp3", "#temp2"),
                 BakedStatement("R3004", "#temp4", "#temp1")
+            )
+            it.validationCache shouldBe validationCache + mapOf(
+                "C123" to Either.right(template),
+                "R3003" to Either.right(resource),
+                "R3004" to Either.right(`class`),
+                Predicates.hasEvaluation.value to Either.right(hasEvaluation),
+                Predicates.hasResearchProblem.value to Either.right(hasResearchProblem)
             )
         }
 
@@ -95,13 +95,12 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
     fun `Given a paper create command, when class of contribution does not exist, it throws an exception`() {
         val command = createPaperCommand()
         val resource = createResource(id = ThingId("R3003"))
-        val tempIds = setOf("#temp1", "#temp2", "#temp3", "#temp4")
-        val validatedIds = mapOf<String, Either<String, Thing>>(
+        val validationCache = mapOf<String, Either<CreateThingCommandPart, Thing>>(
             "R3003" to Either.right(resource),
-            "#temp1" to Either.left("#temp1"),
-            "#temp2" to Either.left("#temp2"),
-            "#temp3" to Either.left("#temp3"),
-            "#temp4" to Either.left("#temp4")
+            "#temp1" from command,
+            "#temp2" from command,
+            "#temp3" from command,
+            "#temp4" from command
         )
         val template = createClass(ThingId("C123"))
 
@@ -109,9 +108,8 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
 
         assertThrows<ThingNotFound> {
             contributionValidator.validate(
-                tempIds = tempIds,
-                validatedIdsIn = validatedIds,
-                thingsCommand = command.contents!!,
+                validationCacheIn = validationCache,
+                thingCommands = command.contents!!.all(),
                 contributionCommands = command.contents!!.contributions,
             )
         }
@@ -123,13 +121,12 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
     fun `Given a paper create command, when class of contribution is not a class, it throws an exception`() {
         val command = createPaperCommand()
         val resource = createResource(id = ThingId("R3003"))
-        val tempIds = setOf("#temp1", "#temp2", "#temp3", "#temp4")
-        val validatedIds = mapOf<String, Either<String, Thing>>(
+        val validationCache = mapOf<String, Either<CreateThingCommandPart, Thing>>(
             "R3003" to Either.right(resource),
-            "#temp1" to Either.left("#temp1"),
-            "#temp2" to Either.left("#temp2"),
-            "#temp3" to Either.left("#temp3"),
-            "#temp4" to Either.left("#temp4")
+            "#temp1" from command,
+            "#temp2" from command,
+            "#temp3" from command,
+            "#temp4" from command
         )
         val template = createResource(id = ThingId("C123"))
 
@@ -137,9 +134,8 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
 
         assertThrows<ThingIsNotAClass> {
             contributionValidator.validate(
-                tempIds = tempIds,
-                validatedIdsIn = validatedIds,
-                thingsCommand = command.contents!!,
+                validationCacheIn = validationCache,
+                thingCommands = command.contents!!.all(),
                 contributionCommands = command.contents!!.contributions,
             )
         }
@@ -163,9 +159,8 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
 
         assertThrows<EmptyContribution> {
             contributionValidator.validate(
-                tempIds = emptySet(),
-                validatedIdsIn = emptyMap(),
-                thingsCommand = command.contents!!,
+                validationCacheIn = emptyMap(),
+                thingCommands = command.contents!!.all(),
                 contributionCommands = command.contents!!.contributions,
             )
         }.asClue {
@@ -193,10 +188,8 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
             contributionValidator.bakeStatements(
                 subject = "#temp1",
                 statementCommands = statements,
-                tempIds = setOf("#temp1", "#temp2", "#temp3", "#temp4"),
-                thingsCommand = contents,
-                contributionCommands = contents.contributions,
-                validatedIds = mutableMapOf(),
+                thingCommands = contents.all(),
+                validationCache = mutableMapOf(),
                 destination = mutableSetOf()
             )
         }
@@ -226,10 +219,8 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
             contributionValidator.bakeStatements(
                 subject = "#temp1",
                 statementCommands = statements,
-                tempIds = emptySet(),
-                thingsCommand = contents,
-                contributionCommands = contents.contributions,
-                validatedIds = mutableMapOf(),
+                thingCommands = contents.all(),
+                validationCache = mutableMapOf(),
                 destination = mutableSetOf()
             )
         }
@@ -255,10 +246,8 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
             contributionValidator.bakeStatements(
                 subject = "#temp1",
                 statementCommands = statements,
-                tempIds = emptySet(),
-                thingsCommand = contents,
-                contributionCommands = contents.contributions,
-                validatedIds = mutableMapOf("#temp1" to Either.left("#temp1")),
+                thingCommands = contents.all(),
+                validationCache = mutableMapOf("#temp1" to Either.left(CreateLiteralCommandPart("not a predicate"))),
                 destination = mutableSetOf()
             )
         }
@@ -290,10 +279,8 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
             contributionValidator.bakeStatements(
                 subject = "#temp1",
                 statementCommands = statements,
-                tempIds = emptySet(),
-                thingsCommand = contents,
-                contributionCommands = contents.contributions,
-                validatedIds = mutableMapOf("#temp1" to Either.left("#temp1")),
+                thingCommands = contents.all(),
+                validationCache = mutableMapOf("#temp1" from contents),
                 destination = mutableSetOf()
             )
         }
@@ -329,10 +316,8 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
             contributionValidator.bakeStatements(
                 subject = "#temp1",
                 statementCommands = statements,
-                tempIds = setOf("#temp1"),
-                thingsCommand = contents,
-                contributionCommands = contents.contributions,
-                validatedIds = mutableMapOf(
+                thingCommands = contents.all(),
+                validationCache = mutableMapOf(
                     literalId to Either.right(createLiteral(ThingId(literalId))),
                     Predicates.hasEvaluation.value to Either.right(createPredicate(Predicates.hasEvaluation))
                 ),
@@ -371,11 +356,9 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
             contributionValidator.bakeStatements(
                 subject = "#temp1",
                 statementCommands = statements,
-                tempIds = setOf("#temp1"),
-                thingsCommand = contents,
-                contributionCommands = contents.contributions,
-                validatedIds = mutableMapOf(
-                    "#temp1" to Either.left("#temp1"),
+                thingCommands = contents.all(),
+                validationCache = mutableMapOf(
+                    "#temp1" from contents,
                     Predicates.hasEvaluation.value to Either.right(createPredicate(Predicates.hasEvaluation))
                 ),
                 destination = mutableSetOf()
@@ -396,9 +379,8 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
 
         assertThrows<InvalidLabel> {
             contributionValidator.validate(
-                validatedIdsIn = emptyMap(),
-                tempIds = emptySet(),
-                thingsCommand = contents,
+                validationCacheIn = emptyMap(),
+                thingCommands = contents.all(),
                 contributionCommands = contents.contributions
             )
         }

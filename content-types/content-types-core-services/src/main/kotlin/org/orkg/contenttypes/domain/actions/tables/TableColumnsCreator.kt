@@ -31,5 +31,5 @@ class TableColumnsCreator(
     }
 
     private fun State.resolve(id: String) =
-        validatedIds[id]!!.fold({ tempIdToThing[it] }, { it.id })!!
+        validationCache[id]!!.fold({ tempIdToThing[id] }, { it.id })!!
 }

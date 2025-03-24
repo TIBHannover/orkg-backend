@@ -39,8 +39,7 @@ internal class ContributionPaperValidatorUnitTest : MockkBaseTest {
         val result = contributionPaperValidator(command, state)
 
         result.asClue {
-            it.tempIds.size shouldBe 0
-            it.validatedIds.size shouldBe 0
+            it.validationCache.size shouldBe 0
             it.bakedStatements.size shouldBe 0
             it.contributionId shouldBe null
         }

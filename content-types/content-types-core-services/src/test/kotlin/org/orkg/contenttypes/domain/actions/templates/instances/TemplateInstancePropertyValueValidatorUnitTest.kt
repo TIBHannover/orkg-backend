@@ -15,11 +15,13 @@ import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.UnknownTemplateProperties
 import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertyValueValidator
 import org.orkg.contenttypes.domain.actions.BakedStatement
+import org.orkg.contenttypes.domain.actions.ThingIdValidator
 import org.orkg.contenttypes.domain.actions.UpdateTemplateInstanceState
 import org.orkg.contenttypes.domain.testing.fixtures.createTemplate
 import org.orkg.contenttypes.domain.testing.fixtures.createTemplateInstance
 import org.orkg.contenttypes.input.CreateLiteralCommandPart
 import org.orkg.contenttypes.input.CreateResourceCommandPart
+import org.orkg.contenttypes.input.testing.fixtures.from
 import org.orkg.contenttypes.input.testing.fixtures.updateTemplateInstanceCommand
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
@@ -36,7 +38,7 @@ internal class TemplateInstancePropertyValueValidatorUnitTest : MockkBaseTest {
     private val abstractTemplatePropertyValueValidator: AbstractTemplatePropertyValueValidator = mockk()
 
     private val templateInstancePropertyValueValidator = TemplateInstancePropertyValueValidator(
-        thingRepository,
+        ThingIdValidator(thingRepository), // it is easier to mock thingRepository calls than thingIdValidator calls
         classRepository,
         statementRepository,
         abstractTemplatePropertyValueValidator
@@ -44,6 +46,11 @@ internal class TemplateInstancePropertyValueValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template instance update command, when validating its properties, it returns success`() {
+        val temp1 = CreateLiteralCommandPart("1") // datatype is irrelevant, as it will be re-assigned by the service
+        val temp2 = CreateResourceCommandPart(
+            label = "MOTO",
+            classes = setOf(ThingId("C28"))
+        )
         val command = updateTemplateInstanceCommand().copy(
             statements = mapOf(
                 Predicates.field to listOf("#temp1", "R1"),
@@ -53,13 +60,10 @@ internal class TemplateInstancePropertyValueValidatorUnitTest : MockkBaseTest {
                 Predicates.hasAuthor to listOf("#temp2", "R1", "R123")
             ),
             resources = mapOf(
-                "#temp2" to CreateResourceCommandPart(
-                    label = "MOTO",
-                    classes = setOf(ThingId("C28"))
-                )
+                "#temp2" to temp2
             ),
             literals = mapOf(
-                "#temp1" to CreateLiteralCommandPart("1") // datatype is irrelevant, as it will be re-assigned by the service
+                "#temp1" to temp1
             ),
             predicates = emptyMap(),
             lists = emptyMap(),
@@ -68,8 +72,7 @@ internal class TemplateInstancePropertyValueValidatorUnitTest : MockkBaseTest {
         val state = UpdateTemplateInstanceState(
             template = createTemplate(),
             templateInstance = createTemplateInstance(),
-            tempIds = setOf("#temp1", "#temp2"),
-            validatedIds = mapOf(
+            validationCache = mapOf(
                 "R123" to Either.right(
                     createResource(
                         id = ThingId("R123"),
@@ -101,10 +104,9 @@ internal class TemplateInstancePropertyValueValidatorUnitTest : MockkBaseTest {
         result.asClue {
             it.template shouldBe state.template
             it.templateInstance shouldBe state.templateInstance
-            it.tempIds shouldBe state.tempIds
-            it.validatedIds shouldBe state.validatedIds + mapOf(
-                "#temp2" to Either.left("#temp2"),
-                "#temp1" to Either.left("#temp1")
+            it.validationCache shouldBe state.validationCache + mapOf(
+                "#temp2" from command,
+                "#temp1" from command
             )
             it.statementsToAdd shouldBe setOf(
                 BakedStatement("R54631", Predicates.field.value, "#temp1"),

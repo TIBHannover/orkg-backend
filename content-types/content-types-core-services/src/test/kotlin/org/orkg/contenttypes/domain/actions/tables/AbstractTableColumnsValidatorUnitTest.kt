@@ -36,8 +36,9 @@ internal class AbstractTableColumnsValidatorUnitTest : MockkBaseTest {
     fun `Given a list of table rows, when validating column definitions, it returns success`() {
         val l123 = createLiteral(ThingId("L123"))
         val l456 = createLiteral(ThingId("L456"))
-        val thingsCommand = mapOf<String, CreateThingCommandPart>(
-            "#temp1" to CreateLiteralCommandPart("header1")
+        val temp1 = CreateLiteralCommandPart("header1")
+        val thingCommands = mapOf<String, CreateThingCommandPart>(
+            "#temp1" to temp1
         )
         val rows = listOf(
             RowCommand(
@@ -45,20 +46,19 @@ internal class AbstractTableColumnsValidatorUnitTest : MockkBaseTest {
                 data = listOf("L123", "L456", "#temp1")
             )
         )
-        val tempIds = setOf("#temp2", "#temp3")
-        val validatedIds = mapOf<String, Either<String, Thing>>(
+        val validationCache = mapOf<String, Either<CreateThingCommandPart, Thing>>(
             "L123" to Either.right(l123),
-            "#temp1" to Either.left("#temp1")
+            "#temp1" to Either.left(temp1)
         )
 
         every { thingRepository.findById(ThingId("L456")) } returns Optional.of(l456)
 
-        val result = abstractTableColumnsValidator.validate(thingsCommand, rows, tempIds, validatedIds)
+        val result = abstractTableColumnsValidator.validate(rows, thingCommands, validationCache)
 
         result shouldBe mapOf(
             "L123" to Either.right(l123),
             "L456" to Either.right(l456),
-            "#temp1" to Either.left("#temp1")
+            "#temp1" to Either.left(temp1)
         )
 
         verify(exactly = 1) { thingRepository.findById(ThingId("L456")) }
@@ -66,37 +66,35 @@ internal class AbstractTableColumnsValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a list of table rows, when validating column definitions and temp id cannot be resolved, it throws an exception`() {
-        val thingsCommand = emptyMap<String, CreateThingCommandPart>()
+        val thingCommands = emptyMap<String, CreateThingCommandPart>()
         val rows = listOf(
             RowCommand(
                 label = "header",
                 data = listOf("#temp1")
             )
         )
-        val tempIds = emptySet<String>()
-        val validatedIds = emptyMap<String, Either<String, Thing>>()
+        val validationCache = emptyMap<String, Either<CreateThingCommandPart, Thing>>()
 
         shouldThrow<ThingNotDefined> {
-            abstractTableColumnsValidator.validate(thingsCommand, rows, tempIds, validatedIds)
+            abstractTableColumnsValidator.validate(rows, thingCommands, validationCache)
         }
     }
 
     @Test
     fun `Given a list of table rows, when validating column definitions and thing id cannot be resolved, it throws an exception`() {
-        val thingsCommand = emptyMap<String, CreateThingCommandPart>()
+        val thingCommands = emptyMap<String, CreateThingCommandPart>()
         val rows = listOf(
             RowCommand(
                 label = "header",
                 data = listOf("L123")
             )
         )
-        val tempIds = emptySet<String>()
-        val validatedIds = emptyMap<String, Either<String, Thing>>()
+        val validationCache = emptyMap<String, Either<CreateThingCommandPart, Thing>>()
 
         every { thingRepository.findById(ThingId("L123")) } returns Optional.empty()
 
         shouldThrow<ThingNotFound> {
-            abstractTableColumnsValidator.validate(thingsCommand, rows, tempIds, validatedIds)
+            abstractTableColumnsValidator.validate(rows, thingCommands, validationCache)
         }
 
         verify(exactly = 1) { thingRepository.findById(ThingId("L123")) }
@@ -105,20 +103,19 @@ internal class AbstractTableColumnsValidatorUnitTest : MockkBaseTest {
     @ParameterizedTest
     @MethodSource("nonLiteralThing")
     fun `Given a list of table rows, when validating column definitions and header row contains a non-literal thing, it throws an exception`(thing: Thing) {
-        val thingsCommand = emptyMap<String, CreateThingCommandPart>()
+        val thingCommands = emptyMap<String, CreateThingCommandPart>()
         val rows = listOf(
             RowCommand(
                 label = "header",
                 data = listOf(thing.id.value)
             )
         )
-        val tempIds = emptySet<String>()
-        val validatedIds = emptyMap<String, Either<String, Thing>>()
+        val validationCache = emptyMap<String, Either<CreateThingCommandPart, Thing>>()
 
         every { thingRepository.findById(thing.id) } returns Optional.of(thing)
 
         shouldThrow<TableHeaderValueMustBeLiteral> {
-            abstractTableColumnsValidator.validate(thingsCommand, rows, tempIds, validatedIds)
+            abstractTableColumnsValidator.validate(rows, thingCommands, validationCache)
         }
 
         verify(exactly = 1) { thingRepository.findById(thing.id) }
@@ -127,20 +124,19 @@ internal class AbstractTableColumnsValidatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a list of table rows, when validating column definitions and header row contains a non-string literal, it throws an exception`() {
         val literal = createLiteral(label = "true", datatype = Literals.XSD.BOOLEAN.prefixedUri)
-        val thingsCommand = emptyMap<String, CreateThingCommandPart>()
+        val thingCommands = emptyMap<String, CreateThingCommandPart>()
         val rows = listOf(
             RowCommand(
                 label = "header",
                 data = listOf(literal.id.value)
             )
         )
-        val tempIds = emptySet<String>()
-        val validatedIds = emptyMap<String, Either<String, Thing>>()
+        val validationCache = emptyMap<String, Either<CreateThingCommandPart, Thing>>()
 
         every { thingRepository.findById(literal.id) } returns Optional.of(literal)
 
         shouldThrow<TableHeaderValueMustBeLiteral> {
-            abstractTableColumnsValidator.validate(thingsCommand, rows, tempIds, validatedIds)
+            abstractTableColumnsValidator.validate(rows, thingCommands, validationCache)
         }
 
         verify(exactly = 1) { thingRepository.findById(literal.id) }

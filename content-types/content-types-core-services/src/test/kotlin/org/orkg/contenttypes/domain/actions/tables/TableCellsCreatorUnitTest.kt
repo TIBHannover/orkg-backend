@@ -11,6 +11,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreateTableState
 import org.orkg.contenttypes.input.testing.fixtures.createTableCommand
+import org.orkg.contenttypes.input.testing.fixtures.from
 import org.orkg.graph.testing.fixtures.createResource
 
 internal class TableCellsCreatorUnitTest : MockkBaseTest {
@@ -23,12 +24,12 @@ internal class TableCellsCreatorUnitTest : MockkBaseTest {
         val command = createTableCommand()
         val state = CreateTableState().copy(
             tableId = ThingId("TableId"),
-            validatedIds = mapOf(
+            validationCache = mapOf(
                 "R456" to Either.right(createResource(ThingId("R456"))),
-                "#temp4" to Either.left("#temp4"),
-                "#temp5" to Either.left("#temp5"),
-                "#temp6" to Either.left("#temp6"),
-                "#temp7" to Either.left("#temp7")
+                "#temp4" from command,
+                "#temp5" from command,
+                "#temp6" from command,
+                "#temp7" from command
             ),
             tempIdToThing = mapOf(
                 "#temp4" to ThingId("R1"),
@@ -55,8 +56,7 @@ internal class TableCellsCreatorUnitTest : MockkBaseTest {
 
         result.asClue {
             it.tableId shouldBe state.tableId
-            it.tempIds shouldBe state.tempIds
-            it.validatedIds shouldBe state.validatedIds
+            it.validationCache shouldBe state.validationCache
             it.tempIdToThing shouldBe state.tempIdToThing
             it.columns shouldBe state.columns
             it.rows shouldBe state.rows

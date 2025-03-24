@@ -57,7 +57,7 @@ class TemplateInstancePropertyValueUpdater(
                     contributorId = command.contributorId,
                     extractionMethod = command.extractionMethod,
                     thingsCommand = command.copy(literals = state.literals),
-                    validatedIds = validatedIds,
+                    validationCache = validationCache,
                     bakedStatements = statementsToAdd
                 )
             }

@@ -12,11 +12,10 @@ class ContributionContentsValidator(
 
     override fun invoke(command: CreateContributionCommand, state: State): State {
         val result = contributionValidator.validate(
-            validatedIdsIn = state.validatedIds,
-            tempIds = state.tempIds,
-            thingsCommand = command,
+            validationCacheIn = state.validationCache,
+            thingCommands = command.all(),
             contributionCommands = listOf(command.contribution)
         )
-        return state.copy(bakedStatements = result.bakedStatements, validatedIds = result.validatedIds)
+        return state.copy(bakedStatements = result.bakedStatements, validationCache = result.validationCache)
     }
 }

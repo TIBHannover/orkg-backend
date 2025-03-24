@@ -7,19 +7,22 @@ import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ThingRepository
 
 class PaperThingsCommandValidator(
-    thingRepository: ThingRepository,
-    classRepository: ClassRepository,
-) : ThingsCommandValidator(thingRepository, classRepository),
-    CreatePaperAction {
+    private val thingsCommandValidator: ThingsCommandValidator,
+) : CreatePaperAction {
+    constructor(
+        thingRepository: ThingRepository,
+        classRepository: ClassRepository,
+    ) : this(ThingsCommandValidator(thingRepository, classRepository))
+
     override operator fun invoke(command: CreatePaperCommand, state: CreatePaperState): CreatePaperState {
         if (command.contents == null) {
             return state
         }
-        val validatedIds = validate(
-            thingsCommand = command.contents!!,
-            tempIds = state.tempIds,
-            validatedIds = state.validatedIds
+        return state.copy(
+            validationCache = thingsCommandValidator.validate(
+                thingsCommand = command.contents!!,
+                validationCache = state.validationCache
+            )
         )
-        return state.copy(validatedIds = validatedIds)
     }
 }

@@ -11,6 +11,7 @@ import org.orkg.common.Either
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.ThingsCommandValidator
 import org.orkg.contenttypes.domain.actions.UpdateTemplateInstanceState
+import org.orkg.contenttypes.input.CreateThingCommandPart
 import org.orkg.contenttypes.input.testing.fixtures.updateTemplateInstanceCommand
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.testing.fixtures.createResource
@@ -26,36 +27,23 @@ internal class TemplateInstanceThingsCommandValidatorUnitTest : MockkBaseTest {
         val command = updateTemplateInstanceCommand()
         val state = UpdateTemplateInstanceState()
 
-        val validatedIds = mapOf<String, Either<String, Thing>>(
+        val validationCache = mapOf<String, Either<CreateThingCommandPart, Thing>>(
             "R100" to Either.right(createResource())
         )
 
-        every {
-            thingsCommandValidator.validate(
-                thingsCommand = command,
-                tempIds = state.tempIds,
-                validatedIds = state.validatedIds
-            )
-        } returns validatedIds
+        every { thingsCommandValidator.validate(command, state.validationCache) } returns validationCache
 
         val result = templateInstanceThingsCommandValidator(command, state)
 
         result.asClue {
             it.template shouldBe state.template
             it.templateInstance shouldBe state.templateInstance
-            it.tempIds shouldBe state.tempIds
-            it.validatedIds shouldBe validatedIds
+            it.validationCache shouldBe validationCache
             it.statementsToAdd shouldBe state.statementsToAdd
             it.statementsToRemove shouldBe state.statementsToRemove
             it.literals shouldBe state.literals
         }
 
-        verify(exactly = 1) {
-            thingsCommandValidator.validate(
-                thingsCommand = command,
-                tempIds = state.tempIds,
-                validatedIds = state.validatedIds
-            )
-        }
+        verify(exactly = 1) { thingsCommandValidator.validate(command, state.validationCache) }
     }
 }

@@ -6,11 +6,11 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.Test
-import org.orkg.common.Either
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreateTableState
 import org.orkg.contenttypes.input.testing.fixtures.createTableCommand
+import org.orkg.contenttypes.input.testing.fixtures.from
 
 internal class TableColumnsCreatorUnitTest : MockkBaseTest {
     private val abstractTableColumnCreator: AbstractTableColumnCreator = mockk()
@@ -22,10 +22,10 @@ internal class TableColumnsCreatorUnitTest : MockkBaseTest {
         val command = createTableCommand()
         val state = CreateTableState().copy(
             tableId = ThingId("TableId"),
-            validatedIds = mapOf(
-                "#temp1" to Either.left("#temp1"),
-                "#temp2" to Either.left("#temp2"),
-                "#temp3" to Either.left("#temp3")
+            validationCache = mapOf(
+                "#temp1" from command,
+                "#temp2" from command,
+                "#temp3" from command
             ),
             tempIdToThing = mapOf(
                 "#temp1" to ThingId("L1"),
@@ -45,8 +45,7 @@ internal class TableColumnsCreatorUnitTest : MockkBaseTest {
 
         result.asClue {
             it.tableId shouldBe state.tableId
-            it.tempIds shouldBe state.tempIds
-            it.validatedIds shouldBe state.validatedIds
+            it.validationCache shouldBe state.validationCache
             it.tempIdToThing shouldBe state.tempIdToThing
             it.columns shouldBe columns
             it.rows shouldBe state.rows

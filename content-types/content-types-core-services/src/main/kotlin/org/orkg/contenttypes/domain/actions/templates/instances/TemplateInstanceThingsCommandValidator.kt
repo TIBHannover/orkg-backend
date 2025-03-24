@@ -21,10 +21,9 @@ class TemplateInstanceThingsCommandValidator(
         state: UpdateTemplateInstanceState,
     ): UpdateTemplateInstanceState =
         state.copy(
-            validatedIds = thingsCommandValidator.validate(
+            validationCache = thingsCommandValidator.validate(
                 thingsCommand = command,
-                tempIds = state.tempIds,
-                validatedIds = state.validatedIds
+                validationCache = state.validationCache
             )
         )
 }

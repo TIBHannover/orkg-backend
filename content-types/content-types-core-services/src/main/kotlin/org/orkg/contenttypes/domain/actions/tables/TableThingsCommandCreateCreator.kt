@@ -39,7 +39,7 @@ class TableThingsCommandCreateCreator(
         val tempIdToThing = mutableMapOf<String, ThingId>()
         subgraphCreator.createThings(
             thingsCommand = command,
-            validatedIds = state.validatedIds,
+            validationCache = state.validationCache,
             contributorId = command.contributorId,
             extractionMethod = command.extractionMethod,
             lookup = tempIdToThing

@@ -10,6 +10,8 @@ import org.orkg.common.Either
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.ThingNotDefined
+import org.orkg.contenttypes.input.CreateLiteralCommandPart
+import org.orkg.contenttypes.input.CreateThingCommandPart
 import org.orkg.contenttypes.input.RowCommand
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.domain.ThingNotFound
@@ -42,22 +44,28 @@ internal class AbstractTableCellsValidatorUnitTest : MockkBaseTest {
                 data = listOf("#temp1", "R456", "R456")
             )
         )
-        val tempIds = setOf("#temp1", "#temp2")
-        val validatedIds = mapOf<String, Either<String, Thing>>(
+        val temp1 = CreateLiteralCommandPart("some label 1")
+        val temp2 = CreateLiteralCommandPart("some label 2")
+        val temp4 = CreateLiteralCommandPart("some label 4")
+        val thingCommands = mapOf(
+            "#temp1" to temp1,
+            "#temp2" to temp2,
+        )
+        val validationCache = mapOf<String, Either<CreateThingCommandPart, Thing>>(
             "R123" to Either.right(r123),
-            "#temp4" to Either.left("#temp4")
+            "#temp4" to Either.left(temp4)
         )
 
         every { thingRepository.findById(ThingId("R456")) } returns Optional.of(r456)
 
-        val result = abstractTableCellsValidator.validate(rows, tempIds, validatedIds)
+        val result = abstractTableCellsValidator.validate(rows, thingCommands, validationCache)
 
         result shouldBe mapOf(
             "R123" to Either.right(r123),
             "R456" to Either.right(r456),
-            "#temp1" to Either.left("#temp1"),
-            "#temp2" to Either.left("#temp2"),
-            "#temp4" to Either.left("#temp4")
+            "#temp1" to Either.left(temp1),
+            "#temp2" to Either.left(temp2),
+            "#temp4" to Either.left(temp4)
         )
 
         verify(exactly = 1) { thingRepository.findById(ThingId("R456")) }
@@ -72,11 +80,10 @@ internal class AbstractTableCellsValidatorUnitTest : MockkBaseTest {
                 data = listOf("#temp1")
             )
         )
-        val tempIds = emptySet<String>()
-        val validatedIds = emptyMap<String, Either<String, Thing>>()
+        val validationCache = emptyMap<String, Either<CreateThingCommandPart, Thing>>()
 
         shouldThrow<ThingNotDefined> {
-            abstractTableCellsValidator.validate(rows, tempIds, validatedIds)
+            abstractTableCellsValidator.validate(rows, emptyMap(), validationCache)
         }
     }
 
@@ -89,13 +96,12 @@ internal class AbstractTableCellsValidatorUnitTest : MockkBaseTest {
                 data = listOf("L123")
             )
         )
-        val tempIds = emptySet<String>()
-        val validatedIds = emptyMap<String, Either<String, Thing>>()
+        val validationCache = emptyMap<String, Either<CreateThingCommandPart, Thing>>()
 
         every { thingRepository.findById(ThingId("L123")) } returns Optional.empty()
 
         shouldThrow<ThingNotFound> {
-            abstractTableCellsValidator.validate(rows, tempIds, validatedIds)
+            abstractTableCellsValidator.validate(rows, emptyMap(), validationCache)
         }
 
         verify(exactly = 1) { thingRepository.findById(ThingId("L123")) }

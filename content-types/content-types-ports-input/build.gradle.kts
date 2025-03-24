@@ -16,9 +16,9 @@ dependencies {
     testFixturesApi(project(":common:identifiers"))
     testFixturesApi(project(":content-types:content-types-core-model"))
     testFixturesApi(project(":content-types:content-types-ports-input"))
+    testFixturesApi(project(":graph:graph-core-model"))
     testFixturesImplementation("dev.forkhandles:values4k")
     testFixturesImplementation(project(":graph:graph-core-constants"))
-    testFixturesImplementation(project(":graph:graph-core-model"))
     testFixturesImplementation(testFixtures(project(":content-types:content-types-core-model")))
     testFixturesImplementation("org.eclipse.rdf4j:rdf4j-common-io")
 }

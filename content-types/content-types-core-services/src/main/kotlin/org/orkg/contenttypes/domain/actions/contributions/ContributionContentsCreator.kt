@@ -42,7 +42,7 @@ class ContributionContentsCreator(
                 extractionMethod = command.extractionMethod,
                 thingsCommand = command,
                 contributionCommands = listOf(command.contribution),
-                validatedIds = state.validatedIds,
+                validationCache = state.validationCache,
                 bakedStatements = state.bakedStatements
             ).single()
         )

@@ -33,8 +33,7 @@ internal class TableRowsCreatorUnitTest : MockkBaseTest {
 
         result.asClue {
             it.tableId shouldBe state.tableId
-            it.tempIds shouldBe state.tempIds
-            it.validatedIds shouldBe state.validatedIds
+            it.validationCache shouldBe state.validationCache
             it.tempIdToThing shouldBe state.tempIdToThing
             it.columns shouldBe state.columns
             it.rows shouldBe rows

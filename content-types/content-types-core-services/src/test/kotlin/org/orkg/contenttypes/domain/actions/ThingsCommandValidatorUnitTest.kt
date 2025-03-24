@@ -18,6 +18,8 @@ import org.orkg.contenttypes.input.CreateLiteralCommandPart
 import org.orkg.contenttypes.input.CreatePaperUseCase
 import org.orkg.contenttypes.input.CreatePredicateCommandPart
 import org.orkg.contenttypes.input.CreateResourceCommandPart
+import org.orkg.contenttypes.input.CreateThingCommandPart
+import org.orkg.contenttypes.input.testing.fixtures.from
 import org.orkg.contenttypes.input.testing.fixtures.updateTemplateInstanceCommand
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.InvalidLiteralDatatype
@@ -41,7 +43,7 @@ internal class ThingsCommandValidatorUnitTest : MockkBaseTest {
     private val thingRepository: ThingRepository = mockk()
     private val classRepository: ClassRepository = mockk()
 
-    private val thingsCommandValidator = object : ThingsCommandValidator(thingRepository, classRepository) {}
+    private val thingsCommandValidator = ThingsCommandValidator(thingRepository, classRepository)
 
     @Test
     fun `Given paper contents, when valid, it returns success`() {
@@ -79,17 +81,12 @@ internal class ThingsCommandValidatorUnitTest : MockkBaseTest {
         every { thingRepository.findById(r123.id) } returns Optional.of(r123)
         every { thingRepository.findById(c2000.id) } returns Optional.of(c2000)
 
-        val validatedIds = mutableMapOf<String, Either<String, Thing>>()
-        val tempIds = setOf("#temp1", "#temp2", "#temp3", "#temp4")
+        val validationCache = mutableMapOf<String, Either<CreateThingCommandPart, Thing>>()
 
-        val result = thingsCommandValidator.validate(
-            thingsCommand = contents,
-            tempIds = tempIds,
-            validatedIds = validatedIds
-        )
+        val result = thingsCommandValidator.validate(contents, validationCache)
 
         result shouldBe mapOf(
-            "#temp1" to Either.left("#temp1"),
+            "#temp1" from contents,
             "R123" to Either.right(r123),
             "C2000" to Either.right(c2000)
         )
@@ -117,8 +114,7 @@ internal class ThingsCommandValidatorUnitTest : MockkBaseTest {
         assertThrows<ThingNotFound> {
             thingsCommandValidator.validate(
                 thingsCommand = contents,
-                tempIds = emptySet(),
-                validatedIds = mutableMapOf()
+                validationCache = mutableMapOf()
             )
         }
 
@@ -142,13 +138,7 @@ internal class ThingsCommandValidatorUnitTest : MockkBaseTest {
 
         every { thingRepository.findById(any()) } returns Optional.of(resource)
 
-        assertThrows<ThingIsNotAClass> {
-            thingsCommandValidator.validate(
-                thingsCommand = contents,
-                tempIds = emptySet(),
-                validatedIds = mutableMapOf()
-            )
-        }
+        assertThrows<ThingIsNotAClass> { thingsCommandValidator.validate(contents, mutableMapOf()) }
 
         verify(exactly = 1) { thingRepository.findById(any()) }
     }
@@ -167,13 +157,7 @@ internal class ThingsCommandValidatorUnitTest : MockkBaseTest {
             contributions = emptyList()
         )
 
-        assertThrows<ReservedClass> {
-            thingsCommandValidator.validate(
-                thingsCommand = contents,
-                tempIds = emptySet(),
-                validatedIds = mutableMapOf()
-            )
-        }
+        assertThrows<ReservedClass> { thingsCommandValidator.validate(contents, mutableMapOf()) }
     }
 
     @Test
@@ -189,13 +173,7 @@ internal class ThingsCommandValidatorUnitTest : MockkBaseTest {
             contributions = emptyList()
         )
 
-        assertThrows<InvalidLabel> {
-            thingsCommandValidator.validate(
-                thingsCommand = contents,
-                tempIds = emptySet(),
-                validatedIds = mutableMapOf()
-            )
-        }
+        assertThrows<InvalidLabel> { thingsCommandValidator.validate(contents, mutableMapOf()) }
     }
 
     @Test
@@ -211,13 +189,7 @@ internal class ThingsCommandValidatorUnitTest : MockkBaseTest {
             contributions = emptyList()
         )
 
-        assertThrows<InvalidLiteralLabel> {
-            thingsCommandValidator.validate(
-                thingsCommand = contents,
-                tempIds = emptySet(),
-                validatedIds = mutableMapOf()
-            )
-        }
+        assertThrows<InvalidLiteralLabel> { thingsCommandValidator.validate(contents, mutableMapOf()) }
     }
 
     @Test
@@ -234,13 +206,7 @@ internal class ThingsCommandValidatorUnitTest : MockkBaseTest {
             contributions = emptyList()
         )
 
-        assertThrows<InvalidLiteralLabel> {
-            thingsCommandValidator.validate(
-                thingsCommand = contents,
-                tempIds = emptySet(),
-                validatedIds = mutableMapOf()
-            )
-        }
+        assertThrows<InvalidLiteralLabel> { thingsCommandValidator.validate(contents, mutableMapOf()) }
     }
 
     @Test
@@ -257,13 +223,7 @@ internal class ThingsCommandValidatorUnitTest : MockkBaseTest {
             contributions = emptyList()
         )
 
-        assertThrows<InvalidLiteralDatatype> {
-            thingsCommandValidator.validate(
-                thingsCommand = contents,
-                tempIds = emptySet(),
-                validatedIds = mutableMapOf()
-            )
-        }
+        assertThrows<InvalidLiteralDatatype> { thingsCommandValidator.validate(contents, mutableMapOf()) }
     }
 
     @Test
@@ -279,13 +239,7 @@ internal class ThingsCommandValidatorUnitTest : MockkBaseTest {
             contributions = emptyList()
         )
 
-        assertThrows<InvalidLabel> {
-            thingsCommandValidator.validate(
-                thingsCommand = contents,
-                tempIds = emptySet(),
-                validatedIds = mutableMapOf()
-            )
-        }
+        assertThrows<InvalidLabel> { thingsCommandValidator.validate(contents, mutableMapOf()) }
     }
 
     @Test
@@ -302,13 +256,7 @@ internal class ThingsCommandValidatorUnitTest : MockkBaseTest {
             contributions = emptyList()
         )
 
-        assertThrows<InvalidLabel> {
-            thingsCommandValidator.validate(
-                thingsCommand = contents,
-                tempIds = emptySet(),
-                validatedIds = mutableMapOf()
-            )
-        }
+        assertThrows<InvalidLabel> { thingsCommandValidator.validate(contents, mutableMapOf()) }
     }
 
     @Test
@@ -325,13 +273,7 @@ internal class ThingsCommandValidatorUnitTest : MockkBaseTest {
             )
         )
 
-        assertThrows<InvalidLabel> {
-            thingsCommandValidator.validate(
-                thingsCommand = contents,
-                tempIds = emptySet(),
-                validatedIds = mutableMapOf()
-            )
-        }
+        assertThrows<InvalidLabel> { thingsCommandValidator.validate(contents, mutableMapOf()) }
     }
 
     @Test
@@ -350,13 +292,7 @@ internal class ThingsCommandValidatorUnitTest : MockkBaseTest {
             )
         )
 
-        assertThrows<URINotAbsolute> {
-            thingsCommandValidator.validate(
-                thingsCommand = contents,
-                tempIds = emptySet(),
-                validatedIds = mutableMapOf()
-            )
-        }
+        assertThrows<URINotAbsolute> { thingsCommandValidator.validate(contents, mutableMapOf()) }
     }
 
     @Test
@@ -378,13 +314,7 @@ internal class ThingsCommandValidatorUnitTest : MockkBaseTest {
 
         every { classRepository.findByUri(uri.toString()) } returns Optional.of(`class`)
 
-        assertThrows<URIAlreadyInUse> {
-            thingsCommandValidator.validate(
-                thingsCommand = contents,
-                tempIds = emptySet(),
-                validatedIds = mutableMapOf()
-            )
-        }
+        assertThrows<URIAlreadyInUse> { thingsCommandValidator.validate(contents, mutableMapOf()) }
 
         verify(exactly = 1) { classRepository.findByUri(uri.toString()) }
     }

@@ -15,6 +15,7 @@ import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneStatementState
 import org.orkg.contenttypes.domain.testing.fixtures.createRosettaStoneStatement
 import org.orkg.contenttypes.domain.testing.fixtures.createRosettaStoneTemplate
+import org.orkg.contenttypes.input.testing.fixtures.from
 import org.orkg.contenttypes.input.testing.fixtures.updateRosettaStoneStatementCommand
 import org.orkg.contenttypes.output.RosettaStoneStatementRepository
 import org.orkg.graph.domain.Classes
@@ -47,8 +48,7 @@ internal class RosettaStoneStatementUpdaterUnitTest : MockkBaseTest {
         val state = UpdateRosettaStoneStatementState(
             rosettaStoneTemplate = createRosettaStoneTemplate(),
             rosettaStoneStatement = originalStatement,
-            tempIds = setOf("#temp1", "#temp2", "#temp3", "#temp4", "#temp5"),
-            validatedIds = mapOf(
+            validationCache = mapOf(
                 "R258" to Either.right(r258),
                 "R369" to Either.right(r369),
                 "R987" to Either.right(r987),
@@ -56,11 +56,11 @@ internal class RosettaStoneStatementUpdaterUnitTest : MockkBaseTest {
                 "R321" to Either.right(r321),
                 "R741" to Either.right(r741),
                 "C123" to Either.right(c123),
-                "#temp1" to Either.left("#temp1"),
-                "#temp2" to Either.left("#temp2"),
-                "#temp3" to Either.left("#temp3"),
-                "#temp4" to Either.left("#temp4"),
-                "#temp5" to Either.left("#temp5")
+                "#temp1" from command,
+                "#temp2" from command,
+                "#temp3" from command,
+                "#temp4" from command,
+                "#temp5" from command
             ),
             tempIdToThing = mapOf(
                 "#temp1" to ThingId("Temp1"),
@@ -91,8 +91,7 @@ internal class RosettaStoneStatementUpdaterUnitTest : MockkBaseTest {
             it.rosettaStoneTemplate shouldBe state.rosettaStoneTemplate
             it.rosettaStoneStatement shouldBe state.rosettaStoneStatement
             it.rosettaStoneStatementId shouldBe rosettaStoneStatementVersionId
-            it.tempIds shouldBe state.tempIds
-            it.validatedIds shouldBe state.validatedIds
+            it.validationCache shouldBe state.validationCache
             it.tempIdToThing shouldBe state.tempIdToThing
         }
 

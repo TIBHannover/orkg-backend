@@ -22,6 +22,7 @@ import org.orkg.contenttypes.domain.actions.PublishPaperState
 import org.orkg.contenttypes.domain.actions.ResearchFieldValidator
 import org.orkg.contenttypes.domain.actions.ResourceValidator
 import org.orkg.contenttypes.domain.actions.SDGValidator
+import org.orkg.contenttypes.domain.actions.TempIdValidator
 import org.orkg.contenttypes.domain.actions.UpdatePaperCommand
 import org.orkg.contenttypes.domain.actions.UpdatePaperState
 import org.orkg.contenttypes.domain.actions.VerifiedValidator
@@ -29,7 +30,6 @@ import org.orkg.contenttypes.domain.actions.VisibilityValidator
 import org.orkg.contenttypes.domain.actions.contributions.ContributionContentsCreator
 import org.orkg.contenttypes.domain.actions.contributions.ContributionContentsValidator
 import org.orkg.contenttypes.domain.actions.contributions.ContributionPaperValidator
-import org.orkg.contenttypes.domain.actions.contributions.ContributionTempIdValidator
 import org.orkg.contenttypes.domain.actions.contributions.ContributionThingsCommandValidator
 import org.orkg.contenttypes.domain.actions.execute
 import org.orkg.contenttypes.domain.actions.papers.PaperAuthorListCreateValidator
@@ -55,7 +55,6 @@ import org.orkg.contenttypes.domain.actions.papers.PaperResourceCreator
 import org.orkg.contenttypes.domain.actions.papers.PaperResourceUpdater
 import org.orkg.contenttypes.domain.actions.papers.PaperSDGCreator
 import org.orkg.contenttypes.domain.actions.papers.PaperSDGUpdater
-import org.orkg.contenttypes.domain.actions.papers.PaperTempIdValidator
 import org.orkg.contenttypes.domain.actions.papers.PaperThingsCommandValidator
 import org.orkg.contenttypes.domain.actions.papers.PaperTitleCreateValidator
 import org.orkg.contenttypes.domain.actions.papers.PaperTitleUpdateValidator
@@ -171,7 +170,7 @@ class PaperService(
 
     override fun create(command: CreatePaperCommand): ThingId {
         val steps = listOf(
-            PaperTempIdValidator(),
+            TempIdValidator { it.contents?.tempIds() },
             PublicationInfoValidator { it.publicationInfo },
             PaperTitleCreateValidator(resourceService),
             PaperIdentifierCreateValidator(statementRepository),
@@ -197,7 +196,7 @@ class PaperService(
 
     override fun create(command: CreateContributionCommand): ThingId {
         val steps = listOf(
-            ContributionTempIdValidator(),
+            TempIdValidator { it.tempIds() },
             ContributionPaperValidator(resourceRepository),
             ContributionThingsCommandValidator(thingRepository, classRepository),
             ContributionContentsValidator(thingRepository),

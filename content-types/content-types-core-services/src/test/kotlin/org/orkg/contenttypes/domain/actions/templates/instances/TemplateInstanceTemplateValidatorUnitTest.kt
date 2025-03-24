@@ -33,8 +33,7 @@ internal class TemplateInstanceTemplateValidatorUnitTest : MockkBaseTest {
         result.asClue {
             it.template shouldBe template
             it.templateInstance shouldBe state.templateInstance
-            it.tempIds shouldBe state.tempIds
-            it.validatedIds shouldBe state.validatedIds
+            it.validationCache shouldBe state.validationCache
             it.statementsToAdd shouldBe state.statementsToAdd
             it.statementsToRemove shouldBe state.statementsToRemove
             it.literals shouldBe state.literals

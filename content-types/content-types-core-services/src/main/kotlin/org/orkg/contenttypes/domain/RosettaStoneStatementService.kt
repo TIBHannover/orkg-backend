@@ -12,6 +12,7 @@ import org.orkg.contenttypes.domain.actions.CreateRosettaStoneStatementCommand
 import org.orkg.contenttypes.domain.actions.CreateRosettaStoneStatementState
 import org.orkg.contenttypes.domain.actions.ObservatoryValidator
 import org.orkg.contenttypes.domain.actions.OrganizationValidator
+import org.orkg.contenttypes.domain.actions.TempIdValidator
 import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneStatementCommand
 import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneStatementState
 import org.orkg.contenttypes.domain.actions.execute
@@ -21,8 +22,6 @@ import org.orkg.contenttypes.domain.actions.rosettastone.statements.RosettaStone
 import org.orkg.contenttypes.domain.actions.rosettastone.statements.RosettaStoneStatementModifiableValidator
 import org.orkg.contenttypes.domain.actions.rosettastone.statements.RosettaStoneStatementPropertyValueCreateValidator
 import org.orkg.contenttypes.domain.actions.rosettastone.statements.RosettaStoneStatementPropertyValueUpdateValidator
-import org.orkg.contenttypes.domain.actions.rosettastone.statements.RosettaStoneStatementTempIdCreateValidator
-import org.orkg.contenttypes.domain.actions.rosettastone.statements.RosettaStoneStatementTempIdUpdateValidator
 import org.orkg.contenttypes.domain.actions.rosettastone.statements.RosettaStoneStatementTemplateCreateValidator
 import org.orkg.contenttypes.domain.actions.rosettastone.statements.RosettaStoneStatementTemplateUpdateValidator
 import org.orkg.contenttypes.domain.actions.rosettastone.statements.RosettaStoneStatementThingsCommandCreateCreator
@@ -104,7 +103,7 @@ class RosettaStoneStatementService(
 
     override fun create(command: CreateRosettaStoneStatementCommand): ThingId {
         val steps = listOf(
-            RosettaStoneStatementTempIdCreateValidator(),
+            TempIdValidator { it.tempIds() },
             RosettaStoneStatementTemplateCreateValidator(rosettaStoneTemplateService),
             RosettaStoneStatementContextValidator(resourceRepository),
             ObservatoryValidator(observatoryRepository, { it.observatories }),
@@ -119,7 +118,7 @@ class RosettaStoneStatementService(
 
     override fun update(command: UpdateRosettaStoneStatementCommand): ThingId {
         val steps = listOf(
-            RosettaStoneStatementTempIdUpdateValidator(),
+            TempIdValidator { it.tempIds() },
             RosettaStoneStatementExistenceValidator(this),
             RosettaStoneStatementModifiableValidator(),
             RosettaStoneStatementTemplateUpdateValidator(rosettaStoneTemplateService),

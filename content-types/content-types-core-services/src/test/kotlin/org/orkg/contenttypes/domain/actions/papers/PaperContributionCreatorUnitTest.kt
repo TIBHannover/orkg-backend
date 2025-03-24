@@ -13,6 +13,7 @@ import org.orkg.contenttypes.domain.actions.BakedStatement
 import org.orkg.contenttypes.domain.actions.ContributionCreator
 import org.orkg.contenttypes.domain.actions.CreatePaperState
 import org.orkg.contenttypes.input.testing.fixtures.createPaperCommand
+import org.orkg.contenttypes.input.testing.fixtures.from
 import org.orkg.graph.testing.fixtures.createResource
 
 internal class PaperContributionCreatorUnitTest : MockkBaseTest {
@@ -24,9 +25,8 @@ internal class PaperContributionCreatorUnitTest : MockkBaseTest {
     fun `Given a paper create command, when creating its contents, it returns success`() {
         val command = createPaperCommand()
         val state = CreatePaperState(
-            tempIds = setOf("#temp1"),
-            validatedIds = mapOf(
-                "#temp1" to Either.left("#temp1"),
+            validationCache = mapOf(
+                "#temp1" from command,
                 "R3003" to Either.right(createResource())
             ),
             bakedStatements = setOf(
@@ -42,7 +42,7 @@ internal class PaperContributionCreatorUnitTest : MockkBaseTest {
                 extractionMethod = command.extractionMethod,
                 thingsCommand = command.contents!!,
                 contributionCommands = command.contents!!.contributions,
-                validatedIds = state.validatedIds,
+                validationCache = state.validationCache,
                 bakedStatements = state.bakedStatements
             )
         } returns listOf(ThingId("R456"))
@@ -50,8 +50,7 @@ internal class PaperContributionCreatorUnitTest : MockkBaseTest {
         val result = paperContributionCreator(command, state)
 
         result.asClue {
-            it.tempIds shouldBe state.tempIds
-            it.validatedIds shouldBe state.validatedIds
+            it.validationCache shouldBe state.validationCache
             it.bakedStatements shouldBe state.bakedStatements
             it.authors shouldBe state.authors
             it.paperId shouldBe state.paperId
@@ -64,7 +63,7 @@ internal class PaperContributionCreatorUnitTest : MockkBaseTest {
                 extractionMethod = command.extractionMethod,
                 thingsCommand = command.contents!!,
                 contributionCommands = command.contents!!.contributions,
-                validatedIds = state.validatedIds,
+                validationCache = state.validationCache,
                 bakedStatements = state.bakedStatements
             )
         }

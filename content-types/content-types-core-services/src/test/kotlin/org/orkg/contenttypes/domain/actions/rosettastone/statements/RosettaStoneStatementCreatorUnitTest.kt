@@ -15,6 +15,7 @@ import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.contenttypes.domain.actions.CreateRosettaStoneStatementState
 import org.orkg.contenttypes.domain.testing.fixtures.createRosettaStoneTemplate
 import org.orkg.contenttypes.input.testing.fixtures.createRosettaStoneStatementCommand
+import org.orkg.contenttypes.input.testing.fixtures.from
 import org.orkg.contenttypes.output.RosettaStoneStatementRepository
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.output.ThingRepository
@@ -28,16 +29,14 @@ internal class RosettaStoneStatementCreatorUnitTest : MockkBaseTest {
     private val rosettaStoneStatementRepository: RosettaStoneStatementRepository = mockk()
     private val thingRepository: ThingRepository = mockk()
 
-    private val rosettaStoneStatementCreator =
-        RosettaStoneStatementCreator(rosettaStoneStatementRepository, thingRepository, fixedClock)
+    private val rosettaStoneStatementCreator = RosettaStoneStatementCreator(rosettaStoneStatementRepository, thingRepository, fixedClock)
 
     @Test
     fun `Given a rosetta stone statement create command, when creating a new rosetta stone statement, it returns success`() {
         val command = createRosettaStoneStatementCommand()
         val state = CreateRosettaStoneStatementState(
             rosettaStoneTemplate = createRosettaStoneTemplate(),
-            tempIds = setOf("#temp1", "#temp2", "#temp3", "#temp4", "#temp5"),
-            validatedIds = mapOf(
+            validationCache = mapOf(
                 "R258" to Either.right(createResource(ThingId("R258"))),
                 "R369" to Either.right(createResource(ThingId("R369"))),
                 "R987" to Either.right(createResource(ThingId("R987"))),
@@ -45,11 +44,11 @@ internal class RosettaStoneStatementCreatorUnitTest : MockkBaseTest {
                 "R321" to Either.right(createResource(ThingId("R321"))),
                 "R741" to Either.right(createResource(ThingId("R741"))),
                 "C123" to Either.right(createClass(ThingId("C123"))),
-                "#temp1" to Either.left("#temp1"),
-                "#temp2" to Either.left("#temp2"),
-                "#temp3" to Either.left("#temp3"),
-                "#temp4" to Either.left("#temp4"),
-                "#temp5" to Either.left("#temp5")
+                "#temp1" from command,
+                "#temp2" from command,
+                "#temp3" from command,
+                "#temp4" from command,
+                "#temp5" from command
             ),
             tempIdToThing = mapOf(
                 "#temp1" to ThingId("Temp1"),
@@ -86,8 +85,7 @@ internal class RosettaStoneStatementCreatorUnitTest : MockkBaseTest {
         result.asClue {
             it.rosettaStoneTemplate shouldBe state.rosettaStoneTemplate
             it.rosettaStoneStatementId shouldBe rosettaStoneStatementId
-            it.tempIds shouldBe state.tempIds
-            it.validatedIds shouldBe state.validatedIds
+            it.validationCache shouldBe state.validationCache
             it.tempIdToThing shouldBe state.tempIdToThing
         }
 

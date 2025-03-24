@@ -39,7 +39,7 @@ class RosettaStoneStatementThingsCommandCreateCreator(
         val tempIdToThing: MutableMap<String, ThingId> = mutableMapOf()
         subgraphCreator.createThings(
             thingsCommand = command,
-            validatedIds = state.validatedIds,
+            validationCache = state.validationCache,
             contributorId = command.contributorId,
             extractionMethod = command.extractionMethod,
             lookup = tempIdToThing

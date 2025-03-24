@@ -18,19 +18,18 @@ import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.output.ThingRepository
 
 class TemplateInstancePropertyValueValidator(
-    override val thingRepository: ThingRepository,
+    private val thingIdValidator: ThingIdValidator,
     private val classRepository: ClassRepository,
     private val statementRepository: StatementRepository,
     private val abstractTemplatePropertyValueValidator: AbstractTemplatePropertyValueValidator,
-) : UpdateTemplateInstanceAction,
-    ThingIdValidator {
+) : UpdateTemplateInstanceAction {
     constructor(
         thingRepository: ThingRepository,
         classRepository: ClassRepository,
         statementRepository: StatementRepository,
         classHierarchyRepository: ClassHierarchyRepository,
     ) : this(
-        thingRepository,
+        ThingIdValidator(thingRepository),
         classRepository,
         statementRepository,
         AbstractTemplatePropertyValueValidator(classHierarchyRepository)
@@ -43,8 +42,8 @@ class TemplateInstancePropertyValueValidator(
         val toRemove = mutableSetOf<BakedStatement>()
         val toAdd = mutableSetOf<BakedStatement>()
         val templateInstance = state.templateInstance!!
-        val validatedIds = state.validatedIds.toMutableMap()
-        val thingsCommand = command.all()
+        val validationCache = state.validationCache.toMutableMap()
+        val thingCommands = command.all()
         val literalCommands = mutableMapOf<String, CreateLiteralCommandPart>()
 
         validatePropertyPaths(state.template!!, command.statements.keys)
@@ -56,19 +55,18 @@ class TemplateInstancePropertyValueValidator(
                 BakedStatement(templateInstance.root.id.value, property.path.id.value, it.thing.id.value)
             }
             propertyInstances.forEach { objectId ->
-                val `object` = validateId(objectId, state.tempIds, validatedIds)
+                val `object` = thingIdValidator.validate(objectId, thingCommands, validationCache)
 
-                `object`.onLeft { tempId ->
-                    val thingCommand = thingsCommand[tempId]!!
-                    abstractTemplatePropertyValueValidator.validateObject(property, tempId, thingCommand)
-                    if (property is LiteralTemplateProperty && thingCommand is CreateLiteralCommandPart) {
-                        literalCommands[tempId] = thingCommand.copy(
+                `object`.onLeft { command ->
+                    abstractTemplatePropertyValueValidator.validateObject(property, objectId, command)
+                    if (property is LiteralTemplateProperty && command is CreateLiteralCommandPart) {
+                        literalCommands[objectId] = command.copy(
                             dataType = Literals.XSD.fromClass(property.datatype.id)?.prefixedUri
                                 ?: classRepository.findById(property.datatype.id).orElse(null)?.uri?.toString()
                                 ?: Literals.XSD.STRING.prefixedUri
                         )
                     }
-                    toAdd += BakedStatement(templateInstance.root.id.value, property.path.id.value, tempId)
+                    toAdd += BakedStatement(templateInstance.root.id.value, property.path.id.value, objectId)
                 }
 
                 `object`.onRight { thing ->
@@ -84,7 +82,7 @@ class TemplateInstancePropertyValueValidator(
         }
 
         return state.copy(
-            validatedIds = validatedIds,
+            validationCache = validationCache,
             statementsToAdd = toAdd,
             statementsToRemove = toRemove,
             literals = literalCommands

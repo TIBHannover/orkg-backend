@@ -37,18 +37,18 @@ import org.orkg.graph.output.ThingRepository
 import kotlin.math.absoluteValue
 
 class AbstractRosettaStoneStatementPropertyValueValidator(
-    override val thingRepository: ThingRepository,
+    private val thingIdValidator: ThingIdValidator,
     private val statementRepository: StatementRepository,
     private val rosettaStoneStatementService: RosettaStoneStatementUseCases,
     private val abstractTemplatePropertyValueValidator: AbstractTemplatePropertyValueValidator,
-) : ThingIdValidator {
+) {
     constructor(
         thingRepository: ThingRepository,
         statementRepository: StatementRepository,
         rosettaStoneStatementService: RosettaStoneStatementUseCases,
         classHierarchyRepository: ClassHierarchyRepository,
     ) : this(
-        thingRepository,
+        ThingIdValidator(thingRepository),
         statementRepository,
         rosettaStoneStatementService,
         AbstractTemplatePropertyValueValidator(classHierarchyRepository)
@@ -56,14 +56,13 @@ class AbstractRosettaStoneStatementPropertyValueValidator(
 
     fun validate(
         templateProperties: List<TemplateProperty>,
-        thingsCommand: Map<String, CreateThingCommandPart>,
-        validatedIdsIn: Map<String, Either<String, Thing>>,
-        tempIds: Set<String>,
+        thingCommands: Map<String, CreateThingCommandPart>,
+        validationCacheIn: Map<String, Either<CreateThingCommandPart, Thing>>,
         templateId: ThingId,
         subjects: List<String>,
         objects: List<List<String>>,
-    ): Map<String, Either<String, Thing>> {
-        val validatedIds = validatedIdsIn.toMutableMap()
+    ): Map<String, Either<CreateThingCommandPart, Thing>> {
+        val validataionCache = validationCacheIn.toMutableMap()
         validateInputPositionCount(templateId, objects, templateProperties)
         val inputs = objects.toMutableList()
         inputs.add(templateProperties.indexOfFirst { it.path.id == Predicates.hasSubjectPosition }, subjects)
@@ -86,10 +85,10 @@ class AbstractRosettaStoneStatementPropertyValueValidator(
                 }
             }
             propertyInstances.forEach { objectId ->
-                val `object` = validateId(objectId, tempIds, validatedIds)
+                val `object` = thingIdValidator.validate(objectId, thingCommands, validataionCache)
 
-                `object`.onLeft { tempId ->
-                    validateObject(property, tempId, thingsCommand[tempId]!!)
+                `object`.onLeft { command ->
+                    validateObject(property, objectId, command)
                 }
 
                 `object`.onRight { thing ->
@@ -106,8 +105,7 @@ class AbstractRosettaStoneStatementPropertyValueValidator(
                 }
             }
         }
-
-        return validatedIds
+        return validataionCache
     }
 
     private fun validateObject(property: TemplateProperty, id: String, `object`: CreateThingCommandPart) {

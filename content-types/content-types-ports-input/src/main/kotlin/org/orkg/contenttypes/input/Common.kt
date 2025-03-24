@@ -20,6 +20,9 @@ sealed interface CreateThingsCommand {
 
     fun all(): Map<String, CreateThingCommandPart> =
         resources + literals + predicates + classes + lists
+
+    fun tempIds(): List<String> =
+        listOf(resources.keys, literals.keys, predicates.keys, classes.keys, lists.keys).flatten()
 }
 
 sealed interface CreateThingCommandPart {

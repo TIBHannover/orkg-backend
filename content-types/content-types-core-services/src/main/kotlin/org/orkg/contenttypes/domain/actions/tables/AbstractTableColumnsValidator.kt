@@ -12,20 +12,20 @@ import org.orkg.graph.domain.Thing
 import org.orkg.graph.output.ThingRepository
 
 class AbstractTableColumnsValidator(
-    override val thingRepository: ThingRepository,
-) : ThingIdValidator {
+    private val thingIdValidator: ThingIdValidator,
+) {
+    constructor(thingRepository: ThingRepository) : this(ThingIdValidator(thingRepository))
+
     internal fun validate(
-        thingsCommand: Map<String, CreateThingCommandPart>,
         rows: List<RowCommand>,
-        tempIds: Set<String>,
-        validationCacheIn: Map<String, Either<String, Thing>>,
-    ): Map<String, Either<String, Thing>> {
+        thingCommands: Map<String, CreateThingCommandPart>,
+        validationCacheIn: Map<String, Either<CreateThingCommandPart, Thing>>,
+    ): Map<String, Either<CreateThingCommandPart, Thing>> {
         val validationCache = validationCacheIn.toMutableMap()
         rows.first().data.forEachIndexed { index, id ->
-            val `object` = validateId(id!!, tempIds, validationCache)
+            val `object` = thingIdValidator.validate(id!!, thingCommands, validationCache)
 
-            `object`.onLeft { tempId ->
-                val command = thingsCommand[tempId]!!
+            `object`.onLeft { command ->
                 if (command !is CreateLiteralCommandPart || Literals.XSD.fromString(command.dataType) != Literals.XSD.STRING) {
                     throw TableHeaderValueMustBeLiteral(index)
                 }

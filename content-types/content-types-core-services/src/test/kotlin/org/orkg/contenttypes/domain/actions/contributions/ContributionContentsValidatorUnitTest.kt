@@ -12,7 +12,9 @@ import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.BakedStatement
 import org.orkg.contenttypes.domain.actions.ContributionState
 import org.orkg.contenttypes.domain.actions.ContributionValidator
+import org.orkg.contenttypes.input.CreateThingCommandPart
 import org.orkg.contenttypes.input.testing.fixtures.createContributionCommand
+import org.orkg.contenttypes.input.testing.fixtures.from
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.testing.fixtures.createClass
@@ -29,13 +31,12 @@ internal class ContributionContentsValidatorUnitTest : MockkBaseTest {
         val command = createContributionCommand()
         val resource = createResource(id = ThingId("R3003"))
         val state = ContributionState(
-            tempIds = setOf("#temp1", "#temp2", "#temp3", "#temp4"),
-            validatedIds = mapOf(
+            validationCache = mapOf(
                 "R3003" to Either.right(resource),
-                "#temp1" to Either.left("#temp1"),
-                "#temp2" to Either.left("#temp2"),
-                "#temp3" to Either.left("#temp3"),
-                "#temp4" to Either.left("#temp4")
+                "#temp1" from command,
+                "#temp2" from command,
+                "#temp3" from command,
+                "#temp4" from command
             )
         )
         val bakedStatements = setOf(
@@ -50,7 +51,7 @@ internal class ContributionContentsValidatorUnitTest : MockkBaseTest {
         val `class` = createClass(ThingId("R3004"))
         val hasResearchProblem = createPredicate(Predicates.hasResearchProblem)
         val hasEvaluation = createPredicate(Predicates.hasEvaluation)
-        val validatedIds = state.validatedIds + mapOf<String, Either<String, Thing>>(
+        val validationCache = state.validationCache + mapOf<String, Either<CreateThingCommandPart, Thing>>(
             "C123" to Either.right(template),
             "R3003" to Either.right(resource),
             "R3004" to Either.right(`class`),
@@ -60,27 +61,24 @@ internal class ContributionContentsValidatorUnitTest : MockkBaseTest {
 
         every {
             contributionValidator.validate(
-                validatedIdsIn = state.validatedIds,
-                tempIds = state.tempIds,
-                thingsCommand = command,
+                validationCacheIn = state.validationCache.toMutableMap(),
+                thingCommands = command.all(),
                 contributionCommands = listOf(command.contribution)
             )
-        } returns ContributionValidator.Result(validatedIds, bakedStatements)
+        } returns ContributionValidator.Result(validationCache, bakedStatements)
 
         val result = contributionContentsValidator(command, state)
 
         result.asClue {
-            it.tempIds shouldBe state.tempIds
-            it.validatedIds shouldBe state.validatedIds + validatedIds
+            it.validationCache shouldBe validationCache
             it.bakedStatements shouldBe bakedStatements
             it.contributionId shouldBe null
         }
 
         verify(exactly = 1) {
             contributionValidator.validate(
-                validatedIdsIn = state.validatedIds,
-                tempIds = state.tempIds,
-                thingsCommand = command,
+                validationCacheIn = state.validationCache.toMutableMap(),
+                thingCommands = command.all(),
                 contributionCommands = listOf(command.contribution)
             )
         }

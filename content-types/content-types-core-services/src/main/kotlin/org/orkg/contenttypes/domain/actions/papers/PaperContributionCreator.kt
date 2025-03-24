@@ -42,7 +42,7 @@ class PaperContributionCreator(
                 extractionMethod = command.extractionMethod,
                 thingsCommand = it,
                 contributionCommands = it.contributions,
-                validatedIds = state.validatedIds,
+                validationCache = state.validationCache,
                 bakedStatements = state.bakedStatements
             )
         }

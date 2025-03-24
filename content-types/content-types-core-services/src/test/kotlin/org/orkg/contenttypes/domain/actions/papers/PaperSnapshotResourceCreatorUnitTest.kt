@@ -39,8 +39,7 @@ internal class PaperSnapshotResourceCreatorUnitTest : MockkBaseTest {
         val result = paperSnapshotResourceCreator(command, state)
 
         result.asClue {
-            it.tempIds.size shouldBe 0
-            it.validatedIds.size shouldBe 0
+            it.validationCache.size shouldBe 0
             it.bakedStatements.size shouldBe 0
             it.authors.size shouldBe 0
             it.paperId shouldBe id

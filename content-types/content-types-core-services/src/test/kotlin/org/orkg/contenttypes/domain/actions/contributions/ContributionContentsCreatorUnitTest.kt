@@ -16,6 +16,7 @@ import org.orkg.contenttypes.domain.actions.ContributionState
 import org.orkg.contenttypes.domain.actions.CreateContributionCommand
 import org.orkg.contenttypes.input.CreateContributionCommandPart
 import org.orkg.contenttypes.input.CreatePredicateCommandPart
+import org.orkg.contenttypes.input.testing.fixtures.from
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.testing.fixtures.createResource
 import java.util.UUID
@@ -46,9 +47,8 @@ internal class ContributionContentsCreatorUnitTest : MockkBaseTest {
             )
         )
         val state = ContributionState(
-            tempIds = setOf("#temp1"),
-            validatedIds = mapOf(
-                "#temp1" to Either.left("#temp1"),
+            validationCache = mapOf(
+                "#temp1" from command,
                 "R3003" to Either.right(createResource())
             ),
             bakedStatements = setOf(
@@ -64,7 +64,7 @@ internal class ContributionContentsCreatorUnitTest : MockkBaseTest {
                 extractionMethod = command.extractionMethod,
                 thingsCommand = command,
                 contributionCommands = listOf(command.contribution),
-                validatedIds = state.validatedIds,
+                validationCache = state.validationCache,
                 bakedStatements = state.bakedStatements
             )
         } returns listOf(contributionId)
@@ -72,8 +72,7 @@ internal class ContributionContentsCreatorUnitTest : MockkBaseTest {
         val result = contributionContentsCreatorCreator(command, state)
 
         result.asClue {
-            it.tempIds shouldBe state.tempIds
-            it.validatedIds shouldBe state.validatedIds
+            it.validationCache shouldBe state.validationCache
             it.bakedStatements shouldBe state.bakedStatements
             it.contributionId shouldBe contributionId
         }
@@ -85,7 +84,7 @@ internal class ContributionContentsCreatorUnitTest : MockkBaseTest {
                 extractionMethod = command.extractionMethod,
                 thingsCommand = command,
                 contributionCommands = listOf(command.contribution),
-                validatedIds = state.validatedIds,
+                validationCache = state.validationCache,
                 bakedStatements = state.bakedStatements
             )
         }

@@ -8,10 +8,22 @@ import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
 class PaperIdentifierCreator(
-    unsafeStatementUseCases: UnsafeStatementUseCases,
-    unsafeLiteralUseCases: UnsafeLiteralUseCases,
-) : IdentifierCreator(unsafeStatementUseCases, unsafeLiteralUseCases),
-    CreatePaperAction {
-    override fun invoke(command: CreatePaperCommand, state: State): State =
-        state.apply { create(command.contributorId, command.identifiers, Identifiers.paper, paperId!!) }
+    private val identifierCreator: IdentifierCreator,
+) : CreatePaperAction {
+    constructor(
+        unsafeStatementUseCases: UnsafeStatementUseCases,
+        unsafeLiteralUseCases: UnsafeLiteralUseCases,
+    ) : this(
+        IdentifierCreator(unsafeStatementUseCases, unsafeLiteralUseCases)
+    )
+
+    override fun invoke(command: CreatePaperCommand, state: State): State {
+        identifierCreator.create(
+            contributorId = command.contributorId,
+            identifiers = command.identifiers,
+            identifierDefinitions = Identifiers.paper,
+            subjectId = state.paperId!!
+        )
+        return state
+    }
 }

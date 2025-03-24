@@ -20,7 +20,7 @@ internal class IdentifierCreatorUnitTest : MockkBaseTest {
     private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
     private val unsafeLiteralUseCases: UnsafeLiteralUseCases = mockk()
 
-    private val identifierCreator = object : IdentifierCreator(unsafeStatementUseCases, unsafeLiteralUseCases) {}
+    private val identifierCreator = IdentifierCreator(unsafeStatementUseCases, unsafeLiteralUseCases)
 
     @Test
     fun `Given a map of identifiers, it crates new paper identifiers`() {

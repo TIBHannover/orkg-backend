@@ -27,7 +27,7 @@ internal class LiteratureListVersionResourceCreatorUnitTest : MockkBaseTest {
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
             contributorId = command.contributorId,
             label = command.title,
-            classes = setOf(Classes.literatureListPublished),
+            classes = setOf(Classes.literatureListPublished, Classes.latestVersion),
             extractionMethod = command.extractionMethod,
             observatoryId = command.observatories.firstOrNull(),
             organizationId = command.organizations.firstOrNull()

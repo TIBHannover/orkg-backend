@@ -1,7 +1,7 @@
-MATCH (srp:`SmartReviewPublished`)<-[:`RELATED` {predicate_id: 'hasPublishedVersion'}]-(srl:`SmartReview`)
-WITH srl, apoc.coll.sortNodes(collect(srp), 'created_at') AS published
-WITH srl, published[0] AS latestVersion, TAIL(published) AS outdatedVersions
-SET latestVersion:LatestVersion
-WITH outdatedVersions
-UNWIND outdatedVersions AS outdated
-REMOVE outdated:LatestVersion;
+MATCH (p:SmartReviewPublished:LatestVersion)
+REMOVE p:LatestVersion;
+
+MATCH (h:SmartReview)-[:RELATED {predicate_id: "hasPublishedVersion"}]->(p:SmartReviewPublished)
+WITH h, COLLECT(p) AS published
+WITH h, apoc.coll.sortNodes(published, "created_at")[0] AS latestVersion
+SET latestVersion:LatestVersion;

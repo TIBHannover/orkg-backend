@@ -1,7 +1,7 @@
-MATCH (llp:`LiteratureListPublished`)<-[:`RELATED` {predicate_id: 'hasPublishedVersion'}]-(lll:`LiteratureList`)
-WITH lll, apoc.coll.sortNodes(collect(llp), 'created_at') AS published
-WITH lll, published[0] AS latestVersion, TAIL(published) AS outdatedVersions
-SET latestVersion:LatestVersion
-WITH outdatedVersions
-UNWIND outdatedVersions AS outdated
-REMOVE outdated:LatestVersion;
+MATCH (p:LiteratureListPublished:LatestVersion)
+REMOVE p:LatestVersion;
+
+MATCH (h:LiteratureList)-[:RELATED {predicate_id: "hasPublishedVersion"}]->(p:LiteratureListPublished)
+WITH h, COLLECT(p) AS published
+WITH h, apoc.coll.sortNodes(published, "created_at")[0] AS latestVersion
+SET latestVersion:LatestVersion;

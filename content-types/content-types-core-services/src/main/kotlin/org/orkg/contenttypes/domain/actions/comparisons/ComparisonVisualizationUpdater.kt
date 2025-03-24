@@ -15,7 +15,9 @@ class ComparisonVisualizationUpdater(
         unsafeLiteralUseCases: UnsafeLiteralUseCases,
         statementService: StatementUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
-    ) : this(StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases))
+    ) : this(
+        StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases)
+    )
 
     override fun invoke(command: UpdateComparisonCommand, state: State): State {
         if (command.visualizations != null && command.visualizations != state.comparison!!.visualizations) {

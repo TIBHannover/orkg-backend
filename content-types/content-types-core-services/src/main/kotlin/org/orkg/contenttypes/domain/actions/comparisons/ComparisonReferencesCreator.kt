@@ -15,7 +15,7 @@ class ComparisonReferencesCreator(
         unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(StatementCollectionPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases))
 
-    override operator fun invoke(command: CreateComparisonCommand, state: State): State =
+    override fun invoke(command: CreateComparisonCommand, state: State): State =
         state.also {
             statementCollectionPropertyCreator.create(
                 contributorId = command.contributorId,

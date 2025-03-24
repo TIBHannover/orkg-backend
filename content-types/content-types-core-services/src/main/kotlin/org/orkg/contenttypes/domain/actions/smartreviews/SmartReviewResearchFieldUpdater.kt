@@ -16,7 +16,9 @@ class SmartReviewResearchFieldUpdater(
         unsafeLiteralUseCases: UnsafeLiteralUseCases,
         statementService: StatementUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
-    ) : this(StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases))
+    ) : this(
+        StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases)
+    )
 
     override fun invoke(command: UpdateSmartReviewCommand, state: State): State {
         if (command.researchFields != null && command.researchFields != state.smartReview!!.researchFields.ids) {

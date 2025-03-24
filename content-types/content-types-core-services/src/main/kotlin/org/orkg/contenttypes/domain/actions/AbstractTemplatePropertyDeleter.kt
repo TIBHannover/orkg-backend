@@ -14,7 +14,11 @@ class AbstractTemplatePropertyDeleter(
     constructor(
         resourceService: ResourceUseCases,
         statementService: StatementUseCases,
-    ) : this(resourceService, statementService, ContentTypePartDeleter(statementService))
+    ) : this(
+        resourceService,
+        statementService,
+        ContentTypePartDeleter(statementService)
+    )
 
     internal fun delete(contributorId: ContributorId, templateId: ThingId, propertyId: ThingId) =
         contentTypePartDeleter.delete(templateId, propertyId) { incomingStatements ->

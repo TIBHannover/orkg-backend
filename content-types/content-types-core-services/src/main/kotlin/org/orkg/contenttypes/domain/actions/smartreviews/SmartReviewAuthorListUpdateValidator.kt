@@ -12,7 +12,9 @@ class SmartReviewAuthorListUpdateValidator(
     constructor(
         resourceRepository: ResourceRepository,
         statementRepository: StatementRepository,
-    ) : this(AbstractAuthorListValidator(resourceRepository, statementRepository))
+    ) : this(
+        AbstractAuthorListValidator(resourceRepository, statementRepository)
+    )
 
     override fun invoke(command: UpdateSmartReviewCommand, state: State): State {
         if (command.authors != null && command.authors != state.smartReview!!.authors) {

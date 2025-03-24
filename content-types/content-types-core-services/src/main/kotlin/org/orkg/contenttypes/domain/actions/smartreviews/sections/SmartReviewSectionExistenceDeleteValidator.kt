@@ -12,7 +12,9 @@ class SmartReviewSectionExistenceDeleteValidator(
     constructor(
         smartReviewService: SmartReviewService,
         resourceRepository: ResourceRepository,
-    ) : this(AbstractSmartReviewExistenceValidator(smartReviewService, resourceRepository))
+    ) : this(
+        AbstractSmartReviewExistenceValidator(smartReviewService, resourceRepository)
+    )
 
     override fun invoke(command: DeleteSmartReviewSectionCommand, state: State): State =
         abstractSmartReviewExistenceValidator.findUnpublishedSmartReviewById(command.smartReviewId)

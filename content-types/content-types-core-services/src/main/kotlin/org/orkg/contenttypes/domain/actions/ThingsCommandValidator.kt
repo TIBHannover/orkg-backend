@@ -28,7 +28,10 @@ class ThingsCommandValidator(
     constructor(
         thingRepository: ThingRepository,
         classRepository: ClassRepository,
-    ) : this(ThingIdValidator(thingRepository), classRepository)
+    ) : this(
+        ThingIdValidator(thingRepository),
+        classRepository
+    )
 
     internal fun validate(
         thingsCommand: CreateThingsCommand,

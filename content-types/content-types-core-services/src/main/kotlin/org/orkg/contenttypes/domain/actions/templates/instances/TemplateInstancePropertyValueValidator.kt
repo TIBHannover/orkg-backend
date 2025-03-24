@@ -8,7 +8,7 @@ import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertyValueValidat
 import org.orkg.contenttypes.domain.actions.BakedStatement
 import org.orkg.contenttypes.domain.actions.ThingIdValidator
 import org.orkg.contenttypes.domain.actions.UpdateTemplateInstanceCommand
-import org.orkg.contenttypes.domain.actions.UpdateTemplateInstanceState
+import org.orkg.contenttypes.domain.actions.templates.instances.UpdateTemplateInstanceAction.State
 import org.orkg.contenttypes.domain.actions.toThingCommandPart
 import org.orkg.contenttypes.input.CreateLiteralCommandPart
 import org.orkg.graph.domain.Literals
@@ -35,10 +35,7 @@ class TemplateInstancePropertyValueValidator(
         AbstractTemplatePropertyValueValidator(classHierarchyRepository)
     )
 
-    override fun invoke(
-        command: UpdateTemplateInstanceCommand,
-        state: UpdateTemplateInstanceState,
-    ): UpdateTemplateInstanceState {
+    override fun invoke(command: UpdateTemplateInstanceCommand, state: State): State {
         val toRemove = mutableSetOf<BakedStatement>()
         val toAdd = mutableSetOf<BakedStatement>()
         val templateInstance = state.templateInstance!!

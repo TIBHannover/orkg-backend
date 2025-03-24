@@ -18,8 +18,8 @@ class RosettaStoneStatementUpdater(
         val version = RosettaStoneStatementVersion(
             id = rosettaStoneStatementRepository.nextIdentity(),
             formattedLabel = state.rosettaStoneTemplate!!.formattedLabel,
-            subjects = command.subjects.map { state.mapToThing(it) },
-            objects = command.objects.map { objects -> objects.map { state.mapToThing(it) } },
+            subjects = command.subjects.map { state.resolve(it) },
+            objects = command.objects.map { objects -> objects.map { state.resolve(it) } },
             createdAt = OffsetDateTime.now(clock),
             createdBy = command.contributorId,
             certainty = command.certainty,
@@ -45,6 +45,6 @@ class RosettaStoneStatementUpdater(
 
     // FIXME: Fetching thing instances that are effectively not needed by the repository should be avoided.
     //        Only the ids are needed in order to save the statement.
-    private fun State.mapToThing(id: String) =
+    private fun State.resolve(id: String) =
         validationCache[id]!!.mapLeft { thingRepository.findById(tempIdToThing[id]!!).get() }.merge()
 }

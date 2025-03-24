@@ -1,9 +1,9 @@
 package org.orkg.contenttypes.domain.actions.literaturelists.sections
 
 import org.orkg.contenttypes.domain.actions.CreateLiteratureListSectionCommand
-import org.orkg.contenttypes.domain.actions.CreateLiteratureListSectionState
 import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyUpdater
 import org.orkg.contenttypes.domain.actions.literaturelists.AbstractLiteratureListSectionCreator
+import org.orkg.contenttypes.domain.actions.literaturelists.sections.CreateLiteratureListSectionAction.State
 import org.orkg.contenttypes.input.AbstractLiteratureListSectionCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateStatementUseCase
@@ -28,10 +28,7 @@ class LiteratureListSectionCreator(
         StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases)
     )
 
-    override fun invoke(
-        command: CreateLiteratureListSectionCommand,
-        state: CreateLiteratureListSectionState,
-    ): CreateLiteratureListSectionState {
+    override fun invoke(command: CreateLiteratureListSectionCommand, state: State): State {
         val sectionId = abstractLiteratureListSectionCreator.create(
             contributorId = command.contributorId,
             section = command as AbstractLiteratureListSectionCommand

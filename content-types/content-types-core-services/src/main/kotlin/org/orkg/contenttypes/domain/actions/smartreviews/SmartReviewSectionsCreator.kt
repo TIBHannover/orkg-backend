@@ -16,7 +16,10 @@ class SmartReviewSectionsCreator(
         unsafeLiteralUseCases: UnsafeLiteralUseCases,
         unsafeResourceUseCases: UnsafeResourceUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
-    ) : this(unsafeStatementUseCases, AbstractSmartReviewSectionCreator(unsafeStatementUseCases, unsafeResourceUseCases, unsafeLiteralUseCases))
+    ) : this(
+        unsafeStatementUseCases,
+        AbstractSmartReviewSectionCreator(unsafeStatementUseCases, unsafeResourceUseCases, unsafeLiteralUseCases)
+    )
 
     override fun invoke(command: CreateSmartReviewCommand, state: State): State {
         command.sections.forEach { section ->

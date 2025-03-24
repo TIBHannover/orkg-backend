@@ -29,7 +29,7 @@ class TemplatePropertiesUpdater(
     )
 
     override fun invoke(command: UpdateTemplateCommand, state: State): State {
-        command.properties?.let { properties ->
+        command.properties?.also { properties ->
             abstractTemplatePropertiesUpdater.update(
                 contributorId = command.contributorId,
                 subjectId = command.templateId,

@@ -16,18 +16,20 @@ class TemplatePropertyUpdater(
         unsafeResourceUseCases: UnsafeResourceUseCases,
         statementService: StatementUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
-    ) : this(AbstractTemplatePropertyUpdater(unsafeLiteralUseCases, unsafeResourceUseCases, statementService, unsafeStatementUseCases))
+    ) : this(
+        AbstractTemplatePropertyUpdater(unsafeLiteralUseCases, unsafeResourceUseCases, statementService, unsafeStatementUseCases)
+    )
 
-    override fun invoke(command: UpdateTemplatePropertyCommand, state: State): State =
-        state.apply {
-            if (!command.matchesProperty(templateProperty!!)) {
-                abstractTemplatePropertyUpdater.update(
-                    statements = state.statements[templateProperty.id].orEmpty(),
-                    contributorId = command.contributorId,
-                    order = templateProperty.order.toInt(),
-                    newProperty = command,
-                    oldProperty = templateProperty
-                )
-            }
+    override fun invoke(command: UpdateTemplatePropertyCommand, state: State): State {
+        if (!command.matchesProperty(state.templateProperty!!)) {
+            abstractTemplatePropertyUpdater.update(
+                statements = state.statements[state.templateProperty.id].orEmpty(),
+                contributorId = command.contributorId,
+                order = state.templateProperty.order.toInt(),
+                newProperty = command,
+                oldProperty = state.templateProperty
+            )
         }
+        return state
+    }
 }

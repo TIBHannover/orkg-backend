@@ -15,13 +15,13 @@ class ComparisonResearchFieldCreator(
         unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(StatementCollectionPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases))
 
-    override operator fun invoke(command: CreateComparisonCommand, state: State): State =
-        state.apply {
-            statementCollectionPropertyCreator.create(
-                contributorId = command.contributorId,
-                subjectId = state.comparisonId!!,
-                predicateId = Predicates.hasSubject,
-                objects = command.researchFields
-            )
-        }
+    override fun invoke(command: CreateComparisonCommand, state: State): State {
+        statementCollectionPropertyCreator.create(
+            contributorId = command.contributorId,
+            subjectId = state.comparisonId!!,
+            predicateId = Predicates.hasSubject,
+            objects = command.researchFields
+        )
+        return state
+    }
 }

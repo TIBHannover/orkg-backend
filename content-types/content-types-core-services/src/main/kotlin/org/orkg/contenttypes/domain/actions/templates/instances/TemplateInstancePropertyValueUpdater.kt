@@ -4,7 +4,7 @@ import org.orkg.common.PageRequests
 import org.orkg.contenttypes.domain.actions.BakedStatement
 import org.orkg.contenttypes.domain.actions.SubgraphCreator
 import org.orkg.contenttypes.domain.actions.UpdateTemplateInstanceCommand
-import org.orkg.contenttypes.domain.actions.UpdateTemplateInstanceState
+import org.orkg.contenttypes.domain.actions.templates.instances.UpdateTemplateInstanceAction.State
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeClassUseCases
@@ -40,26 +40,23 @@ class TemplateInstancePropertyValueUpdater(
         statementService
     )
 
-    override fun invoke(
-        command: UpdateTemplateInstanceCommand,
-        state: UpdateTemplateInstanceState,
-    ): UpdateTemplateInstanceState =
-        state.apply {
-            if (statementsToRemove.isNotEmpty()) {
-                statementService.findAll(subjectId = command.subject, pageable = PageRequests.ALL)
-                    .filter { BakedStatement(it.subject.id.value, it.predicate.id.value, it.`object`.id.value) in statementsToRemove }
-                    .mapTo(mutableSetOf()) { it.id }
-                    .takeIf { it.isNotEmpty() }
-                    ?.let(statementService::deleteAllById)
-            }
-            if (statementsToAdd.isNotEmpty()) {
-                subgraphCreator.createThingsAndStatements(
-                    contributorId = command.contributorId,
-                    extractionMethod = command.extractionMethod,
-                    thingsCommand = command.copy(literals = state.literals),
-                    validationCache = validationCache,
-                    bakedStatements = statementsToAdd
-                )
-            }
+    override fun invoke(command: UpdateTemplateInstanceCommand, state: State): State {
+        if (state.statementsToRemove.isNotEmpty()) {
+            statementService.findAll(subjectId = command.subject, pageable = PageRequests.ALL)
+                .filter { BakedStatement(it.subject.id.value, it.predicate.id.value, it.`object`.id.value) in state.statementsToRemove }
+                .mapTo(mutableSetOf()) { it.id }
+                .takeIf { it.isNotEmpty() }
+                ?.let(statementService::deleteAllById)
         }
+        if (state.statementsToAdd.isNotEmpty()) {
+            subgraphCreator.createThingsAndStatements(
+                contributorId = command.contributorId,
+                extractionMethod = command.extractionMethod,
+                thingsCommand = command.copy(literals = state.literals),
+                validationCache = state.validationCache,
+                bakedStatements = state.statementsToAdd
+            )
+        }
+        return state
+    }
 }

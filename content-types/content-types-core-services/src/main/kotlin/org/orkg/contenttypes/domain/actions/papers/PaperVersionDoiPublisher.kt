@@ -20,7 +20,11 @@ class PaperVersionDoiPublisher(
         unsafeLiteralUseCases: UnsafeLiteralUseCases,
         doiService: DoiService,
         paperPublishBaseUri: String,
-    ) : this(SingleStatementPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases), doiService, paperPublishBaseUri)
+    ) : this(
+        SingleStatementPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
+        doiService,
+        paperPublishBaseUri
+    )
 
     override fun invoke(command: PublishPaperCommand, state: State): State {
         val paper = state.paper!!

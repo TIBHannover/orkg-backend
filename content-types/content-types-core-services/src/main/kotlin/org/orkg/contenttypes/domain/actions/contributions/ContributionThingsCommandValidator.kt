@@ -1,8 +1,8 @@
 package org.orkg.contenttypes.domain.actions.contributions
 
-import org.orkg.contenttypes.domain.actions.ContributionState
 import org.orkg.contenttypes.domain.actions.CreateContributionCommand
 import org.orkg.contenttypes.domain.actions.ThingsCommandValidator
+import org.orkg.contenttypes.domain.actions.contributions.ContributionAction.State
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ThingRepository
 
@@ -12,9 +12,11 @@ class ContributionThingsCommandValidator(
     constructor(
         thingRepository: ThingRepository,
         classRepository: ClassRepository,
-    ) : this(ThingsCommandValidator(thingRepository, classRepository))
+    ) : this(
+        ThingsCommandValidator(thingRepository, classRepository)
+    )
 
-    override operator fun invoke(command: CreateContributionCommand, state: ContributionState): ContributionState =
+    override fun invoke(command: CreateContributionCommand, state: State): State =
         state.copy(
             validationCache = thingsCommandValidator.validate(
                 thingsCommand = command,

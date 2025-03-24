@@ -13,7 +13,9 @@ class SmartReviewSDGCreator(
     constructor(
         unsafeLiteralUseCases: UnsafeLiteralUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
-    ) : this(StatementCollectionPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases))
+    ) : this(
+        StatementCollectionPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases)
+    )
 
     override fun invoke(command: CreateSmartReviewCommand, state: State): State {
         statementCollectionPropertyCreator.create(

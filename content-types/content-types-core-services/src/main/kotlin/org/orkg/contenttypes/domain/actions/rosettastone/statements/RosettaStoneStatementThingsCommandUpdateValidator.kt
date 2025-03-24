@@ -12,7 +12,9 @@ class RosettaStoneStatementThingsCommandUpdateValidator(
     constructor(
         thingRepository: ThingRepository,
         classRepository: ClassRepository,
-    ) : this(ThingsCommandValidator(thingRepository, classRepository))
+    ) : this(
+        ThingsCommandValidator(thingRepository, classRepository)
+    )
 
     override fun invoke(command: UpdateRosettaStoneStatementCommand, state: State): State =
         state.copy(

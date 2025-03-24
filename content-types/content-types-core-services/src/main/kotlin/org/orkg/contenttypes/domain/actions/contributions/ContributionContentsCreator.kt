@@ -1,8 +1,8 @@
 package org.orkg.contenttypes.domain.actions.contributions
 
 import org.orkg.contenttypes.domain.actions.ContributionCreator
-import org.orkg.contenttypes.domain.actions.ContributionState
 import org.orkg.contenttypes.domain.actions.CreateContributionCommand
+import org.orkg.contenttypes.domain.actions.contributions.ContributionAction.State
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.UnsafeClassUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
@@ -34,7 +34,7 @@ class ContributionContentsCreator(
         )
     )
 
-    override operator fun invoke(command: CreateContributionCommand, state: ContributionState): ContributionState =
+    override fun invoke(command: CreateContributionCommand, state: State): State =
         state.copy(
             contributionId = contributionCreator.create(
                 paperId = command.paperId,

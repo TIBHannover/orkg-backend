@@ -13,17 +13,19 @@ class TemplateDescriptionCreator(
     constructor(
         unsafeLiteralUseCases: UnsafeLiteralUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
-    ) : this(SingleStatementPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases))
+    ) : this(
+        SingleStatementPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases)
+    )
 
-    override fun invoke(command: CreateTemplateCommand, state: State): State =
-        state.apply {
-            command.description?.let {
-                singleStatementPropertyCreator.create(
-                    contributorId = command.contributorId,
-                    subjectId = state.templateId!!,
-                    predicateId = Predicates.description,
-                    label = it
-                )
-            }
+    override fun invoke(command: CreateTemplateCommand, state: State): State {
+        command.description?.also {
+            singleStatementPropertyCreator.create(
+                contributorId = command.contributorId,
+                subjectId = state.templateId!!,
+                predicateId = Predicates.description,
+                label = it
+            )
         }
+        return state
+    }
 }

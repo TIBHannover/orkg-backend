@@ -13,7 +13,9 @@ class RosettaStoneTemplatePropertiesUpdateValidator(
     constructor(
         predicateRepository: PredicateRepository,
         classRepository: ClassRepository,
-    ) : this(AbstractRosettaStoneTemplatePropertiesValidator(predicateRepository, classRepository))
+    ) : this(
+        AbstractRosettaStoneTemplatePropertiesValidator(predicateRepository, classRepository)
+    )
 
     override fun invoke(command: UpdateRosettaStoneTemplateCommand, state: State): State {
         command.properties?.let { newProperties ->

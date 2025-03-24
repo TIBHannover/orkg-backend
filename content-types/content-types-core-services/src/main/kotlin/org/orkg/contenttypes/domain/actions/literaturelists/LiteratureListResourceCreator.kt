@@ -1,7 +1,7 @@
 package org.orkg.contenttypes.domain.actions.literaturelists
 
 import org.orkg.contenttypes.domain.actions.CreateLiteratureListCommand
-import org.orkg.contenttypes.domain.actions.CreateLiteratureListState
+import org.orkg.contenttypes.domain.actions.literaturelists.CreateLiteratureListAction.State
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.UnsafeResourceUseCases
@@ -9,10 +9,7 @@ import org.orkg.graph.input.UnsafeResourceUseCases
 class LiteratureListResourceCreator(
     private val unsafeResourceUseCases: UnsafeResourceUseCases,
 ) : CreateLiteratureListAction {
-    override operator fun invoke(
-        command: CreateLiteratureListCommand,
-        state: CreateLiteratureListState,
-    ): CreateLiteratureListState {
+    override fun invoke(command: CreateLiteratureListCommand, state: State): State {
         val literatureListId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
                 contributorId = command.contributorId,

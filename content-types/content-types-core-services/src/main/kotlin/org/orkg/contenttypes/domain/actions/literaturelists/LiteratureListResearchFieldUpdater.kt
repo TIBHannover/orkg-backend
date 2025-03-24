@@ -2,7 +2,7 @@ package org.orkg.contenttypes.domain.actions.literaturelists
 
 import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyUpdater
 import org.orkg.contenttypes.domain.actions.UpdateLiteratureListCommand
-import org.orkg.contenttypes.domain.actions.UpdateLiteratureListState
+import org.orkg.contenttypes.domain.actions.literaturelists.UpdateLiteratureListAction.State
 import org.orkg.contenttypes.domain.ids
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.StatementUseCases
@@ -16,12 +16,11 @@ class LiteratureListResearchFieldUpdater(
         unsafeLiteralUseCases: UnsafeLiteralUseCases,
         statementService: StatementUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
-    ) : this(StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases))
+    ) : this(
+        StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases)
+    )
 
-    override operator fun invoke(
-        command: UpdateLiteratureListCommand,
-        state: UpdateLiteratureListState,
-    ): UpdateLiteratureListState {
+    override fun invoke(command: UpdateLiteratureListCommand, state: State): State {
         if (command.researchFields != null && command.researchFields != state.literatureList!!.researchFields.ids) {
             statementCollectionPropertyUpdater.update(
                 statements = state.statements[command.literatureListId].orEmpty(),

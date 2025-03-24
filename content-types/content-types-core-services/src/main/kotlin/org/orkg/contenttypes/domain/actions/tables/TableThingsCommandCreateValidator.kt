@@ -12,7 +12,9 @@ class TableThingsCommandCreateValidator(
     constructor(
         thingRepository: ThingRepository,
         classRepository: ClassRepository,
-    ) : this(ThingsCommandValidator(thingRepository, classRepository))
+    ) : this(
+        ThingsCommandValidator(thingRepository, classRepository)
+    )
 
     override fun invoke(command: CreateTableCommand, state: State): State =
         state.copy(

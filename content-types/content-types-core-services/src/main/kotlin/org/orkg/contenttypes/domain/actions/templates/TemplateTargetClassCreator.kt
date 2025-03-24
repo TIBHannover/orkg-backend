@@ -9,15 +9,15 @@ import org.orkg.graph.input.UnsafeStatementUseCases
 class TemplateTargetClassCreator(
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
 ) : CreateTemplateAction {
-    override fun invoke(command: CreateTemplateCommand, state: State): State =
-        state.apply {
-            unsafeStatementUseCases.create(
-                CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = templateId!!,
-                    predicateId = Predicates.shTargetClass,
-                    objectId = command.targetClass
-                )
+    override fun invoke(command: CreateTemplateCommand, state: State): State {
+        unsafeStatementUseCases.create(
+            CreateCommand(
+                contributorId = command.contributorId,
+                subjectId = state.templateId!!,
+                predicateId = Predicates.shTargetClass,
+                objectId = command.targetClass
             )
-        }
+        )
+        return state
+    }
 }

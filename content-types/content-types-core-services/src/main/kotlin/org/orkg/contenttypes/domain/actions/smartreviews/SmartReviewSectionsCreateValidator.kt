@@ -14,7 +14,9 @@ class SmartReviewSectionsCreateValidator(
         resourceRepository: ResourceRepository,
         predicateRepository: PredicateRepository,
         thingRepository: ThingRepository,
-    ) : this(AbstractSmartReviewSectionValidator(resourceRepository, predicateRepository, thingRepository))
+    ) : this(
+        AbstractSmartReviewSectionValidator(resourceRepository, predicateRepository, thingRepository)
+    )
 
     override fun invoke(command: CreateSmartReviewCommand, state: State): State {
         val validIds = mutableSetOf<ThingId>()

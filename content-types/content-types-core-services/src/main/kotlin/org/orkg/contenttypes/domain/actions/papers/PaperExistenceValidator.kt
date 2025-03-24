@@ -4,7 +4,7 @@ import org.orkg.contenttypes.domain.Paper
 import org.orkg.contenttypes.domain.PaperNotFound
 import org.orkg.contenttypes.domain.PaperService
 import org.orkg.contenttypes.domain.actions.UpdatePaperCommand
-import org.orkg.contenttypes.domain.actions.UpdatePaperState
+import org.orkg.contenttypes.domain.actions.papers.UpdatePaperAction.State
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.output.ResourceRepository
 
@@ -12,7 +12,7 @@ class PaperExistenceValidator(
     private val paperService: PaperService,
     private val resourceRepository: ResourceRepository,
 ) : UpdatePaperAction {
-    override fun invoke(command: UpdatePaperCommand, state: UpdatePaperState): UpdatePaperState {
+    override fun invoke(command: UpdatePaperCommand, state: State): State {
         val resource = resourceRepository.findById(command.paperId)
             .filter { Classes.paper in it.classes }
             .orElseThrow { PaperNotFound(command.paperId) }

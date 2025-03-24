@@ -13,7 +13,9 @@ class LiteratureListChangelogCreator(
     constructor(
         unsafeLiteralUseCases: UnsafeLiteralUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
-    ) : this(SingleStatementPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases))
+    ) : this(
+        SingleStatementPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases)
+    )
 
     override fun invoke(command: PublishLiteratureListCommand, state: State): State {
         singleStatementPropertyCreator.create(

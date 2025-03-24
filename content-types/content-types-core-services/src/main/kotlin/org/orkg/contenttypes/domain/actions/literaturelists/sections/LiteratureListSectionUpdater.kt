@@ -3,8 +3,8 @@ package org.orkg.contenttypes.domain.actions.literaturelists.sections
 import org.orkg.contenttypes.domain.LiteratureListListSection
 import org.orkg.contenttypes.domain.LiteratureListTextSection
 import org.orkg.contenttypes.domain.actions.UpdateLiteratureListSectionCommand
-import org.orkg.contenttypes.domain.actions.UpdateLiteratureListSectionState
 import org.orkg.contenttypes.domain.actions.literaturelists.AbstractLiteratureListSectionUpdater
+import org.orkg.contenttypes.domain.actions.literaturelists.sections.UpdateLiteratureListSectionAction.State
 import org.orkg.contenttypes.input.AbstractLiteratureListListSectionCommand
 import org.orkg.contenttypes.input.AbstractLiteratureListSectionCommand
 import org.orkg.contenttypes.input.AbstractLiteratureListTextSectionCommand
@@ -25,18 +25,15 @@ class LiteratureListSectionUpdater(
         unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
         AbstractLiteratureListSectionUpdater(
-            unsafeLiteralUseCases = unsafeLiteralUseCases,
-            resourceService = resourceService,
-            unsafeResourceUseCases = unsafeResourceUseCases,
-            statementService = statementService,
-            unsafeStatementUseCases = unsafeStatementUseCases
+            unsafeLiteralUseCases,
+            resourceService,
+            unsafeResourceUseCases,
+            statementService,
+            unsafeStatementUseCases
         )
     )
 
-    override fun invoke(
-        command: UpdateLiteratureListSectionCommand,
-        state: UpdateLiteratureListSectionState,
-    ): UpdateLiteratureListSectionState {
+    override fun invoke(command: UpdateLiteratureListSectionCommand, state: State): State {
         val section = state.literatureList!!.sections.single { it.id == command.literatureListSectionId }
         if (!(command as AbstractLiteratureListSectionCommand).matchesLiteratureListSection(section)) {
             when (command) {

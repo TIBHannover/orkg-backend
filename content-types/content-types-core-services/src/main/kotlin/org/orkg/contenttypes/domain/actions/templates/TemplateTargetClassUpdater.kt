@@ -15,7 +15,9 @@ class TemplateTargetClassUpdater(
         unsafeLiteralUseCases: UnsafeLiteralUseCases,
         statementUseCases: StatementUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
-    ) : this(SingleStatementPropertyUpdater(unsafeLiteralUseCases, statementUseCases, unsafeStatementUseCases))
+    ) : this(
+        SingleStatementPropertyUpdater(unsafeLiteralUseCases, statementUseCases, unsafeStatementUseCases)
+    )
 
     override fun invoke(command: UpdateTemplateCommand, state: State): State {
         if (command.targetClass != null && command.targetClass != state.template!!.targetClass.id) {

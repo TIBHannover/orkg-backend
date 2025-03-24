@@ -9,7 +9,7 @@ import org.orkg.graph.input.UnsafeResourceUseCases
 class ComparisonResourceCreator(
     private val unsafeResourceUseCases: UnsafeResourceUseCases,
 ) : CreateComparisonAction {
-    override operator fun invoke(command: CreateComparisonCommand, state: State): State {
+    override fun invoke(command: CreateComparisonCommand, state: State): State {
         val comparisonId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
                 contributorId = command.contributorId,

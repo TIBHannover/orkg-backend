@@ -19,7 +19,11 @@ class SmartReviewVersionDoiPublisher(
         unsafeLiteralUseCases: UnsafeLiteralUseCases,
         doiService: DoiService,
         smartReviewPublishBaseUri: String,
-    ) : this(SingleStatementPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases), doiService, smartReviewPublishBaseUri)
+    ) : this(
+        SingleStatementPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
+        doiService,
+        smartReviewPublishBaseUri
+    )
 
     override fun invoke(command: PublishSmartReviewCommand, state: State): State {
         if (!command.assignDOI) {

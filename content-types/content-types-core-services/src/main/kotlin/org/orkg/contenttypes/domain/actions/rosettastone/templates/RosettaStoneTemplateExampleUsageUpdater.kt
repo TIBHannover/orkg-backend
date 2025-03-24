@@ -15,7 +15,9 @@ class RosettaStoneTemplateExampleUsageUpdater(
         unsafeLiteralUseCases: UnsafeLiteralUseCases,
         statementService: StatementUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
-    ) : this(SingleStatementPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases))
+    ) : this(
+        SingleStatementPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases)
+    )
 
     override fun invoke(command: UpdateRosettaStoneTemplateCommand, state: State): State {
         if (command.exampleUsage != null && command.exampleUsage != state.rosettaStoneTemplate!!.exampleUsage) {

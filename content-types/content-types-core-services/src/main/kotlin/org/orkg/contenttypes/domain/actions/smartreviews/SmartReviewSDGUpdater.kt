@@ -16,7 +16,9 @@ class SmartReviewSDGUpdater(
         unsafeLiteralUseCases: UnsafeLiteralUseCases,
         statementService: StatementUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
-    ) : this(StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases))
+    ) : this(
+        StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases)
+    )
 
     override fun invoke(command: UpdateSmartReviewCommand, state: State): State {
         if (command.sustainableDevelopmentGoals != null && command.sustainableDevelopmentGoals != state.smartReview!!.sustainableDevelopmentGoals.ids) {

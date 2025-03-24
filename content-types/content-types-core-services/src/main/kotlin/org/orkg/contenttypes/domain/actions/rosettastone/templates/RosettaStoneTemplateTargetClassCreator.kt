@@ -1,7 +1,7 @@
 package org.orkg.contenttypes.domain.actions.rosettastone.templates
 
 import org.orkg.contenttypes.domain.actions.CreateRosettaStoneTemplateCommand
-import org.orkg.contenttypes.domain.actions.CreateRosettaStoneTemplateState
+import org.orkg.contenttypes.domain.actions.rosettastone.templates.CreateRosettaStoneTemplateAction.State
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateClassUseCase
 import org.orkg.graph.input.CreateLiteralUseCase
@@ -15,52 +15,49 @@ class RosettaStoneTemplateTargetClassCreator(
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
     private val unsafeLiteralUseCases: UnsafeLiteralUseCases,
 ) : CreateRosettaStoneTemplateAction {
-    override fun invoke(
-        command: CreateRosettaStoneTemplateCommand,
-        state: CreateRosettaStoneTemplateState,
-    ): CreateRosettaStoneTemplateState =
-        state.apply {
-            val classId = unsafeClassUseCases.create(
-                CreateClassUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    label = "${command.label} (class)",
-                )
+    override fun invoke(command: CreateRosettaStoneTemplateCommand, state: State): State {
+        val classId = unsafeClassUseCases.create(
+            CreateClassUseCase.CreateCommand(
+                contributorId = command.contributorId,
+                label = "${command.label} (class)",
             )
-            unsafeStatementUseCases.create(
-                CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = rosettaStoneTemplateId!!,
-                    predicateId = Predicates.shTargetClass,
-                    objectId = classId
-                )
+        )
+        unsafeStatementUseCases.create(
+            CreateCommand(
+                contributorId = command.contributorId,
+                subjectId = state.rosettaStoneTemplateId!!,
+                predicateId = Predicates.shTargetClass,
+                objectId = classId
             )
-            val exampleUsageId = unsafeLiteralUseCases.create(
-                CreateLiteralUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    label = command.exampleUsage
-                )
+        )
+        val exampleUsageId = unsafeLiteralUseCases.create(
+            CreateLiteralUseCase.CreateCommand(
+                contributorId = command.contributorId,
+                label = command.exampleUsage
             )
-            unsafeStatementUseCases.create(
-                CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = classId,
-                    predicateId = Predicates.exampleOfUsage,
-                    objectId = exampleUsageId
-                )
+        )
+        unsafeStatementUseCases.create(
+            CreateCommand(
+                contributorId = command.contributorId,
+                subjectId = classId,
+                predicateId = Predicates.exampleOfUsage,
+                objectId = exampleUsageId
             )
-            val descriptionId = unsafeLiteralUseCases.create(
-                CreateLiteralUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    label = "${command.description}\n\nThis is a Rosetta Statement class. Every Rosetta Stone Statement class has a template associated that should be used when adding a statement of this type to the ORKG."
-                )
+        )
+        val descriptionId = unsafeLiteralUseCases.create(
+            CreateLiteralUseCase.CreateCommand(
+                contributorId = command.contributorId,
+                label = "${command.description}\n\nThis is a Rosetta Statement class. Every Rosetta Stone Statement class has a template associated that should be used when adding a statement of this type to the ORKG."
             )
-            unsafeStatementUseCases.create(
-                CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = classId,
-                    predicateId = Predicates.description,
-                    objectId = descriptionId
-                )
+        )
+        unsafeStatementUseCases.create(
+            CreateCommand(
+                contributorId = command.contributorId,
+                subjectId = classId,
+                predicateId = Predicates.description,
+                objectId = descriptionId
             )
-        }
+        )
+        return state
+    }
 }

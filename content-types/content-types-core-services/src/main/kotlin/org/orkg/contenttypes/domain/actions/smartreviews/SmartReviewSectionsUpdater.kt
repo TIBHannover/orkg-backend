@@ -28,7 +28,7 @@ class SmartReviewSectionsUpdater(
     )
 
     override fun invoke(command: UpdateSmartReviewCommand, state: State): State {
-        command.sections?.let { sections ->
+        command.sections?.also { sections ->
             val oldSections = state.smartReview!!.sections.toMutableList()
             val newToOld = sections.associateWith { newSection ->
                 oldSections.firstOrNull { newSection.matchesSmartReviewSection(it) }?.also { oldSections.remove(it) }

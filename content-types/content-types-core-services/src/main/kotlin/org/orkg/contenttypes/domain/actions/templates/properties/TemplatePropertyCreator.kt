@@ -14,7 +14,9 @@ class TemplatePropertyCreator(
         unsafeResourceUseCases: UnsafeResourceUseCases,
         unsafeLiteralUseCases: UnsafeLiteralUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
-    ) : this(AbstractTemplatePropertyCreator(unsafeResourceUseCases, unsafeLiteralUseCases, unsafeStatementUseCases))
+    ) : this(
+        AbstractTemplatePropertyCreator(unsafeResourceUseCases, unsafeLiteralUseCases, unsafeStatementUseCases)
+    )
 
     override fun invoke(command: CreateTemplatePropertyCommand, state: State): State = state.copy(
         templatePropertyId = abstractTemplatePropertyCreator.create(

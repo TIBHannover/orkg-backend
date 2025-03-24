@@ -17,7 +17,11 @@ class AbstractSmartReviewSectionDeleter(
     constructor(
         statementService: StatementUseCases,
         resourceService: ResourceUseCases,
-    ) : this(statementService, resourceService, ContentTypePartDeleter(statementService))
+    ) : this(
+        statementService,
+        resourceService,
+        ContentTypePartDeleter(statementService)
+    )
 
     internal fun delete(
         contributorId: ContributorId,

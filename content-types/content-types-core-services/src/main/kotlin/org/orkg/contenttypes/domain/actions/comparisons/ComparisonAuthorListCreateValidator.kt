@@ -14,6 +14,6 @@ class ComparisonAuthorListCreateValidator(
         statementRepository: StatementRepository,
     ) : this(AbstractAuthorListValidator(resourceRepository, statementRepository))
 
-    override operator fun invoke(command: CreateComparisonCommand, state: State): State =
+    override fun invoke(command: CreateComparisonCommand, state: State): State =
         state.copy(authors = authorValidator.validate(command.authors))
 }

@@ -15,18 +15,19 @@ class TemplateClosedCreator(
 ) : CreateTemplateAction {
     override fun invoke(command: CreateTemplateCommand, state: State): State {
         if (command.isClosed) {
+            val trueLiteralId = unsafeLiteralUseCases.create(
+                CreateLiteralUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    label = "true",
+                    datatype = Literals.XSD.BOOLEAN.prefixedUri
+                )
+            )
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = state.templateId!!,
                     predicateId = Predicates.shClosed,
-                    objectId = unsafeLiteralUseCases.create(
-                        CreateLiteralUseCase.CreateCommand(
-                            contributorId = command.contributorId,
-                            label = "true",
-                            datatype = Literals.XSD.BOOLEAN.prefixedUri
-                        )
-                    )
+                    objectId = trueLiteralId
                 )
             )
         }

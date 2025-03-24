@@ -13,7 +13,9 @@ class SmartReviewSectionDeleter(
     constructor(
         statementService: StatementUseCases,
         resourceService: ResourceUseCases,
-    ) : this(AbstractSmartReviewSectionDeleter(statementService, resourceService))
+    ) : this(
+        AbstractSmartReviewSectionDeleter(statementService, resourceService)
+    )
 
     override fun invoke(command: DeleteSmartReviewSectionCommand, state: State): State {
         val section = state.smartReview!!.sections.find { it.id == command.sectionId }

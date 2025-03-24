@@ -2,7 +2,7 @@ package org.orkg.contenttypes.domain.actions.literaturelists
 
 import org.orkg.contenttypes.domain.actions.AbstractAuthorListValidator
 import org.orkg.contenttypes.domain.actions.CreateLiteratureListCommand
-import org.orkg.contenttypes.domain.actions.CreateLiteratureListState
+import org.orkg.contenttypes.domain.actions.literaturelists.CreateLiteratureListAction.State
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 
@@ -12,8 +12,10 @@ class LiteratureListAuthorListCreateValidator(
     constructor(
         resourceRepository: ResourceRepository,
         statementRepository: StatementRepository,
-    ) : this(AbstractAuthorListValidator(resourceRepository, statementRepository))
+    ) : this(
+        AbstractAuthorListValidator(resourceRepository, statementRepository)
+    )
 
-    override operator fun invoke(command: CreateLiteratureListCommand, state: CreateLiteratureListState): CreateLiteratureListState =
+    override fun invoke(command: CreateLiteratureListCommand, state: State): State =
         state.copy(authors = authorValidator.validate(command.authors))
 }

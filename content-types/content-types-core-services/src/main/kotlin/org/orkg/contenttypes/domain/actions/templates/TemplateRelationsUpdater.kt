@@ -23,9 +23,8 @@ class TemplateRelationsUpdater(
     )
 
     override fun invoke(command: UpdateTemplateCommand, state: State): State {
-        command.relations?.let { relations ->
+        command.relations?.also { relations ->
             val statements = state.statements[command.templateId].orEmpty()
-
             statementCollectionPropertyUpdater.update(
                 statements = statements,
                 contributorId = command.contributorId,
@@ -33,7 +32,6 @@ class TemplateRelationsUpdater(
                 predicateId = Predicates.templateOfResearchField,
                 objects = relations.researchFields
             )
-
             statementCollectionPropertyUpdater.update(
                 statements = statements,
                 contributorId = command.contributorId,
@@ -41,7 +39,6 @@ class TemplateRelationsUpdater(
                 predicateId = Predicates.templateOfResearchProblem,
                 objects = relations.researchProblems
             )
-
             singleStatementPropertyUpdater.updateOptionalProperty(
                 statements = statements,
                 contributorId = command.contributorId,

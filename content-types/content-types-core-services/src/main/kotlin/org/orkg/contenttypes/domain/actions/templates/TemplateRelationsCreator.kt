@@ -14,7 +14,7 @@ class TemplateRelationsCreator(
     override fun invoke(command: CreateTemplateCommand, state: State): State {
         linkResearchFields(command.contributorId, state.templateId!!, command.relations.researchFields)
         linkResearchProblems(command.contributorId, state.templateId, command.relations.researchProblems)
-        command.relations.predicate?.let { predicateId ->
+        command.relations.predicate?.also { predicateId ->
             linkPredicate(command.contributorId, state.templateId, predicateId)
         }
         return state

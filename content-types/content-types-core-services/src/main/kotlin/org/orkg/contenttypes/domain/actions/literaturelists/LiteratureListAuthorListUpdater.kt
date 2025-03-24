@@ -2,7 +2,7 @@ package org.orkg.contenttypes.domain.actions.literaturelists
 
 import org.orkg.contenttypes.domain.actions.AbstractAuthorListUpdater
 import org.orkg.contenttypes.domain.actions.UpdateLiteratureListCommand
-import org.orkg.contenttypes.domain.actions.UpdateLiteratureListState
+import org.orkg.contenttypes.domain.actions.literaturelists.UpdateLiteratureListAction.State
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
@@ -28,7 +28,7 @@ class LiteratureListAuthorListUpdater(
         )
     )
 
-    override operator fun invoke(command: UpdateLiteratureListCommand, state: UpdateLiteratureListState): UpdateLiteratureListState {
+    override fun invoke(command: UpdateLiteratureListCommand, state: State): State {
         if (command.authors != null && command.authors != state.literatureList!!.authors) {
             authorUpdater.update(state.statements, command.contributorId, state.authors, command.literatureListId)
         }

@@ -9,7 +9,7 @@ import org.orkg.graph.input.UnsafeStatementUseCases
 class ComparisonContributionCreator(
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
 ) : CreateComparisonAction {
-    override operator fun invoke(command: CreateComparisonCommand, state: State): State {
+    override fun invoke(command: CreateComparisonCommand, state: State): State {
         command.contributions.forEach { contributionId ->
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(

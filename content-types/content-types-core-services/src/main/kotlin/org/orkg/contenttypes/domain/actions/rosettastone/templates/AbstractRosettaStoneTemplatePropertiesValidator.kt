@@ -19,7 +19,9 @@ class AbstractRosettaStoneTemplatePropertiesValidator(
     constructor(
         predicateRepository: PredicateRepository,
         classRepository: ClassRepository,
-    ) : this(AbstractTemplatePropertyValidator(predicateRepository, classRepository))
+    ) : this(
+        AbstractTemplatePropertyValidator(predicateRepository, classRepository)
+    )
 
     internal fun validate(properties: List<TemplatePropertyCommand>) {
         if (properties.isEmpty()) {

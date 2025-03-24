@@ -14,7 +14,9 @@ class TemplatePropertiesCreator(
         unsafeResourceUseCases: UnsafeResourceUseCases,
         unsafeLiteralUseCases: UnsafeLiteralUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
-    ) : this(AbstractTemplatePropertyCreator(unsafeResourceUseCases, unsafeLiteralUseCases, unsafeStatementUseCases))
+    ) : this(
+        AbstractTemplatePropertyCreator(unsafeResourceUseCases, unsafeLiteralUseCases, unsafeStatementUseCases)
+    )
 
     override fun invoke(command: CreateTemplateCommand, state: State): State {
         command.properties.forEachIndexed { index, property ->

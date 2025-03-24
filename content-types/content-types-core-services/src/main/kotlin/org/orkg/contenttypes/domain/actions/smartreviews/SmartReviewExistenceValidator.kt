@@ -11,9 +11,11 @@ class SmartReviewExistenceValidator(
     constructor(
         smartReviewService: SmartReviewService,
         resourceRepository: ResourceRepository,
-    ) : this(AbstractSmartReviewExistenceValidator(smartReviewService, resourceRepository))
+    ) : this(
+        AbstractSmartReviewExistenceValidator(smartReviewService, resourceRepository)
+    )
 
     override fun invoke(command: UpdateSmartReviewCommand, state: State): State =
         abstractSmartReviewExistenceValidator.findUnpublishedSmartReviewById(command.smartReviewId)
-            .let { (smartReview, statements) -> state.copy(smartReview = smartReview, statements = statements) }
+            .let { state.copy(smartReview = it.first, statements = it.second) }
 }

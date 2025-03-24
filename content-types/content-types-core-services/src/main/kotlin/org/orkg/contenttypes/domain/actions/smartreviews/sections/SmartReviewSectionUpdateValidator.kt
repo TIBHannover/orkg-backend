@@ -25,7 +25,9 @@ class SmartReviewSectionUpdateValidator(
         resourceRepository: ResourceRepository,
         predicateRepository: PredicateRepository,
         thingRepository: ThingRepository,
-    ) : this(AbstractSmartReviewSectionValidator(resourceRepository, predicateRepository, thingRepository))
+    ) : this(
+        AbstractSmartReviewSectionValidator(resourceRepository, predicateRepository, thingRepository)
+    )
 
     override fun invoke(command: UpdateSmartReviewSectionCommand, state: State): State {
         val section = state.smartReview!!.sections.singleOrNull { it.id == command.smartReviewSectionId }

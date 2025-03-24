@@ -2,7 +2,7 @@ package org.orkg.contenttypes.domain.actions.literaturelists
 
 import org.orkg.contenttypes.domain.LiteratureListService
 import org.orkg.contenttypes.domain.actions.UpdateLiteratureListCommand
-import org.orkg.contenttypes.domain.actions.UpdateLiteratureListState
+import org.orkg.contenttypes.domain.actions.literaturelists.UpdateLiteratureListAction.State
 import org.orkg.graph.output.ResourceRepository
 
 class LiteratureListExistenceValidator(
@@ -11,12 +11,11 @@ class LiteratureListExistenceValidator(
     constructor(
         literatureListService: LiteratureListService,
         resourceRepository: ResourceRepository,
-    ) : this(AbstractLiteratureListExistenceValidator(literatureListService, resourceRepository))
+    ) : this(
+        AbstractLiteratureListExistenceValidator(literatureListService, resourceRepository)
+    )
 
-    override fun invoke(
-        command: UpdateLiteratureListCommand,
-        state: UpdateLiteratureListState,
-    ): UpdateLiteratureListState =
+    override fun invoke(command: UpdateLiteratureListCommand, state: State): State =
         abstractLiteratureListExistenceValidator.findUnpublishedLiteratureListById(command.literatureListId)
             .let { state.copy(literatureList = it.first, statements = it.second) }
 }

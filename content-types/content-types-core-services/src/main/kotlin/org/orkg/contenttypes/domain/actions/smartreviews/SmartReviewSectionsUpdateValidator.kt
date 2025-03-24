@@ -20,7 +20,9 @@ class SmartReviewSectionsUpdateValidator(
         resourceRepository: ResourceRepository,
         predicateRepository: PredicateRepository,
         thingRepository: ThingRepository,
-    ) : this(AbstractSmartReviewSectionValidator(resourceRepository, predicateRepository, thingRepository))
+    ) : this(
+        AbstractSmartReviewSectionValidator(resourceRepository, predicateRepository, thingRepository)
+    )
 
     override fun invoke(command: UpdateSmartReviewCommand, state: State): State {
         command.sections?.let { sections ->

@@ -13,7 +13,9 @@ class SmartReviewChangelogCreator(
     constructor(
         unsafeLiteralUseCases: UnsafeLiteralUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
-    ) : this(SingleStatementPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases))
+    ) : this(
+        SingleStatementPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases)
+    )
 
     override fun invoke(command: PublishSmartReviewCommand, state: State): State {
         singleStatementPropertyCreator.create(

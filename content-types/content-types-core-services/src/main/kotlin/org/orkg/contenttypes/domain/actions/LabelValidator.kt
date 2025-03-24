@@ -8,6 +8,10 @@ class LabelValidator<T, S>(
     private val property: String = "label",
     private val valueSelector: (T) -> String?,
 ) : Action<T, S> {
-    override fun invoke(command: T, state: S): S =
-        state.also { valueSelector(command)?.let { Label.ofOrNull(it) ?: throw InvalidLabel(property) } }
+    override fun invoke(command: T, state: S): S {
+        valueSelector(command)?.also {
+            Label.ofOrNull(it) ?: throw InvalidLabel(property)
+        }
+        return state
+    }
 }

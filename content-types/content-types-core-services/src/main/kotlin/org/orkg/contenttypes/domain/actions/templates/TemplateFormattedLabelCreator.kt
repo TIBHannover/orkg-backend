@@ -14,17 +14,18 @@ class TemplateFormattedLabelCreator(
 ) : CreateTemplateAction {
     override fun invoke(command: CreateTemplateCommand, state: State): State {
         command.formattedLabel?.let { label ->
+            val labelLiteralId = unsafeLiteralUseCases.create(
+                CreateLiteralUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    label = label.value
+                )
+            )
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = state.templateId!!,
                     predicateId = Predicates.templateLabelFormat,
-                    objectId = unsafeLiteralUseCases.create(
-                        CreateLiteralUseCase.CreateCommand(
-                            contributorId = command.contributorId,
-                            label = label.value
-                        )
-                    )
+                    objectId = labelLiteralId
                 )
             )
         }

@@ -2,7 +2,7 @@ package org.orkg.contenttypes.domain.actions.comparisons
 
 import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyUpdater
 import org.orkg.contenttypes.domain.actions.UpdateComparisonCommand
-import org.orkg.contenttypes.domain.actions.UpdateComparisonState
+import org.orkg.contenttypes.domain.actions.comparisons.UpdateComparisonAction.State
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
@@ -15,12 +15,11 @@ class ComparisonResearchFieldUpdater(
         unsafeLiteralUseCases: UnsafeLiteralUseCases,
         statementService: StatementUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
-    ) : this(StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases))
+    ) : this(
+        StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases)
+    )
 
-    override operator fun invoke(
-        command: UpdateComparisonCommand,
-        state: UpdateComparisonState,
-    ): UpdateComparisonState {
+    override fun invoke(command: UpdateComparisonCommand, state: State): State {
         if (command.researchFields != null && command.researchFields != state.comparison!!.researchFields.map { it.id }) {
             statementCollectionPropertyUpdater.update(
                 contributorId = command.contributorId,

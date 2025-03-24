@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added content-negotiation to generic content-type endpoint.
+  (See: [!1267](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1267))
+- Added healthcheck.
+  (See: [!1271](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1271))
+### Changed
+- Split compose file into general and development settings.
+  (See: [!1270](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1270))
+### Fixed
+- Fixed publishing of literature lists and smart reviews.
+  (See: [!1278](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1278))
 
 ## [0.79.0] - 2025-03-18
 ### Added

@@ -4,6 +4,8 @@ import com.ninjasquad.springmockk.MockkBean
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.every
+import io.mockk.just
+import io.mockk.runs
 import io.mockk.verify
 import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.`is`
@@ -13,6 +15,7 @@ import org.orkg.common.configuration.WebMvcConfiguration
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.export.adapter.input.rest.RdfController.Companion.DUMP_ENDPOINT
 import org.orkg.export.adapter.input.rest.RdfController.Companion.HINTS_ENDPOINT
+import org.orkg.export.input.ExportRDFUseCase
 import org.orkg.graph.domain.FuzzySearchString
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
@@ -22,10 +25,12 @@ import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
+import org.orkg.testing.annotations.TestWithMockAdmin
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.core.task.TaskExecutor
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
@@ -54,6 +59,12 @@ internal class RdfControllerUnitTest : MockMvcBaseTest("rdf-hints") {
 
     @MockkBean
     private lateinit var formattedLabelService: FormattedLabelUseCases
+
+    @MockkBean
+    private lateinit var rdfService: ExportRDFUseCase
+
+    @MockkBean
+    private lateinit var taskExecutor: TaskExecutor
 
     @Test
     fun legacyRedirectToDump() {
@@ -167,5 +178,18 @@ internal class RdfControllerUnitTest : MockMvcBaseTest("rdf-hints") {
                 pageable = any<Pageable>()
             )
         }
+    }
+
+    @Test
+    @TestWithMockAdmin
+    fun createRdfDump() {
+        every { taskExecutor.execute(any()) } just runs
+
+        documentedPostRequestTo("/api/admin/rdf/dump")
+            .perform()
+            .andExpect(status().isNoContent)
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { taskExecutor.execute(any()) }
     }
 }

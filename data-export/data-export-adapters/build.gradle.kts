@@ -31,7 +31,9 @@ testing {
 dependencies {
     api("org.springframework.boot:spring-boot")
     api("org.springframework.data:spring-data-commons")
+    api("org.springframework:spring-beans")
     api("org.springframework:spring-context")
+    api("org.springframework:spring-core")
     api("org.springframework:spring-web")
     api(project(":common:identifiers"))
     api(project(":common:spring-webmvc"))
@@ -43,7 +45,6 @@ dependencies {
     implementation("org.eclipse.rdf4j:rdf4j-model-api")
     implementation("org.eclipse.rdf4j:rdf4j-rio-api")
     implementation("org.slf4j:slf4j-api")
-    implementation("org.springframework:spring-beans")
     runtimeOnly("org.eclipse.rdf4j:rdf4j-rio-n3")
     runtimeOnly("org.eclipse.rdf4j:rdf4j-rio-rdfxml")
     runtimeOnly("org.eclipse.rdf4j:rdf4j-rio-trig")

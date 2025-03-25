@@ -1,0 +1,4 @@
+### Create RDF Dump
+POST {{server_url}}/api/admin/rdf/dump
+Accept: */*
+Authorization: Bearer {{access_token}}

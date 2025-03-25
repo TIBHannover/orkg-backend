@@ -1,6 +1,8 @@
 package org.orkg.export.adapter.input.rest
 
 import org.orkg.common.MediaTypeCapabilities
+import org.orkg.common.annotations.RequireAdminRole
+import org.orkg.export.input.ExportRDFUseCase
 import org.orkg.graph.adapter.input.rest.ThingRepresentation
 import org.orkg.graph.adapter.input.rest.mapping.ClassRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.mapping.PredicateRepresentationAdapter
@@ -11,11 +13,15 @@ import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.core.task.TaskExecutor
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.http.ResponseEntity.noContent
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
@@ -27,6 +33,10 @@ class RdfController(
     private val resourceRepository: ResourceRepository,
     private val predicateRepository: PredicateRepository,
     private val classRepository: ClassRepository,
+    private val rdfService: ExportRDFUseCase,
+    private val taskExecutor: TaskExecutor,
+    @Value("\${orkg.export.rdf.file-name:#{null}}")
+    private val path: String?,
     override val statementService: StatementUseCases,
     override val formattedLabelService: FormattedLabelUseCases,
 ) : ResourceRepresentationAdapter,
@@ -42,6 +52,13 @@ class RdfController(
                     .toUri()
             )
             .build()
+
+    @RequireAdminRole
+    @PostMapping("/api/admin/rdf/dump")
+    fun createRdfDump(): ResponseEntity<Any> {
+        taskExecutor.execute { rdfService.dumpToNTriple(path) }
+        return noContent().build()
+    }
 
     @GetMapping(HINTS_ENDPOINT)
     fun getHints(

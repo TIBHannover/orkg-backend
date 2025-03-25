@@ -15,6 +15,15 @@ The response will be `301 Moved Permanently`, pointing to the latest version of 
 
 operation::rdf-hints-legacy-redirect-to-dump[snippets='curl-request,http-response']
 
+[[rdf-dump-create]]
+=== Creating Dumps
+
+Dumps are created automatically by the system, but can also be triggered manually usng a `POST` request.
+
+NOTE: This endpoint requires the admin role.
+
+operation::rdf-hints-create-rdf-dump[snippets='curl-request,http-response']
+
 [[resolvable-vocab]]
 == Resolvable Vocabulary
 

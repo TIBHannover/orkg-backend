@@ -15,11 +15,14 @@ class ComparisonContributionUpdater(
         unsafeLiteralUseCases: UnsafeLiteralUseCases,
         statementService: StatementUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
-    ) : this(StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases))
+    ) : this(
+        StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases)
+    )
 
     override fun invoke(command: UpdateComparisonCommand, state: State): State {
         if (command.contributions != null && command.contributions != state.comparison!!.contributions) {
             statementCollectionPropertyUpdater.update(
+                statements = state.statements[command.comparisonId].orEmpty(),
                 contributorId = command.contributorId,
                 subjectId = command.comparisonId,
                 predicateId = Predicates.comparesContribution,

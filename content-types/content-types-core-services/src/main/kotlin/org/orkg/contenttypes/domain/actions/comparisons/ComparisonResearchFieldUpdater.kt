@@ -22,6 +22,7 @@ class ComparisonResearchFieldUpdater(
     override fun invoke(command: UpdateComparisonCommand, state: State): State {
         if (command.researchFields != null && command.researchFields != state.comparison!!.researchFields.map { it.id }) {
             statementCollectionPropertyUpdater.update(
+                statements = state.statements[command.comparisonId].orEmpty(),
                 contributorId = command.contributorId,
                 subjectId = command.comparisonId,
                 predicateId = Predicates.hasSubject,

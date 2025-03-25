@@ -7,7 +7,6 @@ import io.mockk.runs
 import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
-import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.common.testing.fixtures.fixedClock
@@ -25,7 +24,6 @@ import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
-import org.orkg.testing.pageOf
 import java.time.OffsetDateTime
 import java.util.UUID
 
@@ -47,25 +45,11 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         val oldObjectStatements = setOf(ThingId("R1"), ThingId("R2")).toReferenceStatements(subjectId)
         val contributorId = ContributorId(UUID.randomUUID())
 
-        every {
-            statementService.findAll(
-                subjectId = subjectId,
-                predicateId = Predicates.reference,
-                pageable = PageRequests.ALL
-            )
-        } returns pageOf(oldObjectStatements)
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
         every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
 
-        statementCollectionPropertyUpdater.update(contributorId, subjectId, Predicates.reference, objects.toSet())
+        statementCollectionPropertyUpdater.update(oldObjectStatements, contributorId, subjectId, Predicates.reference, objects.toSet())
 
-        verify(exactly = 1) {
-            statementService.findAll(
-                subjectId = subjectId,
-                predicateId = Predicates.reference,
-                pageable = PageRequests.ALL
-            )
-        }
         verify(exactly = 1) { statementService.deleteAllById(oldObjectStatements.map { it.id }.toSet()) }
         verify(exactly = 1) {
             unsafeStatementUseCases.create(
@@ -96,25 +80,11 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         val oldObjectStatements = setOf(ThingId("R1"), ThingId("R2")).toReferenceStatements(subjectId)
         val contributorId = ContributorId(UUID.randomUUID())
 
-        every {
-            statementService.findAll(
-                subjectId = subjectId,
-                predicateId = Predicates.reference,
-                pageable = PageRequests.ALL
-            )
-        } returns pageOf(oldObjectStatements)
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
         every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
 
-        statementCollectionPropertyUpdater.update(contributorId, subjectId, Predicates.reference, objects.toSet())
+        statementCollectionPropertyUpdater.update(oldObjectStatements, contributorId, subjectId, Predicates.reference, objects.toSet())
 
-        verify(exactly = 1) {
-            statementService.findAll(
-                subjectId = subjectId,
-                predicateId = Predicates.reference,
-                pageable = PageRequests.ALL
-            )
-        }
         verify(exactly = 1) { statementService.deleteAllById(setOf(oldObjectStatements[0].id)) }
         verify(exactly = 1) {
             unsafeStatementUseCases.create(
@@ -135,23 +105,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         val oldObjectStatements = objects.toReferenceStatements(subjectId)
         val contributorId = ContributorId(UUID.randomUUID())
 
-        every {
-            statementService.findAll(
-                subjectId = subjectId,
-                predicateId = Predicates.reference,
-                pageable = PageRequests.ALL
-            )
-        } returns pageOf(oldObjectStatements)
-
-        statementCollectionPropertyUpdater.update(contributorId, subjectId, Predicates.reference, objects.toSet())
-
-        verify(exactly = 1) {
-            statementService.findAll(
-                subjectId = subjectId,
-                predicateId = Predicates.reference,
-                pageable = PageRequests.ALL
-            )
-        }
+        statementCollectionPropertyUpdater.update(oldObjectStatements, contributorId, subjectId, Predicates.reference, objects.toSet())
     }
 
     @Test
@@ -161,24 +115,10 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         val oldObjectStatements = listOf(ThingId("R1"), ThingId("R2")).toReferenceStatements(subjectId)
         val contributorId = ContributorId(UUID.randomUUID())
 
-        every {
-            statementService.findAll(
-                subjectId = subjectId,
-                predicateId = Predicates.reference,
-                pageable = PageRequests.ALL
-            )
-        } returns pageOf(oldObjectStatements)
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
 
-        statementCollectionPropertyUpdater.update(contributorId, subjectId, Predicates.reference, objects.toSet())
+        statementCollectionPropertyUpdater.update(oldObjectStatements, contributorId, subjectId, Predicates.reference, objects.toSet())
 
-        verify(exactly = 1) {
-            statementService.findAll(
-                subjectId = subjectId,
-                predicateId = Predicates.reference,
-                pageable = PageRequests.ALL
-            )
-        }
         verify(exactly = 1) { statementService.deleteAllById(oldObjectStatements.map { it.id }.toSet()) }
     }
 
@@ -188,24 +128,10 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         val objects = listOf(ThingId("R1"), ThingId("R2"))
         val contributorId = ContributorId(UUID.randomUUID())
 
-        every {
-            statementService.findAll(
-                subjectId = subjectId,
-                predicateId = Predicates.reference,
-                pageable = PageRequests.ALL
-            )
-        } returns pageOf()
         every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
 
-        statementCollectionPropertyUpdater.update(contributorId, subjectId, Predicates.reference, objects.toSet())
+        statementCollectionPropertyUpdater.update(emptyList(), contributorId, subjectId, Predicates.reference, objects.toSet())
 
-        verify(exactly = 1) {
-            statementService.findAll(
-                subjectId = subjectId,
-                predicateId = Predicates.reference,
-                pageable = PageRequests.ALL
-            )
-        }
         verify(exactly = 1) {
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
@@ -235,28 +161,12 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         val oldLiteralStatements = setOf("R1", "R2").toLiteralStatements(subjectId)
         val contributorId = ContributorId(UUID.randomUUID())
 
-        every {
-            statementService.findAll(
-                subjectId = subjectId,
-                predicateId = Predicates.reference,
-                objectClasses = setOf(Classes.literal),
-                pageable = PageRequests.ALL
-            )
-        } returns pageOf(oldLiteralStatements)
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
         every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
         every { unsafeLiteralUseCases.create(any()) } returns ThingId("L1") andThen ThingId("L2")
 
-        statementCollectionPropertyUpdater.update(contributorId, subjectId, Predicates.reference, literals.toSet())
+        statementCollectionPropertyUpdater.update(oldLiteralStatements, contributorId, subjectId, Predicates.reference, literals.toSet())
 
-        verify(exactly = 1) {
-            statementService.findAll(
-                subjectId = subjectId,
-                predicateId = Predicates.reference,
-                objectClasses = setOf(Classes.literal),
-                pageable = PageRequests.ALL
-            )
-        }
         verify(exactly = 1) { statementService.deleteAllById(oldLiteralStatements.map { it.id }.toSet()) }
         literals.forEach { literal ->
             verify(exactly = 1) {
@@ -294,28 +204,12 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         val oldLiteralStatements = setOf("R1", "R2").toLiteralStatements(subjectId)
         val contributorId = ContributorId(UUID.randomUUID())
 
-        every {
-            statementService.findAll(
-                subjectId = subjectId,
-                predicateId = Predicates.reference,
-                objectClasses = setOf(Classes.literal),
-                pageable = PageRequests.ALL
-            )
-        } returns pageOf(oldLiteralStatements)
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
         every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
         every { unsafeLiteralUseCases.create(any()) } returns ThingId("L1")
 
-        statementCollectionPropertyUpdater.update(contributorId, subjectId, Predicates.reference, literals.toSet())
+        statementCollectionPropertyUpdater.update(oldLiteralStatements, contributorId, subjectId, Predicates.reference, literals.toSet())
 
-        verify(exactly = 1) {
-            statementService.findAll(
-                subjectId = subjectId,
-                predicateId = Predicates.reference,
-                objectClasses = setOf(Classes.literal),
-                pageable = PageRequests.ALL
-            )
-        }
         verify(exactly = 1) { statementService.deleteAllById(setOf(oldLiteralStatements[0].id)) }
         verify(exactly = 1) {
             unsafeLiteralUseCases.create(
@@ -341,25 +235,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         val oldLiteralStatements = literals.toLiteralStatements(subjectId)
         val contributorId = ContributorId(UUID.randomUUID())
 
-        every {
-            statementService.findAll(
-                subjectId = subjectId,
-                predicateId = Predicates.reference,
-                objectClasses = setOf(Classes.literal),
-                pageable = PageRequests.ALL
-            )
-        } returns pageOf(oldLiteralStatements)
-
-        statementCollectionPropertyUpdater.update(contributorId, subjectId, Predicates.reference, literals.toSet())
-
-        verify(exactly = 1) {
-            statementService.findAll(
-                subjectId = subjectId,
-                predicateId = Predicates.reference,
-                objectClasses = setOf(Classes.literal),
-                pageable = PageRequests.ALL
-            )
-        }
+        statementCollectionPropertyUpdater.update(oldLiteralStatements, contributorId, subjectId, Predicates.reference, literals.toSet())
     }
 
     @Test
@@ -369,26 +245,10 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         val oldLiteralStatements = listOf("R1", "R2").toLiteralStatements(subjectId)
         val contributorId = ContributorId(UUID.randomUUID())
 
-        every {
-            statementService.findAll(
-                subjectId = subjectId,
-                predicateId = Predicates.reference,
-                objectClasses = setOf(Classes.literal),
-                pageable = PageRequests.ALL
-            )
-        } returns pageOf(oldLiteralStatements)
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
 
-        statementCollectionPropertyUpdater.update(contributorId, subjectId, Predicates.reference, literals.toSet())
+        statementCollectionPropertyUpdater.update(oldLiteralStatements, contributorId, subjectId, Predicates.reference, literals.toSet())
 
-        verify(exactly = 1) {
-            statementService.findAll(
-                subjectId = subjectId,
-                predicateId = Predicates.reference,
-                objectClasses = setOf(Classes.literal),
-                pageable = PageRequests.ALL
-            )
-        }
         verify(exactly = 1) { statementService.deleteAllById(oldLiteralStatements.map { it.id }.toSet()) }
     }
 
@@ -398,27 +258,11 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         val literals = listOf("R1", "R2")
         val contributorId = ContributorId(UUID.randomUUID())
 
-        every {
-            statementService.findAll(
-                subjectId = subjectId,
-                predicateId = Predicates.reference,
-                objectClasses = setOf(Classes.literal),
-                pageable = PageRequests.ALL
-            )
-        } returns pageOf()
         every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
         every { unsafeLiteralUseCases.create(any()) } returns ThingId("L1") andThen ThingId("L2")
 
-        statementCollectionPropertyUpdater.update(contributorId, subjectId, Predicates.reference, literals.toSet())
+        statementCollectionPropertyUpdater.update(emptyList(), contributorId, subjectId, Predicates.reference, literals.toSet())
 
-        verify(exactly = 1) {
-            statementService.findAll(
-                subjectId = subjectId,
-                predicateId = Predicates.reference,
-                objectClasses = setOf(Classes.literal),
-                pageable = PageRequests.ALL
-            )
-        }
         literals.forEach { literal ->
             verify(exactly = 1) {
                 unsafeLiteralUseCases.create(
@@ -455,25 +299,11 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         val oldObjectStatements = setOf(ThingId("R1"), ThingId("R2")).toReferenceStatements(subjectId)
         val contributorId = ContributorId(UUID.randomUUID())
 
-        every {
-            statementService.findAll(
-                subjectId = subjectId,
-                predicateId = Predicates.reference,
-                pageable = PageRequests.ALL
-            )
-        } returns pageOf(oldObjectStatements)
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
         every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
 
-        statementCollectionPropertyUpdater.update(contributorId, subjectId, Predicates.reference, objects)
+        statementCollectionPropertyUpdater.update(oldObjectStatements, contributorId, subjectId, Predicates.reference, objects)
 
-        verify(exactly = 1) {
-            statementService.findAll(
-                subjectId = subjectId,
-                predicateId = Predicates.reference,
-                pageable = PageRequests.ALL
-            )
-        }
         verify(exactly = 1) { statementService.deleteAllById(oldObjectStatements.map { it.id }.toSet()) }
         verify(exactly = 1) {
             unsafeStatementUseCases.create(
@@ -504,25 +334,11 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         val oldObjectStatements = setOf(ThingId("R1"), ThingId("R2")).toReferenceStatements(subjectId)
         val contributorId = ContributorId(UUID.randomUUID())
 
-        every {
-            statementService.findAll(
-                subjectId = subjectId,
-                predicateId = Predicates.reference,
-                pageable = PageRequests.ALL
-            )
-        } returns pageOf(oldObjectStatements)
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
         every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
 
-        statementCollectionPropertyUpdater.update(contributorId, subjectId, Predicates.reference, objects)
+        statementCollectionPropertyUpdater.update(oldObjectStatements, contributorId, subjectId, Predicates.reference, objects)
 
-        verify(exactly = 1) {
-            statementService.findAll(
-                subjectId = subjectId,
-                predicateId = Predicates.reference,
-                pageable = PageRequests.ALL
-            )
-        }
         verify(exactly = 1) { statementService.deleteAllById(setOf(oldObjectStatements[0].id)) }
         verify(exactly = 1) {
             unsafeStatementUseCases.create(
@@ -543,23 +359,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         val oldObjectStatements = objects.toReferenceStatements(subjectId)
         val contributorId = ContributorId(UUID.randomUUID())
 
-        every {
-            statementService.findAll(
-                subjectId = subjectId,
-                predicateId = Predicates.reference,
-                pageable = PageRequests.ALL
-            )
-        } returns pageOf(oldObjectStatements)
-
-        statementCollectionPropertyUpdater.update(contributorId, subjectId, Predicates.reference, objects)
-
-        verify(exactly = 1) {
-            statementService.findAll(
-                subjectId = subjectId,
-                predicateId = Predicates.reference,
-                pageable = PageRequests.ALL
-            )
-        }
+        statementCollectionPropertyUpdater.update(oldObjectStatements, contributorId, subjectId, Predicates.reference, objects)
     }
 
     @Test
@@ -569,24 +369,10 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         val oldObjectStatements = listOf(ThingId("R1"), ThingId("R2")).toReferenceStatements(subjectId)
         val contributorId = ContributorId(UUID.randomUUID())
 
-        every {
-            statementService.findAll(
-                subjectId = subjectId,
-                predicateId = Predicates.reference,
-                pageable = PageRequests.ALL
-            )
-        } returns pageOf(oldObjectStatements)
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
 
-        statementCollectionPropertyUpdater.update(contributorId, subjectId, Predicates.reference, objects)
+        statementCollectionPropertyUpdater.update(oldObjectStatements, contributorId, subjectId, Predicates.reference, objects)
 
-        verify(exactly = 1) {
-            statementService.findAll(
-                subjectId = subjectId,
-                predicateId = Predicates.reference,
-                pageable = PageRequests.ALL
-            )
-        }
         verify(exactly = 1) { statementService.deleteAllById(oldObjectStatements.map { it.id }.toSet()) }
     }
 
@@ -596,24 +382,10 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         val objects = listOf(ThingId("R1"), ThingId("R2"))
         val contributorId = ContributorId(UUID.randomUUID())
 
-        every {
-            statementService.findAll(
-                subjectId = subjectId,
-                predicateId = Predicates.reference,
-                pageable = PageRequests.ALL
-            )
-        } returns pageOf()
         every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
 
-        statementCollectionPropertyUpdater.update(contributorId, subjectId, Predicates.reference, objects)
+        statementCollectionPropertyUpdater.update(emptyList(), contributorId, subjectId, Predicates.reference, objects)
 
-        verify(exactly = 1) {
-            statementService.findAll(
-                subjectId = subjectId,
-                predicateId = Predicates.reference,
-                pageable = PageRequests.ALL
-            )
-        }
         verify(exactly = 1) {
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
@@ -644,24 +416,10 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         val oldObjectStatements = objects.toReferenceStatements(subjectId) + excessiveObjectStatements
         val contributorId = ContributorId(UUID.randomUUID())
 
-        every {
-            statementService.findAll(
-                subjectId = subjectId,
-                predicateId = Predicates.reference,
-                pageable = PageRequests.ALL
-            )
-        } returns pageOf(oldObjectStatements)
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
 
-        statementCollectionPropertyUpdater.update(contributorId, subjectId, Predicates.reference, objects)
+        statementCollectionPropertyUpdater.update(oldObjectStatements, contributorId, subjectId, Predicates.reference, objects)
 
-        verify(exactly = 1) {
-            statementService.findAll(
-                subjectId = subjectId,
-                predicateId = Predicates.reference,
-                pageable = PageRequests.ALL
-            )
-        }
         verify(exactly = 1) { statementService.deleteAllById(excessiveObjectStatements.map { it.id }.toSet()) }
     }
 

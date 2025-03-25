@@ -22,6 +22,7 @@ class ComparisonVisualizationUpdater(
     override fun invoke(command: UpdateComparisonCommand, state: State): State {
         if (command.visualizations != null && command.visualizations != state.comparison!!.visualizations) {
             statementCollectionPropertyUpdater.update(
+                statements = state.statements[command.comparisonId].orEmpty(),
                 contributorId = command.contributorId,
                 subjectId = command.comparisonId,
                 predicateId = Predicates.hasVisualization,

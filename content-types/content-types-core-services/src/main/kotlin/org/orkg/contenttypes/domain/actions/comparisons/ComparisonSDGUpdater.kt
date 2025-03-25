@@ -22,6 +22,7 @@ class ComparisonSDGUpdater(
     override fun invoke(command: UpdateComparisonCommand, state: State): State {
         if (command.sustainableDevelopmentGoals != null && command.sustainableDevelopmentGoals != state.comparison!!.sustainableDevelopmentGoals.map { it.id }.toSet()) {
             statementCollectionPropertyUpdater.update(
+                statements = state.statements[command.comparisonId].orEmpty(),
                 contributorId = command.contributorId,
                 subjectId = command.comparisonId,
                 predicateId = Predicates.sustainableDevelopmentGoal,

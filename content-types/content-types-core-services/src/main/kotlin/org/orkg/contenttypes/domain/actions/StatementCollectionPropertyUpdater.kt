@@ -1,10 +1,8 @@
 package org.orkg.contenttypes.domain.actions
 
 import org.orkg.common.ContributorId
-import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.wherePredicate
-import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.StatementId
@@ -19,23 +17,6 @@ class StatementCollectionPropertyUpdater(
     private val statementService: StatementUseCases,
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
 ) {
-    internal fun update(
-        contributorId: ContributorId,
-        subjectId: ThingId,
-        predicateId: ThingId,
-        objects: Set<ThingId>,
-    ) = update(
-        statements = statementService.findAll(
-            subjectId = subjectId,
-            predicateId = predicateId,
-            pageable = PageRequests.ALL
-        ).content,
-        contributorId = contributorId,
-        subjectId = subjectId,
-        predicateId = predicateId,
-        objects = objects
-    )
-
     internal fun update(
         statements: List<GeneralStatement>,
         contributorId: ContributorId,
@@ -66,23 +47,6 @@ class StatementCollectionPropertyUpdater(
             )
         }
     }
-
-    internal fun update(
-        contributorId: ContributorId,
-        subjectId: ThingId,
-        predicateId: ThingId,
-        objects: List<ThingId>,
-    ) = update(
-        statements = statementService.findAll(
-            subjectId = subjectId,
-            predicateId = predicateId,
-            pageable = PageRequests.ALL
-        ).content,
-        contributorId = contributorId,
-        subjectId = subjectId,
-        predicateId = predicateId,
-        objects = objects
-    )
 
     internal fun update(
         statements: List<GeneralStatement>,
@@ -128,26 +92,6 @@ class StatementCollectionPropertyUpdater(
             statementService.deleteAllById(toRemove)
         }
     }
-
-    internal fun update(
-        contributorId: ContributorId,
-        subjectId: ThingId,
-        predicateId: ThingId,
-        literals: Set<String>,
-        datatype: String = Literals.XSD.STRING.prefixedUri,
-    ) = update(
-        statements = statementService.findAll(
-            subjectId = subjectId,
-            predicateId = predicateId,
-            objectClasses = setOf(Classes.literal),
-            pageable = PageRequests.ALL
-        ).content,
-        contributorId = contributorId,
-        subjectId = subjectId,
-        predicateId = predicateId,
-        literals = literals,
-        datatype = datatype
-    )
 
     internal fun update(
         statements: List<GeneralStatement>,

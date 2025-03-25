@@ -26,6 +26,7 @@ internal class ComparisonSDGUpdaterUnitTest : MockkBaseTest {
 
         every {
             statementCollectionPropertyUpdater.update(
+                statements = state.statements[command.comparisonId].orEmpty(),
                 contributorId = command.contributorId,
                 subjectId = command.comparisonId,
                 predicateId = Predicates.sustainableDevelopmentGoal,
@@ -37,6 +38,7 @@ internal class ComparisonSDGUpdaterUnitTest : MockkBaseTest {
 
         verify(exactly = 1) {
             statementCollectionPropertyUpdater.update(
+                statements = state.statements[command.comparisonId].orEmpty(),
                 contributorId = command.contributorId,
                 subjectId = command.comparisonId,
                 predicateId = Predicates.sustainableDevelopmentGoal,

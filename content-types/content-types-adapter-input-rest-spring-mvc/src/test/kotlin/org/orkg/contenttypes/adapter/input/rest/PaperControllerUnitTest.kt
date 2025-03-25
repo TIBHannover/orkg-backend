@@ -853,6 +853,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
                         fieldWithPath("mentionings").description("The updated set of ids of resources that are mentioned in the paper and should be used for extended search. (optional)"),
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the paper belongs to. (optional)").optional(),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the paper belongs to. (optional)").optional(),
+                        fieldWithPath("extraction_method").description("""The´updated method used to extract the paper resource. Can be one of $allowedExtractionMethodValues. (optional)"""),
                         fieldWithPath("visibility").description("The updated visibility of the paper. Can be one of $allowedVisibilityValues. (optional)").optional(),
                         fieldWithPath("verified").description("The updated verification status of the paper. (optional)").optional()
                     ).and(authorListFields("paper"))
@@ -1540,6 +1541,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             organizations = listOf(
                 OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e")
             ),
+            extractionMethod = ExtractionMethod.AUTOMATIC,
             visibility = Visibility.FEATURED,
             verified = true
         )

@@ -64,6 +64,7 @@
     "organizations": [
         "edc18168-c4ee-4cb8-a98a-136f748e912e"
     ],
+    "extraction_method": "AUTOMATIC",
     "visibility": "DELETED",
     "verified": false
 }

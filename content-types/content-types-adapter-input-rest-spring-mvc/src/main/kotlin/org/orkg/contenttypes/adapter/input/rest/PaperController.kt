@@ -320,6 +320,8 @@ class PaperController(
         val observatories: List<ObservatoryId>?,
         @field:Size(max = 1)
         val organizations: List<OrganizationId>?,
+        @JsonProperty("extraction_method")
+        val extractionMethod: ExtractionMethod?,
         val visibility: Visibility?,
         val verified: Boolean?,
     ) {
@@ -336,6 +338,7 @@ class PaperController(
                 mentionings = mentionings,
                 observatories = observatories,
                 organizations = organizations,
+                extractionMethod = extractionMethod,
                 visibility = visibility,
                 verified = verified
             )

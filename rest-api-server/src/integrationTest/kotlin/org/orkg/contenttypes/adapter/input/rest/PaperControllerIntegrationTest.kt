@@ -372,7 +372,7 @@ internal class PaperControllerIntegrationTest : MockMvcBaseTest("papers") {
             )
             it.observatories shouldBe listOf(ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3"))
             it.organizations shouldBe listOf(OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"))
-            it.extractionMethod shouldBe ExtractionMethod.MANUAL
+            it.extractionMethod shouldBe ExtractionMethod.AUTOMATIC
             it.createdAt shouldNotBe null
             it.createdBy shouldBe ContributorId(MockUserId.USER)
             it.verified shouldBe false

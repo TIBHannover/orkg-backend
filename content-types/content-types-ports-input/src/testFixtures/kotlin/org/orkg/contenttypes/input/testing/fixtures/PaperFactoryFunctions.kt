@@ -163,6 +163,7 @@ fun updatePaperCommand() = UpdatePaperUseCase.UpdateCommand(
     ),
     observatories = listOf(ObservatoryId("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")),
     organizations = listOf(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")),
+    extractionMethod = ExtractionMethod.AUTOMATIC,
     visibility = Visibility.DEFAULT,
     verified = false
 )

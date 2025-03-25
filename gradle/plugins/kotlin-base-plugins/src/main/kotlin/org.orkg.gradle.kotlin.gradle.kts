@@ -1,5 +1,3 @@
-import com.diffplug.gradle.spotless.SpotlessExtension
-
 plugins {
     id("java")
     id("org.jetbrains.kotlin.jvm")
@@ -7,8 +5,8 @@ plugins {
     id("idea")
     id("org.orkg.gradle.base")
     id("org.orkg.gradle.consistent-resolution")
-    id("com.diffplug.spotless")
     id("com.autonomousapps.dependency-analysis")
+    id("com.github.gmazzo.buildconfig")
 }
 
 val javaLanguageVersion = JavaLanguageVersion.of(21)
@@ -42,9 +40,6 @@ kotlin {
 
 tasks.withType<JavaCompile>().configureEach {
     options.encoding = "UTF-8"
-
-    // Always run linter before compiling
-    dependsOn(tasks.named("spotlessCheck"))
 }
 
 // Configure details for *all* test executions directly on 'Test' task
@@ -85,13 +80,4 @@ tasks.register("compileAll") {
     group = LifecycleBasePlugin.BUILD_GROUP
     description = "Compile all Java code (use to prime the build cache for CI pipeline)"
     dependsOn(tasks.withType<JavaCompile>())
-}
-
-extensions.configure<SpotlessExtension> {
-    kotlin {
-        ktlint("1.5.0") // TODO: Remove once Spotless uses this version
-    }
-    kotlinGradle {
-        ktlint("1.5.0") // TODO: Remove once Spotless uses this version
-    }
 }

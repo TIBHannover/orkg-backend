@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies.constraints {
-    val kotlinVersion = "2.1.10"
+    val kotlinVersion = "2.1.20"
     api("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     api("org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion")
     api("org.jetbrains.kotlin:kotlin-noarg:$kotlinVersion")
@@ -23,12 +23,11 @@ dependencies.constraints {
     api("org.gradlex:jvm-dependency-conflict-resolution:2.1.2")
     api("com.autonomousapps:dependency-analysis-gradle-plugin:2.5.0")
     api("com.osacky.doctor:doctor-plugin:0.10.0")
-    api("com.github.ben-manes:gradle-versions-plugin:0.51.0")
-    api("dev.iurysouza:modulegraph:0.10.1")
+    api("com.github.ben-manes:gradle-versions-plugin:0.52.0")
+    api("dev.iurysouza:modulegraph:0.12.0")
+    api("com.github.gmazzo.buildconfig:com.github.gmazzo.buildconfig.gradle.plugin:5.5.4")
 
     api("com.google.cloud.tools:jib-gradle-plugin:3.4.0")
-    api("com.diffplug.spotless:spotless-plugin-gradle:7.0.0")
-    //api("com.diffplug.spotless:spotless-plugin-gradle:6.23.3")
-    api("com.diffplug.spotless-changelog:spotless-changelog-plugin-gradle:2.4.0")
-    //api("com.diffplug.spotless-changelog:spotless-changelog-plugin-gradle:3.0.2")
+    api("com.diffplug.spotless:spotless-plugin-gradle:7.0.2")
+    api("com.diffplug.spotless-changelog:spotless-changelog-plugin-gradle:3.1.2")
 }

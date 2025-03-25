@@ -86,7 +86,7 @@ val asciidoctor by tasks.existing(AsciidoctorTask::class) {
 
         // Work-around for JRE 16+, because Java's internal APIs are no longer available due to JPMS.
         // This should be fixed in the Asciidoctor plugin, but never was.
-        forkOptions {
+        jvm {
             jvmArgs(
                 "--add-opens", "java.base/sun.nio.ch=ALL-UNNAMED",
                 "--add-opens", "java.base/java.io=ALL-UNNAMED",

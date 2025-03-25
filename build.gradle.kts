@@ -19,7 +19,7 @@ dependencies {
 reporting {
     reports {
         val testAggregateTestReport by creating(AggregateTestReport::class) {
-            testType.set(TestSuiteType.UNIT_TEST)
+            testSuiteName = "test"
         }
     }
 }
@@ -28,7 +28,7 @@ reporting {
 reporting {
     reports {
         val testCodeCoverageReport by registering(JacocoCoverageReport::class) {
-            testType.set(TestSuiteType.UNIT_TEST)
+            testSuiteName = "test"
         }
     }
 }

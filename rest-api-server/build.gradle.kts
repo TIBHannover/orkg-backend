@@ -13,7 +13,6 @@ plugins {
     // The taskinfo plugin currently does not work with Gradle 7.6: https://gitlab.com/barfuin/gradle-taskinfo/-/issues/20
     // It was used only occasionally for debugging, and can be re-enabled again later (if needed).
     // id("org.barfuin.gradle.taskinfo") version "1.2.0"
-    id("com.diffplug.spotless")
 }
 
 testing {
@@ -36,7 +35,6 @@ testing {
             }
         }
         val integrationTest by registering(JvmTestSuite::class) {
-            testType.set(TestSuiteType.INTEGRATION_TEST)
             dependencies {
                 implementation(project())
                 implementation(project(":common:pagination"))

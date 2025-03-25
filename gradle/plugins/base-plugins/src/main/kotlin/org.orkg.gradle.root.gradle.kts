@@ -41,16 +41,29 @@ fun isSpringManaged(
     candidate.version != currentVersion &&
         candidate.group in
         setOf(
+            "ch.qos.logback",
             "com.fasterxml.jackson.core",
             "com.fasterxml.jackson.datatype",
             "com.fasterxml.jackson.module",
+            "com.github.ben-manes.caffeine",
+            "io.micrometer",
             "jakarta.persistence",
             "jakarta.validation",
             "org.apache.tomcat.embed",
+            "org.assertj",
             "org.hamcrest",
+            // "org.jetbrains.kotlin", // TODO: Uncomment once Spring Boot provides Kotlin 2.x
+            "org.junit.jupiter",
+            "org.junit.platform",
             "org.liquibase",
+            "org.neo4j", // via spring-boot-data-starter-neo4j
             "org.neo4j.driver",
             "org.slf4j",
+            "org.springframework",
+            "org.springframework.data",
+            "org.springframework.restdocs",
+            "org.springframework.security",
+            "org.testcontainers",
         )
 
 // Module Graph plugin configuration

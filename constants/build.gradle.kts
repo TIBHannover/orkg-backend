@@ -1,6 +1,5 @@
 plugins {
-    kotlin("jvm")
-    id("com.github.gmazzo.buildconfig") version "5.5.1"
+    id("org.orkg.gradle.kotlin")
 }
 
 buildConfig {

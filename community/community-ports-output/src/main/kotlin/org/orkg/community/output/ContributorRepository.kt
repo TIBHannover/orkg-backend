@@ -7,7 +7,10 @@ import org.springframework.data.domain.Pageable
 import java.util.Optional
 
 interface ContributorRepository {
-    fun findAll(pageable: Pageable): Page<Contributor>
+    fun findAll(
+        pageable: Pageable,
+        label: String? = null,
+    ): Page<Contributor>
 
     fun findById(id: ContributorId): Optional<Contributor>
 

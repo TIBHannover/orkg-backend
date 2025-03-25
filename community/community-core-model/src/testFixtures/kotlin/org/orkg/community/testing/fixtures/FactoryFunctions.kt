@@ -30,7 +30,8 @@ fun createContributor(
     email: String = "user@example.org",
     observatoryId: ObservatoryId = ObservatoryId.UNKNOWN,
     organizationId: OrganizationId = OrganizationId.UNKNOWN,
-    joinedAt: OffsetDateTime = OffsetDateTime.parse("2023-10-06T10:37:17.055493+01:00"),
+    // FIXME: See https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/533
+    joinedAt: OffsetDateTime = OffsetDateTime.parse("2023-10-06T10:37:17.055493Z"),
     isCurator: Boolean = false,
     isAdmin: Boolean = false,
 ): Contributor = Contributor(

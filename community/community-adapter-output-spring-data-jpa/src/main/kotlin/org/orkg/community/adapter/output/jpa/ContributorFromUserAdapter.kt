@@ -32,8 +32,14 @@ class ContributorFromUserAdapter(
         eventBus.register(this)
     }
 
-    override fun findAll(pageable: Pageable): Page<Contributor> =
-        postgresContributorRepository.findAll(pageable).map(ContributorEntity::toContributor)
+    override fun findAll(
+        pageable: Pageable,
+        label: String?,
+    ): Page<Contributor> =
+        when (label) {
+            null -> postgresContributorRepository.findAll(pageable)
+            else -> postgresContributorRepository.findAllByDisplayNameContainsIgnoreCase(label, pageable)
+        }.map(ContributorEntity::toContributor)
 
     override fun findById(id: ContributorId): Optional<Contributor> =
         postgresContributorRepository.findById(id.value).map(ContributorEntity::toContributor)

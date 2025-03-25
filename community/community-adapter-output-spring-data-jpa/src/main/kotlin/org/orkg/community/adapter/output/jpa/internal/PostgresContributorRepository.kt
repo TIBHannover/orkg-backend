@@ -9,4 +9,6 @@ interface PostgresContributorRepository : JpaRepository<ContributorEntity, UUID>
     fun findAllByObservatoryId(observatoryId: UUID, pageable: Pageable): Page<ContributorEntity>
 
     fun findAllByOrganizationId(organizationId: UUID, pageable: Pageable): Page<ContributorEntity>
+
+    fun findAllByDisplayNameContainsIgnoreCase(label: String, pageable: Pageable): Page<ContributorEntity>
 }

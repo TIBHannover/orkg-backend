@@ -1,0 +1,37 @@
+package org.orkg.community.adapter.output.jpa
+
+import org.orkg.community.adapter.output.jpa.configuration.CommunityJpaConfiguration
+import org.orkg.community.adapter.output.jpa.configuration.CommunityJpaTestConfiguration
+import org.orkg.community.output.ContributorRepository
+import org.orkg.community.testing.fixtures.ContributorRepositoryContracts
+import org.orkg.eventbus.ReallySimpleEventBus
+import org.orkg.testing.PostgresContainerInitializer
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.TestConstructor
+
+@DataJpaTest
+@ContextConfiguration(
+    classes = [
+        CommunityJpaConfiguration::class,
+        CommunityJpaTestConfiguration::class,
+        ContributorFromUserAdapter::class,
+        ReallySimpleEventBus::class,
+    ],
+    initializers = [PostgresContainerInitializer::class],
+)
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
+internal class ContributorContractTest : ContributorRepositoryContracts {
+    @Autowired
+    private lateinit var adapter: ContributorFromUserAdapter
+
+    override val repository: ContributorRepository
+        get() = adapter
+
+    override fun cleanUpAfterEach() {
+        adapter.deleteAll()
+    }
+}

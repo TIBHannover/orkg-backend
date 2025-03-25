@@ -457,3 +457,20 @@ fun ResultActions.andExpectTable(path: String = "$"): ResultActions = this
 fun ResultActions.andExpectBundle(path: String = "$"): ResultActions = this
     .andExpect(jsonPath("$path.root", `is`(notNullValue())))
     .andExpect(jsonPath("$path.statements").isArray)
+
+fun ResultActions.andExpectContributor(path: String = "$"): ResultActions = this
+    .andExpect(jsonPath("$path.id", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.display_name", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.joined_at", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.organization_id", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.observatory_id", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.gravatar_id", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.avatar_url", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.isAdmin").doesNotExist())
+    .andExpect(jsonPath("$path.is_admin").doesNotExist())
+    .andExpect(jsonPath("$path.admin").doesNotExist())
+    .andExpect(jsonPath("$path.isCurator").doesNotExist())
+    .andExpect(jsonPath("$path.is_curator").doesNotExist())
+    .andExpect(jsonPath("$path.curator").doesNotExist())
+    .andExpect(jsonPath("$path.emailMD5").doesNotExist())
+    .andExpect(jsonPath("$path.email_md5").doesNotExist())

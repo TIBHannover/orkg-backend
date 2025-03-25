@@ -14,7 +14,7 @@ import org.orkg.eventbus.events.UserRegistered
 import org.orkg.eventbus.events.UserRegistered.Role.ADMIN
 import org.orkg.eventbus.events.UserRegistered.Role.CURATOR
 import java.time.LocalDateTime
-import java.time.ZoneId
+import java.time.ZoneOffset
 import java.util.UUID
 
 @Entity
@@ -50,12 +50,12 @@ class ContributorEntity(
 }
 
 fun ContributorEntity.toContributor() = Contributor(
-    id = ContributorId(this@toContributor.id!!),
-    name = this@toContributor.displayName!!,
-    joinedAt = this@toContributor.joinedAt!!.atZone(ZoneId.systemDefault()).toOffsetDateTime(),
-    organizationId = this@toContributor.organizationId?.let(::OrganizationId) ?: OrganizationId.UNKNOWN,
-    observatoryId = this@toContributor.observatoryId?.let(::ObservatoryId) ?: ObservatoryId.UNKNOWN,
-    emailMD5 = MD5Hash(this@toContributor.emailMD5!!),
-    isCurator = this@toContributor.curator!!,
-    isAdmin = this@toContributor.admin!!,
+    id = ContributorId(id!!),
+    name = displayName!!,
+    joinedAt = joinedAt!!.atZone(ZoneOffset.UTC).toOffsetDateTime(),
+    organizationId = organizationId?.let(::OrganizationId) ?: OrganizationId.UNKNOWN,
+    observatoryId = observatoryId?.let(::ObservatoryId) ?: ObservatoryId.UNKNOWN,
+    emailMD5 = MD5Hash(emailMD5!!),
+    isCurator = curator!!,
+    isAdmin = admin!!,
 )

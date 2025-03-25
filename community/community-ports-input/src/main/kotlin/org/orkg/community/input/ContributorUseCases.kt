@@ -5,6 +5,8 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.community.domain.Contributor
 import org.orkg.community.domain.internal.MD5Hash
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import java.time.OffsetDateTime
 import java.util.Optional
 
@@ -26,6 +28,11 @@ interface RetrieveContributorUseCase {
     fun findById(id: ContributorId): Optional<Contributor>
 
     fun findAllById(ids: List<ContributorId>): List<Contributor>
+
+    fun findAll(
+        pageable: Pageable,
+        label: String? = null,
+    ): Page<Contributor>
 }
 
 interface CreateContributorUseCase {

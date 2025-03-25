@@ -2,6 +2,7 @@ package org.orkg.graph.adapter.output.neo4j
 
 import org.neo4j.cypherdsl.core.Condition
 import org.neo4j.cypherdsl.core.Cypher.anonParameter
+import org.neo4j.cypherdsl.core.Cypher.call
 import org.neo4j.cypherdsl.core.Cypher.coalesce
 import org.neo4j.cypherdsl.core.Cypher.collect
 import org.neo4j.cypherdsl.core.Cypher.count
@@ -315,32 +316,41 @@ class SpringDataNeo4jResourceAdapter(
             val resource = node("Resource", includeClasses.map { it.value }).named(node)
             val matchResources = matchDistinct(resource, patterns)
             val match = label?.let { searchString ->
+                val skipNodeCollection = includeClasses.isEmpty() && baseClass == null
                 when (searchString) {
                     is ExactSearchString -> {
-                        // Collecting resources before using the fulltext index introduces additional overhead.
-                        // It is possible to remove this overhead when not needed (every time we do not filter by includeClasses or baseClass).
-                        // However, it would further increase code complexity.
-                        // See also: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1247
-                        matchResources
-                            .with(collect(node).`as`(nodes))
-                            .call("db.index.fulltext.queryNodes")
-                            .withArgs(anonParameter(FULLTEXT_INDEX_FOR_LABEL), anonParameter(searchString.query))
-                            .yield("node")
-                            .where(toLower(node.property("label")).eq(toLower(anonParameter(searchString.input))).and(node.`in`(nodes)))
-                            .with(node)
+                        if (skipNodeCollection) {
+                            call("db.index.fulltext.queryNodes")
+                                .withArgs(anonParameter(FULLTEXT_INDEX_FOR_LABEL), anonParameter(searchString.query))
+                                .yield("node")
+                                .where(toLower(node.property("label")).eq(toLower(anonParameter(searchString.input))))
+                                .with(node)
+                        } else {
+                            matchResources
+                                .with(collect(node).`as`(nodes))
+                                .call("db.index.fulltext.queryNodes")
+                                .withArgs(anonParameter(FULLTEXT_INDEX_FOR_LABEL), anonParameter(searchString.query))
+                                .yield("node")
+                                .where(toLower(node.property("label")).eq(toLower(anonParameter(searchString.input))).and(node.`in`(nodes)))
+                                .with(node)
+                        }
                     }
                     is FuzzySearchString -> {
-                        // Collecting resources before using the fulltext index introduces additional overhead.
-                        // It is possible to remove this overhead when not needed (every time we do not filter by includeClasses or baseClass).
-                        // However, it would further increase code complexity.
-                        // See also: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1247
-                        matchResources
-                            .with(collect(node).`as`(nodes))
-                            .call("db.index.fulltext.queryNodes")
-                            .withArgs(anonParameter(FULLTEXT_INDEX_FOR_LABEL), anonParameter(searchString.query))
-                            .yield("node", "score")
-                            .where(size(node.property("label")).gte(anonParameter(searchString.input.length)).and(node.`in`(nodes)))
-                            .with(node, name("score"))
+                        if (skipNodeCollection) {
+                            call("db.index.fulltext.queryNodes")
+                                .withArgs(anonParameter(FULLTEXT_INDEX_FOR_LABEL), anonParameter(searchString.query))
+                                .yield("node", "score")
+                                .where(size(node.property("label")).gte(anonParameter(searchString.input.length)))
+                                .with(node, name("score"))
+                        } else {
+                            matchResources
+                                .with(collect(node).`as`(nodes))
+                                .call("db.index.fulltext.queryNodes")
+                                .withArgs(anonParameter(FULLTEXT_INDEX_FOR_LABEL), anonParameter(searchString.query))
+                                .yield("node", "score")
+                                .where(size(node.property("label")).gte(anonParameter(searchString.input.length)).and(node.`in`(nodes)))
+                                .with(node, name("score"))
+                        }
                     }
                 }
             } ?: matchResources

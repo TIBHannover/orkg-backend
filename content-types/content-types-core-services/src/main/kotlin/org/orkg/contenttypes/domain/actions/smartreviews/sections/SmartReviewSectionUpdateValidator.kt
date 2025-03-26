@@ -37,42 +37,42 @@ class SmartReviewSectionUpdateValidator(
                 if (section !is SmartReviewComparisonSection) {
                     throw SmartReviewSectionTypeMismatch.mustBeComparisonSection()
                 }
-                val validIds = mutableSetOfNotNull(section.comparison?.id)
-                abstractSmartReviewSectionValidator.validate(command, validIds)
+                val validationCache = mutableSetOfNotNull(section.comparison?.id)
+                abstractSmartReviewSectionValidator.validate(command, validationCache)
             }
             is UpdateSmartReviewSectionUseCase.UpdateVisualizationSectionCommand -> {
                 if (section !is SmartReviewVisualizationSection) {
                     throw SmartReviewSectionTypeMismatch.mustBeVisualizationSection()
                 }
-                val validIds = mutableSetOfNotNull(section.visualization?.id)
-                abstractSmartReviewSectionValidator.validate(command, validIds)
+                val validationCache = mutableSetOfNotNull(section.visualization?.id)
+                abstractSmartReviewSectionValidator.validate(command, validationCache)
             }
             is UpdateSmartReviewSectionUseCase.UpdateResourceSectionCommand -> {
                 if (section !is SmartReviewResourceSection) {
                     throw SmartReviewSectionTypeMismatch.mustBeResourceSection()
                 }
-                val validIds = mutableSetOfNotNull(section.resource?.id)
-                abstractSmartReviewSectionValidator.validate(command, validIds)
+                val validationCache = mutableSetOfNotNull(section.resource?.id)
+                abstractSmartReviewSectionValidator.validate(command, validationCache)
             }
             is UpdateSmartReviewSectionUseCase.UpdatePredicateSectionCommand -> {
                 if (section !is SmartReviewPredicateSection) {
                     throw SmartReviewSectionTypeMismatch.mustBePredicateSection()
                 }
-                val validIds = mutableSetOfNotNull(section.predicate?.id)
-                abstractSmartReviewSectionValidator.validate(command, validIds)
+                val validationCache = mutableSetOfNotNull(section.predicate?.id)
+                abstractSmartReviewSectionValidator.validate(command, validationCache)
             }
             is UpdateSmartReviewSectionUseCase.UpdateOntologySectionCommand -> {
                 if (section !is SmartReviewOntologySection) {
                     throw SmartReviewSectionTypeMismatch.mustBeOntologySection()
                 }
-                val validIds = mutableSetOf<ThingId>()
+                val validationCache = mutableSetOf<ThingId>()
                 section.entities.forEach { entity ->
-                    entity.id?.let { id -> validIds.add(id) }
+                    entity.id?.let { id -> validationCache.add(id) }
                 }
                 section.predicates.forEach {
-                    validIds.add(it.id)
+                    validationCache.add(it.id)
                 }
-                abstractSmartReviewSectionValidator.validate(command, validIds)
+                abstractSmartReviewSectionValidator.validate(command, validationCache)
             }
             is UpdateSmartReviewSectionUseCase.UpdateTextSectionCommand -> {
                 if (section !is SmartReviewTextSection) {

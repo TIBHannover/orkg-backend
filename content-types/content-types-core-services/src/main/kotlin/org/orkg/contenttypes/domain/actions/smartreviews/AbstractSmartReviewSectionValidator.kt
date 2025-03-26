@@ -30,46 +30,46 @@ class AbstractSmartReviewSectionValidator(
     private val predicateRepository: PredicateRepository,
     private val thingRepository: ThingRepository,
 ) {
-    internal fun validate(section: AbstractSmartReviewSectionCommand, validIds: MutableSet<ThingId>) {
+    internal fun validate(section: AbstractSmartReviewSectionCommand, validationCache: MutableSet<ThingId>) {
         Label.ofOrNull(section.heading) ?: throw InvalidLabel("heading")
 
         when (section) {
             is AbstractSmartReviewComparisonSectionCommand -> {
-                validateWithCache(section.comparison, validIds) { comparisonId ->
+                validateWithCache(section.comparison, validationCache) { comparisonId ->
                     resourceRepository.findById(comparisonId)
                         .filter { Classes.comparison in it.classes || Classes.comparisonPublished in it.classes }
                         .orElseThrow { ComparisonNotFound(comparisonId) }
                 }
             }
             is AbstractSmartReviewVisualizationSectionCommand -> {
-                validateWithCache(section.visualization, validIds) { visualizationId ->
+                validateWithCache(section.visualization, validationCache) { visualizationId ->
                     resourceRepository.findById(visualizationId)
                         .filter { Classes.visualization in it.classes }
                         .orElseThrow { VisualizationNotFound(visualizationId) }
                 }
             }
             is AbstractSmartReviewResourceSectionCommand -> {
-                validateWithCache(section.resource, validIds) { resourceId ->
+                validateWithCache(section.resource, validationCache) { resourceId ->
                     resourceRepository.findById(resourceId)
                         .orElseThrow { ResourceNotFound.withId(resourceId) }
                 }
             }
             is AbstractSmartReviewPredicateSectionCommand -> {
-                validateWithCache(section.predicate, validIds) { predicateId ->
+                validateWithCache(section.predicate, validationCache) { predicateId ->
                     predicateRepository.findById(predicateId)
                         .orElseThrow { PredicateNotFound(predicateId) }
                 }
             }
             is AbstractSmartReviewOntologySectionCommand -> {
-                val entitiesToValidate = section.entities.toSet() - validIds
+                val entitiesToValidate = section.entities.toSet() - validationCache
                 if (entitiesToValidate.isNotEmpty()) {
                     if (!thingRepository.existsAllById(entitiesToValidate)) {
                         throw OntologyEntityNotFound(entitiesToValidate)
                     }
-                    validIds += section.entities
+                    validationCache += section.entities
                 }
                 section.predicates.forEach { predicateId ->
-                    validateWithCache(predicateId, validIds) {
+                    validateWithCache(predicateId, validationCache) {
                         predicateRepository.findById(predicateId)
                             .orElseThrow { PredicateNotFound(predicateId) }
                     }

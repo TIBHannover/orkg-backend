@@ -30,7 +30,7 @@ internal class AbstractLiteratureListSectionValidatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a list section command, when validating, it returns success`() {
         val section = literatureListListSectionCommand()
-        val validIds = mutableSetOf<ThingId>()
+        val validationCache = mutableSetOf<ThingId>()
 
         every {
             resourceRepository.findById(ThingId("R2315"))
@@ -39,9 +39,9 @@ internal class AbstractLiteratureListSectionValidatorUnitTest : MockkBaseTest {
             resourceRepository.findById(ThingId("R3512"))
         } returns Optional.of(createResource(ThingId("R3512"), classes = setOf(Classes.software)))
 
-        abstractLiteratureListSectionValidator.validate(section, validIds)
+        abstractLiteratureListSectionValidator.validate(section, validationCache)
 
-        validIds shouldBe section.entries.map { it.id }
+        validationCache shouldBe section.entries.map { it.id }
 
         verify(exactly = 1) { resourceRepository.findById(ThingId("R2315")) }
         verify(exactly = 1) { resourceRepository.findById(ThingId("R3512")) }
@@ -55,15 +55,15 @@ internal class AbstractLiteratureListSectionValidatorUnitTest : MockkBaseTest {
                 Entry(ThingId("R2315"))
             )
         )
-        val validIds = mutableSetOf<ThingId>()
+        val validationCache = mutableSetOf<ThingId>()
 
         every {
             resourceRepository.findById(ThingId("R2315"))
         } returns Optional.of(createResource(ThingId("R2315"), classes = setOf(Classes.paper)))
 
-        abstractLiteratureListSectionValidator.validate(section, validIds)
+        abstractLiteratureListSectionValidator.validate(section, validationCache)
 
-        validIds shouldBe setOf(ThingId("R2315"))
+        validationCache shouldBe setOf(ThingId("R2315"))
 
         verify(exactly = 1) { resourceRepository.findById(ThingId("R2315")) }
     }
@@ -71,15 +71,15 @@ internal class AbstractLiteratureListSectionValidatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a list section command, when validating, it does not check already valid ids`() {
         val section = literatureListListSectionCommand()
-        val validIds = mutableSetOf(ThingId("R2315"))
+        val validationCache = mutableSetOf(ThingId("R2315"))
 
         every {
             resourceRepository.findById(ThingId("R3512"))
         } returns Optional.of(createResource(ThingId("R3512"), classes = setOf(Classes.paper)))
 
-        abstractLiteratureListSectionValidator.validate(section, validIds)
+        abstractLiteratureListSectionValidator.validate(section, validationCache)
 
-        validIds shouldBe section.entries.map { it.id }
+        validationCache shouldBe section.entries.map { it.id }
 
         verify(exactly = 1) { resourceRepository.findById(ThingId("R3512")) }
     }
@@ -89,21 +89,21 @@ internal class AbstractLiteratureListSectionValidatorUnitTest : MockkBaseTest {
         val section = literatureListListSectionCommand().copy(
             entries = listOf(Entry(ThingId("R2315"), "a".repeat(MAX_LABEL_LENGTH + 1)))
         )
-        val validIds = mutableSetOf<ThingId>()
+        val validationCache = mutableSetOf<ThingId>()
 
-        assertThrows<InvalidDescription> { abstractLiteratureListSectionValidator.validate(section, validIds) }
+        assertThrows<InvalidDescription> { abstractLiteratureListSectionValidator.validate(section, validationCache) }
     }
 
     @Test
     fun `Given a list section command, when resource is not allowed, it throws an exception`() {
         val section = literatureListListSectionCommand()
-        val validIds = mutableSetOf<ThingId>()
+        val validationCache = mutableSetOf<ThingId>()
 
         every {
             resourceRepository.findById(ThingId("R2315"))
         } returns Optional.of(createResource(ThingId("R2315"), classes = setOf(Classes.visualization)))
 
-        assertThrows<InvalidListSectionEntry> { abstractLiteratureListSectionValidator.validate(section, validIds) }
+        assertThrows<InvalidListSectionEntry> { abstractLiteratureListSectionValidator.validate(section, validationCache) }
 
         verify(exactly = 1) { resourceRepository.findById(ThingId("R2315")) }
     }
@@ -111,19 +111,19 @@ internal class AbstractLiteratureListSectionValidatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a text section command, when validating, it returns success`() {
         val section = literatureListTextSectionCommand()
-        val validIds = mutableSetOf<ThingId>()
+        val validationCache = mutableSetOf<ThingId>()
 
-        abstractLiteratureListSectionValidator.validate(section, validIds)
+        abstractLiteratureListSectionValidator.validate(section, validationCache)
 
-        validIds shouldBe validIds
+        validationCache shouldBe validationCache
     }
 
     @Test
     fun `Given a text section command, when heading is invalid, it throws an exception`() {
         val section = literatureListTextSectionCommand().copy(heading = "\n")
-        val validIds = mutableSetOf<ThingId>()
+        val validationCache = mutableSetOf<ThingId>()
 
-        assertThrows<InvalidLabel> { abstractLiteratureListSectionValidator.validate(section, validIds) }.asClue {
+        assertThrows<InvalidLabel> { abstractLiteratureListSectionValidator.validate(section, validationCache) }.asClue {
             it.property shouldBe "heading"
         }
     }
@@ -131,9 +131,9 @@ internal class AbstractLiteratureListSectionValidatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a text section command, when text is invalid, it throws an exception`() {
         val section = literatureListTextSectionCommand().copy(text = "\n")
-        val validIds = mutableSetOf<ThingId>()
+        val validationCache = mutableSetOf<ThingId>()
 
-        assertThrows<InvalidDescription> { abstractLiteratureListSectionValidator.validate(section, validIds) }.asClue {
+        assertThrows<InvalidDescription> { abstractLiteratureListSectionValidator.validate(section, validationCache) }.asClue {
             it.property shouldBe "text"
         }
     }
@@ -141,8 +141,8 @@ internal class AbstractLiteratureListSectionValidatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a text section command, when heading size is too low, it throws an exception`() {
         val section = literatureListTextSectionCommand().copy(headingSize = 0)
-        val validIds = mutableSetOf<ThingId>()
+        val validationCache = mutableSetOf<ThingId>()
 
-        assertThrows<InvalidHeadingSize> { abstractLiteratureListSectionValidator.validate(section, validIds) }
+        assertThrows<InvalidHeadingSize> { abstractLiteratureListSectionValidator.validate(section, validationCache) }
     }
 }

@@ -41,7 +41,7 @@ internal class TableResourceCreatorUnitTest : MockkBaseTest {
         result.asClue {
             it.tableId shouldBe id
             it.validationCache shouldBe state.validationCache
-            it.tempIdToThing shouldBe state.tempIdToThing
+            it.tempIdToThingId shouldBe state.tempIdToThingId
             it.columns shouldBe state.columns
             it.rows shouldBe state.rows
         }

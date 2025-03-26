@@ -36,14 +36,14 @@ class TableThingsCommandCreateCreator(
     )
 
     override fun invoke(command: CreateTableCommand, state: State): State {
-        val tempIdToThing = mutableMapOf<String, ThingId>()
+        val tempIdToThingId = mutableMapOf<String, ThingId>()
         subgraphCreator.createThings(
             thingsCommand = command,
             validationCache = state.validationCache,
             contributorId = command.contributorId,
             extractionMethod = command.extractionMethod,
-            lookup = tempIdToThing
+            lookup = tempIdToThingId
         )
-        return state.copy(tempIdToThing = tempIdToThing)
+        return state.copy(tempIdToThingId = tempIdToThingId)
     }
 }

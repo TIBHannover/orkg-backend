@@ -36,7 +36,7 @@ internal class TableThingsCommandCreateValidatorUnitTest : MockkBaseTest {
         result.asClue {
             it.tableId shouldBe state.tableId
             it.validationCache shouldBe validationCache
-            it.tempIdToThing shouldBe state.tempIdToThing
+            it.tempIdToThingId shouldBe state.tempIdToThingId
             it.columns shouldBe state.columns
             it.rows shouldBe state.rows
         }

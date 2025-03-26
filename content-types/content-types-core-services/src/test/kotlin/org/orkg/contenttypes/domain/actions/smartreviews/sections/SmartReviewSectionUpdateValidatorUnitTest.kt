@@ -145,14 +145,14 @@ internal class SmartReviewSectionUpdateValidatorUnitTest : MockkBaseTest {
         val state = UpdateSmartReviewSectionState(smartReview = smartReview)
         val section = smartReview.sections.filterIsInstance<SmartReviewOntologySection>().first()
         val command = updateSmartReviewOntologySectionCommand().copy(smartReviewSectionId = section.id)
-        val validIds = (section.entities.mapNotNull { it.id } union section.predicates.map { it.id }).toMutableSet()
+        val validationCache = (section.entities.mapNotNull { it.id } union section.predicates.map { it.id }).toMutableSet()
 
         every { abstractSmartReviewSectionValidator.validate(any(), any()) } just runs
 
         smartReviewSectionUpdateValidator(command, state)
 
         verify(exactly = 1) {
-            abstractSmartReviewSectionValidator.validate(command, validIds)
+            abstractSmartReviewSectionValidator.validate(command, validationCache)
         }
     }
 

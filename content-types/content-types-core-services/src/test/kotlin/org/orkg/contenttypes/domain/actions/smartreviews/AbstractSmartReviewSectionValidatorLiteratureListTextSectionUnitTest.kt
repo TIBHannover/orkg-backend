@@ -15,11 +15,11 @@ internal class AbstractSmartReviewSectionValidatorLiteratureListTextSectionUnitT
     @Test
     fun `Given a text section command, when validating, it returns success`() {
         val section = smartReviewTextSectionCommand()
-        val validIds = mutableSetOf<ThingId>()
+        val validationCache = mutableSetOf<ThingId>()
 
-        abstractSmartReviewSectionValidator.validate(section, validIds)
+        abstractSmartReviewSectionValidator.validate(section, validationCache)
 
-        validIds shouldBe emptySet()
+        validationCache shouldBe emptySet()
     }
 
     @Test
@@ -27,9 +27,9 @@ internal class AbstractSmartReviewSectionValidatorLiteratureListTextSectionUnitT
         val section = smartReviewTextSectionCommand().copy(
             heading = "a".repeat(MAX_LABEL_LENGTH + 1)
         )
-        val validIds = mutableSetOf<ThingId>()
+        val validationCache = mutableSetOf<ThingId>()
 
-        assertThrows<InvalidLabel> { abstractSmartReviewSectionValidator.validate(section, validIds) }
+        assertThrows<InvalidLabel> { abstractSmartReviewSectionValidator.validate(section, validationCache) }
     }
 
     @Test
@@ -37,9 +37,9 @@ internal class AbstractSmartReviewSectionValidatorLiteratureListTextSectionUnitT
         val section = smartReviewTextSectionCommand().copy(
             text = "a".repeat(MAX_LABEL_LENGTH + 1)
         )
-        val validIds = mutableSetOf<ThingId>()
+        val validationCache = mutableSetOf<ThingId>()
 
-        assertThrows<InvalidDescription> { abstractSmartReviewSectionValidator.validate(section, validIds) }
+        assertThrows<InvalidDescription> { abstractSmartReviewSectionValidator.validate(section, validationCache) }
     }
 
     @Test
@@ -47,8 +47,8 @@ internal class AbstractSmartReviewSectionValidatorLiteratureListTextSectionUnitT
         val section = smartReviewTextSectionCommand().copy(
             `class` = Classes.comparison
         )
-        val validIds = mutableSetOf<ThingId>()
+        val validationCache = mutableSetOf<ThingId>()
 
-        assertThrows<InvalidSmartReviewTextSectionType> { abstractSmartReviewSectionValidator.validate(section, validIds) }
+        assertThrows<InvalidSmartReviewTextSectionType> { abstractSmartReviewSectionValidator.validate(section, validationCache) }
     }
 }

@@ -18,14 +18,14 @@ internal class AbstractSmartReviewSectionValidatorVisualizationSectionUnitTest :
     @Test
     fun `Given a visualization section command, when validating, it returns success`() {
         val section = smartReviewVisualizationSectionCommand()
-        val validIds = mutableSetOf<ThingId>()
+        val validationCache = mutableSetOf<ThingId>()
         val resource = createResource(section.visualization!!, classes = setOf(Classes.visualization))
 
         every { resourceRepository.findById(section.visualization!!) } returns Optional.of(resource)
 
-        abstractSmartReviewSectionValidator.validate(section, validIds)
+        abstractSmartReviewSectionValidator.validate(section, validationCache)
 
-        validIds shouldBe setOf(section.visualization)
+        validationCache shouldBe setOf(section.visualization)
 
         verify(exactly = 1) { resourceRepository.findById(section.visualization!!) }
     }
@@ -33,21 +33,21 @@ internal class AbstractSmartReviewSectionValidatorVisualizationSectionUnitTest :
     @Test
     fun `Given a visualization section command, when validating, it does not validate the visualization id when it is not set`() {
         val section = smartReviewVisualizationSectionCommand().copy(visualization = null)
-        val validIds = mutableSetOf<ThingId>()
+        val validationCache = mutableSetOf<ThingId>()
 
-        abstractSmartReviewSectionValidator.validate(section, validIds)
+        abstractSmartReviewSectionValidator.validate(section, validationCache)
 
-        validIds shouldBe emptySet()
+        validationCache shouldBe emptySet()
     }
 
     @Test
     fun `Given a visualization section command, when validating, it does not check already valid ids`() {
         val section = smartReviewVisualizationSectionCommand()
-        val validIds = mutableSetOf(section.visualization!!)
+        val validationCache = mutableSetOf(section.visualization!!)
 
-        abstractSmartReviewSectionValidator.validate(section, validIds)
+        abstractSmartReviewSectionValidator.validate(section, validationCache)
 
-        validIds shouldBe setOf(section.visualization)
+        validationCache shouldBe setOf(section.visualization)
     }
 
     @Test
@@ -55,20 +55,20 @@ internal class AbstractSmartReviewSectionValidatorVisualizationSectionUnitTest :
         val section = smartReviewVisualizationSectionCommand().copy(
             heading = "a".repeat(MAX_LABEL_LENGTH + 1)
         )
-        val validIds = mutableSetOf<ThingId>()
+        val validationCache = mutableSetOf<ThingId>()
 
-        assertThrows<InvalidLabel> { abstractSmartReviewSectionValidator.validate(section, validIds) }
+        assertThrows<InvalidLabel> { abstractSmartReviewSectionValidator.validate(section, validationCache) }
     }
 
     @Test
     fun `Given a visualization section command, when resource is not a visualization, it throws an exception`() {
         val section = smartReviewVisualizationSectionCommand()
-        val validIds = mutableSetOf<ThingId>()
+        val validationCache = mutableSetOf<ThingId>()
         val resource = createResource(section.visualization!!, classes = setOf(Classes.comparison))
 
         every { resourceRepository.findById(section.visualization!!) } returns Optional.of(resource)
 
-        assertThrows<VisualizationNotFound> { abstractSmartReviewSectionValidator.validate(section, validIds) }
+        assertThrows<VisualizationNotFound> { abstractSmartReviewSectionValidator.validate(section, validationCache) }
 
         verify(exactly = 1) { resourceRepository.findById(section.visualization!!) }
     }
@@ -76,11 +76,11 @@ internal class AbstractSmartReviewSectionValidatorVisualizationSectionUnitTest :
     @Test
     fun `Given a visualization section command, when visualization does not exist, it throws an exception`() {
         val section = smartReviewVisualizationSectionCommand()
-        val validIds = mutableSetOf<ThingId>()
+        val validationCache = mutableSetOf<ThingId>()
 
         every { resourceRepository.findById(section.visualization!!) } returns Optional.empty()
 
-        assertThrows<VisualizationNotFound> { abstractSmartReviewSectionValidator.validate(section, validIds) }
+        assertThrows<VisualizationNotFound> { abstractSmartReviewSectionValidator.validate(section, validationCache) }
 
         verify(exactly = 1) { resourceRepository.findById(section.visualization!!) }
     }

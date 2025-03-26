@@ -31,5 +31,5 @@ class TableCellsCreator(
     }
 
     private fun State.resolve(id: String): ThingId =
-        validationCache[id]!!.fold({ tempIdToThing[id] }, { it.id })!!
+        validationCache[id]!!.fold({ tempIdToThingId[id] }, { it.id })!!
 }

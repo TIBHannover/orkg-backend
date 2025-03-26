@@ -12,10 +12,10 @@ class LiteratureListSectionsUpdateValidator(
 
     override fun invoke(command: UpdateLiteratureListCommand, state: State): State {
         command.sections?.let { sections ->
-            val validIds = state.literatureList!!.sections.filterIsInstance<LiteratureListListSection>()
+            val validationCache = state.literatureList!!.sections.filterIsInstance<LiteratureListListSection>()
                 .flatMapTo(mutableSetOf()) { it.entries.map { entry -> entry.value.id } }
             sections.forEach { section ->
-                abstractLiteratureListSectionValidator.validate(section, validIds)
+                abstractLiteratureListSectionValidator.validate(section, validationCache)
             }
         }
         return state

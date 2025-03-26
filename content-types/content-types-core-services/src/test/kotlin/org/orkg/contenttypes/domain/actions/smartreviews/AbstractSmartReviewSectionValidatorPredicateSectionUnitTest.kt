@@ -17,14 +17,14 @@ internal class AbstractSmartReviewSectionValidatorPredicateSectionUnitTest : Abs
     @Test
     fun `Given a predicate section command, when validating, it returns success`() {
         val section = smartReviewPredicateSectionCommand()
-        val validIds = mutableSetOf<ThingId>()
+        val validationCache = mutableSetOf<ThingId>()
         val predicate = createPredicate(section.predicate!!)
 
         every { predicateRepository.findById(section.predicate!!) } returns Optional.of(predicate)
 
-        abstractSmartReviewSectionValidator.validate(section, validIds)
+        abstractSmartReviewSectionValidator.validate(section, validationCache)
 
-        validIds shouldBe setOf(section.predicate)
+        validationCache shouldBe setOf(section.predicate)
 
         verify(exactly = 1) { predicateRepository.findById(section.predicate!!) }
     }
@@ -32,21 +32,21 @@ internal class AbstractSmartReviewSectionValidatorPredicateSectionUnitTest : Abs
     @Test
     fun `Given a predicate section command, when validating, it does not validate the predicate id when it is not set`() {
         val section = smartReviewPredicateSectionCommand().copy(predicate = null)
-        val validIds = mutableSetOf<ThingId>()
+        val validationCache = mutableSetOf<ThingId>()
 
-        abstractSmartReviewSectionValidator.validate(section, validIds)
+        abstractSmartReviewSectionValidator.validate(section, validationCache)
 
-        validIds shouldBe emptySet()
+        validationCache shouldBe emptySet()
     }
 
     @Test
     fun `Given a predicate section command, when validating, it does not check already valid ids`() {
         val section = smartReviewPredicateSectionCommand()
-        val validIds = mutableSetOf(section.predicate!!)
+        val validationCache = mutableSetOf(section.predicate!!)
 
-        abstractSmartReviewSectionValidator.validate(section, validIds)
+        abstractSmartReviewSectionValidator.validate(section, validationCache)
 
-        validIds shouldBe setOf(section.predicate)
+        validationCache shouldBe setOf(section.predicate)
     }
 
     @Test
@@ -54,19 +54,19 @@ internal class AbstractSmartReviewSectionValidatorPredicateSectionUnitTest : Abs
         val section = smartReviewPredicateSectionCommand().copy(
             heading = "a".repeat(MAX_LABEL_LENGTH + 1)
         )
-        val validIds = mutableSetOf<ThingId>()
+        val validationCache = mutableSetOf<ThingId>()
 
-        assertThrows<InvalidLabel> { abstractSmartReviewSectionValidator.validate(section, validIds) }
+        assertThrows<InvalidLabel> { abstractSmartReviewSectionValidator.validate(section, validationCache) }
     }
 
     @Test
     fun `Given a predicate section command, when predicate does not exist, it throws an exception`() {
         val section = smartReviewPredicateSectionCommand()
-        val validIds = mutableSetOf<ThingId>()
+        val validationCache = mutableSetOf<ThingId>()
 
         every { predicateRepository.findById(section.predicate!!) } returns Optional.empty()
 
-        assertThrows<PredicateNotFound> { abstractSmartReviewSectionValidator.validate(section, validIds) }
+        assertThrows<PredicateNotFound> { abstractSmartReviewSectionValidator.validate(section, validationCache) }
 
         verify(exactly = 1) { predicateRepository.findById(section.predicate!!) }
     }

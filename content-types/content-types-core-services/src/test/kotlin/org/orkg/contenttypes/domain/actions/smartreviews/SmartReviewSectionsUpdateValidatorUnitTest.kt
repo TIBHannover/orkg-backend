@@ -37,9 +37,9 @@ internal class SmartReviewSectionsUpdateValidatorUnitTest : MockkBaseTest {
         val command = updateSmartReviewCommand()
         val smartReview = createSmartReview()
         val state = UpdateSmartReviewState(smartReview = smartReview)
-        val validIds = mutableSetOf(ThingId("R1"), ThingId("P1"), ThingId("R6416"), ThingId("R215648"))
+        val validationCache = mutableSetOf(ThingId("R1"), ThingId("P1"), ThingId("R6416"), ThingId("R215648"))
 
-        every { abstractSmartReviewSectionValidator.validate(any(), validIds) } just runs
+        every { abstractSmartReviewSectionValidator.validate(any(), validationCache) } just runs
 
         smartReviewSectionsUpdateValidator(command, state).asClue {
             it.smartReview shouldBe smartReview
@@ -48,7 +48,7 @@ internal class SmartReviewSectionsUpdateValidatorUnitTest : MockkBaseTest {
         }
 
         command.sections!!.forEach { section ->
-            verify(exactly = 1) { abstractSmartReviewSectionValidator.validate(section, validIds) }
+            verify(exactly = 1) { abstractSmartReviewSectionValidator.validate(section, validationCache) }
         }
     }
 }

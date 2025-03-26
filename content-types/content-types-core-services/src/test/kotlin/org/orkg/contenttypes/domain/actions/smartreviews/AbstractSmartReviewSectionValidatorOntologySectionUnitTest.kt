@@ -19,15 +19,15 @@ internal class AbstractSmartReviewSectionValidatorOntologySectionUnitTest : Abst
     @Test
     fun `Given an ontology section command, when validating, it returns success`() {
         val section = smartReviewOntologySectionCommand().copy(predicates = listOf(Predicates.employs))
-        val validIds = mutableSetOf<ThingId>()
+        val validationCache = mutableSetOf<ThingId>()
         val predicate = createPredicate(section.predicates.single())
 
         every { thingRepository.existsAllById(section.entities.toSet()) } returns true
         every { predicateRepository.findById(predicate.id) } returns Optional.of(predicate)
 
-        abstractSmartReviewSectionValidator.validate(section, validIds)
+        abstractSmartReviewSectionValidator.validate(section, validationCache)
 
-        validIds shouldBe (section.entities union section.predicates)
+        validationCache shouldBe (section.entities union section.predicates)
 
         verify(exactly = 1) { thingRepository.existsAllById(section.entities.toSet()) }
         verify(exactly = 1) { predicateRepository.findById(predicate.id) }
@@ -36,14 +36,14 @@ internal class AbstractSmartReviewSectionValidatorOntologySectionUnitTest : Abst
     @Test
     fun `Given an ontology section command, when validating, it does query the thing repository when entity list is empty`() {
         val section = smartReviewOntologySectionCommand().copy(entities = emptyList())
-        val validIds = mutableSetOf<ThingId>()
+        val validationCache = mutableSetOf<ThingId>()
         val predicate = createPredicate(section.predicates.single())
 
         every { predicateRepository.findById(predicate.id) } returns Optional.of(predicate)
 
-        abstractSmartReviewSectionValidator.validate(section, validIds)
+        abstractSmartReviewSectionValidator.validate(section, validationCache)
 
-        validIds shouldBe setOf(predicate.id)
+        validationCache shouldBe setOf(predicate.id)
 
         verify(exactly = 1) { predicateRepository.findById(predicate.id) }
     }
@@ -51,13 +51,13 @@ internal class AbstractSmartReviewSectionValidatorOntologySectionUnitTest : Abst
     @Test
     fun `Given an ontology section command, when validating, it does query the predicate repository when predicate list is empty`() {
         val section = smartReviewOntologySectionCommand().copy(predicates = emptyList())
-        val validIds = mutableSetOf<ThingId>()
+        val validationCache = mutableSetOf<ThingId>()
 
         every { thingRepository.existsAllById(section.entities.toSet()) } returns true
 
-        abstractSmartReviewSectionValidator.validate(section, validIds)
+        abstractSmartReviewSectionValidator.validate(section, validationCache)
 
-        validIds shouldBe (section.entities union section.predicates)
+        validationCache shouldBe (section.entities union section.predicates)
 
         verify(exactly = 1) { thingRepository.existsAllById(section.entities.toSet()) }
     }
@@ -65,13 +65,13 @@ internal class AbstractSmartReviewSectionValidatorOntologySectionUnitTest : Abst
     @Test
     fun `Given an ontology section command, when validating, it does not check already valid ids`() {
         val section = smartReviewOntologySectionCommand()
-        val validIds = mutableSetOf(ThingId("P1"))
+        val validationCache = mutableSetOf(ThingId("P1"))
 
         every { thingRepository.existsAllById(setOf(ThingId("R1"))) } returns true
 
-        abstractSmartReviewSectionValidator.validate(section, validIds)
+        abstractSmartReviewSectionValidator.validate(section, validationCache)
 
-        validIds shouldBe (section.entities union section.predicates)
+        validationCache shouldBe (section.entities union section.predicates)
 
         verify(exactly = 1) { thingRepository.existsAllById(setOf(ThingId("R1"))) }
     }
@@ -81,19 +81,19 @@ internal class AbstractSmartReviewSectionValidatorOntologySectionUnitTest : Abst
         val section = smartReviewOntologySectionCommand().copy(
             heading = "a".repeat(MAX_LABEL_LENGTH + 1)
         )
-        val validIds = mutableSetOf<ThingId>()
+        val validationCache = mutableSetOf<ThingId>()
 
-        assertThrows<InvalidLabel> { abstractSmartReviewSectionValidator.validate(section, validIds) }
+        assertThrows<InvalidLabel> { abstractSmartReviewSectionValidator.validate(section, validationCache) }
     }
 
     @Test
     fun `Given an ontology section command, when entity does not exist, it throws an exception`() {
         val section = smartReviewOntologySectionCommand()
-        val validIds = mutableSetOf<ThingId>()
+        val validationCache = mutableSetOf<ThingId>()
 
         every { thingRepository.existsAllById(any()) } returns false
 
-        assertThrows<OntologyEntityNotFound> { abstractSmartReviewSectionValidator.validate(section, validIds) }
+        assertThrows<OntologyEntityNotFound> { abstractSmartReviewSectionValidator.validate(section, validationCache) }
 
         verify(exactly = 1) { thingRepository.existsAllById(any()) }
     }
@@ -101,12 +101,12 @@ internal class AbstractSmartReviewSectionValidatorOntologySectionUnitTest : Abst
     @Test
     fun `Given an ontology section command, when predicate does not exist, it throws an exception`() {
         val section = smartReviewOntologySectionCommand().copy(predicates = listOf(Predicates.employs))
-        val validIds = mutableSetOf<ThingId>()
+        val validationCache = mutableSetOf<ThingId>()
 
         every { thingRepository.existsAllById(any()) } returns true
         every { predicateRepository.findById(section.predicates.single()) } returns Optional.empty()
 
-        assertThrows<PredicateNotFound> { abstractSmartReviewSectionValidator.validate(section, validIds) }
+        assertThrows<PredicateNotFound> { abstractSmartReviewSectionValidator.validate(section, validationCache) }
 
         verify(exactly = 1) { thingRepository.existsAllById(any()) }
         verify(exactly = 1) { predicateRepository.findById(section.predicates.single()) }

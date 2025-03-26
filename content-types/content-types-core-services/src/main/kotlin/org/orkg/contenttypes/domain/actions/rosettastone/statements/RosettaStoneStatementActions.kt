@@ -15,7 +15,7 @@ interface CreateRosettaStoneStatementAction : Action<CreateRosettaStoneStatement
         val rosettaStoneTemplate: RosettaStoneTemplate? = null,
         val rosettaStoneStatementId: ThingId? = null,
         val validationCache: Map<String, Either<CreateThingCommandPart, Thing>> = emptyMap(),
-        val tempIdToThing: Map<String, ThingId> = emptyMap(),
+        val tempIdToThingId: Map<String, ThingId> = emptyMap(),
     )
 }
 
@@ -25,6 +25,6 @@ interface UpdateRosettaStoneStatementAction : Action<UpdateRosettaStoneStatement
         val rosettaStoneTemplate: RosettaStoneTemplate? = null,
         val rosettaStoneStatementId: ThingId? = null,
         val validationCache: Map<String, Either<CreateThingCommandPart, Thing>> = emptyMap(),
-        val tempIdToThing: Map<String, ThingId> = emptyMap(),
+        val tempIdToThingId: Map<String, ThingId> = emptyMap(),
     )
 }

@@ -44,7 +44,7 @@ internal class LiteratureListSectionUpdateValidatorUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             abstractLiteratureListSectionValidator.validate(
                 section = command as AbstractLiteratureListSectionCommand,
-                validIds = mutableSetOf()
+                validationCache = mutableSetOf()
             )
         }
     }
@@ -71,7 +71,7 @@ internal class LiteratureListSectionUpdateValidatorUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             abstractLiteratureListSectionValidator.validate(
                 section = command as AbstractLiteratureListSectionCommand,
-                validIds = mutableSetOf(ThingId("R154686"), ThingId("R6416"))
+                validationCache = mutableSetOf(ThingId("R154686"), ThingId("R6416"))
             )
         }
     }

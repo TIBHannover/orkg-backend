@@ -11,9 +11,9 @@ class LiteratureListSectionsCreateValidator(
     constructor(resourceRepository: ResourceRepository) : this(AbstractLiteratureListSectionValidator(resourceRepository))
 
     override fun invoke(command: CreateLiteratureListCommand, state: State): State {
-        val validIds = mutableSetOf<ThingId>()
+        val validationCache = mutableSetOf<ThingId>()
         command.sections.forEach { section ->
-            abstractLiteratureListSectionValidator.validate(section, validIds)
+            abstractLiteratureListSectionValidator.validate(section, validationCache)
         }
         return state
     }

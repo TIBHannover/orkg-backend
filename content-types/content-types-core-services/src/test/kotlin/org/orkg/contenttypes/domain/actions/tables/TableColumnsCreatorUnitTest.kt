@@ -27,7 +27,7 @@ internal class TableColumnsCreatorUnitTest : MockkBaseTest {
                 "#temp2" from command,
                 "#temp3" from command
             ),
-            tempIdToThing = mapOf(
+            tempIdToThingId = mapOf(
                 "#temp1" to ThingId("L1"),
                 "#temp2" to ThingId("L2"),
                 "#temp3" to ThingId("L3")
@@ -46,7 +46,7 @@ internal class TableColumnsCreatorUnitTest : MockkBaseTest {
         result.asClue {
             it.tableId shouldBe state.tableId
             it.validationCache shouldBe state.validationCache
-            it.tempIdToThing shouldBe state.tempIdToThing
+            it.tempIdToThingId shouldBe state.tempIdToThingId
             it.columns shouldBe columns
             it.rows shouldBe state.rows
         }

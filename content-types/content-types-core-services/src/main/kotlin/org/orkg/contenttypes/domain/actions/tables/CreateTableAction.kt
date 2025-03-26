@@ -11,7 +11,7 @@ interface CreateTableAction : Action<CreateTableCommand, CreateTableAction.State
     data class State(
         val validationCache: Map<String, Either<CreateThingCommandPart, Thing>> = emptyMap(),
         val tableId: ThingId? = null,
-        val tempIdToThing: Map<String, ThingId> = emptyMap(),
+        val tempIdToThingId: Map<String, ThingId> = emptyMap(),
         val columns: List<ThingId> = emptyList(),
         val rows: List<ThingId> = emptyList(),
     )

@@ -22,7 +22,7 @@ class SmartReviewSectionCreateValidator(
     override fun invoke(command: CreateSmartReviewSectionCommand, state: State): State {
         abstractSmartReviewSectionValidator.validate(
             section = command as AbstractSmartReviewSectionCommand,
-            validIds = mutableSetOf()
+            validationCache = mutableSetOf()
         )
         return state
     }

@@ -37,9 +37,9 @@ internal class LiteratureListSectionsUpdateValidatorUnitTest : MockkBaseTest {
         val command = updateLiteratureListCommand()
         val literatureList = createLiteratureList()
         val state = UpdateLiteratureListState(literatureList = literatureList)
-        val validIds = mutableSetOf(ThingId("R154686"), ThingId("R6416"))
+        val validationCache = mutableSetOf(ThingId("R154686"), ThingId("R6416"))
 
-        every { abstractLiteratureListSectionValidator.validate(any(), validIds) } just runs
+        every { abstractLiteratureListSectionValidator.validate(any(), validationCache) } just runs
 
         literatureListSectionsUpdateValidator(command, state).asClue {
             it.literatureList shouldBe literatureList
@@ -48,7 +48,7 @@ internal class LiteratureListSectionsUpdateValidatorUnitTest : MockkBaseTest {
         }
 
         command.sections!!.forEach { section ->
-            verify(exactly = 1) { abstractLiteratureListSectionValidator.validate(section, validIds) }
+            verify(exactly = 1) { abstractLiteratureListSectionValidator.validate(section, validationCache) }
         }
     }
 }

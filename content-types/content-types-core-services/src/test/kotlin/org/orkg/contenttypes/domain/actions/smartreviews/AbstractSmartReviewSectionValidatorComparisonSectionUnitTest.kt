@@ -18,14 +18,14 @@ internal class AbstractSmartReviewSectionValidatorComparisonSectionUnitTest : Ab
     @Test
     fun `Given a comparison section command, when validating, it returns success`() {
         val section = smartReviewComparisonSectionCommand()
-        val validIds = mutableSetOf<ThingId>()
+        val validationCache = mutableSetOf<ThingId>()
         val resource = createResource(section.comparison!!, classes = setOf(Classes.comparison))
 
         every { resourceRepository.findById(section.comparison!!) } returns Optional.of(resource)
 
-        abstractSmartReviewSectionValidator.validate(section, validIds)
+        abstractSmartReviewSectionValidator.validate(section, validationCache)
 
-        validIds shouldBe setOf(section.comparison)
+        validationCache shouldBe setOf(section.comparison)
 
         verify(exactly = 1) { resourceRepository.findById(section.comparison!!) }
     }
@@ -33,14 +33,14 @@ internal class AbstractSmartReviewSectionValidatorComparisonSectionUnitTest : Ab
     @Test
     fun `Given a comparison section command for a published comparison, when validating, it returns success`() {
         val section = smartReviewComparisonSectionCommand()
-        val validIds = mutableSetOf<ThingId>()
+        val validationCache = mutableSetOf<ThingId>()
         val resource = createResource(section.comparison!!, classes = setOf(Classes.comparisonPublished))
 
         every { resourceRepository.findById(section.comparison!!) } returns Optional.of(resource)
 
-        abstractSmartReviewSectionValidator.validate(section, validIds)
+        abstractSmartReviewSectionValidator.validate(section, validationCache)
 
-        validIds shouldBe setOf(section.comparison)
+        validationCache shouldBe setOf(section.comparison)
 
         verify(exactly = 1) { resourceRepository.findById(section.comparison!!) }
     }
@@ -48,21 +48,21 @@ internal class AbstractSmartReviewSectionValidatorComparisonSectionUnitTest : Ab
     @Test
     fun `Given a comparison section command, when validating, it does not validate the comparison id when it is not set`() {
         val section = smartReviewComparisonSectionCommand().copy(comparison = null)
-        val validIds = mutableSetOf<ThingId>()
+        val validationCache = mutableSetOf<ThingId>()
 
-        abstractSmartReviewSectionValidator.validate(section, validIds)
+        abstractSmartReviewSectionValidator.validate(section, validationCache)
 
-        validIds shouldBe emptySet()
+        validationCache shouldBe emptySet()
     }
 
     @Test
     fun `Given a comparison section command, when validating, it does not check already valid ids`() {
         val section = smartReviewComparisonSectionCommand()
-        val validIds = mutableSetOf(section.comparison!!)
+        val validationCache = mutableSetOf(section.comparison!!)
 
-        abstractSmartReviewSectionValidator.validate(section, validIds)
+        abstractSmartReviewSectionValidator.validate(section, validationCache)
 
-        validIds shouldBe setOf(section.comparison)
+        validationCache shouldBe setOf(section.comparison)
     }
 
     @Test
@@ -70,20 +70,20 @@ internal class AbstractSmartReviewSectionValidatorComparisonSectionUnitTest : Ab
         val section = smartReviewComparisonSectionCommand().copy(
             heading = "a".repeat(MAX_LABEL_LENGTH + 1)
         )
-        val validIds = mutableSetOf<ThingId>()
+        val validationCache = mutableSetOf<ThingId>()
 
-        assertThrows<InvalidLabel> { abstractSmartReviewSectionValidator.validate(section, validIds) }
+        assertThrows<InvalidLabel> { abstractSmartReviewSectionValidator.validate(section, validationCache) }
     }
 
     @Test
     fun `Given a comparison section command, when resource is not a comparison, it throws an exception`() {
         val section = smartReviewComparisonSectionCommand()
-        val validIds = mutableSetOf<ThingId>()
+        val validationCache = mutableSetOf<ThingId>()
         val resource = createResource(section.comparison!!, classes = setOf(Classes.visualization))
 
         every { resourceRepository.findById(section.comparison!!) } returns Optional.of(resource)
 
-        assertThrows<ComparisonNotFound> { abstractSmartReviewSectionValidator.validate(section, validIds) }
+        assertThrows<ComparisonNotFound> { abstractSmartReviewSectionValidator.validate(section, validationCache) }
 
         verify(exactly = 1) { resourceRepository.findById(section.comparison!!) }
     }
@@ -91,11 +91,11 @@ internal class AbstractSmartReviewSectionValidatorComparisonSectionUnitTest : Ab
     @Test
     fun `Given a comparison section command, when comparison does not exist, it throws an exception`() {
         val section = smartReviewComparisonSectionCommand()
-        val validIds = mutableSetOf<ThingId>()
+        val validationCache = mutableSetOf<ThingId>()
 
         every { resourceRepository.findById(section.comparison!!) } returns Optional.empty()
 
-        assertThrows<ComparisonNotFound> { abstractSmartReviewSectionValidator.validate(section, validIds) }
+        assertThrows<ComparisonNotFound> { abstractSmartReviewSectionValidator.validate(section, validationCache) }
 
         verify(exactly = 1) { resourceRepository.findById(section.comparison!!) }
     }

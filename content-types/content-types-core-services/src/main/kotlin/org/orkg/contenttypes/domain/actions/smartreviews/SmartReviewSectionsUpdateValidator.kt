@@ -26,22 +26,22 @@ class SmartReviewSectionsUpdateValidator(
 
     override fun invoke(command: UpdateSmartReviewCommand, state: State): State {
         command.sections?.let { sections ->
-            val validIds = mutableSetOf<ThingId>()
+            val validationCache = mutableSetOf<ThingId>()
             state.smartReview!!.sections.forEach { section ->
                 when (section) {
-                    is SmartReviewComparisonSection -> section.comparison?.id?.let(validIds::add)
-                    is SmartReviewVisualizationSection -> section.visualization?.id?.let(validIds::add)
-                    is SmartReviewResourceSection -> section.resource?.id?.let(validIds::add)
-                    is SmartReviewPredicateSection -> section.predicate?.id?.let(validIds::add)
+                    is SmartReviewComparisonSection -> section.comparison?.id?.let(validationCache::add)
+                    is SmartReviewVisualizationSection -> section.visualization?.id?.let(validationCache::add)
+                    is SmartReviewResourceSection -> section.resource?.id?.let(validationCache::add)
+                    is SmartReviewPredicateSection -> section.predicate?.id?.let(validationCache::add)
                     is SmartReviewOntologySection -> {
-                        section.entities.forEach { it.id?.let(validIds::add) }
-                        section.predicates.forEach { validIds.add(it.id) }
+                        section.entities.forEach { it.id?.let(validationCache::add) }
+                        section.predicates.forEach { validationCache.add(it.id) }
                     }
                     is SmartReviewTextSection -> Unit
                 }
             }
             sections.forEach { section ->
-                abstractSmartReviewSectionValidator.validate(section, validIds)
+                abstractSmartReviewSectionValidator.validate(section, validationCache)
             }
         }
         return state

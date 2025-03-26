@@ -25,7 +25,7 @@ class LiteratureListSectionUpdateValidator(
             }
             abstractLiteratureListSectionValidator.validate(
                 section = command as AbstractLiteratureListSectionCommand,
-                validIds = section.entries.map { it.value.id }.toMutableSet()
+                validationCache = section.entries.map { it.value.id }.toMutableSet()
             )
         } else if (command is UpdateLiteratureListSectionUseCase.UpdateTextSectionCommand) {
             if (section !is LiteratureListTextSection) {
@@ -33,7 +33,7 @@ class LiteratureListSectionUpdateValidator(
             }
             abstractLiteratureListSectionValidator.validate(
                 section = command as AbstractLiteratureListSectionCommand,
-                validIds = mutableSetOf()
+                validationCache = mutableSetOf()
             )
         }
         return state

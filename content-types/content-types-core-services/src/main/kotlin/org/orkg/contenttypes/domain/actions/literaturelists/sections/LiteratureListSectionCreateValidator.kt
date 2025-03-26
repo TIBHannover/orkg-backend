@@ -18,7 +18,7 @@ class LiteratureListSectionCreateValidator(
     override fun invoke(command: CreateLiteratureListSectionCommand, state: State): State {
         abstractLiteratureListSectionValidator.validate(
             section = command as AbstractLiteratureListSectionCommand,
-            validIds = mutableSetOf()
+            validationCache = mutableSetOf()
         )
         return state
     }

@@ -20,18 +20,18 @@ private val allowedListSectionEntryClasses = setOf(Classes.paper, Classes.datase
 class AbstractLiteratureListSectionValidator(
     private val resourceRepository: ResourceRepository,
 ) {
-    internal fun validate(section: AbstractLiteratureListSectionCommand, validIds: MutableSet<ThingId>) {
+    internal fun validate(section: AbstractLiteratureListSectionCommand, validationCache: MutableSet<ThingId>) {
         if (section is AbstractLiteratureListListSectionCommand) {
             section.entries.forEach { entry ->
                 entry.description?.let { description ->
                     Description.ofOrNull(description) ?: throw InvalidDescription("description")
                 }
-                if (entry.id !in validIds) {
+                if (entry.id !in validationCache) {
                     val resource = resourceRepository.findById(entry.id).orElseThrow { ResourceNotFound.withId(entry.id) }
                     if (allowedListSectionEntryClasses.intersect(resource.classes).isEmpty()) {
                         throw InvalidListSectionEntry(entry.id, allowedListSectionEntryClasses)
                     }
-                    validIds += entry.id
+                    validationCache += entry.id
                 }
             }
         } else if (section is AbstractLiteratureListTextSectionCommand) {

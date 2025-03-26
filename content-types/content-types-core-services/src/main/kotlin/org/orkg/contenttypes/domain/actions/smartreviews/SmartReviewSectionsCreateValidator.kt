@@ -19,9 +19,9 @@ class SmartReviewSectionsCreateValidator(
     )
 
     override fun invoke(command: CreateSmartReviewCommand, state: State): State {
-        val validIds = mutableSetOf<ThingId>()
+        val validationCache = mutableSetOf<ThingId>()
         command.sections.forEach { section ->
-            abstractSmartReviewSectionValidator.validate(section, validIds)
+            abstractSmartReviewSectionValidator.validate(section, validationCache)
         }
         return state
     }

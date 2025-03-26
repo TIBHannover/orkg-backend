@@ -52,7 +52,7 @@ class AbstractSmartReviewSectionCreator(
                 classes = setOf(Classes.comparisonSection)
             )
         )
-        section.comparison?.let { comparisonId ->
+        section.comparison?.also { comparisonId ->
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
@@ -76,7 +76,7 @@ class AbstractSmartReviewSectionCreator(
                 classes = setOf(Classes.visualizationSection)
             )
         )
-        section.visualization?.let { visualizationId ->
+        section.visualization?.also { visualizationId ->
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
@@ -100,7 +100,7 @@ class AbstractSmartReviewSectionCreator(
                 classes = setOf(Classes.resourceSection)
             )
         )
-        section.resource?.let { resourceId ->
+        section.resource?.also { resourceId ->
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
@@ -124,7 +124,7 @@ class AbstractSmartReviewSectionCreator(
                 classes = setOf(Classes.propertySection)
             )
         )
-        section.predicate?.let { predicateId ->
+        section.predicate?.also { predicateId ->
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,

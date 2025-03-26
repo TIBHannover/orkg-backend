@@ -24,7 +24,7 @@ class ClassService(
 ) : ClassUseCases {
     override fun create(command: CreateClassUseCase.CreateCommand): ThingId {
         Label.ofOrNull(command.label) ?: throw InvalidLabel()
-        command.uri?.let { uri ->
+        command.uri?.also { uri ->
             if (!uri.isAbsolute) {
                 throw URINotAbsolute(uri)
             }

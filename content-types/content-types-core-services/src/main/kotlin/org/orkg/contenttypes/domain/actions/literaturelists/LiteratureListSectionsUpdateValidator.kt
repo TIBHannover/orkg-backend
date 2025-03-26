@@ -11,7 +11,7 @@ class LiteratureListSectionsUpdateValidator(
     constructor(resourceRepository: ResourceRepository) : this(AbstractLiteratureListSectionValidator(resourceRepository))
 
     override fun invoke(command: UpdateLiteratureListCommand, state: State): State {
-        command.sections?.let { sections ->
+        command.sections?.also { sections ->
             val validationCache = state.literatureList!!.sections.filterIsInstance<LiteratureListListSection>()
                 .flatMapTo(mutableSetOf()) { it.entries.map { entry -> entry.value.id } }
             sections.forEach { section ->

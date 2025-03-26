@@ -133,7 +133,7 @@ class SubgraphCreator(
                     )
                 )
                 lookup[it.key] = predicate
-                it.value.description?.let { description ->
+                it.value.description?.also { description ->
                     val literal = unsafeLiteralUseCases.create(
                         CreateLiteralUseCase.CreateCommand(
                             contributorId = contributorId,

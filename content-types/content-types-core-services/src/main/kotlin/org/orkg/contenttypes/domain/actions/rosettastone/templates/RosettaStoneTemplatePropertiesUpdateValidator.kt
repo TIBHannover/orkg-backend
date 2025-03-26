@@ -18,7 +18,7 @@ class RosettaStoneTemplatePropertiesUpdateValidator(
     )
 
     override fun invoke(command: UpdateRosettaStoneTemplateCommand, state: State): State {
-        command.properties?.let { newProperties ->
+        command.properties?.also { newProperties ->
             if (state.isUsedInRosettaStoneStatement) {
                 val oldProperties = state.rosettaStoneTemplate!!.properties
                 if (newProperties.size < oldProperties.size) {

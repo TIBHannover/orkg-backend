@@ -51,7 +51,7 @@ abstract class AbstractImportServiceUnitTest : MockkBaseTest {
         externalThing: ExternalThing,
         subjectId: ThingId,
     ) {
-        externalThing.description?.let { description ->
+        externalThing.description?.also { description ->
             val descriptionId = ThingId("newDescriptionId")
             val statementId = StatementId("SnewDescription")
             every {
@@ -80,7 +80,7 @@ abstract class AbstractImportServiceUnitTest : MockkBaseTest {
         externalThing: ExternalThing,
         subjectId: ThingId,
     ) {
-        externalThing.description?.let { description ->
+        externalThing.description?.also { description ->
             verify(exactly = 1) {
                 literalService.create(
                     CreateLiteralUseCase.CreateCommand(

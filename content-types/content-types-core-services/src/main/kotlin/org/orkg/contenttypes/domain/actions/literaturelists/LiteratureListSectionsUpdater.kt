@@ -28,7 +28,7 @@ class LiteratureListSectionsUpdater(
     )
 
     override fun invoke(command: UpdateLiteratureListCommand, state: State): State {
-        command.sections?.let { sections ->
+        command.sections?.also { sections ->
             val oldSections = state.literatureList!!.sections.toMutableList()
             val newToOld = sections.associateWith { newSection ->
                 oldSections.firstOrNull { newSection.matchesLiteratureListSection(it) }?.also { oldSections.remove(it) }

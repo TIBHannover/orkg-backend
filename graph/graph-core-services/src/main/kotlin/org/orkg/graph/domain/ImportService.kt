@@ -248,7 +248,7 @@ class ImportService(
         contributorId: ContributorId,
         subjectId: ThingId,
     ) {
-        externalThing.description?.let { description ->
+        externalThing.description?.also { description ->
             val descriptionId = literalService.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,

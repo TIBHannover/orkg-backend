@@ -59,8 +59,8 @@ class ListService(
         if (!list.modifiable) {
             throw ListNotModifiable(command.id)
         }
-        val label = command.label?.let {
-            Label.ofOrNull(it)?.value ?: throw InvalidLabel()
+        val label = command.label?.also {
+            Label.ofOrNull(it) ?: throw InvalidLabel()
         }
         val elements = command.elements?.also {
             if (it.isNotEmpty() && !thingRepository.existsAllById(it.toSet())) {

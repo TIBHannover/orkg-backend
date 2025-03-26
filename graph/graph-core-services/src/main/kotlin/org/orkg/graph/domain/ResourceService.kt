@@ -132,12 +132,12 @@ class ResourceService(
         }
         command.label?.also { Label.ofOrNull(it) ?: throw InvalidLabel() }
         command.classes?.also { validateClasses(it) }
-        command.observatoryId?.let { observatoryId ->
+        command.observatoryId?.also { observatoryId ->
             if (observatoryId != resource.observatoryId && observatoryId != ObservatoryId.UNKNOWN && !observatoryRepository.existsById(observatoryId)) {
                 throw ObservatoryNotFound(observatoryId)
             }
         }
-        command.organizationId?.let { organizationId ->
+        command.organizationId?.also { organizationId ->
             if (organizationId != resource.organizationId && organizationId != OrganizationId.UNKNOWN && organizationRepository.findById(organizationId).isEmpty) {
                 throw OrganizationNotFound(organizationId)
             }

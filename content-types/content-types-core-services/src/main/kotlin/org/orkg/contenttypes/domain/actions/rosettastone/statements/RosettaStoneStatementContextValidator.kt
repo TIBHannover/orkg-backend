@@ -9,7 +9,7 @@ class RosettaStoneStatementContextValidator(
     private val resourceRepository: ResourceRepository,
 ) : CreateRosettaStoneStatementAction {
     override fun invoke(command: CreateRosettaStoneStatementCommand, state: State): State {
-        command.context?.let { context ->
+        command.context?.also { context ->
             resourceRepository.findById(context)
                 .orElseThrow { ResourceNotFound.withId(context) }
         }

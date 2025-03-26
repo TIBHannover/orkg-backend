@@ -168,7 +168,7 @@ fun LiteratureListListSection.toGroupedStatements(): Map<ThingId, List<GeneralSt
             predicate = createPredicate(Predicates.hasLink),
             `object` = createResource(entry.value.id, classes = entry.value.classes)
         )
-        entry.description?.let { description ->
+        entry.description?.also { description ->
             statements += createStatement(
                 id = StatementId("S${index}_3"),
                 subject = value,

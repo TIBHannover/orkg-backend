@@ -48,7 +48,7 @@ class AbstractLiteratureListSectionCreator(
                 objectId = entry.id
             )
         )
-        entry.description?.let { description ->
+        entry.description?.also { description ->
             val descriptionLiteral = unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,

@@ -35,7 +35,7 @@ class AbstractTemplatePropertyCreator(
                 classes = setOf(Classes.propertyShape)
             )
         )
-        property.placeholder?.let { placeholder ->
+        property.placeholder?.also { placeholder ->
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
@@ -50,7 +50,7 @@ class AbstractTemplatePropertyCreator(
                 )
             )
         }
-        property.description?.let { description ->
+        property.description?.also { description ->
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
@@ -65,7 +65,7 @@ class AbstractTemplatePropertyCreator(
                 )
             )
         }
-        property.minCount?.let { min ->
+        property.minCount?.also { min ->
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
@@ -81,7 +81,7 @@ class AbstractTemplatePropertyCreator(
                 )
             )
         }
-        property.maxCount?.let { max ->
+        property.maxCount?.also { max ->
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
@@ -98,7 +98,7 @@ class AbstractTemplatePropertyCreator(
             )
         }
         if (property is StringLiteralTemplatePropertyCommand) {
-            property.pattern?.let { pattern ->
+            property.pattern?.also { pattern ->
                 unsafeStatementUseCases.create(
                     CreateStatementUseCase.CreateCommand(
                         contributorId = contributorId,
@@ -114,7 +114,7 @@ class AbstractTemplatePropertyCreator(
                 )
             }
         } else if (property is NumberLiteralTemplatePropertyCommand) {
-            property.minInclusive?.let { minInclusive ->
+            property.minInclusive?.also { minInclusive ->
                 unsafeStatementUseCases.create(
                     CreateStatementUseCase.CreateCommand(
                         contributorId = contributorId,
@@ -131,7 +131,7 @@ class AbstractTemplatePropertyCreator(
                     )
                 )
             }
-            property.maxInclusive?.let { maxInclusive ->
+            property.maxInclusive?.also { maxInclusive ->
                 unsafeStatementUseCases.create(
                     CreateStatementUseCase.CreateCommand(
                         contributorId = contributorId,

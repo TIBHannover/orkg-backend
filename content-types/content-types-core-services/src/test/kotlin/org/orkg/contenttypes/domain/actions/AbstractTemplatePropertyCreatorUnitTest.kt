@@ -539,7 +539,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                 )
             )
         } returns propertyId
-        property.placeholder?.let { placeholder ->
+        property.placeholder?.also { placeholder ->
             every {
                 unsafeLiteralUseCases.create(
                     CreateLiteralUseCase.CreateCommand(
@@ -559,7 +559,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                 )
             } returns StatementId("Splaceholder")
         }
-        property.description?.let { description ->
+        property.description?.also { description ->
             every {
                 unsafeLiteralUseCases.create(
                     CreateLiteralUseCase.CreateCommand(
@@ -677,7 +677,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                 )
             )
         }
-        property.placeholder?.let { placeholder ->
+        property.placeholder?.also { placeholder ->
             verify(exactly = 1) {
                 unsafeLiteralUseCases.create(
                     CreateLiteralUseCase.CreateCommand(
@@ -697,7 +697,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                 )
             }
         }
-        property.description?.let { description ->
+        property.description?.also { description ->
             verify(exactly = 1) {
                 unsafeLiteralUseCases.create(
                     CreateLiteralUseCase.CreateCommand(

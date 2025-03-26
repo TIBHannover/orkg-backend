@@ -30,16 +30,16 @@ class AbstractTemplatePropertyValidator(
         Label.ofOrNull(property.label) ?: throw InvalidLabel()
         property.placeholder?.also { Label.ofOrNull(it) ?: throw InvalidLabel("placeholder") }
         property.description?.also { Description.ofOrNull(it) ?: throw InvalidDescription("description") }
-        property.minCount?.let { min ->
+        property.minCount?.also { min ->
             if (min < 0) {
                 throw InvalidMinCount(min)
             }
         }
-        property.maxCount?.let { max ->
+        property.maxCount?.also { max ->
             if (max < 0) {
                 throw InvalidMaxCount(max)
             }
-            property.minCount?.let { min ->
+            property.minCount?.also { min ->
                 if (max in 1 until min) {
                     throw InvalidCardinality(min, max)
                 }
@@ -49,7 +49,7 @@ class AbstractTemplatePropertyValidator(
             if (Literals.XSD.fromClass(property.datatype) != Literals.XSD.STRING) {
                 throw InvalidDatatype(property.datatype, Literals.XSD.STRING.`class`)
             }
-            property.pattern?.let { pattern ->
+            property.pattern?.also { pattern ->
                 try {
                     Regex(pattern)
                 } catch (e: Exception) {

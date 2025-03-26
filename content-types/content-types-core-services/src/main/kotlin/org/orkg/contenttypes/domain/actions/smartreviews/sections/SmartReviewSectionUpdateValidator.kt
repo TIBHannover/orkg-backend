@@ -67,7 +67,7 @@ class SmartReviewSectionUpdateValidator(
                 }
                 val validationCache = mutableSetOf<ThingId>()
                 section.entities.forEach { entity ->
-                    entity.id?.let { id -> validationCache.add(id) }
+                    entity.id?.also { id -> validationCache.add(id) }
                 }
                 section.predicates.forEach {
                     validationCache.add(it.id)

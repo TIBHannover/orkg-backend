@@ -91,13 +91,13 @@ class AbstractTemplatePropertyValueValidator(
 
     private fun validateObjectLabel(property: TemplateProperty, objectId: String, label: String) {
         if (property is StringLiteralTemplateProperty) {
-            property.pattern?.let { pattern ->
+            property.pattern?.also { pattern ->
                 if (!label.matches(Regex(pattern))) {
                     throw LabelDoesNotMatchPattern(property.id, objectId, property.path.id, label, pattern)
                 }
             }
         } else if (property is NumberLiteralTemplateProperty) {
-            property.minInclusive?.let { minInclusive ->
+            property.minInclusive?.also { minInclusive ->
                 val xsd = Literals.XSD.fromClass(property.datatype.id)
                 if (xsd?.isNumber != true) {
                     throw IllegalStateException("""Encountered number literal template property "${property.id}" with invalid datatype "${property.datatype}". This is a bug!""")
@@ -106,7 +106,7 @@ class AbstractTemplatePropertyValueValidator(
                     throw NumberTooLow(property.id, objectId, property.path.id, label, minInclusive)
                 }
             }
-            property.maxInclusive?.let { maxInclusive ->
+            property.maxInclusive?.also { maxInclusive ->
                 val xsd = Literals.XSD.fromClass(property.datatype.id)
                 if (xsd?.isNumber != true) {
                     throw IllegalStateException("""Encountered number literal template property "${property.id}" with invalid datatype "${property.datatype}". This is a bug!""")

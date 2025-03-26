@@ -15,7 +15,7 @@ class TemplateRelationsUpdateValidator(
     private val predicateRepository: PredicateRepository,
 ) : UpdateTemplateAction {
     override fun invoke(command: UpdateTemplateCommand, state: State): State {
-        command.relations?.let { relations ->
+        command.relations?.also { relations ->
             (relations.researchFields - state.researchFields).forEach { researchFieldId ->
                 resourceRepository.findById(researchFieldId)
                     .filter { Classes.researchField in it.classes }
@@ -26,7 +26,7 @@ class TemplateRelationsUpdateValidator(
                     .filter { Classes.problem in it.classes }
                     .orElseThrow { ResearchProblemNotFound(researchProblemId) }
             }
-            relations.predicate?.let { predicate ->
+            relations.predicate?.also { predicate ->
                 if (predicate != state.template!!.relations.predicate?.id) {
                     predicateRepository.findById(predicate).orElseThrow { PredicateNotFound(predicate) }
                 }

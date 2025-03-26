@@ -24,7 +24,7 @@ class TemplateRelationsCreateValidator(
                 .filter { Classes.problem in it.classes }
                 .orElseThrow { ResearchProblemNotFound(researchProblemId) }
         }
-        command.relations.predicate?.let {
+        command.relations.predicate?.also {
             predicateRepository.findById(it).orElseThrow { PredicateNotFound(it) }
         }
         return state

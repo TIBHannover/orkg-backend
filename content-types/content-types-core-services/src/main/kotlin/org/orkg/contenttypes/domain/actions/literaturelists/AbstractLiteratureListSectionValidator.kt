@@ -23,7 +23,7 @@ class AbstractLiteratureListSectionValidator(
     internal fun validate(section: AbstractLiteratureListSectionCommand, validationCache: MutableSet<ThingId>) {
         if (section is AbstractLiteratureListListSectionCommand) {
             section.entries.forEach { entry ->
-                entry.description?.let { description ->
+                entry.description?.also { description ->
                     Description.ofOrNull(description) ?: throw InvalidDescription("description")
                 }
                 if (entry.id !in validationCache) {

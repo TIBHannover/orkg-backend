@@ -29,7 +29,7 @@ class RosettaStoneTemplatePropertiesUpdater(
     )
 
     override fun invoke(command: UpdateRosettaStoneTemplateCommand, state: State): State {
-        command.properties?.let { properties ->
+        command.properties?.also { properties ->
             abstractRosettaStoneTemplatePropertiesUpdater.update(
                 contributorId = command.contributorId,
                 subjectId = command.templateId,

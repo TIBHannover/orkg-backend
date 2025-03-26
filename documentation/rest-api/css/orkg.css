@@ -9,7 +9,7 @@
     --orkg-block-border-color: #dee2e6;
     --orkg-toc-background-color: rgb(215, 218, 227);
 	--toc-width: 23.5rem;
-    --asciidoctor-details-background: #F8F9FB;
+    --asciidoctor-details-background: var(--asciidoctor-admonition-background);
 }
 
 html.dark-theme {
@@ -24,7 +24,7 @@ html.dark-theme {
     --orkg-content-background-color: #1D2024;
     --orkg-block-border-color: #3C3F46;
     --orkg-toc-background-color: #1D2024;
-    --asciidoctor-details-background: #303237;
+    --asciidoctor-details-background: var(--asciidoctor-admonition-background);
 }
 
 #banner {
@@ -96,6 +96,10 @@ a:hover {
     color: var(--toc-active-font-color) !important;
 }
 
+.doc .admonitionblock td.content {
+    border-radius: 4px;
+}
+
 .admonitionblock, .literalblock, .listingblock {
     border-radius: 4px;
     border: 1px solid var(--orkg-block-border-color);
@@ -112,5 +116,5 @@ body.fixed-toc #toc {
 
 .details {
     border-radius: 4px;
-    border: 1px solid rgba(0, 0, 0, 0.125) !important;
+    border: 1px solid var(--orkg-block-border-color) !important;
 }

@@ -3,11 +3,13 @@ package org.orkg.community.adapter.input.rest
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
-import org.hamcrest.Matchers
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.exceptions.ExceptionHandler
+import org.orkg.common.json.CommonJacksonModule
+import org.orkg.common.testing.fixtures.IsIso8601DateTimeString
+import org.orkg.community.adapter.input.rest.json.CommunityJacksonModule
 import org.orkg.community.input.RetrieveContributorUseCase
 import org.orkg.community.testing.fixtures.createContributor
 import org.orkg.testing.MockUserId
@@ -18,20 +20,26 @@ import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
+import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import orkg.orkg.community.testing.fixtures.contributorResponseFields
 import java.util.Optional
 
-/**
- * A regular expression to match ISO 8601 formatted dates.
- * If nanosecond part is rounded to zero, the last digit is removed. Fun bug. -----vvv
- */
-private const val ISO_8601_PATTERN = """^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{1,8}\d?([+-]\d{2}:\d{2}|Z)$"""
-
-@ContextConfiguration(classes = [ContributorController::class, ExceptionHandler::class, FixedClockConfig::class])
+@ContextConfiguration(
+    classes = [
+        ContributorController::class,
+        CommonJacksonModule::class,
+        CommunityJacksonModule::class,
+        ExceptionHandler::class,
+        FixedClockConfig::class
+    ]
+)
 @WebMvcTest(controllers = [ContributorController::class])
 internal class ContributorControllerUnitTest : MockMvcBaseTest("contributors") {
     @MockkBean
@@ -44,21 +52,32 @@ internal class ContributorControllerUnitTest : MockMvcBaseTest("contributors") {
 
         get("/api/contributors/{id}", id)
             .perform()
-            .andExpect(MockMvcResultMatchers.status().isNotFound)
+            .andExpect(status().isNotFound)
 
         verify(exactly = 1) { retrieveContributor.findById(id) }
     }
 
     @Test
-    fun `When ID is found Then return contributor`() {
-        val id = MockUserId.USER.let(::ContributorId)
+    @DisplayName("When ID is found Then return contributor")
+    fun getSingle() {
+        val id = ContributorId(MockUserId.USER)
         every { retrieveContributor.findById(id) } returns Optional.of(createContributor(id = id))
 
-        get("/api/contributors/{id}", id)
+        documentedGetRequestTo("/api/contributors/{id}", id)
             .perform()
-            .andExpect(MockMvcResultMatchers.status().isOk)
-            .andExpect(MockMvcResultMatchers.jsonPath("\$.joined_at").value(isISO8601()))
-            .andExpect(MockMvcResultMatchers.header().string("Cache-Control", "max-age=300"))
+            .andExpect(status().isOk)
+            .andExpectContributor()
+            .andExpect(jsonPath("$.joined_at").value(IsIso8601DateTimeString()))
+            .andExpect(header().string("Cache-Control", "max-age=300"))
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the contributor.")
+                    ),
+                    responseFields(contributorResponseFields())
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { retrieveContributor.findById(id) }
     }
@@ -111,6 +130,4 @@ internal class ContributorControllerUnitTest : MockMvcBaseTest("contributors") {
             )
         }
     }
-
-    private fun isISO8601() = Matchers.matchesRegex(ISO_8601_PATTERN)
 }

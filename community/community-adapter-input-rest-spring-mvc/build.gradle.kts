@@ -12,6 +12,7 @@ testing {
             dependencies {
                 implementation(testFixtures(project(":testing:spring")))
                 implementation(testFixtures(project(":graph:graph-core-model")))
+                implementation(testFixtures(project(":common:datatypes")))
                 implementation(testFixtures(project(":community:community-core-model")))
                 implementation(testFixtures(project(":media-storage:media-storage-core-model")))
                 implementation(project(":common:serialization"))

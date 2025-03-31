@@ -2,12 +2,13 @@
 @file:Suppress("UnstableApiUsage")
 
 plugins {
-    id("org.orkg.gradle.kotlin-library")
+    id("org.orkg.gradle.kotlin-library-with-test-fixtures")
 }
 
 dependencies {
     api("org.eclipse.rdf4j:rdf4j-common-io") // for RFC 3987 compliant IRIs
     implementation(project(":common:string-utils"))
+    testFixturesApi("org.hamcrest:hamcrest")
 }
 
 testing {

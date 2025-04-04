@@ -13,6 +13,7 @@ import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.task.TaskExecutor
 import org.springframework.data.domain.Pageable
@@ -42,6 +43,8 @@ class RdfController(
 ) : ResourceRepresentationAdapter,
     PredicateRepresentationAdapter,
     ClassRepresentationAdapter {
+    private val logger = LoggerFactory.getLogger(this::class.java.name)
+
     @GetMapping(DUMP_ENDPOINT, produces = ["application/n-triples"])
     fun dumpToRdf(uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<String> =
         ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY)
@@ -56,7 +59,15 @@ class RdfController(
     @RequireAdminRole
     @PostMapping("/api/admin/rdf/dump")
     fun createRdfDump(): ResponseEntity<Any> {
-        taskExecutor.execute { rdfService.dumpToNTriple(path) }
+        taskExecutor.execute {
+            logger.info("Starting rdf dump...")
+            try {
+                rdfService.dumpToNTriple(path)
+                logger.info("Finished rdf dump")
+            } catch (e: Exception) {
+                logger.error("Error creating rdf dump", e)
+            }
+        }
         return noContent().build()
     }
 

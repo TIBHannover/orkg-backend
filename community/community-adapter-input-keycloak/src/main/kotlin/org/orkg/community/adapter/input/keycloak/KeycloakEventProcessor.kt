@@ -175,7 +175,9 @@ class KeycloakEventProcessor(
         val roles = roles().realmLevel().listEffective()
         return Contributor(
             id = ContributorId(user.id),
-            name = user.firstAttribute("displayName"),
+            name = user.firstAttribute("displayName")
+                ?: user.username.takeUnless { it.isEmail() }
+                ?: "User ${user.id.replace("_", "")}",
             joinedAt = OffsetDateTime.ofInstant(Instant.ofEpochMilli(user.createdTimestamp), ZoneId.systemDefault()),
             organizationId = OrganizationId.UNKNOWN,
             observatoryId = ObservatoryId.UNKNOWN,
@@ -184,4 +186,7 @@ class KeycloakEventProcessor(
             isAdmin = roles.any { it.name == "admin" }
         )
     }
+
+    private fun String.isEmail(): Boolean =
+        matches(Regex(""".*@.*\..*"""))
 }

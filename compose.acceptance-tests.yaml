@@ -1,0 +1,35 @@
+services:
+  api:
+    ports:
+      - "8080"
+    environment:
+      # Simulate a production environment (required for KeycloakEventProcessor)
+      SPRING_PROFILES_ACTIVE: production
+      # Postgres credentials; must match service "postgres"
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      # Neo4j credentials; must match service "neo4j"
+      SPRING_NEO4J_AUTHENTICATION_USERNAME: neo4j
+      SPRING_NEO4J_AUTHENTICATION_PASSWORD: "!Secret1234"
+
+  postgres:
+    ports:
+      - "5432" # When using Spring Test
+    expose:
+      - "5432" # When using Spring Test
+  neo4j:
+    environment:
+      NEO4J_AUTH: "neo4j/!Secret1234"
+    ports:
+      - "7687" # when using Spring Test
+    expose:
+      - "7687" # when using Spring Test
+  keycloak:
+    ports:
+      - "8080"
+  mailserver:
+    ports:
+      - "8025"
+    environment:
+      # Keep unlimited number of messages
+      MP_MAX_MESSAGES: 0

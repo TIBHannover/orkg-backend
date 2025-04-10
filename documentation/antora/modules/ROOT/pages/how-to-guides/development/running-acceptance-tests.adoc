@@ -1,0 +1,90 @@
+= How to run acceptance tests
+
+== Introduction
+
+Acceptance tests are tests that simulate users interacting with the real system, as realistically as possible, to verify that features meet their acceptance criteria.
+(Hence, the name "acceptance test".)
+These tests directly relate to user stories and therefore should be expressed in terms of the domain.
+This is achieved by using a special xref:reference/development/test-dsl.adoc[testing DLS].
+All of these tests are independent and can be run in parallel without causing conflicts, as it should be the case on the real system.
+Containers are used for all system components.
+
+[#building_the_image]
+== Building the image
+
+In regular tests, the REST API is started by Spring,
+and therefore does run in the same environment as the tests.
+As a consequence, the production code is connected to the tests,
+and the build system knows that it needs to recompile the production code before tests can be run.
+In acceptance tests, the REST API is started as a Docker container instead, which the tests connect to;
+so the API is running outside the test environment,
+and the build system cannot make the connection.
+Currently, acceptance tests are not explicitly hooked into the regular build cycle.
+As a consequence, the build system does not know when changes to the production code happen,
+and will not rebuild the container image before running the acceptance tests.
+Developers need to first build a container image for the version they want to test.
+Not rebuilding the container image after a modification can lead to wrong results in the acceptance tests, because the last build container will be used in the tests.
+
+After re-building the container image, there are two ways to run acceptance tests:
+
+1. In isolation (clean system).
+2. Using an existing development setup.
+
+== Running tests in isolation
+
+The best way to run the tests is against a clean or fresh system, because it is in a known state.
+To start a new test run, execute:
+
+[source,sh]
+----
+./gradlew :acceptance-tests:test
+----
+
+This will start all system components using Docker Compose before the tests execute, and shut them down afterward.
+You can see the commands executed in the log output.
+The tests will not start before all containers are in a healthy state.
+This means that the tests are slow to start, usually in the order of one or two minutes.
+
+== Running tests against the local development environment
+
+If you are working on tests themselves, it might not be practical to restart the system each time.
+Also, you might want to examine the changes to the database or debug the code, which will be destroyed if you start a fresh system.
+In this case, you can also use your Compose setup used for development to run the tests against, by setting the `local` property to `true` :
+
+[source,sh]
+----
+./gradlew :acceptance-tests:test -Plocal=true
+----
+
+Due to the fixed seed to the random number generator, running tests twice will lead to failures, because "randomly" generated IDs will be the same.
+Therefore, the seed will be set to the time of the system (in milliseconds) before tests are run.
+You can still control that behavior as described in <<re_running_acceptance_tests>>.
+
+The full development system needs to run for the tests to work correctly.
+Although the start-up time is saved, it will also write data to system components, so you might need to reset your local setup if you need a fresh state.
+
+[#re_running_acceptance_tests]
+== Re-running acceptance tests
+
+Due to Gradle's task avoidance, the tests will only run if the inputs changed, i.e., either the production code or the tests.
+When you do not change the tests but want to run them against a new API container, Gradle will skip executing the tests.
+The reason for this is Gradle not knowing about the container chaning, because it is not part of the build, but <<building_the_image,done manually>>.
+You can force Gradle to re-run the tests nevertheless by passing the `--rerun` option to the `:acceptance-tests:test` task.
+
+== Reproducing previous runs (or setting the RNG seed)
+
+The xref:reference/development/test-dsl.adoc[Testing DSL] initializes the random seed generator per test, to keep the test reproducible.
+Ideally, all runs of a test should produce the exact same result.
+If you need or want to adjust the random seed, you can set the Gradle property `seed` to a value of your liking, e.g., by passing `-Pseed=2342`.
+This works on both local and isolated test runs.
+
+== IDE support
+
+The project contains two run configurations for IntelliJ IDEA, so tests can be from the IDE directly.
+Those configurations will automatically set the `--rerun` parameter for Gradle, so running the tests in guaranteed.
+
+== Testing the setup
+
+If you have doubts if the setup works correctly, there are a few tests that have no other purpose than to check the test setup.
+They are not run by default, but if you only want to know if the setup is correct, just execute the `:acceptance-tests:testSetup` task.
+This works for both the isolated and development setup.

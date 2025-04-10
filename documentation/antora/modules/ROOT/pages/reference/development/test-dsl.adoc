@@ -1,0 +1,103 @@
+= Testing DSL and Acceptance Testing
+
+This document describes the _Testing DSL_ used for acceptance tests.
+_Acceptance test_ means tests that verify the desired functionality against a full, production-like system; no mocks, full infrastructure.
+The DSL is written in code, but intended to be easily readable, because it describes the scenarios at a high level of abstraction.
+It uses business language only, not technical language.
+
+The Testing DSL is heavily inspired by the DSL used by the LMAX system.
+It is described in the following sections.
+Further information on LMAX can be found in section <<References>> for further studying.
+
+== Layering
+
+The testing DSL works in three layers, the
+
+. test layer,
+. DSL layer, and
+. driver layer.
+
+It is the same basic https://github.com/LMAX-Exchange/Simple-DSL/wiki/Layers[layer structure] as in the LMAX DSL, summarized below.
+Changes to this setup are also mentioned.
+
+=== The test layer
+
+The test layer is technical, and contains all the tests.
+It can be found in the `acceptance-test` module, under the package `org.orkg.testing.acceptancetests`.
+Tests are organized in subpackages by functionality.
+
+=== The DSL Layer
+
+The DSL layer contains the different parts of the DSL.
+In the case of the ORKG REST API, this is only for API access, found in the `api` package.
+In principle, other parts could be added, such as tests for UI or other means of accessing the ORKG.
+
+Each DSL implementation provides operations on a high level of abstraction, expressed in terms of the domain.
+Technical details are hidden in the implementation below.
+For example, logging in should be provided as a method named `login(username)`, not `getTokenFromKeycloak(username)`,
+  because the latter is not a domain operation, but an implementation detail.
+
+DSL classes receive a `SystemDriver` and `TestContext` instance for managing state and exchanging information.
+New instances are created for each test, so they are isolated from each other.
+The system driver manages all other drivers lazily, and provides access to all operations.
+Results of these operations can be stored in the test context.
+
+The test context manages and provides access to state that might need to be exchanged between parts of the DSL.
+You can see it as a whiteboard on which the DSL can note down information for later use.
+It also provides translation for certain identifiers that need to be unique, so that tests can achieve isolation.
+For example, the username `alice` might be translated to `alice1234`, with the number being unique to each test.
+The test context provides a test-specific ID which stays consistent between test invocations to help in debugging,
+and should be used by authors.
+
+==== Differences to the LMAX implementation
+
+A major difference to the LMAX implementation is the fact
+that we leverage Kotlin features instead of providing a separate implementation:
+
+* Required arguments become function arguments.
+* Optional parameters become function arguments with default values.
+* Allowed value restrictions become enums.
+* Key-value pairs like `user: alice` become named parameter calls, like `login(user = "alice")`.
+
+This has obvious limitations.
+A major one is that argument groups are not possible with this approach.
+At the time of writing, this does not seem like a limitation.
+
+NOTE: If the requirements change, it should be relatively simple to migrate to the same or a similar DSL implementation,
+even with the IDE doing most of the work.
+
+=== The driver layer
+
+A driver drives the operations of a test.
+The `drivers` package contains all driver implementations.
+The central driver is the system driver (class `SystemDriver`).
+The system driver instantiates and manages all other drivers required to perform the operations required by the DSL.
+It does so lazily, so that expensive operations are avoided until they are necessary for the operation performed.
+
+== A word on strings
+
+The testing DSL is string-heavy.
+Alan Perlis warned about strings in his epigrams (#34).
+This has taught programmers to avoid strings for everything but text,
+and lean on types wherever possible.
+However, in the DSL, we basically just describe a test setup, as we would in a document;
+we intentionally do not want to write "test code".
+Information is passed down at most one layer.
+Mistakes can be caught early and easily.
+Using strings provides a lot more flexibility in the design and use of the DSL,
+with minimal risks of hiding information.
+So within the DSL, the use is fine, and should not be complicated by introducing new types.
+
+== References
+
+https://www.symphonious.net/testing-at-lmax/[Testing@LMAX]::
+An article series/collection on how testing works at LMAX,
+and which decisions went into the design of their testing DSL.
+
+https://github.com/LMAX-Exchange/Simple-DSL[Simple-DSL]::
+The DSL implementation of LMAX.
+It also contains more detailed explanations in the https://github.com/LMAX-Exchange/Simple-DSL/wiki[wiki].
+
+https://martinfowler.com/articles/lmax.html[The LMAX Architecture]::
+Writeup by Martin Fowler on the architecture, with links to additional technical details.
+Does not go deeply into testing, though.

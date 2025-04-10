@@ -3,14 +3,9 @@ services:
   api:
     image: registry.gitlab.com/tibhannover/orkg/orkg-backend
     environment:
-      ORKG_KEYCLOAK_HOST: "http://keycloak:8080"
-      ORKG_OAUTH_TOKEN_ENDPOINT: "http://keycloak:8080/realms/orkg/protocol/openid-connect/token"
-      ORKG_OAUTH_REGISTRATION_ENDPOINT: "http://keycloak:8080/realms/orkg/clients-registrations/openid-connect"
-      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUERURI: "http://keycloak:8080/realms/orkg"
-      SPRING_DATASOURCE_URL: 'jdbc:postgresql://postgres/postgres'
-      SPRING_NEO4J_URI: 'bolt://neo4j:7687'
-      #ORKG_SIMCOMP_HOST: 'http://simcomp:4321' # defaults to https://orkg.org/simcomp
-      ORKG_RANKING_PAPERS_LOG_FILE: /home/cnb/logs/paper-ranking.log
+      ORKG_KEYCLOAK_HOST: http://keycloak:8080
+    env_file:
+      - .env
     networks:
       - auth
       - mail
@@ -22,6 +17,12 @@ services:
         condition: service_healthy
       postgres:
         condition: service_healthy
+    healthcheck:
+      # We need a health check, so the Gradle plugin knows when the services are ready
+      test: [ "CMD", "java", "-cp", "@/app/jib-classpath-file", "org.orkg.SpringApplicationKt", "--healthcheck" ]
+      interval: 5s
+      timeout: 10s
+      retries: 60
 
   neo4j:
     image: neo4j:5-community

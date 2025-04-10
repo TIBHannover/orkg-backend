@@ -117,4 +117,5 @@ include("widget")
 include("rest-api-server")
 include(":integrations:datacite-serialization")
 
+includeBuild("acceptance-tests")
 includeBuild("world")

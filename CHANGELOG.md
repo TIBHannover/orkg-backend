@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added console feedback for manually triggered RDF dumps.
+- Added config option for thread pool size of task scheduler.
+  (See: [!1296](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1296))
+- Add testing DSL and acceptance test infrastructur.
+  (See: [!1291](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1291))
+### Fixed
+- Fixed Keycloak event processing.
+  (See: [!1298](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1298))
+- Fixed timestamps of graph entities being in a different timezone than originally saved in SimComp.
+  (See: [!1295](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1295))
 
 ## [0.81.0] - 2025-03-26
 ### Added

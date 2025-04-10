@@ -198,7 +198,7 @@ class TemplateController(
     }
 
     data class UpdateTemplateRequest(
-        @field:NotBlank
+        @field:NullableNotBlank
         val label: String?,
         @field:NullableNotBlank
         val description: String?,

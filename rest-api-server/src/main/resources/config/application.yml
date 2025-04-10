@@ -83,6 +83,8 @@ orkg:
     legacy-client-secret: "secret"
     token-endpoint: "${orkg.keycloak.host}/realms/${orkg.keycloak.realm}/protocol/openid-connect/token"
     registration-endpoint: "${orkg.keycloak.host}/realms/${orkg.keycloak.realm}/clients-registrations/openid-connect"
+  concurrent:
+    task-scheduler-thead-pool-size: 3
 management:
   endpoints:
     enabled-by-default: false

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component
 
 @Component
 @TransactionalOnJPA
-class SpringJpaPostgresKeycloakEventStateAdapter(
+class SpringDataJpaKeycloakEventStateAdapter(
     private val postgresRepository: PostgresKeycloakEventStateRepository,
 ) : KeycloakEventStateRepository {
     override fun findById(id: EventType): Int =

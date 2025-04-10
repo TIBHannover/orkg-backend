@@ -22,7 +22,7 @@ import java.util.Optional
 
 @Component
 @TransactionalOnJPA
-class ContributorFromUserAdapter(
+class SpringDataJpaContributorFromUserAdapter(
     private val eventBus: EventBus,
     private val postgresContributorRepository: PostgresContributorRepository,
 ) : ContributorRepository,

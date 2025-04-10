@@ -16,7 +16,7 @@ import java.util.UUID
 
 @Component
 @TransactionalOnJPA
-class SpringJpaPostgresObservatoryFilterAdapter(
+class SpringDataJpaObservatoryFilterAdapter(
     private val postgresRepository: PostgresObservatoryFilterRepository,
 ) : ObservatoryFilterRepository {
     override fun save(observatoryFilter: ObservatoryFilter) {

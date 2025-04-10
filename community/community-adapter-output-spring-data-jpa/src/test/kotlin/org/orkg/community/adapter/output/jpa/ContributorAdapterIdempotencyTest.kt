@@ -21,7 +21,7 @@ import java.time.LocalDateTime
     classes = [
         CommunityJpaConfiguration::class,
         CommunityJpaTestConfiguration::class,
-        ContributorFromUserAdapter::class,
+        SpringDataJpaContributorFromUserAdapter::class,
         ReallySimpleEventBus::class,
     ],
     initializers = [PostgresContainerInitializer::class],
@@ -30,7 +30,7 @@ import java.time.LocalDateTime
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 internal class ContributorAdapterIdempotencyTest {
     @Autowired
-    private lateinit var adapter: ContributorFromUserAdapter
+    private lateinit var adapter: SpringDataJpaContributorFromUserAdapter
 
     @Test
     fun `duplicate registration messages create a single entry`() {

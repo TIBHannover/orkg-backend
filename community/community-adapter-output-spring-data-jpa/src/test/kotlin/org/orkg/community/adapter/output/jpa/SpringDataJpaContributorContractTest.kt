@@ -17,16 +17,16 @@ import org.springframework.test.context.TestConstructor
     classes = [
         CommunityJpaConfiguration::class,
         CommunityJpaTestConfiguration::class,
-        ContributorFromUserAdapter::class,
+        SpringDataJpaContributorFromUserAdapter::class,
         ReallySimpleEventBus::class,
     ],
     initializers = [PostgresContainerInitializer::class],
 )
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
-internal class ContributorContractTest : ContributorRepositoryContracts {
+internal class SpringDataJpaContributorContractTest : ContributorRepositoryContracts {
     @Autowired
-    private lateinit var adapter: ContributorFromUserAdapter
+    private lateinit var adapter: SpringDataJpaContributorFromUserAdapter
 
     override val repository: ContributorRepository
         get() = adapter

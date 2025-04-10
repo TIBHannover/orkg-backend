@@ -21,7 +21,7 @@ import java.util.Optional
 
 @Component
 @TransactionalOnJPA
-class SpringJpaPostgresObservatoryAdapter(
+class SpringDataJpaObservatoryAdapter(
     private val postgresRepository: PostgresObservatoryRepository,
     private val postgresOrganizationRepository: PostgresOrganizationRepository,
     private val postgresContributorRepository: PostgresContributorRepository,

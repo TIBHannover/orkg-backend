@@ -10,7 +10,7 @@ import java.util.Optional
 import java.util.UUID
 
 @Component
-class SpringJpaPostgresImageAdapter(
+class SpringDataJpaImageAdapter(
     private val repository: PostgresImageRepository,
 ) : ImageRepository {
     override fun save(image: Image) {

@@ -18,7 +18,7 @@ import org.springframework.test.context.TestConstructor
 @DataJpaTest
 @ContextConfiguration(
     classes = [
-        SpringJpaPostgresObservatoryFilterAdapter::class,
+        SpringDataJpaObservatoryFilterAdapter::class,
         CommunityJpaConfiguration::class,
         CommunityJpaTestConfiguration::class,
         ReallySimpleEventBus::class,
@@ -27,9 +27,9 @@ import org.springframework.test.context.TestConstructor
 )
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
-internal class PostgresObservatoryFilterContractTest : ObservatoryFilterRepositoryContracts {
+internal class SpringDataJpaObservatoryFilterContractTest : ObservatoryFilterRepositoryContracts {
     @Autowired
-    private lateinit var adapter: SpringJpaPostgresObservatoryFilterAdapter
+    private lateinit var adapter: SpringDataJpaObservatoryFilterAdapter
 
     @Autowired
     private lateinit var observatoryAdapter: ObservatoryRepository

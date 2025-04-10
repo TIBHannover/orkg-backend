@@ -13,16 +13,16 @@ import org.springframework.test.context.TestConstructor
 @DataJpaTest
 @ContextConfiguration(
     classes = [
-        SpringJpaPostgresImageAdapter::class,
+        SpringDataJpaImageAdapter::class,
         MediaStorageJpaConfiguration::class
     ],
     initializers = [PostgresContainerInitializer::class]
 )
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
-internal class SpringJpaPostgresImageAdapterContractTest : ImageRepositoryContracts {
+internal class SpringDataJpaImageAdapterContractTest : ImageRepositoryContracts {
     @Autowired
-    private lateinit var adapter: SpringJpaPostgresImageAdapter
+    private lateinit var adapter: SpringDataJpaImageAdapter
 
     override val repository: ImageRepository
         get() = adapter

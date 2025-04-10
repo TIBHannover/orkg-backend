@@ -15,7 +15,7 @@ import java.util.Optional
 
 @Component
 @TransactionalOnJPA
-class SpringJpaPostgresConferenceSeriesAdapter(
+class SpringDataJpaConferenceSeriesAdapter(
     private val postgresConferenceSeriesRepository: PostgresConferenceSeriesRepository,
     private val postgresOrganizationRepository: PostgresOrganizationRepository,
 ) : ConferenceSeriesRepository {

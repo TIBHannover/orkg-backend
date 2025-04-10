@@ -96,6 +96,7 @@ internal class TemplateInstanceServiceUnitTest : MockkBaseTest {
         actual.isPresent shouldBe true
         actual.get().asClue { templateInstance ->
             templateInstance.root shouldBe expected.root
+            templateInstance.predicates shouldBe expected.predicates
             templateInstance.statements shouldBe expected.statements
         }
 
@@ -159,6 +160,7 @@ internal class TemplateInstanceServiceUnitTest : MockkBaseTest {
         actual.isPresent shouldBe true
         actual.get().asClue { templateInstance ->
             templateInstance.root shouldBe expected.root
+            templateInstance.predicates shouldBe expected.predicates
             templateInstance.statements shouldBe expected.statements
         }
 

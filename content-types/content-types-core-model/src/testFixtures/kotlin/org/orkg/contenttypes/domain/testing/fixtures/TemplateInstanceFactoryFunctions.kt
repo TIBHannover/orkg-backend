@@ -7,11 +7,19 @@ import org.orkg.contenttypes.domain.TemplateInstance
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.testing.fixtures.createLiteral
+import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import java.time.OffsetDateTime
 
 fun createTemplateInstance() = TemplateInstance(
     root = createResource(ThingId("R54631"), classes = setOf(ThingId("targetClass"))),
+    predicates = listOf(
+        Predicates.field,
+        Predicates.description,
+        Predicates.hasHeadingLevel,
+        Predicates.hasWikidataId,
+        Predicates.hasAuthor,
+    ).associateWith(::createPredicate),
     statements = mapOf(
         Predicates.field to listOf(
             EmbeddedStatement(
@@ -58,6 +66,14 @@ fun createTemplateInstance() = TemplateInstance(
 
 fun createNestedTemplateInstance() = TemplateInstance(
     root = createResource(ThingId("R54631"), classes = setOf(ThingId("targetClass"))),
+    predicates = listOf(
+        Predicates.field,
+        Predicates.description,
+        Predicates.hasHeadingLevel,
+        Predicates.hasWikidataId,
+        Predicates.hasAuthor,
+        Predicates.hasDOI,
+    ).associateWith(::createPredicate),
     statements = mapOf(
         Predicates.field to listOf(
             EmbeddedStatement(

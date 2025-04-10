@@ -19,6 +19,7 @@ import org.orkg.contenttypes.input.TemplateInstanceUseCases
 import org.orkg.contenttypes.input.TemplateUseCases
 import org.orkg.contenttypes.input.UpdateTemplateInstanceUseCase
 import org.orkg.graph.domain.GeneralStatement
+import org.orkg.graph.domain.Predicate
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.Thing
@@ -110,9 +111,11 @@ class TemplateInstanceService(
 
     fun Resource.toTemplateInstance(template: Template, nested: Boolean = false): TemplateInstance {
         val statements = statementService.findAll(subjectId = id, pageable = PageRequests.ALL)
+        val visitedPredicates = mutableSetOf<Predicate>()
         val templateInstance = TemplateInstance(
             root = this,
-            statements = associateTemplatePropertiesToStatements(template, statements)
+            statements = associateTemplatePropertiesToStatements(template, statements, visitedPredicates),
+            predicates = visitedPredicates.associateBy { it.id }
         )
         if (nested) {
             val visitedThings = mutableSetOf(id)
@@ -122,8 +125,10 @@ class TemplateInstanceService(
                     template = template,
                     statements = templateInstance.statements,
                     visitedThings = visitedThings,
+                    visitedPredicates = visitedPredicates,
                     visitedTemplates = visitedTemplates
-                )
+                ),
+                predicates = visitedPredicates.associateBy { it.id }
             )
         }
         return templateInstance
@@ -132,12 +137,16 @@ class TemplateInstanceService(
     private fun associateTemplatePropertiesToStatements(
         template: Template,
         statements: Iterable<GeneralStatement>,
+        visitedPredicates: MutableSet<Predicate>,
     ): Map<ThingId, List<EmbeddedStatement>> =
         template.properties.associateBy(
             keySelector = { it.path.id },
             valueTransform = { property ->
-                statements.filter { it.predicate.id == property.path.id }
-                    .map { EmbeddedStatement(it.`object`, it.createdAt!!, it.createdBy, emptyMap()) }
+                val relevantStatements = statements.filter { it.predicate.id == property.path.id }
+                if (relevantStatements.isNotEmpty()) {
+                    visitedPredicates += relevantStatements[0].predicate
+                }
+                relevantStatements.map { EmbeddedStatement(it.`object`, it.createdAt!!, it.createdBy, emptyMap()) }
             }
         )
 
@@ -145,6 +154,7 @@ class TemplateInstanceService(
         template: Template,
         statements: Map<ThingId, List<EmbeddedStatement>>,
         visitedThings: MutableSet<ThingId>,
+        visitedPredicates: MutableSet<Predicate>,
         visitedTemplates: MutableMap<ThingId, Template?>,
     ): Map<ThingId, List<EmbeddedStatement>> =
         template.properties.associateBy(
@@ -174,13 +184,15 @@ class TemplateInstanceService(
                     )
                     val associatedStatements = associateTemplatePropertiesToStatements(
                         template = nestedTemplate,
-                        statements = nestedStatements.content
+                        statements = nestedStatements.content,
+                        visitedPredicates = visitedPredicates,
                     )
                     val recursiveStatements = findNestedStatementsRecursively(
                         template = nestedTemplate,
                         statements = associatedStatements,
                         visitedThings = visitedThings,
-                        visitedTemplates = visitedTemplates
+                        visitedPredicates = visitedPredicates,
+                        visitedTemplates = visitedTemplates,
                     )
                     `object`.copy(statements = recursiveStatements)
                 }

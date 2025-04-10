@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.82.0] - 2025-04-10
 ### Added
 - Added console feedback for manually triggered RDF dumps.
 - Added config option for thread pool size of task scheduler.
@@ -1484,7 +1486,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.81.0...master
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.82.0...master
+[0.82.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.82.0
 [0.81.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.81.0
 [0.80.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.80.0
 [0.79.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.79.0

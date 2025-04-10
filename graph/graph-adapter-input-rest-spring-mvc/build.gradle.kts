@@ -36,14 +36,15 @@ testing {
             dependencies {
                 implementation(project(":common:serialization"))
                 implementation(project(":graph:graph-core-constants"))
+                implementation(testFixtures(project(":common:testing")))
                 implementation(testFixtures(project(":community:community-core-model")))
                 implementation(testFixtures(project(":graph:graph-core-model")))
                 implementation(testFixtures(project(":testing:spring")))
-
                 implementation("io.kotest:kotest-assertions-api")
                 implementation("io.kotest:kotest-assertions-shared")
                 implementation("io.mockk:mockk-dsl")
                 implementation("io.mockk:mockk-jvm")
+                implementation("org.assertj:assertj-core")
                 implementation("org.hamcrest:hamcrest")
                 implementation("org.junit.jupiter:junit-jupiter-api")
                 implementation("org.springframework.boot:spring-boot-test")
@@ -56,6 +57,7 @@ testing {
                 implementation("org.springframework.restdocs:spring-restdocs-mockmvc")
                 runtimeOnly("com.jayway.jsonpath:json-path")
                 runtimeOnly("org.springframework.boot:spring-boot-starter-validation")
+                runtimeOnly("org.springframework.boot:spring-boot-starter-test")
             }
         }
     }

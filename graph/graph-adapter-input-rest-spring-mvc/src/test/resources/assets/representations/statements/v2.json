@@ -1,0 +1,42 @@
+{
+    "id": "S353060",
+    "subject": {
+        "id": "R0",
+        "label": "Gruber's design of ontologies",
+        "classes": ["Ontology"],
+        "shared": 2,
+        "observatory_id": "f9008445-b750-436d-96c8-91f62a9be223",
+        "organization_id": "a6e1ed6f-f6fb-484e-8993-140ab63b12e0",
+        "created_at": "2019-01-06T15:04:07.692Z",
+        "created_by": "29ed99d5-9135-41e2-8626-2bbd4e6797bf",
+        "featured": true,
+        "unlisted": false,
+        "visibility": "FEATURED",
+        "verified": false,
+        "formatted_label": null,
+        "extraction_method": "UNKNOWN",
+        "_class": "resource",
+        "modifiable": true
+    },
+    "predicate": {
+        "id": "P30",
+        "label": "has research field",
+        "created_at": "2021-05-12T18:58:42.964363+02:00",
+        "created_by": "29ed99d5-9135-41e2-8626-2bbd4e6797bf",
+        "_class": "predicate",
+        "description": "specifies the research field of the subject",
+        "modifiable": true
+    },
+    "object": {
+        "id": "L8142",
+        "label": "value",
+        "datatype": "xsd:string",
+        "created_at": "2019-12-19T15:07:02.204+01:00",
+        "created_by": "29ed99d5-9135-41e2-8626-2bbd4e6797bf",
+        "_class": "literal",
+        "modifiable": true
+    },
+    "created_at": "2021-05-13T10:21:13.081955+02:00",
+    "created_by": "64acea2a-d2d7-4b28-9ada-8f9c0c5afea2",
+    "index": 1
+}

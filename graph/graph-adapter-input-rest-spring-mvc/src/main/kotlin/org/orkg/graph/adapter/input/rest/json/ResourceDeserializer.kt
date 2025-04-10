@@ -1,4 +1,4 @@
-package org.orkg.contenttypes.adapter.output.simcomp.json
+package org.orkg.graph.adapter.input.rest.json
 
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationContext

@@ -26,6 +26,7 @@ interface TableRepresentationAdapter : ThingReferenceRepresentationAdapter {
             createdAt = createdAt,
             createdBy = createdBy,
             visibility = visibility,
+            modifiable = modifiable,
             unlistedBy = unlistedBy
         )
 

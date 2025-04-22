@@ -453,6 +453,7 @@ fun ResultActions.andExpectTable(path: String = "$"): ResultActions = this
     .andExpect(jsonPath("$path.created_by", `is`(notNullValue())))
     .andExpect(jsonPath("$path.created_at", `is`(notNullValue())))
     .andExpect(jsonPath("$path.visibility", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.modifiable", `is`(notNullValue())))
 
 fun ResultActions.andExpectBundle(path: String = "$"): ResultActions = this
     .andExpect(jsonPath("$path.root", `is`(notNullValue())))

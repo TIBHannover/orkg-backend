@@ -7,11 +7,11 @@ import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.Label
 
 class TableRowsValidator<T, S>(
-    private val valueSelector: (T) -> List<RowCommand>,
+    private val valueSelector: (T) -> List<RowCommand>?,
 ) : Action<T, S> {
     override fun invoke(command: T, state: S): S {
         val rows = valueSelector(command)
-        rows.forEachIndexed { index, row ->
+        rows?.forEachIndexed { index, row ->
             if (row.label != null) {
                 Label.ofOrNull(row.label!!) ?: throw InvalidLabel("rows[$index].label")
             }

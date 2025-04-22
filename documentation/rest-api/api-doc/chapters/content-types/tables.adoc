@@ -33,3 +33,18 @@ The response will be `201 Created` when successful.
 The table (object) can be retrieved by following the URI in the `Location` header field.
 
 operation::tables-create[snippets='request-fields,curl-request,response-headers,http-response']
+
+[[tables-edit]]
+== Updating Tables
+
+A `PUT` request updates an existing table with all the given parameters.
+The response will be `204 No Content` when successful.
+The updated table (object) can be retrieved by following the URI in the `Location` header field.
+
+[NOTE]
+====
+1. All fields at the top level in the request can be omitted or `null`, meaning that the corresponding fields should not be updated.
+2. The same rules as for <<resources-edit,updating resources>> apply when updating the visibility of a table.
+====
+
+operation::tables-update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']

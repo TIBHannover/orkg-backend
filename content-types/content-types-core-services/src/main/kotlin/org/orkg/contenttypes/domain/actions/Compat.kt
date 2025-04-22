@@ -24,6 +24,7 @@ import org.orkg.contenttypes.domain.actions.smartreviews.sections.CreateSmartRev
 import org.orkg.contenttypes.domain.actions.smartreviews.sections.DeleteSmartReviewSectionAction
 import org.orkg.contenttypes.domain.actions.smartreviews.sections.UpdateSmartReviewSectionAction
 import org.orkg.contenttypes.domain.actions.tables.CreateTableAction
+import org.orkg.contenttypes.domain.actions.tables.UpdateTableAction
 import org.orkg.contenttypes.domain.actions.templates.CreateTemplateAction
 import org.orkg.contenttypes.domain.actions.templates.UpdateTemplateAction
 import org.orkg.contenttypes.domain.actions.templates.instances.UpdateTemplateInstanceAction
@@ -57,6 +58,7 @@ import org.orkg.contenttypes.input.UpdateRosettaStoneStatementUseCase
 import org.orkg.contenttypes.input.UpdateRosettaStoneTemplateUseCase
 import org.orkg.contenttypes.input.UpdateSmartReviewSectionUseCase
 import org.orkg.contenttypes.input.UpdateSmartReviewUseCase
+import org.orkg.contenttypes.input.UpdateTableUseCase
 import org.orkg.contenttypes.input.UpdateTemplateInstanceUseCase
 import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase
 import org.orkg.contenttypes.input.UpdateTemplateUseCase
@@ -85,6 +87,7 @@ internal typealias UpdateRosettaStoneStatementCommand = UpdateRosettaStoneStatem
 internal typealias UpdateRosettaStoneTemplateCommand = UpdateRosettaStoneTemplateUseCase.UpdateCommand
 internal typealias UpdateSmartReviewCommand = UpdateSmartReviewUseCase.UpdateCommand
 internal typealias UpdateSmartReviewSectionCommand = UpdateSmartReviewSectionUseCase.UpdateCommand
+internal typealias UpdateTableCommand = UpdateTableUseCase.UpdateCommand
 internal typealias UpdateTemplateCommand = UpdateTemplateUseCase.UpdateCommand
 internal typealias UpdateTemplateInstanceCommand = UpdateTemplateInstanceUseCase.UpdateCommand
 internal typealias UpdateTemplatePropertyCommand = UpdateTemplatePropertyUseCase.UpdateCommand
@@ -117,6 +120,7 @@ internal typealias UpdateRosettaStoneStatementState = UpdateRosettaStoneStatemen
 internal typealias UpdateRosettaStoneTemplateState = UpdateRosettaStoneTemplateAction.State
 internal typealias UpdateSmartReviewSectionState = UpdateSmartReviewSectionAction.State
 internal typealias UpdateSmartReviewState = UpdateSmartReviewAction.State
+internal typealias UpdateTableState = UpdateTableAction.State
 internal typealias UpdateTemplateInstanceState = UpdateTemplateInstanceAction.State
 internal typealias UpdateTemplatePropertyState = UpdateTemplatePropertyAction.State
 internal typealias UpdateTemplateState = UpdateTemplateAction.State

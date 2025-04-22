@@ -18,6 +18,7 @@
 * xref:reference/model/smart-review-model.adoc[Smart Review]
 * xref:reference/model/template-model.adoc[Template]
 * xref:reference/model/rosetta-stone-template-model.adoc[Rosetta Stone Template]
+* xref:reference/model/csvw-table-model.adoc[Table]
 
 == Internal Model
 

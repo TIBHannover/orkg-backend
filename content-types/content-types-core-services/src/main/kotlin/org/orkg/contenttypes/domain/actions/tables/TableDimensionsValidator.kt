@@ -8,10 +8,10 @@ import org.orkg.contenttypes.domain.actions.Action
 import org.orkg.contenttypes.input.RowCommand
 
 class TableDimensionsValidator<T, S>(
-    private val valueSelector: (T) -> List<RowCommand>,
+    private val valueSelector: (T) -> List<RowCommand>?,
 ) : Action<T, S> {
     override fun invoke(command: T, state: S): S {
-        val rows = valueSelector(command)
+        val rows = valueSelector(command) ?: return state
         val header = rows.firstOrNull() ?: throw MissingTableRows()
         header.data.forEachIndexed { index, label ->
             if (label.isNullOrBlank()) {

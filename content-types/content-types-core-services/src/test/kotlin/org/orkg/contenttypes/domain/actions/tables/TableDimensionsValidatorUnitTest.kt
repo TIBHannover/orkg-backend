@@ -9,7 +9,7 @@ import org.orkg.contenttypes.domain.TooManyTableRowValues
 import org.orkg.contenttypes.input.RowCommand
 
 internal class TableDimensionsValidatorUnitTest {
-    private val tableDimensionsValidator = TableDimensionsValidator<List<RowCommand>, Unit> { it }
+    private val tableDimensionsValidator = TableDimensionsValidator<List<RowCommand>?, Unit> { it }
 
     @Test
     fun `Given a list of row definitions, when validating, it returns success`() {
@@ -24,6 +24,11 @@ internal class TableDimensionsValidatorUnitTest {
             )
         )
         tableDimensionsValidator(rows, Unit)
+    }
+
+    @Test
+    fun `Given a list of row definitions, when null, it returns success`() {
+        tableDimensionsValidator(null, Unit)
     }
 
     @Test

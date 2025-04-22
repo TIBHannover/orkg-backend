@@ -16,7 +16,7 @@ import org.orkg.graph.domain.Predicate
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.Thing
-import org.orkg.graph.input.ResourceUseCases
+import org.orkg.graph.input.DeleteResourceUseCase
 import org.orkg.graph.output.StatementRepository
 
 internal val String.isTempId: Boolean get() = startsWith('#') || startsWith('^')
@@ -45,7 +45,7 @@ internal fun Thing.toThingCommandPart(statementRepository: StatementRepository? 
         is Literal -> CreateLiteralCommandPart(label, datatype)
     }
 
-internal fun ResourceUseCases.tryDelete(id: ThingId, contributorId: ContributorId): Boolean {
+internal fun DeleteResourceUseCase.tryDelete(id: ThingId, contributorId: ContributorId): Boolean {
     try {
         delete(id, contributorId)
     } catch (e: Exception) {

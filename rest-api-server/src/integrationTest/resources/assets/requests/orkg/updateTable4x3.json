@@ -1,0 +1,94 @@
+{
+    "label": "updated example table",
+    "resources": {
+        "#temp1": {
+            "label": "MOTO2",
+            "classes": []
+        }
+    },
+    "literals": {
+        "#temp2": {
+            "label": "0.8",
+            "data_type": "xsd:decimal"
+        },
+        "#temp3": {
+            "label": "header value",
+            "data_type": "xsd:string"
+        },
+        "#temp7": {
+            "label": "column 3",
+            "data_type": "xsd:string"
+        },
+        "#temp8": {
+            "label": "column 4",
+            "data_type": "xsd:string"
+        }
+    },
+    "predicates": {
+        "#temp4": {
+            "label": "has other Result",
+            "description": "has other more different result"
+        }
+    },
+    "classes": {
+        "#temp5": {
+            "label": "some other test class",
+            "uri": "https://orkg.org/class/C1234"
+        }
+    },
+    "lists": {
+        "#temp6": {
+            "label": "different list",
+            "elements": [
+                "#temp1",
+                "C123"
+            ]
+        }
+    },
+    "rows": [
+        {
+            "label": null,
+            "data": [
+                "#temp3",
+                "L123",
+                "#temp7",
+                "#temp8"
+            ]
+        },
+        {
+            "label": "row 1",
+            "data": [
+                "#temp1",
+                "#temp2",
+                "R123",
+                "#temp4"
+            ]
+        },
+        {
+            "label": "row 2",
+            "data": [
+                "C123",
+                "P123",
+                "#temp5",
+                null
+            ]
+        },
+        {
+            "label": "row 3",
+            "data": [
+                null,
+                "#temp6",
+                null,
+                null
+            ]
+        }
+    ],
+    "observatories": [
+        "1afefdd0-5c09-4c9c-b718-2b35316b56f3"
+    ],
+    "organizations": [
+        "edc18168-c4ee-4cb8-a98a-136f748e912e"
+    ],
+    "extraction_method": "UNKNOWN",
+    "visibility": "DEFAULT"
+}

@@ -4,6 +4,8 @@ import com.ninjasquad.springmockk.MockkBean
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.every
+import io.mockk.just
+import io.mockk.runs
 import io.mockk.verify
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.hamcrest.Matchers.endsWith
@@ -18,6 +20,7 @@ import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.contenttypes.adapter.input.rest.TableController.CreateTableRequest
+import org.orkg.contenttypes.adapter.input.rest.TableController.UpdateTableRequest
 import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
 import org.orkg.contenttypes.domain.TableNotFound
 import org.orkg.contenttypes.domain.testing.fixtures.createTable
@@ -25,6 +28,7 @@ import org.orkg.contenttypes.input.TableUseCases
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
+import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
 import org.orkg.graph.testing.asciidoc.allowedVisibilityValues
@@ -101,6 +105,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                         // TODO: Add links to documentation of special user UUIDs.
                         fieldWithPath("created_by").description("The UUID of the user or service who created this table."),
                         fieldWithPath("visibility").description("""Visibility of the table. Can be one of $allowedVisibilityValues."""),
+                        fieldWithPath("modifiable").description("Whether the table can be modified."),
                         fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this table.").optional(),
                     )
                 )
@@ -284,6 +289,60 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
         verify(exactly = 1) { tableService.create(any()) }
     }
 
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a table update request, when service succeeds, it updates the table")
+    fun update() {
+        val id = ThingId("R123")
+        every { tableService.update(any()) } just runs
+
+        documentedPutRequestTo("/api/tables/{id}", id)
+            .content(updateTableRequest())
+            .accept(TABLE_JSON_V1)
+            .contentType(TABLE_JSON_V1)
+            .perform()
+            .andExpect(status().isNoContent)
+            .andExpect(header().string("Location", endsWith("/api/tables/$id")))
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the table.")
+                    ),
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the updated table can be fetched from.")
+                    ),
+                    requestFields(
+                        fieldWithPath("label").description("The label of the table. (optional)"),
+                        fieldWithPath("resources").description("Definition of resources that need to be created. (optional)"),
+                        fieldWithPath("resources.*.label").description("The label of the resource."),
+                        fieldWithPath("resources.*.classes").description("The list of classes of the resource."),
+                        fieldWithPath("literals").description("Definition of literals that need to be created. (optional)"),
+                        fieldWithPath("literals.*.label").description("The value of the literal."),
+                        fieldWithPath("literals.*.data_type").description("The data type of the literal."),
+                        fieldWithPath("predicates").description("Definition of predicates that need to be created. (optional)"),
+                        fieldWithPath("predicates.*.label").description("The label of the predicate."),
+                        fieldWithPath("predicates.*.description").description("The description of the predicate."),
+                        fieldWithPath("lists").description("Definition of lists that need to be created (optional)."),
+                        fieldWithPath("lists.*.label").description("The label of the list."),
+                        fieldWithPath("lists.*.elements").description("The IDs of the elements of the list."),
+                        fieldWithPath("classes").description("Definition of classes that need to be created. (optional)"),
+                        fieldWithPath("classes.*.label").description("The label of the class."),
+                        fieldWithPath("classes.*.uri").description("The uri of the class."),
+                        fieldWithPath("rows[]").description("The ordered list of rows of the table. The first row always represents the header of the table and must only consist of string literals. Additionally, one data row is required. Every row must have the same length. (optional)"),
+                        fieldWithPath("rows[].label").description("The label of the row. (optional)").optional(),
+                        subsectionWithPath("rows[].data[]").description("The ordered list of values (thing ids, temporary ids or `null`) of the row.").optional(),
+                        fieldWithPath("organizations[]").description("The list of IDs of the organizations or conference series the table belongs to. (optional)"),
+                        fieldWithPath("observatories[]").description("The list of IDs of the observatories the table belongs to. (optional)"),
+                        fieldWithPath("extraction_method").description("""The method used to extract the table resource. Can be one of $allowedExtractionMethodValues. (optional)"""),
+                        fieldWithPath("visibility").description("""The method used to extract the table resource. Can be one of $allowedVisibilityValues. (optional)"""),
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { tableService.update(any()) }
+    }
+
     private fun createTableRequest() =
         CreateTableRequest(
             label = "Table Title",
@@ -337,5 +396,61 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                 OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f")
             ),
             extractionMethod = ExtractionMethod.UNKNOWN
+        )
+
+    private fun updateTableRequest() =
+        UpdateTableRequest(
+            label = "Table Title",
+            resources = mapOf(
+                "#temp1" to CreateResourceRequestPart(
+                    label = "MOTO",
+                    classes = setOf(ThingId("Result"))
+                )
+            ),
+            literals = mapOf(
+                "#temp2" to CreateLiteralRequestPart("column 1", Literals.XSD.STRING.prefixedUri),
+                "#temp3" to CreateLiteralRequestPart("column 2", Literals.XSD.STRING.prefixedUri),
+                "#temp4" to CreateLiteralRequestPart("column 3", Literals.XSD.STRING.prefixedUri)
+            ),
+            predicates = mapOf(
+                "#temp5" to CreatePredicateRequestPart(
+                    label = "hasResult",
+                    description = "has result"
+                )
+            ),
+            lists = mapOf(
+                "#temp6" to CreateListRequestPart(
+                    label = "list",
+                    elements = listOf("#temp1", "C123")
+                )
+            ),
+            classes = mapOf(
+                "#temp7" to CreateClassRequestPart(
+                    label = "class",
+                    uri = ParsedIRI("https://orkg.org/class/C1")
+                )
+            ),
+            rows = listOf(
+                RowRequest(
+                    label = "header",
+                    data = listOf("#temp1", "#temp2", "#temp3")
+                ),
+                RowRequest(
+                    label = null,
+                    data = listOf("R456", "#temp4", "#temp5")
+                ),
+                RowRequest(
+                    label = "row 2",
+                    data = listOf("#temp6", null, "#temp7")
+                )
+            ),
+            observatories = listOf(
+                ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece")
+            ),
+            organizations = listOf(
+                OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f")
+            ),
+            extractionMethod = ExtractionMethod.UNKNOWN,
+            visibility = Visibility.DEFAULT
         )
 }

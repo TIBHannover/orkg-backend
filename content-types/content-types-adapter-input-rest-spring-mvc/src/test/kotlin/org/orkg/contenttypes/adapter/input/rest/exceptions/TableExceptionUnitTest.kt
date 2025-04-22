@@ -11,6 +11,7 @@ import org.orkg.contenttypes.domain.MissingTableRowValues
 import org.orkg.contenttypes.domain.MissingTableRows
 import org.orkg.contenttypes.domain.TableHeaderValueMustBeLiteral
 import org.orkg.contenttypes.domain.TableNotFound
+import org.orkg.contenttypes.domain.TableNotModifiable
 import org.orkg.contenttypes.domain.TooManyTableRowValues
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcBaseTest
@@ -118,6 +119,21 @@ internal class TableExceptionUnitTest : MockMvcBaseTest("tables") {
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
+    @Test
+    fun tableNotModifiable() {
+        val id = "R123"
+
+        get("/table-not-modifiable")
+            .param("id", id)
+            .perform()
+            .andExpect(status().isForbidden)
+            .andExpect(jsonPath("$.status").value(HttpStatus.FORBIDDEN.value()))
+            .andExpect(jsonPath("$.error", `is`("Forbidden")))
+            .andExpect(jsonPath("$.path").value("/table-not-modifiable"))
+            .andExpect(jsonPath("$.message").value("""Table "$id" is not modifiable."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
     @TestComponent
     @RestController
     internal class TestController {
@@ -150,5 +166,10 @@ internal class TableExceptionUnitTest : MockMvcBaseTest("tables") {
             @RequestParam index: Int,
             @RequestParam expectedSize: Int,
         ): Unit = throw MissingTableRowValues(index, expectedSize)
+
+        @GetMapping("/table-not-modifiable")
+        fun tableNotModifiable(
+            @RequestParam id: ThingId,
+        ): Unit = throw TableNotModifiable(id)
     }
 }

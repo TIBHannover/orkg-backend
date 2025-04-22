@@ -22,6 +22,7 @@ data class Table(
     val createdAt: OffsetDateTime,
     val createdBy: ContributorId,
     val visibility: Visibility,
+    val modifiable: Boolean,
     val unlistedBy: ContributorId? = null,
 ) {
     data class Row(
@@ -78,6 +79,7 @@ data class Table(
                 createdAt = resource.createdAt,
                 createdBy = resource.createdBy,
                 visibility = resource.visibility,
+                modifiable = resource.modifiable,
                 unlistedBy = resource.unlistedBy
             )
         }

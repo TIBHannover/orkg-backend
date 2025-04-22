@@ -8,7 +8,7 @@ import org.orkg.contenttypes.input.RowCommand
 import org.orkg.graph.domain.InvalidLabel
 
 internal class TableRowsValidatorUnitTest {
-    private val tableRowsValidator = TableRowsValidator<List<RowCommand>, Unit> { it }
+    private val tableRowsValidator = TableRowsValidator<List<RowCommand>?, Unit> { it }
 
     @Test
     fun `Given a list of row definitions, when validating their labels, it returns success`() {
@@ -36,5 +36,10 @@ internal class TableRowsValidatorUnitTest {
         shouldThrow<InvalidLabel> { tableRowsValidator(rows, Unit) }.asClue {
             it.property shouldBe "rows[0].label"
         }
+    }
+
+    @Test
+    fun `Given a list of row definitions, when null, it returns success`() {
+        tableRowsValidator(null, Unit)
     }
 }

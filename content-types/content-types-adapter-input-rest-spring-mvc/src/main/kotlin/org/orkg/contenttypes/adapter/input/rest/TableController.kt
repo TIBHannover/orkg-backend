@@ -10,12 +10,15 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId
+import org.orkg.common.validation.NullableNotBlank
 import org.orkg.contenttypes.adapter.input.rest.mapping.TableRepresentationAdapter
 import org.orkg.contenttypes.domain.TableNotFound
 import org.orkg.contenttypes.input.CreateTableUseCase
 import org.orkg.contenttypes.input.TableUseCases
+import org.orkg.contenttypes.input.UpdateTableUseCase
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.SearchString
+import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -23,10 +26,12 @@ import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.format.annotation.DateTimeFormat.ISO
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
+import org.springframework.http.ResponseEntity.noContent
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -87,6 +92,23 @@ class TableController(
         return created(location).build()
     }
 
+    @RequireLogin
+    @PutMapping("/{id}", consumes = [TABLE_JSON_V1])
+    fun update(
+        @PathVariable id: ThingId,
+        @RequestBody @Valid request: UpdateTableRequest,
+        uriComponentsBuilder: UriComponentsBuilder,
+        currentUser: Authentication?,
+    ): ResponseEntity<Any> {
+        val userId = currentUser.contributorId()
+        service.update(request.toUpdateCommand(id, userId))
+        val location = uriComponentsBuilder
+            .path("/api/tables/{id}")
+            .buildAndExpand(id)
+            .toUri()
+        return noContent().location(location).build()
+    }
+
     data class CreateTableRequest(
         @field:NotBlank
         val label: String,
@@ -123,6 +145,48 @@ class TableController(
                 observatories = observatories,
                 organizations = organizations,
                 extractionMethod = extractionMethod
+            )
+    }
+
+    data class UpdateTableRequest(
+        @field:NullableNotBlank
+        val label: String?,
+        @field:Valid
+        val resources: Map<String, CreateResourceRequestPart>?,
+        @field:Valid
+        val literals: Map<String, CreateLiteralRequestPart>?,
+        @field:Valid
+        val predicates: Map<String, CreatePredicateRequestPart>?,
+        @field:Valid
+        val classes: Map<String, CreateClassRequestPart>?,
+        @field:Valid
+        val lists: Map<String, CreateListRequestPart>?,
+        @field:Valid
+        @field:Size(min = 2)
+        val rows: List<RowRequest>?,
+        @field:Size(max = 1)
+        val observatories: List<ObservatoryId>?,
+        @field:Size(max = 1)
+        val organizations: List<OrganizationId>?,
+        @JsonProperty("extraction_method")
+        val extractionMethod: ExtractionMethod?,
+        val visibility: Visibility?,
+    ) {
+        fun toUpdateCommand(tableId: ThingId, contributorId: ContributorId): UpdateTableUseCase.UpdateCommand =
+            UpdateTableUseCase.UpdateCommand(
+                tableId = tableId,
+                contributorId = contributorId,
+                label = label,
+                resources = resources?.mapValues { it.value.toCreateCommand() }.orEmpty(),
+                literals = literals?.mapValues { it.value.toCreateCommand() }.orEmpty(),
+                predicates = predicates?.mapValues { it.value.toCreateCommand() }.orEmpty(),
+                classes = classes?.mapValues { it.value.toCreateCommand() }.orEmpty(),
+                lists = lists?.mapValues { it.value.toCreateCommand() }.orEmpty(),
+                rows = rows?.map { it.toRowCommand() },
+                observatories = observatories,
+                organizations = organizations,
+                extractionMethod = extractionMethod,
+                visibility = visibility
             )
     }
 }

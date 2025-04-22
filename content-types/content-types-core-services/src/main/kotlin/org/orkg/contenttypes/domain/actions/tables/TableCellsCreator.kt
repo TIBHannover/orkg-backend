@@ -1,6 +1,5 @@
 package org.orkg.contenttypes.domain.actions.tables
 
-import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.actions.CreateTableCommand
 import org.orkg.contenttypes.domain.actions.tables.CreateTableAction.State
 import org.orkg.graph.input.UnsafeResourceUseCases
@@ -23,13 +22,10 @@ class TableCellsCreator(
                     contributorId = command.contributorId,
                     rowId = state.rows[rowIndex],
                     columnId = state.columns[columnIndex],
-                    value = value?.let { state.resolve(it) },
+                    value = value?.let(state::resolve),
                 )
             }
         }
         return state
     }
-
-    private fun State.resolve(id: String): ThingId =
-        validationCache[id]!!.fold({ tempIdToThingId[id] }, { it.id })!!
 }

@@ -24,12 +24,9 @@ class TableColumnsCreator(
                 contributorId = command.contributorId,
                 tableId = state.tableId!!,
                 index = index,
-                titleLiteralId = state.resolve(value!!)
+                titleLiteralId = state.resolve(value!!)!!
             )
         }
         return state.copy(columns = columns)
     }
-
-    private fun State.resolve(id: String) =
-        validationCache[id]!!.fold({ tempIdToThingId[id] }, { it.id })!!
 }

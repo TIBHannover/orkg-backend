@@ -692,6 +692,7 @@ data class TableRepresentation(
     @get:JsonProperty("created_by")
     val createdBy: ContributorId,
     val visibility: Visibility,
+    val modifiable: Boolean,
     @get:JsonProperty("unlisted_by")
     val unlistedBy: ContributorId? = null,
 ) {

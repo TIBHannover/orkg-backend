@@ -6,23 +6,37 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
+import org.orkg.contenttypes.domain.actions.Action
 import org.orkg.contenttypes.domain.actions.CreateTableCommand
 import org.orkg.contenttypes.domain.actions.CreateTableState
 import org.orkg.contenttypes.domain.actions.LabelValidator
 import org.orkg.contenttypes.domain.actions.ObservatoryValidator
 import org.orkg.contenttypes.domain.actions.OrganizationValidator
 import org.orkg.contenttypes.domain.actions.TempIdValidator
+import org.orkg.contenttypes.domain.actions.UpdateTableCommand
+import org.orkg.contenttypes.domain.actions.UpdateTableState
 import org.orkg.contenttypes.domain.actions.execute
 import org.orkg.contenttypes.domain.actions.tables.TableCellsCreateValidator
 import org.orkg.contenttypes.domain.actions.tables.TableCellsCreator
+import org.orkg.contenttypes.domain.actions.tables.TableCellsUpdateValidator
+import org.orkg.contenttypes.domain.actions.tables.TableCellsUpdater
 import org.orkg.contenttypes.domain.actions.tables.TableColumnsCreateValidator
 import org.orkg.contenttypes.domain.actions.tables.TableColumnsCreator
+import org.orkg.contenttypes.domain.actions.tables.TableColumnsUpdateValidator
+import org.orkg.contenttypes.domain.actions.tables.TableColumnsUpdater
 import org.orkg.contenttypes.domain.actions.tables.TableDimensionsValidator
+import org.orkg.contenttypes.domain.actions.tables.TableExistenceValidator
+import org.orkg.contenttypes.domain.actions.tables.TableModifiableValidator
 import org.orkg.contenttypes.domain.actions.tables.TableResourceCreator
+import org.orkg.contenttypes.domain.actions.tables.TableResourceUpdater
 import org.orkg.contenttypes.domain.actions.tables.TableRowsCreator
+import org.orkg.contenttypes.domain.actions.tables.TableRowsUpdater
 import org.orkg.contenttypes.domain.actions.tables.TableRowsValidator
 import org.orkg.contenttypes.domain.actions.tables.TableThingsCommandCreateCreator
 import org.orkg.contenttypes.domain.actions.tables.TableThingsCommandCreateValidator
+import org.orkg.contenttypes.domain.actions.tables.TableThingsCommandUpdateCreator
+import org.orkg.contenttypes.domain.actions.tables.TableThingsCommandUpdateValidator
+import org.orkg.contenttypes.domain.actions.tables.TableUpdateValidationCacheInitializer
 import org.orkg.contenttypes.input.TableUseCases
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
@@ -106,6 +120,29 @@ class TableService(
             TableCellsCreator(unsafeResourceUseCases, unsafeStatementUseCases)
         )
         return steps.execute(command, CreateTableState()).tableId!!
+    }
+
+    override fun update(command: UpdateTableCommand) {
+        val steps = listOf<Action<UpdateTableCommand, UpdateTableState>>(
+            TableExistenceValidator(this, resourceRepository),
+            TableModifiableValidator(),
+            LabelValidator { it.label },
+            TempIdValidator { it.tempIds() },
+            TableDimensionsValidator { it.rows },
+            TableRowsValidator { it.rows },
+            ObservatoryValidator(observatoryRepository, { it.observatories }),
+            OrganizationValidator(organizationRepository, { it.organizations }),
+            TableThingsCommandUpdateValidator(thingRepository, classRepository),
+            TableUpdateValidationCacheInitializer(),
+            TableColumnsUpdateValidator(thingRepository),
+            TableCellsUpdateValidator(thingRepository),
+            TableResourceUpdater(unsafeResourceUseCases),
+            TableThingsCommandUpdateCreator(unsafeClassUseCases, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, unsafePredicateUseCases, statementRepository, listService),
+            TableColumnsUpdater(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases),
+            TableRowsUpdater(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases),
+            TableCellsUpdater(unsafeResourceUseCases, unsafeStatementUseCases),
+        )
+        steps.execute(command, UpdateTableState())
     }
 
     internal fun findSubgraph(resource: Resource): ContentTypeSubgraph {

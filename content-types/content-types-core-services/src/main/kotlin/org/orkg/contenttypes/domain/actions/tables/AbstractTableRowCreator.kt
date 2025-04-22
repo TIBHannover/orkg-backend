@@ -30,7 +30,7 @@ class AbstractTableRowCreator(
                 classes = setOf(Classes.row),
             )
         )
-        val columnNumberLiteralId = unsafeLiteralUseCases.create(
+        val rowNumberLiteralId = unsafeLiteralUseCases.create(
             CreateLiteralUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = "${index + 1}",
@@ -42,7 +42,7 @@ class AbstractTableRowCreator(
                 contributorId = contributorId,
                 subjectId = rowId,
                 predicateId = Predicates.csvwNumber,
-                objectId = columnNumberLiteralId
+                objectId = rowNumberLiteralId
             )
         )
         if (label != null) {

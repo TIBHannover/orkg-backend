@@ -17,6 +17,8 @@ import org.orkg.common.testing.fixtures.Assets.requestJson
 import org.orkg.community.input.ContributorUseCases
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
+import org.orkg.contenttypes.domain.TableNotFound
+import org.orkg.contenttypes.input.TableUseCases
 import org.orkg.createClass
 import org.orkg.createClasses
 import org.orkg.createContributor
@@ -26,10 +28,14 @@ import org.orkg.createOrganization
 import org.orkg.createPredicate
 import org.orkg.createPredicates
 import org.orkg.createResource
+import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
+import org.orkg.graph.domain.Literal
 import org.orkg.graph.domain.Literals
+import org.orkg.graph.domain.Predicate
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.LiteralUseCases
@@ -65,6 +71,9 @@ internal class TableControllerIntegrationTest : MockMvcBaseTest("tables") {
 
     @Autowired
     private lateinit var observatoryService: ObservatoryUseCases
+
+    @Autowired
+    private lateinit var tableService: TableUseCases
 
     @BeforeEach
     fun setup() {
@@ -141,7 +150,7 @@ internal class TableControllerIntegrationTest : MockMvcBaseTest("tables") {
 
     @Test
     @TestWithMockUser
-    fun createAndFetch() {
+    fun createAndUpdate() {
         val id = post("/api/tables")
             .content(requestJson("orkg/createTable"))
             .accept(TABLE_JSON_V1)
@@ -256,6 +265,212 @@ internal class TableControllerIntegrationTest : MockMvcBaseTest("tables") {
             it.createdAt shouldNotBe null
             it.createdBy shouldBe ContributorId(MockUserId.USER)
             it.visibility shouldBe Visibility.DEFAULT
+            it.modifiable shouldBe true
+            it.unlistedBy shouldBe null
+        }
+
+        // test column creation, row deletion
+
+        put("/api/tables/{id}", id)
+            .content(requestJson("orkg/updateTable4x3"))
+            .accept(TABLE_JSON_V1)
+            .contentType(TABLE_JSON_V1)
+            .perform()
+            .andExpect(status().isNoContent)
+
+        val updatedTable4x3 = tableService.findById(id).orElseThrow { TableNotFound(id) }
+
+        updatedTable4x3.asClue {
+            it.id shouldBe id
+            it.label shouldBe "updated example table"
+            it.rows.size shouldBe 4
+            it.rows[0].asClue { row ->
+                row.label shouldBe null
+                row.data.size shouldBe 4
+                row.data[0].shouldBeInstanceOf<Literal> { thing ->
+                    thing.id shouldNotBe null
+                    thing.label shouldBe "header value"
+                    thing.datatype shouldBe Literals.XSD.STRING.prefixedUri
+                }
+                row.data[1].shouldBeInstanceOf<Literal> { thing ->
+                    thing.id shouldNotBe null
+                    thing.label shouldBe "other header name"
+                    thing.datatype shouldBe Literals.XSD.STRING.prefixedUri
+                }
+                row.data[2].shouldBeInstanceOf<Literal> { thing ->
+                    thing.id shouldNotBe null
+                    thing.label shouldBe "column 3"
+                    thing.datatype shouldBe Literals.XSD.STRING.prefixedUri
+                }
+                row.data[3].shouldBeInstanceOf<Literal> { thing ->
+                    thing.id shouldNotBe null
+                    thing.label shouldBe "column 4"
+                    thing.datatype shouldBe Literals.XSD.STRING.prefixedUri
+                }
+            }
+            it.rows[1].asClue { row ->
+                row.label shouldBe "row 1"
+                row.data.size shouldBe 4
+                row.data[0].shouldBeInstanceOf<Resource> { thing ->
+                    thing.id shouldNotBe null
+                    thing.label shouldBe "MOTO2"
+                    thing.classes shouldBe emptySet()
+                }
+                row.data[1].shouldBeInstanceOf<Literal> { thing ->
+                    thing.id shouldNotBe null
+                    thing.label shouldBe "0.8"
+                    thing.datatype shouldBe Literals.XSD.DECIMAL.prefixedUri
+                }
+                row.data[2].shouldBeInstanceOf<Resource> { thing ->
+                    thing.id shouldBe ThingId("R123")
+                    thing.label shouldBe "some resource"
+                    thing.classes shouldBe emptySet()
+                }
+                row.data[3].shouldBeInstanceOf<Predicate> { thing ->
+                    thing.id shouldNotBe null
+                    thing.label shouldBe "has other Result"
+                }
+            }
+            it.rows[2].asClue { row ->
+                row.label shouldBe "row 2"
+                row.data.size shouldBe 4
+                row.data[0].shouldBeInstanceOf<Class> { thing ->
+                    thing.id shouldBe ThingId("C123")
+                    thing.label shouldBe "some class"
+                    thing.uri shouldBe null
+                }
+                row.data[1].shouldBeInstanceOf<Predicate> { thing ->
+                    thing.id shouldBe ThingId("P123")
+                    thing.label shouldBe "some predicate"
+                }
+                row.data[2].shouldBeInstanceOf<Class> { thing ->
+                    thing.id shouldNotBe null
+                    thing.label shouldBe "some other test class"
+                    thing.uri shouldBe ParsedIRI("https://orkg.org/class/C1234")
+                }
+                row.data[3] shouldBe null
+            }
+            it.rows[3].asClue { row ->
+                row.label shouldBe "row 3"
+                row.data.size shouldBe 4
+                row.data[0] shouldBe null
+                row.data[1].shouldBeInstanceOf<Resource> { thing ->
+                    thing.id shouldNotBe null
+                    thing.label shouldBe "different list"
+                    thing.classes shouldBe setOf(Classes.list)
+                }
+                row.data[2] shouldBe null
+                row.data[3] shouldBe null
+            }
+            it.observatories shouldBe listOf(ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3"))
+            it.organizations shouldBe listOf(OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"))
+            it.extractionMethod shouldBe ExtractionMethod.UNKNOWN
+            it.createdAt shouldNotBe null
+            it.createdBy shouldBe ContributorId(MockUserId.USER)
+            it.visibility shouldBe Visibility.DEFAULT
+            it.modifiable shouldBe true
+            it.unlistedBy shouldBe null
+        }
+
+        // test row creation, column deletion
+
+        put("/api/tables/{id}", id)
+            .content(requestJson("orkg/updateTable3x4"))
+            .accept(TABLE_JSON_V1)
+            .contentType(TABLE_JSON_V1)
+            .perform()
+            .andExpect(status().isNoContent)
+
+        val updatedTable3x4 = tableService.findById(id).orElseThrow { TableNotFound(id) }
+
+        updatedTable3x4.asClue {
+            it.id shouldBe id
+            it.label shouldBe "updated example table"
+            it.rows.size shouldBe 5
+            it.rows[0].asClue { row ->
+                row.label shouldBe null
+                row.data.size shouldBe 3
+                row.data[0].shouldBeInstanceOf<Literal> { thing ->
+                    thing.id shouldNotBe null
+                    thing.label shouldBe "header value"
+                    thing.datatype shouldBe Literals.XSD.STRING.prefixedUri
+                }
+                row.data[1].shouldBeInstanceOf<Literal> { thing ->
+                    thing.id shouldNotBe null
+                    thing.label shouldBe "other header name"
+                    thing.datatype shouldBe Literals.XSD.STRING.prefixedUri
+                }
+                row.data[2].shouldBeInstanceOf<Literal> { thing ->
+                    thing.id shouldNotBe null
+                    thing.label shouldBe "column 3"
+                    thing.datatype shouldBe Literals.XSD.STRING.prefixedUri
+                }
+            }
+            it.rows[1].asClue { row ->
+                row.label shouldBe "row 1"
+                row.data.size shouldBe 3
+                row.data[0].shouldBeInstanceOf<Resource> { thing ->
+                    thing.id shouldNotBe null
+                    thing.label shouldBe "MOTO2"
+                    thing.classes shouldBe emptySet()
+                }
+                row.data[1].shouldBeInstanceOf<Literal> { thing ->
+                    thing.id shouldNotBe null
+                    thing.label shouldBe "0.8"
+                    thing.datatype shouldBe Literals.XSD.DECIMAL.prefixedUri
+                }
+                row.data[2].shouldBeInstanceOf<Resource> { thing ->
+                    thing.id shouldBe ThingId("R123")
+                    thing.label shouldBe "some resource"
+                    thing.classes shouldBe emptySet()
+                }
+            }
+            it.rows[2].asClue { row ->
+                row.label shouldBe "row 2"
+                row.data.size shouldBe 3
+                row.data[0].shouldBeInstanceOf<Predicate> { thing ->
+                    thing.id shouldNotBe null
+                    thing.label shouldBe "has other Result"
+                }
+                row.data[1].shouldBeInstanceOf<Class> { thing ->
+                    thing.id shouldBe ThingId("C123")
+                    thing.label shouldBe "some class"
+                    thing.uri shouldBe null
+                }
+                row.data[2].shouldBeInstanceOf<Predicate> { thing ->
+                    thing.id shouldBe ThingId("P123")
+                    thing.label shouldBe "some predicate"
+                }
+            }
+            it.rows[3].asClue { row ->
+                row.label shouldBe "row 3"
+                row.data.size shouldBe 3
+                row.data[0].shouldBeInstanceOf<Class> { thing ->
+                    thing.id shouldNotBe null
+                    thing.label shouldBe "some other test class"
+                    thing.uri shouldBe ParsedIRI("https://orkg.org/class/C12345")
+                }
+                row.data[1] shouldBe null
+                row.data[2] shouldBe null
+            }
+            it.rows[4].asClue { row ->
+                row.label shouldBe "row 4"
+                row.data.size shouldBe 3
+                row.data[0] shouldBe null
+                row.data[1].shouldBeInstanceOf<Resource> { thing ->
+                    thing.id shouldNotBe null
+                    thing.label shouldBe "different list"
+                    thing.classes shouldBe setOf(Classes.list)
+                }
+                row.data[2] shouldBe null
+            }
+            it.observatories shouldBe listOf(ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3"))
+            it.organizations shouldBe listOf(OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"))
+            it.extractionMethod shouldBe ExtractionMethod.UNKNOWN
+            it.createdAt shouldNotBe null
+            it.createdBy shouldBe ContributorId(MockUserId.USER)
+            it.visibility shouldBe Visibility.DEFAULT
+            it.modifiable shouldBe true
             it.unlistedBy shouldBe null
         }
     }

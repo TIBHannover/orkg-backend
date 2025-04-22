@@ -144,6 +144,12 @@ class RosettaStoneTemplatePropertyNotModifiable(id: ThingId) :
         """Rosetta stone template property "$id" is not modifiable."""
     )
 
+class TableNotModifiable(id: ThingId) :
+    SimpleMessageException(
+        HttpStatus.FORBIDDEN,
+        """Table "$id" is not modifiable."""
+    )
+
 class ComparisonAlreadyPublished(id: ThingId) :
     SimpleMessageException(
         HttpStatus.FORBIDDEN,

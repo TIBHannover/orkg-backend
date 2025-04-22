@@ -1,7 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
 plugins {
-    id("org.orkg.gradle.kotlin-library")
+    id("org.orkg.gradle.kotlin-library-with-test-fixtures")
     id("org.orkg.gradle.spring-library")
 }
 
@@ -28,6 +28,10 @@ dependencies {
     implementation(project(":common:datatypes"))
     implementation(project(":common:pagination"))
     implementation(project(":graph:graph-core-constants"))
+    testFixturesApi(project(":common:identifiers"))
+    testFixturesApi(project(":graph:graph-core-model"))
+    testFixturesImplementation(project(":graph:graph-core-constants"))
+    testFixturesImplementation(testFixtures(project(":graph:graph-core-model")))
 }
 
 testing {

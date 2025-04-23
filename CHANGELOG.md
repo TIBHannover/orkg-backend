@@ -6,13 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added content-type endpoint for updating tables.
+  (See: [!1293](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1293))
 
 ## [0.82.0] - 2025-04-10
 ### Added
 - Added console feedback for manually triggered RDF dumps.
 - Added config option for thread pool size of task scheduler.
   (See: [!1296](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1296))
-- Add testing DSL and acceptance test infrastructur.
+- Added testing DSL and acceptance test infrastructur.
   (See: [!1291](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1291))
 ### Fixed
 - Fixed Keycloak event processing.

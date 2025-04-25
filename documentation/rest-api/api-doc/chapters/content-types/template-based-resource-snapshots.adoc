@@ -1,0 +1,33 @@
+= Template Based Resource Snapshots
+
+Template based resource snapshots are snapshots of a subgraph described by a given template for a given resource.
+They can be used to create and assign persistent identifiers to resource subgraphs.
+
+[[template-based-resource-snapshots-fetch]]
+== Fetching Template Based Resource Snapshots
+
+A `GET` request returns a template based resource snapshot.
+
+operation::template-based-resource-snapshots-get-single[snippets='path-parameters,curl-request,http-response,response-fields']
+
+[[template-based-resource-snapshots-list]]
+== Listing Template Based Resource Snapshots
+
+A `GET` request returns a <<sorting-and-pagination,paged>> list of <<template-based-resource-snapshots-fetch,template based resource snapshots>>.
+If no paging request parameters are provided, the default values will be used.
+
+operation::template-based-resource-snapshots-get-paged-with-parameters[snippets='path-parameters']
+operation::template-based-resource-snapshots-get-paged[snippets='curl-request']
+
+The following list of request parameters are supported:
+
+operation::template-based-resource-snapshots-get-paged-with-parameters[snippets='query-parameters']
+
+[[template-based-resource-snapshots-create]]
+== Creating Template Based Resource Snapshots
+
+A `POST` request creates a new template based resource snapshot.
+The response will be `201 Created` when successful.
+The template based resource snapshot (object) can be retrieved by following the URI in the `Location` header field.
+
+operation::template-based-resource-snapshots-create[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']

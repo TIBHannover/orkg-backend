@@ -90,6 +90,20 @@ class TableNotFound(id: ThingId) :
         """Table "$id" not found."""
     )
 
+class TemplateInstanceNotFound(
+    templateId: ThingId,
+    resourceId: ThingId,
+) : SimpleMessageException(
+        HttpStatus.NOT_FOUND,
+        """Template instance for resource "$resourceId" and template id "$templateId" not found."""
+    )
+
+class TemplateBasedResourceSnapshotNotFound(snapshotId: SnapshotId) :
+    SimpleMessageException(
+        HttpStatus.NOT_FOUND,
+        """Template based resource snapshot "$snapshotId" not found."""
+    )
+
 class PaperNotModifiable(id: ThingId) :
     SimpleMessageException(
         HttpStatus.FORBIDDEN,

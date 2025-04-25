@@ -20,6 +20,7 @@ import org.orkg.contenttypes.domain.ObjectIsNotALiteral
 import org.orkg.contenttypes.domain.ObjectIsNotAPredicate
 import org.orkg.contenttypes.domain.ObjectMustNotBeALiteral
 import org.orkg.contenttypes.domain.ResourceIsNotAnInstanceOfTargetClass
+import org.orkg.contenttypes.domain.TemplateInstanceNotFound
 import org.orkg.contenttypes.domain.TemplateNotApplicable
 import org.orkg.contenttypes.domain.TooManyPropertyValues
 import org.orkg.contenttypes.domain.UnknownTemplateProperties
@@ -38,7 +39,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @WebMvcTest
 @ContextConfiguration(classes = [TestController::class, ExceptionHandler::class, FixedClockConfig::class])
-internal class TemplateInstanceExceptionUnitTest : MockMvcBaseTest("tables") {
+internal class TemplateInstanceExceptionUnitTest : MockMvcBaseTest("template-instances") {
     @Test
     fun templateNotApplicable() {
         val templateId = ThingId("R123")
@@ -417,6 +418,23 @@ internal class TemplateInstanceExceptionUnitTest : MockMvcBaseTest("tables") {
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
+    @Test
+    fun templateInstanceNotFound() {
+        val templateId = "R123"
+        val resourceId = "R456"
+
+        get("/template-instance-not-found")
+            .param("templateId", templateId)
+            .param("resourceId", resourceId)
+            .perform()
+            .andExpect(status().isNotFound)
+            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
+            .andExpect(jsonPath("$.error", `is`("Not Found")))
+            .andExpect(jsonPath("$.path").value("/template-instance-not-found"))
+            .andExpect(jsonPath("$.message").value("""Template instance for resource "$resourceId" and template id "$templateId" not found."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
     @TestComponent
     @RestController
     internal class TestController {
@@ -559,5 +577,11 @@ internal class TemplateInstanceExceptionUnitTest : MockMvcBaseTest("tables") {
             @RequestParam label: String,
             @RequestParam maxInclusive: Number,
         ): Unit = throw NumberTooHigh(templatePropertyId, objectId, predicateId, label, maxInclusive)
+
+        @GetMapping("/template-instance-not-found")
+        fun templateInstanceNotFound(
+            @RequestParam templateId: ThingId,
+            @RequestParam resourceId: ThingId,
+        ): Unit = throw TemplateInstanceNotFound(templateId, resourceId)
     }
 }

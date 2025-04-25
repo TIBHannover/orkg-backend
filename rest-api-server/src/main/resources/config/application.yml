@@ -90,6 +90,11 @@ orkg:
     admin-handle: "20.500.14488/ADMIN"
     key-index: 300
     password: ""
+  snapshots:
+    resources:
+      url-templates:
+        backend: "https://orkg.org/api/resources/{id}/snapshots/{snapshotId}"
+        frontend: "https://orkg.org/resource/{id}/snapshots/{snapshotId}"
 management:
   endpoints:
     enabled-by-default: false

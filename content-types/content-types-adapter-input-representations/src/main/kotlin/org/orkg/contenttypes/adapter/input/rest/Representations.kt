@@ -30,6 +30,8 @@ import org.orkg.contenttypes.domain.PredicateReference
 import org.orkg.contenttypes.domain.ResearchField
 import org.orkg.contenttypes.domain.ResearchProblem
 import org.orkg.contenttypes.domain.ResourceReference
+import org.orkg.contenttypes.domain.SnapshotId
+import org.orkg.contenttypes.domain.identifiers.Handle
 import org.orkg.contenttypes.input.PublicationInfoCommand
 import org.orkg.graph.adapter.input.rest.ResourceRepresentation
 import org.orkg.graph.adapter.input.rest.SimpleAuthorRepresentation
@@ -773,4 +775,18 @@ data class ContributionInfoRepresentation(
     val paperYear: Int?,
     @get:JsonProperty("paper_id")
     val paperId: ThingId,
+)
+
+data class TemplateBasedResourceSnapshotRepresentation(
+    val id: SnapshotId,
+    @get:JsonProperty("created_by")
+    val createdBy: ContributorId,
+    @get:JsonProperty("created_at")
+    val createdAt: OffsetDateTime,
+    val data: TemplateInstanceRepresentation,
+    @get:JsonProperty("resource_id")
+    val resourceId: ThingId,
+    @get:JsonProperty("template_id")
+    val templateId: ThingId,
+    val handle: Handle?,
 )

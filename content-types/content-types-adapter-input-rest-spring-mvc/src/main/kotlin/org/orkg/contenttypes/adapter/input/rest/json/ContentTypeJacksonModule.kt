@@ -11,6 +11,7 @@ import org.orkg.contenttypes.domain.ComparisonHeaderCell
 import org.orkg.contenttypes.domain.ComparisonIndexCell
 import org.orkg.contenttypes.domain.ComparisonTargetCell
 import org.orkg.contenttypes.domain.ConfiguredComparisonTargetCell
+import org.orkg.contenttypes.domain.SnapshotId
 
 class ContentTypeJacksonModule : SimpleModule() {
     override fun setupModule(context: SetupContext?) {
@@ -19,11 +20,13 @@ class ContentTypeJacksonModule : SimpleModule() {
                 addDeserializer(IdentifierMapRequest::class.java, IdentifierMapRequestDeserializer())
                 addDeserializer(TemplatePropertyRequest::class.java, TemplatePropertyRequestDeserializer())
                 addDeserializer(TemplatePropertyRepresentation::class.java, TemplatePropertyRepresentationDeserializer())
+                addDeserializer(SnapshotId::class.java, SnapshotIdDeserializer())
             }
         )
         context?.addSerializers(
             SimpleSerializers().apply {
                 addSerializer(IdentifierMapRequest::class.java, IdentifierMapRequestSerializer())
+                addSerializer(SnapshotId::class.java, SnapshotIdSerializer())
             }
         )
         context?.setMixInAnnotations(ComparisonConfig::class.java, ComparisonConfigMixin::class.java)

@@ -51,7 +51,6 @@ import org.springframework.restdocs.request.RequestDocumentation.parameterWithNa
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -84,7 +83,6 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
             .contentType(TABLE_JSON_V1)
             .perform()
             .andExpect(status().isOk)
-            .andDo(MockMvcResultHandlers.print())
             .andExpectTable()
             .andDo(
                 documentationHandler.document(

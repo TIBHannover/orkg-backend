@@ -475,3 +475,12 @@ fun ResultActions.andExpectContributor(path: String = "$"): ResultActions = this
     .andExpect(jsonPath("$path.curator").doesNotExist())
     .andExpect(jsonPath("$path.emailMD5").doesNotExist())
     .andExpect(jsonPath("$path.email_md5").doesNotExist())
+
+fun ResultActions.andExpectTemplateBasedResourceSnapshot(path: String = "$"): ResultActions = this
+    .andExpect(jsonPath("$path.id", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.created_by", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.created_at", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.data", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.resource_id", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.template_id", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.handle", `is`(notNullValue())))

@@ -47,5 +47,8 @@ include::content-types/template-properties.adoc[leveloffset=+1]
 [[template-instances]]
 include::content-types/template-instances.adoc[leveloffset=+1]
 
+[[template-based-resource-snapshots]]
+include::content-types/template-based-resource-snapshots.adoc[leveloffset=+1]
+
 [[visualizations]]
 include::content-types/visualizations.adoc[leveloffset=+1]

@@ -32,7 +32,7 @@ interface TemplateInstanceRepresentationAdapter :
         return map { it.toTemplateInstanceRepresentation(statementCounts, formattedLabels, descriptions) }
     }
 
-    private fun TemplateInstance.toTemplateInstanceRepresentation(
+    fun TemplateInstance.toTemplateInstanceRepresentation(
         capabilities: MediaTypeCapabilities,
     ): TemplateInstanceRepresentation {
         val resources = resources()
@@ -42,7 +42,7 @@ interface TemplateInstanceRepresentationAdapter :
         return toTemplateInstanceRepresentation(counts, labels, descriptions)
     }
 
-    private fun TemplateInstance.toTemplateInstanceRepresentation(
+    fun TemplateInstance.toTemplateInstanceRepresentation(
         statementCounts: StatementCounts,
         formattedLabels: FormattedLabels,
         descriptions: Map<ThingId, String>,

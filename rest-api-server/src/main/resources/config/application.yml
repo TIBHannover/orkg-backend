@@ -85,6 +85,11 @@ orkg:
     registration-endpoint: "${orkg.keycloak.host}/realms/${orkg.keycloak.realm}/clients-registrations/openid-connect"
   concurrent:
     task-scheduler-thead-pool-size: 3
+  handles:
+    prefix: "20.500.14488"
+    admin-handle: "20.500.14488/ADMIN"
+    key-index: 300
+    password: ""
 management:
   endpoints:
     enabled-by-default: false

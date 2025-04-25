@@ -47,6 +47,7 @@ dependencies {
     api("org.jbibtex:jbibtex:1.0.20")
     api("net.datafaker:datafaker:2.4.2")
     api("commons-fileupload:commons-fileupload:1.5")
+    api("net.handle:handle-client:9.3.1")
 
     // Declare constraints on all components that need alignment
     constraints {

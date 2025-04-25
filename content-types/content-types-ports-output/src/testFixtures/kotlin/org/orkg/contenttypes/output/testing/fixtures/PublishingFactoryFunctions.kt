@@ -4,6 +4,7 @@ import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.output.DoiService
+import org.orkg.contenttypes.output.HandleService
 import org.orkg.graph.domain.Classes
 import java.net.URI
 
@@ -33,4 +34,10 @@ fun dummyRegisterDoiCommand(): DoiService.RegisterCommand =
         resourceType = Classes.paper.value,
         resourceTypeGeneral = "Dataset",
         relatedIdentifiers = listOf("10.48366/r609337")
+    )
+
+fun registerHandleCommand(): HandleService.RegisterCommand =
+    HandleService.RegisterCommand(
+        suffix = "182",
+        url = URI.create("https://example.org"),
     )

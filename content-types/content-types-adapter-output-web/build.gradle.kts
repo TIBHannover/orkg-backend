@@ -7,6 +7,7 @@ plugins {
 }
 
 dependencies {
+    api("org.springframework:spring-beans")
     api("org.springframework:spring-context")
     api("com.fasterxml.jackson.core:jackson-databind")
     api(project(":content-types:content-types-core-model"))
@@ -15,6 +16,7 @@ dependencies {
     implementation("dev.forkhandles:values4k")
     implementation(project(":common:spring-webmvc"))
     implementation(project(":integrations:datacite-serialization"))
+    implementation("net.handle:handle-client")
 }
 
 testing {

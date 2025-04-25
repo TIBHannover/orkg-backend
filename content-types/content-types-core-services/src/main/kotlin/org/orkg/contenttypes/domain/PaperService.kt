@@ -1,6 +1,7 @@
 package org.orkg.contenttypes.domain
 
 import org.orkg.common.ContributorId
+import org.orkg.common.DOI
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.PageRequests
@@ -62,7 +63,6 @@ import org.orkg.contenttypes.domain.actions.papers.PaperVersionArchiver
 import org.orkg.contenttypes.domain.actions.papers.PaperVersionCreator
 import org.orkg.contenttypes.domain.actions.papers.PaperVersionDoiPublisher
 import org.orkg.contenttypes.domain.actions.papers.PaperVersionHistoryUpdater
-import org.orkg.contenttypes.domain.identifiers.DOI
 import org.orkg.contenttypes.input.PaperUseCases
 import org.orkg.contenttypes.output.DoiService
 import org.orkg.contenttypes.output.PaperPublishedRepository

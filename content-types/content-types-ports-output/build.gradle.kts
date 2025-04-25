@@ -4,9 +4,10 @@ plugins {
 
 dependencies {
     api("org.springframework.data:spring-data-commons")
-    api(project(":common:identifiers"))
+    api(project(":common:core-identifiers"))
     api(project(":content-types:content-types-core-model"))
     api(project(":graph:graph-core-model"))
+    implementation(project(":common:external-identifiers"))
 
     testFixturesApi("io.kotest:kotest-framework-api")
     testFixturesApi("org.junit.jupiter:junit-jupiter-api")
@@ -19,7 +20,8 @@ dependencies {
     testFixturesImplementation("io.kotest:kotest-assertions-core")
     testFixturesImplementation("io.kotest:kotest-runner-junit5")
     testFixturesImplementation(project(":common:pagination"))
-    testFixturesImplementation(project(":common:identifiers"))
+    testFixturesImplementation(project(":common:core-identifiers"))
+    testFixturesImplementation(project(":common:external-identifiers"))
     testFixturesImplementation(project(":content-types:content-types-core-model"))
     testFixturesImplementation(project(":graph:graph-core-constants"))
     testFixturesImplementation(project(":graph:graph-core-model"))

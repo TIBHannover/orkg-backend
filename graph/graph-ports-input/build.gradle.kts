@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":common:identifiers"))
+    api(project(":common:core-identifiers"))
     api(project(":graph:graph-core-model"))
 
     api("org.eclipse.rdf4j:rdf4j-common-io")

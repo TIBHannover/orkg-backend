@@ -14,9 +14,9 @@ import net.handle.api.HSAdapterFactory
 import net.handle.hdllib.HandleException
 import net.handle.hdllib.HandleValue
 import org.junit.jupiter.api.Test
+import org.orkg.common.Handle
 import org.orkg.common.exceptions.ServiceUnavailable
 import org.orkg.common.testing.fixtures.MockkBaseTest
-import org.orkg.contenttypes.domain.identifiers.Handle
 import org.orkg.contenttypes.output.testing.fixtures.registerHandleCommand
 
 internal class HandleServiceAdapterUnitTest : MockkBaseTest {

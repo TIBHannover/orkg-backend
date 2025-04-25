@@ -14,7 +14,7 @@ dependencies {
     api("org.springframework:spring-context")
     api(project(":common:spring-data"))
     implementation(project(":common:string-utils"))
-    api(project(":common:identifiers"))
+    api(project(":common:core-identifiers"))
     api(project(":community:community-core-model"))
     api(project(":community:community-ports-output"))
     api(project(":eventbus"))

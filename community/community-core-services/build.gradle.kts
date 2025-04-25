@@ -9,7 +9,7 @@ dependencies {
     api("org.springframework.data:spring-data-commons")
     api("org.springframework:spring-context")
     api(project(":common:spring-data"))
-    api(project(":common:identifiers"))
+    api(project(":common:core-identifiers"))
     api(project(":community:community-core-model"))
     api(project(":community:community-ports-input"))
     api(project(":community:community-ports-output"))

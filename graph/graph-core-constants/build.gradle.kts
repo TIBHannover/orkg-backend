@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    api(project(":common:identifiers"))
+    api(project(":common:core-identifiers"))
 }

@@ -1,10 +1,10 @@
 package org.orkg.contenttypes.adapter.output.web
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.orkg.common.DOI
 import org.orkg.common.exceptions.ServiceUnavailable
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.configuration.DataCiteConfiguration
-import org.orkg.contenttypes.domain.identifiers.DOI
 import org.orkg.contenttypes.output.DoiService
 import org.orkg.integration.datacite.json.DataCiteJson
 import org.orkg.integration.datacite.json.DataCiteJson.Attributes

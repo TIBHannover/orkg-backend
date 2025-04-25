@@ -16,7 +16,7 @@ dependencies {
     api("org.springframework:spring-web")
     api("com.fasterxml.jackson.core:jackson-databind")
     api("jakarta.validation:jakarta.validation-api")
-    api(project(":common:identifiers"))
+    api(project(":common:core-identifiers"))
     api(project(":common:spring-webmvc"))
     api(project(":community:community-ports-input"))
     api(project(":graph:graph-core-model"))

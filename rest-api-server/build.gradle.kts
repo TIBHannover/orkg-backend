@@ -97,7 +97,8 @@ dependencies {
 
     // This project is essentially a "configuration" project in Spring's sense, so we depend on all components:
     implementation(project(":common:pagination"))
-    implementation(project(":common:identifiers"))
+    implementation(project(":common:core-identifiers"))
+    runtimeOnly(project(":common:external-identifiers"))
     runtimeOnly(project(":common:serialization"))
 
     runtimeOnly(project(":community:community-adapter-input-keycloak"))
@@ -233,7 +234,7 @@ dependencies {
     "integrationTestRuntimeOnly"("io.kotest.extensions:kotest-extensions-spring")
     "integrationTestRuntimeOnly"("io.kotest.extensions:kotest-extensions-testcontainers")
     "integrationTestRuntimeOnly"("io.kotest:kotest-framework-datatest")
-    "integrationTestApi"(project(":common:identifiers"))
+    "integrationTestApi"(project(":common:core-identifiers"))
     "integrationTestApi"(project(":community:community-core-model"))
     "integrationTestApi"(project(":community:community-ports-input"))
     "integrationTestApi"(project(":graph:graph-core-model"))
@@ -250,6 +251,7 @@ dependencies {
     "integrationTestImplementation"("org.springframework.restdocs:spring-restdocs-core")
     "integrationTestImplementation"("org.springframework:spring-beans")
     "integrationTestImplementation"("org.springframework:spring-test")
+    "integrationTestImplementation"(project(":common:external-identifiers"))
     "integrationTestImplementation"(project(":content-types:content-types-adapter-input-rest-spring-mvc"))
     "integrationTestImplementation"(project(":content-types:content-types-core-model"))
     "integrationTestImplementation"(project(":content-types:content-types-ports-input"))

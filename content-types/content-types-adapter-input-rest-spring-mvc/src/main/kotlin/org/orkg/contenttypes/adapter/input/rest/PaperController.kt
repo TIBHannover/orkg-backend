@@ -6,6 +6,7 @@ import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
 import org.orkg.common.ContributorId
+import org.orkg.common.DOI
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
@@ -16,7 +17,6 @@ import org.orkg.contenttypes.adapter.input.rest.mapping.PaperRepresentationAdapt
 import org.orkg.contenttypes.domain.InvalidDOI
 import org.orkg.contenttypes.domain.PaperNotFound
 import org.orkg.contenttypes.domain.PaperWithStatementCount
-import org.orkg.contenttypes.domain.identifiers.DOI
 import org.orkg.contenttypes.input.CreateContributionCommandPart
 import org.orkg.contenttypes.input.CreateContributionUseCase
 import org.orkg.contenttypes.input.CreatePaperUseCase

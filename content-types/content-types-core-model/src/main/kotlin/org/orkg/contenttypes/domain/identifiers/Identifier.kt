@@ -1,5 +1,6 @@
 package org.orkg.contenttypes.domain.identifiers
 
+import org.orkg.common.IdentifierValue
 import org.orkg.common.ThingId
 
 data class Identifier(

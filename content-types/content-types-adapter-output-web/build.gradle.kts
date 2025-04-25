@@ -14,6 +14,7 @@ dependencies {
     api(project(":content-types:content-types-ports-output"))
     implementation("org.springframework:spring-web")
     implementation("dev.forkhandles:values4k")
+    implementation(project(":common:external-identifiers"))
     implementation(project(":common:spring-webmvc"))
     implementation(project(":integrations:datacite-serialization"))
     implementation("net.handle:handle-client")

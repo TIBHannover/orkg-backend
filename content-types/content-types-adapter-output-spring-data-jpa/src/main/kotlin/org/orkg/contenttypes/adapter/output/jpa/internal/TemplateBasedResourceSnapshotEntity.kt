@@ -5,13 +5,13 @@ import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Table
 import org.orkg.common.ContributorId
+import org.orkg.common.Handle
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.SnapshotId
 import org.orkg.contenttypes.domain.TemplateBasedResourceSnapshot
 import org.orkg.contenttypes.domain.TemplateBasedResourceSnapshot.ModelVersion
 import org.orkg.contenttypes.domain.TemplateBasedResourceSnapshotV1
 import org.orkg.contenttypes.domain.TemplateInstance
-import org.orkg.contenttypes.domain.identifiers.Handle
 import java.time.ZoneOffset
 
 @Entity

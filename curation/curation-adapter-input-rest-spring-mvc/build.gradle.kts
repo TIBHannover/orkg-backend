@@ -16,7 +16,7 @@ testing {
                 implementation("org.springframework.boot:spring-boot-test-autoconfigure")
                 implementation("org.springframework:spring-test")
                 implementation("com.ninja-squad:springmockk")
-                implementation(project(":common:identifiers"))
+                implementation(project(":common:core-identifiers"))
                 implementation(project(":common:spring-webmvc"))
                 implementation(project(":common:serialization"))
                 implementation(testFixtures(project(":graph:graph-core-model")))

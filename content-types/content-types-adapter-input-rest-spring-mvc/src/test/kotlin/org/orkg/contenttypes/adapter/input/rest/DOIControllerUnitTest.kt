@@ -5,12 +5,12 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.verify
 import org.junit.jupiter.api.Test
+import org.orkg.common.DOI
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.configuration.DataCiteConfiguration
-import org.orkg.contenttypes.domain.identifiers.DOI
 import org.orkg.contenttypes.output.DoiService
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.LiteralUseCases

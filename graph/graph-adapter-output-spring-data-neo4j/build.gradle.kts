@@ -8,7 +8,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":common:identifiers"))
+    api(project(":common:core-identifiers"))
     api(project(":common:spring-data"))
     api(project(":common:neo4j-dsl"))
     api(project(":graph:graph-core-model"))
@@ -29,7 +29,7 @@ dependencies {
     implementation("org.eclipse.rdf4j:rdf4j-common-io")
     implementation("org.apache.lucene:lucene-queryparser")
 
-    testFixturesApi(project(":common:identifiers"))
+    testFixturesApi(project(":common:core-identifiers"))
 
     testApi("io.kotest:kotest-framework-api")
 }

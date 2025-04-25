@@ -1,7 +1,7 @@
 package org.orkg.contenttypes.output
 
+import org.orkg.common.DOI
 import org.orkg.contenttypes.domain.Author
-import org.orkg.contenttypes.domain.identifiers.DOI
 import java.net.URI
 
 interface DoiService {

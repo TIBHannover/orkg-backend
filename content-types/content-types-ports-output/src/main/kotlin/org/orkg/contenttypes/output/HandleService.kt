@@ -1,6 +1,6 @@
 package org.orkg.contenttypes.output
 
-import org.orkg.contenttypes.domain.identifiers.Handle
+import org.orkg.common.Handle
 import java.net.URI
 
 interface HandleService {

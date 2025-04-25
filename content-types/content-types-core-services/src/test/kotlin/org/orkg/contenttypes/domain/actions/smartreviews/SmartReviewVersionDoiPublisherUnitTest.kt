@@ -8,11 +8,11 @@ import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
 import org.junit.jupiter.api.Test
+import org.orkg.common.DOI
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.PublishSmartReviewState
 import org.orkg.contenttypes.domain.actions.SingleStatementPropertyCreator
-import org.orkg.contenttypes.domain.identifiers.DOI
 import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
 import org.orkg.contenttypes.input.testing.fixtures.publishSmartReviewCommand
 import org.orkg.contenttypes.output.DoiService

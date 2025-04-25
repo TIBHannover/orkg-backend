@@ -1,7 +1,7 @@
 package org.orkg.contenttypes.domain
 
+import org.orkg.common.Handle
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.domain.identifiers.Handle
 import org.orkg.contenttypes.input.CreateTemplateBasedResourceSnapshotUseCase
 import org.orkg.contenttypes.input.TemplateBasedResourceSnapshotUseCases
 import org.orkg.contenttypes.input.TemplateInstanceUseCases

@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":common:identifiers"))
+    api(project(":common:core-identifiers"))
     api(project(":media-storage:media-storage-core-model"))
     api("org.springframework:spring-core")
 }

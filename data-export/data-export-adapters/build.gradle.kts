@@ -35,7 +35,7 @@ dependencies {
     api("org.springframework:spring-context")
     api("org.springframework:spring-core")
     api("org.springframework:spring-web")
-    api(project(":common:identifiers"))
+    api(project(":common:core-identifiers"))
     api(project(":common:spring-webmvc"))
     api(project(":data-export:data-export-ports-input"))
     api(project(":graph:graph-adapter-input-representations"))

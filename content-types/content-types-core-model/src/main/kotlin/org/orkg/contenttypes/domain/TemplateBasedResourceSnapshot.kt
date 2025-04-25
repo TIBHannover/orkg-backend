@@ -1,9 +1,9 @@
 package org.orkg.contenttypes.domain
 
 import org.orkg.common.ContributorId
+import org.orkg.common.Handle
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.TemplateBasedResourceSnapshot.ModelVersion
-import org.orkg.contenttypes.domain.identifiers.Handle
 import java.time.OffsetDateTime
 
 sealed interface TemplateBasedResourceSnapshot<T : Any> : Snapshot<T, ModelVersion> {

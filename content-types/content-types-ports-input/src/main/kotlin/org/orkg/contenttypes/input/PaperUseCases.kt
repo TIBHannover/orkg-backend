@@ -1,13 +1,13 @@
 package org.orkg.contenttypes.input
 
 import org.orkg.common.ContributorId
+import org.orkg.common.DOI
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.Paper
 import org.orkg.contenttypes.domain.PaperWithStatementCount
-import org.orkg.contenttypes.domain.identifiers.DOI
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.SearchString

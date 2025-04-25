@@ -1,10 +1,10 @@
 package org.orkg.contenttypes.domain.testing.fixtures
 
 import org.orkg.common.ContributorId
+import org.orkg.common.Handle
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.SnapshotId
 import org.orkg.contenttypes.domain.TemplateBasedResourceSnapshotV1
-import org.orkg.contenttypes.domain.identifiers.Handle
 import java.time.OffsetDateTime
 
 fun createTemplateBasedResourceSnapshotV1() = TemplateBasedResourceSnapshotV1(

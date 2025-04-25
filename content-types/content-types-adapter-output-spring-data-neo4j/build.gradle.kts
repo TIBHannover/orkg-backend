@@ -34,7 +34,7 @@ dependencies {
     api("org.springframework.data:spring-data-commons")
     api("org.springframework.data:spring-data-neo4j")
     api("org.springframework:spring-context")
-    api(project(":common:identifiers"))
+    api(project(":common:core-identifiers"))
     api(project(":content-types:content-types-core-model"))
     api(project(":content-types:content-types-ports-output"))
     api(project(":graph:graph-adapter-output-spring-data-neo4j"))

@@ -1,5 +1,15 @@
 package org.orkg.contenttypes.domain.identifiers
 
+import org.orkg.common.DOI
+import org.orkg.common.GoogleScholarId
+import org.orkg.common.ISBN
+import org.orkg.common.ISSN
+import org.orkg.common.LinkedInId
+import org.orkg.common.ORCID
+import org.orkg.common.OpenAlexId
+import org.orkg.common.ResearchGateId
+import org.orkg.common.ResearcherId
+import org.orkg.common.WikidataId
 import org.orkg.graph.domain.Predicates
 
 object Identifiers {

@@ -3,8 +3,8 @@ package org.orkg.contenttypes.adapter.output.web
 import net.handle.api.HSAdapter
 import net.handle.api.HSAdapterFactory
 import net.handle.hdllib.HandleException
+import org.orkg.common.Handle
 import org.orkg.common.exceptions.ServiceUnavailable
-import org.orkg.contenttypes.domain.identifiers.Handle
 import org.orkg.contenttypes.output.HandleService
 import org.orkg.contenttypes.output.HandleService.RegisterCommand
 import org.springframework.beans.factory.annotation.Value

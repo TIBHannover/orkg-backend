@@ -4,12 +4,12 @@ import dev.forkhandles.fabrikate.Fabricator
 import dev.forkhandles.fabrikate.FabricatorConfig
 import dev.forkhandles.fabrikate.Fabrikate
 import dev.forkhandles.fabrikate.register
+import org.orkg.common.Handle
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.EmbeddedStatement
 import org.orkg.contenttypes.domain.RosettaStoneStatement
 import org.orkg.contenttypes.domain.RosettaStoneStatementVersion
 import org.orkg.contenttypes.domain.TemplateInstance
-import org.orkg.contenttypes.domain.identifiers.Handle
 import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.Predicate

@@ -6,7 +6,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":common:identifiers"))
+    api(project(":common:core-identifiers"))
     api(project(":community:community-ports-input"))
     api(project(":community:community-ports-output"))
     api(project(":graph:graph-core-model"))

@@ -13,7 +13,7 @@ dependencies {
     api("org.springframework.boot:spring-boot-autoconfigure")
     api("org.springframework.data:spring-data-commons")
     api("org.springframework.data:spring-data-jpa")
-    api(project(":common:identifiers"))
+    api(project(":common:core-identifiers"))
     api(project(":common:spring-data"))
     api(project(":content-types:content-types-core-model"))
     api(project(":content-types:content-types-ports-output"))
@@ -21,6 +21,7 @@ dependencies {
     implementation("dev.forkhandles:values4k")
     implementation("io.hypersistence:hypersistence-utils-hibernate-63")
     implementation("org.hibernate.orm:hibernate-core")
+    implementation(project(":common:external-identifiers"))
     implementation(project(":common:pagination"))
     runtimeOnly(project(":graph:graph-adapter-input-rest-spring-mvc")) // for thing serialization
     runtimeOnly("com.fasterxml.jackson.datatype:jackson-datatype-jsr310") // for timestamp serialization

@@ -7,7 +7,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":common:identifiers"))
+    api(project(":common:core-identifiers"))
     implementation(project(":common:string-utils"))
     api("com.fasterxml.jackson.core:jackson-annotations")
     api("com.fasterxml.jackson.core:jackson-databind")

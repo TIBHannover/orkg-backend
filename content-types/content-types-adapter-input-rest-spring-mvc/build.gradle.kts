@@ -16,7 +16,7 @@ dependencies {
     api("org.springframework:spring-beans")
     api("org.springframework:spring-context")
     api("org.springframework:spring-web")
-    api(project(":common:identifiers"))
+    api(project(":common:core-identifiers"))
     api(project(":common:spring-webmvc"))
     api(project(":community:community-core-model"))
     api(project(":community:community-ports-input"))
@@ -32,12 +32,13 @@ dependencies {
     implementation("org.eclipse.rdf4j:rdf4j-common-io")
     implementation("org.slf4j:slf4j-api")
     implementation(project(":common:datatypes"))
+    implementation(project(":common:external-identifiers"))
     implementation(project(":common:functional"))
     implementation(project(":common:serialization"))
     implementation(project(":graph:graph-core-constants"))
     testFixturesApi(project(":content-types:content-types-adapter-input-representations"))
     testFixturesImplementation(project(":common:datatypes"))
-    testFixturesImplementation(project(":common:identifiers"))
+    testFixturesImplementation(project(":common:core-identifiers"))
     testFixturesImplementation(project(":graph:graph-core-constants"))
 }
 

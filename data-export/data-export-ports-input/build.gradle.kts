@@ -4,5 +4,5 @@ plugins {
 
 dependencies {
     api("org.eclipse.rdf4j:rdf4j-model-api")
-    api(project(":common:identifiers"))
+    api(project(":common:core-identifiers"))
 }

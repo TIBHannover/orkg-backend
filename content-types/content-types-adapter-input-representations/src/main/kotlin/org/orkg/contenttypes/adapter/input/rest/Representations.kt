@@ -14,6 +14,7 @@ import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
+import org.orkg.common.Handle
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.RealNumber
@@ -31,7 +32,6 @@ import org.orkg.contenttypes.domain.ResearchField
 import org.orkg.contenttypes.domain.ResearchProblem
 import org.orkg.contenttypes.domain.ResourceReference
 import org.orkg.contenttypes.domain.SnapshotId
-import org.orkg.contenttypes.domain.identifiers.Handle
 import org.orkg.contenttypes.input.PublicationInfoCommand
 import org.orkg.graph.adapter.input.rest.ResourceRepresentation
 import org.orkg.graph.adapter.input.rest.SimpleAuthorRepresentation

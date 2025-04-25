@@ -11,34 +11,22 @@ dependencies {
     api("org.eclipse.rdf4j:rdf4j-common-io")
     api("org.springframework.boot:spring-boot")
     api("org.springframework:spring-context")
-    api("dev.forkhandles:values4k")
-    api(project(":common:identifiers"))
+    api("org.springframework:spring-web")
+    api(project(":common:core-identifiers"))
     api(project(":common:datatypes"))
+    api(project(":common:external-identifiers"))
     api(project(":common:spring-webmvc"))
     api(project(":graph:graph-core-model"))
     implementation(project(":graph:graph-core-constants"))
-    api("org.springframework:spring-web")
+    implementation("dev.forkhandles:values4k")
 
-    testFixturesApi(project(":common:identifiers"))
     testFixturesImplementation(project(":common:datatypes"))
-    testFixturesApi(project(":graph:graph-core-model"))
     testFixturesApi("dev.forkhandles:fabrikate4k")
+    testFixturesApi(project(":common:core-identifiers"))
+    testFixturesApi(project(":common:external-identifiers"))
+    testFixturesApi(project(":graph:graph-core-model"))
     testFixturesImplementation("org.eclipse.rdf4j:rdf4j-common-io")
     testFixturesImplementation("dev.forkhandles:values4k")
     testFixturesImplementation(testFixtures(project(":graph:graph-core-model")))
     testFixturesImplementation(project(":graph:graph-core-constants"))
-}
-
-testing {
-    suites {
-        val test by getting(JvmTestSuite::class) {
-            dependencies {
-                implementation("io.kotest:kotest-assertions-shared")
-                implementation("org.junit.jupiter:junit-jupiter-api")
-                implementation("org.junit.jupiter:junit-jupiter-params")
-                implementation("io.kotest:kotest-runner-junit5")
-                implementation(project(":content-types:content-types-core-model"))
-            }
-        }
-    }
 }

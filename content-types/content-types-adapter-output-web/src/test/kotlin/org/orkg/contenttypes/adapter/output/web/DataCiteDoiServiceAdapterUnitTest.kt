@@ -11,6 +11,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.Test
+import org.orkg.common.DOI
 import org.orkg.common.exceptions.ServiceUnavailable
 import org.orkg.common.testing.fixtures.Assets.requestJson
 import org.orkg.common.testing.fixtures.Assets.responseJson
@@ -18,7 +19,6 @@ import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.common.testing.fixtures.TestBodyPublisher
 import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.contenttypes.domain.configuration.DataCiteConfiguration
-import org.orkg.contenttypes.domain.identifiers.DOI
 import org.orkg.contenttypes.output.testing.fixtures.dummyRegisterDoiCommand
 import org.springframework.http.MediaType
 import java.net.URI

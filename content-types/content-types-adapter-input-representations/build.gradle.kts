@@ -7,7 +7,7 @@ dependencies {
     api("org.eclipse.rdf4j:rdf4j-common-io")
     api("org.springframework.data:spring-data-commons")
     api(project(":common:datatypes"))
-    api(project(":common:identifiers"))
+    api(project(":common:core-identifiers"))
     api(project(":common:spring-webmvc"))
     api(project(":community:community-core-model"))
     api(project(":community:community-ports-input"))
@@ -17,4 +17,5 @@ dependencies {
     api(project(":graph:graph-core-model"))
     implementation("jakarta.validation:jakarta.validation-api")
     implementation(project(":common:serialization"))
+    implementation(project(":common:external-identifiers"))
 }

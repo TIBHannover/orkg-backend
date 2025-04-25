@@ -9,9 +9,9 @@ import io.mockk.runs
 import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
+import org.orkg.common.Handle
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.common.testing.fixtures.fixedClock
-import org.orkg.contenttypes.domain.identifiers.Handle
 import org.orkg.contenttypes.domain.testing.fixtures.createTemplate
 import org.orkg.contenttypes.domain.testing.fixtures.createTemplateInstance
 import org.orkg.contenttypes.input.CreateTemplateBasedResourceSnapshotUseCase

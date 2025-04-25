@@ -1,12 +1,12 @@
 package org.orkg.contenttypes.domain
 
 import org.orkg.common.ContributorId
+import org.orkg.common.ORCID
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.community.domain.Contributor
 import org.orkg.community.input.RetrieveContributorUseCase
-import org.orkg.contenttypes.domain.identifiers.ORCID
 import org.orkg.contenttypes.input.LegacyCreatePaperUseCase
 import org.orkg.contenttypes.input.LegacyPaperUseCases
 import org.orkg.contenttypes.output.PaperRepository

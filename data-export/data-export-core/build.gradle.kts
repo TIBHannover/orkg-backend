@@ -10,7 +10,7 @@ dependencies {
     api("org.eclipse.rdf4j:rdf4j-model-api")
     api("org.springframework:spring-beans")
     api("org.springframework:spring-context")
-    api(project(":common:identifiers"))
+    api(project(":common:core-identifiers"))
     api(project(":content-types:content-types-ports-input"))
     api(project(":content-types:content-types-ports-output"))
     api(project(":data-export:data-export-ports-input"))

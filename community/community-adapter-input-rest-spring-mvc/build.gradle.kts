@@ -48,7 +48,7 @@ dependencies {
     api("org.springframework.security:spring-security-core")
     api("org.springframework:spring-context")
     api("org.springframework:spring-web")
-    api(project(":common:identifiers"))
+    api(project(":common:core-identifiers"))
     api(project(":common:spring-webmvc"))
     api(project(":community:community-adapter-input-representations"))
     api(project(":community:community-core-model"))

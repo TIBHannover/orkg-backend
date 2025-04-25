@@ -12,6 +12,7 @@ import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
+import org.orkg.common.DOI
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
@@ -42,7 +43,6 @@ import org.orkg.contenttypes.domain.PaperNotFound
 import org.orkg.contenttypes.domain.ThingIsNotAClass
 import org.orkg.contenttypes.domain.ThingIsNotAPredicate
 import org.orkg.contenttypes.domain.ThingNotDefined
-import org.orkg.contenttypes.domain.identifiers.DOI
 import org.orkg.contenttypes.domain.testing.fixtures.createPaper
 import org.orkg.contenttypes.input.CreateContributionUseCase
 import org.orkg.contenttypes.input.CreatePaperUseCase

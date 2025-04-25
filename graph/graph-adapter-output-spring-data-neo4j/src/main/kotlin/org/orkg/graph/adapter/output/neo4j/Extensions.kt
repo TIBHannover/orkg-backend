@@ -115,6 +115,12 @@ data class ClassMapper(val name: String) : BiFunction<TypeSystem, Record, Class>
     override fun apply(typeSystem: TypeSystem, record: Record) = record[name].asNode().toClass()
 }
 
+data class ThingMapper(val name: String) : BiFunction<TypeSystem, Record, Thing> {
+    constructor(symbolicName: SymbolicName) : this(symbolicName.value)
+
+    override fun apply(typeSystem: TypeSystem, record: Record) = record[name].asNode().toThing()
+}
+
 fun Node.toLiteral() = Literal(
     id = this["id"].toThingId()!!,
     label = this["label"].asString(),

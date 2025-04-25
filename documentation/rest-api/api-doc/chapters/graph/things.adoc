@@ -13,3 +13,16 @@ operation::things-get-single[snippets='path-parameters,curl-request,http-respons
 [[things-fetch_response_fields]]
 === Response fields
 The response object can either be a <<classes-fetch,class>>, <<resources-fetch,resource>>, <<predicates-fetch,predicate>> or a <<literals-fetch,literal>>.
+
+[[things-list]]
+== Listing Things
+
+A `GET` request lists all things.
+
+TIP: {pagination_note}
+
+operation::things-get-paged[snippets='curl-request']
+
+The following list of request parameters are supported:
+
+operation::things-get-paged-with-parameters[snippets='query-parameters,curl-request']

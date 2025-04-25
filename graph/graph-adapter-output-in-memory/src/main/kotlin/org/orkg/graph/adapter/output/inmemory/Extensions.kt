@@ -7,8 +7,6 @@ import org.orkg.graph.domain.Literal
 import org.orkg.graph.domain.Predicate
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
-import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 
 internal fun String.matches(searchString: SearchString): Boolean = when (searchString) {
@@ -113,6 +111,3 @@ internal fun <T : Comparable<T>> Sort.Order.compare(a: T?, b: T?): Int {
     }
     return if (isAscending) result else -result
 }
-
-internal inline fun Pageable.withDefaultSort(sort: () -> Sort): Pageable =
-    if (this.sort.isSorted) this else PageRequest.of(pageNumber, pageSize, sort())

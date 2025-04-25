@@ -47,6 +47,7 @@ dependencies {
     api("org.jbibtex:jbibtex:1.0.20")
     api("net.datafaker:datafaker:2.4.2")
     api("commons-fileupload:commons-fileupload:1.5")
+    api("io.hypersistence:hypersistence-utils-hibernate-63:3.9.9") // jsonb support for hibernate
     api("net.handle:handle-client:9.3.1")
 
     // Declare constraints on all components that need alignment

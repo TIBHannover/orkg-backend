@@ -285,9 +285,6 @@ fun matchDistinct(
         match(node).let { if (patterns.isNotEmpty()) it.match(patterns) else it }.withDistinct(node)
     }
 
-inline fun Pageable.withDefaultSort(sort: () -> Sort): Pageable =
-    if (this.sort.isSorted) this else PageRequest.of(pageNumber, pageSize, sort())
-
 fun Pageable.withSort(sort: Sort): Pageable =
     PageRequest.of(pageNumber, pageSize, sort)
 

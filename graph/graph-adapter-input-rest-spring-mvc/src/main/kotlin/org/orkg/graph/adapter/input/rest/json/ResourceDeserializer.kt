@@ -30,7 +30,7 @@ class ResourceDeserializer : JsonDeserializer<Resource>() {
             visibility = this["visibility"]?.asText()?.let(Visibility::valueOf)
                 ?: visibilityFromFlags(this["featured"]?.asBoolean(), this["unlisted"]?.asBoolean()),
             verified = this["verified"]?.asBoolean(),
-            unlistedBy = this["unlisted_by"]?.asText()?.let(::ContributorId),
+            unlistedBy = this["unlisted_by"]?.textValue()?.let(::ContributorId),
             modifiable = this["modifiable"]?.asBoolean() ?: true
         )
     }

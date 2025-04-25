@@ -1,9 +1,9 @@
 package org.orkg.curation.adapter.output.neo4j
 
+import org.orkg.common.withDefaultSort
 import org.orkg.curation.adapter.output.neo4j.internal.Neo4jClassCurationRepository
 import org.orkg.curation.adapter.output.neo4j.internal.Neo4jPredicateCurationRepository
 import org.orkg.curation.output.CurationRepository
-import org.orkg.graph.adapter.output.neo4j.withDefaultSort
 import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.Predicate
 import org.springframework.data.domain.Page

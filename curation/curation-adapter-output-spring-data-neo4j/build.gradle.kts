@@ -38,4 +38,5 @@ dependencies {
     api(project(":curation:curation-ports-output"))
     api(project(":graph:graph-adapter-output-spring-data-neo4j"))
     api(project(":graph:graph-core-model"))
+    implementation(project(":common:pagination"))
 }

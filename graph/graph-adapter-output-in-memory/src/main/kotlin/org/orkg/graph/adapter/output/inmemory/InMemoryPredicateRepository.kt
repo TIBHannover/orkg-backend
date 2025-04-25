@@ -2,6 +2,7 @@ package org.orkg.graph.adapter.output.inmemory
 
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.common.withDefaultSort
 import org.orkg.graph.domain.Predicate
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.output.PredicateRepository

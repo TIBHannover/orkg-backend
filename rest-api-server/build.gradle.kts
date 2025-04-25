@@ -112,6 +112,7 @@ dependencies {
 
     runtimeOnly(project(":content-types:content-types-adapter-input-rest-spring-mvc"))
     implementation(project(":content-types:content-types-adapter-output-simcomp"))
+    runtimeOnly(project(":content-types:content-types-adapter-output-spring-data-jpa"))
     runtimeOnly(project(":content-types:content-types-adapter-output-spring-data-neo4j"))
     runtimeOnly(project(":content-types:content-types-adapter-output-web"))
     runtimeOnly(project(":content-types:content-types-core-model"))

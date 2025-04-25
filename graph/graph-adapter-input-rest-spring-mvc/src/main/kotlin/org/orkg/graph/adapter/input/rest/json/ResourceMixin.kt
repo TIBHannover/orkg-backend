@@ -1,5 +1,6 @@
 package org.orkg.graph.adapter.input.rest.json
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
@@ -18,6 +19,7 @@ abstract class ResourceMixin(
     val extractionMethod: ExtractionMethod,
     @field:JsonProperty("organization_id")
     val organizationId: OrganizationId,
+    @field:JsonInclude(JsonInclude.Include.NON_NULL)
     @field:JsonProperty("unlisted_by")
     val unlistedBy: ContributorId?,
 )

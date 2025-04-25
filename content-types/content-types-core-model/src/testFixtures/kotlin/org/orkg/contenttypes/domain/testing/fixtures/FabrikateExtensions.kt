@@ -4,12 +4,17 @@ import dev.forkhandles.fabrikate.Fabricator
 import dev.forkhandles.fabrikate.FabricatorConfig
 import dev.forkhandles.fabrikate.Fabrikate
 import dev.forkhandles.fabrikate.register
+import org.orkg.common.ThingId
+import org.orkg.contenttypes.domain.EmbeddedStatement
 import org.orkg.contenttypes.domain.RosettaStoneStatement
 import org.orkg.contenttypes.domain.RosettaStoneStatementVersion
+import org.orkg.contenttypes.domain.TemplateInstance
+import org.orkg.contenttypes.domain.identifiers.Handle
 import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.Predicate
 import org.orkg.graph.domain.Resource
+import kotlin.math.absoluteValue
 
 class RosettaStoneStatementVersionFabricator : Fabricator<RosettaStoneStatementVersion> {
     override fun invoke(fabrikate: Fabrikate): RosettaStoneStatementVersion = RosettaStoneStatementVersion(
@@ -51,7 +56,38 @@ class RosettaStoneStatementFabricator : Fabricator<RosettaStoneStatement> {
     )
 }
 
+class EmbeddedStatementFabricator : Fabricator<EmbeddedStatement> {
+    override fun invoke(fabrikate: Fabrikate): EmbeddedStatement = EmbeddedStatement(
+        thing = fabrikate.random(),
+        createdAt = fabrikate.random(),
+        createdBy = fabrikate.random(),
+        statements = emptyMap()
+    )
+}
+
+class TemplateInstanceFabricator : Fabricator<TemplateInstance> {
+    override fun invoke(fabrikate: Fabrikate): TemplateInstance {
+        val predicateIds = fabrikate.random<List<ThingId>>()
+        return TemplateInstance(
+            root = fabrikate.random<Resource>(),
+            predicates = predicateIds.associateWith { fabrikate.random<Predicate>() },
+            statements = predicateIds.associate { it to fabrikate.random<List<EmbeddedStatement>>() },
+        )
+    }
+}
+
+class HandleFabricator : Fabricator<Handle> {
+    override fun invoke(fabrikate: Fabrikate): Handle =
+        Handle.of("${fabrikate.random<Long>().absoluteValue}.${fabrikate.random<Long>().absoluteValue}/${fabrikate.random<Long>()}")
+}
+
 fun FabricatorConfig.withRosettaStoneStatementMappings(): FabricatorConfig = withMappings {
     register(RosettaStoneStatementVersionFabricator())
     register(RosettaStoneStatementFabricator())
+}
+
+fun FabricatorConfig.withContentTypeMappings(): FabricatorConfig = withMappings {
+    register(EmbeddedStatementFabricator())
+    register(TemplateInstanceFabricator())
+    register(HandleFabricator())
 }

@@ -9,6 +9,7 @@ dependencies {
     api(project(":graph:graph-core-model"))
 
     testFixturesApi("io.kotest:kotest-framework-api")
+    testFixturesApi("org.junit.jupiter:junit-jupiter-api")
     testFixturesApi(project(":graph:graph-ports-output"))
     testFixturesImplementation("io.kotest:kotest-assertions-shared")
     testFixturesImplementation("org.eclipse.rdf4j:rdf4j-common-io")

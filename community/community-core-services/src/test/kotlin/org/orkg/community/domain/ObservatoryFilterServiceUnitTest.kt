@@ -27,7 +27,7 @@ import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createPredicate
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.util.Optional
 import java.util.UUID
 
@@ -79,7 +79,7 @@ internal class ObservatoryFilterServiceUnitTest : MockkBaseTest {
                 withArg {
                     it.id shouldBe id
                     it.observatoryId shouldBe command.observatoryId
-                    it.createdAt shouldBe LocalDateTime.now(fixedClock)
+                    it.createdAt shouldBe OffsetDateTime.now(fixedClock)
                     it.createdBy shouldBe command.contributorId
                     it.path shouldBe command.path
                     it.label shouldBe command.label
@@ -124,7 +124,7 @@ internal class ObservatoryFilterServiceUnitTest : MockkBaseTest {
                 withArg {
                     it.id shouldBe command.id
                     it.observatoryId shouldBe command.observatoryId
-                    it.createdAt shouldBe LocalDateTime.now(fixedClock)
+                    it.createdAt shouldBe OffsetDateTime.now(fixedClock)
                     it.createdBy shouldBe command.contributorId
                     it.path shouldBe command.path
                     it.label shouldBe command.label

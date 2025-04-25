@@ -52,6 +52,7 @@ class SpringDataJpaObservatoryFilterAdapter(
             label = this@toObservatoryFilterEntity.label
             createdBy = this@toObservatoryFilterEntity.createdBy.value
             createdAt = this@toObservatoryFilterEntity.createdAt
+            createdAtOffsetTotalSeconds = this@toObservatoryFilterEntity.createdAt.offset.totalSeconds
             path = this@toObservatoryFilterEntity.path.joinToString(",")
             range = this@toObservatoryFilterEntity.range.value
             exact = this@toObservatoryFilterEntity.exact

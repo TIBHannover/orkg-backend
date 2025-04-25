@@ -12,6 +12,7 @@ import org.orkg.mediastorage.domain.ImageData
 import org.orkg.mediastorage.domain.ImageId
 import org.springframework.util.MimeType
 import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import java.util.UUID
 
 @Entity
@@ -34,11 +35,14 @@ class ImageEntity {
     @Column(name = "created_at", nullable = false)
     var createdAt: OffsetDateTime? = null
 
+    @Column(name = "created_at_offset_total_seconds", nullable = false)
+    var createdAtOffsetTotalSeconds: Int? = null
+
     fun toImage() = Image(
         id = ImageId(id!!),
         data = ImageData(data!!),
         mimeType = MimeType.valueOf(mimeType!!),
         createdBy = if (createdBy != null) ContributorId(createdBy!!) else null,
-        createdAt = createdAt!!
+        createdAt = createdAt!!.withOffsetSameInstant(ZoneOffset.ofTotalSeconds(createdAtOffsetTotalSeconds!!)),
     )
 }

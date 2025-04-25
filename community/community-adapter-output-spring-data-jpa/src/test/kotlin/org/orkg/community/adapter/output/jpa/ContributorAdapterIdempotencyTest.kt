@@ -14,7 +14,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestConstructor
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 
 @DataJpaTest
 @ContextConfiguration(
@@ -40,7 +40,7 @@ internal class ContributorAdapterIdempotencyTest {
             enabled = true,
             email = "user@example.org",
             roles = setOf(UserRegistered.Role.ADMIN),
-            createdAt = LocalDateTime.now(fixedClock),
+            createdAt = OffsetDateTime.now(fixedClock),
             observatoryId = null,
             organizationId = null,
         )

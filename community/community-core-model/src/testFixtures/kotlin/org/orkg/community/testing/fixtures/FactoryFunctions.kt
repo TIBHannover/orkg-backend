@@ -21,7 +21,6 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.mediastorage.domain.ImageId
 import org.orkg.testing.MockUserId
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.OffsetDateTime
 
 fun createContributor(
@@ -72,7 +71,7 @@ fun createObservatoryFilter(
     observatoryId: ObservatoryId = ObservatoryId("b0c02a5a-e40f-41bb-af93-aebcfb0a58b5"),
     label: String = "Observatory filter",
     createdBy: ContributorId = ContributorId(MockUserId.USER),
-    createdAt: LocalDateTime = LocalDateTime.parse("2023-10-17T10:42:48.324973"),
+    createdAt: OffsetDateTime = OffsetDateTime.parse("2023-10-17T10:42:48.324973+01:00"),
     path: PredicatePath = listOf(Predicates.hasResearchProblem),
     range: ThingId = Classes.resources,
     exact: Boolean = false,

@@ -12,6 +12,7 @@ import org.orkg.contenttypes.domain.TemplateBasedResourceSnapshot.ModelVersion
 import org.orkg.contenttypes.domain.TemplateBasedResourceSnapshotV1
 import org.orkg.contenttypes.domain.TemplateInstance
 import org.orkg.contenttypes.domain.identifiers.Handle
+import java.time.ZoneOffset
 
 @Entity
 @Table(name = "template_based_resource_snapshots")
@@ -30,7 +31,7 @@ class TemplateBasedResourceSnapshotEntity : SnapshotEntity<ModelVersion>() {
                 TemplateBasedResourceSnapshotV1(
                     id = SnapshotId(id!!),
                     createdBy = ContributorId(createdBy!!),
-                    createdAt = createdAt!!,
+                    createdAt = createdAt!!.withOffsetSameInstant(ZoneOffset.ofTotalSeconds(createdAtOffsetTotalSeconds!!)),
                     data = objectMapper.treeToValue(data, TemplateInstance::class.java),
                     resourceId = ThingId(resourceId!!),
                     templateId = ThingId(templateId!!),

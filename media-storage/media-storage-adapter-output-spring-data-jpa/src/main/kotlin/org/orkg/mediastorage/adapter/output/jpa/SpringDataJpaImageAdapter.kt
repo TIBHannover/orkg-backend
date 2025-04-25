@@ -35,5 +35,6 @@ class SpringDataJpaImageAdapter(
             mimeType = this@toImageEntity.mimeType.toString()
             createdBy = this@toImageEntity.createdBy?.value
             createdAt = this@toImageEntity.createdAt
+            createdAtOffsetTotalSeconds = this@toImageEntity.createdAt.offset.totalSeconds
         }
 }

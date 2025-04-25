@@ -13,7 +13,7 @@ import org.orkg.community.domain.internal.MD5Hash
 import org.orkg.eventbus.events.UserRegistered
 import org.orkg.eventbus.events.UserRegistered.Role.ADMIN
 import org.orkg.eventbus.events.UserRegistered.Role.CURATOR
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.util.UUID
 
@@ -25,7 +25,9 @@ class ContributorEntity(
     @Column(name = "display_name")
     var displayName: String? = null,
     @Column(name = "joined_at")
-    var joinedAt: LocalDateTime? = null,
+    var joinedAt: OffsetDateTime? = null,
+    @Column(name = "joined_at_offset_total_seconds")
+    var joinedAtOffsetTotalSeconds: Int? = null,
     @Column(name = "organization_id")
     var organizationId: UUID? = null,
     @Column(name = "observatory_id")
@@ -40,6 +42,7 @@ class ContributorEntity(
             id = UUID.fromString(event.id),
             displayName = event.displayName,
             joinedAt = event.createdAt,
+            joinedAtOffsetTotalSeconds = event.createdAt.offset.totalSeconds,
             organizationId = event.organizationId?.let { UUID.fromString(event.organizationId) },
             observatoryId = event.observatoryId?.let { UUID.fromString(event.observatoryId) },
             emailMD5 = event.email.trim().lowercase().md5,
@@ -52,7 +55,7 @@ class ContributorEntity(
 fun ContributorEntity.toContributor() = Contributor(
     id = ContributorId(id!!),
     name = displayName!!,
-    joinedAt = joinedAt!!.atZone(ZoneOffset.UTC).toOffsetDateTime(),
+    joinedAt = joinedAt!!.withOffsetSameInstant(ZoneOffset.ofTotalSeconds(joinedAtOffsetTotalSeconds!!)),
     organizationId = organizationId?.let(::OrganizationId) ?: OrganizationId.UNKNOWN,
     observatoryId = observatoryId?.let(::ObservatoryId) ?: ObservatoryId.UNKNOWN,
     emailMD5 = MD5Hash(emailMD5!!),

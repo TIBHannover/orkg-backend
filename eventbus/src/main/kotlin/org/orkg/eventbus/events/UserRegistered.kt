@@ -1,7 +1,7 @@
 package org.orkg.eventbus.events
 
 import org.orkg.eventbus.Event
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 
 /**
  * An integration event describing that a user registered.
@@ -12,7 +12,7 @@ data class UserRegistered(
     val enabled: Boolean,
     val email: String,
     val roles: Set<Role>,
-    val createdAt: LocalDateTime,
+    val createdAt: OffsetDateTime,
     val observatoryId: String?,
     val organizationId: String?,
 ) : Event {

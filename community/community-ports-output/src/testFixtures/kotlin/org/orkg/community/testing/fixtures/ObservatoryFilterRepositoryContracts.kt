@@ -17,7 +17,7 @@ import org.orkg.eventbus.EventBus
 import org.orkg.eventbus.events.UserRegistered
 import org.orkg.testing.MockUserId
 import org.springframework.data.domain.PageRequest
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.util.UUID
 
 interface ObservatoryFilterRepositoryContracts {
@@ -117,7 +117,7 @@ interface ObservatoryFilterRepositoryContracts {
                 enabled = true,
                 email = "test@example.com",
                 roles = emptySet(),
-                createdAt = LocalDateTime.now(fixedClock),
+                createdAt = OffsetDateTime.now(fixedClock),
                 observatoryId = null,
                 organizationId = null,
             )

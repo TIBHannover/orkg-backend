@@ -19,6 +19,9 @@ abstract class SnapshotEntity<V : Enum<V>> {
     @Column(name = "created_at")
     var createdAt: OffsetDateTime? = null
 
+    @Column(name = "created_at_offset_total_seconds")
+    var createdAtOffsetTotalSeconds: Int? = null
+
     var createdBy: UUID? = null
 
     @Enumerated(EnumType.STRING)

@@ -53,7 +53,8 @@ class SpringDataJpaContributorFromUserAdapter(
             ContributorEntity(
                 id = contributor.id.value,
                 displayName = contributor.name,
-                joinedAt = contributor.joinedAt.toLocalDateTime(),
+                joinedAt = contributor.joinedAt,
+                joinedAtOffsetTotalSeconds = contributor.joinedAt.offset.totalSeconds,
                 organizationId = contributor.organizationId.takeUnless { it == OrganizationId.UNKNOWN }?.value,
                 observatoryId = contributor.observatoryId.takeUnless { it == ObservatoryId.UNKNOWN }?.value,
                 emailMD5 = contributor.emailMD5.value,

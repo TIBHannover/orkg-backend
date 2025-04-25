@@ -9,7 +9,8 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.ThingId
 import org.orkg.community.domain.ObservatoryFilter
 import org.orkg.community.domain.ObservatoryFilterId
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import java.util.UUID
 
 @Entity
@@ -27,7 +28,10 @@ class ObservatoryFilterEntity {
     var createdBy: UUID? = null
 
     @Column(name = "created_at", nullable = false)
-    var createdAt: LocalDateTime? = null
+    var createdAt: OffsetDateTime? = null
+
+    @Column(name = "created_at_offset_total_seconds")
+    var createdAtOffsetTotalSeconds: Int? = null
 
     var path: String? = null
 
@@ -44,7 +48,7 @@ fun ObservatoryFilterEntity.toObservatoryFilter() =
         observatoryId = ObservatoryId(observatoryId!!),
         label = label!!,
         createdBy = ContributorId(createdBy!!),
-        createdAt = createdAt!!,
+        createdAt = createdAt!!.withOffsetSameInstant(ZoneOffset.ofTotalSeconds(createdAtOffsetTotalSeconds!!)),
         path = path!!.split(",").map(::ThingId),
         range = ThingId(range!!),
         exact = exact!!,

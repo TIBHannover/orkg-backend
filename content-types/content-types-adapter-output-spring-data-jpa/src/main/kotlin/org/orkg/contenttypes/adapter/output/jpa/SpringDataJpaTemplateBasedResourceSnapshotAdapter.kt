@@ -55,6 +55,7 @@ class SpringDataJpaTemplateBasedResourceSnapshotAdapter(
             id = this@toTemplateBasedResourceSnapshotEntity.id.value
             createdBy = this@toTemplateBasedResourceSnapshotEntity.createdBy.value
             createdAt = this@toTemplateBasedResourceSnapshotEntity.createdAt
+            createdAtOffsetTotalSeconds = this@toTemplateBasedResourceSnapshotEntity.createdAt.offset.totalSeconds
             data = objectMapper.valueToTree(this@toTemplateBasedResourceSnapshotEntity.data)
             modelVersion = this@toTemplateBasedResourceSnapshotEntity.modelVersion
             resourceId = this@toTemplateBasedResourceSnapshotEntity.resourceId.value

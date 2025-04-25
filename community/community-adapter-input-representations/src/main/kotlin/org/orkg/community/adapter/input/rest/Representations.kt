@@ -7,7 +7,7 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.community.domain.ObservatoryFilterId
 import org.orkg.graph.domain.PredicatePath
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 
 data class ObservatoryRepresentation(
     val id: ObservatoryId,
@@ -37,7 +37,7 @@ data class ObservatoryFilterRepresentation(
     @get:JsonProperty("created_by")
     val createdBy: ContributorId,
     @get:JsonProperty("created_at")
-    val createdAt: LocalDateTime,
+    val createdAt: OffsetDateTime,
     val path: PredicatePath,
     val range: ThingId,
     val exact: Boolean,

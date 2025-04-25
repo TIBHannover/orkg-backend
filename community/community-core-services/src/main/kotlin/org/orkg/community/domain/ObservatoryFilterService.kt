@@ -15,7 +15,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import java.time.Clock
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.util.Optional
 
 @Service
@@ -43,7 +43,7 @@ class ObservatoryFilterService(
             observatoryId = observatory.id,
             label = command.label,
             createdBy = command.contributorId,
-            createdAt = LocalDateTime.now(clock),
+            createdAt = OffsetDateTime.now(clock),
             path = command.path,
             range = command.range,
             exact = command.exact,

@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added endpoint for listing things.
+  (See: [!1307](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1307))
+- Added content-type endpoints for fetching and creating template based resource snapshots.
+  (Closes: [#585](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/585))
+- Added support for external identifiers on contributors.
+  (See: [!1304](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1304))
+- Added service for sending emails.
+  (Closes: [#453](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/463))
+- Added filtering parameters to statement count metric.
+  (See: [!1306](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1306))
+### Fixed
+- Fixed timezone offset not being stored for JPA entities.
+  (Closes: [#533](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/533))
 
 ## [0.83.0] - 2025-04-23
 ### Added

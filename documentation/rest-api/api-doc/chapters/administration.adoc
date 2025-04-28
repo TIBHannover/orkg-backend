@@ -1,0 +1,7 @@
+= Administration
+
+[NOTE]
+The following endpoints require the administrator role.
+
+[[emails]]
+include::administration/email-service.adoc[leveloffset=+1]

@@ -1,0 +1,2 @@
+This is a test email.
+Hello from notification service unit test!

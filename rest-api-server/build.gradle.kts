@@ -156,6 +156,13 @@ dependencies {
     runtimeOnly(project(":media-storage:media-storage-ports-output"))
     runtimeOnly(project(":media-storage:media-storage-core-services"))
 
+    runtimeOnly(project(":notifications:notifications-adapter-input-rest-spring-mvc"))
+    runtimeOnly(project(":notifications:notifications-adapter-output-spring-javamail"))
+    runtimeOnly(project(":notifications:notifications-core-model"))
+    runtimeOnly(project(":notifications:notifications-core-services"))
+    runtimeOnly(project(":notifications:notifications-ports-input"))
+    runtimeOnly(project(":notifications:notifications-ports-output"))
+
     runtimeOnly(project(":profiling:profiling-adapter-output"))
     runtimeOnly(project(":profiling:profiling-adapter-output-spring-data-neo4j"))
     runtimeOnly(project(":profiling:profiling-core-model"))

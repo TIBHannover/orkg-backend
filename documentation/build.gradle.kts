@@ -27,6 +27,7 @@ dependencies {
     restdocs(project(withSnippets(":community:community-adapter-input-rest-spring-mvc")))
     restdocs(project(withSnippets(":statistics:statistics-adapter-input-rest-spring-mvc")))
     restdocs(project(withSnippets(":curation:curation-adapter-input-rest-spring-mvc")))
+    restdocs(project(withSnippets(":notifications:notifications-adapter-input-rest-spring-mvc")))
     restdocs(project(withSnippets(":widget")))
     asciidoctor("io.spring.asciidoctor.backends:spring-asciidoctor-backends:0.0.7")
 }

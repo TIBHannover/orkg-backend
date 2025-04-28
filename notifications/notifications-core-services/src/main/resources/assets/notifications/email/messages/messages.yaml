@@ -1,0 +1,3 @@
+email-test-subject: "Test email"
+email-test-body: "This is a test email.\n{0}"
+email-test-body-html: "<p>This is a test email.<br/>{0}</p>"

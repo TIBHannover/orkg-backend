@@ -49,6 +49,7 @@ dependencies {
     api("commons-fileupload:commons-fileupload:1.5")
     api("io.hypersistence:hypersistence-utils-hibernate-63:3.9.9") // jsonb support for hibernate
     api("net.handle:handle-client:9.3.1")
+    api("org.freemarker:freemarker:2.3.34")
 
     // Declare constraints on all components that need alignment
     constraints {

@@ -33,6 +33,9 @@ include::chapters/research-fields-and-research-problems.adoc[leveloffset=+1]
 [[curation-and-statistics]]
 include::chapters/curation-and-statistics.adoc[leveloffset=+1]
 
+[[administration]]
+include::chapters/administration.adoc[leveloffset=+1]
+
 [[integrations]]
 include::chapters/integrations.adoc[leveloffset=+1]
 

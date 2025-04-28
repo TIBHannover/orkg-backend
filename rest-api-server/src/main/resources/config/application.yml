@@ -18,7 +18,20 @@ spring:
       spec: maximumSize=5000,expireAfterAccess=10m,recordStats
       overrides:
         metrics-name-and-parameters-to-number-cache: maximumSize=200,expireAfterAccess=5m,expireAfterWrite=5m
+  mail:
+    host: "localhost"
+    port: 8025
+    username: ""
+    password: ""
+    protocol: smtp
 orkg:
+  mail:
+    from:
+      email: "no-reply@orkg.org"
+      display-name: "ORKG - Open Research Knowledge Graph"
+    reply-to:
+      email: ""
+      display-name: ""
   export:
     rdf:
       # cron schedule for the rdf-dump

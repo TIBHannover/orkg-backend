@@ -64,13 +64,28 @@ class Neo4jTestConfiguration {
 annotation class TestContainersJpaTest
 
 @Retention(RUNTIME)
-@WithMockAuthentication(authorities = [], name = MockUserId.USER)
+@WithMockAuthentication(
+    authorities = [],
+    userId = MockUserId.USER,
+    username = "Test User",
+    email = "user@example.org"
+)
 annotation class TestWithMockUser
 
 @Retention(RUNTIME)
-@WithMockAuthentication(authorities = ["ROLE_CURATOR"], name = MockUserId.CURATOR)
+@WithMockAuthentication(
+    authorities = ["ROLE_CURATOR"],
+    userId = MockUserId.CURATOR,
+    username = "Test Curator",
+    email = "curator@example.org"
+)
 annotation class TestWithMockCurator
 
 @Retention(RUNTIME)
-@WithMockAuthentication(authorities = ["ROLE_ADMIN"], name = MockUserId.ADMIN)
+@WithMockAuthentication(
+    authorities = ["ROLE_ADMIN"],
+    userId = MockUserId.ADMIN,
+    username = "Test Admin",
+    email = "admin@example.org"
+)
 annotation class TestWithMockAdmin

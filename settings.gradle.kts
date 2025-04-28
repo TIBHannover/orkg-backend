@@ -82,6 +82,14 @@ include(
     ":media-storage:media-storage-ports-output",
 )
 include(
+    "notifications:notifications-adapter-input-rest-spring-mvc",
+    "notifications:notifications-adapter-output-spring-javamail",
+    "notifications:notifications-core-model",
+    "notifications:notifications-core-services",
+    "notifications:notifications-ports-input",
+    "notifications:notifications-ports-output",
+)
+include(
     "data-export:data-export-ports-input",
     "data-export:data-export-core",
     "data-export:data-export-adapters",

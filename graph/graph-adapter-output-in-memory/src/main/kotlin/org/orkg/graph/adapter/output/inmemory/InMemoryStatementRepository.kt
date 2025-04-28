@@ -105,19 +105,71 @@ class InMemoryStatementRepository(private val inMemoryGraph: InMemoryGraph) :
     ): Page<GeneralStatement> =
         findAllFilteredAndPaged(
             pageable = pageable,
-            comparator = pageable.withDefaultSort { Sort.by("created_at") }.sort.comparator
-        ) {
-            it.subject isInstanceOfAll subjectClasses &&
-                (subjectId == null || subjectId == it.subject.id) &&
-                (subjectLabel == null || subjectLabel == it.subject.label) &&
-                (predicateId == null || predicateId == it.predicate.id) &&
-                (createdBy == null || it.createdBy == createdBy) &&
-                (createdAtStart == null || it.createdAt!! >= createdAtStart) &&
-                (createdAtEnd == null || it.createdAt!! <= createdAtEnd) &&
-                it.`object` isInstanceOfAll objectClasses &&
-                (objectId == null || objectId == it.`object`.id) &&
-                (objectLabel == null || objectLabel == it.`object`.label)
-        }
+            comparator = pageable.withDefaultSort { Sort.by("created_at") }.sort.comparator,
+            predicate = buildFindAllPredicate(
+                subjectClasses,
+                subjectId,
+                subjectLabel,
+                predicateId,
+                createdBy,
+                createdAtStart,
+                createdAtEnd,
+                objectClasses,
+                objectId,
+                objectLabel
+            )
+        )
+
+    override fun count(
+        subjectClasses: Set<ThingId>,
+        subjectId: ThingId?,
+        subjectLabel: String?,
+        predicateId: ThingId?,
+        createdBy: ContributorId?,
+        createdAtStart: OffsetDateTime?,
+        createdAtEnd: OffsetDateTime?,
+        objectClasses: Set<ThingId>,
+        objectId: ThingId?,
+        objectLabel: String?,
+    ): Long =
+        entities.values.count(
+            buildFindAllPredicate(
+                subjectClasses,
+                subjectId,
+                subjectLabel,
+                predicateId,
+                createdBy,
+                createdAtStart,
+                createdAtEnd,
+                objectClasses,
+                objectId,
+                objectLabel
+            )
+        ).toLong()
+
+    private fun buildFindAllPredicate(
+        subjectClasses: Set<ThingId>,
+        subjectId: ThingId?,
+        subjectLabel: String?,
+        predicateId: ThingId?,
+        createdBy: ContributorId?,
+        createdAtStart: OffsetDateTime?,
+        createdAtEnd: OffsetDateTime?,
+        objectClasses: Set<ThingId>,
+        objectId: ThingId?,
+        objectLabel: String?,
+    ): (GeneralStatement) -> Boolean = {
+        it.subject isInstanceOfAll subjectClasses &&
+            (subjectId == null || subjectId == it.subject.id) &&
+            (subjectLabel == null || subjectLabel == it.subject.label) &&
+            (predicateId == null || predicateId == it.predicate.id) &&
+            (createdBy == null || it.createdBy == createdBy) &&
+            (createdAtStart == null || it.createdAt!! >= createdAtStart) &&
+            (createdAtEnd == null || it.createdAt!! <= createdAtEnd) &&
+            it.`object` isInstanceOfAll objectClasses &&
+            (objectId == null || objectId == it.`object`.id) &&
+            (objectLabel == null || objectLabel == it.`object`.label)
+    }
 
     override fun findAllByStatementIdIn(ids: Set<StatementId>, pageable: Pageable): Page<GeneralStatement> =
         findAllFilteredAndPaged(pageable) { it.id in ids }
@@ -170,7 +222,7 @@ class InMemoryStatementRepository(private val inMemoryGraph: InMemoryGraph) :
 
     private val Sort.comparator: Comparator<GeneralStatement>
         get() = if (isUnsorted) {
-            Comparator.comparing<GeneralStatement?, OffsetDateTime> { it.createdAt }.reversed()
+            Comparator.comparing<GeneralStatement, OffsetDateTime> { it.createdAt!! }.reversed()
         } else {
             Comparator { a, b ->
                 var result = 0

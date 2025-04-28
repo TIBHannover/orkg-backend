@@ -348,7 +348,59 @@ class SpringDataNeo4jStatementAdapter(
         objectClasses: Set<ThingId>,
         objectId: ThingId?,
         objectLabel: String?,
-    ): Page<GeneralStatement> = cypherQueryBuilderFactory.newBuilder(Uncached)
+    ): Page<GeneralStatement> =
+        buildFindAllQuery(
+            sort = pageable.sort,
+            subjectClasses = subjectClasses,
+            subjectId = subjectId,
+            subjectLabel = subjectLabel,
+            predicateId = predicateId,
+            createdBy = createdBy,
+            createdAtStart = createdAtStart,
+            createdAtEnd = createdAtEnd,
+            objectClasses = objectClasses,
+            objectId = objectId,
+            objectLabel = objectLabel,
+        ).fetch(pageable, false)
+
+    override fun count(
+        subjectClasses: Set<ThingId>,
+        subjectId: ThingId?,
+        subjectLabel: String?,
+        predicateId: ThingId?,
+        createdBy: ContributorId?,
+        createdAtStart: OffsetDateTime?,
+        createdAtEnd: OffsetDateTime?,
+        objectClasses: Set<ThingId>,
+        objectId: ThingId?,
+        objectLabel: String?,
+    ): Long =
+        buildFindAllQuery(
+            subjectClasses = subjectClasses,
+            subjectId = subjectId,
+            subjectLabel = subjectLabel,
+            predicateId = predicateId,
+            createdBy = createdBy,
+            createdAtStart = createdAtStart,
+            createdAtEnd = createdAtEnd,
+            objectClasses = objectClasses,
+            objectId = objectId,
+            objectLabel = objectLabel,
+        ).count()
+
+    fun buildFindAllQuery(
+        sort: Sort = Sort.unsorted(),
+        subjectClasses: Set<ThingId>,
+        subjectId: ThingId?,
+        subjectLabel: String?,
+        predicateId: ThingId?,
+        createdBy: ContributorId?,
+        createdAtStart: OffsetDateTime?,
+        createdAtEnd: OffsetDateTime?,
+        objectClasses: Set<ThingId>,
+        objectId: ThingId?,
+        objectLabel: String?,
+    ) = cypherQueryBuilderFactory.newBuilder(Uncached)
         .withCommonQuery {
             val subject = node("Thing").named("sub")
             val r = name("r")
@@ -372,7 +424,7 @@ class SpringDataNeo4jStatementAdapter(
             val subject = name("sub")
             val r = name("r")
             val `object` = name("obj")
-            val sort = pageable.sort.orElseGet { Sort.by("created_at") }
+            val sort = sort.orElseGet { Sort.by("created_at") }
             val propertyMappings = mapOf(
                 "id" to r.property("id"),
                 "created_at" to r.property("created_at"),
@@ -420,7 +472,6 @@ class SpringDataNeo4jStatementAdapter(
         }
         .countOver("r")
         .mappedBy(StatementMapper(predicateRepository))
-        .fetch(pageable, false)
 
     override fun findAllByStatementIdIn(ids: Set<StatementId>, pageable: Pageable): Page<GeneralStatement> =
         cypherQueryBuilderFactory.newBuilder()

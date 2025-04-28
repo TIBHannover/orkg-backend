@@ -6,22 +6,22 @@ plugins {
 }
 
 dependencies {
+    api("org.eclipse.rdf4j:rdf4j-common-io")
+    api("org.springframework.data:spring-data-commons")
+    api("org.springframework:spring-context")
     api(project(":common:core-identifiers"))
+    api(project(":common:spring-data"))
     api(project(":community:community-ports-input"))
     api(project(":community:community-ports-output"))
     api(project(":graph:graph-core-model"))
     api(project(":graph:graph-ports-input"))
     api(project(":graph:graph-ports-output"))
+    api(project(":statistics:statistics-core-model"))
+    implementation("dev.forkhandles:values4k")
     implementation(project(":common:datatypes"))
     implementation(project(":common:pagination"))
-    implementation(project(":graph:graph-core-constants"))
-
-    api("org.eclipse.rdf4j:rdf4j-common-io")
-    api("org.springframework.data:spring-data-commons")
-    api("org.springframework:spring-context")
-    api(project(":common:spring-data"))
-    implementation("dev.forkhandles:values4k")
     implementation(project(":community:community-core-model"))
+    implementation(project(":graph:graph-core-constants"))
 }
 
 testing {

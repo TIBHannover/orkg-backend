@@ -95,6 +95,19 @@ interface StatementReadRepository : EntityRepository<GeneralStatement, Statement
         id: ThingId,
         pageable: Pageable,
     ): Page<ResourceContributor>
+
+    fun count(
+        subjectClasses: Set<ThingId> = emptySet(),
+        subjectId: ThingId? = null,
+        subjectLabel: String? = null,
+        predicateId: ThingId? = null,
+        createdBy: ContributorId? = null,
+        createdAtStart: OffsetDateTime? = null,
+        createdAtEnd: OffsetDateTime? = null,
+        objectClasses: Set<ThingId> = emptySet(),
+        objectId: ThingId? = null,
+        objectLabel: String? = null,
+    ): Long
 }
 
 interface StatementWriteRepository {

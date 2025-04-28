@@ -63,18 +63,6 @@ class Metrics {
     )
 
     @Bean
-    fun statementCountMetric(
-        statisticsRepository: StatisticsRepository,
-        cacheManager: CacheManager?,
-    ): Metric = CachedMetric.create(
-        cacheManager = cacheManager,
-        name = "statement-count",
-        description = "Number of statements in the graph.",
-        group = "things",
-        supplier = { statisticsRepository.countRelations("RELATED") }
-    )
-
-    @Bean
     fun orphansCountMetric(
         statisticsRepository: StatisticsRepository,
         cacheManager: CacheManager?,

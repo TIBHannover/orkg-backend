@@ -484,3 +484,8 @@ fun ResultActions.andExpectTemplateBasedResourceSnapshot(path: String = "$"): Re
     .andExpect(jsonPath("$path.resource_id", `is`(notNullValue())))
     .andExpect(jsonPath("$path.template_id", `is`(notNullValue())))
     .andExpect(jsonPath("$path.handle", `is`(notNullValue())))
+
+fun ResultActions.andExpectContributorIdentifier(path: String = "$"): ResultActions = this
+    .andExpect(jsonPath("$path.type", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.value", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.created_at", `is`(notNullValue())))

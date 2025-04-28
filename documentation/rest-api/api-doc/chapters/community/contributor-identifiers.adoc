@@ -1,0 +1,29 @@
+= Contributor Identifiers
+
+Contributors may possess of external identifiers, such as https://orcid.org/[ORCID], wich can be linked to their profile.
+
+include::{snippets}/contributor-identifiers-get-single/response-fields.adoc[]
+
+[[contributor-identifiers-list]]
+== Listing Contributor Identifiers
+
+A `GET` request returns a <<sorting-and-pagination,paged>> list of <<contributor-identifiers,contributor identifiers>>.
+
+operation::contributor-identifiers-get-paged[snippets='path-parameters,curl-request']
+
+[[contributor-identifiers-create]]
+== Creating Contributor Identifiers
+
+A `POST` request assigns a new identifier to the currently logged in contributor.
+The response will be `201 Created` when successful.
+The updated set of contributor identifiers can be retrieved by following the URI in the `Location` header field.
+
+operation::contributor-identifiers-create[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+
+[[contributor-identifiers-delete]]
+== Deleting Contributor Identifiers
+
+A `DELETE` request removes an existing identifier of the currently logged in contributor.
+The response will be `204 No Content` when successful.
+
+operation::contributor-identifiers-delete[snippets='path-parameters,request-fields,curl-request,http-response']

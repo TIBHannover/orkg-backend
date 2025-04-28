@@ -13,6 +13,8 @@ dependencies {
     api("org.springframework.data:spring-data-jpa")
     api("org.springframework:spring-context")
     api(project(":common:spring-data"))
+    implementation(project(":common:external-identifiers"))
+    implementation(project(":common:pagination"))
     implementation(project(":common:string-utils"))
     api(project(":common:core-identifiers"))
     api(project(":community:community-core-model"))

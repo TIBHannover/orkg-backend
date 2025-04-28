@@ -31,6 +31,14 @@ class ContributorAlreadyExists(id: ContributorId) :
         """Contributor "$id" already exists."""
     )
 
+class ContributorIdentifierAlreadyExists(
+    contributorId: ContributorId,
+    value: String,
+) : SimpleMessageException(
+        HttpStatus.BAD_REQUEST,
+        """Identifier "$value" for contributor "$contributorId" already exists."""
+    )
+
 class OrganizationNotFound : SimpleMessageException {
     constructor(id: String) :
         super(HttpStatus.NOT_FOUND, """Organization "$id" not found.""")
@@ -147,4 +155,10 @@ class UserNotFound(userId: UUID) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
         """User "$userId" not found."""
+    )
+
+class UnknownIdentifierType(type: String) :
+    SimpleMessageException(
+        HttpStatus.BAD_REQUEST,
+        """Unknown identifier type "$type"."""
     )

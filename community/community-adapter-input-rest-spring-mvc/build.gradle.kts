@@ -15,6 +15,7 @@ testing {
                 implementation(testFixtures(project(":common:datatypes")))
                 implementation(testFixtures(project(":community:community-core-model")))
                 implementation(testFixtures(project(":media-storage:media-storage-core-model")))
+                implementation(project(":common:external-identifiers"))
                 implementation(project(":common:serialization"))
                 implementation(project(":content-types:content-types-core-model"))
                 implementation(project(":graph:graph-core-constants"))

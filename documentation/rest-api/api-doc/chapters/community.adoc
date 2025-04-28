@@ -3,6 +3,9 @@
 [[contributors]]
 include::community/contributors.adoc[leveloffset=+1]
 
+[[contributor-identifiers]]
+include::community/contributor-identifiers.adoc[leveloffset=+1]
+
 [[organizations]]
 include::community/organizations.adoc[leveloffset=+1]
 

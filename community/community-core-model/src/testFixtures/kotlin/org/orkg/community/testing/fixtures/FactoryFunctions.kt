@@ -1,12 +1,15 @@
 package org.orkg.community.testing.fixtures
 
 import org.orkg.common.ContributorId
+import org.orkg.common.IdentifierValue
+import org.orkg.common.ORCID
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.community.domain.ConferenceSeries
 import org.orkg.community.domain.ConferenceSeriesId
 import org.orkg.community.domain.Contributor
+import org.orkg.community.domain.ContributorIdentifier
 import org.orkg.community.domain.Metadata
 import org.orkg.community.domain.Observatory
 import org.orkg.community.domain.ObservatoryFilter
@@ -43,6 +46,13 @@ fun createContributor(
     isCurator = isCurator,
     isAdmin = isAdmin,
 )
+
+fun createContributorIdentifier(
+    contributorId: ContributorId = ContributorId("824e21b5-5df6-44c7-b2db-5929598f7398"),
+    type: ContributorIdentifier.Type = ContributorIdentifier.Type.ORCID,
+    value: IdentifierValue = ORCID.of("0000-0001-5109-3700"),
+    createdAt: OffsetDateTime = OffsetDateTime.parse("2023-10-06T10:37:17.055493Z"),
+) = ContributorIdentifier(contributorId, type, value, createdAt)
 
 fun createOrganization(
     id: OrganizationId = OrganizationId("d02073bc-30fd-481e-9167-f3fc3595d590"),

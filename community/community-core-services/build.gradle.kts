@@ -16,6 +16,7 @@ dependencies {
     api(project(":graph:graph-ports-output"))
     api(project(":media-storage:media-storage-core-model"))
     api(project(":media-storage:media-storage-ports-input"))
+    implementation(project(":common:external-identifiers"))
     implementation(project(":content-types:content-types-core-model"))
     implementation(project(":graph:graph-core-model")) // for ResearchFields
     implementation(project(":graph:graph-core-constants"))
@@ -30,7 +31,9 @@ testing {
                 implementation(testFixtures(project(":common:testing")))
                 implementation(testFixtures(project(":graph:graph-core-model")))
                 implementation(testFixtures(project(":community:community-core-model")))
+                implementation(testFixtures(project(":community:community-ports-input")))
                 implementation(testFixtures(project(":media-storage:media-storage-core-model")))
+                implementation("dev.forkhandles:values4k")
                 implementation("io.kotest:kotest-assertions-shared")
                 implementation("io.mockk:mockk-dsl")
                 implementation("io.mockk:mockk-jvm")

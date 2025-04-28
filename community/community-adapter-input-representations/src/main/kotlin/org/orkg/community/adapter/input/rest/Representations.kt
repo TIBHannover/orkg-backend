@@ -5,6 +5,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.community.domain.ContributorIdentifier
 import org.orkg.community.domain.ObservatoryFilterId
 import org.orkg.graph.domain.PredicatePath
 import java.time.OffsetDateTime
@@ -42,4 +43,11 @@ data class ObservatoryFilterRepresentation(
     val range: ThingId,
     val exact: Boolean,
     val featured: Boolean,
+)
+
+data class ContributorIdentifierRepresentation(
+    val type: ContributorIdentifier.Type,
+    val value: String,
+    @get:JsonProperty("created_at")
+    val createdAt: OffsetDateTime,
 )

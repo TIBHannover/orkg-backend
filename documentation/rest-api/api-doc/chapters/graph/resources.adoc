@@ -33,7 +33,7 @@ The resource can be retrieved by following the URI in the `Location` header fiel
 
 NOTE: The created resource is returned in the body for convenience. This might be subject to change.
 
-operation::resources-add[snippets='request-fields,curl-request,response-headers,http-response,response-fields']
+operation::resources-create[snippets='request-fields,curl-request,response-headers,http-response,response-fields']
 
 [[resources-edit]]
 == Updating Resources
@@ -67,7 +67,7 @@ The response will be `204 NO CONTENT` when successful.
 4. If the performing user is not the creator of the resource and does not have the curator role, the return status will be `403 FORBIDDEN`.
 ====
 
-operation::resources-delete-resource-success[snippets='path-parameters,curl-request,http-response']
+operation::resources-delete[snippets='path-parameters,curl-request,http-response']
 
 [[resources-import]]
 == Importing Resources

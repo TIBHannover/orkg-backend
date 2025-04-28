@@ -22,8 +22,8 @@ import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
-import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
 import org.orkg.testing.MockUserId
+import org.orkg.testing.andExpectResource
 import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
 import org.orkg.testing.annotations.TestWithMockAdmin
 import org.orkg.testing.annotations.TestWithMockUser
@@ -31,14 +31,8 @@ import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.restdocs.pageableDetailedFieldParameters
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
-import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
-import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
-import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.ResponseFieldsSnippet
-import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -96,26 +90,11 @@ internal class ResourceControllerIntegrationTest : MockMvcBaseTest("resources") 
     fun add() {
         val resource = mapOf("label" to "foo")
 
-        documentedPostRequestTo("/api/resources")
+        post("/api/resources")
             .content(resource)
             .perform()
             .andExpect(status().isCreated)
-//            TODO: Needs to be converted into a unit test in order to test location header path
-//            .andExpect(header().string("Location", endsWith("api/resources/$id")))
-            .andDo(
-                documentationHandler.document(
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the created resource can be fetched from.")
-                    ),
-                    requestFields(
-                        fieldWithPath("label").description("The resource label."),
-                        fieldWithPath("classes").type("Array").description("The classes of the resource. (optional)").optional(),
-                        fieldWithPath("extraction_method").type("String").description("""The method used to extract the resource. Can be one of $allowedExtractionMethodValues. (optional, default: "UNKNOWN")""").optional()
-                    ),
-                    responseFields(resourceResponseFields())
-                )
-            )
-            .andDo(generateDefaultDocSnippets())
+            .andExpectResource()
     }
 
     @Test
@@ -224,17 +203,9 @@ internal class ResourceControllerIntegrationTest : MockMvcBaseTest("resources") 
     fun deleteResourceSuccess() {
         val id = service.createResource(label = "bye bye", userId = ContributorId(MockUserId.ADMIN))
 
-        documentedDeleteRequestTo("/api/resources/{id}", id)
+        delete("/api/resources/{id}", id)
             .perform()
             .andExpect(status().isNoContent)
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the resource.")
-                    )
-                )
-            )
-            .andDo(generateDefaultDocSnippets())
     }
 
     @Test

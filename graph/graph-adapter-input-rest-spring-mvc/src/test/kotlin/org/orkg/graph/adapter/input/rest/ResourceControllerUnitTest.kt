@@ -24,6 +24,7 @@ import org.orkg.community.testing.fixtures.createContributor
 import org.orkg.graph.adapter.input.rest.testing.fixtures.resourceResponseFields
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.InvalidClassCollection
 import org.orkg.graph.domain.ResourceContributor
 import org.orkg.graph.domain.ResourceNotFound
@@ -417,5 +418,90 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
             .andExpect(jsonPath("$.path").value("/api/resources/$id"))
 
         verify(exactly = 1) { resourceService.update(command) }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("When creating a resource, and service succeeds, then status is 201 CREATED and resource is returned")
+    fun create() {
+        val id = ThingId("R213")
+        val contributorId = ContributorId(MockUserId.USER)
+        val command = ResourceController.CreateResourceRequest(
+            id = id,
+            label = "foo",
+            classes = setOf(Classes.dataset),
+            extractionMethod = ExtractionMethod.MANUAL
+        )
+        val resource = createResource(
+            id = id,
+            classes = command.classes,
+            label = command.label,
+            extractionMethod = command.extractionMethod
+        )
+
+        every { resourceService.create(any()) } returns id
+        every { contributorService.findById(any()) } returns Optional.of(createContributor(contributorId))
+        every { resourceService.findById(any()) } returns Optional.of(resource)
+        every { statementService.countIncomingStatementsById(id) } returns 0
+
+        documentedPostRequestTo("/api/resources")
+            .content(command)
+            .perform()
+            .andExpect(status().isCreated)
+            .andExpectResource()
+            .andExpect(header().string("Location", endsWith("api/resources/$id")))
+            .andDo(
+                documentationHandler.document(
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the created resource can be fetched from.")
+                    ),
+                    requestFields(
+                        fieldWithPath("id").description("The id for the resource. (optional)"),
+                        fieldWithPath("label").description("The resource label."),
+                        fieldWithPath("classes").type("Array").description("The classes of the resource. (optional)").optional(),
+                        fieldWithPath("extraction_method").type("String").description("""The method used to extract the resource. Can be one of $allowedExtractionMethodValues. (optional, default: "UNKNOWN")""").optional()
+                    ),
+                    responseFields(resourceResponseFields())
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) {
+            resourceService.create(
+                withArg {
+                    it.id shouldBe id
+                    it.contributorId shouldBe contributorId
+                    it.label shouldBe command.label
+                    it.classes shouldBe command.classes
+                    it.extractionMethod shouldBe command.extractionMethod
+                }
+            )
+        }
+        verify(exactly = 1) { contributorService.findById(any()) }
+        verify(exactly = 1) { resourceService.findById(any()) }
+        verify(exactly = 1) { statementService.countIncomingStatementsById(id) }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("When deleting a resource, and service succeeds, then status is 204 NO CONTENT")
+    fun delete() {
+        val id = ThingId("R213")
+
+        every { resourceService.delete(id, any()) } just runs
+
+        documentedDeleteRequestTo("/api/resources/{id}", id)
+            .perform()
+            .andExpect(status().isNoContent)
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the resource.")
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { resourceService.delete(id, ContributorId(MockUserId.USER)) }
     }
 }

@@ -120,35 +120,6 @@ internal class LiteralControllerUnitTest : MockMvcBaseTest("literals") {
     }
 
     @Test
-    @TestWithMockUser
-    fun whenPOST_AndLabelIsEmptyString_ThenSucceed() {
-        val literal = createCreateRequestWithEmptyLabel()
-        val mockResult = Literal(
-            id = ThingId("L1"),
-            label = literal.label,
-            datatype = literal.datatype,
-            createdAt = OffsetDateTime.now(clock),
-            createdBy = ContributorId(MockUserId.USER)
-        )
-        val command = CreateCommand(
-            contributorId = ContributorId(MockUserId.USER),
-            label = "",
-            datatype = "xsd:string"
-        )
-        every { literalService.findById(any()) } returns Optional.of(mockResult)
-        every { literalService.create(command) } returns mockResult.id
-
-        post("/api/literals")
-            .content(literal)
-            .perform()
-            .andExpect(status().isCreated)
-            .andExpect(header().string("Location", matchesPattern("https?://.+/api/literals/L1")))
-
-        verify(exactly = 1) { literalService.findById(any()) }
-        verify(exactly = 1) { literalService.create(command) }
-    }
-
-    @Test
     @DisplayName("Given several literals, when filtering by no parameters, then status is 200 OK and literals are returned")
     fun getPaged() {
         every { literalService.findAll(any()) } returns pageOf(createLiteral())
@@ -231,6 +202,76 @@ internal class LiteralControllerUnitTest : MockMvcBaseTest("literals") {
     }
 
     @Test
+    @TestWithMockUser
+    @DisplayName("When creating a literal, and request is valid, then status is 201 CREATED and literal is returned")
+    fun create() {
+        val id = ThingId("L1")
+        val literal = createLiteral(id)
+        val request = CreateLiteralRequest(
+            label = literal.label,
+            datatype = literal.datatype
+        )
+        val command = CreateCommand(
+            contributorId = ContributorId(MockUserId.USER),
+            label = request.label,
+            datatype = request.datatype,
+        )
+        every { literalService.findById(any()) } returns Optional.of(literal)
+        every { literalService.create(command) } returns literal.id
+
+        documentedPostRequestTo("/api/literals")
+            .content(request)
+            .perform()
+            .andExpect(status().isCreated)
+            .andExpect(header().string("Location", endsWith("api/literals/$id")))
+            .andDo(
+                documentationHandler.document(
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the newly created literal can be fetched from.")
+                    ),
+                    requestFields(
+                        fieldWithPath("label").description("The value of the literal."),
+                        fieldWithPath("datatype").description("The datatype of the literal value. (default: xsd:string)")
+                    ),
+                    responseFields(literalResponseFields())
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { literalService.findById(any()) }
+        verify(exactly = 1) { literalService.create(command) }
+    }
+
+    @Test
+    @TestWithMockUser
+    fun whenPOST_AndLabelIsEmptyString_ThenSucceed() {
+        val literal = createCreateRequestWithEmptyLabel()
+        val mockResult = Literal(
+            id = ThingId("L1"),
+            label = literal.label,
+            datatype = literal.datatype,
+            createdAt = OffsetDateTime.now(clock),
+            createdBy = ContributorId(MockUserId.USER)
+        )
+        val command = CreateCommand(
+            contributorId = ContributorId(MockUserId.USER),
+            label = "",
+            datatype = "xsd:string"
+        )
+        every { literalService.findById(any()) } returns Optional.of(mockResult)
+        every { literalService.create(command) } returns mockResult.id
+
+        post("/api/literals")
+            .content(literal)
+            .perform()
+            .andExpect(status().isCreated)
+            .andExpect(header().string("Location", matchesPattern("https?://.+/api/literals/L1")))
+
+        verify(exactly = 1) { literalService.findById(any()) }
+        verify(exactly = 1) { literalService.create(command) }
+    }
+
+    @Test
     fun whenPOST_AndDatatypeIsBlank_ThenFailValidation() {
         val literal = CreateLiteralRequest(
             label = "irrelevant",
@@ -241,10 +282,10 @@ internal class LiteralControllerUnitTest : MockMvcBaseTest("literals") {
             .content(literal)
             .perform()
             .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("\$.status").value(400))
-            .andExpect(jsonPath("\$.errors.length()").value(1))
-            .andExpect(jsonPath("\$.errors[0].field").value("datatype"))
-            .andExpect(jsonPath("\$.errors[0].message").value("must not be blank"))
+            .andExpect(jsonPath("$.status").value(400))
+            .andExpect(jsonPath("$.errors.length()").value(1))
+            .andExpect(jsonPath("$.errors[0].field").value("datatype"))
+            .andExpect(jsonPath("$.errors[0].message").value("must not be blank"))
     }
 
     @Test
@@ -259,44 +300,12 @@ internal class LiteralControllerUnitTest : MockMvcBaseTest("literals") {
             .content(literal)
             .perform()
             .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("\$.status").value(400))
-            .andExpect(jsonPath("\$.errors.length()").value(1))
-            .andExpect(jsonPath("\$.errors[0].field").value("label"))
-            .andExpect(jsonPath("\$.errors[0].message").value("A literal must be at most $MAX_LABEL_LENGTH characters long."))
+            .andExpect(jsonPath("$.status").value(400))
+            .andExpect(jsonPath("$.errors.length()").value(1))
+            .andExpect(jsonPath("$.errors[0].field").value("label"))
+            .andExpect(jsonPath("$.errors[0].message").value("A literal must be at most $MAX_LABEL_LENGTH characters long."))
 
         verify(exactly = 1) { literalService.create(any()) }
-    }
-
-    @Test
-    @TestWithMockUser
-    fun whenPOST_AndRequestIsValid_ThenSucceed() {
-        val literal = CreateLiteralRequest(
-            label = "irrelevant",
-            datatype = "irrelevant"
-        )
-        val mockResult = Literal(
-            id = ThingId("L1"),
-            label = literal.label,
-            datatype = literal.datatype,
-            createdAt = OffsetDateTime.now(clock),
-            createdBy = ContributorId(MockUserId.USER),
-        )
-        val command = CreateCommand(
-            contributorId = ContributorId(MockUserId.USER),
-            label = literal.label,
-            datatype = literal.datatype,
-        )
-        every { literalService.findById(any()) } returns Optional.of(mockResult)
-        every { literalService.create(command) } returns mockResult.id
-
-        post("/api/literals")
-            .content(literal)
-            .perform()
-            .andExpect(status().isCreated)
-            .andExpect(header().string("Location", matchesPattern("https?://.+/api/literals/L1")))
-
-        verify(exactly = 1) { literalService.findById(any()) }
-        verify(exactly = 1) { literalService.create(command) }
     }
 
     @Test

@@ -31,7 +31,7 @@ The resource can be retrieved by following the URI in the `Location` header fiel
 
 NOTE: The created literal is returned in the body for convenience. This might be subject to change.
 
-operation::literals-add[snippets='request-fields,curl-request,response-headers,http-response']
+operation::literals-create[snippets='request-fields,curl-request,response-headers,http-response']
 
 [[literals-edit]]
 == Updating Literals

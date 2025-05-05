@@ -33,6 +33,7 @@ internal class PaperResourceUpdaterUnitTest : MockkBaseTest {
             observatoryId = command.observatories!!.single(),
             organizationId = command.organizations!!.single(),
             extractionMethod = command.extractionMethod,
+            verified = command.verified,
             visibility = command.visibility,
         )
 
@@ -60,6 +61,7 @@ internal class PaperResourceUpdaterUnitTest : MockkBaseTest {
             observatoryId = ObservatoryId.UNKNOWN,
             organizationId = command.organizations!!.single(),
             extractionMethod = command.extractionMethod,
+            verified = command.verified,
             visibility = command.visibility,
         )
 
@@ -86,6 +88,7 @@ internal class PaperResourceUpdaterUnitTest : MockkBaseTest {
             observatoryId = null,
             organizationId = command.organizations!!.single(),
             extractionMethod = command.extractionMethod,
+            verified = command.verified,
             visibility = command.visibility,
         )
 
@@ -112,6 +115,7 @@ internal class PaperResourceUpdaterUnitTest : MockkBaseTest {
             observatoryId = command.observatories!!.single(),
             organizationId = OrganizationId.UNKNOWN,
             extractionMethod = command.extractionMethod,
+            verified = command.verified,
             visibility = command.visibility,
         )
 
@@ -138,6 +142,7 @@ internal class PaperResourceUpdaterUnitTest : MockkBaseTest {
             observatoryId = command.observatories!!.single(),
             organizationId = null,
             extractionMethod = command.extractionMethod,
+            verified = command.verified,
             visibility = command.visibility,
         )
 

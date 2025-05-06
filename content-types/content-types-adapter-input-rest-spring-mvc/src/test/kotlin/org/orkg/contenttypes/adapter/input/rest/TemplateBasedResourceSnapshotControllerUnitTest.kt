@@ -74,6 +74,7 @@ internal class TemplateBasedResourceSnapshotControllerUnitTest : MockMvcBaseTest
         val templateBasedResourceSnapshot = createTemplateBasedResourceSnapshotV1()
         every { templateBasedResourceSnapshotService.findById(templateBasedResourceSnapshot.id) } returns Optional.of(templateBasedResourceSnapshot)
         every { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) } returns emptyMap()
+        every { statementService.findAllDescriptionsById(any<Set<ThingId>>()) } returns emptyMap()
 
         documentedGetRequestTo("/api/resources/{id}/snapshots/{snapshotId}", templateBasedResourceSnapshot.resourceId, templateBasedResourceSnapshot.id)
             .perform()
@@ -101,6 +102,7 @@ internal class TemplateBasedResourceSnapshotControllerUnitTest : MockMvcBaseTest
 
         verify(exactly = 1) { templateBasedResourceSnapshotService.findById(templateBasedResourceSnapshot.id) }
         verify(exactly = 1) { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) }
+        verify(exactly = 1) { statementService.findAllDescriptionsById(any<Set<ThingId>>()) }
     }
 
     @Test
@@ -140,6 +142,7 @@ internal class TemplateBasedResourceSnapshotControllerUnitTest : MockMvcBaseTest
             templateBasedResourceSnapshotService.findAllByResourceId(any(), any())
         } returns pageOf(createTemplateBasedResourceSnapshotV1())
         every { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) } returns emptyMap()
+        every { statementService.findAllDescriptionsById(any<Set<ThingId>>()) } returns emptyMap()
 
         documentedGetRequestTo("/api/resources/{id}/snapshots", resourceId)
             .perform()
@@ -152,6 +155,7 @@ internal class TemplateBasedResourceSnapshotControllerUnitTest : MockMvcBaseTest
             templateBasedResourceSnapshotService.findAllByResourceId(any(), any())
         }
         verify(exactly = 1) { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) }
+        verify(exactly = 1) { statementService.findAllDescriptionsById(any<Set<ThingId>>()) }
     }
 
     @Test
@@ -161,6 +165,7 @@ internal class TemplateBasedResourceSnapshotControllerUnitTest : MockMvcBaseTest
             templateBasedResourceSnapshotService.findAllByResourceIdAndTemplateId(any(), any(), any())
         } returns pageOf(createTemplateBasedResourceSnapshotV1())
         every { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) } returns emptyMap()
+        every { statementService.findAllDescriptionsById(any<Set<ThingId>>()) } returns emptyMap()
 
         val resourceId = ThingId("R123")
         val templateId = ThingId("R456")
@@ -191,6 +196,7 @@ internal class TemplateBasedResourceSnapshotControllerUnitTest : MockMvcBaseTest
             )
         }
         verify(exactly = 1) { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) }
+        verify(exactly = 1) { statementService.findAllDescriptionsById(any<Set<ThingId>>()) }
     }
 
     @Test

@@ -49,6 +49,7 @@ interface TemplateInstanceRepresentationAdapter :
     ): TemplateInstanceRepresentation =
         TemplateInstanceRepresentation(
             root = root.toResourceRepresentation(statementCounts, formattedLabels),
+            predicates = predicates.mapValues { (_, value) -> value.toPredicateRepresentation(descriptions[value.id]) },
             statements = statements.mapValues { (_, value) ->
                 value.map { it.toEmbeddedStatementRepresentation(statementCounts, formattedLabels, descriptions) }
             }
@@ -58,5 +59,5 @@ interface TemplateInstanceRepresentationAdapter :
         (statements.values.flatMap { it.resources() } + root)
 
     fun TemplateInstance.thingsWithDescription(): List<Thing> =
-        statements.values.flatMap { it.thingsWithDescription() }.filter { it is Predicate || it is Class }
+        statements.values.flatMap { it.thingsWithDescription() }.filter { it is Predicate || it is Class } + predicates.values
 }

@@ -81,6 +81,7 @@ internal class TemplateInstanceControllerUnitTest : MockMvcBaseTest("template-in
 
         every { service.findById(id, templateInstance.root.id) } returns Optional.of(templateInstance)
         every { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) } returns emptyMap()
+        every { statementService.findAllDescriptionsById(any<Set<ThingId>>()) } returns emptyMap()
 
         documentedGetRequestTo("/api/templates/{id}/instances/{instanceId}", id, templateInstance.root.id)
             .accept(TEMPLATE_INSTANCE_JSON_V1)
@@ -97,6 +98,7 @@ internal class TemplateInstanceControllerUnitTest : MockMvcBaseTest("template-in
                     responseFields(
                         // The order here determines the order in the generated table. More relevant items should be up.
                         subsectionWithPath("root").description("The resource representation of the root resource."),
+                        subsectionWithPath("predicates").description("Map of predicate id to predicate representation."),
                         subsectionWithPath("statements").description("Map of predicate id to list of embedded statement representations, where `root` is the subject."),
                         subsectionWithPath("statements.*[].thing").description("The thing representation of the object of the statement. Acts as the subject for statements defined in the `statements` object."),
                         timestampFieldWithPath("statements.*[].created_at", "the statement was created"),
@@ -110,6 +112,7 @@ internal class TemplateInstanceControllerUnitTest : MockMvcBaseTest("template-in
 
         verify(exactly = 1) { service.findById(id, templateInstance.root.id) }
         verify(exactly = 1) { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) }
+        verify(exactly = 1) { statementService.findAllDescriptionsById(any<Set<ThingId>>()) }
     }
 
     @Test
@@ -139,6 +142,7 @@ internal class TemplateInstanceControllerUnitTest : MockMvcBaseTest("template-in
 
         every { service.findAll(id, pageable = any()) } returns pageOf(templateInstance)
         every { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) } returns emptyMap()
+        every { statementService.findAllDescriptionsById(any<Set<ThingId>>()) } returns emptyMap()
 
         documentedGetRequestTo("/api/templates/{id}/instances", id)
             .accept(TEMPLATE_INSTANCE_JSON_V1)
@@ -158,6 +162,7 @@ internal class TemplateInstanceControllerUnitTest : MockMvcBaseTest("template-in
 
         verify(exactly = 1) { service.findAll(id, pageable = any()) }
         verify(exactly = 1) { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) }
+        verify(exactly = 1) { statementService.findAllDescriptionsById(any<Set<ThingId>>()) }
     }
 
     @Test
@@ -168,6 +173,7 @@ internal class TemplateInstanceControllerUnitTest : MockMvcBaseTest("template-in
 
         every { service.findAll(id, any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns pageOf(templateInstance)
         every { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) } returns emptyMap()
+        every { statementService.findAllDescriptionsById(any<Set<ThingId>>()) } returns emptyMap()
 
         val label = "label"
         val exact = true
@@ -214,6 +220,7 @@ internal class TemplateInstanceControllerUnitTest : MockMvcBaseTest("template-in
 
         verify(exactly = 1) { service.findAll(id, any(), any(), any(), any(), any(), any(), any(), any(), any()) }
         verify(exactly = 1) { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) }
+        verify(exactly = 1) { statementService.findAllDescriptionsById(any<Set<ThingId>>()) }
     }
 
     @Test

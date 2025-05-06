@@ -33,6 +33,7 @@ import org.orkg.contenttypes.domain.ResearchProblem
 import org.orkg.contenttypes.domain.ResourceReference
 import org.orkg.contenttypes.domain.SnapshotId
 import org.orkg.contenttypes.input.PublicationInfoCommand
+import org.orkg.graph.adapter.input.rest.PredicateRepresentation
 import org.orkg.graph.adapter.input.rest.ResourceRepresentation
 import org.orkg.graph.adapter.input.rest.SimpleAuthorRepresentation
 import org.orkg.graph.adapter.input.rest.StatementRepresentation
@@ -423,6 +424,7 @@ data class RosettaStoneTemplateRepresentation(
 
 data class TemplateInstanceRepresentation(
     val root: ResourceRepresentation,
+    val predicates: Map<ThingId, PredicateRepresentation>,
     val statements: Map<ThingId, List<EmbeddedStatementRepresentation>>,
 )
 

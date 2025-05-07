@@ -31,7 +31,7 @@ class NotificationService(
         val textModel = model.toMutableMap()
         htmlModel["formatMessage"] = MessageFormatter(emailTemplateLoader.messages, ::escapeHtml4)
         textModel["formatMessage"] = MessageFormatter(emailTemplateLoader.messages)
-        val htmlBody = getEmailTemplate("html/$templateName.ftl").render(htmlModel)
+        val htmlBody = getEmailTemplate("html/$templateName.ftl").render(htmlModel).replace("\n", "")
         val textBody = getEmailTemplate("text/$templateName.ftl").render(textModel)
         val subject = emailTemplateLoader.messages[subjectKey] ?: throw IllegalArgumentException("Unknown subject key: $subjectKey")
         val email = Email(subject, htmlBody, textBody)

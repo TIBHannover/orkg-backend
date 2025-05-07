@@ -1,4 +1,5 @@
 <#macro emailLayout>
+<#compress>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -204,6 +205,9 @@
 </head>
 
 <body bgcolor="#e9ebf2">
+<div style="display: none;">
+<#nested>
+</div>
 <table align="center" cellpadding="0" cellspacing="0" class="container-for-gmail-android" width="100%">
   <tr>
     <td align="left" valign="top" width="100%" style="background:#e9ebf2;">
@@ -212,11 +216,6 @@
         <table cellspacing="0" cellpadding="0" width="100%" bgcolor="#e9ebf2" style="background-color:transparent">
           <tr>
             <td width="100%" height="95" valign="top" style="text-align: center; vertical-align:middle;">
-            <!--[if gte mso 9]>
-            <v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="mso-width-percent:1000;height:95px; v-text-anchor:middle;">
-              <v:fill type="tile" src="https://orkg.org/strapi/uploads/logo_e6e07dc7c7.png" color="#e9ebf2" />
-              <v:textbox inset="0,0,0,0">
-            <![endif]-->
               <center>
                 <table cellpadding="0" cellspacing="0" width="600" class="w320">
                   <tr>
@@ -226,10 +225,6 @@
                   </tr>
                 </table>
               </center>
-              <!--[if gte mso 9]>
-              </v:textbox>
-            </v:rect>
-            <![endif]-->
             </td>
           </tr>
         </table>
@@ -271,4 +266,5 @@
 </table>
 </body>
 </html>
+</#compress>
 </#macro>

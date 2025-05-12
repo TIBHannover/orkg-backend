@@ -28,6 +28,18 @@ interface ThingRepository {
         organizationId: OrganizationId? = null,
     ): Page<Thing>
 
+    fun count(
+        label: SearchString? = null,
+        visibility: VisibilityFilter? = null,
+        createdBy: ContributorId? = null,
+        createdAtStart: OffsetDateTime? = null,
+        createdAtEnd: OffsetDateTime? = null,
+        includeClasses: Set<ThingId> = emptySet(),
+        excludeClasses: Set<ThingId> = emptySet(),
+        observatoryId: ObservatoryId? = null,
+        organizationId: OrganizationId? = null,
+    ): Long
+
     fun existsAllById(ids: Set<ThingId>): Boolean
 
     fun isUsedAsObject(id: ThingId): Boolean

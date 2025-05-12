@@ -61,7 +61,55 @@ class SpringDataNeo4jThingAdapter(
         excludeClasses: Set<ThingId>,
         observatoryId: ObservatoryId?,
         organizationId: OrganizationId?,
-    ): Page<Thing> = cypherQueryBuilderFactory.newBuilder(Uncached)
+    ): Page<Thing> =
+        buildFindAllQuery(
+            sort = pageable.sort.orElseGet { Sort.by("created_at") },
+            label = label,
+            visibility = visibility,
+            createdBy = createdBy,
+            createdAtStart = createdAtStart,
+            createdAtEnd = createdAtEnd,
+            includeClasses = includeClasses,
+            excludeClasses = excludeClasses,
+            observatoryId = observatoryId,
+            organizationId = organizationId
+        ).fetch(pageable, false)
+
+    override fun count(
+        label: SearchString?,
+        visibility: VisibilityFilter?,
+        createdBy: ContributorId?,
+        createdAtStart: OffsetDateTime?,
+        createdAtEnd: OffsetDateTime?,
+        includeClasses: Set<ThingId>,
+        excludeClasses: Set<ThingId>,
+        observatoryId: ObservatoryId?,
+        organizationId: OrganizationId?,
+    ): Long =
+        buildFindAllQuery(
+            label = label,
+            visibility = visibility,
+            createdBy = createdBy,
+            createdAtStart = createdAtStart,
+            createdAtEnd = createdAtEnd,
+            includeClasses = includeClasses,
+            excludeClasses = excludeClasses,
+            observatoryId = observatoryId,
+            organizationId = organizationId
+        ).count()
+
+    private fun buildFindAllQuery(
+        sort: Sort = Sort.unsorted(),
+        label: SearchString?,
+        visibility: VisibilityFilter?,
+        createdBy: ContributorId?,
+        createdAtStart: OffsetDateTime?,
+        createdAtEnd: OffsetDateTime?,
+        includeClasses: Set<ThingId>,
+        excludeClasses: Set<ThingId>,
+        observatoryId: ObservatoryId?,
+        organizationId: OrganizationId?,
+    ) = cypherQueryBuilderFactory.newBuilder(Uncached)
         .withCommonQuery {
             val node = node("Thing", includeClasses.map { it.value }).named("node")
             val match = label?.let { searchString ->
@@ -102,7 +150,6 @@ class SpringDataNeo4jThingAdapter(
             val node = name("node")
             val score = if (label != null && label is FuzzySearchString) name("score") else null
             val variables = listOfNotNull(node, score)
-            val sort = pageable.sort.orElseGet { Sort.by("created_at") }
             commonQuery
                 .with(variables) // "with" is required because cypher dsl reorders "orderBy" and "where" clauses sometimes, decreasing performance
                 .where(
@@ -131,7 +178,6 @@ class SpringDataNeo4jThingAdapter(
         }
         .countOver("node")
         .mappedBy(ThingMapper("node"))
-        .fetch(pageable, false)
 
     override fun existsAllById(ids: Set<ThingId>): Boolean = neo4jRepository.existsAll(ids)
 

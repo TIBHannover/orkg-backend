@@ -9,6 +9,6 @@ dependencies {
     api("jakarta.validation:jakarta.validation-api")
     api(project(":common:core-identifiers"))
     api(project(":common:spring-webmvc"))
-    api(project(":community:community-core-model"))
     api(project(":community:community-ports-input-legacy"))
+    implementation(project(":community:community-core-model"))
 }

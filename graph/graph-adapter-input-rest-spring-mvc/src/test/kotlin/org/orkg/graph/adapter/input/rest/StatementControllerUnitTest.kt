@@ -32,9 +32,7 @@ import org.orkg.graph.domain.ThingNotFound
 import org.orkg.graph.input.CreateStatementUseCase.CreateCommand
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createLiteral
-import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.MockUserId
@@ -225,7 +223,7 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
 
     @Test
     @TestWithMockUser
-    @DisplayName("Given a statement is created, when service succeeds, then status is 200 OK and statement is returned")
+    @DisplayName("Given a statement is created, when service succeeds, then status is 201 CREATED")
     fun create() {
         val id = StatementId("S123")
         val statement = createStatement().copy(id = id, subject = createResource(), `object` = createLiteral())
@@ -243,16 +241,12 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
         )
 
         every { statementService.create(command) } returns id
-        every { statementService.findById(id) } returns Optional.of(statement)
-        every { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) } returns emptyMap()
-        every { statementService.findAllDescriptionsById(any()) } returns emptyMap()
 
         documentedPostRequestTo("/api/statements")
             .content(request)
             .perform()
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("/api/statements/$id")))
-            .andExpectStatement()
             .andDo(
                 documentationHandler.document(
                     responseHeaders(
@@ -263,16 +257,12 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
                         fieldWithPath("subject_id").description("The id of the subject of the statement."),
                         fieldWithPath("predicate_id").description("The id of the predicate of the statement."),
                         fieldWithPath("object_id").description("The id of the object of the statement.")
-                    ),
-                    responseFields(statementResponseFields())
+                    )
                 )
             )
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { statementService.create(command) }
-        verify(exactly = 1) { statementService.findById(id) }
-        verify(exactly = 1) { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) }
-        verify(exactly = 1) { statementService.findAllDescriptionsById(any()) }
     }
 
     @Test
@@ -376,7 +366,7 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
 
     @Test
     @TestWithMockUser
-    @DisplayName("Given a statement is updated, when service succeeds, then status is 200 OK and statement is returned")
+    @DisplayName("Given a statement is updated, when service succeeds, then status is 204 NO CONTENT")
     fun update() {
         val id = StatementId("S1")
         val subjectId = ThingId("R123")
@@ -387,23 +377,13 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
             predicateId = predicateId,
             objectId = objectId,
         )
-        val updatedStatement = createStatement(
-            id = id,
-            subject = createResource(subjectId),
-            predicate = createPredicate(predicateId),
-            `object` = createClass(objectId)
-        )
         every { statementService.update(any()) } just runs
-        every { statementService.findById(id) } returns Optional.of(updatedStatement)
-        every { statementService.findAllDescriptionsById(any()) } returns emptyMap()
-        every { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) } returns emptyMap()
 
         documentedPutRequestTo("/api/statements/{id}", id)
             .content(request)
             .perform()
-            .andExpect(status().isOk)
+            .andExpect(status().isNoContent)
             .andExpect(header().string("Location", endsWith("/api/statements/$id")))
-            .andExpectStatement()
             .andDo(
                 documentationHandler.document(
                     pathParameters(
@@ -431,9 +411,6 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
                 }
             )
         }
-        verify(exactly = 1) { statementService.findById(id) }
-        verify(exactly = 1) { statementService.findAllDescriptionsById(any()) }
-        verify(exactly = 1) { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) }
     }
 
     @Test

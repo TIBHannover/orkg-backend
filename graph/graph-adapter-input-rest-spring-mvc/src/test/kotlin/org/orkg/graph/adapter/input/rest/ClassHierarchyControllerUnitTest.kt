@@ -340,7 +340,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
 
     @Test
     @TestWithMockCurator
-    @DisplayName("Given a parent class id and a child class id, when a relation is created for a patch request, then status is 200 OK")
+    @DisplayName("Given a parent class id and a child class id, when a relation is created for a patch request, then status is 204 NO CONTENT")
     fun updateChildRelations() {
         val parentId = ThingId("parentId")
         val childId = ThingId("childId")
@@ -351,7 +351,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
         documentedPatchRequestTo("/api/classes/{id}/children", parentId)
             .content(request)
             .perform()
-            .andExpect(status().isOk)
+            .andExpect(status().isNoContent)
             .andExpect(header().string("location", endsWith("/api/classes/$parentId/children")))
             .andDo(
                 documentationHandler.document(
@@ -437,7 +437,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
 
     @Test
     @TestWithMockCurator
-    @DisplayName("Given a child class id, when deleting its subclass relation, then status is 200 OK")
+    @DisplayName("Given a child class id, when deleting its subclass relation, then status is 204 NO CONTENT")
     fun deleteParentRelation() {
         val childId = ThingId("childId")
 
@@ -475,7 +475,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
 
     @Test
     @TestWithMockCurator
-    @DisplayName("Given a child class id and a parent class id, when a relation is created, then status is 200 OK")
+    @DisplayName("Given a child class id and a parent class id, when a relation is created, then status is 201 CREATED")
     fun createParentRelation() {
         val parentId = ThingId("parentId")
         val childId = ThingId("childId")

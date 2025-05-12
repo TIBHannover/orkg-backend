@@ -1,16 +1,12 @@
 package org.orkg.graph.adapter.input.rest
 
-import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId
-import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
 import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.input.CreateObjectUseCase.CreateObjectRequest
-import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.ObjectUseCases
 import org.orkg.graph.input.ResourceUseCases
-import org.orkg.graph.input.StatementUseCases
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
@@ -28,23 +24,20 @@ import org.springframework.web.util.UriComponentsBuilder
 class ObjectController(
     private val resourceService: ResourceUseCases,
     private val objectService: ObjectUseCases,
-    override val statementService: StatementUseCases,
-    override val formattedLabelService: FormattedLabelUseCases,
-) : ResourceRepresentationAdapter {
+) {
     @RequireLogin
     @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun add(
         @RequestBody obj: CreateObjectRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         currentUser: Authentication?,
-        capabilities: MediaTypeCapabilities,
     ): ResponseEntity<ResourceRepresentation> {
         val id = objectService.createObject(obj, null, currentUser.contributorId().value)
         val location = uriComponentsBuilder
             .path("/api/resources/{id}")
             .buildAndExpand(id)
             .toUri()
-        return created(location).body(resourceService.findById(id).mapToResourceRepresentation(capabilities).get())
+        return created(location).build()
     }
 
     @RequireLogin
@@ -54,16 +47,14 @@ class ObjectController(
         @RequestBody obj: CreateObjectRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         currentUser: Authentication?,
-        capabilities: MediaTypeCapabilities,
     ): ResponseEntity<ResourceRepresentation> {
-        resourceService
-            .findById(id)
+        resourceService.findById(id)
             .orElseThrow { ResourceNotFound.withId(id) }
         objectService.createObject(obj, id, currentUser.contributorId().value)
         val location = uriComponentsBuilder
             .path("/api/resources/{id}")
             .buildAndExpand(id)
             .toUri()
-        return created(location).body(resourceService.findById(id).mapToResourceRepresentation(capabilities).get())
+        return created(location).build()
     }
 }

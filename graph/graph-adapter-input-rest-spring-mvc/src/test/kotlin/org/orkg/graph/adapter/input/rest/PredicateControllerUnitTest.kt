@@ -34,7 +34,6 @@ import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
-import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType.APPLICATION_JSON
@@ -116,25 +115,15 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
 
     @Test
     @TestWithMockUser
-    @DisplayName("Given a predicate create request, when service succeeds, it creates and returns the predicate")
+    @DisplayName("Given a predicate create request, when service succeeds, then status is 201 CREATED")
     fun create() {
         val request = PredicateController.CreatePredicateRequest(
             id = null,
             label = "predicate label"
         )
         val id = ThingId("R123")
-        val predicate = createPredicate(id, label = request.label)
 
         every { predicateService.create(any()) } returns id
-        every { predicateService.findById(id) } returns Optional.of(predicate)
-        every {
-            statementService.findAll(
-                pageable = PageRequests.SINGLE,
-                subjectId = id,
-                predicateId = Predicates.description,
-                objectClasses = setOf(Classes.literal)
-            )
-        } returns pageOf()
 
         documentedPostRequestTo("/api/predicates")
             .content(request)
@@ -142,7 +131,6 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
             .perform()
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("api/predicates/$id")))
-            .andExpectPredicate()
             .andDo(
                 documentationHandler.document(
                     responseHeaders(
@@ -151,16 +139,6 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
                     requestFields(
                         fieldWithPath("id").type("String").description("The id of the predicate. (optional)").optional(),
                         fieldWithPath("label").description("The label of the predicate.")
-                    ),
-                    responseFields(
-                        fieldWithPath("id").description("The predicate id."),
-                        fieldWithPath("label").description("The predicate label."),
-                        timestampFieldWithPath("created_at", "the predicate  was created"),
-                        // TODO: Add links to documentation of special user UUIDs.
-                        fieldWithPath("created_by").description("The ID of the user that created the predicate. All zeros if unknown."),
-                        fieldWithPath("description").type("String").description("The description of the predicate, if exists.").optional(),
-                        fieldWithPath("modifiable").description("Whether this predicate can be modified."),
-                        fieldWithPath("_class").description("Class description, always `predicate`.").optional().ignored()
                     )
                 )
             )
@@ -174,36 +152,19 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
                     it.contributorId shouldBe ContributorId(MockUserId.USER)
                 }
             )
-            predicateService.findById(id)
-            statementService.findAll(
-                pageable = PageRequests.SINGLE,
-                subjectId = id,
-                predicateId = Predicates.description,
-                objectClasses = setOf(Classes.literal)
-            )
         }
     }
 
     @Test
     @TestWithMockUser
-    fun `Given a predicate create request, when id is specified and service succeeds, it creates and returns the predicate`() {
+    fun `Given a predicate create request, when id is specified and service succeeds, then status is 201 CREATED`() {
         val id = ThingId("R123")
         val request = PredicateController.CreatePredicateRequest(
             id = id,
             label = "predicate label"
         )
-        val predicate = createPredicate(id, label = request.label)
 
         every { predicateService.create(any()) } returns id
-        every { predicateService.findById(id) } returns Optional.of(predicate)
-        every {
-            statementService.findAll(
-                pageable = PageRequests.SINGLE,
-                subjectId = id,
-                predicateId = Predicates.description,
-                objectClasses = setOf(Classes.literal)
-            )
-        } returns pageOf()
 
         post("/api/predicates")
             .content(request)
@@ -211,7 +172,6 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
             .perform()
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("api/predicates/$id")))
-            .andExpectPredicate()
 
         verify(exactly = 1) {
             predicateService.create(
@@ -220,13 +180,6 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
                     it.label shouldBe request.label
                     it.contributorId shouldBe ContributorId(MockUserId.USER)
                 }
-            )
-            predicateService.findById(id)
-            statementService.findAll(
-                pageable = PageRequests.SINGLE,
-                subjectId = id,
-                predicateId = Predicates.description,
-                objectClasses = setOf(Classes.literal)
             )
         }
     }
@@ -319,7 +272,7 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
 
     @Test
     @TestWithMockUser
-    @DisplayName("Given a predicate update command, when service succeeds, it returns status 200 OK")
+    @DisplayName("Given a predicate update command, when service succeeds, then status is 204 NO CONTENT")
     fun update() {
         val predicate = createPredicate(label = "foo")
         val command = UpdatePredicateUseCase.UpdateCommand(
@@ -332,22 +285,12 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
         )
 
         every { predicateService.update(command) } just runs
-        every { predicateService.findById(any()) } returns Optional.of(predicate)
-        every {
-            statementService.findAll(
-                pageable = PageRequests.SINGLE,
-                subjectId = predicate.id,
-                predicateId = Predicates.description,
-                objectClasses = setOf(Classes.literal)
-            )
-        } returns pageOf()
 
         documentedPutRequestTo("/api/predicates/{id}", predicate.id)
             .content(request)
             .perform()
-            .andExpect(status().isOk)
+            .andExpect(status().isNoContent)
             .andExpect(header().string("Location", CoreMatchers.endsWith("/api/predicates/${predicate.id}")))
-            .andExpectPredicate()
             .andDo(
                 documentationHandler.document(
                     pathParameters(
@@ -358,22 +301,12 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
                     ),
                     requestFields(
                         fieldWithPath("label").description("The updated predicate label. (optional)").optional(),
-                    ),
-                    responseFields(predicateResponseFields())
+                    )
                 )
             )
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { predicateService.update(command) }
-        verify(exactly = 1) { predicateService.findById(any()) }
-        verify(exactly = 1) {
-            statementService.findAll(
-                pageable = PageRequests.SINGLE,
-                subjectId = predicate.id,
-                predicateId = Predicates.description,
-                objectClasses = setOf(Classes.literal)
-            )
-        }
     }
 
     @Test

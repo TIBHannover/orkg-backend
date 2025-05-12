@@ -19,7 +19,6 @@ import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.graph.adapter.input.rest.LiteralController.CreateLiteralRequest
 import org.orkg.graph.adapter.input.rest.json.GraphJacksonModule
-import org.orkg.graph.adapter.input.rest.testing.fixtures.literalResponseFields
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.InvalidLiteralLabel
 import org.orkg.graph.domain.Literal
@@ -203,7 +202,7 @@ internal class LiteralControllerUnitTest : MockMvcBaseTest("literals") {
 
     @Test
     @TestWithMockUser
-    @DisplayName("When creating a literal, and request is valid, then status is 201 CREATED and literal is returned")
+    @DisplayName("When creating a literal, and request is valid, then status is 201 CREATED")
     fun create() {
         val id = ThingId("L1")
         val literal = createLiteral(id)
@@ -216,7 +215,6 @@ internal class LiteralControllerUnitTest : MockMvcBaseTest("literals") {
             label = request.label,
             datatype = request.datatype,
         )
-        every { literalService.findById(any()) } returns Optional.of(literal)
         every { literalService.create(command) } returns literal.id
 
         documentedPostRequestTo("/api/literals")
@@ -232,13 +230,11 @@ internal class LiteralControllerUnitTest : MockMvcBaseTest("literals") {
                     requestFields(
                         fieldWithPath("label").description("The value of the literal."),
                         fieldWithPath("datatype").description("The datatype of the literal value. (default: xsd:string)")
-                    ),
-                    responseFields(literalResponseFields())
+                    )
                 )
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { literalService.findById(any()) }
         verify(exactly = 1) { literalService.create(command) }
     }
 
@@ -258,7 +254,6 @@ internal class LiteralControllerUnitTest : MockMvcBaseTest("literals") {
             label = "",
             datatype = "xsd:string"
         )
-        every { literalService.findById(any()) } returns Optional.of(mockResult)
         every { literalService.create(command) } returns mockResult.id
 
         post("/api/literals")
@@ -267,7 +262,6 @@ internal class LiteralControllerUnitTest : MockMvcBaseTest("literals") {
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", matchesPattern("https?://.+/api/literals/L1")))
 
-        verify(exactly = 1) { literalService.findById(any()) }
         verify(exactly = 1) { literalService.create(command) }
     }
 
@@ -310,7 +304,7 @@ internal class LiteralControllerUnitTest : MockMvcBaseTest("literals") {
 
     @Test
     @TestWithMockUser
-    @DisplayName("Given a literal update command, when service succeeds, it returns status 200 OK")
+    @DisplayName("Given a literal update command, when service succeeds, it returns status 204 NO CONTENT")
     fun update() {
         val literal = createLiteral(label = "foo")
         val command = UpdateLiteralUseCase.UpdateCommand(
@@ -325,14 +319,12 @@ internal class LiteralControllerUnitTest : MockMvcBaseTest("literals") {
         )
 
         every { literalService.update(command) } just runs
-        every { literalService.findById(any()) } returns Optional.of(literal)
 
         documentedPutRequestTo("/api/literals/{id}", literal.id)
             .content(request)
             .perform()
-            .andExpect(status().isOk)
+            .andExpect(status().isNoContent)
             .andExpect(header().string("Location", endsWith("/api/literals/${literal.id}")))
-            .andExpectLiteral()
             .andDo(
                 documentationHandler.document(
                     pathParameters(
@@ -344,14 +336,12 @@ internal class LiteralControllerUnitTest : MockMvcBaseTest("literals") {
                     requestFields(
                         fieldWithPath("label").description("The updated value of the literal. (optional)").optional(),
                         fieldWithPath("datatype").description("The updated datatype of the literal value. (optional)").optional(),
-                    ),
-                    responseFields(literalResponseFields())
+                    )
                 )
             )
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { literalService.update(command) }
-        verify(exactly = 1) { literalService.findById(any()) }
     }
 
     private fun createCreateRequestWithEmptyLabel() = CreateLiteralRequest(label = "")

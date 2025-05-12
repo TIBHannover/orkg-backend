@@ -145,7 +145,6 @@ internal class ListControllerUnitTest : MockMvcBaseTest("lists") {
         )
 
         every { listService.create(any()) } returns id
-        every { listService.findById(any()) } returns Optional.of(list)
 
         documentedPostRequestTo("/api/lists")
             .content(request)
@@ -166,7 +165,6 @@ internal class ListControllerUnitTest : MockMvcBaseTest("lists") {
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { listService.create(any()) }
-        verify(exactly = 1) { listService.findById(id) }
     }
 
     @Test

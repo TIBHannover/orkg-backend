@@ -55,7 +55,7 @@ class ObservatoryController(
             .path("/api/observatories/{id}")
             .buildAndExpand(id)
             .toUri()
-        return created(location).body(service.findById(id).mapToObservatoryRepresentation().get())
+        return created(location).build()
     }
 
     @GetMapping("/{id}")

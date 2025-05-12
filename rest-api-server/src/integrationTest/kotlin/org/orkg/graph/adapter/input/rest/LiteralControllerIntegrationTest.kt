@@ -7,7 +7,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.createLiteral
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.testing.andExpectLiteral
 import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.spring.MockMvcBaseTest
@@ -88,9 +87,6 @@ internal class LiteralControllerIntegrationTest : MockMvcBaseTest("literals") {
             .content(input)
             .perform()
             .andExpect(status().isCreated)
-            .andExpectLiteral()
-            .andExpect(jsonPath("$.label").value(input["label"] as String))
-            .andExpect(jsonPath("$.datatype").value(input["datatype"] as String))
     }
 
     @Test
@@ -106,9 +102,7 @@ internal class LiteralControllerIntegrationTest : MockMvcBaseTest("literals") {
         put("/api/literals/{id}", literalId)
             .content(update)
             .perform()
-            .andExpect(status().isOk)
+            .andExpect(status().isNoContent)
             .andExpect(header().string("Location", endsWith("api/literals/$literalId")))
-            .andExpect(jsonPath("$.label").value(update["label"] as String))
-            .andExpect(jsonPath("$.datatype").value(update["datatype"] as String))
     }
 }

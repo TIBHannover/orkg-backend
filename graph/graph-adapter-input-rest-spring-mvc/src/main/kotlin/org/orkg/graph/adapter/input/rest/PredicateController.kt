@@ -18,7 +18,7 @@ import org.springframework.format.annotation.DateTimeFormat.ISO
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
-import org.springframework.http.ResponseEntity.ok
+import org.springframework.http.ResponseEntity.noContent
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -79,7 +79,7 @@ class PredicateController(
             .path("/api/predicates/{id}")
             .buildAndExpand(id)
             .toUri()
-        return created(location).body(service.findById(id).mapToPredicateRepresentation().get())
+        return created(location).build()
     }
 
     @RequireLogin
@@ -101,7 +101,7 @@ class PredicateController(
             .path("/api/predicates/{id}")
             .buildAndExpand(id)
             .toUri()
-        return ok().location(location).body(service.findById(id).mapToPredicateRepresentation().get())
+        return noContent().location(location).build()
     }
 
     @DeleteMapping("/{id}")

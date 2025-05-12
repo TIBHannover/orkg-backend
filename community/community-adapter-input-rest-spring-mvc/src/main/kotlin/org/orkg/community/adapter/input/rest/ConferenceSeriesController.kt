@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.http.ResponseEntity.created
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestBody
@@ -56,7 +57,7 @@ class ConferenceSeriesController(
             .path("/api/conference-series/{id}")
             .buildAndExpand(response.id)
             .toUri()
-        return ResponseEntity.created(location).body(service.findById(response.id).get())
+        return created(location).build()
     }
 
     @GetMapping

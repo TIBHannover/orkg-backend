@@ -53,16 +53,16 @@ The statement can be retrieved by following the URI in the `Location` header fie
 6. If a statement with the specified subject, predicate and object already exists, the id of the existing statement will be returned and the status will be `201 CREATED`.
 ====
 
-operation::statements-create[snippets='request-fields,curl-request,response-body,http-response']
+operation::statements-create[snippets='request-fields,curl-request,http-response']
 
 [[statements-edit]]
 == Updating Statements
 
 A `PUT` request updates an existing statement with the given parameters.
-The response will be `200 OK` when successful.
-The updated statement is returned in the body for convenience.
+The response will be `204 NO CONTENT` when successful.
+The updated statement can be retrieved by following the URI in the `Location` header field.
 
-operation::statements-update[snippets='path-parameters,request-fields,curl-request,response-body,http-response']
+operation::statements-update[snippets='path-parameters,request-fields,curl-request,http-response']
 
 [[statements-delete]]
 == Deleting Statement

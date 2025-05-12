@@ -31,16 +31,14 @@ An optional set of classes can be provided.
 The response will be `201 Created` when successful.
 The resource can be retrieved by following the URI in the `Location` header field.
 
-NOTE: The created resource is returned in the body for convenience. This might be subject to change.
-
 operation::resources-create[snippets='request-fields,curl-request,response-headers,http-response,response-fields']
 
 [[resources-edit]]
 == Updating Resources
 
 A `PUT` request updates a resource with the given parameters.
-The response will be `200 OK` when successful.
-The created resource is returned in the body for convenience.
+The response will be `204 NO CONTENT` when successful.
+The updated resource can be retrieved by following the URI in the `Location` header field.
 
 [NOTE]
 ====

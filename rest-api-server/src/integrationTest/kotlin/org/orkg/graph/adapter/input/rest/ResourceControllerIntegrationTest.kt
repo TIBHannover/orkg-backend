@@ -23,7 +23,6 @@ import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.testing.MockUserId
-import org.orkg.testing.andExpectResource
 import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
 import org.orkg.testing.annotations.TestWithMockAdmin
 import org.orkg.testing.annotations.TestWithMockUser
@@ -94,7 +93,6 @@ internal class ResourceControllerIntegrationTest : MockMvcBaseTest("resources") 
             .content(resource)
             .perform()
             .andExpect(status().isCreated)
-            .andExpectResource()
     }
 
     @Test
@@ -140,8 +138,7 @@ internal class ResourceControllerIntegrationTest : MockMvcBaseTest("resources") 
         put("/api/resources/{id}", resource)
             .content(update)
             .perform()
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.label").value(newLabel))
+            .andExpect(status().isNoContent)
     }
 
     @Test
@@ -156,9 +153,7 @@ internal class ResourceControllerIntegrationTest : MockMvcBaseTest("resources") 
         put("/api/resources/{id}", resource)
             .content(update)
             .perform()
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.label").value("test"))
-            .andExpect(jsonPath("$.classes[0]").value(newClass.value))
+            .andExpect(status().isNoContent)
     }
 
     @Test
@@ -172,8 +167,7 @@ internal class ResourceControllerIntegrationTest : MockMvcBaseTest("resources") 
         put("/api/resources/{id}", resource)
             .content(update)
             .perform()
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.classes", hasSize<Int>(0)))
+            .andExpect(status().isNoContent)
     }
 
     @Test

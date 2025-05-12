@@ -23,7 +23,6 @@ import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.Predicates
-import org.orkg.graph.domain.toOptional
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.fixtures.createClass
@@ -284,7 +283,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
 
     @Test
     @TestWithMockUser
-    @DisplayName("Given a class is created, when service succeeds, then status is 200 OK and class is returned")
+    @DisplayName("Given a class is created, when service succeeds, then status is 201 CREATED")
     fun create() {
         val id = ThingId("C123")
         val uri = ParsedIRI("https://example.org/bar")
@@ -292,25 +291,12 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
         val request = mapOf("id" to id, "label" to label, "uri" to uri)
 
         every { classService.create(any()) } returns id
-        every { classService.findById(id) } returns createClass(id = id, label = label, uri = uri).toOptional()
-        every {
-            statementService.findAll(
-                pageable = PageRequests.SINGLE,
-                subjectId = id,
-                predicateId = Predicates.description,
-                objectClasses = setOf(Classes.literal)
-            )
-        } returns pageOf()
 
         documentedPostRequestTo("/api/classes")
             .content(request)
             .perform()
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("/api/classes/$id")))
-            .andExpectClass()
-            .andExpect(jsonPath("$.id").value(id.value))
-            .andExpect(jsonPath("$.label").value(label))
-            .andExpect(jsonPath("$.uri").value(uri.toString()))
             .andDo(
                 documentationHandler.document(
                     responseHeaders(
@@ -320,8 +306,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
                         fieldWithPath("id").description("The class id (optional)"),
                         fieldWithPath("label").description("The class label"),
                         fieldWithPath("uri").description("The class URI")
-                    ),
-                    responseFields(classResponseFields())
+                    )
                 )
             )
             .andDo(generateDefaultDocSnippets())
@@ -336,20 +321,11 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
                 }
             )
         }
-        verify(exactly = 1) { classService.findById(id) }
-        verify(exactly = 1) {
-            statementService.findAll(
-                pageable = PageRequests.SINGLE,
-                subjectId = id,
-                predicateId = Predicates.description,
-                objectClasses = setOf(Classes.literal)
-            )
-        }
     }
 
     @Test
     @TestWithMockUser
-    @DisplayName("Given the class is replaced, when service succeeds, then status is 200 OK and class is returned")
+    @DisplayName("Given the class is replaced, when service succeeds, then status is 204 NO CONTENT")
     fun replace() {
         val id = ThingId("EXISTS")
         val body = mapOf(
@@ -357,29 +333,12 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
             "uri" to "https://example.org/some/new#URI"
         )
         every { classService.replace(any()) } just runs
-        every { classService.findById(id) } returns Optional.of(
-            createClass(
-                id = id,
-                label = "new label",
-                uri = ParsedIRI("https://example.org/some/new#URI")
-            )
-        )
-        every {
-            statementService.findAll(
-                pageable = PageRequests.SINGLE,
-                subjectId = id,
-                predicateId = Predicates.description,
-                objectClasses = setOf(Classes.literal)
-            )
-        } returns pageOf()
 
         documentedPutRequestTo("/api/classes/{id}", id)
             .content(body)
             .perform()
-            .andExpect(status().isOk)
+            .andExpect(status().isNoContent)
             .andExpect(header().string("Location", endsWith("/api/classes/$id")))
-            .andExpect(jsonPath("$.label").value("new label"))
-            .andExpect(jsonPath("$.uri").value("https://example.org/some/new#URI"))
             .andDo(
                 documentationHandler.document(
                     pathParameters(
@@ -391,8 +350,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
                     requestFields(
                         fieldWithPath("label").description("The updated class label"),
                         fieldWithPath("uri").description("The updated class label")
-                    ),
-                    responseFields(classResponseFields())
+                    )
                 )
             )
             .andDo(generateDefaultDocSnippets())
@@ -406,20 +364,11 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
                 }
             )
         }
-        verify(exactly = 1) { classService.findById(id) }
-        verify(exactly = 1) {
-            statementService.findAll(
-                pageable = PageRequests.SINGLE,
-                subjectId = id,
-                predicateId = Predicates.description,
-                objectClasses = setOf(Classes.literal)
-            )
-        }
     }
 
     @Test
     @TestWithMockUser
-    @DisplayName("Given the a class label and URI is patched, when service succeeds, then status is 200 OK")
+    @DisplayName("Given the a class label and URI is patched, when service succeeds, then status is 204 NO CONTENT")
     fun update() {
         val id = ThingId("EXISTS")
         val body = mapOf("uri" to "https://example.org/some/new#URI", "label" to "some label")
@@ -428,7 +377,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
         documentedPatchRequestTo("/api/classes/{id}", id)
             .content(body)
             .perform()
-            .andExpect(status().isOk)
+            .andExpect(status().isNoContent)
             .andExpect(header().string("Location", endsWith("/api/classes/$id")))
             .andDo(
                 documentationHandler.document(
@@ -459,7 +408,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
 
     @Test
     @TestWithMockUser
-    fun `Given the class label is patched, when service succeeds, then status is 200 OK`() {
+    fun `Given the class label is patched, when service succeeds, then status is 204 NO CONTENT`() {
         val id = ThingId("EXISTS")
         val body = mapOf("label" to "some label")
         every { classService.update(any()) } just runs
@@ -467,7 +416,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
         patch("/api/classes/{id}", id)
             .content(body)
             .perform()
-            .andExpect(status().isOk)
+            .andExpect(status().isNoContent)
 
         verify(exactly = 1) {
             classService.update(
@@ -482,7 +431,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
 
     @Test
     @TestWithMockUser
-    fun `Given the class URI is patched, when service succeeds, then status is 200 OK`() {
+    fun `Given the class URI is patched, when service succeeds, then status is 204 NO CONTENT`() {
         val id = ThingId("EXISTS")
         val body = mapOf("uri" to "https://example.org/some/new#URI")
         every { classService.update(any()) } just runs
@@ -490,7 +439,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
         patch("/api/classes/{id}", id)
             .content(body)
             .perform()
-            .andExpect(status().isOk)
+            .andExpect(status().isNoContent)
         verify(exactly = 1) {
             classService.update(
                 withArg {

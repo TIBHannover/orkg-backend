@@ -28,7 +28,7 @@ import org.springframework.format.annotation.DateTimeFormat.ISO
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
-import org.springframework.http.ResponseEntity.ok
+import org.springframework.http.ResponseEntity.noContent
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -93,7 +93,6 @@ class ResourceController(
         @RequestBody request: CreateResourceRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         currentUser: Authentication?,
-        capabilities: MediaTypeCapabilities,
     ): ResponseEntity<ResourceRepresentation> {
         val contributor = contributorService.findById(currentUser.contributorId())
         val id = service.create(
@@ -111,7 +110,7 @@ class ResourceController(
             .path("/api/resources/{id}")
             .buildAndExpand(id)
             .toUri()
-        return created(location).body(service.findById(id).mapToResourceRepresentation(capabilities).get())
+        return created(location).build()
     }
 
     @RequireLogin
@@ -120,7 +119,6 @@ class ResourceController(
         @PathVariable id: ThingId,
         @RequestBody request: UpdateResourceRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        capabilities: MediaTypeCapabilities,
         currentUser: Authentication?,
     ): ResponseEntity<ResourceRepresentation> {
         service.update(request.toUpdateCommand(id, currentUser.contributorId()))
@@ -128,7 +126,7 @@ class ResourceController(
             .path("/api/resources/{id}")
             .buildAndExpand(id)
             .toUri()
-        return ok().location(location).body(service.findById(id).mapToResourceRepresentation(capabilities).get())
+        return noContent().location(location).build()
     }
 
     @GetMapping("/{id}/timeline")

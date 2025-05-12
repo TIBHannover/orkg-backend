@@ -33,6 +33,7 @@ import org.orkg.mediastorage.input.ImageUseCases
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.http.ResponseEntity.created
 import org.springframework.http.ResponseEntity.noContent
 import org.springframework.security.core.Authentication
 import org.springframework.util.MimeType
@@ -87,7 +88,7 @@ class OrganizationController(
             .path("/api/organizations/{id}")
             .buildAndExpand(id)
             .toUri()
-        return ResponseEntity.created(location).body(service.findById(id).get())
+        return created(location).build()
     }
 
     @GetMapping

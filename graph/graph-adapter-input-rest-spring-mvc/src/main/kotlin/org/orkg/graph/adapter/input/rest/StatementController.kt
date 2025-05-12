@@ -23,7 +23,7 @@ import org.springframework.format.annotation.DateTimeFormat.ISO
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
-import org.springframework.http.ResponseEntity.ok
+import org.springframework.http.ResponseEntity.noContent
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -88,7 +88,6 @@ class StatementController(
         @RequestBody request: CreateStatementRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         currentUser: Authentication?,
-        capabilities: MediaTypeCapabilities,
     ): ResponseEntity<StatementRepresentation> {
         val id = statementService.create(
             CreateCommand(
@@ -102,8 +101,7 @@ class StatementController(
             .path("/api/statements/{id}")
             .buildAndExpand(id)
             .toUri()
-        return created(location)
-            .body(statementService.findById(id).mapToStatementRepresentation(capabilities).get())
+        return created(location).build()
     }
 
     @RequireLogin
@@ -113,7 +111,6 @@ class StatementController(
         @RequestBody request: UpdateStatementRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         currentUser: Authentication?,
-        capabilities: MediaTypeCapabilities,
     ): ResponseEntity<StatementRepresentation> {
         statementService.update(
             UpdateStatementUseCase.UpdateCommand(
@@ -128,7 +125,7 @@ class StatementController(
             .path("/api/statements/{id}")
             .buildAndExpand(id)
             .toUri()
-        return ok().location(location).body(statementService.findById(id).mapToStatementRepresentation(capabilities).get())
+        return noContent().location(location).build()
     }
 
     @RequireLogin

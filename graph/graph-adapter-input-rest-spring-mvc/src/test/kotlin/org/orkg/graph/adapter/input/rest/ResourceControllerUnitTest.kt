@@ -295,7 +295,7 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
 
     @Test
     @TestWithMockUser
-    @DisplayName("Given a resource update command, when service succeeds, it returns status 200 OK")
+    @DisplayName("Given a resource update command, when service succeeds, then status is 204 NO CONTENT")
     fun update() {
         val resource = createResource(classes = setOf(Classes.data), label = "foo")
         val command = UpdateResourceUseCase.UpdateCommand(
@@ -318,15 +318,12 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
         )
 
         every { resourceService.update(command) } just runs
-        every { resourceService.findById(any()) } returns Optional.of(resource)
-        every { statementService.countIncomingStatementsById(resource.id) } returns 0
 
         documentedPutRequestTo("/api/resources/{id}", resource.id)
             .content(request)
             .perform()
-            .andExpect(status().isOk)
+            .andExpect(status().isNoContent)
             .andExpect(header().string("Location", endsWith("/api/resources/${resource.id}")))
-            .andExpectResource()
             .andDo(
                 documentationHandler.document(
                     pathParameters(
@@ -342,15 +339,12 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
                         fieldWithPath("visibility").description("""Visibility of the resource. Can be one of $allowedVisibilityValues. (optional)""").optional(),
                         fieldWithPath("organization_id").description("The updated ID of the organization the resource belongs to. (optional)").optional(),
                         fieldWithPath("observatory_id").description("The updated ID of the observatory the resource belongs to. (optional)").optional(),
-                    ),
-                    responseFields(resourceResponseFields())
+                    )
                 )
             )
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { resourceService.update(command) }
-        verify(exactly = 1) { resourceService.findById(any()) }
-        verify(exactly = 1) { statementService.countIncomingStatementsById(resource.id) }
     }
 
     @Test
@@ -381,7 +375,7 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
 
     @Test
     @TestWithMockUser
-    @DisplayName("When creating a resource, and service succeeds, then status is 201 CREATED and resource is returned")
+    @DisplayName("When creating a resource, and service succeeds, then status is 201 CREATED")
     fun create() {
         val id = ThingId("R213")
         val contributorId = ContributorId(MockUserId.USER)
@@ -391,23 +385,14 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
             classes = setOf(Classes.dataset),
             extractionMethod = ExtractionMethod.MANUAL
         )
-        val resource = createResource(
-            id = id,
-            classes = command.classes,
-            label = command.label,
-            extractionMethod = command.extractionMethod
-        )
 
         every { resourceService.create(any()) } returns id
         every { contributorService.findById(any()) } returns Optional.of(createContributor(contributorId))
-        every { resourceService.findById(any()) } returns Optional.of(resource)
-        every { statementService.countIncomingStatementsById(id) } returns 0
 
         documentedPostRequestTo("/api/resources")
             .content(command)
             .perform()
             .andExpect(status().isCreated)
-            .andExpectResource()
             .andExpect(header().string("Location", endsWith("api/resources/$id")))
             .andDo(
                 documentationHandler.document(
@@ -419,8 +404,7 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
                         fieldWithPath("label").description("The resource label."),
                         fieldWithPath("classes").type("Array").description("The classes of the resource. (optional)").optional(),
                         fieldWithPath("extraction_method").type("String").description("""The method used to extract the resource. Can be one of $allowedExtractionMethodValues. (optional, default: "UNKNOWN")""").optional()
-                    ),
-                    responseFields(resourceResponseFields())
+                    )
                 )
             )
             .andDo(generateDefaultDocSnippets())
@@ -437,8 +421,6 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
             )
         }
         verify(exactly = 1) { contributorService.findById(any()) }
-        verify(exactly = 1) { resourceService.findById(any()) }
-        verify(exactly = 1) { statementService.countIncomingStatementsById(id) }
     }
 
     @Test

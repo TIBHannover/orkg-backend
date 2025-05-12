@@ -63,7 +63,7 @@ class ListController(
         val location = uriComponentsBuilder.path("/api/lists/{id}")
             .buildAndExpand(id)
             .toUri()
-        return created(location).body(findById(id))
+        return created(location).build()
     }
 
     @RequireLogin

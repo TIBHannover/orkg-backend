@@ -25,7 +25,6 @@ import org.orkg.community.testing.fixtures.createObservatory
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.testing.fixtures.createResource
-import org.orkg.testing.andExpectObservatory
 import org.orkg.testing.annotations.TestWithMockCurator
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
@@ -38,14 +37,12 @@ import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
 import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import orkg.orkg.community.testing.fixtures.observatoryResponseFields
 import java.util.Optional
 import java.util.UUID
 
@@ -258,7 +255,6 @@ internal class ObservatoryControllerUnitTest : MockMvcBaseTest("observatories") 
             organizationIds = setOf(OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f")),
             sustainableDevelopmentGoals = setOf(sdg)
         )
-        val researchField = createResource(observatory.researchField!!, classes = setOf(Classes.researchField))
         val request = ObservatoryController.CreateObservatoryRequest(
             name = observatory.name,
             organizationId = observatory.organizationIds.first(),
@@ -269,15 +265,12 @@ internal class ObservatoryControllerUnitTest : MockMvcBaseTest("observatories") 
         )
 
         every { observatoryUseCases.create(any()) } returns observatory.id
-        every { observatoryUseCases.findById(observatory.id) } returns Optional.of(observatory)
-        every { resourceUseCases.findById(observatory.researchField!!) } returns Optional.of(researchField)
 
         documentedPostRequestTo("/api/observatories")
             .content(request)
             .perform()
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("/api/observatories/$id")))
-            .andExpectObservatory()
             .andDo(
                 documentationHandler.document(
                     responseHeaders(
@@ -290,8 +283,7 @@ internal class ObservatoryControllerUnitTest : MockMvcBaseTest("observatories") 
                         fieldWithPath("research_field").description("The id of the research field of the observatory."),
                         fieldWithPath("display_id").description("The URI slug of the observatory."),
                         fieldWithPath("sdgs").description("The set of ids of https://sdgs.un.org[sustainable development goals,window=_blank] the observatory belongs to."),
-                    ),
-                    responseFields(observatoryResponseFields())
+                    )
                 )
             )
             .andDo(generateDefaultDocSnippets())
@@ -309,8 +301,6 @@ internal class ObservatoryControllerUnitTest : MockMvcBaseTest("observatories") 
                 }
             )
         }
-        verify(exactly = 1) { observatoryUseCases.findById(observatory.id) }
-        verify(exactly = 1) { resourceUseCases.findById(observatory.researchField!!) }
     }
 
     @Test

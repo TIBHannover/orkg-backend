@@ -6,8 +6,3 @@ WARNING: This API is still **in development** and therefore **unstable** and **s
 Be aware that the API can (and will) break without notice, so beware if you intend to consume it directly.
 We will support a stable API in the future, but it is uncertain when that will be.
 This documentation will be updated to reflect that.
-
-[IMPORTANT]
-====
-* Response body contents for all POST, PUT and PATCH requests will be removed on 15.05.2025. Instead, clients must fetch the updated entity by following the location header.
-====

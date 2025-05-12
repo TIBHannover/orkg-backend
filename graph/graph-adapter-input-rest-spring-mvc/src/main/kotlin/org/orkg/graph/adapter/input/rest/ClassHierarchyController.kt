@@ -54,7 +54,6 @@ class ClassHierarchyController(
     @RequireCuratorRole
     fun deleteParentRelation(
         @PathVariable id: ThingId,
-        uriComponentsBuilder: UriComponentsBuilder,
     ): ResponseEntity<Any> {
         service.deleteByChildId(id)
         return noContent().build()
@@ -118,7 +117,7 @@ class ClassHierarchyController(
             .path("/api/classes/{id}/children")
             .buildAndExpand(id)
             .toUri()
-        return ok().location(location).build()
+        return noContent().location(location).build()
     }
 
     private fun createRelations(parentId: ThingId, childIds: Set<ThingId>, checkIfParentIsLeaf: Boolean, contributorId: ContributorId) {
@@ -129,8 +128,8 @@ class ClassHierarchyController(
     @GetMapping("/{id}/count")
     fun countClassInstances(
         @PathVariable id: ThingId,
-        pageable: Pageable,
-    ): CountResponse = CountResponse(service.countClassInstances(id))
+    ): CountResponse =
+        CountResponse(service.countClassInstances(id))
 
     @GetMapping("/{id}/hierarchy")
     fun findClassHierarchy(

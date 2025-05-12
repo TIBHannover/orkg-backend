@@ -18,7 +18,6 @@ import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @Neo4jContainerIntegrationTest
@@ -92,9 +91,8 @@ internal class PredicateControllerIntegrationTest : MockMvcBaseTest("predicates"
         put("/api/predicates/{id}", predicate)
             .content(resource)
             .perform()
-            .andExpect(status().isOk)
+            .andExpect(status().isNoContent)
             .andExpect(header().string("Location", endsWith("api/predicates/$predicate")))
-            .andExpect(jsonPath("$.label").value(newLabel))
     }
 
     @Test

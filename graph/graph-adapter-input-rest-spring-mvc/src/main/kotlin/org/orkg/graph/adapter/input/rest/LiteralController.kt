@@ -19,7 +19,7 @@ import org.springframework.format.annotation.DateTimeFormat.ISO
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
-import org.springframework.http.ResponseEntity.ok
+import org.springframework.http.ResponseEntity.noContent
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -80,7 +80,7 @@ class LiteralController(
             .path("/api/literals/{id}")
             .buildAndExpand(id)
             .toUri()
-        return created(location).body(service.findById(id).mapToLiteralRepresentation().get())
+        return created(location).build()
     }
 
     @RequireLogin
@@ -103,7 +103,7 @@ class LiteralController(
             .path("/api/literals/{id}")
             .buildAndExpand(id)
             .toUri()
-        return ok().location(location).body(service.findById(id).mapToLiteralRepresentation().get())
+        return noContent().location(location).build()
     }
 
     data class CreateLiteralRequest(

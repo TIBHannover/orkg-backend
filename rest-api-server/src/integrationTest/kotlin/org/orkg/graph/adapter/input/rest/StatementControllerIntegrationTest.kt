@@ -150,9 +150,7 @@ internal class StatementControllerIntegrationTest : MockMvcBaseTest("statements"
         put("/api/statements/{id}", st)
             .content(body)
             .perform()
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.predicate.id").value(p2.value))
-            .andExpect(jsonPath("$.object.id").value(o2.value))
+            .andExpect(status().isNoContent)
     }
 
     @Test
@@ -171,8 +169,7 @@ internal class StatementControllerIntegrationTest : MockMvcBaseTest("statements"
         put("/api/statements/{id}", st)
             .content(body)
             .perform()
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.predicate.id").value(p2.value))
+            .andExpect(status().isNoContent)
     }
 
     @Test

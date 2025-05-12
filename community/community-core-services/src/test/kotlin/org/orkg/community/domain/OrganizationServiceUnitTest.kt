@@ -73,62 +73,6 @@ internal class OrganizationServiceUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `given an organization id and an image, when creating the organization logo, it succeeds`() {
-        val organization = createOrganization()
-        val id = organization.id!!
-        val imageId = ImageId(UUID.randomUUID())
-        val image = loadRawImage(testImage)
-        val contributorId = ContributorId(UUID.randomUUID())
-        val command = CreateImageUseCase.CreateCommand(image.data, image.mimeType, contributorId)
-
-        every { repository.findById(id) } returns Optional.of(organization)
-        every { imageService.create(command) } returns imageId
-        every { repository.save(organization) } just runs
-
-        service.updateLogo(id, image, contributorId)
-
-        verify(exactly = 1) { repository.findById(id) }
-        verify(exactly = 1) { imageService.create(command) }
-        verify(exactly = 1) { repository.save(organization) }
-    }
-
-    @Test
-    fun `given an organization id and an image, when updating the organization logo for a missing organization, it returns an appropriate error`() {
-        val id = OrganizationId(UUID.randomUUID())
-        val image = loadRawImage(testImage)
-        val contributor = ContributorId(UUID.randomUUID())
-
-        every { repository.findById(id) } throws OrganizationNotFound(id)
-
-        assertThrows<OrganizationNotFound> {
-            service.updateLogo(id, image, contributor)
-        }
-
-        verify(exactly = 1) { repository.findById(id) }
-    }
-
-    @Test
-    fun `given an organization id and an image, when updating the organization logo, it receives a new logo id`() {
-        val oldImageId = ImageId(UUID.randomUUID())
-        val newImageId = ImageId(UUID.randomUUID())
-        val image = loadRawImage(testImage)
-        val organization = createOrganization(logoId = oldImageId)
-        val id = organization.id!!
-        val contributor = ContributorId(UUID.randomUUID())
-        val command = CreateImageUseCase.CreateCommand(image.data, image.mimeType, contributor)
-
-        every { repository.findById(id) } returns Optional.of(organization)
-        every { imageService.create(command) } returns newImageId
-        every { repository.save(organization) } just runs
-
-        service.updateLogo(id, image, contributor)
-
-        verify(exactly = 1) { repository.findById(id) }
-        verify(exactly = 1) { imageService.create(command) }
-        verify(exactly = 1) { repository.save(organization) }
-    }
-
-    @Test
     fun `given an organization update command, when repository reports organization not found, it returns an appropriate error`() {
         val id = OrganizationId(UUID.randomUUID())
         val contributorId = ContributorId(UUID.randomUUID())

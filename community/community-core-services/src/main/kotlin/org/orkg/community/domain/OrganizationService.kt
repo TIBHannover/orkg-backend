@@ -7,7 +7,6 @@ import org.orkg.community.input.UpdateOrganizationUseCases
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.mediastorage.domain.Image
 import org.orkg.mediastorage.domain.ImageId
-import org.orkg.mediastorage.domain.RawImage
 import org.orkg.mediastorage.input.CreateImageUseCase
 import org.orkg.mediastorage.input.ImageUseCases
 import org.orkg.spring.data.annotations.TransactionalOnJPA
@@ -59,25 +58,6 @@ class OrganizationService(
     override fun findByDisplayId(name: String): Optional<Organization> =
         postgresOrganizationRepository.findByDisplayId(name)
 
-    override fun update(organization: Organization) {
-        val found = postgresOrganizationRepository.findById(organization.id!!)
-            .orElseThrow { OrganizationNotFound(organization.id!!) }
-
-        if (organization.name != found.name) {
-            found.name = organization.name
-        }
-
-        if (organization.homepage != found.homepage) {
-            found.homepage = organization.homepage
-        }
-
-        if (organization.type != found.type) {
-            found.type = organization.type
-        }
-
-        postgresOrganizationRepository.save(found)
-    }
-
     override fun deleteAll() = postgresOrganizationRepository.deleteAll()
 
     override fun findLogoById(id: OrganizationId): Optional<Image> {
@@ -88,14 +68,6 @@ class OrganizationService(
         } else {
             Optional.empty()
         }
-    }
-
-    override fun updateLogo(id: OrganizationId, image: RawImage, contributor: ContributorId?) {
-        val organization = postgresOrganizationRepository.findById(id)
-            .orElseThrow { OrganizationNotFound(id) }
-        val command = CreateImageUseCase.CreateCommand(image.data, image.mimeType, contributor)
-        organization.logoId = imageService.create(command)
-        postgresOrganizationRepository.save(organization)
     }
 
     override fun update(

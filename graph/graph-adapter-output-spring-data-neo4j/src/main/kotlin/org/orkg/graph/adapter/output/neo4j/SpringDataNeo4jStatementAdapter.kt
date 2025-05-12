@@ -17,13 +17,10 @@ import org.neo4j.cypherdsl.core.Cypher.node
 import org.neo4j.cypherdsl.core.Cypher.parameter
 import org.neo4j.cypherdsl.core.Cypher.returning
 import org.neo4j.cypherdsl.core.Cypher.toUpper
-import org.neo4j.cypherdsl.core.Cypher.union
 import org.neo4j.cypherdsl.core.Cypher.unwind
 import org.neo4j.cypherdsl.core.Cypher.valueAt
 import org.neo4j.cypherdsl.core.ExposesWith
 import org.neo4j.cypherdsl.core.Expression
-import org.neo4j.cypherdsl.core.Node
-import org.neo4j.cypherdsl.core.Relationship
 import org.neo4j.cypherdsl.core.StatementBuilder
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
@@ -350,7 +347,7 @@ class SpringDataNeo4jStatementAdapter(
         objectLabel: String?,
     ): Page<GeneralStatement> =
         buildFindAllQuery(
-            sort = pageable.sort,
+            sort = pageable.sort.orElseGet { Sort.by("created_at") },
             subjectClasses = subjectClasses,
             subjectId = subjectId,
             subjectLabel = subjectLabel,
@@ -424,7 +421,6 @@ class SpringDataNeo4jStatementAdapter(
             val subject = name("sub")
             val r = name("r")
             val `object` = name("obj")
-            val sort = sort.orElseGet { Sort.by("created_at") }
             val propertyMappings = mapOf(
                 "id" to r.property("id"),
                 "created_at" to r.property("created_at"),
@@ -616,42 +612,6 @@ class SpringDataNeo4jStatementAdapter(
             .countDistinctOver("n")
             .withParameters("doi" to doi)
             .mappedBy(ResourceMapper("n"))
-            .fetch(pageable)
-
-    override fun findAllProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Resource> =
-        cypherQueryBuilderFactory.newBuilder()
-            .withCommonQuery {
-                val problem = name("p")
-                val idParameter = parameter("id")
-                call(
-                    union(
-                        match(
-                            paperNode()
-                                .withProperties("organization_id", idParameter)
-                                .relationshipTo(contributionNode(), RELATED)
-                                .withProperties("predicate_id", literalOf<String>("P31"))
-                                .relationshipTo(problemNode().named(problem), RELATED)
-                                .properties("predicate_id", literalOf<String>("P32"))
-                        ).returning(problem)
-                            .build(),
-                        match(
-                            node("Problem")
-                                .named(problem)
-                                .withProperties("observatory_id", idParameter)
-                        ).returning(problem)
-                            .build()
-                    )
-                )
-            }
-            .withQuery { commonQuery ->
-                val problem = name("p")
-                commonQuery.with(problem)
-                    .orderBy(problem.property("id").ascending())
-                    .returning(problem)
-            }
-            .countOver("p")
-            .withParameters("id" to id.value.toString())
-            .mappedBy(ResourceMapper("p"))
             .fetch(pageable)
 
     override fun findAllContributorsByResourceId(id: ThingId, pageable: Pageable): Page<ContributorId> =
@@ -891,28 +851,6 @@ class SpringDataNeo4jStatementAdapter(
             .orElse(0)
         return PageImpl(elements.toList(), pageable, count)
     }
-
-    private fun findAllFilteredAndPaged(
-        parameters: Map<String, Any>,
-        pageable: Pageable,
-        subject: Node = node("Thing"),
-        `object`: Node = node("Thing"),
-        filter: (subject: Node, relationship: Relationship, `object`: Node) -> Condition,
-    ): Page<GeneralStatement> = cypherQueryBuilderFactory.newBuilder()
-        .withCommonQuery {
-            val r = name("rel")
-            val relation = subject.relationshipTo(`object`, RELATED)
-                .named(r)
-            val condition = filter(subject, relation, `object`)
-            match(relation).where(condition)
-        }
-        .withQuery { commonQuery ->
-            commonQuery.returningWithSortableFields(name("rel"), subject.asExpression(), `object`.asExpression())
-        }
-        .countOver("rel")
-        .withParameters(parameters)
-        .mappedBy(StatementMapper(predicateRepository))
-        .fetch(pageable)
 
     private fun BundleConfiguration.toApocConfiguration(): Map<String, Any> {
         val conf = mutableMapOf<String, Any>(

@@ -10,7 +10,6 @@ import org.orkg.contenttypes.output.HandleService
 import org.orkg.contenttypes.output.TemplateBasedResourceSnapshotRepository
 import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.output.ResourceRepository
-import org.orkg.graph.output.StatementRepository
 import org.orkg.spring.data.annotations.TransactionalOnNeo4j
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Page
@@ -25,7 +24,6 @@ import java.util.Optional
 @TransactionalOnNeo4j
 class TemplateBasedResourceSnapshotService(
     private val resourceRepository: ResourceRepository,
-    private val statementRepository: StatementRepository,
     private val templateUseCase: TemplateUseCases,
     private val templateInstanceUseCases: TemplateInstanceUseCases,
     private val templateBasedResourceSnapshotRepository: TemplateBasedResourceSnapshotRepository,

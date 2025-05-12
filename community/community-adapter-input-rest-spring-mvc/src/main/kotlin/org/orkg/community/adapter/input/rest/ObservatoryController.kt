@@ -32,7 +32,6 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
@@ -117,56 +116,6 @@ class ObservatoryController(
         return noContent().location(location).build()
     }
 
-    @RequestMapping("/{id}/name", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @RequireCuratorRole
-    fun updateObservatoryName(
-        @PathVariable id: ObservatoryId,
-        @RequestBody @Valid name: UpdateRequest,
-    ): ObservatoryRepresentation {
-        service.changeName(id, name.value)
-        return service.findById(id).mapToObservatoryRepresentation().get()
-    }
-
-    @RequestMapping("/{id}/description", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @RequireCuratorRole
-    fun updateObservatoryDescription(
-        @PathVariable id: ObservatoryId,
-        @RequestBody @Valid description: UpdateRequest,
-    ): ObservatoryRepresentation {
-        service.changeDescription(id, description.value)
-        return service.findById(id).mapToObservatoryRepresentation().get()
-    }
-
-    @RequestMapping("/{id}/research_field", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @RequireCuratorRole
-    fun updateObservatoryResearchField(
-        @PathVariable id: ObservatoryId,
-        @RequestBody @Valid request: UpdateRequest,
-    ): ObservatoryRepresentation {
-        service.changeResearchField(id, ThingId(request.value))
-        return service.findById(id).mapToObservatoryRepresentation().get()
-    }
-
-    @RequestMapping("/add/{id}/organization", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @RequireCuratorRole
-    fun addObservatoryOrganization(
-        @PathVariable id: ObservatoryId,
-        @RequestBody organizationRequest: UpdateOrganizationRequest,
-    ): ObservatoryRepresentation {
-        service.addOrganization(id, organizationRequest.organizationId)
-        return service.findById(id).mapToObservatoryRepresentation().get()
-    }
-
-    @RequestMapping("/delete/{id}/organization", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @RequireCuratorRole
-    fun deleteObservatoryOrganization(
-        @PathVariable id: ObservatoryId,
-        @RequestBody organizationRequest: UpdateOrganizationRequest,
-    ): ObservatoryRepresentation {
-        service.deleteOrganization(id, organizationRequest.organizationId)
-        return service.findById(id).mapToObservatoryRepresentation().get()
-    }
-
     fun isValidUUID(id: String): Boolean = try {
         UUID.fromString(id) != null
     } catch (e: IllegalArgumentException) {
@@ -223,14 +172,4 @@ class ObservatoryController(
             sustainableDevelopmentGoals = sustainableDevelopmentGoals.orEmpty()
         )
     }
-
-    data class UpdateRequest(
-        @field:NotBlank
-        val value: String,
-    )
-
-    data class UpdateOrganizationRequest(
-        @JsonProperty("organization_id")
-        val organizationId: OrganizationId,
-    )
 }

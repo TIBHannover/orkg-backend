@@ -54,13 +54,6 @@ class ClassController(
     ): ClassRepresentation =
         service.findByURI(uri).mapToClassRepresentation().orElseThrow { ClassNotFound.withURI(uri) }
 
-    @GetMapping(params = ["ids"])
-    fun findByIds(
-        @RequestParam ids: List<ThingId>,
-        pageable: Pageable,
-    ): Page<ClassRepresentation> =
-        service.findAllById(ids, pageable).mapToClassRepresentation()
-
     @GetMapping
     fun findAll(
         @RequestParam("q", required = false) string: String?,

@@ -18,6 +18,9 @@ import org.orkg.community.input.ConferenceSeriesUseCases
 import org.orkg.community.input.DummyDataUseCases
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
+import org.orkg.community.input.UpdateObservatoryUseCase
+import org.orkg.community.input.UpdateObservatoryUseCase.UpdateCommand
+import org.orkg.community.input.UpdateOrganizationUseCases
 import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.graph.input.ResourceUseCases
@@ -104,7 +107,16 @@ class PostgresDummyDataSetup(
     private fun generateOrganizations(organizations: List<Organization>) {
         organizations.forEach { organization ->
             organizationService.findById(organization.id!!).ifPresentOrElse({
-                organizationService.update(organization)
+                organizationService.update(
+                    contributorId = ContributorId.SYSTEM,
+                    command = UpdateOrganizationUseCases.UpdateOrganizationCommand(
+                        id = it.id!!,
+                        name = it.name,
+                        url = it.homepage,
+                        type = it.type!!,
+                        logo = null
+                    )
+                )
             }, {
                 organizationService.create(
                     id = organization.id,
@@ -136,12 +148,13 @@ class PostgresDummyDataSetup(
                 observatoryRepository.save(it.copy(members = emptySet()))
                 observatoryService.findById(it.id).get()
             }
-
-            for (organizationId in it.organizationIds) {
-                if (organizationId !in observatory.organizationIds) {
-                    // There should exist a better method for adding organizations to an observatory but this is all we got
-                    observatoryService.addOrganization(observatory.id, organizationId)
-                }
+            if ((it.organizationIds - observatory.organizationIds).isEmpty()) {
+                observatoryService.update(
+                    UpdateObservatoryUseCase.UpdateCommand(
+                        id = observatory.id,
+                        organizations = it.organizationIds + observatory.organizationIds
+                    )
+                )
             }
         }
 

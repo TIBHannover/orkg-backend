@@ -346,38 +346,6 @@ fun <
         }
     }
 
-    describe("finding several classes") {
-        context("by class id") {
-            val expectedCount = 3
-            val classes = fabricator.random<List<Class>>()
-            classes.forEach(repository::save)
-
-            val expected = classes.take(expectedCount)
-            val result = repository.findAllById(
-                expected.map { it.id },
-                PageRequest.of(0, 5)
-            )
-
-            it("returns the correct result") {
-                result shouldNotBe null
-                result.content shouldNotBe null
-                result.content.size shouldBe expectedCount
-                result.content shouldContainAll expected
-            }
-            it("pages the result correctly") {
-                result.size shouldBe 5
-                result.number shouldBe 0
-                result.totalPages shouldBe 1
-                result.totalElements shouldBe expectedCount
-            }
-            xit("sorts the results by creation date by default") {
-                result.content.zipWithNext { a, b ->
-                    a.createdAt shouldBeLessThan b.createdAt
-                }
-            }
-        }
-    }
-
     describe("finding a class") {
         context("by uri") {
             val expected = fabricator.random<Class>().copy(

@@ -58,8 +58,6 @@ val reservedLabels = setOf(
 
 val reservedLabelsAsStrings = reservedLabels.map { it.value }
 
-val sortByNCreatedAtDesc: Sort = Sort.by("n.created_at").descending()
-
 data class StatementMapper(
     val predicateRepository: PredicateRepository,
     val subject: String = "sub",

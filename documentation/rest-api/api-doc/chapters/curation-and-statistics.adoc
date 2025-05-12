@@ -5,6 +5,3 @@ include::curation-and-statistics/curation.adoc[leveloffset=+1]
 
 [[statistics]]
 include::curation-and-statistics/statistics.adoc[leveloffset=+1]
-
-[[reproducibility-score]]
-include::curation-and-statistics/reproducibility-score.adoc[leveloffset=+1]

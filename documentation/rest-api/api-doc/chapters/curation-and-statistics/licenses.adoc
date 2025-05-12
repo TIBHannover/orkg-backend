@@ -1,9 +1,0 @@
-= License
-
-License information of external code repositories can be obtained through the orkg to compute a reproducibility score for a resource.
-
-NOTE: The endpoint currently only supports GitHub repository URIs.
-
-IMPORTANT: **Deprecated.** There is no replacement for this endpoint.
-
-operation::licenses-get-license[snippets='query-parameters,curl-request,http-response,response-fields']

@@ -5,7 +5,6 @@ import org.orkg.common.ThingId
 import org.orkg.community.domain.Contributor
 import org.orkg.contenttypes.adapter.input.rest.mapping.PaperCountPerResearchProblemRepresentationAdapter
 import org.orkg.contenttypes.input.ResearchFieldUseCases
-import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.graph.adapter.input.rest.PaperCountPerResearchProblemRepresentation
 import org.orkg.graph.adapter.input.rest.ResourceRepresentation
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
@@ -36,7 +35,6 @@ import java.util.Optional
 class ResearchFieldController(
     private val service: ResearchFieldUseCases,
     private val resourceService: ResourceUseCases,
-    private val comparisonRepository: ComparisonRepository,
     override val statementService: StatementUseCases,
     override val formattedLabelService: FormattedLabelUseCases,
 ) : ResourceRepresentationAdapter,
@@ -67,12 +65,7 @@ class ResearchFieldController(
     @GetMapping("/{id}/subfields/research-problems")
     fun findAllResearchProblemsByResearchFieldIncludingSubfields(
         @PathVariable id: ThingId,
-        @RequestParam("featured", required = false, defaultValue = "false")
-        featured: Boolean,
-        @RequestParam("unlisted", required = false, defaultValue = "false")
-        unlisted: Boolean,
-        @RequestParam("visibility", required = false)
-        visibility: VisibilityFilter?,
+        @RequestParam("visibility") visibility: VisibilityFilter = VisibilityFilter.ALL_LISTED,
         pageable: Pageable,
         capabilities: MediaTypeCapabilities,
     ): Page<ResourceRepresentation> {
@@ -81,7 +74,7 @@ class ResearchFieldController(
         resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
         return service.findAllResearchProblemsByResearchField(
             id = id,
-            visibility = visibility ?: VisibilityFilter.fromFlags(featured, unlisted),
+            visibility = visibility,
             includeSubFields = true,
             pageable = pageable
         ).mapToResourceRepresentation(capabilities)
@@ -99,112 +92,6 @@ class ResearchFieldController(
     ): ResponseEntity<Page<Contributor>> {
         resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
         return ok(service.findAllContributorsIncludingSubFields(id, pageable))
-    }
-
-    /**
-     * Fetches all the comparisons
-     * based on a research field {id}
-     * that includes the sub-research fields
-     */
-    @Deprecated(message = "For removal", replaceWith = ReplaceWith("/api/comparisons?research_field={id}"))
-    @GetMapping("/{id}/subfields/comparisons")
-    fun findAllComparisonsIncludingSubFields(
-        @PathVariable id: ThingId,
-        @RequestParam("featured", required = false, defaultValue = "false")
-        featured: Boolean,
-        @RequestParam("unlisted", required = false, defaultValue = "false")
-        unlisted: Boolean,
-        @RequestParam("visibility", required = false)
-        visibility: VisibilityFilter?,
-        pageable: Pageable,
-        capabilities: MediaTypeCapabilities,
-    ): Page<ResourceRepresentation> {
-        resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
-        return comparisonRepository.findAll(
-            researchField = id,
-            visibility = visibility ?: VisibilityFilter.fromFlags(featured, unlisted),
-            includeSubfields = true,
-            pageable = pageable
-        ).mapToResourceRepresentation(capabilities)
-    }
-
-    /**
-     * Fetches all the papers
-     * based on a research field {id}
-     * that includes the sub-research fields
-     */
-    @GetMapping("/{id}/subfields/papers")
-    fun findAllPapersIncludingSubFields(
-        @PathVariable id: ThingId,
-        @RequestParam("featured", required = false, defaultValue = "false")
-        featured: Boolean,
-        @RequestParam("unlisted", required = false, defaultValue = "false")
-        unlisted: Boolean,
-        @RequestParam("visibility", required = false)
-        visibility: VisibilityFilter?,
-        pageable: Pageable,
-        capabilities: MediaTypeCapabilities,
-    ): Page<ResourceRepresentation> {
-        resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
-        return service.findAllPapersByResearchField(
-            id = id,
-            visibility = visibility ?: VisibilityFilter.fromFlags(featured, unlisted),
-            includeSubFields = true,
-            pageable = pageable
-        ).mapToResourceRepresentation(capabilities)
-    }
-
-    /**
-     * Fetches all the papers
-     * based on a research field {id}
-     * that excludes the sub-research fields
-     */
-    @GetMapping("/{id}/papers")
-    fun findAllPapersExcludingSubFields(
-        @PathVariable id: ThingId,
-        @RequestParam("featured", required = false, defaultValue = "false")
-        featured: Boolean,
-        @RequestParam("unlisted", required = false, defaultValue = "false")
-        unlisted: Boolean,
-        @RequestParam("visibility", required = false)
-        visibility: VisibilityFilter?,
-        pageable: Pageable,
-        capabilities: MediaTypeCapabilities,
-    ): Page<ResourceRepresentation> {
-        resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
-        return service.findAllPapersByResearchField(
-            id = id,
-            visibility = visibility ?: VisibilityFilter.fromFlags(featured, unlisted),
-            includeSubFields = false,
-            pageable = pageable
-        ).mapToResourceRepresentation(capabilities)
-    }
-
-    /**
-     * Fetches all the comparisons
-     * based on a research field {id}
-     * that excludes the sub-research fields
-     */
-    @Deprecated(message = "For removal", replaceWith = ReplaceWith("/api/comparisons?research_field={id}"))
-    @GetMapping("/{id}/comparisons")
-    fun findAllComparisonsExcludingSubFields(
-        @PathVariable id: ThingId,
-        @RequestParam("featured", required = false, defaultValue = "false")
-        featured: Boolean,
-        @RequestParam("unlisted", required = false, defaultValue = "false")
-        unlisted: Boolean,
-        @RequestParam("visibility", required = false)
-        visibility: VisibilityFilter?,
-        pageable: Pageable,
-        capabilities: MediaTypeCapabilities,
-    ): Page<ResourceRepresentation> {
-        resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
-        return comparisonRepository.findAll(
-            researchField = id,
-            visibility = visibility ?: VisibilityFilter.fromFlags(featured, unlisted),
-            includeSubfields = false,
-            pageable = pageable
-        ).mapToResourceRepresentation(capabilities)
     }
 
     /**
@@ -230,73 +117,16 @@ class ResearchFieldController(
     @GetMapping("/{id}/research-problems")
     fun findAllResearchProblemsByResearchFieldExcludingSubfields(
         @PathVariable id: ThingId,
-        @RequestParam("featured", required = false, defaultValue = "false")
-        featured: Boolean,
-        @RequestParam("unlisted", required = false, defaultValue = "false")
-        unlisted: Boolean,
-        @RequestParam("visibility", required = false)
-        visibility: VisibilityFilter?,
+        @RequestParam("visibility") visibility: VisibilityFilter = VisibilityFilter.ALL_LISTED,
         pageable: Pageable,
         capabilities: MediaTypeCapabilities,
     ): Page<ResourceRepresentation> {
         resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
         return service.findAllResearchProblemsByResearchField(
             id = id,
-            visibility = visibility ?: VisibilityFilter.fromFlags(featured, unlisted),
+            visibility = visibility,
             includeSubFields = false,
             pageable = pageable
         ).mapToResourceRepresentation(capabilities)
     }
-
-    /**
-     * Gets entities based on the provided classes including subfields
-     *
-     */
-    @GetMapping("/{id}/subfields")
-    fun findAllEntitiesBasedOnClassesByResearchFieldIncludingSubFields(
-        @PathVariable id: ThingId,
-        @RequestParam("featured", required = false, defaultValue = "false")
-        featured: Boolean,
-        @RequestParam("unlisted", required = false, defaultValue = "false")
-        unlisted: Boolean,
-        @RequestParam("visibility", required = false)
-        visibility: VisibilityFilter?,
-        @RequestParam("classes")
-        classes: List<String>,
-        pageable: Pageable,
-        capabilities: MediaTypeCapabilities,
-    ): Page<ResourceRepresentation> =
-        service.findAllEntitiesBasedOnClassesByResearchField(
-            id = id,
-            classesList = classes,
-            visibility = visibility ?: VisibilityFilter.fromFlags(featured, unlisted),
-            includeSubFields = true,
-            pageable = pageable
-        ).mapToResourceRepresentation(capabilities)
-
-    /**
-     * Gets entities based on the provided classes excluding subfields
-     *
-     */
-    @GetMapping("/{id}")
-    fun findAllEntitiesBasedOnClassesByResearchFieldExcludingSubFields(
-        @PathVariable id: ThingId,
-        @RequestParam("featured", required = false, defaultValue = "false")
-        featured: Boolean,
-        @RequestParam("unlisted", required = false, defaultValue = "false")
-        unlisted: Boolean,
-        @RequestParam("visibility", required = false)
-        visibility: VisibilityFilter?,
-        @RequestParam("classes")
-        classes: List<String>,
-        pageable: Pageable,
-        capabilities: MediaTypeCapabilities,
-    ): Page<ResourceRepresentation> =
-        service.findAllEntitiesBasedOnClassesByResearchField(
-            id = id,
-            classesList = classes,
-            visibility = visibility ?: VisibilityFilter.fromFlags(featured, unlisted),
-            includeSubFields = false,
-            pageable = pageable
-        ).mapToResourceRepresentation(capabilities)
 }

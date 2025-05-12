@@ -11,7 +11,6 @@ dependencies {
     api(project(":community:community-core-model"))
     api(project(":content-types:content-types-core-model"))
     api(project(":graph:graph-core-model"))
-    api(project(":graph:graph-ports-input"))
     implementation(project(":common:external-identifiers"))
 
     testFixturesApi(project(":common:core-identifiers"))

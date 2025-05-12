@@ -66,17 +66,6 @@ internal class ClassControllerIntegrationTest : MockMvcBaseTest("classes") {
     }
 
     @Test
-    fun lookupByIds() {
-        val id1 = service.createClass(label = "class1")
-        val id2 = service.createClass(label = "class2")
-
-        get("/api/classes")
-            .param("ids", "$id1", "$id2")
-            .perform()
-            .andExpect(status().isOk)
-    }
-
-    @Test
     fun lookup() {
         service.createClass(label = "research contribution")
         service.createClass(label = "programming language")

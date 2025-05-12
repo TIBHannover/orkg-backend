@@ -308,12 +308,6 @@ class EmptyContribution : SimpleMessageException {
         super(HttpStatus.BAD_REQUEST, """Contribution at index "$index" does not contain any statements.""")
 }
 
-class UnpublishableThing(id: ThingId) :
-    SimpleMessageException(
-        HttpStatus.BAD_REQUEST,
-        """Thing "$id" cannot be published."""
-    )
-
 class TemplateAlreadyExistsForClass(
     classId: ThingId,
     templateId: ThingId,
@@ -838,12 +832,6 @@ class ResearchProblemNotFound(id: ThingId) :
     SimpleMessageException(
         HttpStatus.NOT_FOUND,
         """Research problem "$id" not found."""
-    )
-
-class OrphanOrcidValue(orcid: String) :
-    SimpleMessageException(
-        HttpStatus.BAD_REQUEST,
-        """The ORCID "$orcid" is not attached to any author."""
     )
 
 class TooFewIDsError(ids: List<ThingId>) :

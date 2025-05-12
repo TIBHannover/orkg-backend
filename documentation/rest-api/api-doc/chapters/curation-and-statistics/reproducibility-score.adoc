@@ -1,5 +1,0 @@
-= Reproducibility Score
-The reproducibility score measures the availability, accessibility, linkability, and license of a resource.
-
-[[license]]
-include::licenses.adoc[leveloffset=+1]

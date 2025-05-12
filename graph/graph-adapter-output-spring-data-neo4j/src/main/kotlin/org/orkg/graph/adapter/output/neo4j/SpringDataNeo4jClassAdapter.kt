@@ -142,10 +142,6 @@ class SpringDataNeo4jClassAdapter(
     override fun findById(id: ThingId): Optional<Class> =
         neo4jRepository.findById(id).map(Neo4jClass::toClass)
 
-    @Deprecated("For removal")
-    override fun findAllById(id: Iterable<ThingId>, pageable: Pageable): Page<Class> =
-        neo4jRepository.findAllByIdIn(id, pageable).map(Neo4jClass::toClass)
-
     override fun findByUri(uri: String): Optional<Class> = neo4jRepository.findByUri(uri).map(Neo4jClass::toClass)
 
     @Caching(

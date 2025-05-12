@@ -35,27 +35,6 @@ class SpringDataNeo4jResearchFieldAdapter(
     override fun findAllContributorIdsExcludingSubFields(id: ThingId, pageable: Pageable): Page<ContributorId> =
         neo4jRepository.findAllContributorIdsExcludingSubFields(id, pageable)
 
-    override fun findAllListedPapersByResearchField(
-        id: ThingId,
-        includeSubfields: Boolean,
-        pageable: Pageable,
-    ): Page<Resource> =
-        when (includeSubfields) {
-            true -> neo4jRepository.findAllListedPapersByResearchFieldIncludingSubFields(id, pageable)
-            false -> neo4jRepository.findAllListedPapersByResearchFieldExcludingSubFields(id, pageable)
-        }.map { it.toResource() }
-
-    override fun findAllPapersByResearchFieldAndVisibility(
-        id: ThingId,
-        visibility: Visibility,
-        includeSubfields: Boolean,
-        pageable: Pageable,
-    ): Page<Resource> =
-        when (includeSubfields) {
-            true -> neo4jRepository.findAllPapersByResearchFieldAndVisibilityIncludingSubFields(id, visibility, pageable)
-            false -> neo4jRepository.findAllPapersByResearchFieldAndVisibilityExcludingSubFields(id, visibility, pageable)
-        }.map { it.toResource() }
-
     override fun findAllListedProblemsByResearchField(
         id: ThingId,
         includeSubfields: Boolean,
@@ -75,69 +54,6 @@ class SpringDataNeo4jResearchFieldAdapter(
         when (includeSubfields) {
             true -> neo4jRepository.findAllProblemsByResearchFieldAndVisibilityIncludingSubFields(id, visibility, pageable)
             false -> neo4jRepository.findAllProblemsByResearchFieldAndVisibilityExcludingSubFields(id, visibility, pageable)
-        }.map { it.toResource() }
-
-    override fun findAllListedVisualizationsByResearchField(
-        id: ThingId,
-        includeSubfields: Boolean,
-        pageable: Pageable,
-    ): Page<Resource> =
-        when (includeSubfields) {
-            true -> neo4jRepository.findAllListedVisualizationsByResearchFieldIncludingSubFields(id, pageable)
-            false -> neo4jRepository.findAllListedVisualizationsByResearchFieldExcludingSubFields(id, pageable)
-        }.map { it.toResource() }
-
-    override fun findAllVisualizationsByResearchFieldAndVisibility(
-        id: ThingId,
-        visibility: Visibility,
-        includeSubfields: Boolean,
-        pageable: Pageable,
-    ): Page<Resource> =
-        when (includeSubfields) {
-            true -> neo4jRepository.findAllVisualizationsByResearchFieldAndVisibilityIncludingSubFields(id, visibility, pageable)
-            false -> neo4jRepository.findAllVisualizationsByResearchFieldAndVisibilityExcludingSubFields(id, visibility, pageable)
-        }.map { it.toResource() }
-
-    override fun findAllListedSmartReviewsByResearchField(
-        id: ThingId,
-        includeSubfields: Boolean,
-        pageable: Pageable,
-    ): Page<Resource> =
-        when (includeSubfields) {
-            true -> neo4jRepository.findAllListedSmartReviewsByResearchFieldIncludingSubFields(id, pageable)
-            false -> neo4jRepository.findAllListedSmartReviewsByResearchFieldExcludingSubFields(id, pageable)
-        }.map { it.toResource() }
-
-    override fun findAllSmartReviewsByResearchFieldAndVisibility(
-        id: ThingId,
-        visibility: Visibility,
-        includeSubfields: Boolean,
-        pageable: Pageable,
-    ): Page<Resource> =
-        when (includeSubfields) {
-            true -> neo4jRepository.findAllSmartReviewsByResearchFieldAndVisibilityIncludingSubFields(id, visibility, pageable)
-            false -> neo4jRepository.findAllSmartReviewsByResearchFieldAndVisibilityExcludingSubFields(id, visibility, pageable)
-        }.map { it.toResource() }
-
-    override fun findAllListedLiteratureListsByResearchField(
-        id: ThingId,
-        includeSubfields: Boolean,
-        pageable: Pageable,
-    ): Page<Resource> =
-        when (includeSubfields) {
-            true -> neo4jRepository.findAllListedLiteratureListsByResearchFieldIncludingSubFields(id, pageable)
-            false -> neo4jRepository.findAllListedLiteratureListsByResearchFieldExcludingSubFields(id, pageable)
-        }.map { it.toResource() }
-
-    override fun findAllLiteratureListsByResearchFieldAndVisibility(
-        id: ThingId,
-        visibility: Visibility,
-        includeSubfields: Boolean,
-        pageable: Pageable,
-    ): Page<Resource> =
-        when (includeSubfields) {
-            true -> neo4jRepository.findAllLiteratureListsByResearchFieldAndVisibilityIncludingSubFields(id, visibility, pageable)
-            false -> neo4jRepository.findAllLiteratureListsByResearchFieldAndVisibilityExcludingSubFields(id, visibility, pageable)
         }.map { it.toResource() }
 
     private fun Neo4jProblemsPerField.toPaperCountPerResearchProblem() =

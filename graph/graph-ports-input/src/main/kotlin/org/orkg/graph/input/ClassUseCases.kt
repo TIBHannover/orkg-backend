@@ -34,9 +34,6 @@ interface RetrieveClassUseCase {
         createdAtEnd: OffsetDateTime? = null,
     ): Page<Class>
 
-    @Deprecated(message = "For removal")
-    fun findAllById(ids: Iterable<ThingId>, pageable: Pageable): Page<Class>
-
     fun findById(id: ThingId): Optional<Class>
 }
 

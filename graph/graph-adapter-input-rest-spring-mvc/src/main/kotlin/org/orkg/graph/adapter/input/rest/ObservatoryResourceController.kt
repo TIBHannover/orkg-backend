@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ObservatoryId
-import org.orkg.common.ThingId
 import org.orkg.community.domain.InvalidFilterConfig
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
 import org.orkg.graph.domain.SearchFilter
@@ -41,35 +40,6 @@ class ObservatoryResourceController(
             observatoryId = id,
             filters = objectMapper.parseFilterConfig(filterConfig),
             visibility = visibility ?: VisibilityFilter.ALL_LISTED,
-            pageable = pageable
-        ).mapToResourceRepresentation(capabilities)
-
-    @GetMapping("/{id}/problems")
-    fun findAllProblemsByObservatoryId(
-        @PathVariable id: ObservatoryId,
-        pageable: Pageable,
-        capabilities: MediaTypeCapabilities,
-    ): Page<ResourceRepresentation> =
-        resourceService.findAllProblemsByObservatoryId(id, pageable)
-            .mapToResourceRepresentation(capabilities)
-
-    @GetMapping("/{id}/class")
-    fun findAllResourcesByClassInAndVisibilityAndObservatoryId(
-        @PathVariable id: ObservatoryId,
-        @RequestParam(value = "classes") classes: Set<ThingId>,
-        @RequestParam("featured", required = false, defaultValue = "false")
-        featured: Boolean,
-        @RequestParam("unlisted", required = false, defaultValue = "false")
-        unlisted: Boolean,
-        @RequestParam("visibility", required = false)
-        visibility: VisibilityFilter?,
-        pageable: Pageable,
-        capabilities: MediaTypeCapabilities,
-    ): Page<ResourceRepresentation> =
-        resourceService.findAllByClassInAndVisibilityAndObservatoryId(
-            classes = classes,
-            visibility = visibility ?: VisibilityFilter.fromFlags(featured, unlisted),
-            id = id,
             pageable = pageable
         ).mapToResourceRepresentation(capabilities)
 }

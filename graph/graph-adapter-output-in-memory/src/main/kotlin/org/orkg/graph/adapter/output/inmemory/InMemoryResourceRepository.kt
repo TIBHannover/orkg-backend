@@ -8,7 +8,6 @@ import org.orkg.common.withDefaultSort
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
-import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.output.ResourceRepository
 import org.springframework.data.domain.Page
@@ -206,38 +205,4 @@ class InMemoryResourceRepository(private val inMemoryGraph: InMemoryGraph) :
             .filter { it != ContributorId.UNKNOWN }
             .sortedBy { it.value.toString() }
             .paged(pageable)
-
-    override fun findAllByClassInAndVisibility(
-        classes: Set<ThingId>,
-        visibility: Visibility,
-        pageable: Pageable,
-    ): Page<Resource> = findAllFilteredAndPaged(pageable) {
-        it.visibility == visibility && it.classes.any { `class` -> `class` in classes }
-    }
-
-    override fun findAllListedByClassIn(
-        classes: Set<ThingId>,
-        pageable: Pageable,
-    ): Page<Resource> = findAllFilteredAndPaged(pageable) {
-        (it.visibility == Visibility.DEFAULT || it.visibility == Visibility.FEATURED) && it.classes.any { `class` -> `class` in classes }
-    }
-
-    override fun findAllByClassInAndVisibilityAndObservatoryId(
-        classes: Set<ThingId>,
-        visibility: Visibility,
-        id: ObservatoryId,
-        pageable: Pageable,
-    ): Page<Resource> = findAllFilteredAndPaged(pageable) {
-        it.visibility == visibility && it.observatoryId == id && it.classes.any { `class` -> `class` in classes }
-    }
-
-    override fun findAllListedByClassInAndObservatoryId(
-        classes: Set<ThingId>,
-        id: ObservatoryId,
-        pageable: Pageable,
-    ): Page<Resource> = findAllFilteredAndPaged(pageable) {
-        (it.visibility == Visibility.DEFAULT || it.visibility == Visibility.FEATURED) &&
-            it.observatoryId == id &&
-            it.classes.any { `class` -> `class` in classes }
-    }
 }

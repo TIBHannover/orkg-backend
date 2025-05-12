@@ -183,35 +183,6 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `given all contributors for a resource are being retrieved, when the resource is found, it returns all creators`() {
-        val id = ThingId("R123")
-        val resource = createResource(id = id)
-        val pageable = PageRequest.of(0, 5)
-
-        every { repository.findById(id) } returns Optional.of(resource)
-        every { statementRepository.findAllContributorsByResourceId(id, pageable) } returns Page.empty()
-
-        service.findAllContributorsByResourceId(id, pageable)
-
-        verify(exactly = 1) { repository.findById(id) }
-        verify(exactly = 1) { statementRepository.findAllContributorsByResourceId(any(), any()) }
-    }
-
-    @Test
-    fun `given all contributors for a resource are being retrieved, when the resource is not found, then an exception is thrown`() {
-        val id = ThingId("R123")
-        val pageable = PageRequest.of(0, 5)
-
-        every { repository.findById(id) } returns Optional.empty()
-
-        shouldThrow<ResourceNotFound> {
-            service.findAllContributorsByResourceId(id, pageable)
-        }
-
-        verify(exactly = 1) { repository.findById(id) }
-    }
-
-    @Test
     fun `given a resource is being deleted, when it is still used in a statement, an appropriate error is thrown`() {
         val mockResource = createResource()
         val couldBeAnyone = ContributorId("1255bbe4-1850-4033-ba10-c80d4b370e3e")

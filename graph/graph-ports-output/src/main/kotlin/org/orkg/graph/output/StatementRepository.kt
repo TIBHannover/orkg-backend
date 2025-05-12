@@ -58,10 +58,7 @@ interface StatementReadRepository : EntityRepository<GeneralStatement, Statement
         pageable: Pageable,
     ): Page<Resource>
 
-    fun findAllContributorsByResourceId(
-        id: ThingId,
-        pageable: Pageable,
-    ): Page<ContributorId>
+    fun findAllContributorsByResourceId(id: ThingId, pageable: Pageable): Page<ContributorId>
 
     fun findAllDescriptionsById(ids: Set<ThingId>): Map<ThingId, String>
 
@@ -69,11 +66,6 @@ interface StatementReadRepository : EntityRepository<GeneralStatement, Statement
         observatoryId: ObservatoryId?,
         filters: List<SearchFilter>,
         visibility: VisibilityFilter,
-        pageable: Pageable,
-    ): Page<Resource>
-
-    fun findAllProblemsByObservatoryId(
-        id: ObservatoryId,
         pageable: Pageable,
     ): Page<Resource>
 

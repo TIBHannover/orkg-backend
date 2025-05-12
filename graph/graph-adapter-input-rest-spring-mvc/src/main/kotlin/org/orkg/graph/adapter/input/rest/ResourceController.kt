@@ -6,7 +6,6 @@ import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.common.annotations.RequireCuratorRole
 import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId
 import org.orkg.community.input.RetrieveContributorUseCase
@@ -26,7 +25,6 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.format.annotation.DateTimeFormat.ISO
-import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
@@ -39,9 +37,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 import java.time.OffsetDateTime
@@ -135,38 +131,6 @@ class ResourceController(
         return ok().location(location).body(service.findById(id).mapToResourceRepresentation(capabilities).get())
     }
 
-    @Deprecated("To be removed", replaceWith = ReplaceWith("update"))
-    @RequireLogin
-    @RequestMapping("{id}/observatory", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
-    fun updateWithObservatory(
-        @PathVariable id: ThingId,
-        @RequestBody request: UpdateResourceObservatoryRequest,
-        uriComponentsBuilder: UriComponentsBuilder,
-        capabilities: MediaTypeCapabilities,
-        currentUser: Authentication?,
-    ): ResponseEntity<ResourceRepresentation> = update(
-        id = id,
-        request = UpdateResourceRequest(
-            id = id,
-            label = null,
-            classes = null,
-            organizationId = request.organizationId,
-            observatoryId = request.observatoryId,
-            extractionMethod = null,
-            visibility = null
-        ),
-        uriComponentsBuilder = uriComponentsBuilder,
-        capabilities = capabilities,
-        currentUser = currentUser
-    )
-
-    @GetMapping("/{id}/contributors")
-    fun findContributorsById(
-        @PathVariable id: ThingId,
-        pageable: Pageable,
-    ): Page<ContributorId> =
-        service.findAllContributorsByResourceId(id, pageable)
-
     @GetMapping("/{id}/timeline")
     fun findTimelineById(
         @PathVariable id: ThingId,
@@ -183,58 +147,6 @@ class ResourceController(
         service.delete(id, currentUser.contributorId())
         return ResponseEntity.noContent().build()
     }
-
-    @PutMapping("/{id}/metadata/featured")
-    @ResponseStatus(HttpStatus.OK)
-    @RequireCuratorRole
-    fun markFeatured(
-        @PathVariable id: ThingId,
-    ) {
-        service.markAsFeatured(id)
-    }
-
-    @DeleteMapping("/{id}/metadata/featured")
-    @RequireCuratorRole
-    fun unmarkFeatured(
-        @PathVariable id: ThingId,
-    ) {
-        service.markAsNonFeatured(id)
-    }
-
-    @PutMapping("/{id}/metadata/unlisted")
-    @ResponseStatus(HttpStatus.OK)
-    @RequireCuratorRole
-    fun markUnlisted(
-        @PathVariable id: ThingId,
-        currentUser: Authentication?,
-    ) {
-        service.markAsUnlisted(id, currentUser.contributorId())
-    }
-
-    @DeleteMapping("/{id}/metadata/unlisted")
-    @RequireCuratorRole
-    fun unmarkUnlisted(
-        @PathVariable id: ThingId,
-    ) {
-        service.markAsListed(id)
-    }
-
-    @GetMapping("/classes")
-    fun getResourcesByClass(
-        @RequestParam(value = "classes") classes: Set<ThingId>,
-        @RequestParam("featured", required = false, defaultValue = "false")
-        featured: Boolean,
-        @RequestParam("unlisted", required = false, defaultValue = "false")
-        unlisted: Boolean,
-        @RequestParam("visibility", required = false)
-        visibility: VisibilityFilter?,
-        pageable: Pageable,
-        capabilities: MediaTypeCapabilities,
-    ): Page<ResourceRepresentation> = service.findAllByClassInAndVisibility(
-        classes = classes,
-        visibility = visibility ?: VisibilityFilter.fromFlags(featured, unlisted),
-        pageable = pageable
-    ).mapToResourceRepresentation(capabilities)
 
     data class CreateResourceRequest(
         val id: ThingId?,
@@ -268,11 +180,4 @@ class ResourceController(
                 visibility = visibility
             )
     }
-
-    data class UpdateResourceObservatoryRequest(
-        @JsonProperty("observatory_id")
-        val observatoryId: ObservatoryId,
-        @JsonProperty("organization_id")
-        val organizationId: OrganizationId,
-    )
 }

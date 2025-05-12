@@ -20,19 +20,6 @@ interface ResearchFieldRepository {
 
     fun findAllWithBenchmarks(pageable: Pageable): Page<Resource>
 
-    fun findAllListedPapersByResearchField(
-        id: ThingId,
-        includeSubfields: Boolean = false,
-        pageable: Pageable,
-    ): Page<Resource>
-
-    fun findAllPapersByResearchFieldAndVisibility(
-        id: ThingId,
-        visibility: Visibility,
-        includeSubfields: Boolean = false,
-        pageable: Pageable,
-    ): Page<Resource>
-
     fun findAllListedProblemsByResearchField(
         id: ThingId,
         includeSubfields: Boolean = false,
@@ -40,45 +27,6 @@ interface ResearchFieldRepository {
     ): Page<Resource>
 
     fun findAllProblemsByResearchFieldAndVisibility(
-        id: ThingId,
-        visibility: Visibility,
-        includeSubfields: Boolean = false,
-        pageable: Pageable,
-    ): Page<Resource>
-
-    fun findAllListedVisualizationsByResearchField(
-        id: ThingId,
-        includeSubfields: Boolean = false,
-        pageable: Pageable,
-    ): Page<Resource>
-
-    fun findAllVisualizationsByResearchFieldAndVisibility(
-        id: ThingId,
-        visibility: Visibility,
-        includeSubfields: Boolean = false,
-        pageable: Pageable,
-    ): Page<Resource>
-
-    fun findAllListedSmartReviewsByResearchField(
-        id: ThingId,
-        includeSubfields: Boolean = false,
-        pageable: Pageable,
-    ): Page<Resource>
-
-    fun findAllSmartReviewsByResearchFieldAndVisibility(
-        id: ThingId,
-        visibility: Visibility,
-        includeSubfields: Boolean = false,
-        pageable: Pageable,
-    ): Page<Resource>
-
-    fun findAllListedLiteratureListsByResearchField(
-        id: ThingId,
-        includeSubfields: Boolean = false,
-        pageable: Pageable,
-    ): Page<Resource>
-
-    fun findAllLiteratureListsByResearchFieldAndVisibility(
         id: ThingId,
         visibility: Visibility,
         includeSubfields: Boolean = false,

@@ -322,26 +322,6 @@ class InMemoryStatementRepository(private val inMemoryGraph: InMemoryGraph) :
             .distinct()
             .paged(pageable)
 
-    override fun findAllProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Resource> =
-        entities.values.filter {
-            it.subject is Resource &&
-                Classes.paper in (it.subject as Resource).classes &&
-                (it.subject as Resource).observatoryId == id &&
-                it.predicate.id == Predicates.hasContribution &&
-                it.`object` is Resource &&
-                Classes.contribution in (it.`object` as Resource).classes
-        }.map { hasContributionStatement ->
-            entities.values.filter {
-                it.subject.id == hasContributionStatement.`object`.id &&
-                    it.predicate.id == Predicates.hasResearchProblem &&
-                    it.`object` is Resource &&
-                    Classes.problem in (it.`object` as Resource).classes
-            }.map { it.`object` as Resource }
-        }.flatten()
-            .plus(inMemoryGraph.findAllResources().filter { Classes.problem in it.classes })
-            .distinct()
-            .paged(pageable)
-
     override fun findAllContributorsByResourceId(id: ThingId, pageable: Pageable): Page<ContributorId> =
         findSubgraph(id) { statement, _ ->
             statement.`object` !is Resource ||
@@ -522,9 +502,4 @@ class InMemoryStatementRepository(private val inMemoryGraph: InMemoryGraph) :
             } ||
             this is Resource &&
             (classes - Classes.resource).all { it in classes }
-
-    private data class ResourceEdit(
-        val contributor: ContributorId,
-        val millis: Long,
-    )
 }

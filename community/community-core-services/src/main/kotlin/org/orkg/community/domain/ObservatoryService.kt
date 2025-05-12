@@ -126,44 +126,4 @@ class ObservatoryService(
     }
 
     override fun deleteAll() = postgresObservatoryRepository.deleteAll()
-
-    override fun changeName(id: ObservatoryId, name: String) {
-        val observatory = postgresObservatoryRepository.findById(id)
-            .orElseThrow { ObservatoryNotFound(id) }
-            .copy(name = name)
-        postgresObservatoryRepository.save(observatory)
-    }
-
-    override fun changeDescription(id: ObservatoryId, description: String) {
-        val observatory = postgresObservatoryRepository.findById(id)
-            .orElseThrow { ObservatoryNotFound(id) }
-            .copy(description = description)
-        postgresObservatoryRepository.save(observatory)
-    }
-
-    override fun changeResearchField(id: ObservatoryId, researchFieldId: ThingId) {
-        val researchField = resourceRepository.findById(researchFieldId)
-            .filter { Classes.researchField in it.classes }
-            .orElseThrow { ResearchFieldNotFound(researchFieldId) }
-        val observatory = postgresObservatoryRepository.findById(id)
-            .orElseThrow { ObservatoryNotFound(id) }
-            .copy(researchField = researchField.id)
-        postgresObservatoryRepository.save(observatory)
-    }
-
-    override fun addOrganization(id: ObservatoryId, organizationId: OrganizationId) {
-        postgresOrganizationRepository.findById(organizationId)
-            .orElseThrow { OrganizationNotFound(organizationId) }
-        val observatory = postgresObservatoryRepository.findById(id)
-            .map { it.copy(organizationIds = it.organizationIds + organizationId) }
-            .orElseThrow { ObservatoryNotFound(id) }
-        postgresObservatoryRepository.save(observatory)
-    }
-
-    override fun deleteOrganization(id: ObservatoryId, organizationId: OrganizationId) {
-        val observatory = postgresObservatoryRepository.findById(id)
-            .map { it.copy(organizationIds = it.organizationIds - organizationId) }
-            .orElseThrow { ObservatoryNotFound(id) }
-        postgresObservatoryRepository.save(observatory)
-    }
 }

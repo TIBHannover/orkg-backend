@@ -116,47 +116,6 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
     }
 
     @Test
-    fun `Given the contributors are requested, when service succeeds, then status is 200 OK and contributors are returned`() {
-        val id = ThingId("R123")
-        val contributorIds = listOf(
-            ContributorId(MockUserId.USER),
-            ContributorId(MockUserId.ADMIN)
-        )
-        val contributors = PageImpl(
-            contributorIds,
-            PageRequest.of(0, 25),
-            contributorIds.size.toLong()
-        )
-        every { resourceService.findAllContributorsByResourceId(id, any()) } returns contributors
-
-        get("/api/resources/{id}/contributors", id)
-            .perform()
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.content", Matchers.hasSize<Int>(2)))
-            .andExpect(jsonPath("$.page.number").value(0)) // page number
-            .andExpect(jsonPath("$.page.total_elements").value(2))
-
-        verify(exactly = 1) { resourceService.findAllContributorsByResourceId(id, any()) }
-    }
-
-    @Test
-    fun `Given the contributors are requested, when service reports missing resource, then status is 404 NOT FOUND`() {
-        val id = ThingId("R123")
-        every { resourceService.findAllContributorsByResourceId(id, any()) } throws ResourceNotFound.withId(id)
-
-        get("/api/resources/{id}/contributors", id)
-            .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(404))
-            .andExpect(jsonPath("$.message").value("""Resource "$id" not found."""))
-            .andExpect(jsonPath("$.error").value("Not Found"))
-            .andExpect(jsonPath("$.timestamp").exists())
-            .andExpect(jsonPath("$.path").value("/api/resources/$id/contributors"))
-
-        verify(exactly = 1) { resourceService.findAllContributorsByResourceId(id, any()) }
-    }
-
-    @Test
     fun `Given a timeline is requested, when service succeeds, then status is 200 OK and timeline is returned`() {
         val id = ThingId("R123")
         val resourceContributors = listOf(

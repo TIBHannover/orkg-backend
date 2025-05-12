@@ -29,11 +29,7 @@ interface UnsafeResourceUseCases :
     DeleteResourceUseCase
 
 // FIXME: we need to refactor those as well
-interface OtherResourceUseCases :
-    MarkAsVerifiedUseCase,
-    MarkFeaturedService,
-    MarkAsUnlistedService,
-    RetrieveContributorUseCase
+interface OtherResourceUseCases : RetrieveContributorUseCase
 
 interface RetrieveResourceUseCase {
     fun existsById(id: ThingId): Boolean
@@ -62,28 +58,11 @@ interface RetrieveResourceUseCase {
 
     fun findPaperByTitle(title: String): Optional<Resource>
 
-    fun findAllContributorsByResourceId(id: ThingId, pageable: Pageable): Page<ContributorId>
-
     fun findTimelineByResourceId(id: ThingId, pageable: Pageable): Page<ResourceContributor>
 
     fun findAllPapersByObservatoryIdAndFilters(
         observatoryId: ObservatoryId?,
         filters: List<SearchFilter>,
-        visibility: VisibilityFilter,
-        pageable: Pageable,
-    ): Page<Resource>
-
-    fun findAllProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Resource>
-
-    fun findAllByClassInAndVisibilityAndObservatoryId(
-        classes: Set<ThingId>,
-        visibility: VisibilityFilter,
-        id: ObservatoryId,
-        pageable: Pageable,
-    ): Page<Resource>
-
-    fun findAllByClassInAndVisibility(
-        classes: Set<ThingId>,
         visibility: VisibilityFilter,
         pageable: Pageable,
     ): Page<Resource>
@@ -128,36 +107,6 @@ interface DeleteResourceUseCase {
     fun delete(id: ThingId, contributorId: ContributorId)
 
     fun deleteAll()
-}
-
-interface MarkAsVerifiedUseCase {
-    /**
-     * Marks a resource as verified.
-     *
-     * @param resourceId The ID of the resource to modify.
-     * @return The updated resource if successfully modified, or an empty [Optional] otherwise.
-     */
-    fun markAsVerified(resourceId: ThingId)
-
-    /**
-     * Marks a resource as unverified.
-     *
-     * @param resourceId The ID of the resource to modify.
-     * @return The updated resource if successfully modified, or an empty [Optional] otherwise.
-     */
-    fun markAsUnverified(resourceId: ThingId)
-}
-
-interface MarkFeaturedService {
-    fun markAsFeatured(resourceId: ThingId)
-
-    fun markAsNonFeatured(resourceId: ThingId)
-}
-
-interface MarkAsUnlistedService {
-    fun markAsUnlisted(resourceId: ThingId, contributorId: ContributorId)
-
-    fun markAsListed(resourceId: ThingId)
 }
 
 interface RetrieveContributorUseCase {

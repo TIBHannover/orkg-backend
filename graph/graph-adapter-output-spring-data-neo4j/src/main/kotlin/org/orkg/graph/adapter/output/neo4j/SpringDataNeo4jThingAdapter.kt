@@ -32,12 +32,10 @@ import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
-import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.stereotype.Component
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import java.util.Optional
-import org.neo4j.cypherdsl.core.renderer.Configuration as CypherConfiguration
 
 const val THING_ID_TO_THING_CACHE = "thing-id-to-thing"
 private const val FULLTEXT_INDEX_FOR_LABEL = "fulltext_idx_for_thing_on_label"
@@ -47,8 +45,6 @@ private const val FULLTEXT_INDEX_FOR_LABEL = "fulltext_idx_for_thing_on_label"
 @CacheConfig(cacheNames = [THING_ID_TO_THING_CACHE])
 class SpringDataNeo4jThingAdapter(
     private val neo4jRepository: Neo4jThingRepository,
-    private val neo4jClient: Neo4jClient,
-    private val neo4jConfiguration: CypherConfiguration,
     private val cypherQueryBuilderFactory: CypherQueryBuilderFactory,
 ) : ThingRepository {
     @Cacheable(key = "#id", cacheNames = [THING_ID_TO_THING_CACHE])

@@ -35,7 +35,6 @@ import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.FuzzySearchString
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
-import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.spring.data.annotations.TransactionalOnNeo4j
@@ -408,35 +407,6 @@ class SpringDataNeo4jResourceAdapter(
 
     override fun findPaperById(id: ThingId): Optional<Resource> =
         neo4jRepository.findPaperById(id)
-            .map(Neo4jResource::toResource)
-
-    override fun findAllByClassInAndVisibility(
-        classes: Set<ThingId>,
-        visibility: Visibility,
-        pageable: Pageable,
-    ): Page<Resource> =
-        neo4jRepository.findAllByClassInAndVisibility(classes, visibility, pageable)
-            .map(Neo4jResource::toResource)
-
-    override fun findAllListedByClassIn(classes: Set<ThingId>, pageable: Pageable): Page<Resource> =
-        neo4jRepository.findAllListedByClassIn(classes, pageable)
-            .map(Neo4jResource::toResource)
-
-    override fun findAllByClassInAndVisibilityAndObservatoryId(
-        classes: Set<ThingId>,
-        visibility: Visibility,
-        id: ObservatoryId,
-        pageable: Pageable,
-    ): Page<Resource> =
-        neo4jRepository.findAllByClassInAndVisibilityAndObservatoryId(classes, visibility, id, pageable)
-            .map(Neo4jResource::toResource)
-
-    override fun findAllListedByClassInAndObservatoryId(
-        classes: Set<ThingId>,
-        id: ObservatoryId,
-        pageable: Pageable,
-    ): Page<Resource> =
-        neo4jRepository.findAllListedByClassInAndObservatoryId(classes, id, pageable)
             .map(Neo4jResource::toResource)
 
     override fun findAllContributorIds(pageable: Pageable): Page<ContributorId> =

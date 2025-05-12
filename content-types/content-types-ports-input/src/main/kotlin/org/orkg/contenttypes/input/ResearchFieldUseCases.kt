@@ -18,23 +18,8 @@ interface RetrieveResearchFieldUseCase {
 
     fun findAllContributorsExcludingSubFields(id: ThingId, pageable: Pageable): Page<Contributor>
 
-    fun findAllPapersByResearchField(
-        id: ThingId,
-        visibility: VisibilityFilter,
-        includeSubFields: Boolean = false,
-        pageable: Pageable,
-    ): Page<Resource>
-
     fun findAllResearchProblemsByResearchField(
         id: ThingId,
-        visibility: VisibilityFilter,
-        includeSubFields: Boolean = false,
-        pageable: Pageable,
-    ): Page<Resource>
-
-    fun findAllEntitiesBasedOnClassesByResearchField(
-        id: ThingId,
-        classesList: List<String>,
         visibility: VisibilityFilter,
         includeSubFields: Boolean = false,
         pageable: Pageable,

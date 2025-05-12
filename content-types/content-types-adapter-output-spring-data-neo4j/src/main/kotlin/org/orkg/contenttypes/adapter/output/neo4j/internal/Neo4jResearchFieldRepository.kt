@@ -39,16 +39,8 @@ private const val INCLUDING_SUBFIELDS = """<-[:RELATED* 0.. {predicate_id: 'P36'
 private const val WHERE_VISIBILITY_IS_LISTED = """WHERE (node.visibility = "DEFAULT" OR node.visibility = "FEATURED") AND node.created_at IS NOT NULL"""
 private const val WHERE_VISIBILITY = """WHERE node.visibility = $VISIBILITY AND node.created_at IS NOT NULL"""
 private const val WITH_DISTINCT_NODE = """WITH DISTINCT node"""
-private const val MATCH_PAPER_RELATED_TO_RESEARCH_FIELD = """MATCH (node:Paper)-[:RELATED]->(:ResearchField)"""
-private const val MATCH_PAPER_RELATED_TO_RESEARCH_FIELD_WITH_ID = """MATCH (node:Paper)-[:RELATED]->(:ResearchField {id: $ID})"""
 private const val MATCH_PROBLEM_RELATED_TO_RESEARCH_FIELD = """MATCH (node:Problem)<-[:RELATED]-(:Contribution)<-[:RELATED]-(:Paper)-[:RELATED]->(:ResearchField)"""
 private const val MATCH_PROBLEM_RELATED_TO_RESEARCH_FIELD_WITH_ID = """MATCH (node:Problem)<-[:RELATED]-(:Contribution)<-[:RELATED]-(:Paper)-[:RELATED]->(:ResearchField {id: $ID})"""
-private const val MATCH_VISUALIZATION_RELATED_TO_RESEARCH_FIELD = """MATCH (node:Visualization)<-[:RELATED]-(:ComparisonPublished:LatestVersion)-[:RELATED]->(:ResearchField)"""
-private const val MATCH_VISUALIZATION_RELATED_TO_RESEARCH_FIELD_WITH_ID = """MATCH (node:Visualization)<-[:RELATED]-(:ComparisonPublished:LatestVersion)-[:RELATED]->(:ResearchField {id: $ID})"""
-private const val MATCH_SMART_REVIEW_RELATED_TO_RESEARCH_FIELD = """MATCH (node:SmartReviewPublished)<-[:RELATED]-(:SmartReview)-[:RELATED]->(:ResearchField)"""
-private const val MATCH_SMART_REVIEW_RELATED_TO_RESEARCH_FIELD_WITH_ID = """MATCH (node:SmartReviewPublished)<-[:RELATED]-(:SmartReview)-[:RELATED]->(:ResearchField {id: $ID})"""
-private const val MATCH_LITERATURE_LIST_RELATED_TO_RESEARCH_FIELD = """MATCH (node:LiteratureListPublished)<-[:RELATED]-(:LiteratureList)-[:RELATED]->(:ResearchField)"""
-private const val MATCH_LITERATURE_LIST_RELATED_TO_RESEARCH_FIELD_WITH_ID = """MATCH (node:LiteratureListPublished)<-[:RELATED]-(:LiteratureList)-[:RELATED]->(:ResearchField {id: $ID})"""
 
 private const val PAGE_PARAMS = ":#{orderBy(#pageable)} SKIP ${'$'}skip LIMIT ${'$'}limit"
 
@@ -90,32 +82,6 @@ interface Neo4jResearchFieldRepository : Neo4jRepository<Neo4jResource, ThingId>
     )
     fun findAllWithBenchmarks(pageable: Pageable): Page<Neo4jResource>
 
-    // Papers
-
-    @Query(
-        """$MATCH_PAPER_RELATED_TO_RESEARCH_FIELD$INCLUDING_SUBFIELDS $WITH_DISTINCT_NODE $WHERE_VISIBILITY_IS_LISTED $WITH_NODE_PROPERTIES $RETURN_NODE $PAGE_PARAMS""",
-        countQuery = """$MATCH_PAPER_RELATED_TO_RESEARCH_FIELD$INCLUDING_SUBFIELDS $WITH_DISTINCT_NODE $WHERE_VISIBILITY_IS_LISTED $RETURN_NODE_COUNT"""
-    )
-    fun findAllListedPapersByResearchFieldIncludingSubFields(id: ThingId, pageable: Pageable): Page<Neo4jResource>
-
-    @Query(
-        """$MATCH_PAPER_RELATED_TO_RESEARCH_FIELD_WITH_ID $WITH_DISTINCT_NODE $WHERE_VISIBILITY_IS_LISTED $WITH_NODE_PROPERTIES $RETURN_NODE $PAGE_PARAMS""",
-        countQuery = """$MATCH_PAPER_RELATED_TO_RESEARCH_FIELD_WITH_ID $WITH_DISTINCT_NODE $WHERE_VISIBILITY_IS_LISTED $RETURN_NODE_COUNT"""
-    )
-    fun findAllListedPapersByResearchFieldExcludingSubFields(id: ThingId, pageable: Pageable): Page<Neo4jResource>
-
-    @Query(
-        """$MATCH_PAPER_RELATED_TO_RESEARCH_FIELD$INCLUDING_SUBFIELDS $WITH_DISTINCT_NODE $WHERE_VISIBILITY $WITH_NODE_PROPERTIES $RETURN_NODE $PAGE_PARAMS""",
-        countQuery = """$MATCH_PAPER_RELATED_TO_RESEARCH_FIELD$INCLUDING_SUBFIELDS $WITH_DISTINCT_NODE $WHERE_VISIBILITY $RETURN_NODE_COUNT"""
-    )
-    fun findAllPapersByResearchFieldAndVisibilityIncludingSubFields(id: ThingId, visibility: Visibility, pageable: Pageable): Page<Neo4jResource>
-
-    @Query(
-        """$MATCH_PAPER_RELATED_TO_RESEARCH_FIELD_WITH_ID $WITH_DISTINCT_NODE $WHERE_VISIBILITY $WITH_NODE_PROPERTIES $RETURN_NODE $PAGE_PARAMS""",
-        countQuery = """$MATCH_PAPER_RELATED_TO_RESEARCH_FIELD_WITH_ID $WITH_DISTINCT_NODE $WHERE_VISIBILITY $RETURN_NODE_COUNT"""
-    )
-    fun findAllPapersByResearchFieldAndVisibilityExcludingSubFields(id: ThingId, visibility: Visibility, pageable: Pageable): Page<Neo4jResource>
-
     // Problems
 
     @Query(
@@ -141,84 +107,6 @@ interface Neo4jResearchFieldRepository : Neo4jRepository<Neo4jResource, ThingId>
         countQuery = """$MATCH_PROBLEM_RELATED_TO_RESEARCH_FIELD_WITH_ID $WITH_DISTINCT_NODE $WHERE_VISIBILITY $RETURN_NODE_COUNT"""
     )
     fun findAllProblemsByResearchFieldAndVisibilityExcludingSubFields(id: ThingId, visibility: Visibility, pageable: Pageable): Page<Neo4jResource>
-
-    // Visualizations
-
-    @Query(
-        """$MATCH_VISUALIZATION_RELATED_TO_RESEARCH_FIELD$INCLUDING_SUBFIELDS $WITH_DISTINCT_NODE $WHERE_VISIBILITY_IS_LISTED $WITH_NODE_PROPERTIES $RETURN_NODE $PAGE_PARAMS""",
-        countQuery = """$MATCH_VISUALIZATION_RELATED_TO_RESEARCH_FIELD$INCLUDING_SUBFIELDS $WITH_DISTINCT_NODE $WHERE_VISIBILITY_IS_LISTED $RETURN_NODE_COUNT"""
-    )
-    fun findAllListedVisualizationsByResearchFieldIncludingSubFields(id: ThingId, pageable: Pageable): Page<Neo4jResource>
-
-    @Query(
-        """$MATCH_VISUALIZATION_RELATED_TO_RESEARCH_FIELD_WITH_ID $WITH_DISTINCT_NODE $WHERE_VISIBILITY_IS_LISTED $WITH_NODE_PROPERTIES $RETURN_NODE $PAGE_PARAMS""",
-        countQuery = """$MATCH_VISUALIZATION_RELATED_TO_RESEARCH_FIELD_WITH_ID $WITH_DISTINCT_NODE $WHERE_VISIBILITY_IS_LISTED $RETURN_NODE_COUNT"""
-    )
-    fun findAllListedVisualizationsByResearchFieldExcludingSubFields(id: ThingId, pageable: Pageable): Page<Neo4jResource>
-
-    @Query(
-        """$MATCH_VISUALIZATION_RELATED_TO_RESEARCH_FIELD$INCLUDING_SUBFIELDS $WITH_DISTINCT_NODE $WHERE_VISIBILITY $WITH_NODE_PROPERTIES $RETURN_NODE $PAGE_PARAMS""",
-        countQuery = """$MATCH_VISUALIZATION_RELATED_TO_RESEARCH_FIELD$INCLUDING_SUBFIELDS $WITH_DISTINCT_NODE $WHERE_VISIBILITY $RETURN_NODE_COUNT"""
-    )
-    fun findAllVisualizationsByResearchFieldAndVisibilityIncludingSubFields(id: ThingId, visibility: Visibility, pageable: Pageable): Page<Neo4jResource>
-
-    @Query(
-        """$MATCH_VISUALIZATION_RELATED_TO_RESEARCH_FIELD_WITH_ID $WITH_DISTINCT_NODE $WHERE_VISIBILITY $WITH_NODE_PROPERTIES $RETURN_NODE $PAGE_PARAMS""",
-        countQuery = """$MATCH_VISUALIZATION_RELATED_TO_RESEARCH_FIELD_WITH_ID $WITH_DISTINCT_NODE $WHERE_VISIBILITY $RETURN_NODE_COUNT"""
-    )
-    fun findAllVisualizationsByResearchFieldAndVisibilityExcludingSubFields(id: ThingId, visibility: Visibility, pageable: Pageable): Page<Neo4jResource>
-
-    // Smart Reviews
-
-    @Query(
-        """$MATCH_SMART_REVIEW_RELATED_TO_RESEARCH_FIELD$INCLUDING_SUBFIELDS $WITH_DISTINCT_NODE $WHERE_VISIBILITY_IS_LISTED $WITH_NODE_PROPERTIES $RETURN_NODE $PAGE_PARAMS""",
-        countQuery = """$MATCH_SMART_REVIEW_RELATED_TO_RESEARCH_FIELD$INCLUDING_SUBFIELDS $WITH_DISTINCT_NODE $WHERE_VISIBILITY_IS_LISTED $RETURN_NODE_COUNT"""
-    )
-    fun findAllListedSmartReviewsByResearchFieldIncludingSubFields(id: ThingId, pageable: Pageable): Page<Neo4jResource>
-
-    @Query(
-        """$MATCH_SMART_REVIEW_RELATED_TO_RESEARCH_FIELD_WITH_ID $WITH_DISTINCT_NODE $WHERE_VISIBILITY_IS_LISTED $WITH_NODE_PROPERTIES $RETURN_NODE $PAGE_PARAMS""",
-        countQuery = """$MATCH_SMART_REVIEW_RELATED_TO_RESEARCH_FIELD_WITH_ID $WITH_DISTINCT_NODE $WHERE_VISIBILITY_IS_LISTED $RETURN_NODE_COUNT"""
-    )
-    fun findAllListedSmartReviewsByResearchFieldExcludingSubFields(id: ThingId, pageable: Pageable): Page<Neo4jResource>
-
-    @Query(
-        """$MATCH_SMART_REVIEW_RELATED_TO_RESEARCH_FIELD$INCLUDING_SUBFIELDS $WITH_DISTINCT_NODE $WHERE_VISIBILITY $WITH_NODE_PROPERTIES $RETURN_NODE $PAGE_PARAMS""",
-        countQuery = """$MATCH_SMART_REVIEW_RELATED_TO_RESEARCH_FIELD$INCLUDING_SUBFIELDS $WITH_DISTINCT_NODE $WHERE_VISIBILITY $RETURN_NODE_COUNT"""
-    )
-    fun findAllSmartReviewsByResearchFieldAndVisibilityIncludingSubFields(id: ThingId, visibility: Visibility, pageable: Pageable): Page<Neo4jResource>
-
-    @Query(
-        """$MATCH_SMART_REVIEW_RELATED_TO_RESEARCH_FIELD_WITH_ID $WITH_DISTINCT_NODE $WHERE_VISIBILITY $WITH_NODE_PROPERTIES $RETURN_NODE $PAGE_PARAMS""",
-        countQuery = """$MATCH_SMART_REVIEW_RELATED_TO_RESEARCH_FIELD_WITH_ID $WITH_DISTINCT_NODE $WHERE_VISIBILITY $RETURN_NODE_COUNT"""
-    )
-    fun findAllSmartReviewsByResearchFieldAndVisibilityExcludingSubFields(id: ThingId, visibility: Visibility, pageable: Pageable): Page<Neo4jResource>
-
-    // Literature Lists
-
-    @Query(
-        """$MATCH_LITERATURE_LIST_RELATED_TO_RESEARCH_FIELD$INCLUDING_SUBFIELDS $WITH_DISTINCT_NODE $WHERE_VISIBILITY_IS_LISTED $WITH_NODE_PROPERTIES $RETURN_NODE $PAGE_PARAMS""",
-        countQuery = """$MATCH_LITERATURE_LIST_RELATED_TO_RESEARCH_FIELD$INCLUDING_SUBFIELDS $WITH_DISTINCT_NODE $WHERE_VISIBILITY_IS_LISTED $RETURN_NODE_COUNT"""
-    )
-    fun findAllListedLiteratureListsByResearchFieldIncludingSubFields(id: ThingId, pageable: Pageable): Page<Neo4jResource>
-
-    @Query(
-        """$MATCH_LITERATURE_LIST_RELATED_TO_RESEARCH_FIELD_WITH_ID $WITH_DISTINCT_NODE $WHERE_VISIBILITY_IS_LISTED $WITH_NODE_PROPERTIES $RETURN_NODE $PAGE_PARAMS""",
-        countQuery = """$MATCH_LITERATURE_LIST_RELATED_TO_RESEARCH_FIELD_WITH_ID $WITH_DISTINCT_NODE $WHERE_VISIBILITY_IS_LISTED $RETURN_NODE_COUNT"""
-    )
-    fun findAllListedLiteratureListsByResearchFieldExcludingSubFields(id: ThingId, pageable: Pageable): Page<Neo4jResource>
-
-    @Query(
-        """$MATCH_LITERATURE_LIST_RELATED_TO_RESEARCH_FIELD$INCLUDING_SUBFIELDS $WITH_DISTINCT_NODE $WHERE_VISIBILITY $WITH_NODE_PROPERTIES $RETURN_NODE $PAGE_PARAMS""",
-        countQuery = """$MATCH_LITERATURE_LIST_RELATED_TO_RESEARCH_FIELD$INCLUDING_SUBFIELDS $WITH_DISTINCT_NODE $WHERE_VISIBILITY $RETURN_NODE_COUNT"""
-    )
-    fun findAllLiteratureListsByResearchFieldAndVisibilityIncludingSubFields(id: ThingId, visibility: Visibility, pageable: Pageable): Page<Neo4jResource>
-
-    @Query(
-        """$MATCH_LITERATURE_LIST_RELATED_TO_RESEARCH_FIELD_WITH_ID $WITH_DISTINCT_NODE $WHERE_VISIBILITY $WITH_NODE_PROPERTIES $RETURN_NODE $PAGE_PARAMS""",
-        countQuery = """$MATCH_LITERATURE_LIST_RELATED_TO_RESEARCH_FIELD_WITH_ID $WITH_DISTINCT_NODE $WHERE_VISIBILITY $RETURN_NODE_COUNT"""
-    )
-    fun findAllLiteratureListsByResearchFieldAndVisibilityExcludingSubFields(id: ThingId, visibility: Visibility, pageable: Pageable): Page<Neo4jResource>
 }
 
 data class Neo4jProblemsPerField(

@@ -34,7 +34,6 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.noContent
-import org.springframework.http.ResponseEntity.ok
 import org.springframework.security.core.Authentication
 import org.springframework.util.MimeType
 import org.springframework.web.bind.annotation.GetMapping
@@ -43,7 +42,6 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
@@ -163,60 +161,6 @@ class OrganizationController(
         return noContent().location(location).build()
     }
 
-    @RequestMapping("/{id}/name", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @RequireCuratorRole
-    fun updateOrganizationName(
-        @PathVariable id: OrganizationId,
-        @RequestBody @Valid name: UpdateRequest,
-    ): ResponseEntity<Any> {
-        val response = findOrganization(id)
-        response.name = name.value
-        service.update(response)
-        return ok().body(response)
-    }
-
-    @RequestMapping("/{id}/url", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @RequireCuratorRole
-    fun updateOrganizationUrl(
-        @PathVariable id: OrganizationId,
-        @RequestBody @Valid url: UpdateRequest,
-    ): ResponseEntity<Any> {
-        val response = findOrganization(id)
-        response.homepage = url.value
-        service.update(response)
-        return ok().body(response)
-    }
-
-    @RequestMapping("/{id}/type", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @RequireCuratorRole
-    fun updateOrganizationType(
-        @PathVariable id: OrganizationId,
-        @RequestBody @Valid type: UpdateRequest,
-    ): ResponseEntity<Any> {
-        val response = findOrganization(id)
-        response.type = OrganizationType.fromOrNull(type.value)!!
-        service.update(response)
-        return ok().body(response)
-    }
-
-    @RequestMapping("/{id}/logo", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @RequireCuratorRole
-    fun updateOrganizationLogo(
-        @PathVariable id: OrganizationId,
-        @RequestBody @Valid submittedLogo: UpdateRequest,
-        uriComponentsBuilder: UriComponentsBuilder,
-        currentUser: Authentication?,
-    ): ResponseEntity<Any> {
-        val organization = service.findById(id).orElseThrow { OrganizationNotFound(id) }
-        val image = EncodedImage(submittedLogo.value).decodeBase64()
-        service.updateLogo(id, image, currentUser.contributorId())
-        val location = uriComponentsBuilder
-            .path("/api/organizations/{id}/logo")
-            .buildAndExpand(id)
-            .toUri()
-        return ResponseEntity.created(location).body(organization)
-    }
-
     @GetMapping("/{id}/logo")
     fun findOrganizationLogo(
         @PathVariable id: OrganizationId,
@@ -226,10 +170,6 @@ class OrganizationController(
         response.contentType = logo.mimeType.toString()
         IOUtils.copy(ByteArrayInputStream(logo.data.bytes), response.outputStream)
     }
-
-    fun findOrganization(id: OrganizationId): Organization = service
-        .findById(id)
-        .orElseThrow { OrganizationNotFound(id) }
 
     fun String.isValidUUID(id: String): Boolean = try {
         UUID.fromString(id) != null
@@ -254,11 +194,6 @@ class OrganizationController(
         val displayId: String,
         @field:NotBlank
         val type: String,
-    )
-
-    data class UpdateRequest(
-        @field:NotBlank
-        val value: String,
     )
 
     data class UpdateOrganizationRequest(

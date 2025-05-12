@@ -5,27 +5,6 @@ The research field is essentially a <<Resources,resource>> and hence inherits al
 
 NOTE: In the following sections, the response fields of the page object are omitted for brevity.
 
-== Research Fields and Content-Types
-
-[[research-fields-fetch]]
-=== Listing Content-Types of Research Fields
-
-A `GET` request for a given research field returns a <<sorting-and-pagination,paged>> list of content type <<resources,resources>> that belong to the given research field.
-The endpoint supports <<visibility-filtering-legacy>>.
-
-IMPORTANT: **Deprecated.** Replace with <<content-types-list,Listing Content-Types>>.
-
-operation::research-fields-get-paged[snippets='path-parameters,path-parameters,query-parameters,curl-request']
-
-[[research-fields-fetch-with-subfields]]
-=== Listing Content-Types of Research Fields and their Subfields
-
-A `GET` request to `/api/research-fields/{id}/subfields` returns a <<sorting-and-pagination,paged>> list of content type <<resources,resources>> belonging to a given research field and its subfields.
-
-All path, request and response parameters are exactly the same as on the <<research-fields-fetch,endpoint without subfields>>.
-
-IMPORTANT: **Deprecated.** Replace with <<content-types-list,Listing Content-Types>>.
-
 == Research Fields and Research Problems
 
 [[research-fields-list-research-problems]]
@@ -62,48 +41,6 @@ operation::research-fields-get-contributors-per-field[snippets='path-parameters,
 A `GET` request to `/api/research-fields/{id}/subfields/contributors` returns a <<sorting-and-pagination,paged>> list of contributors that contributed to a given research field and its subfields.
 All path and request parameters are exactly the same as on the <<research-fields-list-contributors,endpoint without subfields>>.
 
-
-== Research Fields and Papers
-
-[[research-fields-list-papers]]
-=== Listing Papers of Research Fields
-
-A `GET` request returns a <<sorting-and-pagination,paged>> list of paper <<resources,resources>> belonging to a given research field.
-
-IMPORTANT: **Deprecated.** Replace with <<papers-list,Listing Papers>>.
-
-operation::research-fields-get-papers-per-field[snippets='path-parameters,curl-request']
-
-
-[[research-fields-list-papers-including-subfields]]
-=== Listing Papers of Research Field and their Subfields
-
-A `GET` request to `/api/research-fields/\{id}/subfields/papers` returns a <<sorting-and-pagination,paged>> list of paper <<resources,resources>> belonging to a given research field and its subfields.
-
-All path and request parameters are exactly the same as on the <<research-fields-list-papers,endpoint without subfields>>.
-
-IMPORTANT: **Deprecated.** Replace with <<papers-list,Listing Papers>>.
-
-
-== Research Fields and Comparisons
-
-[[research-fields-list-comparisons]]
-=== Listing Comparisons of Research Fields
-
-A `GET` request returns a <<sorting-and-pagination,paged>> list of comparison <<resources,resources>> belonging to a given research field.
-
-IMPORTANT: **Deprecated.** Replace with <<comparisons-list,Listing Comparisons>>.
-
-operation::research-fields-get-comparisons-per-field[snippets='path-parameters,curl-request']
-
-[[research-fields-list-comparisons-including-subfields]]
-=== Listing Comparisons of Research Field and their Subfields
-
-A `GET` request to `/api/research-fields/{id}/subfields/comparisons` returns a <<sorting-and-pagination,paged>> list of comparison <<resources,resources>> belonging to a given research field and its subfields.
-
-All path and request parameters are exactly the same as on the <<research-fields-list-comparisons,endpoint without subfields>>.
-
-IMPORTANT: **Deprecated.** Replace with <<comparisons-list,Listing Comparisons>>.
 
 [[research-fields-list-children]]
 == Listing Subfields
@@ -143,12 +80,3 @@ A `GET` request returns a <<sorting-and-pagination,paged>> list of all paths fro
 operation::research-fields-find-hierarchy[snippets='path-parameters,curl-request,http-response']
 
 include::{snippets}/research-fields-research-field-hierarchy-entry/response-fields.adoc[]
-
-[[research-fields-statistics]]
-== Listing Statistics about Research Fields
-
-A `GET` request lists statistics about a research field. Optionally accounts for subfields.
-
-IMPORTANT: **Deprecated.** Replace with <<statistics-fetch-metric,Fetching Metrics>>.
-
-operation::stats-research-fields[snippets='path-parameters,query-parameters,curl-request,http-response,response-fields']

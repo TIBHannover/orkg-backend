@@ -137,9 +137,6 @@ dependencies {
 
     runtimeOnly(project(":identity-management:idm-adapter-input-rest-spring-security-legacy"))
 
-    runtimeOnly(project(":licenses:licenses-adapter-input-rest-spring-mvc"))
-    runtimeOnly(project(":licenses:licenses-core-services"))
-
     runtimeOnly(project(":statistics:statistics-adapter-input-rest-spring-mvc"))
     runtimeOnly(project(":statistics:statistics-adapter-output-spring-data-neo4j"))
     runtimeOnly(project(":statistics:statistics-core-services"))

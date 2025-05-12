@@ -13,41 +13,21 @@ import org.orkg.community.testing.fixtures.createContributor
 import org.orkg.contenttypes.input.ResearchFieldUseCases
 import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.graph.domain.Classes
-import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.graph.testing.asciidoc.legacyVisibilityFilterRequestParameters
-import org.orkg.graph.testing.asciidoc.visibilityFilterRequestParameter
-import org.orkg.graph.testing.fixtures.createComparisonResource
-import org.orkg.graph.testing.fixtures.createPaperResource
 import org.orkg.graph.testing.fixtures.createResource
-import org.orkg.graph.testing.fixtures.createVisualizationResource
 import org.orkg.testing.andExpectPage
-import org.orkg.testing.andExpectResource
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
-import org.orkg.testing.toAsciidoc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
-import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.Optional
 import java.util.UUID
-
-// TODO: Move to a different place
-val supportedClasses = setOf(
-    "Paper",
-    "Comparison",
-    "Visualization",
-    "LiteratureListPublished",
-    "Problem",
-    "SmartReviewPublished",
-).sorted().toAsciidoc()
 
 @ContextConfiguration(
     classes = [
@@ -76,72 +56,6 @@ internal class ResearchFieldControllerUnitTest : MockMvcBaseTest("research-field
     private lateinit var comparisonRepository: ComparisonRepository
 
     @Test
-    fun getPaged() {
-        val id = ThingId("RF1234")
-        val paper = createPaperResource()
-        val visualization = createVisualizationResource()
-        every {
-            useCases.findAllEntitiesBasedOnClassesByResearchField(id, any(), any(), any(), any())
-        } returns pageOf(listOf(paper, visualization))
-        every {
-            // The returned counts returned do not matter, we only need to satisfy the call.
-            statementService.countAllIncomingStatementsById(setOf(paper.id, visualization.id))
-        } returns mapOf(paper.id to 12, visualization.id to 3)
-
-        documentedGetRequestTo("/api/research-fields/{id}", id)
-            .param("classes", "Paper", "Visualization")
-            .accept(APPLICATION_JSON)
-            .contentType(APPLICATION_JSON)
-            .perform()
-            .andExpect(status().isOk)
-            .andExpectPage()
-            .andExpectResource("$.content[0]") // only test the first element, this should be fine
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the research field.")
-                    ),
-                    queryParameters(
-                        parameterWithName("classes").description("A list of classes to filter against. The classes must support research fields. Must be one of $supportedClasses."),
-                        *legacyVisibilityFilterRequestParameters(),
-                        visibilityFilterRequestParameter(),
-                    ),
-                )
-            )
-            .andDo(generateDefaultDocSnippets())
-
-        verify(exactly = 1) { useCases.findAllEntitiesBasedOnClassesByResearchField(id, any(), any(), any(), any()) }
-        verify(exactly = 1) { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) }
-    }
-
-    @Test
-    fun getSubfieldsPaged() {
-        val id = ThingId("RF1234")
-        val paper = createPaperResource()
-        val visualization = createVisualizationResource()
-        val mockedResult = listOf(paper, visualization)
-        every {
-            useCases.findAllEntitiesBasedOnClassesByResearchField(id, any(), any(), any(), any())
-        } returns pageOf(mockedResult)
-        every {
-            // The returned counts returned do not matter, we only need to satisfy the call.
-            statementService.countAllIncomingStatementsById(setOf(paper.id, visualization.id))
-        } returns mapOf(paper.id to 12, visualization.id to 3)
-
-        get("/api/research-fields/{id}/subfields", id)
-            .param("classes", "Paper", "Visualization")
-            .accept(APPLICATION_JSON)
-            .contentType(APPLICATION_JSON)
-            .perform()
-            .andExpect(status().isOk)
-            .andExpectPage()
-            .andExpectResource("$.content[0]") // only test the first element, this should be fine
-
-        verify(exactly = 1) { useCases.findAllEntitiesBasedOnClassesByResearchField(id, any(), any(), any(), any()) }
-        verify(exactly = 1) { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) }
-    }
-
-    @Test
     fun getProblemsPerField() {
         val id = ThingId("RF1234")
         val fieldResource = createResource(id, classes = setOf(Classes.researchField), label = "Fancy research")
@@ -167,79 +81,6 @@ internal class ResearchFieldControllerUnitTest : MockMvcBaseTest("research-field
         verify(exactly = 1) { resourceService.findById(id) }
         verify(exactly = 1) { statementService.countAllIncomingStatementsById(setOf(problemResource.id)) }
         verify(exactly = 1) { useCases.findAllResearchProblemsByResearchField(id, any(), any(), any()) }
-    }
-
-    @Test
-    fun getPapersPerField() {
-        val id = ThingId("RF1234")
-        val fieldResource = createResource(id, classes = setOf(Classes.researchField), label = "Fancy research")
-        val paper1 = createPaperResource(Predicates.yields, title = "Some interesting title")
-        val paper2 = createPaperResource(Predicates.employs, title = "Even more interesting title")
-
-        every { resourceService.findById(fieldResource.id) } returns Optional.of(fieldResource)
-        every { statementService.countAllIncomingStatementsById(setOf(paper1.id, paper2.id)) } returns mapOf(paper1.id to 12, paper2.id to 13)
-        every { useCases.findAllPapersByResearchField(fieldResource.id, any(), any(), any()) } returns pageOf(paper1, paper2)
-
-        documentedGetRequestTo("/api/research-fields/{id}/papers", id)
-            .perform()
-            .andExpect(status().isOk)
-            .andExpectPage()
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the research field.")
-                    ),
-                )
-            )
-            .andDo(generateDefaultDocSnippets())
-
-        verify(exactly = 1) { resourceService.findById(id) }
-        verify(exactly = 1) { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) }
-        verify(exactly = 1) { useCases.findAllPapersByResearchField(id, any(), any(), any()) }
-    }
-
-    @Test
-    fun getComparisonsPerField() {
-        val id = ThingId("RF1234")
-        val fieldResource = createResource(id, classes = setOf(Classes.researchField), label = "Fancy research")
-        val comparison1 = createComparisonResource(ThingId("P1"))
-        val comparison2 = createComparisonResource(ThingId("P2"))
-        every { resourceService.findById(id) } returns Optional.of(fieldResource)
-        every {
-            statementService.countAllIncomingStatementsById(setOf(comparison1.id, comparison2.id))
-        } returns mapOf(comparison1.id to 12, comparison2.id to 13)
-        every {
-            comparisonRepository.findAll(
-                researchField = id,
-                visibility = any(),
-                includeSubfields = false,
-                pageable = any()
-            )
-        } returns pageOf(comparison1, comparison2)
-
-        documentedGetRequestTo("/api/research-fields/{id}/comparisons", id)
-            .perform()
-            .andExpect(status().isOk)
-            .andExpectPage()
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the research field.")
-                    )
-                )
-            )
-            .andDo(generateDefaultDocSnippets())
-
-        verify(exactly = 1) { resourceService.findById(id) }
-        verify(exactly = 1) { statementService.countAllIncomingStatementsById(setOf(comparison1.id, comparison2.id)) }
-        verify(exactly = 1) {
-            comparisonRepository.findAll(
-                researchField = id,
-                visibility = any(),
-                includeSubfields = false,
-                pageable = any()
-            )
-        }
     }
 
     @Test

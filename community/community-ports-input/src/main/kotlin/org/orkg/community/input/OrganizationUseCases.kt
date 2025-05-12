@@ -45,11 +45,7 @@ interface OrganizationUseCases : UpdateOrganizationUseCases {
 
     fun findAllConferences(): List<Organization>
 
-    fun update(organization: Organization)
-
     fun findLogoById(id: OrganizationId): Optional<Image>
-
-    fun updateLogo(id: OrganizationId, image: RawImage, contributor: ContributorId?)
 
     /**
      * Delete all organizations

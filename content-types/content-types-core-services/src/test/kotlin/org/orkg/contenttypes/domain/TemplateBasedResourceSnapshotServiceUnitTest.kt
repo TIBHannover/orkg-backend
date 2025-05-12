@@ -21,7 +21,6 @@ import org.orkg.contenttypes.output.HandleService
 import org.orkg.contenttypes.output.TemplateBasedResourceSnapshotRepository
 import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.output.ResourceRepository
-import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.MockUserId
 import java.net.URI
@@ -30,7 +29,6 @@ import java.util.Optional
 
 internal class TemplateBasedResourceSnapshotServiceUnitTest : MockkBaseTest {
     private val resourceRepository: ResourceRepository = mockk()
-    private val statementRepository: StatementRepository = mockk()
     private val templateUseCase: TemplateUseCases = mockk()
     private val templateInstanceUseCases: TemplateInstanceUseCases = mockk()
     private val templateBasedResourceSnapshotRepository: TemplateBasedResourceSnapshotRepository = mockk()
@@ -40,7 +38,6 @@ internal class TemplateBasedResourceSnapshotServiceUnitTest : MockkBaseTest {
 
     private val service = TemplateBasedResourceSnapshotService(
         resourceRepository,
-        statementRepository,
         templateUseCase,
         templateInstanceUseCases,
         templateBasedResourceSnapshotRepository,

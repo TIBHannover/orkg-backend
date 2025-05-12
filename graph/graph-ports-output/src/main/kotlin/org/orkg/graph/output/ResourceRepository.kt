@@ -6,7 +6,6 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
-import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -59,13 +58,4 @@ interface ResourceRepository : EntityRepository<Resource, ThingId> {
     fun findPaperById(id: ThingId): Optional<Resource>
 
     fun findAllContributorIds(pageable: Pageable): Page<ContributorId>
-
-    // TODO: refactor or remove classIn methods
-    fun findAllByClassInAndVisibility(classes: Set<ThingId>, visibility: Visibility, pageable: Pageable): Page<Resource>
-
-    fun findAllListedByClassIn(classes: Set<ThingId>, pageable: Pageable): Page<Resource>
-
-    fun findAllByClassInAndVisibilityAndObservatoryId(classes: Set<ThingId>, visibility: Visibility, id: ObservatoryId, pageable: Pageable): Page<Resource>
-
-    fun findAllListedByClassInAndObservatoryId(classes: Set<ThingId>, id: ObservatoryId, pageable: Pageable): Page<Resource>
 }

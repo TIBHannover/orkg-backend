@@ -88,23 +88,6 @@ class ResourceService(
     override fun findAllPapersByTitle(title: String?): List<Resource> =
         repository.findAllPapersByLabel(title!!)
 
-    override fun findAllProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Resource> =
-        statementRepository.findAllProblemsByObservatoryId(id, pageable)
-
-    override fun findAllByClassInAndVisibilityAndObservatoryId(
-        classes: Set<ThingId>,
-        visibility: VisibilityFilter,
-        id: ObservatoryId,
-        pageable: Pageable,
-    ): Page<Resource> =
-        when (visibility) {
-            VisibilityFilter.ALL_LISTED -> repository.findAllListedByClassInAndObservatoryId(classes, id, pageable)
-            VisibilityFilter.UNLISTED -> repository.findAllByClassInAndVisibilityAndObservatoryId(classes, Visibility.UNLISTED, id, pageable)
-            VisibilityFilter.FEATURED -> repository.findAllByClassInAndVisibilityAndObservatoryId(classes, Visibility.FEATURED, id, pageable)
-            VisibilityFilter.NON_FEATURED -> repository.findAllByClassInAndVisibilityAndObservatoryId(classes, Visibility.DEFAULT, id, pageable)
-            VisibilityFilter.DELETED -> repository.findAllByClassInAndVisibilityAndObservatoryId(classes, Visibility.DELETED, id, pageable)
-        }
-
     override fun findTimelineByResourceId(id: ThingId, pageable: Pageable): Page<ResourceContributor> =
         repository.findById(id)
             .map { statementRepository.findTimelineByResourceId(id, pageable) }
@@ -118,10 +101,11 @@ class ResourceService(
     ): Page<Resource> =
         statementRepository.findAllPapersByObservatoryIdAndFilters(observatoryId, filters, visibility, pageable)
 
-    override fun findAllContributorsByResourceId(id: ThingId, pageable: Pageable): Page<ContributorId> =
-        repository.findById(id)
-            .map { statementRepository.findAllContributorsByResourceId(id, pageable) }
-            .orElseThrow { ResourceNotFound.withId(id) }
+    override fun findAllProblemsByOrganizationId(
+        id: OrganizationId,
+        pageable: Pageable,
+    ): Page<Resource> =
+        statementRepository.findAllProblemsByOrganizationId(id, pageable)
 
     override fun update(command: UpdateCommand) {
         if (command.hasNoContents()) return
@@ -184,76 +168,7 @@ class ResourceService(
 
     override fun deleteAll() = repository.deleteAll()
 
-    override fun findAllByClassInAndVisibility(
-        classes: Set<ThingId>,
-        visibility: VisibilityFilter,
-        pageable: Pageable,
-    ): Page<Resource> = when {
-        classes.isNotEmpty() -> when (visibility) {
-            VisibilityFilter.ALL_LISTED -> repository.findAllListedByClassIn(classes, pageable)
-            VisibilityFilter.UNLISTED -> repository.findAllByClassInAndVisibility(classes, Visibility.UNLISTED, pageable)
-            VisibilityFilter.FEATURED -> repository.findAllByClassInAndVisibility(classes, Visibility.FEATURED, pageable)
-            VisibilityFilter.NON_FEATURED -> repository.findAllByClassInAndVisibility(classes, Visibility.DEFAULT, pageable)
-            VisibilityFilter.DELETED -> repository.findAllByClassInAndVisibility(classes, Visibility.DELETED, pageable)
-        }
-        else -> findAll(visibility = visibility, pageable = pageable)
-    }
-
     override fun findAllContributorIds(pageable: Pageable) = repository.findAllContributorIds(pageable)
-
-    override fun markAsVerified(resourceId: ThingId) = setVerifiedFlag(resourceId, true)
-
-    override fun markAsUnverified(resourceId: ThingId) = setVerifiedFlag(resourceId, false)
-
-    override fun markAsFeatured(resourceId: ThingId) {
-        val resource = repository.findById(resourceId)
-            .orElseThrow { ResourceNotFound.withId(resourceId) }
-        val modified = resource.copy(
-            visibility = Visibility.FEATURED,
-            unlistedBy = null
-        )
-        repository.save(modified)
-    }
-
-    override fun markAsNonFeatured(resourceId: ThingId) {
-        val resource = repository.findById(resourceId)
-            .orElseThrow { ResourceNotFound.withId(resourceId) }
-        val modified = resource.copy(
-            visibility = Visibility.DEFAULT,
-            unlistedBy = null
-        )
-        repository.save(modified)
-    }
-
-    override fun markAsUnlisted(resourceId: ThingId, contributorId: ContributorId) {
-        val resource = repository.findById(resourceId)
-            .orElseThrow { ResourceNotFound.withId(resourceId) }
-        val modified = resource.copy(
-            visibility = Visibility.UNLISTED,
-            unlistedBy = contributorId
-        )
-        repository.save(modified)
-    }
-
-    override fun markAsListed(resourceId: ThingId) {
-        val resource = repository.findById(resourceId)
-            .orElseThrow { ResourceNotFound.withId(resourceId) }
-        val modified = resource.copy(
-            visibility = Visibility.DEFAULT,
-            unlistedBy = null
-        )
-        repository.save(modified)
-    }
-
-    override fun findAllProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> =
-        statementRepository.findAllProblemsByOrganizationId(id, pageable)
-
-    private fun setVerifiedFlag(resourceId: ThingId, verified: Boolean) {
-        val result = repository.findById(resourceId)
-        var resultObj = result.orElseThrow { ResourceNotFound.withId(resourceId) }
-        resultObj = resultObj.copy(verified = verified)
-        repository.save(resultObj)
-    }
 
     private fun validateClasses(classes: Set<ThingId>): Set<ThingId> {
         if (classes.isNotEmpty()) {

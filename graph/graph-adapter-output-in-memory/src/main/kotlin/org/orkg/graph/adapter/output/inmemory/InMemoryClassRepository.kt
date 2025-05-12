@@ -69,10 +69,6 @@ class InMemoryClassRepository(inMemoryGraph: InMemoryGraph) :
             }
         )
 
-    @Deprecated("For removal")
-    override fun findAllById(id: Iterable<ThingId>, pageable: Pageable) =
-        findAllFilteredAndPaged(pageable) { id.contains(it.id) }
-
     override fun findByUri(uri: String) =
         entities.values.firstOrNull { it.uri.toString() == uri }.toOptional()
 

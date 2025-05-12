@@ -95,12 +95,6 @@ include(
     "data-export:data-export-adapters",
 )
 include(
-    "licenses:licenses-core-model",
-    "licenses:licenses-core-services",
-    "licenses:licenses-ports-input",
-    "licenses:licenses-adapter-input-rest-spring-mvc",
-)
-include(
     "profiling:profiling-core-model",
     "profiling:profiling-core-services",
     "profiling:profiling-ports-output",

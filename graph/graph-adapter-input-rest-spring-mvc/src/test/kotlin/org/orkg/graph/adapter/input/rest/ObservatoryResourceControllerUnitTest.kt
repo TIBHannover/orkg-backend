@@ -216,26 +216,4 @@ internal class ObservatoryResourceControllerUnitTest : MockMvcBaseTest("observat
             .andExpect(jsonPath("$.timestamp").exists())
             .andExpect(jsonPath("$.path").value("/api/observatories/$id/papers"))
     }
-
-    @Test
-    fun `Given the observatory id, when service succeeds, then status is 200 OK and problems list is returned`() {
-        val id = ObservatoryId(UUID.randomUUID())
-        val problemResource = createResource(
-            observatoryId = id,
-            classes = setOf(Classes.problem)
-        )
-        every {
-            resourceService.findAllProblemsByObservatoryId(id, any())
-        } returns PageImpl(listOf(problemResource))
-        every { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) } returns emptyMap()
-
-        get("/api/observatories/{id}/problems", id)
-            .perform()
-            .andExpect(status().isOk)
-            .andExpectPage()
-            .andExpectResource("$.content[*]")
-
-        verify(exactly = 1) { resourceService.findAllProblemsByObservatoryId(id, any()) }
-        verify(exactly = 1) { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) }
-    }
 }

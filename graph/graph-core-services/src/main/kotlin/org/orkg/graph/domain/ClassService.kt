@@ -55,10 +55,6 @@ class ClassService(
     ): Page<Class> =
         repository.findAll(pageable, label, createdBy, createdAtStart, createdAtEnd)
 
-    @Deprecated("For removal")
-    override fun findAllById(ids: Iterable<ThingId>, pageable: Pageable): Page<Class> =
-        repository.findAllById(ids, pageable)
-
     override fun findById(id: ThingId): Optional<Class> =
         repository.findById(id)
 

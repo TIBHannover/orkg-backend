@@ -22,9 +22,6 @@ interface ClassRepository : EntityRepository<Class, ThingId> {
         createdAtEnd: OffsetDateTime? = null,
     ): Page<Class>
 
-    @Deprecated("For removal")
-    fun findAllById(id: Iterable<ThingId>, pageable: Pageable): Page<Class>
-
     fun findByUri(uri: String): Optional<Class>
 
     fun deleteAll()

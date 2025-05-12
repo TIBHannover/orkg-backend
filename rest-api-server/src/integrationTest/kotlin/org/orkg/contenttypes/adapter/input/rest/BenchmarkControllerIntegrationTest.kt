@@ -114,8 +114,8 @@ internal class BenchmarkControllerIntegrationTest : MockMvcBaseTest("benchmarks"
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(1)))
             .andExpect(jsonPath("$.content[0].label", equalTo(fieldWithBenchmarkLabel)))
-            .andExpect(jsonPath("$.number").value(0)) // page number
-            .andExpect(jsonPath("$.totalElements").value(1))
+            .andExpect(jsonPath("$.page.number").value(0)) // page number
+            .andExpect(jsonPath("$.page.total_elements").value(1))
     }
 
     /**
@@ -182,8 +182,8 @@ internal class BenchmarkControllerIntegrationTest : MockMvcBaseTest("benchmarks"
             .andExpect(jsonPath("$.content[1].total_papers", equalTo(1)))
             .andExpect(jsonPath("$.content[1].total_datasets", equalTo(2)))
             .andExpect(jsonPath("$.content[1].total_codes", equalTo(5)))
-            .andExpect(jsonPath("$.number").value(0)) // page number
-            .andExpect(jsonPath("$.totalElements").value(2))
+            .andExpect(jsonPath("$.page.number").value(0)) // page number
+            .andExpect(jsonPath("$.page.total_elements").value(2))
     }
 
     @Test
@@ -228,8 +228,8 @@ internal class BenchmarkControllerIntegrationTest : MockMvcBaseTest("benchmarks"
             .andExpect(jsonPath("$.content[0].total_papers", equalTo(1)))
             .andExpect(jsonPath("$.content[0].total_datasets", equalTo(2)))
             .andExpect(jsonPath("$.content[0].total_codes", equalTo(5)))
-            .andExpect(jsonPath("$.number").value(0)) // page number
-            .andExpect(jsonPath("$.totalElements").value(2))
+            .andExpect(jsonPath("$.page.number").value(0)) // page number
+            .andExpect(jsonPath("$.page.total_elements").value(2))
     }
 
     @Test
@@ -302,7 +302,7 @@ internal class BenchmarkControllerIntegrationTest : MockMvcBaseTest("benchmarks"
             .andExpect(jsonPath("$.content[?(@.research_problem.id==\"${problem2.value}\")].total_papers", equalTo(listOf(1))))
             .andExpect(jsonPath("$.content[?(@.research_problem.id==\"${problem2.value}\")].total_datasets", equalTo(listOf(2))))
             .andExpect(jsonPath("$.content[?(@.research_problem.id==\"${problem2.value}\")].total_codes", equalTo(listOf(5))))
-            .andExpect(jsonPath("$.number").value(0)) // page number
-            .andExpect(jsonPath("$.totalElements").value(2))
+            .andExpect(jsonPath("$.page.number").value(0)) // page number
+            .andExpect(jsonPath("$.page.total_elements").value(2))
     }
 }

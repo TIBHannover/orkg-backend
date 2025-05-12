@@ -134,8 +134,8 @@ internal class DatasetControllerIntegrationTest : MockMvcBaseTest("datasets") {
             .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
-            .andExpect(jsonPath("$.number").value(0)) // page number
-            .andExpect(jsonPath("$.totalElements").value(2))
+            .andExpect(jsonPath("$.page.number").value(0)) // page number
+            .andExpect(jsonPath("$.page.total_elements").value(2))
     }
 
     @Test
@@ -195,8 +195,8 @@ internal class DatasetControllerIntegrationTest : MockMvcBaseTest("datasets") {
             .andExpect(jsonPath("$.content[1].total_papers", equalTo(1)))
             .andExpect(jsonPath("$.content[1].total_models", equalTo(0)))
             .andExpect(jsonPath("$.content[1].total_codes", equalTo(3)))
-            .andExpect(jsonPath("$.number").value(0)) // page number
-            .andExpect(jsonPath("$.totalElements").value(2))
+            .andExpect(jsonPath("$.page.number").value(0)) // page number
+            .andExpect(jsonPath("$.page.total_elements").value(2))
     }
 
     @Test
@@ -289,8 +289,8 @@ internal class DatasetControllerIntegrationTest : MockMvcBaseTest("datasets") {
             .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
-            .andExpect(jsonPath("$.number").value(0)) // page number
-            .andExpect(jsonPath("$.totalElements").value(2))
+            .andExpect(jsonPath("$.page.number").value(0)) // page number
+            .andExpect(jsonPath("$.page.total_elements").value(2))
     }
 
     @Test
@@ -377,8 +377,8 @@ internal class DatasetControllerIntegrationTest : MockMvcBaseTest("datasets") {
             .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
-            .andExpect(jsonPath("$.number").value(0)) // page number
-            .andExpect(jsonPath("$.totalElements").value(2))
+            .andExpect(jsonPath("$.page.number").value(0)) // page number
+            .andExpect(jsonPath("$.page.total_elements").value(2))
     }
 
     @Test
@@ -459,7 +459,7 @@ internal class DatasetControllerIntegrationTest : MockMvcBaseTest("datasets") {
             .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
-            .andExpect(jsonPath("$.number").value(0)) // page number
-            .andExpect(jsonPath("$.totalElements").value(2))
+            .andExpect(jsonPath("$.page.number").value(0)) // page number
+            .andExpect(jsonPath("$.page.total_elements").value(2))
     }
 }

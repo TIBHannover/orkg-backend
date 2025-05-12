@@ -71,7 +71,7 @@ internal class ResearchFieldHierarchyControllerUnitTest : MockMvcBaseTest("resea
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content[0].resource.id").value(response.resource.id.value))
             .andExpect(jsonPath("$.content[0].child_count").value(response.childCount))
-            .andExpect(jsonPath("$.totalElements").value(1))
+            .andExpect(jsonPath("$.page.total_elements").value(1))
             .andExpectPage()
             .andExpectResource("$.content[*].resource")
             .andDo(

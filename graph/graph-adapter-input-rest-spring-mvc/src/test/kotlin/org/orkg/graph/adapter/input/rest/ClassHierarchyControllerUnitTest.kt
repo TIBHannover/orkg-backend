@@ -83,7 +83,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
             .andExpectClass("$.content[*].class")
             .andExpect(jsonPath("$.content[0].class.id").value(response.`class`.id.value))
             .andExpect(jsonPath("$.content[0].child_count").value(response.childCount))
-            .andExpect(jsonPath("$.totalElements").value(1))
+            .andExpect(jsonPath("$.page.total_elements").value(1))
             .andDo(
                 documentationHandler.document(
                     pathParameters(
@@ -622,7 +622,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
             .andExpectClass("$.content[*].class")
             .andExpect(jsonPath("$.content[0].class.id").value(childId.value))
             .andExpect(jsonPath("$.content[0].parent_id").value(parentId.value))
-            .andExpect(jsonPath("$.totalElements").value(1))
+            .andExpect(jsonPath("$.page.total_elements").value(1))
             .andDo(
                 documentationHandler.document(
                     pathParameters(

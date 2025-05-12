@@ -149,7 +149,7 @@ internal class ProblemControllerIntegrationTest : MockMvcBaseTest("research-prob
             .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(1)))
-            .andExpect(jsonPath("$.totalElements").value(2))
+            .andExpect(jsonPath("$.page.total_elements").value(2))
             .andExpect(jsonPath("$.content[0].papers").value(2))
     }
 }

@@ -130,7 +130,7 @@ internal class LegacyComparisonControllerIntegrationTest : MockMvcBaseTest("comp
             .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
-            .andExpect(jsonPath("$.totalElements").value(2))
+            .andExpect(jsonPath("$.page.total_elements").value(2))
             .andExpect(jsonPath("$.content[0].info[?(@.paper_id == '$paper1')].paper_year").value(2018))
             .andExpect(
                 jsonPath(

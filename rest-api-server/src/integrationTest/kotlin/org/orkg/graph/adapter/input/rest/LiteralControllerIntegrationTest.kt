@@ -38,8 +38,8 @@ internal class LiteralControllerIntegrationTest : MockMvcBaseTest("literals") {
             .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
-            .andExpect(jsonPath("$.number").value(0)) // page number
-            .andExpect(jsonPath("$.totalElements").value(2))
+            .andExpect(jsonPath("$.page.number").value(0)) // page number
+            .andExpect(jsonPath("$.page.total_elements").value(2))
     }
 
     @Test
@@ -52,8 +52,8 @@ internal class LiteralControllerIntegrationTest : MockMvcBaseTest("literals") {
             .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
-            .andExpect(jsonPath("$.number").value(0)) // page number
-            .andExpect(jsonPath("$.totalElements").value(2))
+            .andExpect(jsonPath("$.page.number").value(0)) // page number
+            .andExpect(jsonPath("$.page.total_elements").value(2))
     }
 
     @Test
@@ -66,8 +66,8 @@ internal class LiteralControllerIntegrationTest : MockMvcBaseTest("literals") {
             .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(1)))
-            .andExpect(jsonPath("$.number").value(0)) // page number
-            .andExpect(jsonPath("$.totalElements").value(1))
+            .andExpect(jsonPath("$.page.number").value(0)) // page number
+            .andExpect(jsonPath("$.page.total_elements").value(1))
     }
 
     @Test

@@ -11,15 +11,11 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
  */
 fun ResultActions.andExpectPage(path: String = "$"): ResultActions = this
     .andExpect(jsonPath("$path.content", `is`(notNullValue())))
-    .andExpect(jsonPath("$path.totalElements", `is`(notNullValue())))
-    .andExpect(jsonPath("$path.totalPages", `is`(notNullValue())))
-    .andExpect(jsonPath("$path.last", `is`(notNullValue())))
-    .andExpect(jsonPath("$path.first", `is`(notNullValue())))
-    .andExpect(jsonPath("$path.number", `is`(notNullValue())))
-    .andExpect(jsonPath("$path.numberOfElements", `is`(notNullValue())))
-    .andExpect(jsonPath("$path.size", `is`(notNullValue())))
-    .andExpect(jsonPath("$path.empty", `is`(notNullValue())))
-    .andExpect(jsonPath("$path.sort", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.page", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.page.number", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.page.size", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.page.total_elements", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.page.total_pages", `is`(notNullValue())))
 
 fun ResultActions.andExpectStatement(path: String = "$"): ResultActions = this
     .andExpect(jsonPath("$path.id", `is`(notNullValue())))

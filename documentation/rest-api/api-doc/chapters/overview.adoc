@@ -9,7 +9,6 @@ This documentation will be updated to reflect that.
 
 [IMPORTANT]
 ====
-* Deprecated paging fields will be removed on 15.05.2025.
 * Response body contents for all POST, PUT and PATCH requests will be removed on 15.05.2025. Instead, clients must fetch the updated entity by following the location header.
 * The following endpoints will be removed on 15.05.2025:
 ** <<research-fields-fetch,Listing Content-Types of Research Fields>>

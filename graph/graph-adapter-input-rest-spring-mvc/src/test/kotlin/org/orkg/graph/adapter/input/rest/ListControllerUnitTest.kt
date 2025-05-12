@@ -342,11 +342,11 @@ internal class ListControllerUnitTest : MockMvcBaseTest("lists") {
             .andExpect(status().isOk)
             .andExpectPage()
             .andExpect(jsonPath("content", Matchers.hasSize<Int>(elements.size)))
-            .andExpect(jsonPath("totalElements").value(elements.size))
             .andExpect(jsonPath("content[0].id").value(elements[0].id.value))
             .andExpect(jsonPath("content[1].id").value(elements[1].id.value))
             .andExpect(jsonPath("content[2].id").value(elements[2].id.value))
             .andExpect(jsonPath("content[3].id").value(elements[3].id.value))
+            .andExpect(jsonPath("page.total_elements").value(elements.size))
             // Document the representation for later reference.
             .andDo(
                 documentationHandler.document(

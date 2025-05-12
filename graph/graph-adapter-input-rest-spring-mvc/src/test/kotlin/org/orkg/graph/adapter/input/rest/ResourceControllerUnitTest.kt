@@ -133,8 +133,8 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
             .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", Matchers.hasSize<Int>(2)))
-            .andExpect(jsonPath("$.number").value(0)) // page number
-            .andExpect(jsonPath("$.totalElements").value(2))
+            .andExpect(jsonPath("$.page.number").value(0)) // page number
+            .andExpect(jsonPath("$.page.total_elements").value(2))
 
         verify(exactly = 1) { resourceService.findAllContributorsByResourceId(id, any()) }
     }
@@ -174,8 +174,8 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
             .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", Matchers.hasSize<Int>(2)))
-            .andExpect(jsonPath("$.number").value(0)) // page number
-            .andExpect(jsonPath("$.totalElements").value(2))
+            .andExpect(jsonPath("$.page.number").value(0)) // page number
+            .andExpect(jsonPath("$.page.total_elements").value(2))
 
         verify(exactly = 1) { resourceService.findTimelineByResourceId(id, any()) }
     }

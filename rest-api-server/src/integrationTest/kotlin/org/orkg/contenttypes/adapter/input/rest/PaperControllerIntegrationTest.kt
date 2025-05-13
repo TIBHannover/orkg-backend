@@ -1,7 +1,6 @@
 package org.orkg.contenttypes.adapter.input.rest
 
 import io.kotest.assertions.asClue
-import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import org.assertj.core.api.Assertions.assertThat
@@ -378,56 +377,6 @@ internal class PaperControllerIntegrationTest : MockMvcBaseTest("papers") {
             it.verified shouldBe false
             it.visibility shouldBe Visibility.DELETED
             it.modifiable shouldBe true
-            it.unlistedBy shouldBe null
-        }
-    }
-
-    @Test
-    @TestWithMockUser
-    fun createAndFetchContribution() {
-        val paperId = resourceService.createResource(
-            id = ThingId("R165487"),
-            label = "Some other resource",
-            classes = setOf(Classes.paper)
-        )
-
-        val id = post("/api/papers/$paperId/contributions")
-            .content(requestJson("orkg/createContribution"))
-            .accept(CONTRIBUTION_JSON_V2)
-            .contentType(CONTRIBUTION_JSON_V2)
-            .perform()
-            .andExpect(status().isCreated)
-            .andReturn()
-            .response
-            .getHeaderValue("Location")!!
-            .toString()
-            .substringAfterLast("/")
-            .let(::ThingId)
-
-        val contribution = get("/api/contributions/{id}", id)
-            .accept(CONTRIBUTION_JSON_V2)
-            .contentType(CONTRIBUTION_JSON_V2)
-            .perform()
-            .andExpect(status().isOk)
-            .andReturn()
-            .response
-            .contentAsString
-            .let { objectMapper.readValue(it, ContributionRepresentation::class.java) }
-
-        contribution.asClue {
-            it.id shouldBe id
-            it.label shouldBe "Contribution 1"
-            it.classes shouldBe setOf(Classes.contribution)
-            it.properties shouldNotBe null
-            it.properties[Predicates.hasEvaluation].asClue { property ->
-                property shouldNotBe null
-                property!!.size shouldBe 2
-                property shouldContain ThingId("R3004")
-            }
-            it.extractionMethod shouldBe ExtractionMethod.UNKNOWN
-            it.createdAt shouldNotBe null
-            it.createdBy shouldBe ContributorId(MockUserId.USER)
-            it.visibility shouldBe Visibility.DEFAULT
             it.unlistedBy shouldBe null
         }
     }

@@ -11,8 +11,6 @@ import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.domain.actions.Action
-import org.orkg.contenttypes.domain.actions.ContributionState
-import org.orkg.contenttypes.domain.actions.CreateContributionCommand
 import org.orkg.contenttypes.domain.actions.CreatePaperCommand
 import org.orkg.contenttypes.domain.actions.CreatePaperState
 import org.orkg.contenttypes.domain.actions.ObservatoryValidator
@@ -28,10 +26,6 @@ import org.orkg.contenttypes.domain.actions.UpdatePaperCommand
 import org.orkg.contenttypes.domain.actions.UpdatePaperState
 import org.orkg.contenttypes.domain.actions.VerifiedValidator
 import org.orkg.contenttypes.domain.actions.VisibilityValidator
-import org.orkg.contenttypes.domain.actions.contributions.ContributionContentsCreator
-import org.orkg.contenttypes.domain.actions.contributions.ContributionContentsValidator
-import org.orkg.contenttypes.domain.actions.contributions.ContributionPaperValidator
-import org.orkg.contenttypes.domain.actions.contributions.ContributionThingsCommandValidator
 import org.orkg.contenttypes.domain.actions.execute
 import org.orkg.contenttypes.domain.actions.papers.PaperAuthorListCreateValidator
 import org.orkg.contenttypes.domain.actions.papers.PaperAuthorListCreator
@@ -192,17 +186,6 @@ class PaperService(
             PaperContributionCreator(unsafeClassUseCases, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, unsafePredicateUseCases, statementRepository, listService)
         )
         return steps.execute(command, CreatePaperState()).paperId!!
-    }
-
-    override fun create(command: CreateContributionCommand): ThingId {
-        val steps = listOf(
-            TempIdValidator { it.tempIds() },
-            ContributionPaperValidator(resourceRepository),
-            ContributionThingsCommandValidator(thingRepository, classRepository),
-            ContributionContentsValidator(thingRepository),
-            ContributionContentsCreator(unsafeClassUseCases, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, unsafePredicateUseCases, statementRepository, listService)
-        )
-        return steps.execute(command, ContributionState()).contributionId!!
     }
 
     override fun update(command: UpdatePaperCommand) {

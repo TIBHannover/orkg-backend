@@ -21,7 +21,6 @@ import java.util.Optional
 interface PaperUseCases :
     RetrievePaperUseCase,
     CreatePaperUseCase,
-    CreateContributionUseCase,
     UpdatePaperUseCase,
     PublishPaperUseCase
 

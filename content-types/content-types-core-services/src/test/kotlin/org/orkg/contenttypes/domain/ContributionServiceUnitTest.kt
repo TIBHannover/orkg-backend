@@ -11,8 +11,16 @@ import org.orkg.common.PageRequests
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Visibility
+import org.orkg.graph.input.ListUseCases
+import org.orkg.graph.input.UnsafeClassUseCases
+import org.orkg.graph.input.UnsafeLiteralUseCases
+import org.orkg.graph.input.UnsafePredicateUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
+import org.orkg.graph.input.UnsafeStatementUseCases
+import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
+import org.orkg.graph.output.ThingRepository
 import org.orkg.graph.testing.fixtures.createResource
 import org.springframework.data.domain.Page
 import java.util.Optional
@@ -20,8 +28,27 @@ import java.util.Optional
 internal class ContributionServiceUnitTest : MockkBaseTest {
     private val resourceRepository: ResourceRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
+    private val thingRepository: ThingRepository = mockk()
+    private val unsafeClassUseCases: UnsafeClassUseCases = mockk()
+    private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
+    private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
+    private val unsafeLiteralUseCases: UnsafeLiteralUseCases = mockk()
+    private val unsafePredicateUseCases: UnsafePredicateUseCases = mockk()
+    private val listService: ListUseCases = mockk()
+    private val classRepository: ClassRepository = mockk()
 
-    private val service = ContributionService(resourceRepository, statementRepository)
+    private val service = ContributionService(
+        resourceRepository,
+        statementRepository,
+        thingRepository,
+        unsafeClassUseCases,
+        unsafeResourceUseCases,
+        unsafeStatementUseCases,
+        unsafeLiteralUseCases,
+        unsafePredicateUseCases,
+        listService,
+        classRepository,
+    )
 
     @Test
     fun `Given a contribution exists, when fetching it by id, then it is returned`() {

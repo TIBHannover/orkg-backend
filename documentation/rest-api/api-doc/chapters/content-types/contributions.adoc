@@ -28,4 +28,4 @@ A `POST` request creates a new contribution with all the given parameters.
 The response will be `201 Created` when successful.
 The contribution (object) can be retrieved by following the URI in the `Location` header field.
 
-operation::papers-create-contribution[snippets='request-fields,curl-request,http-response']
+operation::contributions-create[snippets='request-fields,curl-request,http-response']

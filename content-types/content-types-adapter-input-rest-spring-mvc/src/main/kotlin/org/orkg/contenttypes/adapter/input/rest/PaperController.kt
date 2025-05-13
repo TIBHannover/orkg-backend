@@ -18,7 +18,6 @@ import org.orkg.contenttypes.domain.InvalidDOI
 import org.orkg.contenttypes.domain.PaperNotFound
 import org.orkg.contenttypes.domain.PaperWithStatementCount
 import org.orkg.contenttypes.input.CreateContributionCommandPart
-import org.orkg.contenttypes.input.CreateContributionUseCase
 import org.orkg.contenttypes.input.CreatePaperUseCase
 import org.orkg.contenttypes.input.PaperUseCases
 import org.orkg.contenttypes.input.PublishPaperUseCase
@@ -145,23 +144,6 @@ class PaperController(
             .buildAndExpand(id)
             .toUri()
         return noContent().location(location).build()
-    }
-
-    @RequireLogin
-    @PostMapping("/{id}/contributions", produces = [CONTRIBUTION_JSON_V2], consumes = [CONTRIBUTION_JSON_V2])
-    fun createContribution(
-        @PathVariable("id") paperId: ThingId,
-        @RequestBody @Valid request: CreateContributionRequest,
-        uriComponentsBuilder: UriComponentsBuilder,
-        currentUser: Authentication?,
-    ): ResponseEntity<ContributionRepresentation> {
-        val userId = currentUser.contributorId()
-        val id = service.create(request.toCreateCommand(userId, paperId))
-        val location = uriComponentsBuilder
-            .path("/api/contributions/{id}")
-            .buildAndExpand(id)
-            .toUri()
-        return created(location).build()
     }
 
     @RequireLogin
@@ -341,33 +323,6 @@ class PaperController(
                 extractionMethod = extractionMethod,
                 visibility = visibility,
                 verified = verified
-            )
-    }
-
-    data class CreateContributionRequest(
-        @field:Valid
-        val resources: Map<String, CreateResourceRequestPart>?,
-        @field:Valid
-        val literals: Map<String, CreateLiteralRequestPart>?,
-        @field:Valid
-        val predicates: Map<String, CreatePredicateRequestPart>?,
-        @field:Valid
-        val lists: Map<String, CreateListRequestPart>?,
-        @field:Valid
-        val contribution: CreatePaperRequest.ContributionRequestPart,
-        @JsonProperty("extraction_method")
-        val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
-    ) {
-        fun toCreateCommand(contributorId: ContributorId, paperId: ThingId): CreateContributionUseCase.CreateCommand =
-            CreateContributionUseCase.CreateCommand(
-                contributorId = contributorId,
-                paperId = paperId,
-                extractionMethod = extractionMethod,
-                resources = resources?.mapValues { it.value.toCreateCommand() }.orEmpty(),
-                literals = literals?.mapValues { it.value.toCreateCommand() }.orEmpty(),
-                predicates = predicates?.mapValues { it.value.toCreateCommand() }.orEmpty(),
-                lists = lists?.mapValues { it.value.toCreateCommand() }.orEmpty(),
-                contribution = contribution.toCreateCommand()
             )
     }
 

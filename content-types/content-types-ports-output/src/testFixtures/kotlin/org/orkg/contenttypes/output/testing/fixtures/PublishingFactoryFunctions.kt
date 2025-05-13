@@ -8,7 +8,7 @@ import org.orkg.contenttypes.output.HandleService
 import org.orkg.graph.domain.Classes
 import java.net.URI
 
-fun dummyRegisterDoiCommand(): DoiService.RegisterCommand =
+fun createRegisterDoiCommand(): DoiService.RegisterCommand =
     DoiService.RegisterCommand(
         suffix = "182",
         title = "Paper title",

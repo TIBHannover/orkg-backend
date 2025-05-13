@@ -19,7 +19,7 @@ import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.common.testing.fixtures.TestBodyPublisher
 import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.contenttypes.domain.configuration.DataCiteConfiguration
-import org.orkg.contenttypes.output.testing.fixtures.dummyRegisterDoiCommand
+import org.orkg.contenttypes.output.testing.fixtures.createRegisterDoiCommand
 import org.springframework.http.MediaType
 import java.net.URI
 import java.net.http.HttpClient
@@ -36,7 +36,7 @@ internal class DataCiteDoiServiceAdapterUnitTest : MockkBaseTest {
 
     @Test
     fun `Creating a doi, returns success`() {
-        val command = dummyRegisterDoiCommand()
+        val command = createRegisterDoiCommand()
         // Mock HttpClient dsl
         val response = mockk<HttpResponse<String>>()
         val dataCiteUri = "https://api.test.datacite.org/dois"
@@ -84,7 +84,7 @@ internal class DataCiteDoiServiceAdapterUnitTest : MockkBaseTest {
 
     @Test
     fun `Creating a doi, when data cite returns error, then an exception is thrown`() {
-        val command = dummyRegisterDoiCommand()
+        val command = createRegisterDoiCommand()
         // Mock HttpClient dsl
         val response = mockk<HttpResponse<String>>()
         val dataCiteUri = "https://api.test.datacite.org/dois"

@@ -26,6 +26,7 @@ import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
+import org.orkg.graph.testing.asciidoc.allowedVisibilityFilterValues
 import org.orkg.graph.testing.asciidoc.allowedVisibilityValues
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
@@ -193,7 +194,7 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
                         parameterWithName("context").description("Filter for the id of the context that the rosetta stone statement was created with. (optional)"),
                         parameterWithName("template_id").description("Filter for the template id that was used to instantiate the rosetta stone statement. (optional)"),
                         parameterWithName("class_id").description("Filter for the class id of the rosetta stone statement. (optional)"),
-                        parameterWithName("visibility").description("""Optional filter for visibility. Either of "ALL_LISTED", "UNLISTED", "FEATURED", "NON_FEATURED", "DELETED"."""),
+                        parameterWithName("visibility").description("""Optional filter for visibility. Either of $allowedVisibilityFilterValues."""),
                         parameterWithName("created_by").description("Filter for the UUID of the user or service who created the first version of the rosetta stone statement. (optional)"),
                         parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned rosetta stone statement can have. (optional)"),
                         parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned rosetta stone statement can have. (optional)"),

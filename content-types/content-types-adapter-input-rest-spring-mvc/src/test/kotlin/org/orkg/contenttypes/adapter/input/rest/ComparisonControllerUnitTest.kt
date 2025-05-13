@@ -45,6 +45,7 @@ import org.orkg.graph.domain.ResearchFieldNotFound
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
+import org.orkg.graph.testing.asciidoc.allowedVisibilityFilterValues
 import org.orkg.graph.testing.asciidoc.allowedVisibilityValues
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectComparison
@@ -323,7 +324,7 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
                         parameterWithName("title").description("A search term that must be contained in the title of the comparison. (optional)"),
                         parameterWithName("exact").description("Whether title matching is exact or fuzzy (optional, default: false)"),
                         parameterWithName("doi").description("Filter for the DOI of the comparison. (optional)"),
-                        parameterWithName("visibility").description("""Optional filter for visibility. Either of "ALL_LISTED", "UNLISTED", "FEATURED", "NON_FEATURED", "DELETED"."""),
+                        parameterWithName("visibility").description("""Optional filter for visibility. Either of $allowedVisibilityFilterValues."""),
                         parameterWithName("created_by").description("Filter for the UUID of the user or service who created this comparison. (optional)"),
                         parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned resource can have. (optional)"),
                         parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned resource can have. (optional)"),

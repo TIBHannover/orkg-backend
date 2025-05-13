@@ -37,6 +37,7 @@ import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
+import org.orkg.graph.testing.asciidoc.allowedVisibilityFilterValues
 import org.orkg.graph.testing.asciidoc.allowedVisibilityValues
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
@@ -245,7 +246,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                     queryParameters(
                         parameterWithName("title").description("A search term that must be contained in the title of the smart review. (optional)"),
                         parameterWithName("exact").description("Whether title matching is exact or fuzzy (optional, default: false)"),
-                        parameterWithName("visibility").description("""Optional filter for visibility. Either of "ALL_LISTED", "UNLISTED", "FEATURED", "NON_FEATURED", "DELETED"."""),
+                        parameterWithName("visibility").description("""Optional filter for visibility. Either of $allowedVisibilityFilterValues."""),
                         parameterWithName("created_by").description("Filter for the UUID of the user or service who created this smart review. (optional)"),
                         parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned resource can have. (optional)"),
                         parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned resource can have. (optional)"),

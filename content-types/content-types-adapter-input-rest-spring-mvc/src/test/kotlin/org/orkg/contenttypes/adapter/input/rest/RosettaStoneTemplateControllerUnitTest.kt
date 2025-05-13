@@ -26,6 +26,7 @@ import org.orkg.contenttypes.input.testing.fixtures.stringLiteralTemplatePropert
 import org.orkg.contenttypes.input.testing.fixtures.untypedTemplatePropertyRequest
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.VisibilityFilter
+import org.orkg.graph.testing.asciidoc.allowedVisibilityFilterValues
 import org.orkg.graph.testing.asciidoc.allowedVisibilityValues
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
@@ -195,7 +196,7 @@ internal class RosettaStoneTemplateControllerUnitTest : MockMvcBaseTest("rosetta
                     queryParameters(
                         parameterWithName("q").description("Optional filter for the rosetta stone template label.").optional(),
                         parameterWithName("exact").description("Optional flag for whether label matching should be exact. (default: false)").optional(),
-                        parameterWithName("visibility").description("""Optional filter for visibility. Either of "ALL_LISTED", "UNLISTED", "FEATURED", "NON_FEATURED", "DELETED".""").optional(),
+                        parameterWithName("visibility").description("""Optional filter for visibility. Either of $allowedVisibilityFilterValues.""").optional(),
                         parameterWithName("created_by").description("Optional filter for the UUID of the user or service who created the rosetta stone template.").optional(),
                         parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned rosetta stone template can have. (optional)"),
                         parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned rosetta stone template can have. (optional)"),

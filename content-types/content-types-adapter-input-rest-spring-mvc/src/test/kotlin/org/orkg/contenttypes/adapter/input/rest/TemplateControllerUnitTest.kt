@@ -60,6 +60,7 @@ import org.orkg.graph.domain.ResearchFieldNotFound
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
+import org.orkg.graph.testing.asciidoc.allowedVisibilityFilterValues
 import org.orkg.graph.testing.asciidoc.allowedVisibilityValues
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectTemplate
@@ -243,7 +244,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
                     queryParameters(
                         parameterWithName("q").description("A search term that must be contained in the label of the template. (optional)."),
                         parameterWithName("exact").description("Whether label matching is exact or fuzzy (optional, default: false)"),
-                        parameterWithName("visibility").description("""Filter for visibility. Either of "ALL_LISTED", "UNLISTED", "FEATURED", "NON_FEATURED", "DELETED". (optional)"""),
+                        parameterWithName("visibility").description("""Filter for visibility. Either of $allowedVisibilityFilterValues. (optional)"""),
                         parameterWithName("created_by").description("Filter for the UUID of the user or service who created the template. (optional)"),
                         parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned template can have. (optional)"),
                         parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned template can have. (optional)"),

@@ -9,7 +9,6 @@ import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
 class ComparisonReferencesUpdater(
-    private val statementService: StatementUseCases,
     private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater,
 ) : UpdateComparisonAction {
     constructor(
@@ -17,7 +16,6 @@ class ComparisonReferencesUpdater(
         statementService: StatementUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
-        statementService,
         StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases)
     )
 

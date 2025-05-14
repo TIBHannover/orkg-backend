@@ -1,10 +1,8 @@
 package org.orkg.contenttypes.domain
 
-import dev.forkhandles.values.ofOrNull
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
-import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.common.pmap
 import org.orkg.community.output.ConferenceSeriesRepository
@@ -42,10 +40,6 @@ import org.orkg.contenttypes.domain.actions.comparisons.ComparisonIsAnonymizedUp
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonPublishableValidator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonReferencesCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonReferencesUpdater
-import org.orkg.contenttypes.domain.actions.comparisons.ComparisonRelatedFigureDeleter
-import org.orkg.contenttypes.domain.actions.comparisons.ComparisonRelatedFigureUpdater
-import org.orkg.contenttypes.domain.actions.comparisons.ComparisonRelatedResourceDeleter
-import org.orkg.contenttypes.domain.actions.comparisons.ComparisonRelatedResourceUpdater
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonResearchFieldCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonResearchFieldUpdater
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonResourceCreator
@@ -62,10 +56,6 @@ import org.orkg.contenttypes.domain.actions.comparisons.ComparisonVisualizationU
 import org.orkg.contenttypes.domain.actions.execute
 import org.orkg.contenttypes.input.ComparisonContributionsUseCases
 import org.orkg.contenttypes.input.ComparisonUseCases
-import org.orkg.contenttypes.input.CreateComparisonUseCase.CreateComparisonRelatedFigureCommand
-import org.orkg.contenttypes.input.CreateComparisonUseCase.CreateComparisonRelatedResourceCommand
-import org.orkg.contenttypes.input.UpdateComparisonUseCase.UpdateComparisonRelatedFigureCommand
-import org.orkg.contenttypes.input.UpdateComparisonUseCase.UpdateComparisonRelatedResourceCommand
 import org.orkg.contenttypes.output.ComparisonPublishedRepository
 import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.contenttypes.output.ComparisonTableRepository
@@ -74,17 +64,11 @@ import org.orkg.contenttypes.output.DoiService
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.GeneralStatement
-import org.orkg.graph.domain.InvalidLabel
-import org.orkg.graph.domain.Label
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
-import org.orkg.graph.input.CreateLiteralUseCase
-import org.orkg.graph.input.CreateResourceUseCase
-import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.ListUseCases
-import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
@@ -109,7 +93,6 @@ class ComparisonService(
     private val statementRepository: StatementRepository,
     private val observatoryRepository: ObservatoryRepository,
     private val organizationRepository: OrganizationRepository,
-    private val resourceService: ResourceUseCases,
     private val unsafeResourceUseCases: UnsafeResourceUseCases,
     private val statementService: StatementUseCases,
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
@@ -164,38 +147,6 @@ class ComparisonService(
             researchProblem = researchProblem
         ).pmap { it.toComparison() }
 
-    override fun findRelatedResourceById(comparisonId: ThingId, id: ThingId): Optional<ComparisonRelatedResource> =
-        statementRepository.findAll(
-            subjectId = comparisonId,
-            predicateId = Predicates.hasRelatedResource,
-            objectId = id,
-            pageable = PageRequests.SINGLE
-        )
-            .filter { it.`object` is Resource && Classes.comparisonRelatedResource in (it.`object` as Resource).classes }
-            .singleOrNull()
-            .let { Optional.ofNullable(it) }
-            .map { (it.`object` as Resource).toComparisonRelatedResource() }
-
-    override fun findAllRelatedResourcesById(comparisonId: ThingId, pageable: Pageable): Page<ComparisonRelatedResource> =
-        statementRepository.findAll(subjectId = comparisonId, predicateId = Predicates.hasRelatedResource, pageable = pageable)
-            .map { (it.`object` as Resource).toComparisonRelatedResource() }
-
-    override fun findRelatedFigureById(comparisonId: ThingId, id: ThingId): Optional<ComparisonRelatedFigure> =
-        statementRepository.findAll(
-            subjectId = comparisonId,
-            predicateId = Predicates.hasRelatedFigure,
-            objectId = id,
-            pageable = PageRequests.SINGLE
-        )
-            .filter { it.`object` is Resource && Classes.comparisonRelatedFigure in (it.`object` as Resource).classes }
-            .singleOrNull()
-            .let { Optional.ofNullable(it) }
-            .map { (it.`object` as Resource).toComparisonRelatedFigure() }
-
-    override fun findAllRelatedFiguresById(comparisonId: ThingId, pageable: Pageable): Page<ComparisonRelatedFigure> =
-        statementRepository.findAll(subjectId = comparisonId, predicateId = Predicates.hasRelatedFigure, pageable = pageable)
-            .map { (it.`object` as Resource).toComparisonRelatedFigure() }
-
     override fun findAllCurrentAndListedAndUnpublishedComparisons(pageable: Pageable): Page<Comparison> =
         comparisonRepository.findAllCurrentAndListedAndUnpublishedComparisons(pageable)
             .map { it.toComparison() }
@@ -229,127 +180,6 @@ class ComparisonService(
         return steps.execute(command, CreateComparisonState()).comparisonId!!
     }
 
-    override fun createComparisonRelatedResource(command: CreateComparisonRelatedResourceCommand): ThingId {
-        Label.ofOrNull(command.label) ?: throw InvalidLabel()
-        resourceRepository.findById(command.comparisonId)
-            .filter { Classes.comparison in it.classes }
-            .orElseThrow { ComparisonNotFound(command.comparisonId) }
-        val resourceId = unsafeResourceUseCases.create(
-            CreateResourceUseCase.CreateCommand(
-                contributorId = command.contributorId,
-                label = command.label,
-                classes = setOf(Classes.comparisonRelatedResource)
-            )
-        )
-        unsafeStatementUseCases.create(
-            CreateStatementUseCase.CreateCommand(
-                contributorId = command.contributorId,
-                subjectId = command.comparisonId,
-                predicateId = Predicates.hasRelatedResource,
-                objectId = resourceId
-            )
-        )
-        if (command.image != null) {
-            unsafeStatementUseCases.create(
-                CreateStatementUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = resourceId,
-                    predicateId = Predicates.hasImage,
-                    objectId = unsafeLiteralUseCases.create(
-                        CreateLiteralUseCase.CreateCommand(
-                            contributorId = command.contributorId,
-                            label = command.image!!
-                        )
-                    )
-                )
-            )
-        }
-        if (command.url != null) {
-            unsafeStatementUseCases.create(
-                CreateStatementUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = resourceId,
-                    predicateId = Predicates.hasURL,
-                    objectId = unsafeLiteralUseCases.create(
-                        CreateLiteralUseCase.CreateCommand(
-                            contributorId = command.contributorId,
-                            label = command.url!!
-                        )
-                    )
-                )
-            )
-        }
-        if (command.description != null) {
-            unsafeStatementUseCases.create(
-                CreateStatementUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = resourceId,
-                    predicateId = Predicates.description,
-                    objectId = unsafeLiteralUseCases.create(
-                        CreateLiteralUseCase.CreateCommand(
-                            contributorId = command.contributorId,
-                            label = command.description!!
-                        )
-                    )
-                )
-            )
-        }
-        return resourceId
-    }
-
-    override fun createComparisonRelatedFigure(command: CreateComparisonRelatedFigureCommand): ThingId {
-        Label.ofOrNull(command.label) ?: throw InvalidLabel()
-        resourceRepository.findById(command.comparisonId)
-            .filter { Classes.comparison in it.classes }
-            .orElseThrow { ComparisonNotFound(command.comparisonId) }
-        val figureId = unsafeResourceUseCases.create(
-            CreateResourceUseCase.CreateCommand(
-                contributorId = command.contributorId,
-                label = command.label,
-                classes = setOf(Classes.comparisonRelatedFigure)
-            )
-        )
-        unsafeStatementUseCases.create(
-            CreateStatementUseCase.CreateCommand(
-                contributorId = command.contributorId,
-                subjectId = command.comparisonId,
-                predicateId = Predicates.hasRelatedFigure,
-                objectId = figureId
-            )
-        )
-        if (command.image != null) {
-            unsafeStatementUseCases.create(
-                CreateStatementUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = figureId,
-                    predicateId = Predicates.hasImage,
-                    objectId = unsafeLiteralUseCases.create(
-                        CreateLiteralUseCase.CreateCommand(
-                            contributorId = command.contributorId,
-                            label = command.image!!
-                        )
-                    )
-                )
-            )
-        }
-        if (command.description != null) {
-            unsafeStatementUseCases.create(
-                CreateStatementUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = figureId,
-                    predicateId = Predicates.description,
-                    objectId = unsafeLiteralUseCases.create(
-                        CreateLiteralUseCase.CreateCommand(
-                            contributorId = command.contributorId,
-                            label = command.description!!
-                        )
-                    )
-                )
-            )
-        }
-        return figureId
-    }
-
     override fun update(command: UpdateComparisonCommand) {
         val steps = listOf(
             LabelValidator("title") { it.title },
@@ -378,44 +208,6 @@ class ComparisonService(
         steps.execute(command, UpdateComparisonState())
     }
 
-    override fun updateComparisonRelatedResource(command: UpdateComparisonRelatedResourceCommand) {
-        ComparisonRelatedResourceUpdater(
-            comparisonService = this,
-            resourceService = resourceService,
-            unsafeLiteralUseCases = unsafeLiteralUseCases,
-            statementService = statementService,
-            unsafeStatementUseCases = unsafeStatementUseCases,
-        ).execute(command)
-    }
-
-    override fun updateComparisonRelatedFigure(command: UpdateComparisonRelatedFigureCommand) {
-        ComparisonRelatedFigureUpdater(
-            comparisonService = this,
-            resourceService = resourceService,
-            unsafeLiteralUseCases = unsafeLiteralUseCases,
-            statementService = statementService,
-            unsafeStatementUseCases = unsafeStatementUseCases
-        ).execute(command)
-    }
-
-    override fun deleteComparisonRelatedResource(
-        comparisonId: ThingId,
-        comparisonRelatedResourceId: ThingId,
-        contributorId: ContributorId,
-    ) {
-        ComparisonRelatedResourceDeleter(statementService, resourceService)
-            .execute(comparisonId, comparisonRelatedResourceId, contributorId)
-    }
-
-    override fun deleteComparisonRelatedFigure(
-        comparisonId: ThingId,
-        comparisonRelatedFigureId: ThingId,
-        contributorId: ContributorId,
-    ) {
-        ComparisonRelatedFigureDeleter(statementService, resourceService)
-            .execute(comparisonId, comparisonRelatedFigureId, contributorId)
-    }
-
     override fun publish(command: PublishComparisonCommand): ThingId {
         val steps = listOf<Action<PublishComparisonCommand, PublishComparisonState>>(
             ComparisonPublishableValidator(this, comparisonTableRepository),
@@ -424,35 +216,6 @@ class ComparisonService(
             ComparisonVersionDoiPublisher(unsafeStatementUseCases, unsafeLiteralUseCases, comparisonRepository, doiService, comparisonPublishBaseUri)
         )
         return steps.execute(command, PublishComparisonState()).comparisonVersionId!!
-    }
-
-    private fun Resource.toComparisonRelatedResource(): ComparisonRelatedResource {
-        val statements = statementRepository.findAll(subjectId = id, pageable = PageRequests.ALL)
-            .content
-            .withoutObjectsWithBlankLabels()
-        return ComparisonRelatedResource(
-            id = this@toComparisonRelatedResource.id,
-            label = this@toComparisonRelatedResource.label,
-            image = statements.wherePredicate(Predicates.hasImage).firstObjectLabel(),
-            url = statements.wherePredicate(Predicates.hasURL).firstObjectLabel(),
-            description = statements.wherePredicate(Predicates.description).firstObjectLabel(),
-            createdAt = this@toComparisonRelatedResource.createdAt,
-            createdBy = this@toComparisonRelatedResource.createdBy
-        )
-    }
-
-    private fun Resource.toComparisonRelatedFigure(): ComparisonRelatedFigure {
-        val statements = statementRepository.findAll(subjectId = id, pageable = PageRequests.ALL)
-            .content
-            .withoutObjectsWithBlankLabels()
-        return ComparisonRelatedFigure(
-            id = this@toComparisonRelatedFigure.id,
-            label = this@toComparisonRelatedFigure.label,
-            image = statements.wherePredicate(Predicates.hasImage).firstObjectLabel(),
-            description = statements.wherePredicate(Predicates.description).firstObjectLabel(),
-            createdAt = this@toComparisonRelatedFigure.createdAt,
-            createdBy = this@toComparisonRelatedFigure.createdBy
-        )
     }
 
     internal fun findSubgraph(resource: Resource): ContentTypeSubgraph {

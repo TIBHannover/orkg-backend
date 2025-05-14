@@ -1,7 +1,6 @@
 package org.orkg.contenttypes.domain
 
 import io.kotest.assertions.asClue
-import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.mockk.every
@@ -20,7 +19,6 @@ import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.domain.testing.fixtures.createComparisonConfig
 import org.orkg.contenttypes.domain.testing.fixtures.createComparisonData
-import org.orkg.contenttypes.input.CreateComparisonUseCase
 import org.orkg.contenttypes.output.ComparisonPublishedRepository
 import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.contenttypes.output.ComparisonTableRepository
@@ -28,16 +26,10 @@ import org.orkg.contenttypes.output.ContributionComparisonRepository
 import org.orkg.contenttypes.output.DoiService
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
-import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
-import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.Visibility
-import org.orkg.graph.input.CreateLiteralUseCase
-import org.orkg.graph.input.CreateResourceUseCase
-import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.ListUseCases
-import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
@@ -62,7 +54,6 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
     private val statementRepository: StatementRepository = mockk()
     private val observatoryRepository: ObservatoryRepository = mockk()
     private val organizationRepository: OrganizationRepository = mockk()
-    private val resourceService: ResourceUseCases = mockk()
     private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
     private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
@@ -82,7 +73,6 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
         statementRepository = statementRepository,
         observatoryRepository = observatoryRepository,
         organizationRepository = organizationRepository,
-        resourceService = resourceService,
         unsafeResourceUseCases = unsafeResourceUseCases,
         statementService = statementService,
         unsafeStatementUseCases = unsafeStatementUseCases,
@@ -611,365 +601,5 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
             comparisonRepository.findVersionHistoryForPublishedComparison(expected.id)
         }
         verify(exactly = 1) { comparisonPublishedRepository.findById(expected.id) }
-    }
-
-    @Test
-    fun `Given a comparison related resource create command, it creates the comparison related resource`() {
-        val command = CreateComparisonUseCase.CreateComparisonRelatedResourceCommand(
-            comparisonId = ThingId("R123"),
-            contributorId = ContributorId(UUID.randomUUID()),
-            label = "related resource",
-            image = "https://example.org/test.png",
-            url = "https://orkg.org/resources/R1000",
-            description = "comparison related resource description"
-        )
-        val resourceId = ThingId("R456")
-        val comparison = createResource(classes = setOf(Classes.comparison))
-        val imageLiteralId = ThingId("L1")
-        val urlLiteralId = ThingId("L2")
-        val descriptionLiteralId = ThingId("L3")
-
-        every { resourceRepository.findById(command.comparisonId) } returns Optional.of(comparison)
-        every {
-            unsafeResourceUseCases.create(
-                CreateResourceUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    label = command.label,
-                    classes = setOf(Classes.comparisonRelatedResource),
-                )
-            )
-        } returns resourceId
-        every {
-            unsafeStatementUseCases.create(
-                CreateStatementUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = command.comparisonId,
-                    predicateId = Predicates.hasRelatedResource,
-                    objectId = resourceId
-                )
-            )
-        } returns StatementId("S123")
-        every {
-            unsafeLiteralUseCases.create(
-                CreateLiteralUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    label = command.image!!
-                )
-            )
-        } returns imageLiteralId
-        every {
-            unsafeLiteralUseCases.create(
-                CreateLiteralUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    label = command.url!!
-                )
-            )
-        } returns urlLiteralId
-        every {
-            unsafeLiteralUseCases.create(
-                CreateLiteralUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    label = command.description!!
-                )
-            )
-        } returns descriptionLiteralId
-        every {
-            unsafeStatementUseCases.create(
-                CreateStatementUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = resourceId,
-                    predicateId = Predicates.hasImage,
-                    objectId = imageLiteralId
-                )
-            )
-        } returns StatementId("S1")
-        every {
-            unsafeStatementUseCases.create(
-                CreateStatementUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = resourceId,
-                    predicateId = Predicates.hasURL,
-                    objectId = urlLiteralId
-                )
-            )
-        } returns StatementId("S2")
-        every {
-            unsafeStatementUseCases.create(
-                CreateStatementUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = resourceId,
-                    predicateId = Predicates.description,
-                    objectId = descriptionLiteralId
-                )
-            )
-        } returns StatementId("S3")
-
-        service.createComparisonRelatedResource(command) shouldBe resourceId
-
-        verify(exactly = 1) { resourceRepository.findById(command.comparisonId) }
-        verify(exactly = 1) {
-            unsafeResourceUseCases.create(
-                CreateResourceUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    label = command.label,
-                    classes = setOf(Classes.comparisonRelatedResource),
-                )
-            )
-        }
-        verify(exactly = 1) {
-            unsafeStatementUseCases.create(
-                CreateStatementUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = command.comparisonId,
-                    predicateId = Predicates.hasRelatedResource,
-                    objectId = resourceId
-                )
-            )
-        }
-        verify(exactly = 1) {
-            unsafeLiteralUseCases.create(
-                CreateLiteralUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    label = command.image!!
-                )
-            )
-        }
-        verify(exactly = 1) {
-            unsafeLiteralUseCases.create(
-                CreateLiteralUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    label = command.url!!
-                )
-            )
-        }
-        verify(exactly = 1) {
-            unsafeLiteralUseCases.create(
-                CreateLiteralUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    label = command.description!!
-                )
-            )
-        }
-        verify(exactly = 1) {
-            unsafeStatementUseCases.create(
-                CreateStatementUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = resourceId,
-                    predicateId = Predicates.hasImage,
-                    objectId = imageLiteralId
-                )
-            )
-        }
-        verify(exactly = 1) {
-            unsafeStatementUseCases.create(
-                CreateStatementUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = resourceId,
-                    predicateId = Predicates.hasURL,
-                    objectId = urlLiteralId
-                )
-            )
-        }
-        verify(exactly = 1) {
-            unsafeStatementUseCases.create(
-                CreateStatementUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = resourceId,
-                    predicateId = Predicates.description,
-                    objectId = descriptionLiteralId
-                )
-            )
-        }
-    }
-
-    @Test
-    fun `Given a comparison related resource create command, when label is invalid, it throws an exception`() {
-        val command = CreateComparisonUseCase.CreateComparisonRelatedResourceCommand(
-            comparisonId = ThingId("R123"),
-            contributorId = ContributorId(UUID.randomUUID()),
-            label = "\n",
-            image = null,
-            url = null,
-            description = null
-        )
-        shouldThrow<InvalidLabel> { service.createComparisonRelatedResource(command) }
-    }
-
-    @Test
-    fun `Given a comparison related resource create command, when comparison does not exist, it throws an exception`() {
-        val command = CreateComparisonUseCase.CreateComparisonRelatedResourceCommand(
-            comparisonId = ThingId("R123"),
-            contributorId = ContributorId(UUID.randomUUID()),
-            label = "related resource",
-            image = null,
-            url = null,
-            description = null
-        )
-
-        every { resourceRepository.findById(any()) } returns Optional.empty()
-
-        shouldThrow<ComparisonNotFound> { service.createComparisonRelatedResource(command) }
-
-        verify(exactly = 1) { resourceRepository.findById(any()) }
-    }
-
-    @Test
-    fun `Given a comparison related figure create command, it creates the comparison related figure`() {
-        val command = CreateComparisonUseCase.CreateComparisonRelatedFigureCommand(
-            comparisonId = ThingId("R123"),
-            contributorId = ContributorId(UUID.randomUUID()),
-            label = "related figure",
-            image = "https://example.org/test.png",
-            description = "comparison related figure description"
-        )
-        val figureId = ThingId("R456")
-        val comparison = createResource(classes = setOf(Classes.comparison))
-        val image = createLiteral(ThingId("L1"))
-        val description = createLiteral(ThingId("L3"))
-
-        every { resourceRepository.findById(command.comparisonId) } returns Optional.of(comparison)
-        every {
-            unsafeResourceUseCases.create(
-                CreateResourceUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    label = command.label,
-                    classes = setOf(Classes.comparisonRelatedFigure),
-                )
-            )
-        } returns figureId
-        every {
-            unsafeStatementUseCases.create(
-                CreateStatementUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = command.comparisonId,
-                    predicateId = Predicates.hasRelatedFigure,
-                    objectId = figureId
-                )
-            )
-        } returns StatementId("S1")
-        every {
-            unsafeLiteralUseCases.create(
-                CreateLiteralUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    label = command.image!!
-                )
-            )
-        } returns image.id
-        every {
-            unsafeLiteralUseCases.create(
-                CreateLiteralUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    label = command.description!!
-                )
-            )
-        } returns description.id
-        every {
-            unsafeStatementUseCases.create(
-                CreateStatementUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = figureId,
-                    predicateId = Predicates.hasImage,
-                    objectId = image.id
-                )
-            )
-        } returns StatementId("S2")
-        every {
-            unsafeStatementUseCases.create(
-                CreateStatementUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = figureId,
-                    predicateId = Predicates.description,
-                    objectId = description.id
-                )
-            )
-        } returns StatementId("S3")
-
-        service.createComparisonRelatedFigure(command) shouldBe figureId
-
-        verify(exactly = 1) { resourceRepository.findById(command.comparisonId) }
-        verify(exactly = 1) {
-            unsafeResourceUseCases.create(
-                CreateResourceUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    label = command.label,
-                    classes = setOf(Classes.comparisonRelatedFigure),
-                )
-            )
-        }
-        verify(exactly = 1) {
-            unsafeStatementUseCases.create(
-                CreateStatementUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = command.comparisonId,
-                    predicateId = Predicates.hasRelatedFigure,
-                    objectId = figureId
-                )
-            )
-        }
-        verify(exactly = 1) {
-            unsafeLiteralUseCases.create(
-                CreateLiteralUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    label = command.image!!
-                )
-            )
-        }
-        verify(exactly = 1) {
-            unsafeLiteralUseCases.create(
-                CreateLiteralUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    label = command.description!!
-                )
-            )
-        }
-        verify(exactly = 1) {
-            unsafeStatementUseCases.create(
-                CreateStatementUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = figureId,
-                    predicateId = Predicates.hasImage,
-                    objectId = image.id
-                )
-            )
-        }
-        verify(exactly = 1) {
-            unsafeStatementUseCases.create(
-                CreateStatementUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = figureId,
-                    predicateId = Predicates.description,
-                    objectId = description.id
-                )
-            )
-        }
-    }
-
-    @Test
-    fun `Given a comparison related figure create command, when label is invalid, it throws an exception`() {
-        val command = CreateComparisonUseCase.CreateComparisonRelatedFigureCommand(
-            comparisonId = ThingId("R123"),
-            contributorId = ContributorId(UUID.randomUUID()),
-            label = "\n",
-            image = null,
-            description = null
-        )
-        shouldThrow<InvalidLabel> { service.createComparisonRelatedFigure(command) }
-    }
-
-    @Test
-    fun `Given a comparison related figure create command, when comparison does not exist, it throws an exception`() {
-        val command = CreateComparisonUseCase.CreateComparisonRelatedFigureCommand(
-            comparisonId = ThingId("R123"),
-            contributorId = ContributorId(UUID.randomUUID()),
-            label = "related figure",
-            image = null,
-            description = null
-        )
-
-        every { resourceRepository.findById(any()) } returns Optional.empty()
-
-        shouldThrow<ComparisonNotFound> { service.createComparisonRelatedFigure(command) }
-
-        verify(exactly = 1) { resourceRepository.findById(any()) }
     }
 }

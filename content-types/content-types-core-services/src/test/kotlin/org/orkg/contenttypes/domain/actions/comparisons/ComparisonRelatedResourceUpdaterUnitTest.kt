@@ -16,9 +16,9 @@ import org.orkg.contenttypes.domain.ComparisonRelatedResource
 import org.orkg.contenttypes.domain.ComparisonRelatedResourceNotFound
 import org.orkg.contenttypes.domain.ComparisonRelatedResourceNotModifiable
 import org.orkg.contenttypes.domain.actions.SingleStatementPropertyUpdater
+import org.orkg.contenttypes.domain.actions.UpdateComparisonRelatedResourceCommand
 import org.orkg.contenttypes.domain.testing.fixtures.createComparisonRelatedResource
-import org.orkg.contenttypes.input.ComparisonUseCases
-import org.orkg.contenttypes.input.UpdateComparisonUseCase.UpdateComparisonRelatedResourceCommand
+import org.orkg.contenttypes.input.ComparisonRelatedResourceUseCases
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
@@ -31,13 +31,13 @@ import org.orkg.testing.pageOf
 import java.util.Optional
 
 internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
-    private val comparisonService: ComparisonUseCases = mockk()
+    private val comparisonRelatedResourceUseCases: ComparisonRelatedResourceUseCases = mockk()
     private val resourceService: ResourceUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
     private val singleStatementPropertyUpdater: SingleStatementPropertyUpdater = mockk()
 
     private val contributionCreator = ComparisonRelatedResourceUpdater(
-        comparisonService,
+        comparisonRelatedResourceUseCases,
         resourceService,
         statementService,
         singleStatementPropertyUpdater
@@ -51,7 +51,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
 
         every { resourceService.findById(command.comparisonId) } returns Optional.of(comparison)
         every {
-            comparisonService.findRelatedResourceById(
+            comparisonRelatedResourceUseCases.findByIdAndComparisonId(
                 comparisonId = command.comparisonId,
                 id = command.comparisonRelatedResourceId
             )
@@ -61,7 +61,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { resourceService.findById(command.comparisonId) }
         verify(exactly = 1) {
-            comparisonService.findRelatedResourceById(
+            comparisonRelatedResourceUseCases.findByIdAndComparisonId(
                 comparisonId = command.comparisonId,
                 id = command.comparisonRelatedResourceId
             )
@@ -88,7 +88,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
 
         every { resourceService.findById(command.comparisonId) } returns Optional.of(comparison)
         every {
-            comparisonService.findRelatedResourceById(
+            comparisonRelatedResourceUseCases.findByIdAndComparisonId(
                 comparisonId = command.comparisonId,
                 id = command.comparisonRelatedResourceId
             )
@@ -98,7 +98,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { resourceService.findById(command.comparisonId) }
         verify(exactly = 1) {
-            comparisonService.findRelatedResourceById(
+            comparisonRelatedResourceUseCases.findByIdAndComparisonId(
                 comparisonId = command.comparisonId,
                 id = command.comparisonRelatedResourceId
             )
@@ -133,7 +133,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
 
         every { resourceService.findById(command.comparisonId) } returns Optional.of(comparison)
         every {
-            comparisonService.findRelatedResourceById(
+            comparisonRelatedResourceUseCases.findByIdAndComparisonId(
                 comparisonId = command.comparisonId,
                 id = command.comparisonRelatedResourceId
             )
@@ -144,7 +144,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { resourceService.findById(command.comparisonId) }
         verify(exactly = 1) {
-            comparisonService.findRelatedResourceById(
+            comparisonRelatedResourceUseCases.findByIdAndComparisonId(
                 comparisonId = command.comparisonId,
                 id = command.comparisonRelatedResourceId
             )
@@ -166,7 +166,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
 
         every { resourceService.findById(command.comparisonId) } returns Optional.of(comparison)
         every {
-            comparisonService.findRelatedResourceById(
+            comparisonRelatedResourceUseCases.findByIdAndComparisonId(
                 comparisonId = command.comparisonId,
                 id = command.comparisonRelatedResourceId
             )
@@ -191,7 +191,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { resourceService.findById(command.comparisonId) }
         verify(exactly = 1) {
-            comparisonService.findRelatedResourceById(
+            comparisonRelatedResourceUseCases.findByIdAndComparisonId(
                 comparisonId = command.comparisonId,
                 id = command.comparisonRelatedResourceId
             )
@@ -227,7 +227,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
 
         every { resourceService.findById(command.comparisonId) } returns Optional.of(comparison)
         every {
-            comparisonService.findRelatedResourceById(
+            comparisonRelatedResourceUseCases.findByIdAndComparisonId(
                 comparisonId = command.comparisonId,
                 id = command.comparisonRelatedResourceId
             )
@@ -252,7 +252,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { resourceService.findById(command.comparisonId) }
         verify(exactly = 1) {
-            comparisonService.findRelatedResourceById(
+            comparisonRelatedResourceUseCases.findByIdAndComparisonId(
                 comparisonId = command.comparisonId,
                 id = command.comparisonRelatedResourceId
             )
@@ -288,7 +288,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
 
         every { resourceService.findById(command.comparisonId) } returns Optional.of(comparison)
         every {
-            comparisonService.findRelatedResourceById(
+            comparisonRelatedResourceUseCases.findByIdAndComparisonId(
                 comparisonId = command.comparisonId,
                 id = command.comparisonRelatedResourceId
             )
@@ -313,7 +313,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { resourceService.findById(command.comparisonId) }
         verify(exactly = 1) {
-            comparisonService.findRelatedResourceById(
+            comparisonRelatedResourceUseCases.findByIdAndComparisonId(
                 comparisonId = command.comparisonId,
                 id = command.comparisonRelatedResourceId
             )
@@ -335,7 +335,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
         }
     }
 
-    private fun ComparisonRelatedResource.toComparisonRelatedResourceUpdateCommand(): UpdateComparisonRelatedResourceCommand =
+    private fun ComparisonRelatedResource.toComparisonRelatedResourceUpdateCommand() =
         UpdateComparisonRelatedResourceCommand(
             comparisonId = ThingId("R123"),
             contributorId = ContributorId("0b3d7108-ea98-448f-85ef-e67a63a8b32b"),

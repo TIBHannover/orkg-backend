@@ -5,8 +5,8 @@ import org.orkg.contenttypes.domain.ComparisonNotFound
 import org.orkg.contenttypes.domain.ComparisonRelatedFigureNotFound
 import org.orkg.contenttypes.domain.ComparisonRelatedFigureNotModifiable
 import org.orkg.contenttypes.domain.actions.SingleStatementPropertyUpdater
-import org.orkg.contenttypes.input.ComparisonUseCases
-import org.orkg.contenttypes.input.UpdateComparisonUseCase.UpdateComparisonRelatedFigureCommand
+import org.orkg.contenttypes.domain.actions.UpdateComparisonRelatedFigureCommand
+import org.orkg.contenttypes.input.ComparisonRelatedFigureUseCases
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.ResourceUseCases
@@ -16,19 +16,19 @@ import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 
 class ComparisonRelatedFigureUpdater(
-    private val comparisonService: ComparisonUseCases,
+    private val comparisonRelatedFigureUseCases: ComparisonRelatedFigureUseCases,
     private val resourceService: ResourceUseCases,
     private val statementService: StatementUseCases,
     private val singleStatementPropertyUpdater: SingleStatementPropertyUpdater,
 ) {
     constructor(
-        comparisonService: ComparisonUseCases,
+        comparisonRelatedFigureUseCases: ComparisonRelatedFigureUseCases,
         resourceService: ResourceUseCases,
         unsafeLiteralUseCases: UnsafeLiteralUseCases,
         statementService: StatementUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
-        comparisonService,
+        comparisonRelatedFigureUseCases,
         resourceService,
         statementService,
         SingleStatementPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases)
@@ -43,7 +43,7 @@ class ComparisonRelatedFigureUpdater(
                 Classes.comparison in it.classes
             }
             .orElseThrow { ComparisonNotFound(command.comparisonId) }
-        val comparisonRelatedFigure = comparisonService.findRelatedFigureById(command.comparisonId, command.comparisonRelatedFigureId)
+        val comparisonRelatedFigure = comparisonRelatedFigureUseCases.findByIdAndComparisonId(command.comparisonId, command.comparisonRelatedFigureId)
             .orElseThrow { ComparisonRelatedFigureNotFound(command.comparisonRelatedFigureId) }
         if (command.label != null && command.label != comparisonRelatedFigure.label) {
             resourceService.update(

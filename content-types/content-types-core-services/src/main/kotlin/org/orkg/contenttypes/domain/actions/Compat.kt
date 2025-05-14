@@ -31,6 +31,8 @@ import org.orkg.contenttypes.domain.actions.templates.instances.UpdateTemplateIn
 import org.orkg.contenttypes.domain.actions.templates.properties.CreateTemplatePropertyAction
 import org.orkg.contenttypes.domain.actions.templates.properties.UpdateTemplatePropertyAction
 import org.orkg.contenttypes.domain.actions.visualizations.VisualizationAction
+import org.orkg.contenttypes.input.CreateComparisonRelatedFigureUseCase
+import org.orkg.contenttypes.input.CreateComparisonRelatedResourceUseCase
 import org.orkg.contenttypes.input.CreateComparisonUseCase
 import org.orkg.contenttypes.input.CreateContributionUseCase
 import org.orkg.contenttypes.input.CreateLiteratureListSectionUseCase
@@ -50,6 +52,8 @@ import org.orkg.contenttypes.input.PublishComparisonUseCase
 import org.orkg.contenttypes.input.PublishLiteratureListUseCase
 import org.orkg.contenttypes.input.PublishPaperUseCase
 import org.orkg.contenttypes.input.PublishSmartReviewUseCase
+import org.orkg.contenttypes.input.UpdateComparisonRelatedFigureUseCase
+import org.orkg.contenttypes.input.UpdateComparisonRelatedResourceUseCase
 import org.orkg.contenttypes.input.UpdateComparisonUseCase
 import org.orkg.contenttypes.input.UpdateLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.UpdateLiteratureListUseCase
@@ -66,6 +70,8 @@ import org.orkg.contenttypes.input.UpdateTemplateUseCase
 internal typealias BakedStatement = Triple<String, String, String>
 
 internal typealias CreateComparisonCommand = CreateComparisonUseCase.CreateCommand
+internal typealias CreateComparisonRelatedFigureCommand = CreateComparisonRelatedFigureUseCase.CreateCommand
+internal typealias CreateComparisonRelatedResourceCommand = CreateComparisonRelatedResourceUseCase.CreateCommand
 internal typealias CreateContributionCommand = CreateContributionUseCase.CreateCommand
 internal typealias CreateLiteratureListCommand = CreateLiteratureListUseCase.CreateCommand
 internal typealias CreateLiteratureListSectionCommand = CreateLiteratureListSectionUseCase.CreateCommand
@@ -80,6 +86,8 @@ internal typealias CreateTemplatePropertyCommand = CreateTemplatePropertyUseCase
 internal typealias CreateVisualizationCommand = CreateVisualizationUseCase.CreateCommand
 
 internal typealias UpdateComparisonCommand = UpdateComparisonUseCase.UpdateCommand
+internal typealias UpdateComparisonRelatedFigureCommand = UpdateComparisonRelatedFigureUseCase.UpdateCommand
+internal typealias UpdateComparisonRelatedResourceCommand = UpdateComparisonRelatedResourceUseCase.UpdateCommand
 internal typealias UpdateLiteratureListCommand = UpdateLiteratureListUseCase.UpdateCommand
 internal typealias UpdateLiteratureListSectionCommand = UpdateLiteratureListSectionUseCase.UpdateCommand
 internal typealias UpdatePaperCommand = UpdatePaperUseCase.UpdateCommand

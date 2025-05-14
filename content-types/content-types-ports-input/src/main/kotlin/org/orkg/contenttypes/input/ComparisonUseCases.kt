@@ -8,8 +8,6 @@ import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.Comparison
 import org.orkg.contenttypes.domain.ComparisonConfig
 import org.orkg.contenttypes.domain.ComparisonData
-import org.orkg.contenttypes.domain.ComparisonRelatedFigure
-import org.orkg.contenttypes.domain.ComparisonRelatedResource
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.Visibility
@@ -23,7 +21,6 @@ interface ComparisonUseCases :
     RetrieveComparisonUseCase,
     CreateComparisonUseCase,
     UpdateComparisonUseCase,
-    DeleteComparisonUseCase,
     PublishComparisonUseCase
 
 interface RetrieveComparisonUseCase {
@@ -46,24 +43,12 @@ interface RetrieveComparisonUseCase {
 
     fun findById(id: ThingId): Optional<Comparison>
 
-    fun findRelatedResourceById(comparisonId: ThingId, id: ThingId): Optional<ComparisonRelatedResource>
-
-    fun findAllRelatedResourcesById(comparisonId: ThingId, pageable: Pageable): Page<ComparisonRelatedResource>
-
-    fun findRelatedFigureById(comparisonId: ThingId, id: ThingId): Optional<ComparisonRelatedFigure>
-
-    fun findAllRelatedFiguresById(comparisonId: ThingId, pageable: Pageable): Page<ComparisonRelatedFigure>
-
     // An unpublished comparison is a comparison that does not have a DOI and is not a draft comparison (ComparisonDraft)
     fun findAllCurrentAndListedAndUnpublishedComparisons(pageable: Pageable): Page<Comparison>
 }
 
 interface CreateComparisonUseCase {
     fun create(command: CreateCommand): ThingId
-
-    fun createComparisonRelatedResource(command: CreateComparisonRelatedResourceCommand): ThingId
-
-    fun createComparisonRelatedFigure(command: CreateComparisonRelatedFigureCommand): ThingId
 
     data class CreateCommand(
         val contributorId: ContributorId,
@@ -82,31 +67,10 @@ interface CreateComparisonUseCase {
         val isAnonymized: Boolean,
         val extractionMethod: ExtractionMethod,
     )
-
-    data class CreateComparisonRelatedResourceCommand(
-        val comparisonId: ThingId,
-        val contributorId: ContributorId,
-        val label: String,
-        val image: String?,
-        val url: String?,
-        val description: String?,
-    )
-
-    data class CreateComparisonRelatedFigureCommand(
-        val comparisonId: ThingId,
-        val contributorId: ContributorId,
-        val label: String,
-        val image: String?,
-        val description: String?,
-    )
 }
 
 interface UpdateComparisonUseCase {
     fun update(command: UpdateCommand)
-
-    fun updateComparisonRelatedResource(command: UpdateComparisonRelatedResourceCommand)
-
-    fun updateComparisonRelatedFigure(command: UpdateComparisonRelatedFigureCommand)
 
     data class UpdateCommand(
         val comparisonId: ThingId,
@@ -126,39 +90,6 @@ interface UpdateComparisonUseCase {
         val isAnonymized: Boolean?,
         val extractionMethod: ExtractionMethod?,
         val visibility: Visibility?,
-    )
-
-    data class UpdateComparisonRelatedResourceCommand(
-        val comparisonId: ThingId,
-        val comparisonRelatedResourceId: ThingId,
-        val contributorId: ContributorId,
-        val label: String?,
-        val image: String?,
-        val url: String?,
-        val description: String?,
-    )
-
-    data class UpdateComparisonRelatedFigureCommand(
-        val comparisonId: ThingId,
-        val comparisonRelatedFigureId: ThingId,
-        val contributorId: ContributorId,
-        val label: String?,
-        val image: String?,
-        val description: String?,
-    )
-}
-
-interface DeleteComparisonUseCase {
-    fun deleteComparisonRelatedResource(
-        comparisonId: ThingId,
-        comparisonRelatedResourceId: ThingId,
-        contributorId: ContributorId,
-    )
-
-    fun deleteComparisonRelatedFigure(
-        comparisonId: ThingId,
-        comparisonRelatedFigureId: ThingId,
-        contributorId: ContributorId,
     )
 }
 

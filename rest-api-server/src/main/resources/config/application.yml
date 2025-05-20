@@ -107,7 +107,7 @@ orkg:
     resources:
       url-templates:
         backend: "https://orkg.org/api/resources/{id}/snapshots/{snapshotId}"
-        frontend: "https://orkg.org/resource/{id}/snapshots/{snapshotId}"
+        frontend: "https://orkg.org/resources/{id}/snapshots/{snapshotId}"
 management:
   endpoints:
     enabled-by-default: false

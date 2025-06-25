@@ -9,7 +9,7 @@ Content-Type: application/json
     "display_name": "Example User"
 }
 
-### Authenticate
+### Authenticate via REST-API (legacy)
 POST {{server_url}}/oauth/token
 Authorization: Basic {{oauth_legacy_client_id}} {{oauth_legacy_client_secret}}
 Content-Type: application/x-www-form-urlencoded
@@ -20,12 +20,12 @@ grant_type=password&username={{username}}&password={{password}}
     client.global.set("access_token", response.body.access_token);
 %}
 
-
 ### Obtain tokens via OIDC (Keycloak)
 POST {{auth_server_url}}/realms/{{realm}}/protocol/openid-connect/token
 Content-Type: application/x-www-form-urlencoded
 
 client_id = {{oauth_client_id}} &
+client_secret = {{oauth_client_secret}} &
 username = {{username}} &
 password = {{password}} &
 grant_type = password
@@ -36,12 +36,12 @@ grant_type = password
 %}
 >>! tokens.json
 
-
 ### Refresh the access token
 POST {{auth_server_url}}/realms/{{realm}}/protocol/openid-connect/token
 Content-Type: application/x-www-form-urlencoded
 
 client_id = {{oauth_client_id}} &
+client_secret = {{oauth_client_secret}} &
 grant_type = refresh_token &
 refresh_token = {{refresh_token}}
 

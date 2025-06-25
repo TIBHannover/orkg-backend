@@ -13,6 +13,7 @@ import org.keycloak.OAuth2Constants.PASSWORD
 import org.keycloak.OAuth2Constants.USERNAME
 import org.keycloak.representations.idm.UserRepresentation
 import org.orkg.testing.KEYCLOAK_CLIENT_ID
+import org.orkg.testing.KEYCLOAK_CLIENT_SECRET
 import org.orkg.testing.KEYCLOAK_REALM
 import org.orkg.testing.KeycloakTestContainersBaseTest
 import java.util.Base64
@@ -59,9 +60,9 @@ internal class KeyCloakIntegrationTest : KeycloakTestContainersBaseTest() {
             .extract().path<String>("access_token")
 
         val user: UserRepresentation = UserRepresentation().apply {
-            email = "user@example.org"
+            email = "test@example.org"
             isEnabled = true
-            username = "user"
+            username = "test"
             isEmailVerified = true
             attributes = mapOf(
                 "displayName" to listOf("John Doe"),
@@ -108,8 +109,9 @@ internal class KeyCloakIntegrationTest : KeycloakTestContainersBaseTest() {
             .log().ifValidationFails()
             .contentType(ContentType.URLENC.withCharset(Charsets.UTF_8))
             .formParam("client_id", KEYCLOAK_CLIENT_ID)
+            .formParam("client_secret", KEYCLOAK_CLIENT_SECRET)
             .formParam("grant_type", "password")
-            .formParam("username", "user")
+            .formParam("username", "test")
             .formParam("password", "Pa\$\$w0rd")
             .`when`().post(orkgRealmTokenEndpoint)
             .then().statusCode(200)
@@ -125,8 +127,8 @@ internal class KeyCloakIntegrationTest : KeycloakTestContainersBaseTest() {
         val payload = ObjectMapper().readTree(tokenPayload)
 
         assertThat(payload.path("azp").textValue()).isEqualTo("orkg-frontend")
-        assertThat(payload.path("preferred_username").textValue()).isEqualTo("user")
-        assertThat(payload.path("email").textValue()).isEqualTo("user@example.org")
+        assertThat(payload.path("preferred_username").textValue()).isEqualTo("test")
+        assertThat(payload.path("email").textValue()).isEqualTo("test@example.org")
         assertThat(payload.path("display_name").textValue()).isEqualTo("John Doe")
         assertThat(payload.path("iss").textValue()).isEqualTo("${container.authServerUrl}/realms/orkg")
     }

@@ -7,6 +7,7 @@ import org.testcontainers.junit.jupiter.Testcontainers
 
 const val KEYCLOAK_REALM = "orkg"
 const val KEYCLOAK_CLIENT_ID = "orkg-frontend"
+const val KEYCLOAK_CLIENT_SECRET = "**********"
 
 @Testcontainers
 abstract class KeycloakTestContainersBaseTest {

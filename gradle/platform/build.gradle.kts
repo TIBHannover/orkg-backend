@@ -29,7 +29,7 @@ dependencies {
     api("com.epages:restdocs-api-spec:$apiSpecVersion") // also acts as anchor for RestdocsApiSpecVirtualPlatformAlignmentRule
     api("com.epages:restdocs-api-spec-mockmvc:$apiSpecVersion")
 
-    val keycloakAdminClientVersion = "26.0.4"
+    val keycloakAdminClientVersion = "26.0.5"
     api("org.keycloak:keycloak-admin-client:$keycloakAdminClientVersion")
 
     val neo4jMigrationsVersion = "2.17.0"

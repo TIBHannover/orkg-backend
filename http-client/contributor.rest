@@ -1,0 +1,10 @@
+### Updating membership of a contributor
+PUT {{server_url}}/api/user/observatory
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+    "organization_id": "aeb2e1ea-f31d-4e88-ab4f-7bcbd9937dd5",
+    "contributor_id": "a7abc885-1f16-43c5-9bd0-c1bd0147d71d",
+    "observatory_id": "00000000-0000-0000-0000-000000000000"
+}

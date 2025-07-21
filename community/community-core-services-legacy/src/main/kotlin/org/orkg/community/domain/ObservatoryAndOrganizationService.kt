@@ -6,12 +6,16 @@ import org.orkg.common.OrganizationId
 import org.orkg.community.input.DummyDataUseCases
 import org.orkg.community.input.ObservatoryAuthUseCases
 import org.orkg.community.output.ContributorRepository
+import org.orkg.community.output.ObservatoryRepository
+import org.orkg.community.output.OrganizationRepository
 import org.springframework.stereotype.Component
 
 // TODO: This is wrong, but we need the refactoring. It should not be left as is.
 @Component
 class ObservatoryAndOrganizationService(
     private val repository: ContributorRepository,
+    private val observatoryRepository: ObservatoryRepository,
+    private val organizationRepository: OrganizationRepository,
 ) : ObservatoryAuthUseCases,
     DummyDataUseCases {
     override fun updateOrganizationAndObservatory(
@@ -32,12 +36,20 @@ class ObservatoryAndOrganizationService(
     ): Contributor {
         val contributor = repository.findById(contributorId)
             .orElseThrow { ContributorNotFound(contributorId) }
-        val user = contributor.copy(
+        if (observatoryId != ObservatoryId.UNKNOWN && !observatoryRepository.existsById(observatoryId)) {
+            throw ObservatoryNotFound(observatoryId)
+        }
+        if (organizationId != OrganizationId.UNKNOWN && organizationRepository.findById(organizationId).isEmpty) {
+            throw OrganizationNotFound(organizationId)
+        }
+        val updated = contributor.copy(
             observatoryId = observatoryId,
             organizationId = organizationId,
         )
-        repository.save(user)
-        return user
+        if (updated != contributor) {
+            repository.save(updated)
+        }
+        return updated
     }
 
     override fun deleteUserObservatory(contributorId: ContributorId) {

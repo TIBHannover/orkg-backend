@@ -6,6 +6,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added thing count metric.
+  (See: [!1317](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1317))
+### Fixed
+- Fixed email preview for some email clients.
+  (See: [!1313](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1313))
+- Fixed keycloak event processing.
+  (Closes: [#624](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/624))
+- Fixed status 500 when updating contributor membership with invalid inputs.
+  (Closes: [#625](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/625))
+### Breaking
+- Removed deprecated page fields.
+  (See: [!1310](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1310))
+- Removed deprecated endpoints.
+  (See: [!1311](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1311))
+- Removed response body contents from all PUT, POST and PATCH endpoints.
+  (See: [!1312](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1312))
 
 ## [0.85.0] - 2025-05-06
 ### Added

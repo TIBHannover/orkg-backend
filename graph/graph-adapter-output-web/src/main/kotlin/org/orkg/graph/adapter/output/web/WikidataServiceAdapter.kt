@@ -52,9 +52,9 @@ class WikidataServiceAdapter(
     override fun findPredicateByURI(ontologyId: String, uri: ParsedIRI): ExternalThing? =
         fetch(ontologyId, uri.toString(), propertyPattern)
 
-    private fun isResource(claims: JsonNode): Boolean = claims.size() == 0 || claims.has("P31")
+    private fun isResource(claims: JsonNode): Boolean = claims.size() == 0 || claims.has("P31") || !claims.has("P279")
 
-    private fun isClass(claims: JsonNode): Boolean = claims.size() == 0 || claims.has("P279")
+    private fun isClass(claims: JsonNode): Boolean = claims.size() == 0 || claims.has("P279") || !claims.has("P31")
 
     private fun fetch(
         ontologyId: String,

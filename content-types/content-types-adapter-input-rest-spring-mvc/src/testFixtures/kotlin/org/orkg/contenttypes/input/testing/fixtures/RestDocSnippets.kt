@@ -1,4 +1,4 @@
-package org.orkg.contenttypes.adapter.input.rest
+package org.orkg.contenttypes.input.testing.fixtures
 
 import org.springframework.restdocs.payload.FieldDescriptor
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath

@@ -30,6 +30,8 @@ import org.orkg.contenttypes.input.DeleteLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.LiteratureListUseCases
 import org.orkg.contenttypes.input.UpdateLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.UpdateLiteratureListUseCase
+import org.orkg.contenttypes.input.testing.fixtures.authorListFields
+import org.orkg.contenttypes.input.testing.fixtures.sustainableDevelopmentGoalsFields
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Visibility

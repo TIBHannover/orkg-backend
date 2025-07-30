@@ -24,6 +24,7 @@ import org.orkg.contenttypes.domain.OnlyOneObservatoryAllowed
 import org.orkg.contenttypes.domain.OnlyOneOrganizationAllowed
 import org.orkg.contenttypes.domain.testing.fixtures.createVisualization
 import org.orkg.contenttypes.input.VisualizationUseCases
+import org.orkg.contenttypes.input.testing.fixtures.authorListFields
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.VisibilityFilter

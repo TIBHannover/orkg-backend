@@ -35,6 +35,9 @@ import org.orkg.contenttypes.domain.testing.fixtures.createComparison
 import org.orkg.contenttypes.domain.testing.fixtures.createComparisonConfig
 import org.orkg.contenttypes.domain.testing.fixtures.createComparisonData
 import org.orkg.contenttypes.input.ComparisonUseCases
+import org.orkg.contenttypes.input.testing.fixtures.authorListFields
+import org.orkg.contenttypes.input.testing.fixtures.publicationInfoFields
+import org.orkg.contenttypes.input.testing.fixtures.sustainableDevelopmentGoalsFields
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Visibility

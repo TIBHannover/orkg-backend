@@ -36,6 +36,7 @@ dependencies {
     implementation(project(":common:serialization"))
     implementation(project(":graph:graph-core-constants"))
     testFixturesApi(project(":content-types:content-types-adapter-input-representations"))
+    testFixturesImplementation("org.springframework.restdocs:spring-restdocs-core")
     testFixturesImplementation(project(":common:datatypes"))
     testFixturesImplementation(project(":common:core-identifiers"))
     testFixturesImplementation(project(":graph:graph-core-constants"))

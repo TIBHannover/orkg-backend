@@ -28,6 +28,9 @@ import org.orkg.contenttypes.input.DeleteSmartReviewSectionUseCase
 import org.orkg.contenttypes.input.SmartReviewUseCases
 import org.orkg.contenttypes.input.UpdateSmartReviewSectionUseCase
 import org.orkg.contenttypes.input.UpdateSmartReviewUseCase
+import org.orkg.contenttypes.input.testing.fixtures.authorListFields
+import org.orkg.contenttypes.input.testing.fixtures.smartReviewIdentifierFields
+import org.orkg.contenttypes.input.testing.fixtures.sustainableDevelopmentGoalsFields
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod

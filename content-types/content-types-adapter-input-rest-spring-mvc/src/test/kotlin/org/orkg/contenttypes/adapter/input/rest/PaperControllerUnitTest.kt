@@ -44,6 +44,10 @@ import org.orkg.contenttypes.domain.ThingNotDefined
 import org.orkg.contenttypes.domain.testing.fixtures.createPaper
 import org.orkg.contenttypes.input.CreatePaperUseCase
 import org.orkg.contenttypes.input.PaperUseCases
+import org.orkg.contenttypes.input.testing.fixtures.authorListFields
+import org.orkg.contenttypes.input.testing.fixtures.paperIdentifierFields
+import org.orkg.contenttypes.input.testing.fixtures.publicationInfoFields
+import org.orkg.contenttypes.input.testing.fixtures.sustainableDevelopmentGoalsFields
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.ThingNotFound

@@ -28,7 +28,7 @@ class FileExportService {
         val temp = Files.createTempFile("", "", *fileAttributes())
         OutputStreamWriter(FileOutputStream(temp.toFile()), Charsets.UTF_8).use { block(it) }
         if (temp.exists()) {
-            Files.move(temp, filePath, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE)
+            Files.move(temp, filePath, StandardCopyOption.REPLACE_EXISTING)
         }
     }
 

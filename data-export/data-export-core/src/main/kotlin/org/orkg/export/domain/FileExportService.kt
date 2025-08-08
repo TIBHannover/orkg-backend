@@ -12,6 +12,7 @@ import java.nio.file.StandardCopyOption
 import java.nio.file.attribute.FileAttribute
 import java.nio.file.attribute.PosixFilePermissions
 import kotlin.io.path.absolute
+import kotlin.io.path.deleteIfExists
 import kotlin.io.path.exists
 import kotlin.io.path.isDirectory
 
@@ -29,6 +30,7 @@ class FileExportService {
         OutputStreamWriter(FileOutputStream(temp.toFile()), Charsets.UTF_8).use { block(it) }
         if (temp.exists()) {
             Files.move(temp, filePath, StandardCopyOption.REPLACE_EXISTING)
+            temp.deleteIfExists()
         }
     }
 

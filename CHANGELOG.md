@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Fixed temporary temp files of dumps sometimes not being deleted.
+  (See: [!1329](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1329))
 
 ## [0.86.1] - 2025-07-28
 ### Fixed

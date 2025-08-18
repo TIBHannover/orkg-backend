@@ -9,7 +9,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler
 class TaskSchedulerConfiguration {
     @Bean
     fun taskScheduler(
-        @Value("\${orkg.concurrent.task-scheduler-thead-pool-size:#{3}}") threadPoolSize: Int,
+        @Value("\${orkg.concurrent.task-scheduler-thread-pool-size:#{3}}") threadPoolSize: Int,
     ): ThreadPoolTaskScheduler =
         ThreadPoolTaskScheduler().apply { poolSize = threadPoolSize }
 }

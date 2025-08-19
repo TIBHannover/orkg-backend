@@ -167,18 +167,18 @@ internal class GeoNamesRepositoryAdapterUnitTest : MockkBaseTest {
                 GeoNamesServiceAdapter::findResourceByShortForm,
                 responseJson("geonames/citySuccess"),
                 ExternalThing(
-                    uri = ParsedIRI("https://sws.geonames.org/2950159"),
+                    uri = ParsedIRI.create("https://sws.geonames.org/2950159"),
                     label = "Berlin",
                     description = null
                 )
             ),
             Arguments.of(
                 "2950159",
-                ParsedIRI("https://sws.geonames.org/2950159"),
+                ParsedIRI.create("https://sws.geonames.org/2950159"),
                 GeoNamesServiceAdapter::findResourceByURI,
                 responseJson("geonames/citySuccess"),
                 ExternalThing(
-                    uri = ParsedIRI("https://sws.geonames.org/2950159"),
+                    uri = ParsedIRI.create("https://sws.geonames.org/2950159"),
                     label = "Berlin",
                     description = null
                 )
@@ -189,8 +189,8 @@ internal class GeoNamesRepositoryAdapterUnitTest : MockkBaseTest {
         fun invalidInputs(): Stream<Arguments> = Stream.of(
             Arguments.of("abc", GeoNamesServiceAdapter::findResourceByShortForm),
             Arguments.of("46568486468", GeoNamesServiceAdapter::findResourceByShortForm),
-            Arguments.of(ParsedIRI("https://sws.geonames.org/abc"), GeoNamesServiceAdapter::findResourceByURI),
-            Arguments.of(ParsedIRI("https://www.geonames.org/46568486468"), GeoNamesServiceAdapter::findResourceByURI),
+            Arguments.of(ParsedIRI.create("https://sws.geonames.org/abc"), GeoNamesServiceAdapter::findResourceByURI),
+            Arguments.of(ParsedIRI.create("https://www.geonames.org/46568486468"), GeoNamesServiceAdapter::findResourceByURI),
         )
     }
 }

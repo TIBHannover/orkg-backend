@@ -93,7 +93,7 @@ class WikidataServiceAdapter(
                 return@send null
             }
             ExternalThing(
-                uri = ParsedIRI("https://www.wikidata.org/entity/$id"),
+                uri = ParsedIRI.create("https://www.wikidata.org/entity/$id"),
                 label = entity.path("labels").path("en").path("value").asText(),
                 description = entity.path("descriptions").path("en").path("value").asText()
             )

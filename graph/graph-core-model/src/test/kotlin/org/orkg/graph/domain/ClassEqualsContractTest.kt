@@ -21,7 +21,7 @@ internal class ClassEqualsContractTest : EqualsContract<Class> {
         label = "some label",
         createdAt = OffsetDateTime.parse(timeStamp),
         createdBy = ContributorId(contributorUUID),
-        uri = ParsedIRI(uri),
+        uri = ParsedIRI.create(uri),
     )
 
     override fun getEqualInstanceSupplier(): Supplier<Class> = Supplier {
@@ -30,7 +30,7 @@ internal class ClassEqualsContractTest : EqualsContract<Class> {
             label = "some label",
             createdAt = OffsetDateTime.parse(timeStamp),
             createdBy = ContributorId(contributorUUID),
-            uri = ParsedIRI(uri)
+            uri = ParsedIRI.create(uri)
         )
     }
 
@@ -39,6 +39,6 @@ internal class ClassEqualsContractTest : EqualsContract<Class> {
         label = "some label",
         createdAt = OffsetDateTime.parse(timeStamp),
         createdBy = ContributorId(contributorUUID),
-        uri = ParsedIRI("https://example.com/different")
+        uri = ParsedIRI.create("https://example.com/different")
     )
 }

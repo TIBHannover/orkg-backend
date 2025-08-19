@@ -138,7 +138,7 @@ internal class RosettaStoneStatementControllerIntegrationTest : MockMvcBaseTest(
             classService.createClass(
                 label = xsd.`class`.value,
                 id = xsd.`class`,
-                uri = ParsedIRI(xsd.uri)
+                uri = ParsedIRI.create(xsd.uri)
             )
         }
 

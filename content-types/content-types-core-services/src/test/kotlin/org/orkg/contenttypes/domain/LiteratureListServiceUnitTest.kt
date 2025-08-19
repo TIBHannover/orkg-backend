@@ -268,7 +268,7 @@ internal class LiteratureListServiceUnitTest : MockkBaseTest {
                     identifiers = mapOf(
                         "orcid" to listOf("0000-1111-2222-3333")
                     ),
-                    homepage = ParsedIRI("https://example.org")
+                    homepage = ParsedIRI.create("https://example.org")
                 )
             )
             it.versions shouldBe VersionInfo(
@@ -513,7 +513,7 @@ internal class LiteratureListServiceUnitTest : MockkBaseTest {
                     identifiers = mapOf(
                         "orcid" to listOf("0000-1111-2222-3333")
                     ),
-                    homepage = ParsedIRI("https://example.org")
+                    homepage = ParsedIRI.create("https://example.org")
                 )
             )
             it.versions shouldBe VersionInfo(

@@ -123,7 +123,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
         val command = CreateClassUseCase.CreateCommand(
             contributorId = ContributorId(MockUserId.USER),
             label = "irrelevant",
-            uri = ParsedIRI("invalid")
+            uri = ParsedIRI.create("invalid")
         )
         val id = ThingId("C123")
 
@@ -145,7 +145,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a class is created, when an already existing uri is given, then it creates the class`() {
-        val mockClass = createClass(uri = ParsedIRI("https://orkg.org/class/C1"))
+        val mockClass = createClass(uri = ParsedIRI.create("https://orkg.org/class/C1"))
         val command = CreateClassUseCase.CreateCommand(
             contributorId = ContributorId(MockUserId.USER),
             label = "irrelevant",
@@ -214,7 +214,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
         val `class` = createClass(uri = null)
         val contributorId = ContributorId(MockUserId.USER)
         val label = "updated label"
-        val uri = ParsedIRI("https://example.org/C1")
+        val uri = ParsedIRI.create("https://example.org/C1")
         val modifiable = false
 
         every { repository.findById(`class`.id) } returns Optional.of(`class`)
@@ -338,7 +338,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
         val command = UpdateClassUseCase.UpdateCommand(
             id = id,
             contributorId = contributorId,
-            uri = ParsedIRI("https://example.org/foo")
+            uri = ParsedIRI.create("https://example.org/foo")
         )
 
         every { repository.findById(id) } returns Optional.empty()
@@ -351,12 +351,12 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
     @Test
     fun `Given a class exists and has no URI, when updating the URI and the URI is valid and the URI is not already used, it returns success`() {
         val originalClass = createClassWithoutURI()
-        val expectedClass = originalClass.copy(uri = ParsedIRI("https://example.org/NEW"))
+        val expectedClass = originalClass.copy(uri = ParsedIRI.create("https://example.org/NEW"))
         val contributorId = ContributorId(MockUserId.USER)
         val command = UpdateClassUseCase.UpdateCommand(
             id = originalClass.id,
             contributorId = contributorId,
-            uri = ParsedIRI("https://example.org/NEW")
+            uri = ParsedIRI.create("https://example.org/NEW")
         )
 
         every { repository.findById(originalClass.id) } returns Optional.of(originalClass)
@@ -375,7 +375,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
         val command = UpdateClassUseCase.UpdateCommand(
             id = originalClass.id,
             contributorId = contributorId,
-            uri = ParsedIRI("https://example.org/NEW")
+            uri = ParsedIRI.create("https://example.org/NEW")
         )
 
         every { repository.findById(originalClass.id) } returns originalClass.toOptional()
@@ -401,7 +401,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
         val command = UpdateClassUseCase.UpdateCommand(
             id = originalClass.id,
             contributorId = contributorId,
-            uri = ParsedIRI("https://example.org/DIFFERENT")
+            uri = ParsedIRI.create("https://example.org/DIFFERENT")
         )
 
         every { repository.findById(originalClass.id) } returns originalClass.toOptional()
@@ -427,7 +427,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
         val command = UpdateClassUseCase.UpdateCommand(
             id = originalClass.id,
             contributorId = contributorId,
-            uri = ParsedIRI("https://example.com/DIFFERENT")
+            uri = ParsedIRI.create("https://example.com/DIFFERENT")
         )
 
         every { repository.findById(originalClass.id) } returns originalClass.toOptional()
@@ -455,7 +455,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
         val `class` = createClass(uri = null)
         val contributorId = ContributorId(MockUserId.USER)
         val label = "updated label"
-        val uri = ParsedIRI("https://example.org/C1")
+        val uri = ParsedIRI.create("https://example.org/C1")
         val modifiable = false
 
         every { repository.findById(`class`.id) } returns Optional.of(`class`)
@@ -504,7 +504,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a class is replaced, when an invalid label is provided, then it updates the label`() {
-        val replacingClass = createClass(label = "invalid\nlabel", uri = ParsedIRI("https://example.com/NEW"))
+        val replacingClass = createClass(label = "invalid\nlabel", uri = ParsedIRI.create("https://example.com/NEW"))
         val existingClass = createClass()
         val contributorId = ContributorId(MockUserId.USER)
 
@@ -554,7 +554,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
     fun `Given a class is replaced, when a URI is provided and the class has no URI and the URI is not already used, then updates return success`() {
         val classToReplace = ThingId("ToReplace")
         val existingClass = createClassWithoutURI().copy(id = classToReplace)
-        val replacingClass = existingClass.copy(uri = ParsedIRI("https://example.com/NEW"))
+        val replacingClass = existingClass.copy(uri = ParsedIRI.create("https://example.com/NEW"))
         val expectedClass = existingClass.copy(id = classToReplace, uri = replacingClass.uri)
         val contributorId = ContributorId(MockUserId.USER)
 
@@ -571,7 +571,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
     fun `Given a class is replaced, when a URI is provided and the class has no URI and the URI is already used, then it updates the URI`() {
         val classToReplace = ThingId("ToReplace")
         val existingClass = createClassWithoutURI().copy(id = classToReplace)
-        val replacingClass = existingClass.copy(uri = ParsedIRI("https://example.com/NEW"))
+        val replacingClass = existingClass.copy(uri = ParsedIRI.create("https://example.com/NEW"))
         val contributorId = ContributorId(MockUserId.USER)
 
         every { repository.findById(replacingClass.id) } returns existingClass.toOptional()
@@ -586,7 +586,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
     @Test
     fun `Given a class is replaced, when a URI is provided and the class has a different URI, then it updates the URI`() {
         val classToReplace = ThingId("ToReplace")
-        val replacingClass = createClass(id = classToReplace, label = "other label", uri = ParsedIRI("https://example.com/NEW"))
+        val replacingClass = createClass(id = classToReplace, label = "other label", uri = ParsedIRI.create("https://example.com/NEW"))
         val existingClass = createClass(id = classToReplace)
         val contributorId = ContributorId(MockUserId.USER)
 

@@ -278,7 +278,7 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
     fun `Given a paper create command, when linking publication url, it returns success`() {
         val paperId = ThingId("R123")
         val contributorId = ContributorId(MockUserId.USER)
-        val url = ParsedIRI("https://orkg.org")
+        val url = ParsedIRI.create("https://orkg.org")
         val publicationInfo = PublicationInfoCommand(
             publishedMonth = null,
             publishedYear = null,

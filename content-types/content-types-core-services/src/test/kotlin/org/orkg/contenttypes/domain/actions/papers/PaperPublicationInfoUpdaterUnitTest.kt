@@ -510,7 +510,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             publishedMonth = null,
             publishedYear = null,
             publishedIn = null,
-            url = ParsedIRI("https://orkg.org/")
+            url = ParsedIRI.create("https://orkg.org/")
         )
         val paper = createPaper().copy(
             publicationInfo = publicationInfo
@@ -535,7 +535,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
                 publishedMonth = null,
                 publishedYear = null,
                 publishedIn = null,
-                url = ParsedIRI("https://orkg.org/")
+                url = ParsedIRI.create("https://orkg.org/")
             )
         )
         val command = updatePaperCommand().copy(
@@ -580,7 +580,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
                 url = null
             )
         )
-        val url = ParsedIRI("https://orkg.org/")
+        val url = ParsedIRI.create("https://orkg.org/")
         val command = updatePaperCommand().copy(
             publicationInfo = PublicationInfoCommand(
                 publishedMonth = null,
@@ -622,7 +622,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
                 publishedMonth = null,
                 publishedYear = null,
                 publishedIn = null,
-                url = ParsedIRI("https://example.org")
+                url = ParsedIRI.create("https://example.org")
             )
         )
         val command = updatePaperCommand().copy(
@@ -630,7 +630,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
                 publishedMonth = null,
                 publishedYear = null,
                 publishedIn = null,
-                url = ParsedIRI("https://orkg.org")
+                url = ParsedIRI.create("https://orkg.org")
             )
         )
         val oldUrlLiteral = createLiteral(

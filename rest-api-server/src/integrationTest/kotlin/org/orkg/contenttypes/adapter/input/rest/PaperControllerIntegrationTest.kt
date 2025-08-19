@@ -234,7 +234,7 @@ internal class PaperControllerIntegrationTest : MockMvcBaseTest("papers") {
                     publishedIn.id shouldNotBe null
                     publishedIn.label shouldBe "conference"
                 }
-                publicationInfo.url shouldBe ParsedIRI("https://www.example.org")
+                publicationInfo.url shouldBe ParsedIRI.create("https://www.example.org")
             }
             it.authors.size shouldBe 5
             it.authors[0] shouldBe AuthorRepresentation(
@@ -259,7 +259,7 @@ internal class PaperControllerIntegrationTest : MockMvcBaseTest("papers") {
                 author.name shouldBe "Author with homepage"
                 author.id shouldNotBe null
                 author.identifiers shouldBe emptyMap()
-                author.homepage shouldBe ParsedIRI("https://example.org/author")
+                author.homepage shouldBe ParsedIRI.create("https://example.org/author")
             }
             it.authors[4] shouldBe AuthorRepresentation(
                 name = "Author that just has a name",
@@ -321,7 +321,7 @@ internal class PaperControllerIntegrationTest : MockMvcBaseTest("papers") {
                     publishedIn.id shouldNotBe null
                     publishedIn.label shouldBe "other conference"
                 }
-                publicationInfo.url shouldBe ParsedIRI("https://www.conference.org")
+                publicationInfo.url shouldBe ParsedIRI.create("https://www.conference.org")
             }
             it.authors.size shouldBe 5
             it.authors[0] shouldBe Author(
@@ -346,7 +346,7 @@ internal class PaperControllerIntegrationTest : MockMvcBaseTest("papers") {
                 author.name shouldBe "Author with homepage"
                 author.id shouldNotBe null
                 author.identifiers shouldBe emptyMap()
-                author.homepage shouldBe ParsedIRI("https://example.org/author")
+                author.homepage shouldBe ParsedIRI.create("https://example.org/author")
             }
             it.authors[4] shouldBe Author(
                 name = "Another author that just has a name",

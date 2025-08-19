@@ -48,7 +48,7 @@ internal class ImportServicePredicateUnitTest : AbstractImportServiceUnitTest() 
         val ontologyId = "ontology"
         val shortForm = "predicateId"
         val externalThing = ExternalThing(
-            uri = ParsedIRI("https://example.org/predicates/$ontologyId/$shortForm"),
+            uri = ParsedIRI.create("https://example.org/predicates/$ontologyId/$shortForm"),
             label = "predicate label",
             description = "predicate description"
         )
@@ -89,7 +89,7 @@ internal class ImportServicePredicateUnitTest : AbstractImportServiceUnitTest() 
         val ontologyId = "ontology"
         val shortForm = "predicateId"
         val externalThing = ExternalThing(
-            uri = ParsedIRI("https://example.org/predicates/$ontologyId/$shortForm"),
+            uri = ParsedIRI.create("https://example.org/predicates/$ontologyId/$shortForm"),
             label = "predicate label",
             description = "predicate description"
         )
@@ -129,7 +129,7 @@ internal class ImportServicePredicateUnitTest : AbstractImportServiceUnitTest() 
     @Test
     fun `Given an import service, when importing a predicate by uri and ontology id, and external predicate already exists in orkg, then it returns the id of the existing predicate`() {
         val ontologyId = "ontology"
-        val uri = ParsedIRI("https://example.org/predicates/$ontologyId/predicateId")
+        val uri = ParsedIRI.create("https://example.org/predicates/$ontologyId/predicateId")
         val existingId = ThingId("existing")
 
         every {
@@ -161,7 +161,7 @@ internal class ImportServicePredicateUnitTest : AbstractImportServiceUnitTest() 
     @Test
     fun `Given an import service, when importing a predicate by uri and ontology id, and external predicate does not exist in orkg and ontology is not supported, then it throws an exception`() {
         val ontologyId = "ontology"
-        val uri = ParsedIRI("https://example.org/predicates/$ontologyId/predicateId")
+        val uri = ParsedIRI.create("https://example.org/predicates/$ontologyId/predicateId")
 
         every {
             statementService.findAll(
@@ -193,7 +193,7 @@ internal class ImportServicePredicateUnitTest : AbstractImportServiceUnitTest() 
     @Test
     fun `Given an import service, when importing a predicate by uri and ontology id, and external predicate does not exist in orkg and external predicate could not be found, then it throws an exception`() {
         val ontologyId = "ontology"
-        val uri = ParsedIRI("https://example.org/predicates/$ontologyId/predicateId")
+        val uri = ParsedIRI.create("https://example.org/predicates/$ontologyId/predicateId")
 
         every {
             statementService.findAll(
@@ -227,7 +227,7 @@ internal class ImportServicePredicateUnitTest : AbstractImportServiceUnitTest() 
     @Test
     fun `Given an import service, when importing a predicate by uri and ontology id, and external predicate is found, and does not exist in orkg, then it creates a new predicate and returns its id`() {
         val ontologyId = "ontology"
-        val uri = ParsedIRI("https://example.org/predicates/$ontologyId/predicateId")
+        val uri = ParsedIRI.create("https://example.org/predicates/$ontologyId/predicateId")
         val externalThing = ExternalThing(
             uri = uri,
             label = "predicate label",

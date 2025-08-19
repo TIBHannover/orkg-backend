@@ -57,7 +57,7 @@ fun updateTemplateInstanceCommand() = UpdateTemplateInstanceUseCase.UpdateComman
     classes = mapOf(
         "#temp6" to CreateClassCommandPart(
             label = "some class",
-            uri = ParsedIRI("https://orkg.org/C1")
+            uri = ParsedIRI.create("https://orkg.org/C1")
         )
     ),
     extractionMethod = ExtractionMethod.MANUAL

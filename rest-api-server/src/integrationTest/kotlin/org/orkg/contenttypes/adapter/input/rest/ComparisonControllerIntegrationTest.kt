@@ -272,7 +272,7 @@ internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparison
                 author.name shouldBe "Author with homepage"
                 author.id shouldNotBe null
                 author.identifiers shouldBe emptyMap()
-                author.homepage shouldBe ParsedIRI("https://example.org/author")
+                author.homepage shouldBe ParsedIRI.create("https://example.org/author")
             }
             it.authors[4] shouldBe AuthorRepresentation(
                 name = "Author that just has a name",
@@ -399,7 +399,7 @@ internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparison
                 author.name shouldBe "Author with homepage"
                 author.id shouldNotBe null
                 author.identifiers shouldBe emptyMap()
-                author.homepage shouldBe ParsedIRI("https://example.org/author")
+                author.homepage shouldBe ParsedIRI.create("https://example.org/author")
             }
             it.authors[4] shouldBe Author(
                 name = "Author that just has a name",

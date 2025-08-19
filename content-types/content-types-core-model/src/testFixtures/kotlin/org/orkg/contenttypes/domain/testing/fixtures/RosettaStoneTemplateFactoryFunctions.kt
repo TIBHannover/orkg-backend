@@ -68,5 +68,5 @@ fun createStringLiteralObjectPositionTemplateProperty() = StringLiteralTemplateP
     createdAt = OffsetDateTime.parse("2023-11-02T14:57:05.959539600+01:00"),
     createdBy = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
     path = ObjectIdAndLabel(Predicates.hasObjectPosition, "has object position"),
-    datatype = ClassReference(Classes.string, "string literal property class label", ParsedIRI(Literals.XSD.STRING.uri))
+    datatype = ClassReference(Classes.string, "string literal property class label", ParsedIRI.create(Literals.XSD.STRING.uri))
 )

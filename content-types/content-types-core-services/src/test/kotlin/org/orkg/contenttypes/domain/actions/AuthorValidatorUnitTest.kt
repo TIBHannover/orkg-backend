@@ -87,7 +87,7 @@ internal class AuthorValidatorUnitTest : MockkBaseTest {
             ),
             Author(
                 name = "Author with homepage",
-                homepage = ParsedIRI("https://example.org/author")
+                homepage = ParsedIRI.create("https://example.org/author")
             ),
             Author(
                 name = "Author that just has a name"

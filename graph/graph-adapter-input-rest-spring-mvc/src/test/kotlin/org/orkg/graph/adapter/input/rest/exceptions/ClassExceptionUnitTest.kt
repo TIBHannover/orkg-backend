@@ -48,7 +48,7 @@ internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun uriAlreadyInUse() {
-        documentedGetRequestTo(URIAlreadyInUse(ParsedIRI("https://example.org/C123"), ThingId("C123")))
+        documentedGetRequestTo(URIAlreadyInUse(ParsedIRI.create("https://example.org/C123"), ThingId("C123")))
             .andExpectErrorStatus(BAD_REQUEST)
             .andExpectType("orkg:problem:uri_already_in_use")
             .andExpectTitle("Bad Request")
@@ -59,7 +59,7 @@ internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun uriNotAbsolute() {
-        documentedGetRequestTo(URINotAbsolute(ParsedIRI("invalid")))
+        documentedGetRequestTo(URINotAbsolute(ParsedIRI.create("invalid")))
             .andExpectErrorStatus(BAD_REQUEST)
             .andExpectType("orkg:problem:uri_not_absolute")
             .andExpectTitle("Bad Request")
@@ -133,7 +133,7 @@ internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun classNotFound_withURI() {
-        get(ClassNotFound.withURI(ParsedIRI("https://example.org/C123")))
+        get(ClassNotFound.withURI(ParsedIRI.create("https://example.org/C123")))
             .andExpectErrorStatus(NOT_FOUND)
             .andExpectType("orkg:problem:class_not_found")
             .andExpectTitle("Not Found")

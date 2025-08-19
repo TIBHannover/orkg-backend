@@ -301,7 +301,7 @@ internal class TemplateInstanceControllerUnitTest : MockMvcBaseTest("template-in
             classes = mapOf(
                 "#temp5" to CreateClassRequestPart(
                     label = "class",
-                    uri = ParsedIRI("https://orkg.org/class/C1")
+                    uri = ParsedIRI.create("https://orkg.org/class/C1")
                 )
             ),
             extractionMethod = ExtractionMethod.MANUAL

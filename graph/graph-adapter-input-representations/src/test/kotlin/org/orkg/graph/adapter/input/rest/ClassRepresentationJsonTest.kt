@@ -57,7 +57,7 @@ internal class ClassRepresentationJsonTest {
             id = ThingId("C100"),
             label = "label",
             description = "class description",
-            uri = ParsedIRI("https://example.org/path/to/file#with-fragment"),
+            uri = ParsedIRI.create("https://example.org/path/to/file#with-fragment"),
             createdAt = OffsetDateTime.of(2018, 12, 25, 5, 23, 42, 123456789, ZoneOffset.ofHours(3)),
             createdBy = ContributorId.UNKNOWN,
             modifiable = true

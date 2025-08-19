@@ -129,7 +129,7 @@ internal class XSDValidationTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = ["http://orkg.org/resources?q=^"])
+    @ValueSource(strings = ["http://orkg.org:-80/"])
     fun `Given a malformed uri, when tested, it is not valid`(value: String) {
         URI.canParse(value) shouldBe false
     }

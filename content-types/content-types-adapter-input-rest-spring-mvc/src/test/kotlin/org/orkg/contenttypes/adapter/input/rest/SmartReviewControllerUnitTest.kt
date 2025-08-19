@@ -1203,7 +1203,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                     id = null,
                     name = "Author with homepage",
                     identifiers = null,
-                    homepage = ParsedIRI("https://example.org/author")
+                    homepage = ParsedIRI.create("https://example.org/author")
                 ),
                 AuthorRequest(
                     id = null,
@@ -1264,7 +1264,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                     id = null,
                     name = "Author with homepage",
                     identifiers = null,
-                    homepage = ParsedIRI("https://example.org/author")
+                    homepage = ParsedIRI.create("https://example.org/author")
                 ),
                 AuthorRequest(
                     id = null,

@@ -234,7 +234,7 @@ internal class LiteratureListControllerIntegrationTest : MockMvcBaseTest("litera
                 author.name shouldBe "Author with homepage"
                 author.id shouldNotBe null
                 author.identifiers shouldBe emptyMap()
-                author.homepage shouldBe ParsedIRI("https://example.org/author")
+                author.homepage shouldBe ParsedIRI.create("https://example.org/author")
             }
             it.authors[4] shouldBe AuthorRepresentation(
                 name = "Author that just has a name",
@@ -322,7 +322,7 @@ internal class LiteratureListControllerIntegrationTest : MockMvcBaseTest("litera
                 author.name shouldBe "Author with homepage"
                 author.id shouldNotBe null
                 author.identifiers shouldBe emptyMap()
-                author.homepage shouldBe ParsedIRI("https://example.org/author")
+                author.homepage shouldBe ParsedIRI.create("https://example.org/author")
             }
             it.authors[4] shouldBe Author(
                 name = "Another author that just has a name",

@@ -88,7 +88,7 @@ class OLSServiceAdapter(
             val item = tree.path("elements").toList().singleOrNull()
                 ?: return@send null
             ExternalThing(
-                uri = ParsedIRI(item.path("iri").asText()),
+                uri = ParsedIRI.create(item.path("iri").asText()),
                 label = item.path("label").toList()
                     .firstOrNull()?.asText() ?: return@send null,
                 description = item.path("definition").toList()

@@ -17,8 +17,8 @@ import java.util.regex.Pattern
  */
 fun String.isValidIRI(): Boolean {
     try {
-        ParsedIRI(this)
-    } catch (e: Exception) {
+        ParsedIRI.create(this)
+    } catch (_: Exception) {
         return false
     }
     return true
@@ -267,8 +267,8 @@ fun <T : Any> mutableSetOfNotNull(vararg elements: T?): MutableSet<T> {
 
 fun String.toIRIOrNull(): ParsedIRI? =
     try {
-        ParsedIRI(this)
-    } catch (e: Exception) {
+        ParsedIRI.create(this)
+    } catch (_: Exception) {
         null
     }
 

@@ -19,7 +19,7 @@ internal class PublicationInfoValidatorUnitTest {
                 publishedMonth = 1,
                 publishedYear = 2024,
                 publishedIn = "valid venue",
-                url = ParsedIRI("https://orkg.org/paper/R1000")
+                url = ParsedIRI.create("https://orkg.org/paper/R1000")
             ),
             Unit
         )

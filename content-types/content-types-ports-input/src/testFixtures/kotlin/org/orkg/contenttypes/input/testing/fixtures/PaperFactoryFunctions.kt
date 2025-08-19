@@ -28,7 +28,7 @@ fun createPaperCommand() = CreatePaperUseCase.CreateCommand(
         publishedYear = 2015,
         publishedMonth = 5,
         publishedIn = "conference",
-        url = ParsedIRI("https://example.org")
+        url = ParsedIRI.create("https://example.org")
     ),
     authors = listOf(
         Author(
@@ -46,7 +46,7 @@ fun createPaperCommand() = CreatePaperUseCase.CreateCommand(
         ),
         Author(
             name = "Author with homepage",
-            homepage = ParsedIRI("https://example.org/author")
+            homepage = ParsedIRI.create("https://example.org/author")
         ),
         Author(
             name = "Author that just has a name"
@@ -129,7 +129,7 @@ fun updatePaperCommand() = UpdatePaperUseCase.UpdateCommand(
         publishedYear = 2015,
         publishedMonth = 5,
         publishedIn = "conference",
-        url = ParsedIRI("https://example.org")
+        url = ParsedIRI.create("https://example.org")
     ),
     authors = listOf(
         Author(
@@ -147,7 +147,7 @@ fun updatePaperCommand() = UpdatePaperUseCase.UpdateCommand(
         ),
         Author(
             name = "Author with homepage",
-            homepage = ParsedIRI("https://example.org/author")
+            homepage = ParsedIRI.create("https://example.org/author")
         ),
         Author(
             name = "Author that just has a name"
@@ -189,7 +189,7 @@ fun publishPaperCommand() = PublishPaperUseCase.PublishCommand(
         ),
         Author(
             name = "Author with homepage",
-            homepage = ParsedIRI("https://example.org/author")
+            homepage = ParsedIRI.create("https://example.org/author")
         ),
         Author(
             name = "Author that just has a name"

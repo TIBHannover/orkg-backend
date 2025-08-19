@@ -245,7 +245,7 @@ internal class PaperServiceUnitTest : MockkBaseTest {
                 publicationInfo.publishedMonth shouldBe publishedMonth
                 publicationInfo.publishedYear shouldBe publishedYear
                 publicationInfo.publishedIn shouldBe ObjectIdAndLabel(publishedInId, publishedIn)
-                publicationInfo.url shouldBe ParsedIRI(publishedUrl)
+                publicationInfo.url shouldBe ParsedIRI.create(publishedUrl)
             }
             paper.authors shouldNotBe null
             paper.authors shouldBe listOf(
@@ -261,7 +261,7 @@ internal class PaperServiceUnitTest : MockkBaseTest {
                     identifiers = mapOf(
                         "orcid" to listOf("0000-1111-2222-3333")
                     ),
-                    homepage = ParsedIRI("https://example.org")
+                    homepage = ParsedIRI.create("https://example.org")
                 )
             )
             paper.contributions shouldNotBe null

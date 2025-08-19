@@ -365,7 +365,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
             classes = mapOf(
                 "#temp7" to CreateClassRequestPart(
                     label = "class",
-                    uri = ParsedIRI("https://orkg.org/class/C1")
+                    uri = ParsedIRI.create("https://orkg.org/class/C1")
                 )
             ),
             rows = listOf(
@@ -420,7 +420,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
             classes = mapOf(
                 "#temp7" to CreateClassRequestPart(
                     label = "class",
-                    uri = ParsedIRI("https://orkg.org/class/C1")
+                    uri = ParsedIRI.create("https://orkg.org/class/C1")
                 )
             ),
             rows = listOf(

@@ -7,5 +7,5 @@ import org.eclipse.rdf4j.common.net.ParsedIRI
 
 class ParsedIRIDeserializer : JsonDeserializer<ParsedIRI>() {
     override fun deserialize(p: JsonParser?, ctxt: DeserializationContext?): ParsedIRI? =
-        p?.valueAsString?.let(::ParsedIRI)
+        p?.valueAsString?.let(ParsedIRI::create)
 }

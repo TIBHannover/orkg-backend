@@ -172,7 +172,7 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
                 responseJson("wikidata/itemSuccess"),
                 responseJson("wikidata/entityNotFound"),
                 ExternalThing(
-                    uri = ParsedIRI("https://www.wikidata.org/entity/Q42"),
+                    uri = ParsedIRI.create("https://www.wikidata.org/entity/Q42"),
                     label = "Douglas Adams",
                     description = "English author and humourist (1952-2001)"
                 )
@@ -184,7 +184,7 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
                 responseJson("wikidata/itemSuccess"),
                 responseJson("wikidata/entityNotFound"),
                 ExternalThing(
-                    uri = ParsedIRI("https://www.wikidata.org/entity/Q42"),
+                    uri = ParsedIRI.create("https://www.wikidata.org/entity/Q42"),
                     label = "Douglas Adams",
                     description = "English author and humourist (1952-2001)"
                 )
@@ -196,43 +196,43 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
                 responseJson("wikidata/propertySuccess"),
                 responseJson("wikidata/entityNotFound"),
                 ExternalThing(
-                    uri = ParsedIRI("https://www.wikidata.org/entity/P30"),
+                    uri = ParsedIRI.create("https://www.wikidata.org/entity/P30"),
                     label = "continent",
                     description = "continent of which the subject is a part"
                 )
             ),
             Arguments.of(
                 "Q42",
-                ParsedIRI("https://www.wikidata.org/entity/Q42"),
+                ParsedIRI.create("https://www.wikidata.org/entity/Q42"),
                 WikidataServiceAdapter::findResourceByURI,
                 responseJson("wikidata/itemSuccess"),
                 responseJson("wikidata/entityNotFound"),
                 ExternalThing(
-                    uri = ParsedIRI("https://www.wikidata.org/entity/Q42"),
+                    uri = ParsedIRI.create("https://www.wikidata.org/entity/Q42"),
                     label = "Douglas Adams",
                     description = "English author and humourist (1952-2001)"
                 )
             ),
             Arguments.of(
                 "Q42",
-                ParsedIRI("https://www.wikidata.org/entity/Q42"),
+                ParsedIRI.create("https://www.wikidata.org/entity/Q42"),
                 WikidataServiceAdapter::findClassByURI,
                 responseJson("wikidata/itemSuccess"),
                 responseJson("wikidata/entityNotFound"),
                 ExternalThing(
-                    uri = ParsedIRI("https://www.wikidata.org/entity/Q42"),
+                    uri = ParsedIRI.create("https://www.wikidata.org/entity/Q42"),
                     label = "Douglas Adams",
                     description = "English author and humourist (1952-2001)"
                 )
             ),
             Arguments.of(
                 "P30",
-                ParsedIRI("https://www.wikidata.org/entity/P30"),
+                ParsedIRI.create("https://www.wikidata.org/entity/P30"),
                 WikidataServiceAdapter::findPredicateByURI,
                 responseJson("wikidata/propertySuccess"),
                 responseJson("wikidata/entityNotFound"),
                 ExternalThing(
-                    uri = ParsedIRI("https://www.wikidata.org/entity/P30"),
+                    uri = ParsedIRI.create("https://www.wikidata.org/entity/P30"),
                     label = "continent",
                     description = "continent of which the subject is a part"
                 )
@@ -244,7 +244,7 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
                 responseJson("wikidata/resourceSuccess"),
                 responseJson("wikidata/classSuccess"), // should fail, because response contains a class and not a resource
                 ExternalThing(
-                    uri = ParsedIRI("https://www.wikidata.org/entity/Q42"),
+                    uri = ParsedIRI.create("https://www.wikidata.org/entity/Q42"),
                     label = "Douglas Adams",
                     description = "English author and humourist (1952-2001)"
                 )
@@ -256,31 +256,31 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
                 responseJson("wikidata/classSuccess"),
                 responseJson("wikidata/resourceSuccess"), // should fail, because response contains a resource and not a class
                 ExternalThing(
-                    uri = ParsedIRI("https://www.wikidata.org/entity/Q42"),
+                    uri = ParsedIRI.create("https://www.wikidata.org/entity/Q42"),
                     label = "Douglas Adams",
                     description = "English author and humourist (1952-2001)"
                 )
             ),
             Arguments.of(
                 "Q42",
-                ParsedIRI("https://www.wikidata.org/entity/Q42"),
+                ParsedIRI.create("https://www.wikidata.org/entity/Q42"),
                 WikidataServiceAdapter::findResourceByURI,
                 responseJson("wikidata/resourceSuccess"),
                 responseJson("wikidata/classSuccess"), // should fail, because response contains a class and not a resource
                 ExternalThing(
-                    uri = ParsedIRI("https://www.wikidata.org/entity/Q42"),
+                    uri = ParsedIRI.create("https://www.wikidata.org/entity/Q42"),
                     label = "Douglas Adams",
                     description = "English author and humourist (1952-2001)"
                 )
             ),
             Arguments.of(
                 "Q42",
-                ParsedIRI("https://www.wikidata.org/entity/Q42"),
+                ParsedIRI.create("https://www.wikidata.org/entity/Q42"),
                 WikidataServiceAdapter::findClassByURI,
                 responseJson("wikidata/classSuccess"),
                 responseJson("wikidata/resourceSuccess"), // should fail, because response contains a resource and not a class
                 ExternalThing(
-                    uri = ParsedIRI("https://www.wikidata.org/entity/Q42"),
+                    uri = ParsedIRI.create("https://www.wikidata.org/entity/Q42"),
                     label = "Douglas Adams",
                     description = "English author and humourist (1952-2001)"
                 )
@@ -292,12 +292,12 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
             Arguments.of("A42", WikidataServiceAdapter::findResourceByShortForm),
             Arguments.of("A42", WikidataServiceAdapter::findClassByShortForm),
             Arguments.of("A30", WikidataServiceAdapter::findPredicateByShortForm),
-            Arguments.of(ParsedIRI("https://www.wikidata.org/entity/A42"), WikidataServiceAdapter::findResourceByURI),
-            Arguments.of(ParsedIRI("https://www.wikidata.org/entity/A42"), WikidataServiceAdapter::findClassByURI),
-            Arguments.of(ParsedIRI("https://www.wikidata.org/entity/A30"), WikidataServiceAdapter::findPredicateByURI),
-            Arguments.of(ParsedIRI("https://www.wikidata.org/abc/A42"), WikidataServiceAdapter::findResourceByURI),
-            Arguments.of(ParsedIRI("https://www.wikidata.org/abc/A42"), WikidataServiceAdapter::findClassByURI),
-            Arguments.of(ParsedIRI("https://www.wikidata.org/abc/A30"), WikidataServiceAdapter::findPredicateByURI),
+            Arguments.of(ParsedIRI.create("https://www.wikidata.org/entity/A42"), WikidataServiceAdapter::findResourceByURI),
+            Arguments.of(ParsedIRI.create("https://www.wikidata.org/entity/A42"), WikidataServiceAdapter::findClassByURI),
+            Arguments.of(ParsedIRI.create("https://www.wikidata.org/entity/A30"), WikidataServiceAdapter::findPredicateByURI),
+            Arguments.of(ParsedIRI.create("https://www.wikidata.org/abc/A42"), WikidataServiceAdapter::findResourceByURI),
+            Arguments.of(ParsedIRI.create("https://www.wikidata.org/abc/A42"), WikidataServiceAdapter::findClassByURI),
+            Arguments.of(ParsedIRI.create("https://www.wikidata.org/abc/A30"), WikidataServiceAdapter::findPredicateByURI),
         )
     }
 }

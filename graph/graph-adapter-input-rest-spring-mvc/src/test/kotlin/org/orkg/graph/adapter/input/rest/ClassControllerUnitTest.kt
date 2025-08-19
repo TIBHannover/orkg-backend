@@ -284,7 +284,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
     @DisplayName("Given a class is created, when service succeeds, then status is 201 CREATED")
     fun create() {
         val id = ThingId("C123")
-        val uri = ParsedIRI("https://example.org/bar")
+        val uri = ParsedIRI.create("https://example.org/bar")
         val label = "foo"
         val request = mapOf("id" to id, "label" to label, "uri" to uri)
 
@@ -358,7 +358,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
                 withArg {
                     it.id shouldBe id
                     it.label shouldBe "new label"
-                    it.uri shouldBe ParsedIRI("https://example.org/some/new#URI")
+                    it.uri shouldBe ParsedIRI.create("https://example.org/some/new#URI")
                 }
             )
         }
@@ -398,7 +398,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
                 withArg {
                     it.id shouldBe id
                     it.label shouldBe "some label"
-                    it.uri shouldBe ParsedIRI("https://example.org/some/new#URI")
+                    it.uri shouldBe ParsedIRI.create("https://example.org/some/new#URI")
                 }
             )
         }
@@ -443,7 +443,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
                 withArg {
                     it.id shouldBe id
                     it.label shouldBe null
-                    it.uri shouldBe ParsedIRI("https://example.org/some/new#URI")
+                    it.uri shouldBe ParsedIRI.create("https://example.org/some/new#URI")
                 }
             )
         }
@@ -453,6 +453,6 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
         id = ThingId("C1"),
         label = "test class",
         createdAt = OffsetDateTime.now(clock),
-        uri = ParsedIRI("https://example.org/exists")
+        uri = ParsedIRI.create("https://example.org/exists")
     )
 }

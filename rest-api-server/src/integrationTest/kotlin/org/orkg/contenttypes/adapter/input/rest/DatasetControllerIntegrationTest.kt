@@ -85,17 +85,17 @@ internal class DatasetControllerIntegrationTest : MockMvcBaseTest("datasets") {
         classService.createClass(
             label = "Quantity",
             id = ThingId(labelsAndClasses.quantityClass),
-            uri = ParsedIRI("http://qudt.org/2.1/schema/qudt/Quantity")
+            uri = ParsedIRI.create("http://qudt.org/2.1/schema/qudt/Quantity")
         )
         classService.createClass(
             label = "Quantity",
             id = ThingId(labelsAndClasses.quantityValueClass),
-            uri = ParsedIRI("http://qudt.org/2.1/schema/qudt/QuantityValue")
+            uri = ParsedIRI.create("http://qudt.org/2.1/schema/qudt/QuantityValue")
         )
         classService.createClass(
             label = "Quantity Kind",
             id = ThingId(labelsAndClasses.metricClass),
-            uri = ParsedIRI("http://qudt.org/2.1/schema/qudt/QuantityKind")
+            uri = ParsedIRI.create("http://qudt.org/2.1/schema/qudt/QuantityKind")
         )
         classService.createClass("Dataset", ThingId(labelsAndClasses.datasetClass))
         classService.createClass("Benchmark", ThingId(labelsAndClasses.benchmarkClass))

@@ -26,7 +26,7 @@ class ThingIdFabricator : Fabricator<ThingId> {
 class ParsedIRIFabricator : Fabricator<ParsedIRI> {
     private val stringFabricator = StringFabricator(length = IntRange(10, 20))
 
-    override fun invoke(fabrikate: Fabrikate): ParsedIRI = ParsedIRI("https://example.com/${stringFabricator(fabrikate)}")
+    override fun invoke(fabrikate: Fabrikate): ParsedIRI = ParsedIRI.create("https://example.com/${stringFabricator(fabrikate)}")
 }
 
 class ThingFabricator : Fabricator<Thing> {

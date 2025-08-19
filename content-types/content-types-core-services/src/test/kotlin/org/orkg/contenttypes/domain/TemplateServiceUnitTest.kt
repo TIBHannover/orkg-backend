@@ -85,7 +85,7 @@ internal class TemplateServiceUnitTest : MockkBaseTest {
         val formattedLabel = FormattedLabel.of("{P32}")
         val targetClassId = ThingId("targetClass")
         val targetClassLabel = "Target Class"
-        val targetClassURI = ParsedIRI("https://orkg.org/class/targetClass")
+        val targetClassURI = ParsedIRI.create("https://orkg.org/class/targetClass")
         val researchFieldId = ThingId("R20")
         val researchFieldLabel = "Research Field 1"
         val researchProblemId = ThingId("R21")

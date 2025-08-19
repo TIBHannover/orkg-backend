@@ -187,19 +187,19 @@ internal class OLSRepositoryAdapterUnitTest : MockkBaseTest {
                 OLSServiceAdapter::findResourceByShortForm,
                 responseJson("ols/individualSuccess"),
                 ExternalThing(
-                    uri = ParsedIRI("http://rs.tdwg.org/abcd/terms/AbsenceObservation"),
+                    uri = ParsedIRI.create("http://rs.tdwg.org/abcd/terms/AbsenceObservation"),
                     label = "AbsenceObservation",
                     description = "A record describing an output of an observation process with indication of the absence of an observation"
                 )
             ),
             Arguments.of(
                 "individuals",
-                ParsedIRI("http://rs.tdwg.org/abcd/terms/AbsenceObservation"),
+                ParsedIRI.create("http://rs.tdwg.org/abcd/terms/AbsenceObservation"),
                 "abcd",
                 OLSServiceAdapter::findResourceByURI,
                 responseJson("ols/individualSuccess"),
                 ExternalThing(
-                    uri = ParsedIRI("http://rs.tdwg.org/abcd/terms/AbsenceObservation"),
+                    uri = ParsedIRI.create("http://rs.tdwg.org/abcd/terms/AbsenceObservation"),
                     label = "AbsenceObservation",
                     description = "A record describing an output of an observation process with indication of the absence of an observation"
                 )
@@ -211,19 +211,19 @@ internal class OLSRepositoryAdapterUnitTest : MockkBaseTest {
                 OLSServiceAdapter::findClassByShortForm,
                 responseJson("ols/termSuccess"),
                 ExternalThing(
-                    uri = ParsedIRI("http://www.w3.org/2004/02/skos/core#Collection"),
+                    uri = ParsedIRI.create("http://www.w3.org/2004/02/skos/core#Collection"),
                     label = "Collection",
                     description = "A meaningful collection of concepts."
                 )
             ),
             Arguments.of(
                 "classes",
-                ParsedIRI("https://sws.geonames.org/2950159"),
+                ParsedIRI.create("https://sws.geonames.org/2950159"),
                 "skos",
                 OLSServiceAdapter::findClassByURI,
                 responseJson("ols/termSuccess"),
                 ExternalThing(
-                    uri = ParsedIRI("http://www.w3.org/2004/02/skos/core#Collection"),
+                    uri = ParsedIRI.create("http://www.w3.org/2004/02/skos/core#Collection"),
                     label = "Collection",
                     description = "A meaningful collection of concepts."
                 )
@@ -235,19 +235,19 @@ internal class OLSRepositoryAdapterUnitTest : MockkBaseTest {
                 OLSServiceAdapter::findPredicateByShortForm,
                 responseJson("ols/propertySuccess"),
                 ExternalThing(
-                    uri = ParsedIRI("http://rs.tdwg.org/abcd/terms/hasCountry"),
+                    uri = ParsedIRI.create("http://rs.tdwg.org/abcd/terms/hasCountry"),
                     label = "has Country",
                     description = "Property to connect an instance of a class to a Country."
                 )
             ),
             Arguments.of(
                 "properties",
-                ParsedIRI("http://rs.tdwg.org/abcd/terms/hasCountry"),
+                ParsedIRI.create("http://rs.tdwg.org/abcd/terms/hasCountry"),
                 "abcd",
                 OLSServiceAdapter::findPredicateByURI,
                 responseJson("ols/propertySuccess"),
                 ExternalThing(
-                    uri = ParsedIRI("http://rs.tdwg.org/abcd/terms/hasCountry"),
+                    uri = ParsedIRI.create("http://rs.tdwg.org/abcd/terms/hasCountry"),
                     label = "has Country",
                     description = "Property to connect an instance of a class to a Country."
                 )
@@ -259,9 +259,9 @@ internal class OLSRepositoryAdapterUnitTest : MockkBaseTest {
             Arguments.of("abc", "!invalid", OLSServiceAdapter::findResourceByShortForm),
             Arguments.of("abc", "!invalid", OLSServiceAdapter::findClassByShortForm),
             Arguments.of("abc", "!invalid", OLSServiceAdapter::findPredicateByShortForm),
-            Arguments.of(ParsedIRI("https://www.geonames.org/abc"), "!invalid", OLSServiceAdapter::findResourceByURI),
-            Arguments.of(ParsedIRI("https://www.geonames.org/abc"), "!invalid", OLSServiceAdapter::findClassByURI),
-            Arguments.of(ParsedIRI("https://www.geonames.org/abc"), "!invalid", OLSServiceAdapter::findPredicateByURI),
+            Arguments.of(ParsedIRI.create("https://www.geonames.org/abc"), "!invalid", OLSServiceAdapter::findResourceByURI),
+            Arguments.of(ParsedIRI.create("https://www.geonames.org/abc"), "!invalid", OLSServiceAdapter::findClassByURI),
+            Arguments.of(ParsedIRI.create("https://www.geonames.org/abc"), "!invalid", OLSServiceAdapter::findPredicateByURI),
         )
     }
 }

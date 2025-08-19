@@ -52,7 +52,7 @@ internal class ClassControllerIntegrationTest : MockMvcBaseTest("classes") {
         // Arrange
         val id = ThingId("dummy")
         val label = "dummy label"
-        val uri = ParsedIRI("https://example.org/exists")
+        val uri = ParsedIRI.create("https://example.org/exists")
         service.createClass(label = label, id = id, uri = uri)
 
         // Act and Assert

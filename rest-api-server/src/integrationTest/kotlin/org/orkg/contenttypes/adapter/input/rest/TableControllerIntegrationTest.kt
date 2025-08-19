@@ -239,7 +239,7 @@ internal class TableControllerIntegrationTest : MockMvcBaseTest("tables") {
                 row.data[0].shouldBeInstanceOf<ClassReferenceRepresentation> { thing ->
                     thing.id shouldNotBe null
                     thing.label shouldBe "test class"
-                    thing.uri shouldBe ParsedIRI("https://orkg.org/class/C123")
+                    thing.uri shouldBe ParsedIRI.create("https://orkg.org/class/C123")
                 }
                 row.data[1] shouldBe null
             }
@@ -346,7 +346,7 @@ internal class TableControllerIntegrationTest : MockMvcBaseTest("tables") {
                 row.data[2].shouldBeInstanceOf<Class> { thing ->
                     thing.id shouldNotBe null
                     thing.label shouldBe "some other test class"
-                    thing.uri shouldBe ParsedIRI("https://orkg.org/class/C1234")
+                    thing.uri shouldBe ParsedIRI.create("https://orkg.org/class/C1234")
                 }
                 row.data[3] shouldBe null
             }
@@ -448,7 +448,7 @@ internal class TableControllerIntegrationTest : MockMvcBaseTest("tables") {
                 row.data[0].shouldBeInstanceOf<Class> { thing ->
                     thing.id shouldNotBe null
                     thing.label shouldBe "some other test class"
-                    thing.uri shouldBe ParsedIRI("https://orkg.org/class/C12345")
+                    thing.uri shouldBe ParsedIRI.create("https://orkg.org/class/C12345")
                 }
                 row.data[1] shouldBe null
                 row.data[2] shouldBe null

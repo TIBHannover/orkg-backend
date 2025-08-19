@@ -55,7 +55,7 @@ fun createClass(
     id: ThingId = ThingId("OK"),
     label: String = "some label",
     createdAt: OffsetDateTime = OffsetDateTime.parse("2023-10-05T12:29:15.3155145+01:00"),
-    uri: ParsedIRI? = ParsedIRI("https://example.org/OK"),
+    uri: ParsedIRI? = ParsedIRI.create("https://example.org/OK"),
     createdBy: ContributorId = ContributorId("dc8b2055-c14a-4e9f-9fcd-e0b79cf1f834"),
     modifiable: Boolean = true,
 ): Class = Class(id, label, uri, createdAt, createdBy, modifiable)

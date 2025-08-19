@@ -43,7 +43,7 @@ fun createPublishedContentType(
             `object` = Class(
                 id = ThingId("C12457"),
                 label = "Some class",
-                uri = ParsedIRI("https://orkg.org/class/C12457"),
+                uri = ParsedIRI.create("https://orkg.org/class/C12457"),
                 createdAt = OffsetDateTime.parse("2022-02-22T08:01:13.261082+01:00"),
                 createdBy = ContributorId("d5416c16-1a45-4aee-8069-be1b6097478b")
             ),

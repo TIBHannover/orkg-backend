@@ -46,7 +46,7 @@ fun createTableCommand() = CreateTableUseCase.CreateCommand(
     classes = mapOf(
         "#temp7" to CreateClassCommandPart(
             label = "class",
-            uri = ParsedIRI("https://orkg.org/class/C1")
+            uri = ParsedIRI.create("https://orkg.org/class/C1")
         )
     ),
     rows = listOf(
@@ -102,7 +102,7 @@ fun updateTableCommand() = UpdateTableUseCase.UpdateCommand(
     classes = mapOf(
         "#temp7" to CreateClassCommandPart(
             label = "class",
-            uri = ParsedIRI("https://orkg.org/class/C1")
+            uri = ParsedIRI.create("https://orkg.org/class/C1")
         )
     ),
     rows = listOf(

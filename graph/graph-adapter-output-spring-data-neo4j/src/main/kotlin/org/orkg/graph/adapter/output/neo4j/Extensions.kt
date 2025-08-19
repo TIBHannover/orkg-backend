@@ -172,7 +172,7 @@ internal fun Value.asNullableBoolean(): Boolean? = if (isNull) null else isTrue
 
 internal fun Value.toOffsetDateTime() = OffsetDateTime.parse(asString(), DateTimeFormatter.ISO_OFFSET_DATE_TIME)
 
-internal fun Value.toIRI() = if (isNull) null else ParsedIRI(asString())
+internal fun Value.toIRI() = if (isNull) null else ParsedIRI.create(asString())
 
 internal fun Value.toStatementId() = StatementId(asString())
 

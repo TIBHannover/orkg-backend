@@ -274,7 +274,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
     fun `Given a string literal template property, when literal label does not match the required pattern, it throws an exception`() {
         val property = createStringLiteralTemplateProperty().copy(
             minCount = 0,
-            datatype = ClassReference(Classes.string, "String", ParsedIRI(Literals.XSD.STRING.uri))
+            datatype = ClassReference(Classes.string, "String", ParsedIRI.create(Literals.XSD.STRING.uri))
         )
         val id = "L123"
         val `object` = createLiteral(ThingId("L123")).toThingCommandPart()
@@ -291,7 +291,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
         val property = createStringLiteralTemplateProperty().copy(
             minCount = 0,
             pattern = """\w+""",
-            datatype = ClassReference(Classes.string, "String", ParsedIRI(Literals.XSD.STRING.uri))
+            datatype = ClassReference(Classes.string, "String", ParsedIRI.create(Literals.XSD.STRING.uri))
         )
         val id = "L123"
         val `object` = createLiteral(ThingId("L123"), label = "word").toThingCommandPart()
@@ -305,7 +305,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
             minCount = 0,
             minInclusive = RealNumber(0),
             maxInclusive = RealNumber(10),
-            datatype = ClassReference(Classes.integer, "Integer", ParsedIRI(Literals.XSD.INT.uri))
+            datatype = ClassReference(Classes.integer, "Integer", ParsedIRI.create(Literals.XSD.INT.uri))
         )
         val id = "#temp1"
         val `object` = CreateLiteralCommandPart(
@@ -321,7 +321,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
         val property = createNumberLiteralTemplateProperty().copy(
             minCount = 0,
             minInclusive = RealNumber(10),
-            datatype = ClassReference(Classes.integer, "Integer", ParsedIRI(Literals.XSD.INT.uri))
+            datatype = ClassReference(Classes.integer, "Integer", ParsedIRI.create(Literals.XSD.INT.uri))
         )
         val id = "#temp1"
         val `object` = CreateLiteralCommandPart(
@@ -361,7 +361,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
             minCount = 0,
             minInclusive = RealNumber(0.0),
             maxInclusive = RealNumber(10.0),
-            datatype = ClassReference(Classes.decimal, "Decimal", ParsedIRI(Literals.XSD.DECIMAL.uri))
+            datatype = ClassReference(Classes.decimal, "Decimal", ParsedIRI.create(Literals.XSD.DECIMAL.uri))
         )
         val id = "#temp1"
         val `object` = CreateLiteralCommandPart(
@@ -377,7 +377,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
         val property = createDecimalLiteralTemplateProperty().copy(
             minCount = 0,
             minInclusive = RealNumber(10.0),
-            datatype = ClassReference(Classes.decimal, "Decimal", ParsedIRI(Literals.XSD.DECIMAL.uri))
+            datatype = ClassReference(Classes.decimal, "Decimal", ParsedIRI.create(Literals.XSD.DECIMAL.uri))
         )
         val id = "#temp1"
         val `object` = CreateLiteralCommandPart(
@@ -397,7 +397,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
         val property = createDecimalLiteralTemplateProperty().copy(
             minCount = 0,
             maxInclusive = RealNumber(5.0),
-            datatype = ClassReference(Classes.decimal, "Decimal", ParsedIRI(Literals.XSD.DECIMAL.uri))
+            datatype = ClassReference(Classes.decimal, "Decimal", ParsedIRI.create(Literals.XSD.DECIMAL.uri))
         )
         val id = "#temp1"
         val `object` = CreateLiteralCommandPart(
@@ -418,7 +418,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
             minCount = 0,
             minInclusive = RealNumber(0.0F),
             maxInclusive = RealNumber(10.0F),
-            datatype = ClassReference(Classes.float, "Float", ParsedIRI(Literals.XSD.FLOAT.uri))
+            datatype = ClassReference(Classes.float, "Float", ParsedIRI.create(Literals.XSD.FLOAT.uri))
         )
         val id = "#temp1"
         val `object` = CreateLiteralCommandPart(
@@ -434,7 +434,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
         val property = createFloatLiteralTemplateProperty().copy(
             minCount = 0,
             minInclusive = RealNumber(10.0F),
-            datatype = ClassReference(Classes.float, "Float", ParsedIRI(Literals.XSD.FLOAT.uri))
+            datatype = ClassReference(Classes.float, "Float", ParsedIRI.create(Literals.XSD.FLOAT.uri))
         )
         val id = "#temp1"
         val `object` = CreateLiteralCommandPart(
@@ -454,7 +454,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
         val property = createFloatLiteralTemplateProperty().copy(
             minCount = 0,
             maxInclusive = RealNumber(5.0F),
-            datatype = ClassReference(Classes.float, "Float", ParsedIRI(Literals.XSD.FLOAT.uri))
+            datatype = ClassReference(Classes.float, "Float", ParsedIRI.create(Literals.XSD.FLOAT.uri))
         )
         val id = "#temp1"
         val `object` = CreateLiteralCommandPart(
@@ -473,7 +473,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
     fun `Given a literal template property, when object label cannot be parsed by data type, it throws an exception`() {
         val property = createOtherLiteralTemplateProperty().copy(
             minCount = 0,
-            datatype = ClassReference(Classes.integer, "Integer", ParsedIRI(Literals.XSD.INT.uri))
+            datatype = ClassReference(Classes.integer, "Integer", ParsedIRI.create(Literals.XSD.INT.uri))
         )
         val id = "#temp1"
         val `object` = CreateLiteralCommandPart(
@@ -493,7 +493,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
         val uri = "https://example.org/classes/software"
         val property = createOtherLiteralTemplateProperty().copy(
             minCount = 0,
-            datatype = ClassReference(Classes.software, "Software", ParsedIRI(uri))
+            datatype = ClassReference(Classes.software, "Software", ParsedIRI.create(uri))
         )
         val id = "#temp1"
         val `object` = CreateLiteralCommandPart(

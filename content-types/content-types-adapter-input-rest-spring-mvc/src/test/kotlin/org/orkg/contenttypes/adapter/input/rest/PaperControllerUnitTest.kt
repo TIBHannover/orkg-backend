@@ -1084,7 +1084,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
                 publishedMonth = 5,
                 publishedYear = 2015,
                 publishedIn = "conference",
-                url = ParsedIRI("https://www.example.org")
+                url = ParsedIRI.create("https://www.example.org")
             ),
             authors = listOf(
                 AuthorRequest(
@@ -1109,7 +1109,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
                     id = null,
                     name = "Author with homepage",
                     identifiers = null,
-                    homepage = ParsedIRI("https://example.org/author")
+                    homepage = ParsedIRI.create("https://example.org/author")
                 ),
                 AuthorRequest(
                     id = null,
@@ -1209,7 +1209,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
                 publishedMonth = 5,
                 publishedYear = 2015,
                 publishedIn = "conference",
-                url = ParsedIRI("https://www.example.org")
+                url = ParsedIRI.create("https://www.example.org")
             ),
             authors = listOf(
                 AuthorRequest(
@@ -1234,7 +1234,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
                     id = null,
                     name = "Author with homepage",
                     identifiers = null,
-                    homepage = ParsedIRI("https://example.org/author")
+                    homepage = ParsedIRI.create("https://example.org/author")
                 ),
                 AuthorRequest(
                     id = null,

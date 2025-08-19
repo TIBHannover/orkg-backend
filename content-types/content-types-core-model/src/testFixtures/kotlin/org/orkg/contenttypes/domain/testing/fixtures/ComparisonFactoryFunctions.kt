@@ -49,7 +49,7 @@ fun createComparison() = Comparison(
         publishedMonth = 4,
         publishedYear = 2023,
         publishedIn = ObjectIdAndLabel(ThingId("R4867"), "ORKG"),
-        url = ParsedIRI("https://example.org")
+        url = ParsedIRI.create("https://example.org")
     ),
     authors = listOf(
         Author(
@@ -58,7 +58,7 @@ fun createComparison() = Comparison(
             identifiers = mapOf(
                 "orcid" to listOf("0000-0002-1825-0097")
             ),
-            homepage = ParsedIRI("https://example.org")
+            homepage = ParsedIRI.create("https://example.org")
         ),
         Author(
             id = null,

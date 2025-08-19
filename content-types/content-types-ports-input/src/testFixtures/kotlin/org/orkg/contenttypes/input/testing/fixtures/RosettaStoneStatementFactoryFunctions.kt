@@ -51,7 +51,7 @@ fun createRosettaStoneStatementCommand() = CreateRosettaStoneStatementUseCase.Cr
     classes = mapOf(
         "#temp5" to CreateClassCommandPart(
             label = "class",
-            uri = ParsedIRI("https://orkg.org/class/C1")
+            uri = ParsedIRI.create("https://orkg.org/class/C1")
         )
     ),
     observatories = listOf(
@@ -97,7 +97,7 @@ fun updateRosettaStoneStatementCommand() = UpdateRosettaStoneStatementUseCase.Up
     classes = mapOf(
         "#temp5" to CreateClassCommandPart(
             label = "class",
-            uri = ParsedIRI("https://orkg.org/class/C1")
+            uri = ParsedIRI.create("https://orkg.org/class/C1")
         )
     ),
     observatories = listOf(

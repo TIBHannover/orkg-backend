@@ -39,7 +39,7 @@ internal class ImportControllerUnitTest : MockMvcBaseTest("import") {
     fun importResourceByURI() {
         val id = ThingId("R123")
         val request = ImportController.ImportByURIRequest(
-            uri = ParsedIRI("https://www.wikidata.org/entity/Q42"),
+            uri = ParsedIRI.create("https://www.wikidata.org/entity/Q42"),
             ontology = "wikidata"
         )
 
@@ -117,7 +117,7 @@ internal class ImportControllerUnitTest : MockMvcBaseTest("import") {
     fun importPredicateByURI() {
         val id = ThingId("P123")
         val request = ImportController.ImportByURIRequest(
-            uri = ParsedIRI("https://www.wikidata.org/entity/P30"),
+            uri = ParsedIRI.create("https://www.wikidata.org/entity/P30"),
             ontology = "wikidata"
         )
 
@@ -195,7 +195,7 @@ internal class ImportControllerUnitTest : MockMvcBaseTest("import") {
     fun importClassByURI() {
         val id = ThingId("C123")
         val request = ImportController.ImportByURIRequest(
-            uri = ParsedIRI("https://www.wikidata.org/entity/Q42"),
+            uri = ParsedIRI.create("https://www.wikidata.org/entity/Q42"),
             ontology = "wikidata"
         )
 

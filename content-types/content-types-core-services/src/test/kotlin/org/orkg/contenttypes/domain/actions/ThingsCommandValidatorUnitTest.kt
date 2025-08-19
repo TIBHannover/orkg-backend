@@ -278,7 +278,7 @@ internal class ThingsCommandValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a things command, when specified class uri is not absolute, it throws an exception`() {
-        val uri = ParsedIRI("invalid")
+        val uri = ParsedIRI.create("invalid")
         val contents = updateTemplateInstanceCommand().copy(
             resources = emptyMap(),
             literals = emptyMap(),
@@ -297,7 +297,7 @@ internal class ThingsCommandValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a things command, when specified class uri already exists, it throws an exception`() {
-        val uri = ParsedIRI("https://orkg.org/class/C1")
+        val uri = ParsedIRI.create("https://orkg.org/class/C1")
         val contents = updateTemplateInstanceCommand().copy(
             resources = emptyMap(),
             literals = emptyMap(),

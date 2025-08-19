@@ -209,7 +209,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
             identifiers = mapOf(
                 "orcid" to listOf(orcid)
             ),
-            homepage = ParsedIRI("https://orkg.org")
+            homepage = ParsedIRI.create("https://orkg.org")
         )
         val authorId = ThingId("R456")
         val contributorId = ContributorId(UUID.randomUUID())

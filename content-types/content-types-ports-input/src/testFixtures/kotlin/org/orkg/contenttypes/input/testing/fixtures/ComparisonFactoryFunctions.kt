@@ -36,7 +36,7 @@ fun createComparisonCommand() = CreateComparisonUseCase.CreateCommand(
         ),
         Author(
             name = "Author with homepage",
-            homepage = ParsedIRI("https://example.org/author")
+            homepage = ParsedIRI.create("https://example.org/author")
         ),
         Author(
             name = "Author that just has a name"
@@ -76,7 +76,7 @@ fun updateComparisonCommand() = UpdateComparisonUseCase.UpdateCommand(
         ),
         Author(
             name = "Author with homepage",
-            homepage = ParsedIRI("https://example.org/author")
+            homepage = ParsedIRI.create("https://example.org/author")
         ),
         Author(
             name = "Author that just has a name"
@@ -113,7 +113,7 @@ fun publishComparisonCommand() = PublishComparisonUseCase.PublishCommand(
             identifiers = mapOf(
                 "orcid" to listOf("0000-1111-2222-3333")
             ),
-            homepage = ParsedIRI("https://example.org")
+            homepage = ParsedIRI.create("https://example.org")
         )
     ),
     assignDOI = true

@@ -140,7 +140,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         val contributorId = ContributorId(UUID.randomUUID())
         val classCommand = CreateClassCommandPart(
             label = "Some class",
-            uri = ParsedIRI("https://example.org")
+            uri = ParsedIRI.create("https://example.org")
         )
         val contents = createRosettaStoneStatementCommand().copy(
             resources = emptyMap(),
@@ -186,7 +186,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         val contributorId = ContributorId(UUID.randomUUID())
         val classCommand = CreateClassCommandPart(
             label = "Some class",
-            uri = ParsedIRI("https://example.org")
+            uri = ParsedIRI.create("https://example.org")
         )
         val contents = createRosettaStoneStatementCommand().copy(
             resources = emptyMap(),

@@ -10,9 +10,9 @@ import org.orkg.MediaTypeCapabilitiesControllerTest.TestConfiguration
 import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.MediaTypeCapabilityRegistry
 import org.orkg.common.configuration.WebMvcConfiguration
-import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.testing.fixtures.FORMATTED_LABEL_CAPABILITY
 import org.orkg.common.testing.fixtures.INCOMING_STATEMENTS_COUNT_CAPABILITY
+import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.configuration.SecurityTestConfiguration
 import org.orkg.testing.spring.MockMvcBaseTest
@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController
     classes = [
         ProducingFakeController::class,
         NonProducingFakeController::class,
-        ExceptionHandler::class,
+        ExceptionTestConfiguration::class,
         FixedClockConfig::class,
         WebMvcConfiguration::class,
         MediaTypeCapabilityRegistry::class,

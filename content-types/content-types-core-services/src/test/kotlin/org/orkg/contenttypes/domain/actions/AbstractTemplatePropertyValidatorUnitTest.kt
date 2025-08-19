@@ -11,7 +11,7 @@ import org.orkg.common.RealNumber
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.InvalidBounds
 import org.orkg.contenttypes.domain.InvalidCardinality
-import org.orkg.contenttypes.domain.InvalidDatatype
+import org.orkg.contenttypes.domain.InvalidDataType
 import org.orkg.contenttypes.domain.InvalidMaxCount
 import org.orkg.contenttypes.domain.InvalidMinCount
 import org.orkg.contenttypes.domain.InvalidRegexPattern
@@ -174,9 +174,9 @@ internal class AbstractTemplatePropertyValidatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a string template property command, when datatype does not match xsd string, it throws an exception`() {
         val property = createStringLiteralTemplatePropertyCommand().copy(datatype = Classes.integer)
-        val exception = InvalidDatatype(property.datatype, Classes.string)
+        val exception = InvalidDataType(property.datatype, Classes.string)
 
-        assertThrows<InvalidDatatype> { abstractTemplatePropertyValidator.validate(property) }.message shouldBe exception.message
+        assertThrows<InvalidDataType> { abstractTemplatePropertyValidator.validate(property) }.message shouldBe exception.message
     }
 
     @Test
@@ -216,12 +216,12 @@ internal class AbstractTemplatePropertyValidatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a number template property command, when datatype does not match xsd integer, decimal or float, it throws an exception`() {
         val property = createNumberLiteralTemplatePropertyCommand().copy(datatype = Classes.string)
-        val exception = InvalidDatatype(
+        val exception = InvalidDataType(
             property.datatype,
             *Literals.XSD.entries.filter { it.isNumber }.map { it.`class` }.toTypedArray()
         )
 
-        assertThrows<InvalidDatatype> { abstractTemplatePropertyValidator.validate(property) }.message shouldBe exception.message
+        assertThrows<InvalidDataType> { abstractTemplatePropertyValidator.validate(property) }.message shouldBe exception.message
     }
 
     @Test

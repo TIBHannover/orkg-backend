@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
-import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.graph.adapter.input.rest.testing.fixtures.classResponseFields
@@ -30,11 +29,16 @@ import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectClass
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.annotations.TestWithMockUser
+import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
 import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
@@ -52,7 +56,9 @@ import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import java.util.Optional
 
-@ContextConfiguration(classes = [ClassController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(
+    classes = [ClassController::class, ExceptionTestConfiguration::class, CommonJacksonModule::class, FixedClockConfig::class]
+)
 @WebMvcTest(controllers = [ClassController::class])
 internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
     @MockkBean
@@ -215,12 +221,8 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
         get("/api/classes")
             .param("sort", "unknown")
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(400))
-            .andExpect(jsonPath("$.message").value(exception.message))
-            .andExpect(jsonPath("$.error").value(exception.status.reasonPhrase))
-            .andExpect(jsonPath("$.timestamp").exists())
-            .andExpect(jsonPath("$.path").value("/api/classes"))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:unknown_sorting_property")
 
         verify(exactly = 1) { classService.findAll(any()) }
     }
@@ -270,12 +272,8 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
             get("/api/classes")
                 .param("uri", "http://example.org/non-existent")
                 .perform()
-                .andExpect(status().isNotFound)
-                .andExpect(jsonPath("$.status").value(404))
-                .andExpect(jsonPath("$.message").value("""Class with URI "http://example.org/non-existent" not found."""))
-                .andExpect(jsonPath("$.error").value("Not Found"))
-                .andExpect(jsonPath("$.timestamp").exists())
-                .andExpect(jsonPath("$.path").value("/api/classes"))
+                .andExpectErrorStatus(NOT_FOUND)
+                .andExpectType("orkg:problem:class_not_found")
 
             verify(exactly = 1) { classService.findByURI(any()) }
         }

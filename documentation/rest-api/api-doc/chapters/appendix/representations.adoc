@@ -15,7 +15,7 @@ Although nanosecond precision is available currently, clients MUST NOT rely on i
 == Errors
 
 [cols="1,1,3"]
-include::{snippets}/errors-simple-message-exception/response-fields.adoc[]
+include::{snippets}/errors-unknown-parameter/response-fields.adoc[]
 
 [[page-representation]]
 == Pages

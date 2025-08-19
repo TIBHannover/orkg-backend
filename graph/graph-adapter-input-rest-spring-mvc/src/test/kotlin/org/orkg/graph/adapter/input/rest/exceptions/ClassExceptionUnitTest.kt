@@ -2,208 +2,120 @@ package org.orkg.graph.adapter.input.rest.exceptions
 
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.hamcrest.Matchers.`is`
-import org.hamcrest.Matchers.notNullValue
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.common.exceptions.ExceptionHandler
-import org.orkg.graph.adapter.input.rest.exceptions.ClassExceptionUnitTest.TestController
 import org.orkg.graph.domain.CannotResetURI
 import org.orkg.graph.domain.ClassAlreadyExists
-import org.orkg.graph.domain.ClassNotAllowed
 import org.orkg.graph.domain.ClassNotFound
 import org.orkg.graph.domain.ClassNotModifiable
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExternalClassNotFound
+import org.orkg.graph.domain.ReservedClassId
 import org.orkg.graph.domain.URIAlreadyInUse
 import org.orkg.graph.domain.URINotAbsolute
 import org.orkg.testing.configuration.FixedClockConfig
-import org.orkg.testing.spring.MockMvcBaseTest
+import org.orkg.testing.spring.MockMvcExceptionBaseTest
+import org.orkg.testing.spring.restdocs.exceptionResponseFields
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.boot.test.context.TestComponent
-import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.http.HttpStatus.FORBIDDEN
+import org.springframework.http.HttpStatus.NOT_FOUND
+import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
 
 @WebMvcTest
-@ContextConfiguration(classes = [TestController::class, ExceptionHandler::class, FixedClockConfig::class])
-internal class ClassExceptionUnitTest : MockMvcBaseTest("exceptions") {
+@ContextConfiguration(classes = [FixedClockConfig::class])
+internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun classNotModifiable() {
-        val id = ThingId("R123")
-
-        get("/class-not-modifiable")
-            .param("id", id.value)
-            .perform()
-            .andExpect(status().isForbidden)
-            .andExpect(jsonPath("$.status").value(HttpStatus.FORBIDDEN.value()))
-            .andExpect(jsonPath("$.error", `is`("Forbidden")))
-            .andExpect(jsonPath("$.path").value("/class-not-modifiable"))
-            .andExpect(jsonPath("$.message").value("""Class "$id" is not modifiable."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+        documentedGetRequestTo(ClassNotModifiable(ThingId("C123")))
+            .andExpectErrorStatus(FORBIDDEN)
+            .andExpectType("orkg:problem:class_not_modifiable")
+            .andExpectTitle("Forbidden")
+            .andExpectDetail("""Class "C123" is not modifiable.""")
+            .andDocumentWithDefaultExceptionResponseFields()
     }
 
     @Test
     fun uriAlreadyInUse() {
-        val id = ThingId("C123")
-        val uri = "https://example.org/C123"
-
-        get("/uri-already-in-use")
-            .param("id", id.value)
-            .param("uri", uri)
-            .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.error", `is`("Bad Request")))
-            .andExpect(jsonPath("$.errors.length()").value(1))
-            .andExpect(jsonPath("$.errors[0].field").value("uri"))
-            .andExpect(jsonPath("$.errors[0].message").value("""The URI <$uri> is already assigned to class with ID "$id"."""))
-            .andExpect(jsonPath("$.path").value("/uri-already-in-use"))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+        documentedGetRequestTo(URIAlreadyInUse(ParsedIRI("https://example.org/C123"), ThingId("C123")))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:uri_already_in_use")
+            .andExpectTitle("Bad Request")
+            .andExpect(jsonPath("$.errors[0].detail", `is`("""The URI <https://example.org/C123> is already assigned to class with ID "C123".""")))
+            .andExpect(jsonPath("$.errors[0].pointer", `is`("#/uri")))
+            .andDocumentWithValidationExceptionResponseFields()
     }
 
     @Test
     fun uriNotAbsolute() {
-        val uri = "invalid"
-
-        get("/uri-not-absolute")
-            .param("uri", uri)
-            .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.error", `is`("Bad Request")))
-            .andExpect(jsonPath("$.errors.length()").value(1))
-            .andExpect(jsonPath("$.errors[0].field").value("uri"))
-            .andExpect(jsonPath("$.errors[0].message").value("""The URI <$uri> is not absolute."""))
-            .andExpect(jsonPath("$.path").value("/uri-not-absolute"))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+        documentedGetRequestTo(URINotAbsolute(ParsedIRI("invalid")))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:uri_not_absolute")
+            .andExpectTitle("Bad Request")
+            .andExpect(jsonPath("$.errors[0].detail", `is`("""The URI <invalid> is not absolute.""")))
+            .andExpect(jsonPath("$.errors[0].pointer", `is`("#/uri")))
+            .andDocumentWithValidationExceptionResponseFields()
     }
 
     @Test
     fun classNotAllowed() {
-        val id = Classes.list
-
-        get("/class-not-allowed")
-            .param("id", id.value)
-            .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.error", `is`("Bad Request")))
-            .andExpect(jsonPath("$.path").value("/class-not-allowed"))
-            .andExpect(jsonPath("$.message").value("""Class id "$id" is not allowed."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+        documentedGetRequestTo(ReservedClassId(Classes.list))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:reserved_class_id")
+            .andExpectTitle("Bad Request")
+            .andExpectDetail("""Class id "${Classes.list}" is reserved.""")
+            .andDocumentWithDefaultExceptionResponseFields()
     }
 
     @Test
     fun classAlreadyExists() {
-        val id = Classes.list
-
-        get("/class-already-exists")
-            .param("id", id.value)
-            .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.error", `is`("Bad Request")))
-            .andExpect(jsonPath("$.path").value("/class-already-exists"))
-            .andExpect(jsonPath("$.message").value("""Class "$id" already exists."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+        documentedGetRequestTo(ClassAlreadyExists(Classes.list))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:class_already_exists")
+            .andExpectTitle("Bad Request")
+            .andExpectDetail("""Class "${Classes.list}" already exists.""")
+            .andDocumentWithDefaultExceptionResponseFields()
     }
 
     @Test
     fun cannotResetURI() {
-        val id = ThingId("C123")
-
-        get("/cannot-reset-uri")
-            .param("id", id.value)
-            .perform()
-            .andExpect(status().isForbidden)
-            .andExpect(jsonPath("$.status").value(HttpStatus.FORBIDDEN.value()))
-            .andExpect(jsonPath("$.error", `is`("Forbidden")))
-            .andExpect(jsonPath("$.path").value("/cannot-reset-uri"))
-            .andExpect(jsonPath("$.errors.length()").value(1))
-            .andExpect(jsonPath("$.errors[0].field").value("uri"))
-            .andExpect(jsonPath("$.errors[0].message").value("""The class "$id" already has a URI. It is not allowed to change URIs."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+        documentedGetRequestTo(CannotResetURI(Classes.list))
+            .andExpectErrorStatus(FORBIDDEN)
+            .andExpectType("orkg:problem:cannot_reset_uri")
+            .andExpectTitle("Forbidden")
+            .andExpect(jsonPath("$.errors[0].detail", `is`("""The class "${Classes.list}" already has a URI. It is not allowed to change URIs.""")))
+            .andExpect(jsonPath("$.errors[0].pointer", `is`("#/uri")))
+            .andDocumentWithValidationExceptionResponseFields()
     }
 
     @Test
     fun classNotFound() {
-        val id = "R123"
-
-        get("/class-not-found")
-            .param("id", id)
-            .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.error", `is`("Not Found")))
-            .andExpect(jsonPath("$.path").value("/class-not-found"))
-            .andExpect(jsonPath("$.message").value("""Class "$id" not found."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+        documentedGetRequestTo(ClassNotFound.withThingId(ThingId("C123")))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:class_not_found")
+            .andExpectTitle("Not Found")
+            .andExpectDetail("""Class "C123" not found.""")
+            .andExpect(jsonPath("$.id", `is`("C123")))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("id").description("The id of the class. (optional, either `id` or `uri` is present)").optional(),
+                        fieldWithPath("uri").type("URI").description("The uri of the class. (optional, either `id` or `uri` is present)").optional(),
+                    )
+                )
+            )
     }
 
     @Test
     fun externalClassNotFound() {
-        val id = "R123"
-        val ontologyId = "skos"
-
-        get("/external-class-not-found")
-            .param("id", id)
-            .param("ontologyId", ontologyId)
-            .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.error", `is`("Not Found")))
-            .andExpect(jsonPath("$.path").value("/external-class-not-found"))
-            .andExpect(jsonPath("$.message").value("""External class "$id" for ontology "$ontologyId" not found."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
-    }
-
-    @TestComponent
-    @RestController
-    internal class TestController {
-        @GetMapping("/class-not-modifiable")
-        fun classNotModifiable(
-            @RequestParam id: ThingId,
-        ): Unit = throw ClassNotModifiable(id)
-
-        @GetMapping("/uri-already-in-use")
-        fun uriAlreadyInUse(
-            @RequestParam id: ThingId,
-            @RequestParam uri: ParsedIRI,
-        ): Unit = throw URIAlreadyInUse(uri, id)
-
-        @GetMapping("/uri-not-absolute")
-        fun uriNotAbsolute(
-            @RequestParam uri: ParsedIRI,
-        ): Unit = throw URINotAbsolute(uri)
-
-        @GetMapping("/class-not-allowed")
-        fun classNotAllowed(
-            @RequestParam id: ThingId,
-        ): Unit = throw ClassNotAllowed(id)
-
-        @GetMapping("/class-already-exists")
-        fun classAlreadyExists(
-            @RequestParam id: ThingId,
-        ): Unit = throw ClassAlreadyExists(id)
-
-        @GetMapping("/cannot-reset-uri")
-        fun cannotResetURI(
-            @RequestParam id: ThingId,
-        ): Unit = throw CannotResetURI(id)
-
-        @GetMapping("/class-not-found")
-        fun classNotFound(
-            @RequestParam id: ThingId,
-        ): Unit = throw ClassNotFound.withThingId(id)
-
-        @GetMapping("/external-class-not-found")
-        fun externalClassNotFound(
-            @RequestParam ontologyId: String,
-            @RequestParam id: String,
-        ): Unit = throw ExternalClassNotFound(ontologyId, id)
+        documentedGetRequestTo(ExternalClassNotFound("skos", "R123"))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:external_class_not_found")
+            .andExpectTitle("Not Found")
+            .andExpectDetail("""External class "R123" for ontology "skos" not found.""")
+            .andDocumentWithDefaultExceptionResponseFields()
     }
 }

@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
-import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.graph.adapter.input.rest.json.GraphJacksonModule
@@ -31,11 +30,15 @@ import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectPredicate
 import org.orkg.testing.annotations.TestWithMockCurator
 import org.orkg.testing.annotations.TestWithMockUser
+import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
 import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
@@ -47,7 +50,6 @@ import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.Clock
 import java.time.OffsetDateTime
@@ -57,7 +59,7 @@ import java.util.Optional
 @ContextConfiguration(
     classes = [
         PredicateController::class,
-        ExceptionHandler::class,
+        ExceptionTestConfiguration::class,
         CommonJacksonModule::class,
         GraphJacksonModule::class,
         FixedClockConfig::class
@@ -260,12 +262,8 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
         get("/api/predicates")
             .param("sort", "unknown")
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(400))
-            .andExpect(jsonPath("$.message").value(exception.message))
-            .andExpect(jsonPath("$.error").value(exception.status.reasonPhrase))
-            .andExpect(jsonPath("$.timestamp").exists())
-            .andExpect(jsonPath("$.path").value("/api/predicates"))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:unknown_sorting_property")
 
         verify(exactly = 1) { predicateService.findAll(any()) }
     }

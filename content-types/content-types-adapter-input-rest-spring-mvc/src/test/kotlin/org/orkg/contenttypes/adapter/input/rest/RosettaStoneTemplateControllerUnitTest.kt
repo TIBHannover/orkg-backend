@@ -13,10 +13,8 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
-import org.orkg.contenttypes.domain.RosettaStoneTemplateNotFound
 import org.orkg.contenttypes.domain.testing.fixtures.createRosettaStoneTemplate
 import org.orkg.contenttypes.input.RosettaStoneTemplateUseCases
 import org.orkg.contenttypes.input.testing.fixtures.numberLiteralTemplatePropertyRequest
@@ -32,13 +30,16 @@ import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectRosettaStoneTemplate
 import org.orkg.testing.annotations.TestWithMockUser
+import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
 import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
@@ -50,7 +51,6 @@ import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.Clock
 import java.time.OffsetDateTime
@@ -60,7 +60,7 @@ import java.util.Optional
 @ContextConfiguration(
     classes = [
         RosettaStoneTemplateController::class,
-        ExceptionHandler::class,
+        ExceptionTestConfiguration::class,
         CommonJacksonModule::class,
         ContentTypeJacksonModule::class,
         FixedClockConfig::class
@@ -119,16 +119,13 @@ internal class RosettaStoneTemplateControllerUnitTest : MockMvcBaseTest("rosetta
     @Test
     fun `Given a rosetta stone template, when it is fetched by id and service reports missing rosetta stone template, then status is 404 NOT FOUND`() {
         val id = ThingId("Missing")
-        val exception = RosettaStoneTemplateNotFound(id)
         every { templateService.findById(id) } returns Optional.empty()
 
         get("/api/rosetta-stone/templates/{id}", id)
             .accept(ROSETTA_STONE_TEMPLATE_JSON_V1)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.path").value("/api/rosetta-stone/templates/$id"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:rosetta_stone_template_not_found")
 
         verify(exactly = 1) { templateService.findById(id) }
     }

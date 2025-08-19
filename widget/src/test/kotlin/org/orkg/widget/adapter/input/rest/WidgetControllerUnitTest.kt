@@ -9,15 +9,21 @@ import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.exceptions.MissingParameter
 import org.orkg.common.exceptions.TooManyParameters
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.graph.testing.asciidoc.Asciidoc
+import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcBaseTest
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectDetail
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorResponse
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectTitle
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
 import org.orkg.widget.input.ResolveDOIUseCase
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
@@ -30,7 +36,14 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 /** An example DOI. Will resolve to the DOI handbook. */
 const val EXAMPLE_DOI = "10.1000/182"
 
-@ContextConfiguration(classes = [WidgetController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(
+    classes = [
+        WidgetController::class,
+        ExceptionTestConfiguration::class,
+        CommonJacksonModule::class,
+        FixedClockConfig::class
+    ]
+)
 @WebMvcTest(controllers = [WidgetController::class])
 internal class WidgetControllerUnitTest : MockMvcBaseTest("widget") {
     @MockkBean
@@ -108,13 +121,11 @@ internal class WidgetControllerUnitTest : MockMvcBaseTest("widget") {
             .param("doi", EXAMPLE_DOI)
             .param("title", "some title")
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(
-                jsonPath(
-                    "$.message",
-                    `is`("Too many parameters: At most one out of \"doi\", \"title\" is allowed.")
-                )
-            )
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:too_many_parameters")
+            .andExpectTitle("Bad Request")
+            .andExpectDetail("Too many parameters: At most one out of \"doi\", \"title\" is allowed.")
+            .andExpectErrorResponse("/api/widgets")
 
         verify(exactly = 1) { resolveDOIUseCase.resolveDOI(EXAMPLE_DOI, "some title") }
     }
@@ -127,13 +138,11 @@ internal class WidgetControllerUnitTest : MockMvcBaseTest("widget") {
 
         get("/api/widgets")
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(
-                jsonPath(
-                    "$.message",
-                    `is`("Missing parameter: At least one parameter out of \"doi\", \"title\" is required.")
-                )
-            )
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:missing_parameter")
+            .andExpectTitle("Bad Request")
+            .andExpectDetail("Missing parameter: At least one parameter out of \"doi\", \"title\" is required.")
+            .andExpectErrorResponse("/api/widgets")
 
         verify(exactly = 1) { resolveDOIUseCase.resolveDOI(null, null) }
     }

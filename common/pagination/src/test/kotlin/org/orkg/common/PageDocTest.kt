@@ -13,7 +13,6 @@ import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
@@ -29,7 +28,6 @@ internal class PageDocTest : MockMvcBaseTest("paged") {
             .param("sort", "label", "desc")
             .perform()
             .andExpect(MockMvcResultMatchers.status().isOk)
-            .andDo(MockMvcResultHandlers.print())
             .andExpectPage()
             .andDo(
                 documentationHandler.document(

@@ -1,11 +1,7 @@
 package org.orkg.contenttypes.adapter.input.rest.exceptions
 
-import org.hamcrest.Matchers.`is`
-import org.hamcrest.Matchers.notNullValue
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.common.exceptions.ExceptionHandler
-import org.orkg.contenttypes.adapter.input.rest.exceptions.TableExceptionUnitTest.TestController
 import org.orkg.contenttypes.domain.MissingTableHeaderValue
 import org.orkg.contenttypes.domain.MissingTableRowValues
 import org.orkg.contenttypes.domain.MissingTableRows
@@ -14,162 +10,83 @@ import org.orkg.contenttypes.domain.TableNotFound
 import org.orkg.contenttypes.domain.TableNotModifiable
 import org.orkg.contenttypes.domain.TooManyTableRowValues
 import org.orkg.testing.configuration.FixedClockConfig
-import org.orkg.testing.spring.MockMvcBaseTest
+import org.orkg.testing.spring.MockMvcExceptionBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.boot.test.context.TestComponent
-import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.http.HttpStatus.FORBIDDEN
+import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
 
 @WebMvcTest
-@ContextConfiguration(classes = [TestController::class, ExceptionHandler::class, FixedClockConfig::class])
-internal class TableExceptionUnitTest : MockMvcBaseTest("tables") {
+@ContextConfiguration(classes = [FixedClockConfig::class])
+internal class TableExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun tableNotFound() {
-        val id = "R123"
-
-        get("/table-not-found")
-            .param("id", id)
-            .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.error", `is`("Not Found")))
-            .andExpect(jsonPath("$.path").value("/table-not-found"))
-            .andExpect(jsonPath("$.message").value("""Table "$id" not found."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+        documentedGetRequestTo(TableNotFound(ThingId("R123")))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:table_not_found")
+            .andExpectTitle("Not Found")
+            .andExpectDetail("""Table "R123" not found.""")
+            .andDocumentWithDefaultExceptionResponseFields()
     }
 
     @Test
     fun missingTableRows() {
-        get("/missing-table-rows")
-            .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.error", `is`("Bad Request")))
-            .andExpect(jsonPath("$.path").value("/missing-table-rows"))
-            .andExpect(jsonPath("$.message").value("""Missing table rows. At least one rows is required."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+        documentedGetRequestTo(MissingTableRows())
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:missing_table_rows")
+            .andExpectTitle("Bad Request")
+            .andExpectDetail("""Missing table rows. At least one rows is required.""")
+            .andDocumentWithDefaultExceptionResponseFields()
     }
 
     @Test
     fun missingTableHeaderValue() {
-        val index = "5"
-
-        get("/missing-table-header-value")
-            .param("index", index)
-            .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.error", `is`("Bad Request")))
-            .andExpect(jsonPath("$.path").value("/missing-table-header-value"))
-            .andExpect(jsonPath("$.message").value("""Missing table header value at index $index."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+        documentedGetRequestTo(MissingTableHeaderValue(5))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:missing_table_header_value")
+            .andExpectTitle("Bad Request")
+            .andExpectDetail("""Missing table header value at index 5.""")
+            .andDocumentWithDefaultExceptionResponseFields()
     }
 
     @Test
     fun tableHeaderValueMustBeLiteral() {
-        val index = "5"
-
-        get("/table-header-value-must-be-literal")
-            .param("index", index)
-            .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.error", `is`("Bad Request")))
-            .andExpect(jsonPath("$.path").value("/table-header-value-must-be-literal"))
-            .andExpect(jsonPath("$.message").value("""Table header value at index "$index" must be a literal."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+        documentedGetRequestTo(TableHeaderValueMustBeLiteral(5))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:table_header_value_must_be_literal")
+            .andExpectTitle("Bad Request")
+            .andExpectDetail("""Table header value at index 5 must be a literal.""")
+            .andDocumentWithDefaultExceptionResponseFields()
     }
 
     @Test
     fun tooManyTableRowValues() {
-        val index = "5"
-        val expectedSize = "10"
-
-        get("/too-many-table-row-values")
-            .param("index", index)
-            .param("expectedSize", expectedSize)
-            .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.error", `is`("Bad Request")))
-            .andExpect(jsonPath("$.path").value("/too-many-table-row-values"))
-            .andExpect(jsonPath("$.message").value("""Row $index has more values than the header. Expected exactly $expectedSize values based on header."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+        documentedGetRequestTo(TooManyTableRowValues(5, 10))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:too_many_table_row_values")
+            .andExpectTitle("Bad Request")
+            .andExpectDetail("""Row 5 has more values than the header. Expected exactly 10 values based on header.""")
+            .andDocumentWithDefaultExceptionResponseFields()
     }
 
     @Test
     fun missingTableRowValues() {
-        val index = "5"
-        val expectedSize = "10"
-
-        get("/missing-table-row-values")
-            .param("index", index)
-            .param("expectedSize", expectedSize)
-            .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.error", `is`("Bad Request")))
-            .andExpect(jsonPath("$.path").value("/missing-table-row-values"))
-            .andExpect(jsonPath("$.message").value("""Row $index has less values than the header. Expected exactly $expectedSize values based on header."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+        documentedGetRequestTo(MissingTableRowValues(10, 5))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:missing_table_row_values")
+            .andExpectTitle("Bad Request")
+            .andExpectDetail("""Row 10 has less values than the header. Expected exactly 5 values based on header.""")
+            .andDocumentWithDefaultExceptionResponseFields()
     }
 
     @Test
     fun tableNotModifiable() {
-        val id = "R123"
-
-        get("/table-not-modifiable")
-            .param("id", id)
-            .perform()
-            .andExpect(status().isForbidden)
-            .andExpect(jsonPath("$.status").value(HttpStatus.FORBIDDEN.value()))
-            .andExpect(jsonPath("$.error", `is`("Forbidden")))
-            .andExpect(jsonPath("$.path").value("/table-not-modifiable"))
-            .andExpect(jsonPath("$.message").value("""Table "$id" is not modifiable."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
-    }
-
-    @TestComponent
-    @RestController
-    internal class TestController {
-        @GetMapping("/table-not-found")
-        fun tableNotFound(
-            @RequestParam id: ThingId,
-        ): Unit = throw TableNotFound(id)
-
-        @GetMapping("/missing-table-rows")
-        fun missingTableRows(): Unit = throw MissingTableRows()
-
-        @GetMapping("/missing-table-header-value")
-        fun missingTableHeaderValue(
-            @RequestParam index: Int,
-        ): Unit = throw MissingTableHeaderValue(index)
-
-        @GetMapping("/table-header-value-must-be-literal")
-        fun tableHeaderValueMustBeLiteral(
-            @RequestParam index: Int,
-        ): Unit = throw TableHeaderValueMustBeLiteral(index)
-
-        @GetMapping("/too-many-table-row-values")
-        fun tooManyTableRowValues(
-            @RequestParam index: Int,
-            @RequestParam expectedSize: Int,
-        ): Unit = throw TooManyTableRowValues(index, expectedSize)
-
-        @GetMapping("/missing-table-row-values")
-        fun missingTableRowValues(
-            @RequestParam index: Int,
-            @RequestParam expectedSize: Int,
-        ): Unit = throw MissingTableRowValues(index, expectedSize)
-
-        @GetMapping("/table-not-modifiable")
-        fun tableNotModifiable(
-            @RequestParam id: ThingId,
-        ): Unit = throw TableNotModifiable(id)
+        documentedGetRequestTo(TableNotModifiable(ThingId("R123")))
+            .andExpectErrorStatus(FORBIDDEN)
+            .andExpectType("orkg:problem:table_not_modifiable")
+            .andExpectTitle("Forbidden")
+            .andExpectDetail("""Table "R123" is not modifiable.""")
+            .andDocumentWithDefaultExceptionResponseFields()
     }
 }

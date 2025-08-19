@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
-import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.graph.domain.ChildClass
 import org.orkg.graph.domain.ClassHierarchyEntry
@@ -26,14 +25,18 @@ import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectClass
 import org.orkg.testing.annotations.TestWithMockCurator
+import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.configuration.SecurityTestConfiguration
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
 import org.orkg.testing.spring.restdocs.pagedResponseFields
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageImpl
+import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
 import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
@@ -49,9 +52,14 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.Optional
 
-@Import(SecurityTestConfiguration::class)
 @ContextConfiguration(
-    classes = [ClassHierarchyController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class]
+    classes = [
+        ClassHierarchyController::class,
+        ExceptionTestConfiguration::class,
+        CommonJacksonModule::class,
+        FixedClockConfig::class,
+        SecurityTestConfiguration::class
+    ]
 )
 @WebMvcTest(controllers = [ClassHierarchyController::class])
 internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarchies") {
@@ -109,7 +117,8 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
 
         get("/api/classes/{id}/children", parentId)
             .perform()
-            .andExpect(status().isNotFound)
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:class_not_found")
 
         verify(exactly = 1) { classHierarchyService.findAllChildrenByAncestorId(parentId, any()) }
     }
@@ -230,7 +239,8 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
 
         get("/api/classes/{id}/root", childId)
             .perform()
-            .andExpect(status().isNotFound)
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:class_not_found")
 
         verify(exactly = 1) { classHierarchyService.findRootByDescendantId(childId) }
     }
@@ -295,7 +305,8 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
         post("/api/classes/{id}/children", parentId)
             .content(request)
             .perform()
-            .andExpect(status().isNotFound)
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:class_not_found")
 
         verify(exactly = 1) { classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), true) }
     }
@@ -313,7 +324,8 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
         post("/api/classes/{id}/children", classId)
             .content(request)
             .perform()
-            .andExpect(status().isBadRequest)
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:invalid_subclass_relation")
 
         verify(exactly = 1) { classHierarchyService.create(ContributorId(MockUserId.CURATOR), classId, setOf(classId), true) }
     }
@@ -333,7 +345,8 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
         post("/api/classes/{id}/children", parentId)
             .content(request)
             .perform()
-            .andExpect(status().isBadRequest)
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:parent_class_already_exists")
 
         verify(exactly = 1) { classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), true) }
     }
@@ -392,7 +405,8 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
         patch("/api/classes/{id}/children", parentId)
             .content(request)
             .perform()
-            .andExpect(status().isNotFound)
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:class_not_found")
 
         verify(exactly = 1) { classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), false) }
     }
@@ -410,7 +424,8 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
         patch("/api/classes/{id}/children", classId)
             .content(request)
             .perform()
-            .andExpect(status().isBadRequest)
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:invalid_subclass_relation")
 
         verify(exactly = 1) { classHierarchyService.create(ContributorId(MockUserId.CURATOR), classId, setOf(classId), false) }
     }
@@ -430,7 +445,8 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
         patch("/api/classes/{id}/children", parentId)
             .content(request)
             .perform()
-            .andExpect(status().isBadRequest)
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:parent_class_already_exists")
 
         verify(exactly = 1) { classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), false) }
     }
@@ -468,7 +484,8 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
 
         delete("/api/classes/{id}/parent", childId)
             .perform()
-            .andExpect(status().isNotFound)
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:class_not_found")
 
         verify(exactly = 1) { classHierarchyService.deleteByChildId(childId) }
     }
@@ -520,7 +537,8 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
         post("/api/classes/{id}/parent", childId)
             .content(request)
             .perform()
-            .andExpect(status().isNotFound)
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:class_not_found")
 
         verify(exactly = 1) { classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), false) }
     }
@@ -538,7 +556,8 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
         post("/api/classes/{id}/parent", classId)
             .content(request)
             .perform()
-            .andExpect(status().isBadRequest)
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:invalid_subclass_relation")
 
         verify(exactly = 1) { classHierarchyService.create(ContributorId(MockUserId.CURATOR), classId, setOf(classId), false) }
     }
@@ -558,7 +577,8 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
         post("/api/classes/{id}/parent", childId)
             .content(request)
             .perform()
-            .andExpect(status().isBadRequest)
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:parent_class_already_exists")
 
         verify(exactly = 1) { classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), false) }
     }
@@ -597,7 +617,8 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
 
         get("/api/classes/{id}/count", id)
             .perform()
-            .andExpect(status().isNotFound)
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:class_not_found")
 
         verify(exactly = 1) { classHierarchyService.countClassInstances(id) }
     }
@@ -648,7 +669,8 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
 
         get("/api/classes/{id}/hierarchy", childId)
             .perform()
-            .andExpect(status().isNotFound)
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:class_not_found")
 
         verify(exactly = 1) { classHierarchyService.findClassHierarchy(childId, any()) }
     }

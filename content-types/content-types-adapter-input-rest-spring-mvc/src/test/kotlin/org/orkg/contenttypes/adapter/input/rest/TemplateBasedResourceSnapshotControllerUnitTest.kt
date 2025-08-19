@@ -8,12 +8,10 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.configuration.WebMvcConfiguration
-import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.contenttypes.adapter.input.rest.TemplateBasedResourceSnapshotController.CreateTemplateBasedResourceSnapshotRequest
 import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
 import org.orkg.contenttypes.domain.SnapshotId
-import org.orkg.contenttypes.domain.TemplateBasedResourceSnapshotNotFound
 import org.orkg.contenttypes.domain.testing.fixtures.createTemplateBasedResourceSnapshotV1
 import org.orkg.contenttypes.input.TemplateBasedResourceSnapshotUseCases
 import org.orkg.graph.input.FormattedLabelUseCases
@@ -21,12 +19,15 @@ import org.orkg.graph.input.StatementUseCases
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectTemplateBasedResourceSnapshot
 import org.orkg.testing.annotations.TestWithMockUser
+import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.MediaType.TEXT_HTML_VALUE
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
 import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
@@ -40,14 +41,13 @@ import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.Optional
 
 @ContextConfiguration(
     classes = [
         TemplateBasedResourceSnapshotController::class,
-        ExceptionHandler::class,
+        ExceptionTestConfiguration::class,
         CommonJacksonModule::class,
         ContentTypeJacksonModule::class,
         WebMvcConfiguration::class,
@@ -109,15 +109,12 @@ internal class TemplateBasedResourceSnapshotControllerUnitTest : MockMvcBaseTest
     fun `Given a template based resource snapshot, when it is fetched by id and service reports missing template based resource snapshot, then status is 404 NOT FOUND`() {
         val id = SnapshotId("Missing")
         val resourceId = ThingId("R123")
-        val exception = TemplateBasedResourceSnapshotNotFound(id)
         every { templateBasedResourceSnapshotService.findById(id) } returns Optional.empty()
 
         get("/api/resources/{id}/snapshots/{snapshotId}", resourceId, id)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.path").value("/api/resources/$resourceId/snapshots/$id"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:template_based_resource_snapshot_not_found")
 
         verify(exactly = 1) { templateBasedResourceSnapshotService.findById(id) }
     }

@@ -16,7 +16,6 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.common.configuration.WebMvcConfiguration
-import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.community.input.RetrieveContributorUseCase
@@ -42,13 +41,18 @@ import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectResource
 import org.orkg.testing.annotations.TestWithMockUser
+import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
+import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
 import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
@@ -69,7 +73,7 @@ import java.util.Optional
 @ContextConfiguration(
     classes = [
         ResourceController::class,
-        ExceptionHandler::class,
+        ExceptionTestConfiguration::class,
         CommonJacksonModule::class,
         FixedClockConfig::class,
         WebMvcConfiguration::class
@@ -147,12 +151,8 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
 
         get("/api/resources/{id}/timeline", id)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(404))
-            .andExpect(jsonPath("$.message").value("""Resource "$id" not found."""))
-            .andExpect(jsonPath("$.error").value("Not Found"))
-            .andExpect(jsonPath("$.timestamp").exists())
-            .andExpect(jsonPath("$.path").value("/api/resources/$id/timeline"))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:resource_not_found")
 
         verify(exactly = 1) { resourceService.findTimelineByResourceId(id, any()) }
     }
@@ -175,12 +175,8 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
         post("/api/resources")
             .content(command)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(400))
-            .andExpect(jsonPath("$.message").value(exception.message))
-            .andExpect(jsonPath("$.error").value(exception.status.reasonPhrase))
-            .andExpect(jsonPath("$.timestamp").exists())
-            .andExpect(jsonPath("$.path").value("/api/resources"))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:invalid_class_collection")
 
         verify(exactly = 1) { contributorService.findById(any()) }
         verify(exactly = 1) { resourceService.create(any<CreateCommand>()) }
@@ -284,12 +280,8 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
         get("/api/resources")
             .param("sort", "unknown")
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(400))
-            .andExpect(jsonPath("$.message").value(exception.message))
-            .andExpect(jsonPath("$.error").value(exception.status.reasonPhrase))
-            .andExpect(jsonPath("$.timestamp").exists())
-            .andExpect(jsonPath("$.path").value("/api/resources"))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:unknown_sorting_property")
 
         verify(exactly = 1) { resourceService.findAll(any()) }
     }
@@ -364,12 +356,8 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
         put("/api/resources/{id}", id)
             .content(command)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(400))
-            .andExpect(jsonPath("$.message").value(exception.message))
-            .andExpect(jsonPath("$.error").value(exception.status.reasonPhrase))
-            .andExpect(jsonPath("$.timestamp").exists())
-            .andExpect(jsonPath("$.path").value("/api/resources/$id"))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:invalid_class_collection")
 
         verify(exactly = 1) { resourceService.update(command) }
     }

@@ -10,23 +10,24 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
-import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
 import org.orkg.contenttypes.domain.ComparisonNotFound
-import org.orkg.contenttypes.domain.ComparisonRelatedFigureNotFound
 import org.orkg.contenttypes.domain.testing.fixtures.createComparisonRelatedFigure
 import org.orkg.contenttypes.input.ComparisonRelatedFigureUseCases
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectComparisonRelatedFigure
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.annotations.TestWithMockUser
+import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
 import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
@@ -36,14 +37,13 @@ import org.springframework.restdocs.request.RequestDocumentation.parameterWithNa
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.Optional
 
 @ContextConfiguration(
     classes = [
         ComparisonRelatedFigureController::class,
-        ExceptionHandler::class,
+        ExceptionTestConfiguration::class,
         CommonJacksonModule::class,
         ContentTypeJacksonModule::class,
         FixedClockConfig::class
@@ -96,7 +96,6 @@ internal class ComparisonRelatedFigureControllerUnitTest : MockMvcBaseTest("comp
     fun `Given a comparison related figure, when fetched by id but service reports missing comparison related figure, then status is 404 NOT FOUND`() {
         val comparisonId = ThingId("R123")
         val comparisonRelatedFigureId = ThingId("R1435")
-        val exception = ComparisonRelatedFigureNotFound(comparisonRelatedFigureId)
 
         every {
             comparisonRelatedFigureService.findByIdAndComparisonId(comparisonId, comparisonRelatedFigureId)
@@ -105,10 +104,8 @@ internal class ComparisonRelatedFigureControllerUnitTest : MockMvcBaseTest("comp
         get("/api/comparisons/{id}/related-figures/{comparisonRelatedFigureId}", comparisonId, comparisonRelatedFigureId)
             .accept(COMPARISON_JSON_V2)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.path").value("/api/comparisons/$comparisonId/related-figures/$comparisonRelatedFigureId"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:comparison_related_figure_not_found")
 
         verify(exactly = 1) { comparisonRelatedFigureService.findByIdAndComparisonId(comparisonId, comparisonRelatedFigureId) }
     }
@@ -186,10 +183,8 @@ internal class ComparisonRelatedFigureControllerUnitTest : MockMvcBaseTest("comp
             .accept(COMPARISON_JSON_V2)
             .contentType(COMPARISON_JSON_V2)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.path").value("/api/comparisons/$comparisonId/related-figures"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:comparison_not_found")
 
         verify(exactly = 1) { comparisonRelatedFigureService.create(any()) }
     }

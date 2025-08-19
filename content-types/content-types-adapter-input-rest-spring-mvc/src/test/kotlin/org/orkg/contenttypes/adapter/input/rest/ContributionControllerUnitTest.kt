@@ -7,11 +7,9 @@ import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.contenttypes.adapter.input.rest.PaperController.CreatePaperRequest.ContributionRequestPart
 import org.orkg.contenttypes.adapter.input.rest.PaperController.CreatePaperRequest.ContributionRequestPart.StatementObjectRequest
-import org.orkg.contenttypes.domain.ContributionNotFound
 import org.orkg.contenttypes.domain.DuplicateTempIds
 import org.orkg.contenttypes.domain.EmptyContribution
 import org.orkg.contenttypes.domain.InvalidStatementSubject
@@ -28,12 +26,16 @@ import org.orkg.graph.testing.asciidoc.allowedVisibilityValues
 import org.orkg.testing.andExpectContribution
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.annotations.TestWithMockUser
+import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
 import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
@@ -44,12 +46,16 @@ import org.springframework.restdocs.request.RequestDocumentation.parameterWithNa
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.Optional
 
 @ContextConfiguration(
-    classes = [ContributionController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class]
+    classes = [
+        ContributionController::class,
+        ExceptionTestConfiguration::class,
+        CommonJacksonModule::class,
+        FixedClockConfig::class
+    ]
 )
 @WebMvcTest(controllers = [ContributionController::class])
 internal class ContributionControllerUnitTest : MockMvcBaseTest("contributions") {
@@ -95,16 +101,13 @@ internal class ContributionControllerUnitTest : MockMvcBaseTest("contributions")
     @Test
     fun `Given a contribution, when it is fetched by id and service reports missing contribution, then status is 404 NOT FOUND`() {
         val id = ThingId("Missing")
-        val exception = ContributionNotFound(id)
         every { contributionService.findById(id) } returns Optional.empty()
 
         get("/api/contributions/{id}", id)
             .accept(CONTRIBUTION_JSON_V2)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.path").value("/api/contributions/$id"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:contribution_not_found")
 
         verify(exactly = 1) { contributionService.findById(id) }
     }
@@ -186,10 +189,8 @@ internal class ContributionControllerUnitTest : MockMvcBaseTest("contributions")
             .accept(CONTRIBUTION_JSON_V2)
             .contentType(CONTRIBUTION_JSON_V2)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/papers/$paperId/contributions"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:invalid_temp_id")
 
         verify(exactly = 1) { contributionService.create(any()) }
     }
@@ -206,10 +207,8 @@ internal class ContributionControllerUnitTest : MockMvcBaseTest("contributions")
             .accept(CONTRIBUTION_JSON_V2)
             .contentType(CONTRIBUTION_JSON_V2)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/papers/$paperId/contributions"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:duplicate_temp_ids")
 
         verify(exactly = 1) { contributionService.create(any()) }
     }
@@ -226,10 +225,8 @@ internal class ContributionControllerUnitTest : MockMvcBaseTest("contributions")
             .accept(CONTRIBUTION_JSON_V2)
             .contentType(CONTRIBUTION_JSON_V2)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.path").value("/api/papers/$paperId/contributions"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:paper_not_found")
 
         verify(exactly = 1) { contributionService.create(any()) }
     }
@@ -246,10 +243,8 @@ internal class ContributionControllerUnitTest : MockMvcBaseTest("contributions")
             .accept(CONTRIBUTION_JSON_V2)
             .contentType(CONTRIBUTION_JSON_V2)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/papers/$paperId/contributions"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:thing_not_defined")
 
         verify(exactly = 1) { contributionService.create(any()) }
     }
@@ -266,10 +261,8 @@ internal class ContributionControllerUnitTest : MockMvcBaseTest("contributions")
             .accept(CONTRIBUTION_JSON_V2)
             .contentType(CONTRIBUTION_JSON_V2)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.path").value("/api/papers/$paperId/contributions"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:thing_not_found")
 
         verify(exactly = 1) { contributionService.create(any()) }
     }
@@ -286,10 +279,8 @@ internal class ContributionControllerUnitTest : MockMvcBaseTest("contributions")
             .accept(CONTRIBUTION_JSON_V2)
             .contentType(CONTRIBUTION_JSON_V2)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/papers/$paperId/contributions"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:thing_is_not_a_class")
 
         verify(exactly = 1) { contributionService.create(any()) }
     }
@@ -306,10 +297,8 @@ internal class ContributionControllerUnitTest : MockMvcBaseTest("contributions")
             .accept(CONTRIBUTION_JSON_V2)
             .contentType(CONTRIBUTION_JSON_V2)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/papers/$paperId/contributions"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:thing_is_not_a_predicate")
 
         verify(exactly = 1) { contributionService.create(any()) }
     }
@@ -326,10 +315,8 @@ internal class ContributionControllerUnitTest : MockMvcBaseTest("contributions")
             .accept(CONTRIBUTION_JSON_V2)
             .contentType(CONTRIBUTION_JSON_V2)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/papers/$paperId/contributions"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:invalid_statement_subject")
 
         verify(exactly = 1) { contributionService.create(any()) }
     }
@@ -346,10 +333,8 @@ internal class ContributionControllerUnitTest : MockMvcBaseTest("contributions")
             .accept(CONTRIBUTION_JSON_V2)
             .contentType(CONTRIBUTION_JSON_V2)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/papers/$paperId/contributions"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:empty_contribution")
 
         verify(exactly = 1) { contributionService.create(any()) }
     }

@@ -14,7 +14,6 @@ import org.orkg.common.exceptions.TooManyParameters
 import org.orkg.community.adapter.input.rest.mapping.ObservatoryRepresentationAdapter
 import org.orkg.community.domain.Contributor
 import org.orkg.community.domain.ObservatoryNotFound
-import org.orkg.community.domain.ObservatoryURLNotFound
 import org.orkg.community.input.CreateObservatoryUseCase.CreateCommand
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.UpdateObservatoryUseCase.UpdateCommand
@@ -70,7 +69,7 @@ class ObservatoryController(
         service
             .findByDisplayId(id)
             .mapToObservatoryRepresentation()
-            .orElseThrow { ObservatoryURLNotFound(id) }
+            .orElseThrow { ObservatoryNotFound(id) }
     }
 
     @GetMapping

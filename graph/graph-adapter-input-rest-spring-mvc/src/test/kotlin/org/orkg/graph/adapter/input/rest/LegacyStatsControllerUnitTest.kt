@@ -5,11 +5,11 @@ import io.mockk.every
 import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.orkg.common.ObservatoryId
-import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.community.input.RetrieveContributorUseCase
 import org.orkg.graph.domain.ObservatoryStats
 import org.orkg.graph.input.LegacyStatisticsUseCases
+import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
@@ -19,7 +19,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.UUID
 
 @ContextConfiguration(
-    classes = [LegacyStatsController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class]
+    classes = [LegacyStatsController::class, ExceptionTestConfiguration::class, CommonJacksonModule::class, FixedClockConfig::class]
 )
 @WebMvcTest(controllers = [LegacyStatsController::class])
 internal class LegacyStatsControllerUnitTest : MockMvcBaseTest("stats") {

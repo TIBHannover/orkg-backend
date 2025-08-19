@@ -13,18 +13,21 @@ import org.hamcrest.Matchers.notNullValue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
-import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.testing.fixtures.TestBodyPublisher
+import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.configuration.SecurityTestConfiguration
 import org.orkg.testing.spring.MockMvcBaseTest
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Import
 import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE
 import org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED
 import org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE
 import org.springframework.http.MediaType.APPLICATION_JSON
@@ -41,7 +44,6 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.util.Base64
 
-@Import(SecurityTestConfiguration::class, LegacyAuthControllerUnitTest.LegacyAuthControllerTestConfiguration::class)
 @TestPropertySource(
     properties = [
         "orkg.oauth.legacy-client-id=orkg-client",
@@ -50,7 +52,15 @@ import java.util.Base64
         "orkg.oauth.registration-endpoint=http://localhost:1234/path/to/registration/endpoint",
     ]
 )
-@ContextConfiguration(classes = [LegacyAuthController::class, ExceptionHandler::class, FixedClockConfig::class])
+@ContextConfiguration(
+    classes = [
+        LegacyAuthController::class,
+        FixedClockConfig::class,
+        SecurityTestConfiguration::class,
+        LegacyAuthControllerUnitTest.LegacyAuthControllerTestConfiguration::class,
+        ExceptionTestConfiguration::class
+    ]
+)
 @WebMvcTest(controllers = [LegacyAuthController::class])
 internal class LegacyAuthControllerUnitTest : MockMvcBaseTest("legacy-auth") {
     @Autowired
@@ -388,7 +398,8 @@ internal class LegacyAuthControllerUnitTest : MockMvcBaseTest("legacy-auth") {
             .param("password", password)
             .param("client_id", "orkg-client")
             .perform()
-            .andExpect(status().isBadRequest)
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:invalid_request")
             .andExpect(jsonPath("$.error", `is`("invalid_request")))
             .andExpect(jsonPath("$.error_description", `is`("Missing grant type")))
     }
@@ -406,7 +417,8 @@ internal class LegacyAuthControllerUnitTest : MockMvcBaseTest("legacy-auth") {
             .param("password", password)
             .param("client_id", "orkg-client")
             .perform()
-            .andExpect(status().isBadRequest)
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:unsupported_grant_type")
             .andExpect(jsonPath("$.error", `is`("unsupported_grant_type")))
             .andExpect(jsonPath("$.error_description", `is`("Unsupported grant type")))
     }
@@ -425,12 +437,8 @@ internal class LegacyAuthControllerUnitTest : MockMvcBaseTest("legacy-auth") {
             .param("username", username)
             .param("client_id", "orkg-client")
             .perform()
-            .andExpect(status().isServiceUnavailable)
-            .andExpect(jsonPath("$.status", `is`(503)))
-            .andExpect(jsonPath("$.error", `is`("Service Unavailable")))
-            .andExpect(jsonPath("$.message", `is`("""Service unavailable.""")))
-            .andExpect(jsonPath("$.path", `is`("/oauth/token")))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+            .andExpectErrorStatus(SERVICE_UNAVAILABLE)
+            .andExpectType("orkg:problem:service_unavailable")
 
         verify(exactly = 1) { httpClient.send(any(), any<HttpResponse.BodyHandler<String>>()) }
     }

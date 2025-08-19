@@ -1,32 +1,63 @@
 package org.orkg.common.exceptions
 
+import org.orkg.common.toSnakeCase
 import org.springframework.http.HttpStatus
+import org.springframework.web.server.ResponseStatusException
+import java.net.URI
+import org.springframework.validation.FieldError as SpringFieldError
+
+fun createProblemURI(type: String): URI = URI.create("orkg:problem:$type")
 
 /**
  * Base class for custom property validation.
  */
 abstract class PropertyValidationException(
-    open val property: String,
+    property: String,
     override val message: String,
     override val cause: Throwable? = null,
-) : RuntimeException(cause)
+    status: HttpStatus = HttpStatus.BAD_REQUEST,
+    type: URI? = null,
+) : SimpleMessageException(
+        status = status,
+        message = null,
+        cause = cause,
+        properties = mapOf("errors" to listOf(FieldError(message, property, message, property))),
+        type = type,
+    )
 
 abstract class ForbiddenOperationException(
     property: String,
     message: String,
+    type: URI? = null,
 ) : PropertyValidationException(
-        property,
-        message
+        property = property,
+        message = message,
+        status = HttpStatus.FORBIDDEN,
+        type = type,
     )
 
 abstract class SimpleMessageException(
-    open val status: HttpStatus,
-    override val message: String,
+    status: HttpStatus,
+    override val message: String?,
     override val cause: Throwable? = null,
-) : RuntimeException(message, cause)
+    properties: Map<String, Any?> = emptyMap(),
+    type: URI? = null,
+) : ResponseStatusException(status, message, cause) {
+    init {
+        if (type != null) {
+            body.type = type
+        } else {
+            val simpleName = this::class.simpleName
+            if (simpleName != null) {
+                body.type = createProblemURI(simpleName.toSnakeCase())
+            }
+        }
+        properties.forEach { property, value -> body.setProperty(property, value) }
+    }
+}
 
 abstract class LoggedMessageException(
-    override val status: HttpStatus,
+    status: HttpStatus,
     override val message: String,
     override val cause: Throwable? = null,
 ) : SimpleMessageException(status, message, cause)
@@ -108,3 +139,22 @@ class MalformedMediaTypeCapability(
         message = """Malformed value "$value" for media type capability "$name".""",
         cause = cause
     )
+
+data class FieldError(
+    val detail: String?,
+    val pointer: String,
+    @Deprecated("To be removed")
+    val message: String?,
+    @Deprecated("To be removed")
+    val field: String,
+) {
+    companion object {
+        fun from(fieldError: SpringFieldError) =
+            FieldError(
+                detail = fieldError.defaultMessage,
+                pointer = jsonFieldPathToJsonPointerReference(fieldError.field.toSnakeCase()),
+                message = fieldError.defaultMessage,
+                field = fieldError.field.toSnakeCase(),
+            )
+    }
+}

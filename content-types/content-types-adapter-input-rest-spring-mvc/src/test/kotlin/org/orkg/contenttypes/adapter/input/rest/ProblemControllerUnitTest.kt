@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.configuration.WebMvcConfiguration
-import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.community.input.RetrieveContributorUseCase
 import org.orkg.community.testing.fixtures.createContributor
@@ -23,6 +22,7 @@ import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.MockUserId
+import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
@@ -41,7 +41,7 @@ import java.util.Optional
 @ContextConfiguration(
     classes = [
         ProblemController::class,
-        ExceptionHandler::class,
+        ExceptionTestConfiguration::class,
         CommonJacksonModule::class,
         FixedClockConfig::class,
         WebMvcConfiguration::class

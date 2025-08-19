@@ -10,23 +10,24 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
-import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
 import org.orkg.contenttypes.domain.ComparisonNotFound
-import org.orkg.contenttypes.domain.ComparisonRelatedResourceNotFound
 import org.orkg.contenttypes.domain.testing.fixtures.createComparisonRelatedResource
 import org.orkg.contenttypes.input.ComparisonRelatedResourceUseCases
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectComparisonRelatedResource
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.annotations.TestWithMockUser
+import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
 import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
@@ -36,14 +37,13 @@ import org.springframework.restdocs.request.RequestDocumentation.parameterWithNa
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.Optional
 
 @ContextConfiguration(
     classes = [
         ComparisonRelatedResourceController::class,
-        ExceptionHandler::class,
+        ExceptionTestConfiguration::class,
         CommonJacksonModule::class,
         ContentTypeJacksonModule::class,
         FixedClockConfig::class
@@ -97,7 +97,6 @@ internal class ComparisonRelatedResourceControllerUnitTest : MockMvcBaseTest("co
     fun `Given a comparison related resource, when fetched by id but service reports missing comparison related resource, then status is 404 NOT FOUND`() {
         val comparisonId = ThingId("R123")
         val comparisonRelatedResourceId = ThingId("R1435")
-        val exception = ComparisonRelatedResourceNotFound(comparisonRelatedResourceId)
 
         every {
             comparisonRelatedResourceService.findByIdAndComparisonId(comparisonId, comparisonRelatedResourceId)
@@ -106,10 +105,8 @@ internal class ComparisonRelatedResourceControllerUnitTest : MockMvcBaseTest("co
         get("/api/comparisons/{id}/related-resources/{comparisonRelatedResourceId}", comparisonId, comparisonRelatedResourceId)
             .accept(COMPARISON_JSON_V2)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.path").value("/api/comparisons/$comparisonId/related-resources/$comparisonRelatedResourceId"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:comparison_related_resource_not_found")
 
         verify(exactly = 1) { comparisonRelatedResourceService.findByIdAndComparisonId(comparisonId, comparisonRelatedResourceId) }
     }
@@ -188,10 +185,8 @@ internal class ComparisonRelatedResourceControllerUnitTest : MockMvcBaseTest("co
             .accept(COMPARISON_JSON_V2)
             .contentType(COMPARISON_JSON_V2)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.path").value("/api/comparisons/$comparisonId/related-resources"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:comparison_not_found")
 
         verify(exactly = 1) { comparisonRelatedResourceService.create(any()) }
     }

@@ -14,14 +14,12 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.common.configuration.WebMvcConfiguration
-import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.contenttypes.domain.testing.fixtures.createTemplateInstance
 import org.orkg.contenttypes.input.TemplateInstanceUseCases
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
-import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
@@ -30,12 +28,15 @@ import org.orkg.graph.testing.asciidoc.allowedVisibilityFilterValues
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectTemplateInstance
 import org.orkg.testing.annotations.TestWithMockUser
+import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
 import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
@@ -47,7 +48,6 @@ import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
@@ -57,7 +57,7 @@ import java.util.UUID
 @ContextConfiguration(
     classes = [
         TemplateInstanceController::class,
-        ExceptionHandler::class,
+        ExceptionTestConfiguration::class,
         CommonJacksonModule::class,
         FixedClockConfig::class,
         WebMvcConfiguration::class
@@ -120,17 +120,14 @@ internal class TemplateInstanceControllerUnitTest : MockMvcBaseTest("template-in
     fun `Given a template instance, when it is fetched by id and service reports missing resource, then status is 404 NOT FOUND`() {
         val id = ThingId("R132")
         val instanceId = ThingId("Missing")
-        val exception = ResourceNotFound.withId(instanceId)
 
         every { service.findById(id, instanceId) } returns Optional.empty()
 
         get("/api/templates/{id}/instances/{instanceId}", id, instanceId)
             .accept(TEMPLATE_INSTANCE_JSON_V1)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.path").value("/api/templates/$id/instances/$instanceId"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:resource_not_found")
 
         verify(exactly = 1) { service.findById(id, instanceId) }
     }

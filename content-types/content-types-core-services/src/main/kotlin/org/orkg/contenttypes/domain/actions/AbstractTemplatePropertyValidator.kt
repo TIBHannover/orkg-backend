@@ -3,7 +3,7 @@ package org.orkg.contenttypes.domain.actions
 import dev.forkhandles.values.ofOrNull
 import org.orkg.contenttypes.domain.InvalidBounds
 import org.orkg.contenttypes.domain.InvalidCardinality
-import org.orkg.contenttypes.domain.InvalidDatatype
+import org.orkg.contenttypes.domain.InvalidDataType
 import org.orkg.contenttypes.domain.InvalidMaxCount
 import org.orkg.contenttypes.domain.InvalidMinCount
 import org.orkg.contenttypes.domain.InvalidRegexPattern
@@ -47,7 +47,7 @@ class AbstractTemplatePropertyValidator(
         }
         if (property is StringLiteralTemplatePropertyCommand) {
             if (Literals.XSD.fromClass(property.datatype) != Literals.XSD.STRING) {
-                throw InvalidDatatype(property.datatype, Literals.XSD.STRING.`class`)
+                throw InvalidDataType(property.datatype, Literals.XSD.STRING.`class`)
             }
             property.pattern?.also { pattern ->
                 try {
@@ -59,7 +59,7 @@ class AbstractTemplatePropertyValidator(
         } else if (property is NumberLiteralTemplatePropertyCommand) {
             val xsd = Literals.XSD.fromClass(property.datatype)
             if (xsd?.isNumber != true) {
-                throw InvalidDatatype(property.datatype, *Literals.XSD.entries.filter { it.isNumber }.map { it.`class` }.toTypedArray())
+                throw InvalidDataType(property.datatype, *Literals.XSD.entries.filter { it.isNumber }.map { it.`class` }.toTypedArray())
             }
             val minInclusive = property.minInclusive
             val maxInclusive = property.maxInclusive

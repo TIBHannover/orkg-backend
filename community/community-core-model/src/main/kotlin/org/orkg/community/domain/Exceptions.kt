@@ -7,17 +7,19 @@ import org.orkg.common.exceptions.SimpleMessageException
 import org.springframework.http.HttpStatus
 import java.util.UUID
 
-class ObservatoryNotFound(id: ObservatoryId) :
-    SimpleMessageException(
+class ObservatoryNotFound : SimpleMessageException {
+    constructor(id: ObservatoryId) : super(
         HttpStatus.NOT_FOUND,
-        """Observatory "$id" not found."""
+        """Observatory "$id" not found.""",
+        properties = mapOf("id" to id)
     )
 
-class ObservatoryURLNotFound(id: String) :
-    SimpleMessageException(
+    constructor(displayId: String) : super(
         HttpStatus.NOT_FOUND,
-        """Observatory "$id" not found."""
+        """Observatory with display id "$displayId" not found.""",
+        properties = mapOf("display_id" to displayId)
     )
+}
 
 class ContributorNotFound(id: ContributorId) :
     SimpleMessageException(
@@ -80,24 +82,28 @@ class LogoNotFound(id: OrganizationId) :
 class ObservatoryAlreadyExists private constructor(
     status: HttpStatus,
     message: String,
-) : SimpleMessageException(status, message) {
+    properties: Map<String, Any>,
+) : SimpleMessageException(status, message, properties = properties) {
     companion object {
         fun withId(id: ObservatoryId) =
             ObservatoryAlreadyExists(
                 status = HttpStatus.BAD_REQUEST,
-                message = """Observatory with id "$id" already exists."""
+                message = """Observatory with id "$id" already exists.""",
+                properties = mapOf("id" to id)
             )
 
         fun withName(name: String) =
             ObservatoryAlreadyExists(
                 status = HttpStatus.BAD_REQUEST,
-                message = """Observatory with name "$name" already exists."""
+                message = """Observatory with name "$name" already exists.""",
+                properties = mapOf("name" to name)
             )
 
         fun withDisplayId(displayId: String) =
             ObservatoryAlreadyExists(
                 status = HttpStatus.BAD_REQUEST,
-                message = """Observatory with display id "$displayId" already exists."""
+                message = """Observatory with display id "$displayId" already exists.""",
+                properties = mapOf("display_id" to displayId)
             )
     }
 }

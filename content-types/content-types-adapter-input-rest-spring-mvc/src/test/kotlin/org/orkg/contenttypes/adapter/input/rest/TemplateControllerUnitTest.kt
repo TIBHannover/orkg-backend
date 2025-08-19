@@ -17,7 +17,6 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.community.domain.ObservatoryNotFound
@@ -30,7 +29,6 @@ import org.orkg.contenttypes.domain.InvalidRegexPattern
 import org.orkg.contenttypes.domain.ResearchProblemNotFound
 import org.orkg.contenttypes.domain.TemplateAlreadyExistsForClass
 import org.orkg.contenttypes.domain.TemplateClosed
-import org.orkg.contenttypes.domain.TemplateNotFound
 import org.orkg.contenttypes.domain.testing.fixtures.createTemplate
 import org.orkg.contenttypes.input.CreateTemplatePropertyUseCase
 import org.orkg.contenttypes.input.CreateTemplatePropertyUseCase.CreateNumberLiteralPropertyCommand
@@ -65,12 +63,16 @@ import org.orkg.graph.testing.asciidoc.allowedVisibilityValues
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectTemplate
 import org.orkg.testing.annotations.TestWithMockUser
+import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
 import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.FieldDescriptor
@@ -83,7 +85,6 @@ import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
@@ -95,7 +96,7 @@ import java.util.stream.Stream
 @ContextConfiguration(
     classes = [
         TemplateController::class,
-        ExceptionHandler::class,
+        ExceptionTestConfiguration::class,
         CommonJacksonModule::class,
         ContentTypeJacksonModule::class,
         FixedClockConfig::class
@@ -166,16 +167,13 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
     @Test
     fun `Given a template, when it is fetched by id and service reports missing template, then status is 404 NOT FOUND`() {
         val id = ThingId("Missing")
-        val exception = TemplateNotFound(id)
         every { templateService.findById(id) } returns Optional.empty()
 
         get("/api/templates/{id}", id)
             .accept(TEMPLATE_JSON_V1)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.path").value("/api/templates/$id"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:template_not_found")
 
         verify(exactly = 1) { templateService.findById(id) }
     }
@@ -331,10 +329,8 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             .accept(TEMPLATE_JSON_V1)
             .contentType(TEMPLATE_JSON_V1)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.path").value("/api/templates"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:class_not_found")
 
         verify(exactly = 1) { templateService.create(any<CreateTemplateUseCase.CreateCommand>()) }
     }
@@ -350,10 +346,8 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             .accept(TEMPLATE_JSON_V1)
             .contentType(TEMPLATE_JSON_V1)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/templates"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:template_already_exists_for_class")
 
         verify(exactly = 1) { templateService.create(any<CreateTemplateUseCase.CreateCommand>()) }
     }
@@ -369,10 +363,8 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             .accept(TEMPLATE_JSON_V1)
             .contentType(TEMPLATE_JSON_V1)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.path").value("/api/templates"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:research_field_not_found")
 
         verify(exactly = 1) { templateService.create(any<CreateTemplateUseCase.CreateCommand>()) }
     }
@@ -388,10 +380,8 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             .accept(TEMPLATE_JSON_V1)
             .contentType(TEMPLATE_JSON_V1)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.path").value("/api/templates"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:research_problem_not_found")
 
         verify(exactly = 1) { templateService.create(any<CreateTemplateUseCase.CreateCommand>()) }
     }
@@ -407,10 +397,8 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             .accept(TEMPLATE_JSON_V1)
             .contentType(TEMPLATE_JSON_V1)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.path").value("/api/templates"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:predicate_not_found")
 
         verify(exactly = 1) { templateService.create(any<CreateTemplateUseCase.CreateCommand>()) }
     }
@@ -426,10 +414,8 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             .accept(TEMPLATE_JSON_V1)
             .contentType(TEMPLATE_JSON_V1)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/templates"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:invalid_min_count")
 
         verify(exactly = 1) { templateService.create(any<CreateTemplateUseCase.CreateCommand>()) }
     }
@@ -445,10 +431,8 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             .accept(TEMPLATE_JSON_V1)
             .contentType(TEMPLATE_JSON_V1)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/templates"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:invalid_max_count")
 
         verify(exactly = 1) { templateService.create(any<CreateTemplateUseCase.CreateCommand>()) }
     }
@@ -464,10 +448,8 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             .accept(TEMPLATE_JSON_V1)
             .contentType(TEMPLATE_JSON_V1)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/templates"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:invalid_cardinality")
 
         verify(exactly = 1) { templateService.create(any<CreateTemplateUseCase.CreateCommand>()) }
     }
@@ -483,10 +465,8 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             .accept(TEMPLATE_JSON_V1)
             .contentType(TEMPLATE_JSON_V1)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/templates"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:invalid_regex_pattern")
 
         verify(exactly = 1) { templateService.create(any<CreateTemplateUseCase.CreateCommand>()) }
     }
@@ -502,10 +482,8 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             .accept(TEMPLATE_JSON_V1)
             .contentType(TEMPLATE_JSON_V1)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.path").value("/api/templates"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:predicate_not_found")
 
         verify(exactly = 1) { templateService.create(any<CreateTemplateUseCase.CreateCommand>()) }
     }
@@ -521,10 +499,8 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             .accept(TEMPLATE_JSON_V1)
             .contentType(TEMPLATE_JSON_V1)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.path").value("/api/templates"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:organization_not_found")
 
         verify(exactly = 1) { templateService.create(any<CreateTemplateUseCase.CreateCommand>()) }
     }
@@ -540,10 +516,8 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             .accept(TEMPLATE_JSON_V1)
             .contentType(TEMPLATE_JSON_V1)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.path").value("/api/templates"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:observatory_not_found")
 
         verify(exactly = 1) { templateService.create(any<CreateTemplateUseCase.CreateCommand>()) }
     }
@@ -700,10 +674,8 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.path").value("/api/templates/$templateId/properties"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:class_not_found")
 
         verify(exactly = 1) { templateService.create(any<CreateTemplatePropertyUseCase.CreateCommand>()) }
     }
@@ -723,10 +695,8 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/templates/$templateId/properties"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:invalid_min_count")
 
         verify(exactly = 1) { templateService.create(any<CreateTemplatePropertyUseCase.CreateCommand>()) }
     }
@@ -746,10 +716,8 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/templates/$templateId/properties"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:invalid_max_count")
 
         verify(exactly = 1) { templateService.create(any<CreateTemplatePropertyUseCase.CreateCommand>()) }
     }
@@ -769,10 +737,8 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/templates/$templateId/properties"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:invalid_cardinality")
 
         verify(exactly = 1) { templateService.create(any<CreateTemplatePropertyUseCase.CreateCommand>()) }
     }
@@ -792,10 +758,8 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/templates/$templateId/properties"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:invalid_regex_pattern")
 
         verify(exactly = 1) { templateService.create(any<CreateTemplatePropertyUseCase.CreateCommand>()) }
     }
@@ -815,10 +779,8 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.path").value("/api/templates/$templateId/properties"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:predicate_not_found")
 
         verify(exactly = 1) { templateService.create(any<CreateTemplatePropertyUseCase.CreateCommand>()) }
     }
@@ -838,10 +800,8 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/templates/$templateId/properties"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:template_closed")
 
         verify(exactly = 1) { templateService.create(any<CreateTemplatePropertyUseCase.CreateCommand>()) }
     }

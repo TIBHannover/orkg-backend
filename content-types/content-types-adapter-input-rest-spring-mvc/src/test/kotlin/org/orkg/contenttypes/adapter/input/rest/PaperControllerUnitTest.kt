@@ -16,7 +16,6 @@ import org.orkg.common.DOI
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.exceptions.ServiceUnavailable
 import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.json.CommonJacksonModule
@@ -57,14 +56,19 @@ import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectPaper
 import org.orkg.testing.annotations.TestWithMockUser
+import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
-import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.http.HttpStatus.NOT_FOUND
+import org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
 import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
@@ -77,7 +81,6 @@ import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
@@ -86,7 +89,7 @@ import java.util.Optional
 @ContextConfiguration(
     classes = [
         PaperController::class,
-        ExceptionHandler::class,
+        ExceptionTestConfiguration::class,
         CommonJacksonModule::class,
         ContentTypeJacksonModule::class,
         FixedClockConfig::class
@@ -154,17 +157,14 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
     @Test
     fun `Given a paper, when it is fetched by id and service reports missing paper, then status is 404 NOT FOUND`() {
         val id = ThingId("Missing")
-        val exception = PaperNotFound(id)
         every { paperService.findById(id) } returns Optional.empty()
 
         get("/api/papers/{id}", id)
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.path").value("/api/papers/$id"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:paper_not_found")
 
         verify(exactly = 1) { paperService.findById(id) }
     }
@@ -292,12 +292,8 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .param("sort", "unknown")
             .accept(PAPER_JSON_V2)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(400))
-            .andExpect(jsonPath("$.message").value(exception.message))
-            .andExpect(jsonPath("$.error").value(exception.status.reasonPhrase))
-            .andExpect(jsonPath("$.timestamp").exists())
-            .andExpect(jsonPath("$.path").value("/api/papers"))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:unknown_sorting_property")
 
         verify(exactly = 1) {
             paperService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
@@ -335,10 +331,8 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
 
         get("/api/papers/{id}/contributors", id)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.path").value("/api/papers/$id/contributors"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:paper_not_found")
 
         verify(exactly = 1) { paperService.findAllContributorsByPaperId(id, any()) }
     }
@@ -413,10 +407,8 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
         post("/api/papers/$id/publish")
             .content(request)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.path").value("/api/papers/$id/publish"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:paper_not_found")
 
         verify(exactly = 1) {
             paperService.publish(
@@ -450,10 +442,8 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
         post("/api/papers/$id/publish")
             .content(request)
             .perform()
-            .andExpect(status().isServiceUnavailable)
-            .andExpect(jsonPath("$.status").value(HttpStatus.SERVICE_UNAVAILABLE.value()))
-            .andExpect(jsonPath("$.path").value("/api/papers/$id/publish"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(SERVICE_UNAVAILABLE)
+            .andExpectType("orkg:problem:service_unavailable")
 
         verify(exactly = 1) {
             paperService.publish(
@@ -538,10 +528,8 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/papers"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:only_one_research_field_allowed")
 
         verify(exactly = 1) { paperService.create(any<CreatePaperUseCase.CreateCommand>()) }
     }
@@ -557,10 +545,8 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/papers"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:only_one_organization_allowed")
 
         verify(exactly = 1) { paperService.create(any<CreatePaperUseCase.CreateCommand>()) }
     }
@@ -576,10 +562,8 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/papers"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:only_one_observatory_allowed")
 
         verify(exactly = 1) { paperService.create(any<CreatePaperUseCase.CreateCommand>()) }
     }
@@ -595,10 +579,8 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/papers"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:thing_not_defined")
 
         verify(exactly = 1) { paperService.create(any<CreatePaperUseCase.CreateCommand>()) }
     }
@@ -614,10 +596,8 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.path").value("/api/papers"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:author_not_found")
 
         verify(exactly = 1) { paperService.create(any<CreatePaperUseCase.CreateCommand>()) }
     }
@@ -633,10 +613,8 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/papers"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:duplicate_temp_ids")
 
         verify(exactly = 1) { paperService.create(any<CreatePaperUseCase.CreateCommand>()) }
     }
@@ -652,10 +630,8 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/papers"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:invalid_temp_id")
 
         verify(exactly = 1) { paperService.create(any<CreatePaperUseCase.CreateCommand>()) }
     }
@@ -671,10 +647,8 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/papers"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:paper_already_exists")
 
         verify(exactly = 1) { paperService.create(any<CreatePaperUseCase.CreateCommand>()) }
     }
@@ -690,10 +664,8 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/papers"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:paper_already_exists")
 
         verify(exactly = 1) { paperService.create(any<CreatePaperUseCase.CreateCommand>()) }
     }
@@ -715,10 +687,8 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/papers"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:ambiguous_author")
 
         verify(exactly = 1) { paperService.create(any<CreatePaperUseCase.CreateCommand>()) }
     }
@@ -734,10 +704,8 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/papers"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:thing_is_not_a_class")
 
         verify(exactly = 1) { paperService.create(any<CreatePaperUseCase.CreateCommand>()) }
     }
@@ -753,10 +721,8 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/papers"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:thing_is_not_a_predicate")
 
         verify(exactly = 1) { paperService.create(any<CreatePaperUseCase.CreateCommand>()) }
     }
@@ -772,10 +738,8 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/papers"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:invalid_statement_subject")
 
         verify(exactly = 1) { paperService.create(any<CreatePaperUseCase.CreateCommand>()) }
     }
@@ -791,10 +755,8 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.path").value("/api/papers"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:thing_not_found")
 
         verify(exactly = 1) { paperService.create(any<CreatePaperUseCase.CreateCommand>()) }
     }
@@ -810,10 +772,8 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/papers"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:empty_contribution")
 
         verify(exactly = 1) { paperService.create(any<CreatePaperUseCase.CreateCommand>()) }
     }
@@ -876,10 +836,8 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/papers/$id"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:paper_already_exists")
 
         verify(exactly = 1) { paperService.update(any()) }
     }
@@ -896,10 +854,8 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/papers/$id"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:paper_already_exists")
 
         verify(exactly = 1) { paperService.update(any()) }
     }
@@ -922,10 +878,8 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/papers/$id"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:ambiguous_author")
 
         verify(exactly = 1) { paperService.update(any()) }
     }
@@ -942,10 +896,8 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.path").value("/api/papers/$id"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:author_not_found")
 
         verify(exactly = 1) { paperService.update(any()) }
     }
@@ -962,10 +914,8 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/papers/$id"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:only_one_research_field_allowed")
 
         verify(exactly = 1) { paperService.update(any()) }
     }
@@ -982,10 +932,8 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/papers/$id"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:only_one_organization_allowed")
 
         verify(exactly = 1) { paperService.update(any()) }
     }
@@ -1002,10 +950,8 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/papers/$id"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:only_one_observatory_allowed")
 
         verify(exactly = 1) { paperService.update(any()) }
     }
@@ -1022,10 +968,8 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.path").value("/api/papers/$id"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:paper_not_found")
 
         verify(exactly = 1) { paperService.update(any()) }
     }

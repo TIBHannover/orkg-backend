@@ -35,7 +35,7 @@ dependencies {
     api("org.springframework:spring-web")
     api("com.fasterxml.jackson.core:jackson-databind")
     api(project(":common:core-identifiers"))
-    implementation(project(":common:spring-webmvc"))
+    api(project(":common:spring-webmvc"))
     api(project(":community:community-core-model"))
     api(project(":community:community-ports-output"))
     implementation("org.springframework.security:spring-security-core")

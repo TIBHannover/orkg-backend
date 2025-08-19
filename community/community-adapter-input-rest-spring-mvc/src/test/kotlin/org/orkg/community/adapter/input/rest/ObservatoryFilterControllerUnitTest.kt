@@ -11,12 +11,9 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.ThingId
-import org.orkg.common.exceptions.ExceptionHandler
-import org.orkg.common.exceptions.Forbidden
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.community.adapter.input.rest.json.CommunityJacksonModule
 import org.orkg.community.domain.ObservatoryFilterId
-import org.orkg.community.domain.ObservatoryFilterNotFound
 import org.orkg.community.domain.ObservatoryNotFound
 import org.orkg.community.input.ObservatoryFilterUseCases
 import org.orkg.community.input.ObservatoryUseCases
@@ -31,11 +28,16 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectObservatoryFilter
 import org.orkg.testing.annotations.TestWithMockUser
+import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.http.HttpStatus.FORBIDDEN
+import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
 import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
@@ -45,7 +47,6 @@ import org.springframework.restdocs.request.RequestDocumentation.parameterWithNa
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.Optional
 import java.util.UUID
@@ -53,7 +54,7 @@ import java.util.UUID
 @ContextConfiguration(
     classes = [
         ObservatoryFilterController::class,
-        ExceptionHandler::class,
+        ExceptionTestConfiguration::class,
         CommonJacksonModule::class,
         CommunityJacksonModule::class,
         FixedClockConfig::class
@@ -114,16 +115,13 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
     fun `Given an observatory filter, when fetched by id but observatory is missing, then status is 404 NOT FOUND`() {
         val id = ObservatoryFilterId(UUID.randomUUID())
         val observatory = createObservatory()
-        val exception = ObservatoryNotFound(observatory.id)
 
         every { observatoryUseCases.findById(observatory.id) } returns Optional.empty()
 
         get("/api/observatories/{id}/filters/{filterId}", observatory.id, id)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(404))
-            .andExpect(jsonPath("$.path").value("/api/observatories/${observatory.id}/filters/$id"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:observatory_not_found")
 
         verify(exactly = 1) { observatoryUseCases.findById(observatory.id) }
     }
@@ -132,17 +130,14 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
     fun `Given an observatory filter, when fetched by id but filter is missing, then status is 404 NOT FOUND`() {
         val id = ObservatoryFilterId(UUID.randomUUID())
         val observatory = createObservatory()
-        val exception = ObservatoryFilterNotFound(id)
 
         every { observatoryUseCases.findById(observatory.id) } returns Optional.of(observatory)
         every { observatoryFilterUseCases.findById(id) } returns Optional.empty()
 
         get("/api/observatories/{id}/filters/{filterId}", observatory.id, id)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(404))
-            .andExpect(jsonPath("$.path").value("/api/observatories/${observatory.id}/filters/$id"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:observatory_filter_not_found")
 
         verify(exactly = 1) { observatoryUseCases.findById(observatory.id) }
         verify(exactly = 1) { observatoryFilterUseCases.findById(id) }
@@ -221,7 +216,8 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
 
         delete("/api/observatories/{id}/filters/{filterId}", observatory.id, id)
             .perform()
-            .andExpect(status().isForbidden)
+            .andExpectErrorStatus(FORBIDDEN)
+            .andExpectType("orkg:problem:forbidden")
 
         verify(exactly = 1) { contributorService.findById(any()) }
     }
@@ -235,17 +231,14 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
             id = ContributorId(MockUserId.USER),
             observatoryId = observatory.id
         )
-        val exception = ObservatoryNotFound(observatory.id)
 
         every { contributorService.findById(any()) } returns Optional.of(user)
         every { observatoryUseCases.findById(observatory.id) } returns Optional.empty()
 
         delete("/api/observatories/{id}/filters/{filterId}", observatory.id, id)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(404))
-            .andExpect(jsonPath("$.path").value("/api/observatories/${observatory.id}/filters/$id"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:observatory_not_found")
 
         verify(exactly = 1) { contributorService.findById(any()) }
         verify(exactly = 1) { observatoryUseCases.findById(observatory.id) }
@@ -324,10 +317,8 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
         post("/api/observatories/${observatory.id}/filters")
             .content(command)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(404))
-            .andExpect(jsonPath("$.path").value("/api/observatories/${observatory.id}/filters"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:observatory_not_found")
 
         verify(exactly = 1) { contributorService.findById(any()) }
         verify(exactly = 1) { observatoryFilterUseCases.create(any()) }
@@ -356,10 +347,8 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
         post("/api/observatories/${observatory.id}/filters")
             .content(command)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(404))
-            .andExpect(jsonPath("$.path").value("/api/observatories/${observatory.id}/filters"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:class_not_found")
 
         verify(exactly = 1) { contributorService.findById(any()) }
         verify(exactly = 1) { observatoryFilterUseCases.create(any()) }
@@ -388,10 +377,8 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
         post("/api/observatories/${observatory.id}/filters")
             .content(command)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(404))
-            .andExpect(jsonPath("$.path").value("/api/observatories/${observatory.id}/filters"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:predicate_not_found")
 
         verify(exactly = 1) { contributorService.findById(any()) }
         verify(exactly = 1) { observatoryFilterUseCases.create(any()) }
@@ -418,7 +405,8 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
         post("/api/observatories/${observatory.id}/filters")
             .content(command)
             .perform()
-            .andExpect(status().isForbidden)
+            .andExpectErrorStatus(FORBIDDEN)
+            .andExpectType("orkg:problem:forbidden")
 
         verify(exactly = 1) { contributorService.findById(any()) }
     }
@@ -501,10 +489,8 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
         patch("/api/observatories/{id}/filters/{filterId}", observatory.id, id)
             .content(command)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(404))
-            .andExpect(jsonPath("$.path").value("/api/observatories/${observatory.id}/filters/$id"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:observatory_not_found")
 
         verify(exactly = 1) { observatoryUseCases.findById(observatory.id) }
         verify(exactly = 1) { contributorService.findById(any()) }
@@ -536,10 +522,8 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
         patch("/api/observatories/{id}/filters/{filterId}", observatory.id, id)
             .content(command)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(404))
-            .andExpect(jsonPath("$.path").value("/api/observatories/${observatory.id}/filters/$id"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:class_not_found")
 
         verify(exactly = 1) { observatoryUseCases.findById(observatory.id) }
         verify(exactly = 1) { contributorService.findById(any()) }
@@ -571,10 +555,8 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
         patch("/api/observatories/{id}/filters/{filterId}", observatory.id, id)
             .content(command)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(404))
-            .andExpect(jsonPath("$.path").value("/api/observatories/${observatory.id}/filters/$id"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:predicate_not_found")
 
         verify(exactly = 1) { observatoryUseCases.findById(observatory.id) }
         verify(exactly = 1) { contributorService.findById(any()) }
@@ -597,7 +579,6 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
             "exact" to false,
             "featured" to false
         )
-        val exception = Forbidden()
 
         every { observatoryUseCases.findById(observatory.id) } returns Optional.of(observatory)
         every { contributorService.findById(any()) } returns Optional.of(user)
@@ -605,10 +586,8 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
         patch("/api/observatories/{id}/filters/{filterId}", observatory.id, id)
             .content(command)
             .perform()
-            .andExpect(status().isForbidden)
-            .andExpect(jsonPath("$.status").value(403))
-            .andExpect(jsonPath("$.path").value("/api/observatories/${observatory.id}/filters/$id"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(FORBIDDEN)
+            .andExpectType("orkg:problem:forbidden")
 
         verify(exactly = 1) { observatoryUseCases.findById(observatory.id) }
         verify(exactly = 1) { contributorService.findById(any()) }
@@ -626,17 +605,14 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
             "exact" to false,
             "featured" to false
         )
-        val exception = ObservatoryNotFound(observatoryId)
 
         every { observatoryUseCases.findById(observatoryId) } returns Optional.empty()
 
         patch("/api/observatories/{id}/filters/{filterId}", observatoryId, id)
             .content(command)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(404))
-            .andExpect(jsonPath("$.path").value("/api/observatories/$observatoryId/filters/$id"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:observatory_not_found")
 
         verify(exactly = 1) { observatoryUseCases.findById(observatoryId) }
     }

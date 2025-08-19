@@ -3,8 +3,11 @@ package org.orkg.contenttypes.domain
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.PropertyValidationException
 import org.orkg.common.exceptions.SimpleMessageException
+import org.orkg.common.exceptions.createProblemURI
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.springframework.http.HttpStatus
+import kotlin.collections.mapOf
 
 class PaperNotFound(id: ThingId) :
     SimpleMessageException(
@@ -197,16 +200,19 @@ class RosettaStoneStatementInUse(id: ThingId) :
 class RosettaStoneTemplateInUse private constructor(
     status: HttpStatus,
     message: String,
-) : SimpleMessageException(status, message) {
+    properties: Map<String, Any>,
+) : SimpleMessageException(status, message, properties = properties) {
     companion object {
         fun cantBeDeleted(id: ThingId) = RosettaStoneTemplateInUse(
             status = HttpStatus.FORBIDDEN,
-            message = """Unable to delete rosetta stone template "$id" because it is used in at least one (rosetta stone) statement."""
+            message = """Unable to delete rosetta stone template "$id" because it is used in at least one (rosetta stone) statement.""",
+            properties = mapOf("id" to id),
         )
 
         fun cantUpdateProperty(id: ThingId, property: String) = RosettaStoneTemplateInUse(
             status = HttpStatus.FORBIDDEN,
-            message = """Unable to update $property of rosetta stone template "$id" because it is used in at least one rosetta stone statement."""
+            message = """Unable to update property "$property" of rosetta stone template "$id" because it is used in at least one rosetta stone statement.""",
+            properties = mapOf("id" to id, "property" to property),
         )
     }
 }
@@ -344,7 +350,7 @@ class InvalidBounds(
         """Invalid bounds. Min bound must be less than or equal to max bound. Found: min: "$min", max: "$max"."""
     )
 
-class InvalidDatatype : SimpleMessageException {
+class InvalidDataType : SimpleMessageException {
     constructor(actual: ThingId, expected: ThingId) :
         super(
             status = HttpStatus.BAD_REQUEST,
@@ -594,30 +600,37 @@ class UnrelatedSmartReviewSection(
 
 class SmartReviewSectionTypeMismatch private constructor(
     override val message: String,
-) : SimpleMessageException(HttpStatus.BAD_REQUEST, message) {
+    properties: Map<String, Any>,
+) : SimpleMessageException(HttpStatus.BAD_REQUEST, message, properties = properties) {
     companion object {
         fun mustBeComparisonSection() = SmartReviewSectionTypeMismatch(
-            """Invalid smart review section type. Must be a comparison section."""
+            """Invalid smart review section type. Must be a comparison section.""",
+            mapOf("expected_type" to Classes.comparisonSection)
         )
 
         fun mustBeVisualizationSection() = SmartReviewSectionTypeMismatch(
-            """Invalid smart review section type. Must be a visualization section."""
+            """Invalid smart review section type. Must be a visualization section.""",
+            mapOf("expected_type" to Classes.visualizationSection)
         )
 
         fun mustBeResourceSection() = SmartReviewSectionTypeMismatch(
-            """Invalid smart review section type. Must be a resource section."""
+            """Invalid smart review section type. Must be a resource section.""",
+            mapOf("expected_type" to Classes.resourceSection)
         )
 
         fun mustBePredicateSection() = SmartReviewSectionTypeMismatch(
-            """Invalid smart review section type. Must be a predicate section."""
+            """Invalid smart review section type. Must be a predicate section.""",
+            mapOf("expected_type" to Classes.propertySection)
         )
 
         fun mustBeOntologySection() = SmartReviewSectionTypeMismatch(
-            """Invalid smart review section type. Must be an ontology section."""
+            """Invalid smart review section type. Must be an ontology section.""",
+            mapOf("expected_type" to Classes.ontologySection)
         )
 
         fun mustBeTextSection() = SmartReviewSectionTypeMismatch(
-            """Invalid smart review section type. Must be a text section."""
+            """Invalid smart review section type. Must be a text section.""",
+            mapOf("expected_type" to Classes.section)
         )
     }
 }
@@ -661,12 +674,14 @@ class MissingPropertyPlaceholder(index: Int) :
 class MissingFormattedLabelPlaceholder : SimpleMessageException {
     constructor(index: Int) : super(
         HttpStatus.BAD_REQUEST,
-        """Missing formatted label placeholder "{$index}"."""
+        """Missing formatted label placeholder "{$index}".""",
+        properties = mapOf("index" to index)
     )
 
     constructor(placeholder: String) : super(
         HttpStatus.BAD_REQUEST,
-        """Missing formatted label placeholder for input position "$placeholder"."""
+        """Missing formatted label placeholder for input position "$placeholder".""",
+        properties = mapOf("placeholder" to placeholder)
     )
 }
 
@@ -799,7 +814,8 @@ class ObjectPositionValueTooHigh(
 class InvalidBibTeXReference(reference: String) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Invalid BibTeX reference "$reference"."""
+        """Invalid BibTeX reference "$reference".""",
+        type = createProblemURI("invalid_bibtex_reference")
     )
 
 class OntologyEntityNotFound(entities: Set<ThingId>) :
@@ -821,7 +837,7 @@ class InvalidDOI(doi: String) :
     )
 
 class InvalidIdentifier(
-    name: String,
+    val name: String,
     cause: IllegalArgumentException,
 ) : PropertyValidationException(
         name,
@@ -855,7 +871,7 @@ class MissingTableHeaderValue(index: Int) :
 class TableHeaderValueMustBeLiteral(index: Int) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Table header value at index "$index" must be a literal."""
+        """Table header value at index $index must be a literal."""
     )
 
 class TooManyTableRowValues(

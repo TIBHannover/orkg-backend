@@ -8,8 +8,6 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ObservatoryId
 import org.orkg.common.ThingId
 import org.orkg.common.configuration.WebMvcConfiguration
-import org.orkg.common.exceptions.ExceptionHandler
-import org.orkg.community.domain.InvalidFilterConfig
 import org.orkg.community.input.RetrieveContributorUseCase
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
@@ -25,20 +23,23 @@ import org.orkg.graph.testing.asciidoc.allowedVisibilityFilterValues
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectResource
+import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcBaseTest
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageImpl
+import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.UUID
 
 @ContextConfiguration(
-    classes = [ObservatoryResourceController::class, ExceptionHandler::class, FixedClockConfig::class, WebMvcConfiguration::class]
+    classes = [ObservatoryResourceController::class, ExceptionTestConfiguration::class, FixedClockConfig::class, WebMvcConfiguration::class]
 )
 @WebMvcTest(controllers = [ObservatoryResourceController::class])
 internal class ObservatoryResourceControllerUnitTest : MockMvcBaseTest("observatory-resources") {
@@ -205,16 +206,11 @@ internal class ObservatoryResourceControllerUnitTest : MockMvcBaseTest("observat
     fun `Given an observatory id, when filter config is invalid, then status is 400 BAD REQUEST`() {
         val id = ObservatoryId(UUID.randomUUID())
         val encodedFilterConfig = "invalid"
-        val exception = InvalidFilterConfig()
 
         get("/api/observatories/{id}/papers", id)
             .param("filter_config", encodedFilterConfig)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(400))
-            .andExpect(jsonPath("$.message").value(exception.message))
-            .andExpect(jsonPath("$.error").value("Bad Request"))
-            .andExpect(jsonPath("$.timestamp").exists())
-            .andExpect(jsonPath("$.path").value("/api/observatories/$id/papers"))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:invalid_filter_config")
     }
 }

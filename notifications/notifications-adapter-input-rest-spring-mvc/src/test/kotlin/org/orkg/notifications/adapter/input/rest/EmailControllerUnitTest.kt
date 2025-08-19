@@ -7,11 +7,11 @@ import io.mockk.runs
 import io.mockk.verify
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.notifications.adapter.input.rest.EmailController.SendTestEmailRequest
 import org.orkg.notifications.domain.Recipient
 import org.orkg.notifications.input.NotificationUseCases
 import org.orkg.testing.annotations.TestWithMockAdmin
+import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -21,7 +21,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @ContextConfiguration(
     classes = [
         EmailController::class,
-        ExceptionHandler::class,
+        ExceptionTestConfiguration::class,
         FixedClockConfig::class
     ]
 )

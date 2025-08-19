@@ -10,8 +10,6 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.common.configuration.WebMvcConfiguration
-import org.orkg.common.exceptions.ExceptionHandler
-import org.orkg.common.exceptions.TooManyParameters
 import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.common.testing.fixtures.fixedClock
@@ -38,14 +36,17 @@ import org.orkg.testing.andExpectResource
 import org.orkg.testing.andExpectSmartReview
 import org.orkg.testing.andExpectTemplate
 import org.orkg.testing.andExpectVisualization
+import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
@@ -54,7 +55,7 @@ import java.util.UUID
 @ContextConfiguration(
     classes = [
         ContentTypeController::class,
-        ExceptionHandler::class,
+        ExceptionTestConfiguration::class,
         CommonJacksonModule::class,
         FixedClockConfig::class,
         WebMvcConfiguration::class,
@@ -185,12 +186,8 @@ internal class ContentTypeControllerUnitTest : MockMvcBaseTest("content-types") 
         get("/api/content-types")
             .param("sort", "unknown")
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(400))
-            .andExpect(jsonPath("$.message").value(exception.message))
-            .andExpect(jsonPath("$.error").value(exception.status.reasonPhrase))
-            .andExpect(jsonPath("$.timestamp").exists())
-            .andExpect(jsonPath("$.path").value("/api/content-types"))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:unknown_sorting_property")
 
         verify(exactly = 1) {
             contentTypeService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
@@ -199,18 +196,12 @@ internal class ContentTypeControllerUnitTest : MockMvcBaseTest("content-types") 
 
     @Test
     fun `Given several content types, when using incompatible filtering parameters, then status is 400 BAD REQUEST`() {
-        val exception = TooManyParameters.atMostOneOf("author_id", "author_name")
-
         get("/api/content-types")
             .param("author_id", "R123")
             .param("author_name", "Author")
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(400))
-            .andExpect(jsonPath("$.message").value(exception.message))
-            .andExpect(jsonPath("$.error").value(exception.status.reasonPhrase))
-            .andExpect(jsonPath("$.timestamp").exists())
-            .andExpect(jsonPath("$.path").value("/api/content-types"))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:too_many_parameters")
     }
 
     @Test
@@ -316,19 +307,13 @@ internal class ContentTypeControllerUnitTest : MockMvcBaseTest("content-types") 
 
     @Test
     fun `Given several content types, when using incompatible filtering parameters as resource, then status is 400 BAD REQUEST`() {
-        val exception = TooManyParameters.atMostOneOf("author_id", "author_name")
-
         get("/api/content-types")
             .param("author_id", "R123")
             .param("author_name", "Author")
             .accept(RESOURCE_JSON_V1)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(400))
-            .andExpect(jsonPath("$.message").value(exception.message))
-            .andExpect(jsonPath("$.error").value(exception.status.reasonPhrase))
-            .andExpect(jsonPath("$.timestamp").exists())
-            .andExpect(jsonPath("$.path").value("/api/content-types"))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:too_many_parameters")
     }
 
     private fun queryParametersFindAll() =

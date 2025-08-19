@@ -6,6 +6,8 @@ import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ForbiddenOperationException
 import org.orkg.common.exceptions.PropertyValidationException
 import org.orkg.common.exceptions.SimpleMessageException
+import org.orkg.common.exceptions.createProblemURI
+import org.orkg.common.exceptions.jsonFieldPathToJsonPointerReference
 import org.springframework.http.HttpStatus
 
 class ResourceNotFound private constructor(
@@ -16,8 +18,10 @@ class ResourceNotFound private constructor(
 
         fun withId(id: String) = ResourceNotFound("""Resource "$id" not found.""")
 
+        @Deprecated("Replace with PaperNotFound")
         fun withDOI(doi: String) = ResourceNotFound("""Resource with DOI "$doi" not found.""")
 
+        @Deprecated("Replace with PaperNotFound")
         fun withLabel(label: String) = ResourceNotFound("""Resource with label "$label" not found.""")
     }
 }
@@ -29,13 +33,14 @@ class LiteralNotFound : SimpleMessageException {
 
 class ClassNotFound private constructor(
     override val message: String,
-) : SimpleMessageException(HttpStatus.NOT_FOUND, message) {
+    properties: Map<String, Any>,
+) : SimpleMessageException(HttpStatus.NOT_FOUND, message, properties = properties) {
     companion object {
         fun withThingId(id: ThingId) = withId(id.value)
 
-        fun withId(id: String) = ClassNotFound("""Class "$id" not found.""")
+        fun withId(id: String) = ClassNotFound("""Class "$id" not found.""", mapOf("id" to id))
 
-        fun withURI(uri: ParsedIRI) = ClassNotFound("""Class with URI "$uri" not found.""")
+        fun withURI(uri: ParsedIRI) = ClassNotFound("""Class with URI "$uri" not found.""", mapOf("uri" to uri))
     }
 }
 
@@ -105,10 +110,10 @@ class ListInUse(id: ThingId) :
         """Unable to delete list "$id" because it is used in at least one statement."""
     )
 
-class ClassNotAllowed(id: ThingId) :
+class ReservedClassId(id: ThingId) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Class id "$id" is not allowed."""
+        """Class id "$id" is reserved."""
     )
 
 class ClassAlreadyExists(id: ThingId) :
@@ -199,45 +204,48 @@ class URIAlreadyInUse(
     uri: ParsedIRI,
     id: ThingId,
 ) : PropertyValidationException(
-        "uri",
-        """The URI <$uri> is already assigned to class with ID "$id"."""
+        jsonFieldPathToJsonPointerReference("uri"),
+        """The URI <$uri> is already assigned to class with ID "$id".""",
+        type = createProblemURI("uri_already_in_use"),
     )
 
 class URINotAbsolute(uri: ParsedIRI) :
     PropertyValidationException(
-        "uri",
-        """The URI <$uri> is not absolute."""
+        jsonFieldPathToJsonPointerReference("uri"),
+        """The URI <$uri> is not absolute.""",
+        type = createProblemURI("uri_not_absolute"),
     )
 
-class InvalidLabel(property: String = "label") :
+class InvalidLabel(val property: String = "label") :
     PropertyValidationException(
-        property,
+        jsonFieldPathToJsonPointerReference(property),
         "A label must not be blank or contain newlines and must be at most $MAX_LABEL_LENGTH characters long."
     )
 
-class InvalidDescription(property: String = "description") :
+class InvalidDescription(val property: String = "description") :
     PropertyValidationException(
-        property,
+        jsonFieldPathToJsonPointerReference(property),
         "A description must not be blank and must be at most $MAX_LABEL_LENGTH characters long."
     )
 
 class InvalidLiteralLabel : PropertyValidationException {
     constructor() :
-        super("label", "A literal must be at most $MAX_LABEL_LENGTH characters long.")
+        super(jsonFieldPathToJsonPointerReference("label"), "A literal must be at most $MAX_LABEL_LENGTH characters long.")
     constructor(label: String, datatype: String) :
-        super("label", """Literal value "$label" is not a valid "$datatype".""")
+        super(jsonFieldPathToJsonPointerReference("label"), """Literal value "$label" is not a valid "$datatype".""")
 }
 
 class InvalidLiteralDatatype :
     PropertyValidationException(
-        "datatype",
-        "A literal datatype must be a URI or a \"xsd:\"-prefixed type"
+        jsonFieldPathToJsonPointerReference("datatype"),
+        "A literal datatype must be a URI or a \"xsd:\"-prefixed type."
     )
 
 class CannotResetURI(id: ThingId) :
     ForbiddenOperationException(
-        "uri",
-        """The class "$id" already has a URI. It is not allowed to change URIs."""
+        jsonFieldPathToJsonPointerReference("uri"),
+        """The class "$id" already has a URI. It is not allowed to change URIs.""",
+        type = createProblemURI("cannot_reset_uri")
     )
 
 class StatementSubjectNotFound(id: ThingId) :
@@ -317,7 +325,7 @@ class ParentClassAlreadyHasChildren(id: ThingId) :
     )
 
 class NeitherOwnerNorCurator private constructor(
-    override val status: HttpStatus,
+    status: HttpStatus,
     override val message: String,
 ) : SimpleMessageException(status, message) {
     constructor(contributorId: ContributorId) : this(
@@ -335,7 +343,7 @@ class NeitherOwnerNorCurator private constructor(
 }
 
 class NotACurator private constructor(
-    override val status: HttpStatus,
+    status: HttpStatus,
     override val message: String,
 ) : SimpleMessageException(status, message) {
     constructor(contributorId: ContributorId) : this(

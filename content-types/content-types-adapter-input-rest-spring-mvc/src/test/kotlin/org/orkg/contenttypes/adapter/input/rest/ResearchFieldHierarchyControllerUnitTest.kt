@@ -8,7 +8,6 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.configuration.WebMvcConfiguration
-import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.community.input.RetrieveContributorUseCase
 import org.orkg.contenttypes.domain.ResearchFieldHierarchyEntry
@@ -22,11 +21,15 @@ import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectResearchFieldHierarchyEntry
 import org.orkg.testing.andExpectResource
+import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.Page
+import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.context.ContextConfiguration
@@ -36,7 +39,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @ContextConfiguration(
     classes = [
         ResearchFieldHierarchyController::class,
-        ExceptionHandler::class,
+        ExceptionTestConfiguration::class,
         CommonJacksonModule::class,
         FixedClockConfig::class,
         WebMvcConfiguration::class
@@ -96,10 +99,8 @@ internal class ResearchFieldHierarchyControllerUnitTest : MockMvcBaseTest("resea
 
         get("/api/research-fields/{id}/children", parentId)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(404))
-            .andExpect(jsonPath("$.path").value("/api/research-fields/$parentId/children"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:research_field_not_found")
 
         verify(exactly = 1) { service.findAllChildrenByAncestorId(parentId, any()) }
     }
@@ -140,10 +141,8 @@ internal class ResearchFieldHierarchyControllerUnitTest : MockMvcBaseTest("resea
 
         get("/api/research-fields/{id}/parents", subfieldId)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(404))
-            .andExpect(jsonPath("$.path").value("/api/research-fields/$subfieldId/parents"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:research_field_not_found")
 
         verify(exactly = 1) { service.findAllParentsByChildId(subfieldId, any()) }
     }
@@ -200,10 +199,8 @@ internal class ResearchFieldHierarchyControllerUnitTest : MockMvcBaseTest("resea
 
         get("/api/research-fields/{id}/roots", subfieldId)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(404))
-            .andExpect(jsonPath("$.path").value("/api/research-fields/$subfieldId/roots"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:research_field_not_found")
 
         verify(exactly = 1) { service.findAllRootsByDescendantId(subfieldId, any()) }
     }
@@ -263,10 +260,8 @@ internal class ResearchFieldHierarchyControllerUnitTest : MockMvcBaseTest("resea
 
         get("/api/research-fields/{id}/hierarchy", subfieldId)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(404))
-            .andExpect(jsonPath("$.path").value("/api/research-fields/$subfieldId/hierarchy"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:research_field_not_found")
 
         verify(exactly = 1) { service.findResearchFieldHierarchyByResearchFieldId(subfieldId, any()) }
     }

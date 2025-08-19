@@ -86,7 +86,7 @@ internal class ClassServiceUnitTest : MockkBaseTest {
             contributorId = contributorId,
             label = "irrelevant"
         )
-        assertThrows<ClassNotAllowed> { service.create(command) }
+        assertThrows<ReservedClassId> { service.create(command) }
     }
 
     @Test

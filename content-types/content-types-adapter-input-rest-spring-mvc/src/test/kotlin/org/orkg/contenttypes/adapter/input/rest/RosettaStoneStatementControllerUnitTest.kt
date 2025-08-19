@@ -13,12 +13,10 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
 import org.orkg.contenttypes.domain.Certainty
-import org.orkg.contenttypes.domain.RosettaStoneStatementNotFound
 import org.orkg.contenttypes.domain.testing.asciidoc.allowedCertaintyValues
 import org.orkg.contenttypes.domain.testing.fixtures.createRosettaStoneStatement
 import org.orkg.contenttypes.input.RosettaStoneStatementUseCases
@@ -33,12 +31,15 @@ import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectRosettaStoneStatement
 import org.orkg.testing.annotations.TestWithMockCurator
 import org.orkg.testing.annotations.TestWithMockUser
+import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
 import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
@@ -50,7 +51,6 @@ import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
@@ -59,7 +59,7 @@ import java.util.Optional
 @ContextConfiguration(
     classes = [
         RosettaStoneStatementController::class,
-        ExceptionHandler::class,
+        ExceptionTestConfiguration::class,
         CommonJacksonModule::class,
         ContentTypeJacksonModule::class,
         FixedClockConfig::class
@@ -124,16 +124,13 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
     @Test
     fun `Given a rosetta stone statement, when it is fetched by id and service reports missing rosetta stone statement, then status is 404 NOT FOUND`() {
         val id = ThingId("Missing")
-        val exception = RosettaStoneStatementNotFound(id)
         every { statementService.findByIdOrVersionId(id) } returns Optional.empty()
 
         get("/api/rosetta-stone/statements/{id}", id)
             .accept(ROSETTA_STONE_STATEMENT_JSON_V1)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.path").value("/api/rosetta-stone/statements/$id"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:rosetta_stone_statement_not_found")
 
         verify(exactly = 1) { statementService.findByIdOrVersionId(id) }
     }
@@ -248,16 +245,13 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
     @Test
     fun `Given a rosetta stone statement, when fetching all of its versions and service reports missing rosetta stone statement, then status is 404 NOT FOUND`() {
         val id = ThingId("Missing")
-        val exception = RosettaStoneStatementNotFound(id)
         every { statementService.findByIdOrVersionId(id) } returns Optional.empty()
 
         get("/api/rosetta-stone/statements/{id}/versions", id)
             .accept(ROSETTA_STONE_STATEMENT_JSON_V1)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.path").value("/api/rosetta-stone/statements/$id/versions"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:rosetta_stone_statement_not_found")
 
         verify(exactly = 1) { statementService.findByIdOrVersionId(id) }
     }

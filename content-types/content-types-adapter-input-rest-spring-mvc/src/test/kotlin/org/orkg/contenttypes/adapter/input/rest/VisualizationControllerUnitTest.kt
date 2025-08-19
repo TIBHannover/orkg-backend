@@ -13,7 +13,6 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.common.testing.fixtures.fixedClock
@@ -35,12 +34,16 @@ import org.orkg.graph.testing.asciidoc.allowedVisibilityValues
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectVisualization
 import org.orkg.testing.annotations.TestWithMockUser
+import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
 import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
@@ -51,7 +54,6 @@ import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
@@ -60,7 +62,7 @@ import java.util.Optional
 @ContextConfiguration(
     classes = [
         VisualizationController::class,
-        ExceptionHandler::class,
+        ExceptionTestConfiguration::class,
         CommonJacksonModule::class,
         ContentTypeJacksonModule::class,
         FixedClockConfig::class
@@ -119,10 +121,8 @@ internal class VisualizationControllerUnitTest : MockMvcBaseTest("visualizations
         get("/api/visualizations/{id}", id)
             .accept(VISUALIZATION_JSON_V2)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.path").value("/api/visualizations/$id"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:visualization_not_found")
 
         verify(exactly = 1) { visualizationService.findById(id) }
     }
@@ -229,12 +229,8 @@ internal class VisualizationControllerUnitTest : MockMvcBaseTest("visualizations
             .param("sort", "unknown")
             .accept(VISUALIZATION_JSON_V2)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(400))
-            .andExpect(jsonPath("$.message").value(exception.message))
-            .andExpect(jsonPath("$.error").value(exception.status.reasonPhrase))
-            .andExpect(jsonPath("$.timestamp").exists())
-            .andExpect(jsonPath("$.path").value("/api/visualizations"))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:unknown_sorting_property")
 
         verify(exactly = 1) {
             visualizationService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
@@ -285,10 +281,8 @@ internal class VisualizationControllerUnitTest : MockMvcBaseTest("visualizations
             .accept(VISUALIZATION_JSON_V2)
             .contentType(VISUALIZATION_JSON_V2)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/visualizations"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:only_one_organization_allowed")
 
         verify(exactly = 1) { visualizationService.create(any()) }
     }
@@ -304,10 +298,8 @@ internal class VisualizationControllerUnitTest : MockMvcBaseTest("visualizations
             .accept(VISUALIZATION_JSON_V2)
             .contentType(VISUALIZATION_JSON_V2)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/visualizations"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:only_one_observatory_allowed")
 
         verify(exactly = 1) { visualizationService.create(any()) }
     }
@@ -323,10 +315,8 @@ internal class VisualizationControllerUnitTest : MockMvcBaseTest("visualizations
             .accept(VISUALIZATION_JSON_V2)
             .contentType(VISUALIZATION_JSON_V2)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.path").value("/api/visualizations"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:author_not_found")
 
         verify(exactly = 1) { visualizationService.create(any()) }
     }
@@ -348,10 +338,8 @@ internal class VisualizationControllerUnitTest : MockMvcBaseTest("visualizations
             .accept(VISUALIZATION_JSON_V2)
             .contentType(VISUALIZATION_JSON_V2)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/visualizations"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:ambiguous_author")
 
         verify(exactly = 1) { visualizationService.create(any()) }
     }

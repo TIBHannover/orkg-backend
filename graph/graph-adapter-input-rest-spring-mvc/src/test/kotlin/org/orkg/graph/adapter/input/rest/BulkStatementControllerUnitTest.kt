@@ -9,7 +9,6 @@ import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.configuration.WebMvcConfiguration
-import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.graph.adapter.input.rest.json.GraphJacksonModule
 import org.orkg.graph.domain.StatementId
@@ -21,6 +20,7 @@ import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectStatement
 import org.orkg.testing.annotations.TestWithMockUser
+import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
@@ -39,7 +39,7 @@ import java.util.Optional
 @ContextConfiguration(
     classes = [
         BulkStatementController::class,
-        ExceptionHandler::class,
+        ExceptionTestConfiguration::class,
         CommonJacksonModule::class,
         GraphJacksonModule::class,
         FixedClockConfig::class,

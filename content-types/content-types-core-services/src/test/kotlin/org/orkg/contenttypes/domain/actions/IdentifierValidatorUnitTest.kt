@@ -134,6 +134,6 @@ internal class IdentifierValidatorUnitTest : MockkBaseTest {
                 exceptionFactory = ::AssertionError
             )
         }
-        result.property shouldBe "doi"
+        result.name shouldBe "doi"
     }
 }

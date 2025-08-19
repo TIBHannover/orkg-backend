@@ -5,7 +5,6 @@ import io.mockk.every
 import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.export.adapter.input.rest.configuration.RdfConfiguration
 import org.orkg.export.domain.FileExportService
 import org.orkg.export.domain.RDFService
@@ -19,6 +18,7 @@ import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
+import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
@@ -35,7 +35,7 @@ import java.util.Optional
     classes = [
         VocabController::class,
         RdfConfiguration::class,
-        ExceptionHandler::class,
+        ExceptionTestConfiguration::class,
         RDFService::class,
         FixedClockConfig::class
     ]

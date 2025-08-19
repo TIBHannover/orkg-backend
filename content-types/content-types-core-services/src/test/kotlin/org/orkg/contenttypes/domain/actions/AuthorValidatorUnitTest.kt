@@ -276,6 +276,6 @@ internal class AuthorValidatorUnitTest : MockkBaseTest {
             )
         )
 
-        assertThrows<InvalidIdentifier> { authorValidator.validate(authors) }.property shouldBe "orcid"
+        assertThrows<InvalidIdentifier> { authorValidator.validate(authors) }.name shouldBe "orcid"
     }
 }

@@ -4,13 +4,15 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.orkg.common.exceptions.ServiceUnavailable
+import org.orkg.common.exceptions.SimpleMessageException
 import org.orkg.common.exceptions.Unauthorized
+import org.orkg.common.exceptions.createProblemURI
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestParam
@@ -113,19 +115,18 @@ class LegacyAuthController(
         }
     }
 
-    data class OAuth2Exception(
-        val errorCode: String,
+    class OAuth2Exception(
+        errorCode: String,
         override val message: String,
-    ) : Exception(message)
-
-    @ExceptionHandler(OAuth2Exception::class)
-    fun handleOAuth2Exception(e: OAuth2Exception): ResponseEntity<Any> {
-        val payload = mapOf(
-            "error" to e.errorCode,
-            "error_description" to e.message
+    ) : SimpleMessageException(
+            status = BAD_REQUEST,
+            message = message,
+            properties = mapOf(
+                "error" to errorCode,
+                "error_description" to message,
+            ),
+            type = createProblemURI(errorCode)
         )
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).body(payload)
-    }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     data class LegacyTokenResponse(

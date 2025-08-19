@@ -12,12 +12,8 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.common.exceptions.ExceptionHandler
-import org.orkg.common.exceptions.TooManyParameters
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.community.domain.Observatory
-import org.orkg.community.domain.ObservatoryNotFound
-import org.orkg.community.domain.ObservatoryURLNotFound
 import org.orkg.community.domain.OrganizationNotFound
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.output.ObservatoryRepository
@@ -26,13 +22,18 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.annotations.TestWithMockCurator
+import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
+import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
 import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
@@ -47,7 +48,7 @@ import java.util.Optional
 import java.util.UUID
 
 @ContextConfiguration(
-    classes = [ObservatoryController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class]
+    classes = [ObservatoryController::class, ExceptionTestConfiguration::class, CommonJacksonModule::class, FixedClockConfig::class]
 )
 @WebMvcTest(controllers = [ObservatoryController::class])
 internal class ObservatoryControllerUnitTest : MockMvcBaseTest("observatories") {
@@ -84,10 +85,8 @@ internal class ObservatoryControllerUnitTest : MockMvcBaseTest("observatories") 
 
         get("/api/observatories/{id}", id)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(404))
-            .andExpect(jsonPath("$.path").value("/api/observatories/$id"))
-            .andExpect(jsonPath("$.message").value(ObservatoryNotFound(id).message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:observatory_not_found")
 
         verify(exactly = 1) { observatoryUseCases.findById(id) }
     }
@@ -111,10 +110,8 @@ internal class ObservatoryControllerUnitTest : MockMvcBaseTest("observatories") 
         post("/api/observatories")
             .content(body)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(404))
-            .andExpect(jsonPath("$.path").value("/api/observatories"))
-            .andExpect(jsonPath("$.message").value(OrganizationNotFound(organizationId).message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:organization_not_found")
 
         verify(exactly = 1) { observatoryUseCases.create(any()) }
     }
@@ -142,10 +139,8 @@ internal class ObservatoryControllerUnitTest : MockMvcBaseTest("observatories") 
 
         get("/api/observatories/{id}", wrongId)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(404))
-            .andExpect(jsonPath("$.path").value("/api/observatories/IncorrectId"))
-            .andExpect(jsonPath("$.message").value(ObservatoryURLNotFound(wrongId).message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:observatory_not_found")
 
         verify(exactly = 1) { observatoryUseCases.findByDisplayId(wrongId) }
     }
@@ -193,10 +188,8 @@ internal class ObservatoryControllerUnitTest : MockMvcBaseTest("observatories") 
             .param("q", "Label")
             .param("research_field", "R1234")
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(400))
-            .andExpect(jsonPath("$.path").value("/api/observatories"))
-            .andExpect(jsonPath("$.message").value(TooManyParameters.atMostOneOf("q", "research_field").message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:too_many_parameters")
     }
 
     @Test

@@ -7,7 +7,6 @@ import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.OrganizationId
-import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.community.domain.LogoNotFound
 import org.orkg.community.domain.OrganizationNotFound
@@ -27,10 +26,14 @@ import org.orkg.mediastorage.testing.fixtures.loadRawImage
 import org.orkg.mediastorage.testing.fixtures.testImage
 import org.orkg.testing.annotations.TestWithMockCurator
 import org.orkg.testing.annotations.TestWithMockUser
+import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcBaseTest
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
 import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
@@ -49,7 +52,7 @@ import java.util.Optional
 import java.util.UUID
 
 @ContextConfiguration(
-    classes = [OrganizationController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class]
+    classes = [OrganizationController::class, ExceptionTestConfiguration::class, CommonJacksonModule::class, FixedClockConfig::class]
 )
 @WebMvcTest(controllers = [OrganizationController::class])
 internal class OrganizationControllerUnitTest : MockMvcBaseTest("organizations") {
@@ -92,7 +95,8 @@ internal class OrganizationControllerUnitTest : MockMvcBaseTest("organizations")
 
         get("/api/organizations/{id}/logo", id)
             .perform()
-            .andExpect(status().isNotFound)
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:logo_not_found")
 
         verify(exactly = 1) { organizationService.findLogoById(id) }
     }
@@ -105,7 +109,8 @@ internal class OrganizationControllerUnitTest : MockMvcBaseTest("organizations")
 
         get("/api/organizations/{id}/logo", id)
             .perform()
-            .andExpect(status().isNotFound)
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:organization_not_found")
 
         verify(exactly = 1) { organizationService.findLogoById(id) }
     }
@@ -143,7 +148,8 @@ internal class OrganizationControllerUnitTest : MockMvcBaseTest("organizations")
         patchMultipart("/api/organizations/{id}", id)
             .json("properties", body)
             .perform()
-            .andExpect(status().isNotFound)
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:organization_not_found")
 
         verify(exactly = 1) { organizationService.update(any(), any()) }
     }
@@ -162,10 +168,8 @@ internal class OrganizationControllerUnitTest : MockMvcBaseTest("organizations")
         patchMultipart("/api/organizations/{id}", id)
             .json("properties", body)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/organizations/$id"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:invalid_mime_type")
 
         verify(exactly = 1) { organizationService.update(any(), any()) }
     }
@@ -184,10 +188,8 @@ internal class OrganizationControllerUnitTest : MockMvcBaseTest("organizations")
         patchMultipart("/api/organizations/{id}", id)
             .json("properties", body)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/organizations/$id"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:invalid_image_data")
 
         verify(exactly = 1) { organizationService.update(any(), any()) }
     }
@@ -222,7 +224,8 @@ internal class OrganizationControllerUnitTest : MockMvcBaseTest("organizations")
         patchMultipart("/api/organizations/{id}", id)
             .json("properties", body)
             .perform()
-            .andExpect(status().isBadRequest)
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:invalid_argument")
 
         verify(exactly = 0) { organizationService.update(any(), any()) }
     }
@@ -238,7 +241,8 @@ internal class OrganizationControllerUnitTest : MockMvcBaseTest("organizations")
         patchMultipart("/api/organizations/{id}", id)
             .json("properties", body)
             .perform()
-            .andExpect(status().isBadRequest)
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:invalid_argument")
 
         verify(exactly = 0) { organizationService.update(any(), any()) }
     }

@@ -15,14 +15,12 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.contenttypes.adapter.input.rest.TableController.CreateTableRequest
 import org.orkg.contenttypes.adapter.input.rest.TableController.UpdateTableRequest
 import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
-import org.orkg.contenttypes.domain.TableNotFound
 import org.orkg.contenttypes.domain.testing.fixtures.createTable
 import org.orkg.contenttypes.input.TableUseCases
 import org.orkg.graph.domain.ExactSearchString
@@ -36,12 +34,16 @@ import org.orkg.graph.testing.asciidoc.allowedVisibilityValues
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectTable
 import org.orkg.testing.annotations.TestWithMockUser
+import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
 import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
@@ -53,7 +55,6 @@ import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
@@ -62,7 +63,7 @@ import java.util.Optional
 @ContextConfiguration(
     classes = [
         TableController::class,
-        ExceptionHandler::class,
+        ExceptionTestConfiguration::class,
         CommonJacksonModule::class,
         ContentTypeJacksonModule::class,
         FixedClockConfig::class
@@ -117,16 +118,13 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
     @Test
     fun `Given a table, when it is fetched by id and service reports missing table, then status is 404 NOT FOUND`() {
         val id = ThingId("Missing")
-        val exception = TableNotFound(id)
         every { tableService.findById(id) } returns Optional.empty()
 
         get("/api/tables/$id")
             .accept(TABLE_JSON_V1)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.path").value("/api/tables/$id"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:table_not_found")
 
         verify(exactly = 1) { tableService.findById(id) }
     }
@@ -226,12 +224,8 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
             .param("sort", "unknown")
             .accept(TABLE_JSON_V1)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(400))
-            .andExpect(jsonPath("$.message").value(exception.message))
-            .andExpect(jsonPath("$.error").value(exception.status.reasonPhrase))
-            .andExpect(jsonPath("$.timestamp").exists())
-            .andExpect(jsonPath("$.path").value("/api/tables"))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:unknown_sorting_property")
 
         verify(exactly = 1) {
             tableService.findAll(any(), any(), any(), any(), any(), any(), any(), any())

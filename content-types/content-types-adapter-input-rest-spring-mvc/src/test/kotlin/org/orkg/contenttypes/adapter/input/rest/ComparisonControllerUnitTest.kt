@@ -15,7 +15,6 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.exceptions.ServiceUnavailable
 import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.json.CommonJacksonModule
@@ -47,12 +46,17 @@ import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectComparison
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.annotations.TestWithMockUser
+import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.http.HttpStatus.NOT_FOUND
+import org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
 import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
@@ -63,7 +67,6 @@ import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
@@ -72,7 +75,7 @@ import java.util.Optional
 @ContextConfiguration(
     classes = [
         ComparisonController::class,
-        ExceptionHandler::class,
+        ExceptionTestConfiguration::class,
         CommonJacksonModule::class,
         ContentTypeJacksonModule::class,
         FixedClockConfig::class
@@ -195,10 +198,8 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
         get("/api/comparisons/{id}", id)
             .accept(COMPARISON_JSON_V2)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.path").value("/api/comparisons/$id"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:comparison_not_found")
 
         verify(exactly = 1) { comparisonService.findById(id) }
     }
@@ -382,12 +383,8 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
             .param("sort", "unknown")
             .accept(COMPARISON_JSON_V2)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(400))
-            .andExpect(jsonPath("$.message").value(exception.message))
-            .andExpect(jsonPath("$.error").value(exception.status.reasonPhrase))
-            .andExpect(jsonPath("$.timestamp").exists())
-            .andExpect(jsonPath("$.path").value("/api/comparisons"))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:unknown_sorting_property")
 
         verify(exactly = 1) {
             comparisonService.findAll(
@@ -484,10 +481,8 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
         post("/api/comparisons/$id/publish")
             .content(request)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.path").value("/api/comparisons/$id/publish"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:comparison_not_found")
 
         verify(exactly = 1) {
             comparisonService.publish(
@@ -524,10 +519,8 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
         post("/api/comparisons/$id/publish")
             .content(request)
             .perform()
-            .andExpect(status().isServiceUnavailable)
-            .andExpect(jsonPath("$.status").value(HttpStatus.SERVICE_UNAVAILABLE.value()))
-            .andExpect(jsonPath("$.path").value("/api/comparisons/$id/publish"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(SERVICE_UNAVAILABLE)
+            .andExpectType("orkg:problem:service_unavailable")
 
         verify(exactly = 1) {
             comparisonService.publish(
@@ -624,10 +617,8 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
             .accept(COMPARISON_JSON_V2)
             .contentType(COMPARISON_JSON_V2)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/comparisons"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:requires_at_least_two_contributions")
 
         verify(exactly = 1) { comparisonService.create(any()) }
     }
@@ -643,10 +634,8 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
             .accept(COMPARISON_JSON_V2)
             .contentType(COMPARISON_JSON_V2)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.path").value("/api/comparisons"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:contribution_not_found")
 
         verify(exactly = 1) { comparisonService.create(any()) }
     }
@@ -662,10 +651,8 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
             .accept(COMPARISON_JSON_V2)
             .contentType(COMPARISON_JSON_V2)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/comparisons"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:only_one_research_field_allowed")
 
         verify(exactly = 1) { comparisonService.create(any()) }
     }
@@ -681,10 +668,8 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
             .accept(COMPARISON_JSON_V2)
             .contentType(COMPARISON_JSON_V2)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.path").value("/api/comparisons"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:research_field_not_found")
 
         verify(exactly = 1) { comparisonService.create(any()) }
     }
@@ -700,10 +685,8 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
             .accept(COMPARISON_JSON_V2)
             .contentType(COMPARISON_JSON_V2)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/comparisons"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:only_one_organization_allowed")
 
         verify(exactly = 1) { comparisonService.create(any()) }
     }
@@ -719,10 +702,8 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
             .accept(COMPARISON_JSON_V2)
             .contentType(COMPARISON_JSON_V2)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/comparisons"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:only_one_observatory_allowed")
 
         verify(exactly = 1) { comparisonService.create(any()) }
     }
@@ -738,10 +719,8 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
             .accept(COMPARISON_JSON_V2)
             .contentType(COMPARISON_JSON_V2)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.path").value("/api/comparisons"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:author_not_found")
 
         verify(exactly = 1) { comparisonService.create(any()) }
     }
@@ -763,10 +742,8 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
             .accept(COMPARISON_JSON_V2)
             .contentType(COMPARISON_JSON_V2)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/comparisons"))
-            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:ambiguous_author")
 
         verify(exactly = 1) { comparisonService.create(any()) }
     }

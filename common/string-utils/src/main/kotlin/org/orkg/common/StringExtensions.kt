@@ -4,23 +4,22 @@ import java.math.BigInteger
 import java.security.MessageDigest
 
 fun String.toSnakeCase(): String =
-    if (this.isEmpty()) {
+    if (isEmpty()) {
         this
     } else {
-        StringBuilder().also {
-            this.forEach { c ->
-                when (c) {
-                    in 'A'..'Z' -> {
-                        it.append("_")
-                        it.append(c.lowercase())
+        buildString {
+            this@toSnakeCase.forEachIndexed { index, c ->
+                when {
+                    c.isUpperCase() -> {
+                        if (index > 0) {
+                            append("_")
+                        }
+                        append(c.lowercase())
                     }
-
-                    else -> {
-                        it.append(c)
-                    }
+                    else -> append(c)
                 }
             }
-        }.toString()
+        }
     }
 
 /**

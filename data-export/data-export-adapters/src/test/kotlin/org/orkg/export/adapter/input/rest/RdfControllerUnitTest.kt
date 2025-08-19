@@ -12,7 +12,6 @@ import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.configuration.WebMvcConfiguration
-import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.export.adapter.input.rest.RdfController.Companion.DUMP_ENDPOINT
 import org.orkg.export.adapter.input.rest.RdfController.Companion.HINTS_ENDPOINT
 import org.orkg.export.input.ExportRDFUseCase
@@ -26,6 +25,7 @@ import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.annotations.TestWithMockAdmin
+import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
@@ -42,7 +42,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@ContextConfiguration(classes = [RdfController::class, ExceptionHandler::class, FixedClockConfig::class, WebMvcConfiguration::class])
+@ContextConfiguration(classes = [RdfController::class, ExceptionTestConfiguration::class, FixedClockConfig::class, WebMvcConfiguration::class])
 @WebMvcTest(controllers = [RdfController::class])
 internal class RdfControllerUnitTest : MockMvcBaseTest("rdf-hints") {
     @MockkBean

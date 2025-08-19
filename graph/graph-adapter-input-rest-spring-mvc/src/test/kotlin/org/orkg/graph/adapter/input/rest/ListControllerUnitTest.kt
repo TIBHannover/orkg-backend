@@ -11,7 +11,6 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.configuration.WebMvcConfiguration
-import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.ListElementNotFound
@@ -26,12 +25,16 @@ import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.annotations.TestWithMockUser
+import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcBaseTest
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageImpl
-import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
 import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
@@ -50,7 +53,7 @@ import java.util.Optional
 @ContextConfiguration(
     classes = [
         ListController::class,
-        ExceptionHandler::class,
+        ExceptionTestConfiguration::class,
         CommonJacksonModule::class,
         FixedClockConfig::class,
         WebMvcConfiguration::class
@@ -113,18 +116,13 @@ internal class ListControllerUnitTest : MockMvcBaseTest("lists") {
     @Test
     fun `Given a list, when fetched by id and service reports missing list, then status is 404 NOT FOUND`() {
         val id = ThingId("NOT_FOUND")
-        val exception = ListNotFound(id)
 
         every { listService.findById(id) } returns Optional.empty()
 
         get("/api/lists/{id}", id)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.message").value(exception.message))
-            .andExpect(jsonPath("$.error").value("Not Found"))
-            .andExpect(jsonPath("$.timestamp").exists())
-            .andExpect(jsonPath("$.path").value("/api/lists/$id"))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:list_not_found")
 
         verify(exactly = 1) { listService.findById(id) }
     }
@@ -182,14 +180,8 @@ internal class ListControllerUnitTest : MockMvcBaseTest("lists") {
         post("/api/lists")
             .content(request)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.errors.length()").value(1))
-            .andExpect(jsonPath("$.errors[0].field").value(exception.property))
-            .andExpect(jsonPath("$.errors[0].message").value(exception.message))
-            .andExpect(jsonPath("$.error").value("Bad Request"))
-            .andExpect(jsonPath("$.timestamp").exists())
-            .andExpect(jsonPath("$.path").value("/api/lists"))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:invalid_label")
 
         verify(exactly = 1) { listService.create(any()) }
         verify(exactly = 0) { listService.findById(id) }
@@ -210,14 +202,8 @@ internal class ListControllerUnitTest : MockMvcBaseTest("lists") {
         post("/api/lists")
             .content(request)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.errors.length()").value(1))
-            .andExpect(jsonPath("$.errors[0].field").value(exception.property))
-            .andExpect(jsonPath("$.errors[0].message").value(exception.message))
-            .andExpect(jsonPath("$.error").value("Bad Request"))
-            .andExpect(jsonPath("$.timestamp").exists())
-            .andExpect(jsonPath("$.path").value("/api/lists"))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:list_element_not_found")
 
         verify(exactly = 1) { listService.create(any()) }
         verify(exactly = 0) { listService.findById(id) }
@@ -280,14 +266,8 @@ internal class ListControllerUnitTest : MockMvcBaseTest("lists") {
             .contentType(APPLICATION_JSON)
             .content(request)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.errors.length()").value(1))
-            .andExpect(jsonPath("$.errors[0].field").value(exception.property))
-            .andExpect(jsonPath("$.errors[0].message").value(exception.message))
-            .andExpect(jsonPath("$.error").value("Bad Request"))
-            .andExpect(jsonPath("$.timestamp").exists())
-            .andExpect(jsonPath("$.path").value("/api/lists/$id"))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:invalid_label")
 
         verify(exactly = 1) { listService.update(any()) }
     }
@@ -308,14 +288,8 @@ internal class ListControllerUnitTest : MockMvcBaseTest("lists") {
             .contentType(APPLICATION_JSON)
             .content(request)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.errors.length()").value(1))
-            .andExpect(jsonPath("$.errors[0].field").value(exception.property))
-            .andExpect(jsonPath("$.errors[0].message").value(exception.message))
-            .andExpect(jsonPath("$.error").value("Bad Request"))
-            .andExpect(jsonPath("$.timestamp").exists())
-            .andExpect(jsonPath("$.path").value("/api/lists/$id"))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:list_element_not_found")
 
         verify(exactly = 1) { listService.update(any()) }
     }
@@ -371,12 +345,8 @@ internal class ListControllerUnitTest : MockMvcBaseTest("lists") {
 
         get("/api/lists/{id}/elements", id)
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.message").value(exception.message))
-            .andExpect(jsonPath("$.error").value("Not Found"))
-            .andExpect(jsonPath("$.timestamp").exists())
-            .andExpect(jsonPath("$.path").value("/api/lists/$id/elements"))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:list_not_found")
 
         verify(exactly = 1) { listService.findAllElementsById(id, any()) }
     }

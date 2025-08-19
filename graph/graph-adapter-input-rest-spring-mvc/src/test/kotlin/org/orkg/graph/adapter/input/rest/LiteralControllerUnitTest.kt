@@ -14,7 +14,6 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
-import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.graph.adapter.input.rest.LiteralController.CreateLiteralRequest
@@ -32,12 +31,16 @@ import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectLiteral
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.annotations.TestWithMockUser
+import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
 import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
@@ -60,7 +63,7 @@ import java.util.Optional
 @ContextConfiguration(
     classes = [
         LiteralController::class,
-        ExceptionHandler::class,
+        ExceptionTestConfiguration::class,
         CommonJacksonModule::class,
         GraphJacksonModule::class,
         FixedClockConfig::class
@@ -190,12 +193,8 @@ internal class LiteralControllerUnitTest : MockMvcBaseTest("literals") {
         get("/api/literals")
             .param("sort", "unknown")
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(400))
-            .andExpect(jsonPath("$.message").value(exception.message))
-            .andExpect(jsonPath("$.error").value(exception.status.reasonPhrase))
-            .andExpect(jsonPath("$.timestamp").exists())
-            .andExpect(jsonPath("$.path").value("/api/literals"))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:unknown_sorting_property")
 
         verify(exactly = 1) { literalService.findAll(any()) }
     }
@@ -275,11 +274,8 @@ internal class LiteralControllerUnitTest : MockMvcBaseTest("literals") {
         post("/api/literals")
             .content(literal)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(400))
-            .andExpect(jsonPath("$.errors.length()").value(1))
-            .andExpect(jsonPath("$.errors[0].field").value("datatype"))
-            .andExpect(jsonPath("$.errors[0].message").value("must not be blank"))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:invalid_argument")
     }
 
     @Test
@@ -293,11 +289,8 @@ internal class LiteralControllerUnitTest : MockMvcBaseTest("literals") {
         post("/api/literals")
             .content(literal)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(400))
-            .andExpect(jsonPath("$.errors.length()").value(1))
-            .andExpect(jsonPath("$.errors[0].field").value("label"))
-            .andExpect(jsonPath("$.errors[0].message").value("A literal must be at most $MAX_LABEL_LENGTH characters long."))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:invalid_literal_label")
 
         verify(exactly = 1) { literalService.create(any()) }
     }

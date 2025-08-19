@@ -1,93 +1,47 @@
 package org.orkg.graph.adapter.input.rest.exceptions
 
-import org.hamcrest.Matchers.`is`
-import org.hamcrest.Matchers.notNullValue
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.common.exceptions.ExceptionHandler
-import org.orkg.graph.adapter.input.rest.exceptions.PredicateExceptionUnitTest.TestController
 import org.orkg.graph.domain.ExternalPredicateNotFound
 import org.orkg.graph.domain.PredicateNotFound
 import org.orkg.graph.domain.PredicateNotModifiable
 import org.orkg.testing.configuration.FixedClockConfig
-import org.orkg.testing.spring.MockMvcBaseTest
+import org.orkg.testing.spring.MockMvcExceptionBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.boot.test.context.TestComponent
-import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.FORBIDDEN
+import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
 
 @WebMvcTest
-@ContextConfiguration(classes = [TestController::class, ExceptionHandler::class, FixedClockConfig::class])
-internal class PredicateExceptionUnitTest : MockMvcBaseTest("exceptions") {
+@ContextConfiguration(classes = [FixedClockConfig::class])
+internal class PredicateExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun predicateNotModifiable() {
-        val id = ThingId("R123")
-
-        get("/predicate-not-modifiable")
-            .param("id", id.value)
-            .perform()
-            .andExpect(status().isForbidden)
-            .andExpect(jsonPath("$.status").value(HttpStatus.FORBIDDEN.value()))
-            .andExpect(jsonPath("$.error", `is`("Forbidden")))
-            .andExpect(jsonPath("$.path").value("/predicate-not-modifiable"))
-            .andExpect(jsonPath("$.message").value("""Predicate "$id" is not modifiable."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+        documentedGetRequestTo(PredicateNotModifiable(ThingId("P123")))
+            .andExpectErrorStatus(FORBIDDEN)
+            .andExpectType("orkg:problem:predicate_not_modifiable")
+            .andExpectTitle("Forbidden")
+            .andExpectDetail("""Predicate "P123" is not modifiable.""")
+            .andDocumentWithDefaultExceptionResponseFields()
     }
 
     @Test
     fun predicateNotFound() {
-        val id = "R123"
-
-        get("/predicate-not-found")
-            .param("id", id)
-            .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.error", `is`("Not Found")))
-            .andExpect(jsonPath("$.path").value("/predicate-not-found"))
-            .andExpect(jsonPath("$.message").value("""Predicate "$id" not found."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+        documentedGetRequestTo(PredicateNotFound(ThingId("P123")))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:predicate_not_found")
+            .andExpectTitle("Not Found")
+            .andExpectDetail("""Predicate "P123" not found.""")
+            .andDocumentWithDefaultExceptionResponseFields()
     }
 
     @Test
     fun externalPredicateNotFound() {
-        val id = "R123"
-        val ontologyId = "skos"
-
-        get("/external-predicate-not-found")
-            .param("id", id)
-            .param("ontologyId", ontologyId)
-            .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.error", `is`("Not Found")))
-            .andExpect(jsonPath("$.path").value("/external-predicate-not-found"))
-            .andExpect(jsonPath("$.message").value("""External predicate "$id" for ontology "$ontologyId" not found."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
-    }
-
-    @TestComponent
-    @RestController
-    internal class TestController {
-        @GetMapping("/predicate-not-modifiable")
-        fun predicateNotModifiable(
-            @RequestParam id: ThingId,
-        ): Unit = throw PredicateNotModifiable(id)
-
-        @GetMapping("/predicate-not-found")
-        fun predicateNotFound(
-            @RequestParam id: ThingId,
-        ): Unit = throw PredicateNotFound(id)
-
-        @GetMapping("/external-predicate-not-found")
-        fun externalPredicateNotFound(
-            @RequestParam ontologyId: String,
-            @RequestParam id: String,
-        ): Unit = throw ExternalPredicateNotFound(ontologyId, id)
+        documentedGetRequestTo(ExternalPredicateNotFound("skos", "P123"))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:external_predicate_not_found")
+            .andExpectTitle("Not Found")
+            .andExpectDetail("""External predicate "P123" for ontology "skos" not found.""")
+            .andDocumentWithDefaultExceptionResponseFields()
     }
 }

@@ -6,7 +6,6 @@ import io.mockk.verify
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
-import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.common.testing.fixtures.IsIso8601DateTimeString
 import org.orkg.community.adapter.input.rest.json.CommunityJacksonModule
@@ -16,6 +15,7 @@ import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectContributor
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.annotations.TestWithMockUser
+import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
@@ -36,7 +36,7 @@ import java.util.Optional
         ContributorController::class,
         CommonJacksonModule::class,
         CommunityJacksonModule::class,
-        ExceptionHandler::class,
+        ExceptionTestConfiguration::class,
         FixedClockConfig::class
     ]
 )

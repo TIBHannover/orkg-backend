@@ -11,16 +11,17 @@ dependencies {
     implementation(project(":common:string-utils"))
     api("com.fasterxml.jackson.core:jackson-annotations")
     api("com.fasterxml.jackson.core:jackson-databind")
-    api("org.neo4j.driver:neo4j-java-driver")
+    api("org.apache.tomcat.embed:tomcat-embed-core") // for HttpServletRequest
     api("org.springframework.data:spring-data-commons")
     api("org.springframework.security:spring-security-core") // for AccessDeniedException, UserDetails
+    api("org.springframework:spring-beans")
     api("org.springframework:spring-context")
     api("org.springframework:spring-core")
     api("org.springframework:spring-web")
     api("org.springframework:spring-webmvc")
     implementation("com.fasterxml.jackson.core:jackson-core")
-    implementation("org.apache.tomcat.embed:tomcat-embed-core") // for HttpServletRequest
-    implementation("org.slf4j:jcl-over-slf4j") // for org.apache.commons.logging.LogFactory in ResponseEntityExceptionHandler
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation("org.slf4j:slf4j-api")
     runtimeOnly("com.fasterxml.jackson.datatype:jackson-datatype-jsr310") // for timestamp serialization
 }
 

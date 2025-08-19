@@ -1,11 +1,8 @@
 package org.orkg.contenttypes.adapter.input.rest.exceptions
 
-import org.hamcrest.Matchers.`is`
-import org.hamcrest.Matchers.notNullValue
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.common.exceptions.ExceptionHandler
-import org.orkg.contenttypes.adapter.input.rest.exceptions.SmartReviewExceptionUnitTest.TestController
+import org.orkg.common.json.CommonJacksonModule
 import org.orkg.contenttypes.domain.InvalidSmartReviewTextSectionType
 import org.orkg.contenttypes.domain.OntologyEntityNotFound
 import org.orkg.contenttypes.domain.PublishedSmartReviewContentNotFound
@@ -14,237 +11,137 @@ import org.orkg.contenttypes.domain.SmartReviewNotModifiable
 import org.orkg.contenttypes.domain.SmartReviewSectionTypeMismatch
 import org.orkg.contenttypes.domain.UnrelatedSmartReviewSection
 import org.orkg.testing.configuration.FixedClockConfig
-import org.orkg.testing.spring.MockMvcBaseTest
+import org.orkg.testing.spring.MockMvcExceptionBaseTest
+import org.orkg.testing.spring.restdocs.exceptionResponseFields
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.boot.test.context.TestComponent
-import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.http.HttpStatus.FORBIDDEN
+import org.springframework.http.HttpStatus.NOT_FOUND
+import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
 
 @WebMvcTest
-@ContextConfiguration(classes = [TestController::class, ExceptionHandler::class, FixedClockConfig::class])
-internal class SmartReviewExceptionUnitTest : MockMvcBaseTest("smart-reviews") {
+@ContextConfiguration(classes = [CommonJacksonModule::class, FixedClockConfig::class])
+internal class SmartReviewExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun publishedSmartReviewContentNotFound() {
-        val smartReviewId = "R123"
-        val contentId = "R456"
-
-        get("/published-smart-review-content-not-found")
-            .param("smartReviewId", smartReviewId)
-            .param("contentId", contentId)
-            .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.error", `is`("Not Found")))
-            .andExpect(jsonPath("$.path").value("/published-smart-review-content-not-found"))
-            .andExpect(jsonPath("$.message").value("""Smart review content "$contentId" not found for smart review "$smartReviewId"."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+        documentedGetRequestTo(PublishedSmartReviewContentNotFound(ThingId("R123"), ThingId("R456")))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:published_smart_review_content_not_found")
+            .andExpectTitle("Not Found")
+            .andExpectDetail("""Smart review content "R456" not found for smart review "R123".""")
+            .andDocumentWithDefaultExceptionResponseFields()
     }
 
     @Test
     fun ontologyEntityNotFound() {
-        val entities = listOf("not", "found")
-
-        get("/ontology-entity-not-found")
-            .param("entities", *entities.toTypedArray())
-            .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.error", `is`("Not Found")))
-            .andExpect(jsonPath("$.path").value("/ontology-entity-not-found"))
-            .andExpect(jsonPath("$.message").value("""Ontology entity not found among entities "not", "found"."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+        documentedGetRequestTo(OntologyEntityNotFound(setOf(ThingId("not"), ThingId("found"))))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:ontology_entity_not_found")
+            .andExpectTitle("Not Found")
+            .andExpectDetail("""Ontology entity not found among entities "not", "found".""")
+            .andDocumentWithDefaultExceptionResponseFields()
     }
 
     @Test
     fun invalidSmartReviewTextSectionType() {
-        val type = "comparison"
-
-        get("/invalid-smart-review-text-section-type")
-            .param("type", type)
-            .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.error", `is`("Bad Request")))
-            .andExpect(jsonPath("$.path").value("/invalid-smart-review-text-section-type"))
-            .andExpect(jsonPath("$.message").value("""Invalid smart review text section type "$type"."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+        documentedGetRequestTo(InvalidSmartReviewTextSectionType(ThingId("comparison")))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:invalid_smart_review_text_section_type")
+            .andExpectTitle("Bad Request")
+            .andExpectDetail("""Invalid smart review text section type "comparison".""")
+            .andDocumentWithDefaultExceptionResponseFields()
     }
 
     @Test
     fun unrelatedSmartReviewSection() {
-        val smartReviewId = "R123"
-        val smartReviewSectionId = "R456"
-
-        get("/unrelated-smart-review-section")
-            .param("smartReviewId", smartReviewId)
-            .param("smartReviewSectionId", smartReviewSectionId)
-            .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.error", `is`("Bad Request")))
-            .andExpect(jsonPath("$.path").value("/unrelated-smart-review-section"))
-            .andExpect(jsonPath("$.message").value("""Smart review section "$smartReviewSectionId" does not belong to smart review "$smartReviewId"."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+        documentedGetRequestTo(UnrelatedSmartReviewSection(ThingId("R123"), ThingId("R456")))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:unrelated_smart_review_section")
+            .andExpectTitle("Bad Request")
+            .andExpectDetail("""Smart review section "R456" does not belong to smart review "R123".""")
+            .andDocumentWithDefaultExceptionResponseFields()
     }
 
     @Test
     fun smartReviewSectionTypeMismatchMustBeComparisonSection() {
-        get("/smart-review-section-type-mismatch-must-be-comparison-section")
-            .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.error", `is`("Bad Request")))
-            .andExpect(jsonPath("$.path").value("/smart-review-section-type-mismatch-must-be-comparison-section"))
-            .andExpect(jsonPath("$.message").value("""Invalid smart review section type. Must be a comparison section."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+        documentedGetRequestTo(SmartReviewSectionTypeMismatch.mustBeComparisonSection())
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:smart_review_section_type_mismatch")
+            .andExpectTitle("Bad Request")
+            .andExpectDetail("""Invalid smart review section type. Must be a comparison section.""")
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("expected_type").description("The expected type of the smart review section."),
+                    )
+                )
+            )
     }
 
     @Test
     fun smartReviewSectionTypeMismatchMustBeVisualizationSection() {
-        get("/smart-review-section-type-mismatch-must-be-visualization-section")
-            .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.error", `is`("Bad Request")))
-            .andExpect(jsonPath("$.path").value("/smart-review-section-type-mismatch-must-be-visualization-section"))
-            .andExpect(jsonPath("$.message").value("""Invalid smart review section type. Must be a visualization section."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+        get(SmartReviewSectionTypeMismatch.mustBeVisualizationSection())
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:smart_review_section_type_mismatch")
+            .andExpectTitle("Bad Request")
+            .andExpectDetail("""Invalid smart review section type. Must be a visualization section.""")
     }
 
     @Test
     fun smartReviewSectionTypeMismatchMustBeResourceSection() {
-        get("/smart-review-section-type-mismatch-must-be-resource-section")
-            .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.error", `is`("Bad Request")))
-            .andExpect(jsonPath("$.path").value("/smart-review-section-type-mismatch-must-be-resource-section"))
-            .andExpect(jsonPath("$.message").value("""Invalid smart review section type. Must be a resource section."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+        get(SmartReviewSectionTypeMismatch.mustBeResourceSection())
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:smart_review_section_type_mismatch")
+            .andExpectTitle("Bad Request")
+            .andExpectDetail("""Invalid smart review section type. Must be a resource section.""")
     }
 
     @Test
     fun smartReviewSectionTypeMismatchMustBePredicateSection() {
-        get("/smart-review-section-type-mismatch-must-be-predicate-section")
-            .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.error", `is`("Bad Request")))
-            .andExpect(jsonPath("$.path").value("/smart-review-section-type-mismatch-must-be-predicate-section"))
-            .andExpect(jsonPath("$.message").value("""Invalid smart review section type. Must be a predicate section."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+        get(SmartReviewSectionTypeMismatch.mustBePredicateSection())
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:smart_review_section_type_mismatch")
+            .andExpectTitle("Bad Request")
+            .andExpectDetail("""Invalid smart review section type. Must be a predicate section.""")
     }
 
     @Test
     fun smartReviewSectionTypeMismatchMustBeOntologySection() {
-        get("/smart-review-section-type-mismatch-must-be-ontology-section")
-            .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.error", `is`("Bad Request")))
-            .andExpect(jsonPath("$.path").value("/smart-review-section-type-mismatch-must-be-ontology-section"))
-            .andExpect(jsonPath("$.message").value("""Invalid smart review section type. Must be an ontology section."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+        get(SmartReviewSectionTypeMismatch.mustBeOntologySection())
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:smart_review_section_type_mismatch")
+            .andExpectTitle("Bad Request")
+            .andExpectDetail("""Invalid smart review section type. Must be an ontology section.""")
     }
 
     @Test
     fun smartReviewSectionTypeMismatchMustBeTextSection() {
-        get("/smart-review-section-type-mismatch-must-be-text-section")
-            .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.error", `is`("Bad Request")))
-            .andExpect(jsonPath("$.path").value("/smart-review-section-type-mismatch-must-be-text-section"))
-            .andExpect(jsonPath("$.message").value("""Invalid smart review section type. Must be a text section."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+        get(SmartReviewSectionTypeMismatch.mustBeTextSection())
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:smart_review_section_type_mismatch")
+            .andExpectTitle("Bad Request")
+            .andExpectDetail("""Invalid smart review section type. Must be a text section.""")
     }
 
     @Test
     fun smartReviewAlreadyPublished() {
-        val id = "R123"
-
-        get("/smart-review-already-published")
-            .param("id", id)
-            .perform()
-            .andExpect(status().isForbidden)
-            .andExpect(jsonPath("$.status").value(HttpStatus.FORBIDDEN.value()))
-            .andExpect(jsonPath("$.error", `is`("Forbidden")))
-            .andExpect(jsonPath("$.path").value("/smart-review-already-published"))
-            .andExpect(jsonPath("$.message").value("""Smart review "$id" is already published."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+        documentedGetRequestTo(SmartReviewAlreadyPublished(ThingId("R123")))
+            .andExpectErrorStatus(FORBIDDEN)
+            .andExpectType("orkg:problem:smart_review_already_published")
+            .andExpectTitle("Forbidden")
+            .andExpectDetail("""Smart review "R123" is already published.""")
+            .andDocumentWithDefaultExceptionResponseFields()
     }
 
     @Test
     fun smartReviewNotModifiable() {
-        val id = "R123"
-
-        get("/smart-review-not-modifiable")
-            .param("id", id)
-            .perform()
-            .andExpect(status().isForbidden)
-            .andExpect(jsonPath("$.status").value(HttpStatus.FORBIDDEN.value()))
-            .andExpect(jsonPath("$.error", `is`("Forbidden")))
-            .andExpect(jsonPath("$.path").value("/smart-review-not-modifiable"))
-            .andExpect(jsonPath("$.message").value("""Smart review "$id" is not modifiable."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
-    }
-
-    @TestComponent
-    @RestController
-    internal class TestController {
-        @GetMapping("/published-smart-review-content-not-found")
-        fun publishedSmartReviewContentNotFound(
-            @RequestParam smartReviewId: ThingId,
-            @RequestParam contentId: ThingId,
-        ): Unit = throw PublishedSmartReviewContentNotFound(smartReviewId, contentId)
-
-        @GetMapping("/ontology-entity-not-found")
-        fun ontologyEntityNotFound(
-            @RequestParam entities: Set<ThingId>,
-        ): Unit = throw OntologyEntityNotFound(entities)
-
-        @GetMapping("/invalid-smart-review-text-section-type")
-        fun invalidSmartReviewTextSectionType(
-            @RequestParam type: ThingId,
-        ): Unit = throw InvalidSmartReviewTextSectionType(type)
-
-        @GetMapping("/unrelated-smart-review-section")
-        fun unrelatedSmartReviewSection(
-            @RequestParam smartReviewId: ThingId,
-            @RequestParam smartReviewSectionId: ThingId,
-        ): Unit = throw UnrelatedSmartReviewSection(smartReviewId, smartReviewSectionId)
-
-        @GetMapping("/smart-review-section-type-mismatch-must-be-comparison-section")
-        fun smartReviewSectionTypeMismatchMustBeComparisonSection(): Unit = throw SmartReviewSectionTypeMismatch.mustBeComparisonSection()
-
-        @GetMapping("/smart-review-section-type-mismatch-must-be-visualization-section")
-        fun smartReviewSectionTypeMismatchMustBeVisualizationSection(): Unit = throw SmartReviewSectionTypeMismatch.mustBeVisualizationSection()
-
-        @GetMapping("/smart-review-section-type-mismatch-must-be-resource-section")
-        fun smartReviewSectionTypeMismatchMustBeResourceSection(): Unit = throw SmartReviewSectionTypeMismatch.mustBeResourceSection()
-
-        @GetMapping("/smart-review-section-type-mismatch-must-be-predicate-section")
-        fun smartReviewSectionTypeMismatchMustBePredicateSection(): Unit = throw SmartReviewSectionTypeMismatch.mustBePredicateSection()
-
-        @GetMapping("/smart-review-section-type-mismatch-must-be-ontology-section")
-        fun smartReviewSectionTypeMismatchMustBeOntologySection(): Unit = throw SmartReviewSectionTypeMismatch.mustBeOntologySection()
-
-        @GetMapping("/smart-review-section-type-mismatch-must-be-text-section")
-        fun smartReviewSectionTypeMismatchMustBeTextSection(): Unit = throw SmartReviewSectionTypeMismatch.mustBeTextSection()
-
-        @GetMapping("/smart-review-already-published")
-        fun smartReviewAlreadyPublished(
-            @RequestParam id: ThingId,
-        ): Unit = throw SmartReviewAlreadyPublished(id)
-
-        @GetMapping("/smart-review-not-modifiable")
-        fun smartReviewNotModifiable(
-            @RequestParam id: ThingId,
-        ): Unit = throw SmartReviewNotModifiable(id)
+        documentedGetRequestTo(SmartReviewNotModifiable(ThingId("R123")))
+            .andExpectErrorStatus(FORBIDDEN)
+            .andExpectType("orkg:problem:smart_review_not_modifiable")
+            .andExpectTitle("Forbidden")
+            .andExpectDetail("""Smart review "R123" is not modifiable.""")
+            .andDocumentWithDefaultExceptionResponseFields()
     }
 }

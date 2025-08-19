@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.configuration.WebMvcConfiguration
-import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.graph.adapter.input.rest.StatementController.CreateStatementRequest
@@ -40,12 +39,18 @@ import org.orkg.testing.andExpectBundle
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectStatement
 import org.orkg.testing.annotations.TestWithMockUser
+import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
+import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.Sort
+import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.http.HttpStatus.FORBIDDEN
+import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
 import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
@@ -57,7 +62,6 @@ import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.Clock
 import java.time.OffsetDateTime
@@ -67,7 +71,7 @@ import java.util.Optional
 @ContextConfiguration(
     classes = [
         StatementController::class,
-        ExceptionHandler::class,
+        ExceptionTestConfiguration::class,
         CommonJacksonModule::class,
         GraphJacksonModule::class,
         FixedClockConfig::class,
@@ -211,12 +215,8 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
         get("/api/statements")
             .param("sort", "unknown")
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(400))
-            .andExpect(jsonPath("$.message").value(exception.message))
-            .andExpect(jsonPath("$.error").value(exception.status.reasonPhrase))
-            .andExpect(jsonPath("$.timestamp").exists())
-            .andExpect(jsonPath("$.path").value("/api/statements"))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:unknown_sorting_property")
 
         verify(exactly = 1) { statementService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) }
     }
@@ -288,12 +288,8 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
         post("/api/statements")
             .content(body)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(400))
-            .andExpect(jsonPath("$.message").value("""Subject "$subject" not found."""))
-            .andExpect(jsonPath("$.error").value("Bad Request"))
-            .andExpect(jsonPath("$.timestamp").exists())
-            .andExpect(jsonPath("$.path").value("/api/statements"))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:statement_subject_not_found")
 
         verify(exactly = 1) { statementService.create(command) }
     }
@@ -321,12 +317,8 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
         post("/api/statements")
             .content(body)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(400))
-            .andExpect(jsonPath("$.message").value("""Predicate "$predicate" not found."""))
-            .andExpect(jsonPath("$.error").value("Bad Request"))
-            .andExpect(jsonPath("$.timestamp").exists())
-            .andExpect(jsonPath("$.path").value("/api/statements"))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:statement_predicate_not_found")
 
         verify(exactly = 1) { statementService.create(command) }
     }
@@ -354,12 +346,8 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
         post("/api/statements")
             .content(body)
             .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(400))
-            .andExpect(jsonPath("$.message").value("""Object "$`object`" not found."""))
-            .andExpect(jsonPath("$.error").value("Bad Request"))
-            .andExpect(jsonPath("$.timestamp").exists())
-            .andExpect(jsonPath("$.path").value("/api/statements"))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:statement_object_not_found")
 
         verify(exactly = 1) { statementService.create(command) }
     }
@@ -504,7 +492,8 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
 
             delete("/api/statements/{id}", id)
                 .perform()
-                .andExpect(status().isForbidden)
+                .andExpectErrorStatus(FORBIDDEN)
+                .andExpectType("orkg:problem:access_denied")
 
             verify(exactly = 0) { statementService.deleteById(id) }
         }
@@ -522,12 +511,8 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
         get("/api/statements/{id}/bundle", id)
             .param("includeFirst", "false")
             .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(404))
-            .andExpect(jsonPath("$.message").value(exception.message))
-            .andExpect(jsonPath("$.error").value(exception.status.reasonPhrase))
-            .andExpect(jsonPath("$.timestamp").exists())
-            .andExpect(jsonPath("$.path").value("/api/statements/$id/bundle"))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:thing_not_found")
 
         verify(exactly = 1) {
             statementService.fetchAsBundle(id, any(), false, Sort.unsorted())

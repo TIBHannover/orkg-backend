@@ -6,12 +6,12 @@ import io.mockk.verify
 import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.statistics.domain.SimpleMetric
 import org.orkg.statistics.domain.SingleValueParameterSpec
 import org.orkg.statistics.input.StatisticsUseCases
 import org.orkg.statistics.testing.fixtures.createMetrics
+import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -26,7 +26,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.util.LinkedMultiValueMap
 
 @ContextConfiguration(
-    classes = [StatisticsController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class]
+    classes = [StatisticsController::class, ExceptionTestConfiguration::class, CommonJacksonModule::class, FixedClockConfig::class]
 )
 @WebMvcTest(controllers = [StatisticsController::class])
 internal class StatisticsControllerUnitTest : MockMvcBaseTest("statistics") {

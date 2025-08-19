@@ -34,7 +34,7 @@ class ClassService(
         }
         command.id?.also { id ->
             if (id in reservedClassIds) {
-                throw ClassNotAllowed(id)
+                throw ReservedClassId(id)
             }
             repository.findById(id).ifPresent {
                 throw ClassAlreadyExists(id)

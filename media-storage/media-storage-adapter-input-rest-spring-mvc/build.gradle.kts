@@ -16,6 +16,8 @@ testing {
             dependencies {
                 implementation("org.junit.jupiter:junit-jupiter-api")
                 implementation("org.springframework.boot:spring-boot-test-autoconfigure")
+                implementation("org.springframework.restdocs:spring-restdocs-core")
+                implementation("org.springframework.restdocs:spring-restdocs-mockmvc")
                 implementation("org.springframework:spring-core")
                 implementation("org.springframework:spring-test")
                 implementation("org.springframework:spring-web")

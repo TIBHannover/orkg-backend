@@ -72,7 +72,7 @@ class PredicateService(
         if (!predicate.isOwnedBy(contributorId)) {
             val contributor = contributorRepository.findById(contributorId)
                 .orElseThrow { ContributorNotFound(contributorId) }
-            if (!contributor.isCurator) throw NeitherOwnerNorCurator(contributorId)
+            if (!contributor.isCurator) throw NeitherOwnerNorCurator(predicate.createdBy, contributorId, predicate.id)
         }
 
         unsafePredicateUseCases.delete(predicate.id, contributorId)

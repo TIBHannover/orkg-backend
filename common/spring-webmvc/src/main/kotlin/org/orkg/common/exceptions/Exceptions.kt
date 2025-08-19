@@ -64,24 +64,29 @@ abstract class LoggedMessageException(
 
 class MissingParameter private constructor(
     override val message: String,
-) : SimpleMessageException(HttpStatus.BAD_REQUEST, message, null) {
+    properties: Map<String, Any?>,
+) : SimpleMessageException(HttpStatus.BAD_REQUEST, message, null, properties) {
     companion object {
         fun requiresAtLeastOneOf(parameter: String, vararg parameters: String) = MissingParameter(
-            "Missing parameter: At least one parameter out of ${formatParameters(parameter, *parameters)} is required."
+            "Missing parameter: At least one parameter out of ${formatParameters(parameter, *parameters)} is required.",
+            mapOf("parameter_names" to listOf(parameter, *parameters))
         )
     }
 }
 
 class TooManyParameters private constructor(
     override val message: String,
-) : SimpleMessageException(HttpStatus.BAD_REQUEST, message, null) {
+    properties: Map<String, Any?>,
+) : SimpleMessageException(HttpStatus.BAD_REQUEST, message, null, properties) {
     companion object {
         fun requiresExactlyOneOf(first: String, second: String, vararg parameters: String) = TooManyParameters(
-            "Too many parameters: Only exactly one out of ${formatParameters(first, second, *parameters)} is allowed."
+            "Too many parameters: Only exactly one out of ${formatParameters(first, second, *parameters)} is allowed.",
+            mapOf("parameter_names" to listOf(first, second, *parameters))
         )
 
         fun atMostOneOf(first: String, second: String, vararg parameters: String) = TooManyParameters(
-            "Too many parameters: At most one out of ${formatParameters(first, second, *parameters)} is allowed."
+            "Too many parameters: At most one out of ${formatParameters(first, second, *parameters)} is allowed.",
+            mapOf("parameter_names" to listOf(first, second, *parameters))
         )
     }
 }
@@ -89,13 +94,15 @@ class TooManyParameters private constructor(
 class UnknownParameter(parameter: String) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Unknown parameter "$parameter"."""
+        """Unknown parameter "$parameter".""",
+        properties = mapOf("parameter_name" to parameter)
     )
 
 class UnknownSortingProperty(property: String) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Unknown sorting property "$property"."""
+        """Unknown sorting property "$property".""",
+        properties = mapOf("property_name" to property)
     )
 
 private fun formatParameters(vararg parameters: String) =
@@ -138,7 +145,11 @@ class MalformedMediaTypeCapability(
 ) : SimpleMessageException(
         status = HttpStatus.NOT_ACCEPTABLE,
         message = """Malformed value "$value" for media type capability "$name".""",
-        cause = cause
+        cause = cause,
+        properties = mapOf(
+            "capability_name" to name,
+            "capability_value" to value,
+        ),
     )
 
 data class FieldError(

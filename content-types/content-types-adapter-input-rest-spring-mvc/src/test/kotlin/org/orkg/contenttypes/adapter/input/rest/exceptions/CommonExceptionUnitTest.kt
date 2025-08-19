@@ -2,6 +2,7 @@ package org.orkg.contenttypes.adapter.input.rest.exceptions
 
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
+import org.orkg.common.json.CommonJacksonModule
 import org.orkg.contenttypes.domain.DuplicateTempIds
 import org.orkg.contenttypes.domain.EmptyContribution
 import org.orkg.contenttypes.domain.InvalidBibTeXReference
@@ -26,10 +27,12 @@ import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
+import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
 @WebMvcTest
-@ContextConfiguration(classes = [FixedClockConfig::class])
+@ContextConfiguration(classes = [CommonJacksonModule::class, FixedClockConfig::class])
 internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun invalidMonth() {
@@ -38,7 +41,14 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:invalid_month")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Invalid month "0". Must be in range [1..12].""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.month").value("0"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("month").description("The month value."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -48,7 +58,14 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:sustainable_development_goal_not_found")
             .andExpectTitle("Not Found")
             .andExpectDetail("""Sustainable Development Goal "SDG1" not found.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.sustainable_development_goal_id").value("SDG1"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("sustainable_development_goal_id").description("The id of the sustainable development goal."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -58,7 +75,14 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:invalid_bibtex_reference")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Invalid BibTeX reference "not bibtex".""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.bibtex_reference").value("not bibtex"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("bibtex_reference").description("The provided bibtex reference."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -108,7 +132,14 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:thing_not_defined")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Thing "#temp1" not defined.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.thing_id").value("#temp1"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("thing_id").description("The id of the thing."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -118,7 +149,14 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:duplicate_temp_ids")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Duplicate temp ids: #temp1=5.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.duplicate_temp_ids['#temp1']").value("5"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        subsectionWithPath("duplicate_temp_ids").description("A map of temp ids to their occurrence count."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -128,7 +166,14 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:invalid_temp_id")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Invalid temp id ":temp1". Requires "#" as prefix.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.temp_id").value(":temp1"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("temp_id").description("The temp id."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -138,7 +183,14 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:thing_is_not_a_class")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Thing "R123" is not a class.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.thing_id").value("R123"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("thing_id").description("The id of the thing."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -148,7 +200,14 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:thing_is_not_a_predicate")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Thing "R123" is not a predicate.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.thing_id").value("R123"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("thing_id").description("The id of the thing."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -158,7 +217,14 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:invalid_statement_subject")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Invalid statement subject "L123".""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.subject_id").value("L123"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("subject_id").description("The id of the subject."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -188,19 +254,35 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun researchProblemNotFound() {
-        get(ResearchProblemNotFound(ThingId("R123")))
+        documentedGetRequestTo(ResearchProblemNotFound(ThingId("R123")))
             .andExpectErrorStatus(NOT_FOUND)
             .andExpectType("orkg:problem:research_problem_not_found")
             .andExpectTitle("Not Found")
             .andExpectDetail("""Research problem "R123" not found.""")
+            .andExpect(jsonPath("$.research_problem_id").value("R123"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("research_problem_id").description("The id of the research problem."),
+                    )
+                )
+            )
     }
 
     @Test
     fun researchFieldNotFound() {
-        get(ResearchFieldNotFound(ThingId("R123")))
+        documentedGetRequestTo(ResearchFieldNotFound(ThingId("R123")))
             .andExpectErrorStatus(NOT_FOUND)
             .andExpectType("orkg:problem:research_field_not_found")
             .andExpectTitle("Not Found")
             .andExpectDetail("""Research field "R123" not found.""")
+            .andExpect(jsonPath("$.research_field_id").value("R123"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("research_field_id").description("The id of the research field."),
+                    )
+                )
+            )
     }
 }

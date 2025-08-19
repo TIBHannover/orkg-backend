@@ -119,6 +119,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
             predicate = createPredicate(Predicates.hasSection),
             `object` = createResource(section.id)
         )
+        val exception = NeitherOwnerNorCurator(ContributorId(UUID.randomUUID()), contributorId, section.id)
 
         every {
             statementService.findAll(
@@ -127,7 +128,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
             )
         } returns pageOf(contributionHasSectionStatement)
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
-        every { resourceService.delete(any(), contributorId) } throws NeitherOwnerNorCurator(contributorId)
+        every { resourceService.delete(any(), contributorId) } throws exception
 
         assertDoesNotThrow {
             abstractTemplatePropertyDeleter.delete(contributorId, contributionId, section, statements)
@@ -227,6 +228,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
             predicate = createPredicate(Predicates.hasSection),
             `object` = createResource(section.id)
         )
+        val exception = NeitherOwnerNorCurator(ContributorId(UUID.randomUUID()), contributorId, section.id)
 
         every {
             statementService.findAll(
@@ -235,7 +237,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
             )
         } returns pageOf(contributionHasSectionStatement)
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
-        every { resourceService.delete(any(), contributorId) } throws NeitherOwnerNorCurator(contributorId)
+        every { resourceService.delete(any(), contributorId) } throws exception
 
         assertDoesNotThrow {
             abstractTemplatePropertyDeleter.delete(contributorId, contributionId, section, statements)
@@ -335,6 +337,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
             predicate = createPredicate(Predicates.hasSection),
             `object` = createResource(section.id)
         )
+        val exception = NeitherOwnerNorCurator(ContributorId(UUID.randomUUID()), contributorId, section.id)
 
         every {
             statementService.findAll(
@@ -343,7 +346,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
             )
         } returns pageOf(contributionHasSectionStatement)
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
-        every { resourceService.delete(any(), contributorId) } throws NeitherOwnerNorCurator(contributorId)
+        every { resourceService.delete(any(), contributorId) } throws exception
 
         assertDoesNotThrow {
             abstractTemplatePropertyDeleter.delete(contributorId, contributionId, section, statements)
@@ -442,6 +445,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
             predicate = createPredicate(Predicates.hasSection),
             `object` = createResource(section.id)
         )
+        val exception = NeitherOwnerNorCurator(ContributorId(UUID.randomUUID()), contributorId, section.id)
 
         every {
             statementService.findAll(
@@ -450,7 +454,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
             )
         } returns pageOf(smartReviewHasSectionStatement)
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
-        every { resourceService.delete(any(), contributorId) } throws NeitherOwnerNorCurator(contributorId)
+        every { resourceService.delete(any(), contributorId) } throws exception
 
         assertDoesNotThrow {
             abstractTemplatePropertyDeleter.delete(contributorId, contributionId, section, statements)
@@ -557,6 +561,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
             predicate = createPredicate(Predicates.hasSection),
             `object` = createResource(section.id)
         )
+        val exception = NeitherOwnerNorCurator(ContributorId(UUID.randomUUID()), contributorId, section.id)
 
         every {
             statementService.findAll(
@@ -565,7 +570,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
             )
         } returns pageOf(smartReviewHasSectionStatement)
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
-        every { resourceService.delete(any(), contributorId) } throws NeitherOwnerNorCurator(contributorId)
+        every { resourceService.delete(any(), contributorId) } throws exception
 
         assertDoesNotThrow {
             abstractTemplatePropertyDeleter.delete(contributorId, contributionId, section, statements)
@@ -674,6 +679,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
             predicate = createPredicate(Predicates.hasSection),
             `object` = createResource(section.id)
         )
+        val exception = NeitherOwnerNorCurator(ContributorId(UUID.randomUUID()), contributorId, section.id)
 
         every {
             statementService.findAll(
@@ -682,7 +688,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
             )
         } returns pageOf(contributionHasSectionStatement)
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
-        every { resourceService.delete(any(), contributorId) } throws NeitherOwnerNorCurator(contributorId)
+        every { resourceService.delete(any(), contributorId) } throws exception
 
         assertDoesNotThrow {
             abstractTemplatePropertyDeleter.delete(contributorId, contributionId, section, statements)

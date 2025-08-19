@@ -4,11 +4,14 @@ import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Test
 import org.orkg.common.configuration.CommonSpringConfig
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
+import org.orkg.testing.spring.restdocs.exceptionResponseFields
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE
 import org.springframework.http.HttpStatus.UNAUTHORIZED
+import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
@@ -31,7 +34,16 @@ internal class ExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:malformed_media_type_capability")
             .andExpectTitle("Not Acceptable")
             .andExpectDetail("""Malformed value "true" for media type capability "formatted-label".""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("capability_name", `is`("formatted-label")))
+            .andExpect(jsonPath("capability_value", `is`("true")))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("capability_name").description("The name of the media type capability."),
+                        fieldWithPath("capability_value").description("The value of the media type capability."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -41,16 +53,31 @@ internal class ExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:missing_parameter")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Missing parameter: At least one parameter out of "param1", "param2" is required.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("parameter_names", `is`(listOf("param1", "param2"))))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("parameter_names").description("A list of possible parameters.")
+                    )
+                )
+            )
     }
 
     @Test
     fun tooManyParameters_requiresExactlyOneOf() {
-        get(TooManyParameters.requiresExactlyOneOf("param1", "param2"))
+        documentedGetRequestTo(TooManyParameters.requiresExactlyOneOf("param1", "param2"))
             .andExpectErrorStatus(BAD_REQUEST)
             .andExpectType("orkg:problem:too_many_parameters")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Too many parameters: Only exactly one out of "param1", "param2" is allowed.""")
+            .andExpect(jsonPath("parameter_names", `is`(listOf("param1", "param2"))))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("parameter_names").description("A list of allowed parameters.")
+                    )
+                )
+            )
     }
 
     @Test
@@ -60,7 +87,7 @@ internal class ExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:too_many_parameters")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Too many parameters: At most one out of "param1", "param2" is allowed.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("parameter_names", `is`(listOf("param1", "param2"))))
     }
 
     @Test
@@ -70,7 +97,14 @@ internal class ExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:unknown_parameter")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Unknown parameter "formatted-label".""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("parameter_name", `is`("formatted-label")))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("parameter_name").description("The name of the unknown parameter.")
+                    )
+                )
+            )
     }
 
     @Test
@@ -80,7 +114,14 @@ internal class ExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:unknown_sorting_property")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Unknown sorting property "unknown".""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("property_name", `is`("unknown")))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("property_name").description("The name of the unknown property.")
+                    )
+                )
+            )
     }
 
     @Test

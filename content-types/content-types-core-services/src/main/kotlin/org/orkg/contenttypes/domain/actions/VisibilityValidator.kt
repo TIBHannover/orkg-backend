@@ -23,7 +23,7 @@ class VisibilityValidator<T, S>(
                 val contributor = contributorRepository.findById(contributorId)
                     .orElseThrow { ContributorNotFound(contributorId) }
                 if (!contributor.isCurator) {
-                    throw NeitherOwnerNorCurator.cannotChangeVisibility(contentType.id)
+                    throw NeitherOwnerNorCurator.cannotChangeVisibility(contentType.createdBy, contributorId, contentType.id)
                 }
             }
         }

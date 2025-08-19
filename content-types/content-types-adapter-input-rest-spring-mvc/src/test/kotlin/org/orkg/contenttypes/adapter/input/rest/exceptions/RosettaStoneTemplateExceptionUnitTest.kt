@@ -32,6 +32,7 @@ import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
 @WebMvcTest
 @ContextConfiguration(classes = [CommonJacksonModule::class, FixedClockConfig::class])
@@ -43,7 +44,14 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
             .andExpectType("orkg:problem:rosetta_stone_template_not_found")
             .andExpectTitle("Not Found")
             .andExpectDetail("""Rosetta stone template "R123" not found.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.rosetta_stone_template_id").value("R123"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("rosetta_stone_template_id").description("The id of the rosetta stone template."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -53,7 +61,14 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
             .andExpectType("orkg:problem:invalid_subject_position_path")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Invalid subject position path. Must be "${Predicates.hasSubjectPosition}".""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.input_position_index").value("0"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("input_position_index").description("The index of the subject position."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -63,7 +78,14 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
             .andExpectType("orkg:problem:invalid_object_position_path")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Invalid object position path for property at index "5". Must be "${Predicates.hasObjectPosition}".""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.input_position_index").value("5"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("input_position_index").description("The index of the subject position."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -73,7 +95,14 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
             .andExpectType("orkg:problem:rosetta_stone_template_not_modifiable")
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Rosetta stone template "R123" is not modifiable.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.rosetta_stone_template_id").value("R123"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("rosetta_stone_template_id").description("The id of the rosetta stone template."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -83,7 +112,14 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
             .andExpectType("orkg:problem:rosetta_stone_template_property_not_modifiable")
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Rosetta stone template property "R123" is not modifiable.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.rosetta_stone_template_property_id").value("R123"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("rosetta_stone_template_property_id").description("The id of the rosetta stone template property."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -93,10 +129,11 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
             .andExpectType("orkg:problem:rosetta_stone_template_in_use")
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Unable to delete rosetta stone template "R123" because it is used in at least one (rosetta stone) statement.""")
+            .andExpect(jsonPath("$.rosetta_stone_template_id").value("R123"))
             .andDo(
                 documentationHandler.document(
                     responseFields(exceptionResponseFields()).and(
-                        fieldWithPath("id").description("The id of the template."),
+                        fieldWithPath("rosetta_stone_template_id").description("The id of the rosetta stone template."),
                         fieldWithPath("property").type("String").description("The property of the template. (optional)").optional(),
                     )
                 )
@@ -110,6 +147,8 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
             .andExpectType("orkg:problem:rosetta_stone_template_in_use")
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Unable to update property "abc" of rosetta stone template "R123" because it is used in at least one rosetta stone statement.""")
+            .andExpect(jsonPath("$.rosetta_stone_template_id").value("R123"))
+            .andExpect(jsonPath("$.property").value("abc"))
     }
 
     @Test
@@ -119,11 +158,12 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
             .andExpectType("orkg:problem:missing_formatted_label_placeholder")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Missing formatted label placeholder "{4}".""")
+            .andExpect(jsonPath("$.input_position_index").value("4"))
             .andDo(
                 documentationHandler.document(
                     responseFields(exceptionResponseFields()).and(
-                        fieldWithPath("index").description("The index of the ropsetta stone template property. (optional, either `placeholder` or `index` is present)"),
-                        fieldWithPath("placeholder").type("String").description("The placeholder of the ropsetta stone template property. (optional, either `placeholder` or `index` is present)").optional(),
+                        fieldWithPath("input_position_index").description("The index of the rosetta stone template property."),
+                        fieldWithPath("input_position_placeholder").type("String").description("The placeholder of the rosetta stone template property. (optional)").optional(),
                     )
                 )
             )
@@ -131,11 +171,13 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
 
     @Test
     fun missingFormattedLabelPlaceholder_withPlaceholder() {
-        get(MissingFormattedLabelPlaceholder("4"))
+        get(MissingFormattedLabelPlaceholder(4, "4"))
             .andExpectErrorStatus(BAD_REQUEST)
             .andExpectType("orkg:problem:missing_formatted_label_placeholder")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Missing formatted label placeholder for input position "4".""")
+            .andExpect(jsonPath("$.input_position_index").value("4"))
+            .andExpect(jsonPath("$.input_position_placeholder").value("4"))
     }
 
     @Test
@@ -200,12 +242,21 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
 
     @Test
     fun newRosettaStoneTemplatePropertyMustBeOptional() {
-        documentedGetRequestTo(NewRosettaStoneTemplatePropertyMustBeOptional("4"))
+        documentedGetRequestTo(NewRosettaStoneTemplatePropertyMustBeOptional(4, "4"))
             .andExpectErrorStatus(BAD_REQUEST)
             .andExpectType("orkg:problem:new_rosetta_stone_template_property_must_be_optional")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""New rosetta stone template property "4" must be optional.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.input_position_index").value("4"))
+            .andExpect(jsonPath("$.input_position_placeholder").value("4"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("input_position_index").description("The index of the rosetta stone template property."),
+                        fieldWithPath("input_position_placeholder").description("The placeholder of the rosetta stone template property."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -245,6 +296,13 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
             .andExpectType("orkg:problem:missing_property_placeholder")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Missing placeholder for property at index "4".""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.input_position_index").value("4"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("input_position_index").description("The index of the rosetta stone template property."),
+                    )
+                )
+            )
     }
 }

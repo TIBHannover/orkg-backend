@@ -14,9 +14,9 @@ class PaperNotFound private constructor(
     properties: Map<String, Any>,
 ) : SimpleMessageException(HttpStatus.NOT_FOUND, message, properties = properties) {
     companion object {
-        fun withId(id: ThingId) = PaperNotFound("""Paper "$id" not found.""", mapOf("id" to id))
+        fun withId(id: ThingId) = PaperNotFound("""Paper "$id" not found.""", mapOf("paper_id" to id))
 
-        fun withDOI(doi: String) = PaperNotFound("""Paper with DOI "$doi" not found.""", mapOf("doi" to doi))
+        fun withDOI(doi: String) = PaperNotFound("""Paper with DOI "$doi" not found.""", mapOf("paper_doi" to doi))
 
         fun withTitle(title: String) = PaperNotFound("""Paper with title "$title" not found.""", mapOf("paper_title" to title))
     }
@@ -25,79 +25,92 @@ class PaperNotFound private constructor(
 class ContributionNotFound(id: ThingId) :
     SimpleMessageException(
         HttpStatus.NOT_FOUND,
-        """Contribution "$id" not found."""
+        """Contribution "$id" not found.""",
+        properties = mapOf("contribution_id" to id),
     )
 
 class ComparisonNotFound(id: ThingId) :
     SimpleMessageException(
         HttpStatus.NOT_FOUND,
-        """Comparison "$id" not found."""
+        """Comparison "$id" not found.""",
+        properties = mapOf("comparison_id" to id),
     )
 
 class ComparisonRelatedResourceNotFound(id: ThingId) :
     SimpleMessageException(
         HttpStatus.NOT_FOUND,
-        """Comparison related resource "$id" not found."""
+        """Comparison related resource "$id" not found.""",
+        properties = mapOf("comparison_related_resource_id" to id),
     )
 
 class ComparisonRelatedFigureNotFound(id: ThingId) :
     SimpleMessageException(
         HttpStatus.NOT_FOUND,
-        """Comparison related figure "$id" not found."""
+        """Comparison related figure "$id" not found.""",
+        properties = mapOf("comparison_related_figure_id" to id),
     )
 
 class VisualizationNotFound(id: ThingId) :
     SimpleMessageException(
         HttpStatus.NOT_FOUND,
-        """Visualization "$id" not found."""
+        """Visualization "$id" not found.""",
+        properties = mapOf("visualization_id" to id),
     )
 
 class TemplateNotFound(id: ThingId) :
     SimpleMessageException(
         HttpStatus.NOT_FOUND,
-        """Template "$id" not found."""
+        """Template "$id" not found.""",
+        properties = mapOf("template_id" to id),
     )
 
 class RosettaStoneTemplateNotFound(id: ThingId) :
     SimpleMessageException(
         HttpStatus.NOT_FOUND,
-        """Rosetta stone template "$id" not found."""
+        """Rosetta stone template "$id" not found.""",
+        properties = mapOf("rosetta_stone_template_id" to id),
     )
 
 class RosettaStoneStatementNotFound(id: ThingId) :
     SimpleMessageException(
         HttpStatus.NOT_FOUND,
-        """Rosetta stone statement "$id" not found."""
+        """Rosetta stone statement "$id" not found.""",
+        properties = mapOf("rosetta_stone_statement_id" to id)
     )
 
 class RosettaStoneStatementVersionNotFound(id: ThingId) :
     SimpleMessageException(
         HttpStatus.NOT_FOUND,
-        """Rosetta stone statement version "$id" not found."""
+        """Rosetta stone statement version "$id" not found.""",
+        properties = mapOf("rosetta_stone_statement_version_id" to id)
     )
 
 class LiteratureListNotFound(id: ThingId) :
     SimpleMessageException(
         HttpStatus.NOT_FOUND,
-        """Literature list "$id" not found."""
+        """Literature list "$id" not found.""",
+        properties = mapOf("literature_list_id" to id)
     )
 
 class SmartReviewNotFound(id: ThingId) :
     SimpleMessageException(
         HttpStatus.NOT_FOUND,
-        """Smart review "$id" not found."""
+        """Smart review "$id" not found.""",
+        properties = mapOf("smart_review_id" to id)
     )
 
 class SustainableDevelopmentGoalNotFound(id: ThingId) :
     SimpleMessageException(
         HttpStatus.NOT_FOUND,
-        """Sustainable Development Goal "$id" not found."""
+        """Sustainable Development Goal "$id" not found.""",
+        properties = mapOf("sustainable_development_goal_id" to id)
     )
 
 class TableNotFound(id: ThingId) :
     SimpleMessageException(
         HttpStatus.NOT_FOUND,
-        """Table "$id" not found."""
+        """Table "$id" not found.""",
+        properties = mapOf("table_id" to id)
     )
 
 class TemplateInstanceNotFound(
@@ -105,103 +118,123 @@ class TemplateInstanceNotFound(
     resourceId: ThingId,
 ) : SimpleMessageException(
         HttpStatus.NOT_FOUND,
-        """Template instance for resource "$resourceId" and template id "$templateId" not found."""
+        """Template instance for resource "$resourceId" and template id "$templateId" not found.""",
+        properties = mapOf(
+            "template_id" to templateId,
+            "resource_id" to resourceId,
+        ),
     )
 
 class TemplateBasedResourceSnapshotNotFound(snapshotId: SnapshotId) :
     SimpleMessageException(
         HttpStatus.NOT_FOUND,
-        """Template based resource snapshot "$snapshotId" not found."""
+        """Template based resource snapshot "$snapshotId" not found.""",
+        properties = mapOf("template_based_resource_snapshot_id" to snapshotId),
     )
 
 class PaperNotModifiable(id: ThingId) :
     SimpleMessageException(
         HttpStatus.FORBIDDEN,
-        """Paper "$id" is not modifiable."""
+        """Paper "$id" is not modifiable.""",
+        properties = mapOf("paper_id" to id),
     )
 
 class ComparisonNotModifiable(id: ThingId) :
     SimpleMessageException(
         HttpStatus.FORBIDDEN,
-        """Comparison "$id" is not modifiable."""
+        """Comparison "$id" is not modifiable.""",
+        properties = mapOf("comparison_id" to id),
     )
 
 class ComparisonRelatedResourceNotModifiable(id: ThingId) :
     SimpleMessageException(
         HttpStatus.FORBIDDEN,
-        """Comparison related resource "$id" is not modifiable."""
+        """Comparison related resource "$id" is not modifiable.""",
+        properties = mapOf("comparison_related_resource_id" to id),
     )
 
 class ComparisonRelatedFigureNotModifiable(id: ThingId) :
     SimpleMessageException(
         HttpStatus.FORBIDDEN,
-        """Comparison related figure "$id" is not modifiable."""
+        """Comparison related figure "$id" is not modifiable.""",
+        properties = mapOf("comparison_related_figure_id" to id),
     )
 
 class LiteratureListNotModifiable(id: ThingId) :
     SimpleMessageException(
         HttpStatus.FORBIDDEN,
-        """Literature list "$id" is not modifiable."""
+        """Literature list "$id" is not modifiable.""",
+        properties = mapOf("literature_list_id" to id)
     )
 
 class SmartReviewNotModifiable(id: ThingId) :
     SimpleMessageException(
         HttpStatus.FORBIDDEN,
-        """Smart review "$id" is not modifiable."""
+        """Smart review "$id" is not modifiable.""",
+        properties = mapOf("smart_review_id" to id)
     )
 
 class RosettaStoneStatementNotModifiable(id: ThingId) :
     SimpleMessageException(
         HttpStatus.FORBIDDEN,
-        """Rosetta stone statement "$id" is not modifiable."""
+        """Rosetta stone statement "$id" is not modifiable.""",
+        properties = mapOf("rosetta_stone_statement_id" to id)
     )
 
 class RosettaStoneTemplateNotModifiable(id: ThingId) :
     SimpleMessageException(
         HttpStatus.FORBIDDEN,
-        """Rosetta stone template "$id" is not modifiable."""
+        """Rosetta stone template "$id" is not modifiable.""",
+        properties = mapOf("rosetta_stone_template_id" to id),
     )
 
 class RosettaStoneTemplatePropertyNotModifiable(id: ThingId) :
     SimpleMessageException(
         HttpStatus.FORBIDDEN,
-        """Rosetta stone template property "$id" is not modifiable."""
+        """Rosetta stone template property "$id" is not modifiable.""",
+        properties = mapOf("rosetta_stone_template_property_id" to id),
     )
 
 class TableNotModifiable(id: ThingId) :
     SimpleMessageException(
         HttpStatus.FORBIDDEN,
-        """Table "$id" is not modifiable."""
+        """Table "$id" is not modifiable.""",
+        properties = mapOf("table_id" to id)
     )
 
 class ComparisonAlreadyPublished(id: ThingId) :
     SimpleMessageException(
         HttpStatus.FORBIDDEN,
-        """Comparison "$id" is already published."""
+        """Comparison "$id" is already published.""",
+        properties = mapOf("comparison_id" to id),
     )
 
 class LiteratureListAlreadyPublished(id: ThingId) :
     SimpleMessageException(
         HttpStatus.FORBIDDEN,
-        """Literature list "$id" is already published."""
+        """Literature list "$id" is already published.""",
+        properties = mapOf("literature_list_id" to id)
     )
 
 class SmartReviewAlreadyPublished(id: ThingId) :
     SimpleMessageException(
         HttpStatus.FORBIDDEN,
-        """Smart review "$id" is already published."""
+        """Smart review "$id" is already published.""",
+        properties = mapOf("smart_review_id" to id)
     )
 
-class CannotDeleteIndividualRosettaStoneStatementVersion :
+class CannotDeleteIndividualRosettaStoneStatementVersion(id: ThingId) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Cannot delete individual versions of rosetta stone statements."""
+        """Cannot delete individual versions of rosetta stone statements.""",
+        properties = mapOf("rosetta_stone_statement_version_id" to id)
     )
 
 class RosettaStoneStatementInUse(id: ThingId) :
     SimpleMessageException(
         HttpStatus.FORBIDDEN,
-        """Unable to delete rosetta stone statement "$id" because it is used in at least one (rosetta stone) statement."""
+        """Unable to delete rosetta stone statement "$id" because it is used in at least one (rosetta stone) statement.""",
+        properties = mapOf("rosetta_stone_statement_id" to id)
     )
 
 class RosettaStoneTemplateInUse private constructor(
@@ -213,13 +246,13 @@ class RosettaStoneTemplateInUse private constructor(
         fun cantBeDeleted(id: ThingId) = RosettaStoneTemplateInUse(
             status = HttpStatus.FORBIDDEN,
             message = """Unable to delete rosetta stone template "$id" because it is used in at least one (rosetta stone) statement.""",
-            properties = mapOf("id" to id),
+            properties = mapOf("rosetta_stone_template_id" to id),
         )
 
         fun cantUpdateProperty(id: ThingId, property: String) = RosettaStoneTemplateInUse(
             status = HttpStatus.FORBIDDEN,
             message = """Unable to update property "$property" of rosetta stone template "$id" because it is used in at least one rosetta stone statement.""",
-            properties = mapOf("id" to id, "property" to property),
+            properties = mapOf("rosetta_stone_template_id" to id, "property" to property),
         )
     }
 }
@@ -251,25 +284,29 @@ class RequiresAtLeastTwoContributions :
 class ThingNotDefined(id: String) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Thing "$id" not defined."""
+        """Thing "$id" not defined.""",
+        properties = mapOf("thing_id" to id),
     )
 
 class AuthorNotFound(id: ThingId) :
     SimpleMessageException(
         HttpStatus.NOT_FOUND,
-        """Author "$id" not found."""
+        """Author "$id" not found.""",
+        properties = mapOf("author_id" to id),
     )
 
 class DuplicateTempIds(val duplicates: Map<String, Int>) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Duplicate temp ids: ${duplicates.entries.joinToString { "${it.key}=${it.value}" }}."""
+        """Duplicate temp ids: ${duplicates.entries.joinToString { "${it.key}=${it.value}" }}.""",
+        properties = mapOf("duplicate_temp_ids" to duplicates)
     )
 
 class InvalidTempId(id: String) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Invalid temp id "$id". Requires "#" as prefix."""
+        """Invalid temp id "$id". Requires "#" as prefix.""",
+        properties = mapOf("temp_id" to id)
     )
 
 class PaperAlreadyExists private constructor(
@@ -284,7 +321,7 @@ class PaperAlreadyExists private constructor(
 
         fun withIdentifier(identifier: String) = PaperAlreadyExists(
             """Paper with identifier "$identifier" already exists.""",
-            mapOf("identifier" to identifier),
+            mapOf("paper_identifier" to identifier),
         )
     }
 }
@@ -296,7 +333,11 @@ class AmbiguousAuthor(author: Author) :
             """Ambiguous author definition with identifiers ${author.identifiers}."""
         } else {
             """Ambiguous author definition with id "${author.id}" and identifiers ${author.identifiers}."""
-        }
+        },
+        properties = mapOf(
+            "author_id" to author.id,
+            "author_identifiers" to author.identifiers,
+        )
     )
 
 class ThingIsNotAClass(id: ThingId) :
@@ -304,6 +345,7 @@ class ThingIsNotAClass(id: ThingId) :
         HttpStatus.BAD_REQUEST,
         """Thing "$id" is not a class.""",
         type = createProblemURI("thing_is_not_a_class"),
+        properties = mapOf("thing_id" to id),
     )
 
 class ThingIsNotAPredicate(id: String) :
@@ -311,12 +353,14 @@ class ThingIsNotAPredicate(id: String) :
         HttpStatus.BAD_REQUEST,
         """Thing "$id" is not a predicate.""",
         type = createProblemURI("thing_is_not_a_predicate"),
+        properties = mapOf("thing_id" to id),
     )
 
 class InvalidStatementSubject(id: String) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Invalid statement subject "$id"."""
+        """Invalid statement subject "$id".""",
+        properties = mapOf("subject_id" to id),
     )
 
 class EmptyContribution : SimpleMessageException {
@@ -335,19 +379,25 @@ class TemplateAlreadyExistsForClass(
     templateId: ThingId,
 ) : SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Class "$classId" already has template "$templateId"."""
+        """Class "$classId" already has template "$templateId".""",
+        properties = mapOf(
+            "template_id" to templateId,
+            "template_target_class_id" to classId
+        ),
     )
 
 class InvalidMinCount(count: Int) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Invalid min count "$count". Must be at least 0."""
+        """Invalid min count "$count". Must be at least 0.""",
+        properties = mapOf("min_count" to count),
     )
 
 class InvalidMaxCount(count: Int) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Invalid max count "$count". Must be at least 0."""
+        """Invalid max count "$count". Must be at least 0.""",
+        properties = mapOf("max_count" to count),
     )
 
 class InvalidCardinality(
@@ -355,7 +405,11 @@ class InvalidCardinality(
     max: Int,
 ) : SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Invalid cardinality. Min count must be less than max count. Found: min: "$min", max: "$max"."""
+        """Invalid cardinality. Min count must be less than max count. Found: min: "$min", max: "$max".""",
+        properties = mapOf(
+            "min_cardinality" to min,
+            "max_cardinality" to max,
+        ),
     )
 
 class InvalidBounds(
@@ -363,19 +417,31 @@ class InvalidBounds(
     max: Number,
 ) : SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Invalid bounds. Min bound must be less than or equal to max bound. Found: min: "$min", max: "$max"."""
+        """Invalid bounds. Min bound must be less than or equal to max bound. Found: min: "$min", max: "$max".""",
+        properties = mapOf(
+            "min_count" to min,
+            "max_count" to max,
+        ),
     )
 
 class InvalidDataType : SimpleMessageException {
     constructor(actual: ThingId, expected: ThingId) :
         super(
             status = HttpStatus.BAD_REQUEST,
-            message = """Invalid datatype. Found "$actual", expected "$expected"."""
+            message = """Invalid datatype. Found "$actual", expected "$expected".""",
+            properties = mapOf(
+                "actual_data_type" to actual,
+                "expected_data_types" to listOf(expected)
+            ),
         )
     constructor(actual: ThingId, vararg expected: ThingId) :
         super(
             status = HttpStatus.BAD_REQUEST,
-            message = """Invalid datatype. Found "$actual", expected either of ${expected.joinToString { "\"$it\"" }}."""
+            message = """Invalid datatype. Found "$actual", expected either of ${expected.joinToString { "\"$it\"" }}.""",
+            properties = mapOf(
+                "actual_data_type" to actual,
+                "expected_data_types" to expected
+            ),
         )
 }
 
@@ -385,19 +451,22 @@ class InvalidRegexPattern(
 ) : SimpleMessageException(
         status = HttpStatus.BAD_REQUEST,
         message = """Invalid regex pattern "$pattern".""",
-        cause = cause
+        cause = cause,
+        properties = mapOf("regex_pattern" to pattern)
     )
 
 class TemplateClosed(id: ThingId) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Template "$id" is closed."""
+        """Template "$id" is closed.""",
+        properties = mapOf("template_id" to id),
     )
 
 class InvalidMonth(month: Int) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Invalid month "$month". Must be in range [1..12]."""
+        """Invalid month "$month". Must be in range [1..12].""",
+        properties = mapOf("month" to month)
     )
 
 class TemplateNotApplicable(
@@ -405,7 +474,11 @@ class TemplateNotApplicable(
     id: ThingId,
 ) : SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Template "$templateId" cannot be applied to resource "$id" because the target resource is not an instance of the template target class."""
+        """Template "$templateId" cannot be applied to resource "$id" because the target resource is not an instance of the template target class.""",
+        properties = mapOf(
+            "template_id" to templateId,
+            "resource_id" to id,
+        ),
     )
 
 class ObjectIsNotAClass(
@@ -415,7 +488,12 @@ class ObjectIsNotAClass(
 ) : SimpleMessageException(
         HttpStatus.BAD_REQUEST,
         """Object "$id" for template property "$templatePropertyId" with predicate "$predicateId" is not a class.""",
-        type = createProblemURI("object_is_not_a_class")
+        type = createProblemURI("object_is_not_a_class"),
+        properties = mapOf(
+            "template_property_id" to templatePropertyId,
+            "predicate_id" to predicateId,
+            "object_id" to id,
+        ),
     )
 
 class ObjectIsNotAPredicate(
@@ -425,7 +503,12 @@ class ObjectIsNotAPredicate(
 ) : SimpleMessageException(
         HttpStatus.BAD_REQUEST,
         """Object "$id" for template property "$templatePropertyId" with predicate "$predicateId" is not a predicate.""",
-        type = createProblemURI("object_is_not_a_predicate")
+        type = createProblemURI("object_is_not_a_predicate"),
+        properties = mapOf(
+            "template_property_id" to templatePropertyId,
+            "predicate_id" to predicateId,
+            "object_id" to id,
+        ),
     )
 
 class ObjectIsNotAList(
@@ -435,7 +518,12 @@ class ObjectIsNotAList(
 ) : SimpleMessageException(
         HttpStatus.BAD_REQUEST,
         """Object "$id" for template property "$templatePropertyId" with predicate "$predicateId" is not a list.""",
-        type = createProblemURI("object_is_not_a_list")
+        type = createProblemURI("object_is_not_a_list"),
+        properties = mapOf(
+            "template_property_id" to templatePropertyId,
+            "predicate_id" to predicateId,
+            "object_id" to id,
+        ),
     )
 
 class ObjectIsNotALiteral(
@@ -445,7 +533,12 @@ class ObjectIsNotALiteral(
 ) : SimpleMessageException(
         HttpStatus.BAD_REQUEST,
         """Object "$id" for template property "$templatePropertyId" with predicate "$predicateId" is not a literal.""",
-        type = createProblemURI("object_is_not_a_literal")
+        type = createProblemURI("object_is_not_a_literal"),
+        properties = mapOf(
+            "template_property_id" to templatePropertyId,
+            "predicate_id" to predicateId,
+            "object_id" to id,
+        ),
     )
 
 class ObjectMustNotBeALiteral(
@@ -455,7 +548,12 @@ class ObjectMustNotBeALiteral(
 ) : SimpleMessageException(
         HttpStatus.BAD_REQUEST,
         """Object "$id" for template property "$templatePropertyId" with predicate "$predicateId" must not be a literal.""",
-        type = createProblemURI("object_must_not_be_a_literal")
+        type = createProblemURI("object_must_not_be_a_literal"),
+        properties = mapOf(
+            "template_property_id" to templatePropertyId,
+            "predicate_id" to predicateId,
+            "object_id" to id,
+        ),
     )
 
 class ResourceIsNotAnInstanceOfTargetClass(
@@ -465,7 +563,13 @@ class ResourceIsNotAnInstanceOfTargetClass(
     targetClass: ThingId,
 ) : SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Object "$id" for template property "$templatePropertyId" with predicate "$predicateId" is not an instance of target class "$targetClass"."""
+        """Object "$id" for template property "$templatePropertyId" with predicate "$predicateId" is not an instance of target class "$targetClass".""",
+        properties = mapOf(
+            "template_property_id" to templatePropertyId,
+            "predicate_id" to predicateId,
+            "object_id" to id,
+            "template_property_target_class" to targetClass,
+        ),
     )
 
 class LabelDoesNotMatchPattern(
@@ -476,7 +580,14 @@ class LabelDoesNotMatchPattern(
     pattern: String,
 ) : SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Label "$label" for object "$objectId" for property "$templatePropertyId" with predicate "$predicateId" does not match pattern "$pattern"."""
+        """Label "$label" for object "$objectId" for property "$templatePropertyId" with predicate "$predicateId" does not match pattern "$pattern".""",
+        properties = mapOf(
+            "template_property_id" to templatePropertyId,
+            "predicate_id" to predicateId,
+            "object_id" to objectId,
+            "object_label" to label,
+            "regex_pattern" to pattern,
+        ),
     )
 
 class UnknownTemplateProperties(
@@ -484,7 +595,11 @@ class UnknownTemplateProperties(
     unknownProperties: Set<ThingId>,
 ) : SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Unknown properties for template "$templateId": ${unknownProperties.joinToString { "\"$it\"" }}."""
+        """Unknown properties for template "$templateId": ${unknownProperties.joinToString { "\"$it\"" }}.""",
+        properties = mapOf(
+            "template_id" to templateId,
+            "template_property_ids" to unknownProperties,
+        ),
     )
 
 class MissingPropertyValues(
@@ -494,7 +609,13 @@ class MissingPropertyValues(
     actual: Int,
 ) : SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Missing values for property "$templatePropertyId" with predicate "$predicateId". min: "$min", found: "$actual"."""
+        """Missing values for property "$templatePropertyId" with predicate "$predicateId". min: "$min", found: "$actual".""",
+        properties = mapOf(
+            "template_property_id" to templatePropertyId,
+            "predicate_id" to predicateId,
+            "min_value_count" to min,
+            "actual_value_count" to actual,
+        ),
     )
 
 class TooManyPropertyValues(
@@ -504,7 +625,13 @@ class TooManyPropertyValues(
     actual: Int,
 ) : SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Too many values for property "$templatePropertyId" with predicate "$predicateId". max: "$max", found: "$actual"."""
+        """Too many values for property "$templatePropertyId" with predicate "$predicateId". max: "$max", found: "$actual".""",
+        properties = mapOf(
+            "template_property_id" to templatePropertyId,
+            "predicate_id" to predicateId,
+            "max_value_count" to max,
+            "actual_value_count" to actual,
+        ),
     )
 
 class InvalidLiteral(
@@ -515,7 +642,14 @@ class InvalidLiteral(
     value: String,
 ) : SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Object "$id" with value "$value" for property "$templatePropertyId" with predicate "$predicateId" is not a valid "$datatype"."""
+        """Object "$id" with value "$value" for property "$templatePropertyId" with predicate "$predicateId" is not a valid "$datatype".""",
+        properties = mapOf(
+            "template_property_id" to templatePropertyId,
+            "predicate_id" to predicateId,
+            "object_id" to id,
+            "object_label" to value,
+            "expected_datatype" to datatype,
+        ),
     )
 
 class MismatchedDataType(
@@ -526,7 +660,14 @@ class MismatchedDataType(
     foundDataType: String,
 ) : SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Object "$id" with data type "$foundDataType" for property "$templatePropertyId" with predicate "$predicateId" does not match expected data type "$expectedDataType"."""
+        """Object "$id" with data type "$foundDataType" for property "$templatePropertyId" with predicate "$predicateId" does not match expected data type "$expectedDataType".""",
+        properties = mapOf(
+            "template_property_id" to templatePropertyId,
+            "predicate_id" to predicateId,
+            "object_id" to id,
+            "actual_datatype" to foundDataType,
+            "expected_datatype" to expectedDataType,
+        ),
     )
 
 class UnrelatedTemplateProperty(
@@ -534,7 +675,11 @@ class UnrelatedTemplateProperty(
     templatePropertyId: ThingId,
 ) : SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Template property "$templatePropertyId" does not belong to template "$templateId"."""
+        """Template property "$templatePropertyId" does not belong to template "$templateId".""",
+        properties = mapOf(
+            "template_id" to templateId,
+            "template_property_id" to templatePropertyId,
+        ),
     )
 
 class NumberTooLow(
@@ -545,7 +690,14 @@ class NumberTooLow(
     minInclusive: Number,
 ) : SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Number "$label" for object "$objectId" for property "$templatePropertyId" with predicate "$predicateId" must be at least "$minInclusive"."""
+        """Number "$label" for object "$objectId" for property "$templatePropertyId" with predicate "$predicateId" must be at least "$minInclusive".""",
+        properties = mapOf(
+            "template_property_id" to templatePropertyId,
+            "predicate_id" to predicateId,
+            "object_id" to objectId,
+            "object_label" to label,
+            "min_inclusive" to minInclusive,
+        ),
     )
 
 class NumberTooHigh(
@@ -556,7 +708,14 @@ class NumberTooHigh(
     maxInclusive: Number,
 ) : SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Number "$label" for object "$objectId" for property "$templatePropertyId" with predicate "$predicateId" must be at most "$maxInclusive"."""
+        """Number "$label" for object "$objectId" for property "$templatePropertyId" with predicate "$predicateId" must be at most "$maxInclusive".""",
+        properties = mapOf(
+            "template_property_id" to templatePropertyId,
+            "predicate_id" to predicateId,
+            "object_id" to objectId,
+            "object_label" to label,
+            "max_inclusive" to maxInclusive,
+        ),
     )
 
 class InvalidListSectionEntry(
@@ -564,13 +723,18 @@ class InvalidListSectionEntry(
     expectedAnyInstanceOf: Set<ThingId>,
 ) : SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Invalid list section entry "$id". Must be an instance of either ${expectedAnyInstanceOf.joinToString { "\"$it\"" }}."""
+        """Invalid list section entry "$id". Must be an instance of either ${expectedAnyInstanceOf.joinToString { "\"$it\"" }}.""",
+        properties = mapOf(
+            "literature_list_section_id" to id,
+            "expected_classes" to expectedAnyInstanceOf
+        )
     )
 
 class InvalidHeadingSize(headingSize: Int) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Invalid heading size "$headingSize". Must be at least 1."""
+        """Invalid heading size "$headingSize". Must be at least 1.""",
+        properties = mapOf("heading_size" to headingSize),
     )
 
 class UnrelatedLiteratureListSection(
@@ -578,19 +742,26 @@ class UnrelatedLiteratureListSection(
     literatureListSectionId: ThingId,
 ) : SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Literature list section "$literatureListSectionId" does not belong to literature list "$literatureListId"."""
+        """Literature list section "$literatureListSectionId" does not belong to literature list "$literatureListId".""",
+        properties = mapOf(
+            "literature_list_id" to literatureListId,
+            "literature_list_section_id" to literatureListSectionId
+        )
     )
 
 class LiteratureListSectionTypeMismatch private constructor(
     override val message: String,
-) : SimpleMessageException(HttpStatus.BAD_REQUEST, message) {
+    properties: Map<String, Any>,
+) : SimpleMessageException(HttpStatus.BAD_REQUEST, message, properties = properties) {
     companion object {
         fun mustBeTextSection() = LiteratureListSectionTypeMismatch(
-            """Invalid literature list section type. Must be a text section."""
+            """Invalid literature list section type. Must be a text section.""",
+            mapOf("expected_literature_list_section_type" to Classes.textSection)
         )
 
         fun mustBeListSection() = LiteratureListSectionTypeMismatch(
-            """Invalid literature list section type. Must be a list section."""
+            """Invalid literature list section type. Must be a list section.""",
+            mapOf("expected_literature_list_section_type" to Classes.listSection)
         )
     }
 }
@@ -600,7 +771,11 @@ class PublishedLiteratureListContentNotFound(
     contentId: ThingId,
 ) : SimpleMessageException(
         HttpStatus.NOT_FOUND,
-        """Literature list content "$contentId" not found for literature list "$literatureListId"."""
+        """Literature list content "$contentId" not found for literature list "$literatureListId".""",
+        properties = mapOf(
+            "literature_list_id" to literatureListId,
+            "literature_list_content_id" to contentId,
+        )
     )
 
 class PublishedSmartReviewContentNotFound(
@@ -608,7 +783,11 @@ class PublishedSmartReviewContentNotFound(
     contentId: ThingId,
 ) : SimpleMessageException(
         HttpStatus.NOT_FOUND,
-        """Smart review content "$contentId" not found for smart review "$smartReviewId"."""
+        """Smart review content "$contentId" not found for smart review "$smartReviewId".""",
+        properties = mapOf(
+            "smart_review_id" to smartReviewId,
+            "smart_review_content_id" to contentId,
+        )
     )
 
 class UnrelatedSmartReviewSection(
@@ -616,7 +795,11 @@ class UnrelatedSmartReviewSection(
     smartReviewSectionId: ThingId,
 ) : SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Smart review section "$smartReviewSectionId" does not belong to smart review "$smartReviewId"."""
+        """Smart review section "$smartReviewSectionId" does not belong to smart review "$smartReviewId".""",
+        properties = mapOf(
+            "smart_review_id" to smartReviewId,
+            "smart_review_section_id" to smartReviewSectionId,
+        )
     )
 
 class SmartReviewSectionTypeMismatch private constructor(
@@ -626,32 +809,32 @@ class SmartReviewSectionTypeMismatch private constructor(
     companion object {
         fun mustBeComparisonSection() = SmartReviewSectionTypeMismatch(
             """Invalid smart review section type. Must be a comparison section.""",
-            mapOf("expected_type" to Classes.comparisonSection)
+            mapOf("expected_smart_review_section_type" to Classes.comparisonSection)
         )
 
         fun mustBeVisualizationSection() = SmartReviewSectionTypeMismatch(
             """Invalid smart review section type. Must be a visualization section.""",
-            mapOf("expected_type" to Classes.visualizationSection)
+            mapOf("expected_smart_review_section_type" to Classes.visualizationSection)
         )
 
         fun mustBeResourceSection() = SmartReviewSectionTypeMismatch(
             """Invalid smart review section type. Must be a resource section.""",
-            mapOf("expected_type" to Classes.resourceSection)
+            mapOf("expected_smart_review_section_type" to Classes.resourceSection)
         )
 
         fun mustBePredicateSection() = SmartReviewSectionTypeMismatch(
             """Invalid smart review section type. Must be a predicate section.""",
-            mapOf("expected_type" to Classes.propertySection)
+            mapOf("expected_smart_review_section_type" to Classes.propertySection)
         )
 
         fun mustBeOntologySection() = SmartReviewSectionTypeMismatch(
             """Invalid smart review section type. Must be an ontology section.""",
-            mapOf("expected_type" to Classes.ontologySection)
+            mapOf("expected_smart_review_section_type" to Classes.ontologySection)
         )
 
         fun mustBeTextSection() = SmartReviewSectionTypeMismatch(
             """Invalid smart review section type. Must be a text section.""",
-            mapOf("expected_type" to Classes.section)
+            mapOf("expected_smart_review_section_type" to Classes.section)
         )
     }
 }
@@ -671,13 +854,15 @@ class InvalidSubjectPositionType :
 class InvalidSubjectPositionPath :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Invalid subject position path. Must be "${Predicates.hasSubjectPosition}"."""
+        """Invalid subject position path. Must be "${Predicates.hasSubjectPosition}".""",
+        properties = mapOf("input_position_index" to 0)
     )
 
 class InvalidObjectPositionPath(index: Int) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Invalid object position path for property at index "$index". Must be "${Predicates.hasObjectPosition}"."""
+        """Invalid object position path for property at index "$index". Must be "${Predicates.hasObjectPosition}".""",
+        properties = mapOf("input_position_index" to index)
     )
 
 class MissingSubjectPosition :
@@ -689,20 +874,22 @@ class MissingSubjectPosition :
 class MissingPropertyPlaceholder(index: Int) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Missing placeholder for property at index "$index"."""
+        """Missing placeholder for property at index "$index".""",
+        properties = mapOf("input_position_index" to index)
     )
 
 class MissingFormattedLabelPlaceholder : SimpleMessageException {
-    constructor(index: Int) : super(
+    constructor(index: Int, placeholder: String? = null) : super(
         HttpStatus.BAD_REQUEST,
-        """Missing formatted label placeholder "{$index}".""",
-        properties = mapOf("index" to index)
-    )
-
-    constructor(placeholder: String) : super(
-        HttpStatus.BAD_REQUEST,
-        """Missing formatted label placeholder for input position "$placeholder".""",
-        properties = mapOf("placeholder" to placeholder)
+        if (placeholder == null) {
+            """Missing formatted label placeholder "{$index}"."""
+        } else {
+            """Missing formatted label placeholder for input position "$placeholder"."""
+        },
+        properties = mapOf(
+            "input_position_index" to index,
+            "input_position_placeholder" to placeholder,
+        )
     )
 }
 
@@ -742,35 +929,56 @@ class NewRosettaStoneTemplateExampleUsageMustStartWithPreviousExampleUsage :
         """New example usage must start with the previous example usage."""
     )
 
-class NewRosettaStoneTemplatePropertyMustBeOptional(placeholder: String) :
-    SimpleMessageException(
+class NewRosettaStoneTemplatePropertyMustBeOptional(
+    index: Int,
+    placeholder: String,
+) : SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """New rosetta stone template property "$placeholder" must be optional."""
+        """New rosetta stone template property "$placeholder" must be optional.""",
+        properties = mapOf(
+            "input_position_index" to index,
+            "input_position_placeholder" to placeholder,
+        ),
     )
 
 class TooManyInputPositions(
     exceptedCount: Int,
+    actualCount: Int,
     templateId: ThingId,
 ) : SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Too many input positions for rosetta stone statement of template "$templateId". Expected exactly $exceptedCount input positions."""
+        """Too many input positions for rosetta stone statement of template "$templateId". Expected exactly $exceptedCount input positions.""",
+        properties = mapOf(
+            "rosetta_stone_template_id" to templateId,
+            "expected_input_position_count" to exceptedCount,
+            "actual_input_position_count" to actualCount,
+        ),
     )
 
 class MissingInputPositions(
     exceptedCount: Int,
+    actualCount: Int,
     templateId: ThingId,
-    missingCount: Int,
 ) : SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Missing input for $missingCount input positions for rosetta stone statement of template "$templateId". Expected exactly $exceptedCount input positions."""
+        """Missing input for rosetta stone statement of template "$templateId". Expected exactly $exceptedCount input positions.""",
+        properties = mapOf(
+            "rosetta_stone_template_id" to templateId,
+            "expected_input_position_count" to exceptedCount,
+            "actual_input_position_count" to actualCount,
+        ),
     )
 
 class NestedRosettaStoneStatement(
     id: ThingId,
-    index: Int,
+    inputPositionIndex: Int,
 ) : SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Rosetta stone statement "$id" for input position $index already contains a rosetta stone statement in one of its input positions."""
+        """Rosetta stone statement "$id" for input position $inputPositionIndex already contains a rosetta stone statement in one of its input positions.""",
+        properties = mapOf(
+            "rosetta_stone_statement_id" to id,
+            "input_position_index" to inputPositionIndex,
+        ),
     )
 
 class MissingSubjectPositionValue(
@@ -778,15 +986,26 @@ class MissingSubjectPositionValue(
     min: Int,
 ) : SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Missing input for subject position "$positionPlaceholder". At least $min input(s) are required."""
+        """Missing input for subject position "$positionPlaceholder". At least $min input(s) are required.""",
+        properties = mapOf(
+            "input_position_placeholder" to positionPlaceholder,
+            "input_position_index" to 0,
+            "min_count" to min,
+        ),
     )
 
 class MissingObjectPositionValue(
     positionPlaceholder: String,
+    objectPositionIndex: Int,
     min: Int,
 ) : SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Missing input for object position "$positionPlaceholder". At least $min input(s) are required."""
+        """Missing input for object position "$positionPlaceholder". At least $min input(s) are required.""",
+        properties = mapOf(
+            "input_position_placeholder" to positionPlaceholder,
+            "input_position_index" to objectPositionIndex,
+            "min_count" to min,
+        ),
     )
 
 class TooManySubjectPositionValues(
@@ -794,61 +1013,102 @@ class TooManySubjectPositionValues(
     max: Int,
 ) : SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Too many inputs for subject position "$positionPlaceholder". Must be at most $max."""
+        """Too many inputs for subject position "$positionPlaceholder". Must be at most $max.""",
+        properties = mapOf(
+            "input_position_placeholder" to positionPlaceholder,
+            "input_position_index" to 0,
+            "max_count" to max,
+        ),
     )
 
 class TooManyObjectPositionValues(
     positionPlaceholder: String,
+    objectPositionIndex: Int,
     max: Int,
 ) : SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Too many inputs for object position "$positionPlaceholder". Must be at most $max."""
+        """Too many inputs for object position "$positionPlaceholder". Must be at most $max.""",
+        properties = mapOf(
+            "input_position_placeholder" to positionPlaceholder,
+            "input_position_index" to objectPositionIndex,
+            "max_count" to max,
+        ),
     )
 
 class ObjectPositionValueDoesNotMatchPattern(
     positionPlaceholder: String,
+    objectPositionIndex: Int,
     label: String,
+    labelIndex: Int,
     pattern: String,
 ) : SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Value "$label" for object position "$positionPlaceholder" does not match pattern "$pattern"."""
+        """Value "$label" for object position "$positionPlaceholder" does not match pattern "$pattern".""",
+        properties = mapOf(
+            "input_position_placeholder" to positionPlaceholder,
+            "input_position_index" to objectPositionIndex,
+            "input" to label,
+            "input_index" to labelIndex,
+            "regex_pattern" to pattern,
+        ),
     )
 
 class ObjectPositionValueTooLow(
     positionPlaceholder: String,
+    objectPositionIndex: Int,
     label: String,
+    labelIndex: Int,
     minInclusive: Number,
 ) : SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Number "$label" for object position "$positionPlaceholder" too low. Must be at least $minInclusive."""
+        """Number "$label" for object position "$positionPlaceholder" too low. Must be at least $minInclusive.""",
+        properties = mapOf(
+            "input_position_placeholder" to positionPlaceholder,
+            "input_position_index" to objectPositionIndex,
+            "input" to label,
+            "input_index" to labelIndex,
+            "min_inclusive" to minInclusive,
+        ),
     )
 
 class ObjectPositionValueTooHigh(
     positionPlaceholder: String,
+    objectPositionIndex: Int,
     label: String,
+    labelIndex: Int,
     maxInclusive: Number,
 ) : SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Number "$label" for object position "$positionPlaceholder" too high. Must be at most $maxInclusive."""
+        """Number "$label" for object position "$positionPlaceholder" too high. Must be at most $maxInclusive.""",
+        properties = mapOf(
+            "input_position_placeholder" to positionPlaceholder,
+            "input_position_index" to objectPositionIndex,
+            "input" to label,
+            "input_index" to labelIndex,
+            "max_inclusive" to maxInclusive,
+        ),
     )
 
 class InvalidBibTeXReference(reference: String) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
         """Invalid BibTeX reference "$reference".""",
-        type = createProblemURI("invalid_bibtex_reference")
+        type = createProblemURI("invalid_bibtex_reference"),
+        properties = mapOf("bibtex_reference" to reference)
     )
 
 class OntologyEntityNotFound(entities: Set<ThingId>) :
     SimpleMessageException(
         HttpStatus.NOT_FOUND,
-        """Ontology entity not found among entities ${entities.joinToString { """"$it"""" }}."""
+        """Ontology entity not found among entities ${entities.joinToString { """"$it"""" }}.""",
+        properties = mapOf("ontology_entities" to entities)
     )
 
 class InvalidSmartReviewTextSectionType(type: ThingId) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Invalid smart review text section type "$type"."""
+        """Invalid smart review text section type "$type".""",
+        properties = mapOf("smart_review_section_type" to type)
     )
 
 class InvalidDOI(doi: String) :
@@ -869,13 +1129,15 @@ class InvalidIdentifier(
 class ResearchProblemNotFound(id: ThingId) :
     SimpleMessageException(
         HttpStatus.NOT_FOUND,
-        """Research problem "$id" not found."""
+        """Research problem "$id" not found.""",
+        properties = mapOf("research_problem_id" to id)
     )
 
 class TooFewContributions(ids: List<ThingId>) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Too few ids: At least two ids are required. Got only "${ids.size}"."""
+        """Too few ids: At least two ids are required. Got only "${ids.size}".""",
+        properties = mapOf("contribution_ids" to ids),
     )
 
 class MissingTableRows :
@@ -887,13 +1149,21 @@ class MissingTableRows :
 class MissingTableHeaderValue(index: Int) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Missing table header value at index $index."""
+        """Missing table header value at index $index.""",
+        properties = mapOf(
+            "table_row_index" to 0,
+            "table_column_index" to index,
+        ),
     )
 
 class TableHeaderValueMustBeLiteral(index: Int) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Table header value at index $index must be a literal."""
+        """Table header value at index $index must be a literal.""",
+        properties = mapOf(
+            "table_row_index" to 0,
+            "table_column_index" to index,
+        ),
     )
 
 class TooManyTableRowValues(
@@ -901,7 +1171,11 @@ class TooManyTableRowValues(
     expectedSize: Int,
 ) : SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Row $index has more values than the header. Expected exactly $expectedSize values based on header."""
+        """Row $index has more values than the header. Expected exactly $expectedSize values based on header.""",
+        properties = mapOf(
+            "table_row_index" to index,
+            "expected_table_row_count" to expectedSize,
+        ),
     )
 
 class MissingTableRowValues(
@@ -909,11 +1183,16 @@ class MissingTableRowValues(
     expectedSize: Int,
 ) : SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Row $index has less values than the header. Expected exactly $expectedSize values based on header."""
+        """Row $index has less values than the header. Expected exactly $expectedSize values based on header.""",
+        properties = mapOf(
+            "table_row_index" to index,
+            "expected_table_row_count" to expectedSize,
+        ),
     )
 
 class ResearchFieldNotFound(id: ThingId) :
     SimpleMessageException(
         HttpStatus.NOT_FOUND,
-        """Research field "$id" not found."""
+        """Research field "$id" not found.""",
+        properties = mapOf("research_field_id" to id)
     )

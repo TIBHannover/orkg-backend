@@ -3,21 +3,25 @@ package org.orkg.graph.adapter.input.rest.exceptions
 import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
+import org.orkg.common.json.CommonJacksonModule
 import org.orkg.graph.domain.ListElementNotFound
 import org.orkg.graph.domain.ListInUse
 import org.orkg.graph.domain.ListNotFound
 import org.orkg.graph.domain.ListNotModifiable
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
+import org.orkg.testing.spring.restdocs.exceptionResponseFields
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.HttpStatus.NOT_FOUND
+import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
 @WebMvcTest
-@ContextConfiguration(classes = [FixedClockConfig::class])
+@ContextConfiguration(classes = [CommonJacksonModule::class, FixedClockConfig::class])
 internal class ListExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun listInUse() {
@@ -26,7 +30,14 @@ internal class ListExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:list_in_use")
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Unable to delete list "R123" because it is used in at least one statement.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.list_id", `is`("R123")))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("list_id").description("The id of the list."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -36,7 +47,14 @@ internal class ListExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:list_not_found")
             .andExpectTitle("Not Found")
             .andExpectDetail("""List "R123" not found.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.list_id", `is`("R123")))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("list_id").description("The id of the list."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -46,7 +64,14 @@ internal class ListExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:list_not_modifiable")
             .andExpectTitle("Forbidden")
             .andExpectDetail("""List "R123" is not modifiable.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.list_id", `is`("R123")))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("list_id").description("The id of the list."),
+                    )
+                )
+            )
     }
 
     @Test

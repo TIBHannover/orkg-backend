@@ -26,12 +26,12 @@ internal class ConferenceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:conference_series_already_exists")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Conference series with name "Cool name" already exists.""")
-            .andExpect(jsonPath("$.name", `is`("Cool name")))
+            .andExpect(jsonPath("$.conference_series_name", `is`("Cool name")))
             .andDo(
                 documentationHandler.document(
                     responseFields(exceptionResponseFields()).and(
-                        fieldWithPath("name").type("String").description("The name of the conference series that already exists. (optional, either `name` or `display_id` is present)").optional(),
-                        fieldWithPath("display_id").type("String").description("The display_id of the conference series that already exists. (optional, either `name` or `display_id` is present)").optional(),
+                        fieldWithPath("conference_series_name").type("String").description("The name of the conference series. (optional, either `conference_series_name` or `conference_series_display_id` is present)").optional(),
+                        fieldWithPath("conference_series_display_id").type("String").description("The display_id of the conference series. (optional, either `conference_series_name` or `conference_series_display_id` is present)").optional(),
                     )
                 )
             )
@@ -44,7 +44,7 @@ internal class ConferenceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:conference_series_already_exists")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Conference series with display id "cool_name" already exists.""")
-            .andExpect(jsonPath("$.display_id", `is`("cool_name")))
+            .andExpect(jsonPath("$.conference_series_display_id", `is`("cool_name")))
     }
 
     @Test
@@ -54,5 +54,13 @@ internal class ConferenceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:conference_series_not_found")
             .andExpectTitle("Not Found")
             .andExpectDetail("""Conference series "eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174" not found.""")
+            .andExpect(jsonPath("$.conference_series_id", `is`("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("conference_series_id").description("The id of the conference series.")
+                    )
+                )
+            )
     }
 }

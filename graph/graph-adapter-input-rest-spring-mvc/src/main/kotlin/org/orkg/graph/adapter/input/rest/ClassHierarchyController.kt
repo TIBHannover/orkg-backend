@@ -1,13 +1,13 @@
 package org.orkg.graph.adapter.input.rest
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import org.orkg.common.ContributorId
+import jakarta.validation.Valid
+import jakarta.validation.constraints.Size
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.RequireCuratorRole
 import org.orkg.common.contributorId
 import org.orkg.graph.adapter.input.rest.mapping.ChildClassRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.mapping.ClassHierarchyEntryRepresentationAdapter
-import org.orkg.graph.domain.EmptyChildIds
 import org.orkg.graph.input.ClassHierarchyUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.springframework.data.domain.Page
@@ -67,7 +67,7 @@ class ClassHierarchyController(
         uriComponentsBuilder: UriComponentsBuilder,
         currentUser: Authentication?,
     ): ResponseEntity<Any> {
-        createRelations(request.parentId, setOf(id), false, currentUser.contributorId())
+        service.create(currentUser.contributorId(), request.parentId, setOf(id), false)
         val location = uriComponentsBuilder
             .path("/api/classes/{id}/parent")
             .buildAndExpand(id)
@@ -92,11 +92,11 @@ class ClassHierarchyController(
     @RequireCuratorRole
     fun createChildRelations(
         @PathVariable id: ThingId,
-        @RequestBody request: CreateChildrenRequest,
+        @RequestBody @Valid request: CreateChildrenRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         currentUser: Authentication?,
     ): ResponseEntity<Any> {
-        createRelations(id, request.childIds, true, currentUser.contributorId())
+        service.create(currentUser.contributorId(), id, request.childIds, true)
         val location = uriComponentsBuilder
             .path("/api/classes/{id}/children")
             .buildAndExpand(id)
@@ -108,21 +108,16 @@ class ClassHierarchyController(
     @RequireCuratorRole
     fun updateChildRelations(
         @PathVariable id: ThingId,
-        @RequestBody request: CreateChildrenRequest,
+        @RequestBody @Valid request: CreateChildrenRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         currentUser: Authentication?,
     ): ResponseEntity<Any> {
-        createRelations(id, request.childIds, false, currentUser.contributorId())
+        service.create(currentUser.contributorId(), id, request.childIds, false)
         val location = uriComponentsBuilder
             .path("/api/classes/{id}/children")
             .buildAndExpand(id)
             .toUri()
         return noContent().location(location).build()
-    }
-
-    private fun createRelations(parentId: ThingId, childIds: Set<ThingId>, checkIfParentIsLeaf: Boolean, contributorId: ContributorId) {
-        if (childIds.isEmpty()) throw EmptyChildIds()
-        service.create(contributorId, parentId, childIds, checkIfParentIsLeaf)
     }
 
     @GetMapping("/{id}/count")
@@ -139,6 +134,7 @@ class ClassHierarchyController(
         service.findClassHierarchy(id, pageable).mapToClassHierarchyEntryRepresentation()
 
     data class CreateChildrenRequest(
+        @Size(min = 1)
         @JsonProperty("child_ids")
         val childIds: Set<ThingId>,
     )

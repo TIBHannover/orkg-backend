@@ -38,11 +38,7 @@ class RosettaStoneTemplateFormattedLabelUpdateValidator : UpdateRosettaStoneTemp
                         else -> null
                     }
                 }
-                if (placeholder != null) {
-                    throw MissingFormattedLabelPlaceholder(placeholder)
-                } else {
-                    throw MissingFormattedLabelPlaceholder(propertyIndex)
-                }
+                throw MissingFormattedLabelPlaceholder(propertyIndex, placeholder)
             }
             if (state.isUsedInRosettaStoneStatement) {
                 if (command.properties == null || command.properties!!.size <= state.rosettaStoneTemplate.properties.size) {

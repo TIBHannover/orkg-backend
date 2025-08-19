@@ -128,6 +128,7 @@ internal class AbstractLiteratureListSectionDeleterUnitTest : MockkBaseTest {
             predicate = createPredicate(Predicates.hasSection),
             `object` = createResource(section.id)
         )
+        val exception = NeitherOwnerNorCurator(ContributorId(UUID.randomUUID()), contributorId, section.id)
 
         every {
             statementService.findAll(
@@ -136,7 +137,7 @@ internal class AbstractLiteratureListSectionDeleterUnitTest : MockkBaseTest {
             )
         } returns pageOf(literatureListHasSectionStatement)
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
-        every { resourceService.delete(any(), contributorId) } throws NeitherOwnerNorCurator(contributorId)
+        every { resourceService.delete(any(), contributorId) } throws exception
 
         assertDoesNotThrow {
             abstractLiteratureListSectionDeleter.delete(contributorId, literatureListId, section, statements)
@@ -249,6 +250,7 @@ internal class AbstractLiteratureListSectionDeleterUnitTest : MockkBaseTest {
             predicate = createPredicate(Predicates.hasSection),
             `object` = createResource(section.id)
         )
+        val exception = NeitherOwnerNorCurator(ContributorId(UUID.randomUUID()), contributorId, section.id)
 
         every {
             statementService.findAll(
@@ -257,7 +259,7 @@ internal class AbstractLiteratureListSectionDeleterUnitTest : MockkBaseTest {
             )
         } returns pageOf(literatureListHasSectionStatement)
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
-        every { resourceService.delete(any(), contributorId) } throws NeitherOwnerNorCurator(contributorId)
+        every { resourceService.delete(any(), contributorId) } throws exception
 
         assertDoesNotThrow {
             abstractLiteratureListSectionDeleter.delete(contributorId, literatureListId, section, statements)

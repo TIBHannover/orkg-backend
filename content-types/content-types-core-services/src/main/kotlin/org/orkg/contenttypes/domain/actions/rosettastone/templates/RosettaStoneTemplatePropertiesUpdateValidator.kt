@@ -32,7 +32,7 @@ class RosettaStoneTemplatePropertiesUpdateValidator(
                         }
                     } else if (newProperty.minCount != null && newProperty.minCount!! > 0) {
                         val placeholder = newProperty.placeholder ?: newProperty.label
-                        throw NewRosettaStoneTemplatePropertyMustBeOptional(placeholder)
+                        throw NewRosettaStoneTemplatePropertyMustBeOptional(index, placeholder)
                     }
                 }
             }

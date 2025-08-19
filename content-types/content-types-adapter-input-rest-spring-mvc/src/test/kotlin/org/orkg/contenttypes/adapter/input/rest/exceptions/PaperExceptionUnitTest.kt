@@ -29,7 +29,14 @@ internal class PaperExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:paper_not_modifiable")
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Paper "R123" is not modifiable.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.paper_id").value("R123"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("paper_id").description("The id of the paper."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -39,13 +46,13 @@ internal class PaperExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:paper_not_found")
             .andExpectTitle("Not Found")
             .andExpectDetail("""Paper "R123" not found.""")
-            .andExpect(jsonPath("$.id").value("R123"))
+            .andExpect(jsonPath("$.paper_id").value("R123"))
             .andDo(
                 documentationHandler.document(
                     responseFields(exceptionResponseFields()).and(
-                        fieldWithPath("id").description("The id of the paper that could not be found. (optional, either `id`, `paper_title` or `doi` is present)"),
-                        fieldWithPath("paper_title").type("String").description("The title of the paper that could not be found. (optional, either `id`, `paper_title` or `doi` is present)").optional(),
-                        fieldWithPath("doi").type("String").description("The doi of the paper that could not be found. (optional, either `id`, `paper_title` or `doi` is present)").optional(),
+                        fieldWithPath("paper_id").description("The id of the paper. (optional, either `paper_id`, `paper_title` or `paper_doi` is present)"),
+                        fieldWithPath("paper_paper_title").type("String").description("The title of the paper. (optional, either `paper_id`, `paper_title` or `doi` is present)").optional(),
+                        fieldWithPath("paper_doi").type("String").description("The doi of the paper. (optional, either `paper_id`, `paper_title` or `paper_doi` is present)").optional(),
                     )
                 )
             )
@@ -68,7 +75,7 @@ internal class PaperExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:paper_not_found")
             .andExpectTitle("Not Found")
             .andExpectDetail("""Paper with DOI "10.123/456" not found.""")
-            .andExpect(jsonPath("$.doi").value("10.123/456"))
+            .andExpect(jsonPath("$.paper_doi").value("10.123/456"))
     }
 
     @Test
@@ -82,8 +89,8 @@ internal class PaperExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andDo(
                 documentationHandler.document(
                     responseFields(exceptionResponseFields()).and(
-                        fieldWithPath("paper_title").description("The title of the paper that already exists. (optional, either `paper_title` or `identifier` is present)"),
-                        fieldWithPath("identifier").type("String").description("The identifier of the paper that already exists. (optional, either `paper_title` or `identifier` is present)").optional(),
+                        fieldWithPath("paper_title").description("The title of the paper. (optional, either `paper_title` or `paper_identifier` is present)"),
+                        fieldWithPath("paper_identifier").type("String").description("The identifier of the paper. (optional, either `paper_title` or `paper_identifier` is present)").optional(),
                     )
                 )
             )
@@ -96,6 +103,6 @@ internal class PaperExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:paper_already_exists")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Paper with identifier "10.123/456" already exists.""")
-            .andExpect(jsonPath("$.identifier", `is`("10.123/456")))
+            .andExpect(jsonPath("$.paper_identifier", `is`("10.123/456")))
     }
 }

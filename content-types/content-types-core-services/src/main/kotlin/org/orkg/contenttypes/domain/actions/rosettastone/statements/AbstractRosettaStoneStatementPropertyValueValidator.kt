@@ -34,7 +34,6 @@ import org.orkg.graph.domain.Thing
 import org.orkg.graph.output.ClassHierarchyRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.output.ThingRepository
-import kotlin.math.absoluteValue
 
 class AbstractRosettaStoneStatementPropertyValueValidator(
     private val thingIdValidator: ThingIdValidator,
@@ -71,24 +70,24 @@ class AbstractRosettaStoneStatementPropertyValueValidator(
             val propertyInstances = inputs[index]
             try {
                 abstractTemplatePropertyValueValidator.validateCardinality(property, propertyInstances)
-            } catch (e: MissingPropertyValues) {
+            } catch (_: MissingPropertyValues) {
                 if (property.path.id == Predicates.hasSubjectPosition) {
                     throw MissingSubjectPositionValue(property.placeholder ?: property.label, property.minCount!!)
                 } else {
-                    throw MissingObjectPositionValue(property.placeholder ?: property.label, property.minCount!!)
+                    throw MissingObjectPositionValue(property.placeholder ?: property.label, index, property.minCount!!)
                 }
-            } catch (e: TooManyPropertyValues) {
+            } catch (_: TooManyPropertyValues) {
                 if (property.path.id == Predicates.hasSubjectPosition) {
                     throw TooManySubjectPositionValues(property.placeholder ?: property.label, property.maxCount!!)
                 } else {
-                    throw TooManyObjectPositionValues(property.placeholder ?: property.label, property.maxCount!!)
+                    throw TooManyObjectPositionValues(property.placeholder ?: property.label, index, property.maxCount!!)
                 }
             }
-            propertyInstances.forEach { objectId ->
+            propertyInstances.forEachIndexed { valueIndex, objectId ->
                 val `object` = thingIdValidator.validate(objectId, thingCommands, validataionCache)
 
                 `object`.onLeft { command ->
-                    validateObject(property, objectId, command)
+                    validateObject(property, index, valueIndex, objectId, command)
                 }
 
                 `object`.onRight { thing ->
@@ -101,35 +100,41 @@ class AbstractRosettaStoneStatementPropertyValueValidator(
                             throw NestedRosettaStoneStatement(thing.id, index)
                         }
                     }
-                    validateObject(property, thing.id.value, thing.toThingCommandPart(statementRepository))
+                    validateObject(property, index, valueIndex, thing.id.value, thing.toThingCommandPart(statementRepository))
                 }
             }
         }
         return validataionCache
     }
 
-    private fun validateObject(property: TemplateProperty, id: String, `object`: CreateThingCommandPart) {
+    private fun validateObject(property: TemplateProperty, positionIndex: Int, valueIndex: Int, id: String, `object`: CreateThingCommandPart) {
         try {
             abstractTemplatePropertyValueValidator.validateObject(property, id, `object`)
         } catch (e: LabelDoesNotMatchPattern) {
             throw e.takeIf { property.path.id == Predicates.hasSubjectPosition }
                 ?: ObjectPositionValueDoesNotMatchPattern(
                     positionPlaceholder = property.placeholder ?: property.label,
+                    objectPositionIndex = positionIndex,
                     label = `object`.label,
+                    labelIndex = valueIndex,
                     pattern = (property as StringLiteralTemplateProperty).pattern!!
                 )
         } catch (e: NumberTooLow) {
             throw e.takeIf { property.path.id == Predicates.hasSubjectPosition }
                 ?: ObjectPositionValueTooLow(
                     positionPlaceholder = property.placeholder ?: property.label,
+                    objectPositionIndex = positionIndex,
                     label = `object`.label,
+                    labelIndex = valueIndex,
                     minInclusive = (property as NumberLiteralTemplateProperty).minInclusive!!
                 )
         } catch (e: NumberTooHigh) {
             throw e.takeIf { property.path.id == Predicates.hasSubjectPosition }
                 ?: ObjectPositionValueTooHigh(
                     positionPlaceholder = property.placeholder ?: property.label,
+                    objectPositionIndex = positionIndex,
                     label = `object`.label,
+                    labelIndex = valueIndex,
                     maxInclusive = (property as NumberLiteralTemplateProperty).maxInclusive!!
                 )
         }
@@ -138,9 +143,9 @@ class AbstractRosettaStoneStatementPropertyValueValidator(
     private fun validateInputPositionCount(templateId: ThingId, objects: List<List<String>>, templateProperties: List<TemplateProperty>) {
         val objectPositionDifference = objects.size - templateProperties.size + 1
         if (objectPositionDifference < 0) {
-            throw MissingInputPositions(templateProperties.size, templateId, objectPositionDifference.absoluteValue)
+            throw MissingInputPositions(templateProperties.size, objects.size + 1, templateId)
         } else if (objectPositionDifference > 0) {
-            throw TooManyInputPositions(templateProperties.size, templateId)
+            throw TooManyInputPositions(templateProperties.size, objects.size + 1, templateId)
         }
     }
 }

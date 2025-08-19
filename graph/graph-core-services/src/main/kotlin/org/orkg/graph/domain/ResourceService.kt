@@ -133,7 +133,7 @@ class ResourceService(
         if (command.visibility != null && command.visibility != resource.visibility) {
             if (!resource.isOwnedBy(command.contributorId) || !isAllowedVisibilityChangeByOwner(command.visibility!!, resource.visibility)) {
                 if (!contributor.isCurator) {
-                    throw NeitherOwnerNorCurator.cannotChangeVisibility(resource.id)
+                    throw NeitherOwnerNorCurator.cannotChangeVisibility(resource.createdBy, command.contributorId, resource.id)
                 }
             }
         }
@@ -160,7 +160,7 @@ class ResourceService(
         if (!resource.isOwnedBy(contributorId)) {
             val contributor = contributorRepository.findById(contributorId)
                 .orElseThrow { ContributorNotFound(contributorId) }
-            if (!contributor.isCurator) throw NeitherOwnerNorCurator(contributorId)
+            if (!contributor.isCurator) throw NeitherOwnerNorCurator(resource.createdBy, contributorId, resource.id)
         }
 
         unsafeResourceUseCases.delete(id, contributorId)

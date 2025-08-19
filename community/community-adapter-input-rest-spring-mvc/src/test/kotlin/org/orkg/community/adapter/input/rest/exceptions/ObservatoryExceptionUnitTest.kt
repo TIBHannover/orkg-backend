@@ -29,13 +29,13 @@ internal class ObservatoryExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:observatory_already_exists")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Observatory with id "eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174" already exists.""")
-            .andExpect(jsonPath("$.id", `is`("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")))
+            .andExpect(jsonPath("$.observatory_id", `is`("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")))
             .andDo(
                 documentationHandler.document(
                     responseFields(exceptionResponseFields()).and(
-                        fieldWithPath("id").description("The id of the observatory that already exists. (optional, either `id`, `name` or `display_id` is present)"),
-                        fieldWithPath("name").type("String").description("The name of the observatory that already exists. (optional, either `id`, `name` or `display_id` is present)").optional(),
-                        fieldWithPath("display_id").type("String").description("The display_id of the observatory that already exists. (optional, either `id`, `name` or `display_id` is present)").optional(),
+                        fieldWithPath("observatory_id").description("The id of the observatory that already exists. (optional, either `observatory_id`, `observatory_name` or `observatory_display_id` is present)"),
+                        fieldWithPath("observatory_name").type("String").description("The name of the observatory that already exists. (optional, either `observatory_id `observatory_name` or `observatory_display_id` is present)").optional(),
+                        fieldWithPath("observatory_display_id").type("String").description("The display_id of the observatory that already exists. (optional, either `observatory_id`, `observatory_name` or `observatory_display_id` is present)").optional(),
                     )
                 )
             )
@@ -48,7 +48,7 @@ internal class ObservatoryExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:observatory_already_exists")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Observatory with name "Cool name" already exists.""")
-            .andExpect(jsonPath("$.name", `is`("Cool name")))
+            .andExpect(jsonPath("$.observatory_name", `is`("Cool name")))
     }
 
     @Test
@@ -58,7 +58,7 @@ internal class ObservatoryExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:observatory_already_exists")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Observatory with display id "cool_name" already exists.""")
-            .andExpect(jsonPath("$.display_id", `is`("cool_name")))
+            .andExpect(jsonPath("$.observatory_display_id", `is`("cool_name")))
     }
 
     @Test
@@ -68,12 +68,12 @@ internal class ObservatoryExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:observatory_not_found")
             .andExpectTitle("Not Found")
             .andExpectDetail("""Observatory "eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174" not found.""")
-            .andExpect(jsonPath("$.id", `is`("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")))
+            .andExpect(jsonPath("$.observatory_id", `is`("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")))
             .andDo(
                 documentationHandler.document(
                     responseFields(exceptionResponseFields()).and(
-                        fieldWithPath("id").description("The id of the observatory that could not be found. (optional, either `id` or `display_id` is present)"),
-                        fieldWithPath("display_id").type("String").description("The display_id of the observatory that could not be found. (optional, either `id` or `display_id` is present)").optional(),
+                        fieldWithPath("observatory_id").description("The id of the observatory. (optional, either `observatory_id` or `observatory_display_id` is present)"),
+                        fieldWithPath("observatory_display_id").type("String").description("The display_id of the observatory. (optional, either `observatory_id` or `observatory_display_id` is present)").optional(),
                     )
                 )
             )
@@ -86,7 +86,7 @@ internal class ObservatoryExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:observatory_not_found")
             .andExpectTitle("Not Found")
             .andExpectDetail("""Observatory with display id "display_name" not found.""")
-            .andExpect(jsonPath("$.display_id", `is`("display_name")))
+            .andExpect(jsonPath("$.observatory_display_id", `is`("display_name")))
     }
 
     @Test
@@ -96,6 +96,13 @@ internal class ObservatoryExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:observatory_member_not_found")
             .andExpectTitle("Not Found")
             .andExpectDetail("""Observatory member "eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174" not found.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.contributor_id", `is`("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("contributor_id").description("The id of the contributor."),
+                    )
+                )
+            )
     }
 }

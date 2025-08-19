@@ -5,9 +5,13 @@ import org.orkg.mediastorage.domain.InvalidImageData
 import org.orkg.mediastorage.domain.InvalidMimeType
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
+import org.orkg.testing.spring.restdocs.exceptionResponseFields
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.util.MimeType
 
 @WebMvcTest
@@ -20,7 +24,14 @@ internal class ExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:invalid_mime_type")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Invalid mime type "application/octet-stream".""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.mime_type").value("application/octet-stream"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("mime_type").description("The provided mime type. (optional)"),
+                    )
+                )
+            )
     }
 
     @Test

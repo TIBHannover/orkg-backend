@@ -1,7 +1,10 @@
 package org.orkg.graph.adapter.input.rest.exceptions
 
+import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
+import org.orkg.common.json.CommonJacksonModule
+import org.orkg.graph.adapter.input.rest.json.GraphJacksonModule
 import org.orkg.graph.domain.InvalidStatement
 import org.orkg.graph.domain.StatementAlreadyExists
 import org.orkg.graph.domain.StatementId
@@ -13,14 +16,18 @@ import org.orkg.graph.domain.StatementPredicateNotFound
 import org.orkg.graph.domain.StatementSubjectNotFound
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
+import org.orkg.testing.spring.restdocs.exceptionResponseFields
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.HttpStatus.NOT_FOUND
+import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
 @WebMvcTest
-@ContextConfiguration(classes = [FixedClockConfig::class])
+@ContextConfiguration(classes = [CommonJacksonModule::class, GraphJacksonModule::class, FixedClockConfig::class])
 internal class StatementExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun statementNotModifiable() {
@@ -29,7 +36,14 @@ internal class StatementExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:statement_not_modifiable")
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Statement "S123" is not modifiable.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.statement_id", `is`("S123")))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("statement_id").description("The id of the statement."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -67,7 +81,14 @@ internal class StatementExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:statement_already_exists")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Statement already exists with id "S123".""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.statement_id", `is`("S123")))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("statement_id").description("The id of the statement."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -77,7 +98,14 @@ internal class StatementExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:statement_not_found")
             .andExpectTitle("Not Found")
             .andExpectDetail("""Statement "S123" not found.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.statement_id", `is`("S123")))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("statement_id").description("The id of the statement."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -87,7 +115,14 @@ internal class StatementExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:statement_subject_not_found")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Subject "R123" not found.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.subject_id", `is`("R123")))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("subject_id").description("The id of the subject."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -97,7 +132,14 @@ internal class StatementExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:statement_predicate_not_found")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Predicate "P123" not found.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.predicate_id", `is`("P123")))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("predicate_id").description("The id of the predicate."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -107,7 +149,14 @@ internal class StatementExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:statement_object_not_found")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Object "R123" not found.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.object_id", `is`("R123")))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("object_id").description("The id of the object."),
+                    )
+                )
+            )
     }
 
     @Test

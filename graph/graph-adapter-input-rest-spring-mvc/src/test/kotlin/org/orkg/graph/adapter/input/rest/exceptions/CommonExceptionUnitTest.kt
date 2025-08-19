@@ -4,6 +4,7 @@ import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.common.json.CommonJacksonModule
 import org.orkg.graph.domain.InvalidDescription
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.MAX_LABEL_LENGTH
@@ -12,14 +13,17 @@ import org.orkg.graph.domain.NotACurator
 import org.orkg.testing.MockUserId
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
+import org.orkg.testing.spring.restdocs.exceptionResponseFields
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.FORBIDDEN
+import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
 @WebMvcTest
-@ContextConfiguration(classes = [FixedClockConfig::class])
+@ContextConfiguration(classes = [CommonJacksonModule::class, FixedClockConfig::class])
 internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun invalidLabel_withDefaultProperty() {
@@ -64,42 +68,62 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
     }
 
     @Test
-    fun neitherOwnerNorCurator_withContributorId() {
-        documentedGetRequestTo(NeitherOwnerNorCurator(ContributorId(MockUserId.USER)))
+    fun neitherOwnerNorCurator_defaultConstructor() {
+        documentedGetRequestTo(NeitherOwnerNorCurator(ContributorId(MockUserId.CURATOR), ContributorId(MockUserId.USER), ThingId("R123")))
             .andExpectErrorStatus(FORBIDDEN)
             .andExpectType("orkg:problem:neither_owner_nor_curator")
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Contributor <b7c81eed-52e1-4f7a-93bf-e6d331b8df7b> does not own the entity to be deleted and is not a curator.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.owner_id").value("c4e9e7c2-cd5f-4385-af09-071674304e37"))
+            .andExpect(jsonPath("$.contributor_id").value("b7c81eed-52e1-4f7a-93bf-e6d331b8df7b"))
+            .andExpect(jsonPath("$.thing_id").value("R123"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("owner_id").description("The id of the owner."),
+                        fieldWithPath("contributor_id").description("The id of the contributor."),
+                        fieldWithPath("thing_id").description("The id of thing."),
+                    )
+                )
+            )
     }
 
     @Test
     fun neitherOwnerNorCurator_cannotChangeVisibility() {
-        documentedGetRequestTo(NeitherOwnerNorCurator.cannotChangeVisibility(ThingId("R123")))
+        get(NeitherOwnerNorCurator.cannotChangeVisibility(ContributorId(MockUserId.CURATOR), ContributorId(MockUserId.USER), ThingId("R123")))
             .andExpectErrorStatus(FORBIDDEN)
             .andExpectType("orkg:problem:neither_owner_nor_curator")
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Insufficient permissions to change visibility of entity "R123".""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.owner_id").value("c4e9e7c2-cd5f-4385-af09-071674304e37"))
+            .andExpect(jsonPath("$.contributor_id").value("b7c81eed-52e1-4f7a-93bf-e6d331b8df7b"))
+            .andExpect(jsonPath("$.thing_id").value("R123"))
     }
 
     @Test
-    fun notACurator_withContributorId() {
+    fun notACurator_defaultConstructor() {
         documentedGetRequestTo(NotACurator(ContributorId(MockUserId.USER)))
             .andExpectErrorStatus(FORBIDDEN)
             .andExpectType("orkg:problem:not_a_curator")
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Contributor <b7c81eed-52e1-4f7a-93bf-e6d331b8df7b> is not a curator.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.contributor_id").value("b7c81eed-52e1-4f7a-93bf-e6d331b8df7b"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("contributor_id").description("The id of the contributor."),
+                    )
+                )
+            )
     }
 
     @Test
     fun notACurator_cannotChangeVerifiedStatus() {
-        documentedGetRequestTo(NotACurator.cannotChangeVerifiedStatus(ContributorId(MockUserId.USER)))
+        get(NotACurator.cannotChangeVerifiedStatus(ContributorId(MockUserId.USER)))
             .andExpectErrorStatus(FORBIDDEN)
             .andExpectType("orkg:problem:not_a_curator")
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Cannot change verified status: Contributor <b7c81eed-52e1-4f7a-93bf-e6d331b8df7b> is not a curator.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.contributor_id").value("b7c81eed-52e1-4f7a-93bf-e6d331b8df7b"))
     }
 }

@@ -2,6 +2,7 @@ package org.orkg.contenttypes.adapter.input.rest.exceptions
 
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
+import org.orkg.common.json.CommonJacksonModule
 import org.orkg.contenttypes.domain.ComparisonAlreadyPublished
 import org.orkg.contenttypes.domain.ComparisonNotFound
 import org.orkg.contenttypes.domain.ComparisonNotModifiable
@@ -11,13 +12,17 @@ import org.orkg.contenttypes.domain.ComparisonRelatedResourceNotFound
 import org.orkg.contenttypes.domain.ComparisonRelatedResourceNotModifiable
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
+import org.orkg.testing.spring.restdocs.exceptionResponseFields
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.FORBIDDEN
+import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
 @WebMvcTest
-@ContextConfiguration(classes = [FixedClockConfig::class])
+@ContextConfiguration(classes = [CommonJacksonModule::class, FixedClockConfig::class])
 internal class ComparisonExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun comparisonAlreadyPublished() {
@@ -26,7 +31,14 @@ internal class ComparisonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:comparison_already_published")
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Comparison "R123" is already published.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.comparison_id").value("R123"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("comparison_id").description("The id of the comparison."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -36,7 +48,14 @@ internal class ComparisonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:comparison_not_modifiable")
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Comparison "R123" is not modifiable.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.comparison_id").value("R123"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("comparison_id").description("The id of the comparison."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -46,6 +65,14 @@ internal class ComparisonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:comparison_related_resource_not_modifiable")
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Comparison related resource "R123" is not modifiable.""")
+            .andExpect(jsonPath("$.comparison_related_resource_id").value("R123"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("comparison_related_resource_id").description("The id of the comparison related resurce."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -55,6 +82,14 @@ internal class ComparisonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:comparison_related_figure_not_modifiable")
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Comparison related figure "R123" is not modifiable.""")
+            .andExpect(jsonPath("$.comparison_related_figure_id").value("R123"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("comparison_related_figure_id").description("The id of the comparison related figure."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -64,7 +99,14 @@ internal class ComparisonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:comparison_not_found")
             .andExpectTitle("Not Found")
             .andExpectDetail("""Comparison "R123" not found.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.comparison_id").value("R123"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("comparison_id").description("The id of the comparison."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -74,6 +116,14 @@ internal class ComparisonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:comparison_related_resource_not_found")
             .andExpectTitle("Not Found")
             .andExpectDetail("""Comparison related resource "R123" not found.""")
+            .andExpect(jsonPath("$.comparison_related_resource_id").value("R123"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("comparison_related_resource_id").description("The id of the comparison related resurce."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -83,5 +133,13 @@ internal class ComparisonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:comparison_related_figure_not_found")
             .andExpectTitle("Not Found")
             .andExpectDetail("""Comparison related figure "R123" not found.""")
+            .andExpect(jsonPath("$.comparison_related_figure_id").value("R123"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("comparison_related_figure_id").description("The id of the comparison related figure."),
+                    )
+                )
+            )
     }
 }

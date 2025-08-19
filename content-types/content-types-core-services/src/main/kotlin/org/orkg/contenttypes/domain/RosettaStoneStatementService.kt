@@ -138,7 +138,7 @@ class RosettaStoneStatementService(
                 throw RosettaStoneStatementNotModifiable(id)
             }
             if (it.id != id) {
-                throw CannotDeleteIndividualRosettaStoneStatementVersion()
+                throw CannotDeleteIndividualRosettaStoneStatementVersion(id)
             }
             if (it.visibility != Visibility.DELETED) {
                 repository.softDelete(id, contributorId)
@@ -152,7 +152,7 @@ class RosettaStoneStatementService(
                 throw RosettaStoneStatementNotModifiable(id)
             }
             if (it.id != id) {
-                throw CannotDeleteIndividualRosettaStoneStatementVersion()
+                throw CannotDeleteIndividualRosettaStoneStatementVersion(id)
             }
             val contributor = contributorRepository.findById(contributorId)
                 .orElseThrow { ContributorNotFound(contributorId) }

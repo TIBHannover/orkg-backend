@@ -124,6 +124,7 @@ internal class AbstractTemplatePropertyDeleterUnitTest : MockkBaseTest {
             predicate = createPredicate(Predicates.shProperty),
             `object` = createResource(propertyId)
         )
+        val exception = NeitherOwnerNorCurator(ContributorId(UUID.randomUUID()), contributorId, propertyId)
 
         every {
             statementService.findAll(
@@ -143,7 +144,7 @@ internal class AbstractTemplatePropertyDeleterUnitTest : MockkBaseTest {
         every {
             statementService.deleteAllById(setOf(templateHasPropertyStatement.id, StatementId("S123"), StatementId("S456")))
         } just runs
-        every { resourceService.delete(propertyId, contributorId) } throws NeitherOwnerNorCurator(contributorId)
+        every { resourceService.delete(propertyId, contributorId) } throws exception
 
         assertDoesNotThrow { abstractTemplatePropertyDeleter.delete(contributorId, templateId, propertyId) }
 

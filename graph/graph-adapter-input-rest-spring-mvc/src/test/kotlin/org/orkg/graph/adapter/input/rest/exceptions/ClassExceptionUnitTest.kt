@@ -4,6 +4,7 @@ import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
+import org.orkg.common.json.CommonJacksonModule
 import org.orkg.graph.domain.CannotResetURI
 import org.orkg.graph.domain.ClassAlreadyExists
 import org.orkg.graph.domain.ClassNotFound
@@ -26,7 +27,7 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
 @WebMvcTest
-@ContextConfiguration(classes = [FixedClockConfig::class])
+@ContextConfiguration(classes = [CommonJacksonModule::class, FixedClockConfig::class])
 internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun classNotModifiable() {
@@ -35,7 +36,14 @@ internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:class_not_modifiable")
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Class "C123" is not modifiable.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.class_id").value("C123"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("class_id").description("The id of the class."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -67,7 +75,14 @@ internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:reserved_class_id")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Class id "${Classes.list}" is reserved.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.class_id").value(Classes.list.value))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("class_id").description("The id of the class."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -77,7 +92,14 @@ internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:class_already_exists")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Class "${Classes.list}" already exists.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.class_id").value(Classes.list.value))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("class_id").description("The id of the class."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -98,12 +120,12 @@ internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:class_not_found")
             .andExpectTitle("Not Found")
             .andExpectDetail("""Class "C123" not found.""")
-            .andExpect(jsonPath("$.id", `is`("C123")))
+            .andExpect(jsonPath("$.class_id", `is`("C123")))
             .andDo(
                 documentationHandler.document(
                     responseFields(exceptionResponseFields()).and(
-                        fieldWithPath("id").description("The id of the class. (optional, either `id` or `uri` is present)"),
-                        fieldWithPath("uri").type("URI").description("The uri of the class. (optional, either `id` or `uri` is present)").optional(),
+                        fieldWithPath("class_id").description("The id of the class. (optional, either `class_id` or `class_uri` is present)"),
+                        fieldWithPath("class_uri").type("URI").description("The uri of the class. (optional, either `class_id` or `class_uri` is present)").optional(),
                     )
                 )
             )
@@ -116,7 +138,7 @@ internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:class_not_found")
             .andExpectTitle("Not Found")
             .andExpectDetail("""Class with URI "https://example.org/C123" not found.""")
-            .andExpect(jsonPath("$.uri", `is`("https://example.org/C123")))
+            .andExpect(jsonPath("$.class_uri", `is`("https://example.org/C123")))
     }
 
     @Test
@@ -126,7 +148,17 @@ internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:external_class_not_found")
             .andExpectTitle("Not Found")
             .andExpectDetail("""External class "R123" for ontology "skos" not found.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.class_id").value("R123"))
+            .andExpect(jsonPath("$.ontology_id").value("skos"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("class_id").description("The id of the class. (optional, either `class_id` or `class_uri` is present)"),
+                        fieldWithPath("class_uri").type("URI").description("The uri of the class. (optional, either `class_id` or `class_uri` is present)").optional(),
+                        fieldWithPath("ontology_id").description("The id of the class ontology."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -136,6 +168,13 @@ internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:reserved_class_id")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Class id "C123" is reserved.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.class_id", `is`("C123")))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("class_id").description("The id of the class."),
+                    )
+                )
+            )
     }
 }

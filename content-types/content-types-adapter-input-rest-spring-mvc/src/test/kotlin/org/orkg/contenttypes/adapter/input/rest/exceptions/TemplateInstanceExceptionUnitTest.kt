@@ -2,6 +2,7 @@ package org.orkg.contenttypes.adapter.input.rest.exceptions
 
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
+import org.orkg.common.json.CommonJacksonModule
 import org.orkg.contenttypes.domain.InvalidLiteral
 import org.orkg.contenttypes.domain.LabelDoesNotMatchPattern
 import org.orkg.contenttypes.domain.MismatchedDataType
@@ -22,13 +23,17 @@ import org.orkg.contenttypes.domain.UnrelatedTemplateProperty
 import org.orkg.graph.domain.Classes
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
+import org.orkg.testing.spring.restdocs.exceptionResponseFields
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
+import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
 @WebMvcTest
-@ContextConfiguration(classes = [FixedClockConfig::class])
+@ContextConfiguration(classes = [CommonJacksonModule::class, FixedClockConfig::class])
 internal class TemplateInstanceExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun templateNotApplicable() {
@@ -37,7 +42,16 @@ internal class TemplateInstanceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:template_not_applicable")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Template "R123" cannot be applied to resource "R456" because the target resource is not an instance of the template target class.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.template_id").value("R123"))
+            .andExpect(jsonPath("$.resource_id").value("R456"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("template_id").description("The id of the template."),
+                        fieldWithPath("resource_id").description("The id of the resource."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -47,7 +61,18 @@ internal class TemplateInstanceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:object_is_not_a_class")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Object "#temp1" for template property "R123" with predicate "P123" is not a class.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.template_property_id").value("R123"))
+            .andExpect(jsonPath("$.predicate_id").value("P123"))
+            .andExpect(jsonPath("$.object_id").value("#temp1"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("template_property_id").description("The id of the template property."),
+                        fieldWithPath("predicate_id").description("The id of the predicate path of the template property."),
+                        fieldWithPath("object_id").description("The id of the object."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -57,7 +82,18 @@ internal class TemplateInstanceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:object_is_not_a_predicate")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Object "#temp1" for template property "R123" with predicate "P123" is not a predicate.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.template_property_id").value("R123"))
+            .andExpect(jsonPath("$.predicate_id").value("P123"))
+            .andExpect(jsonPath("$.object_id").value("#temp1"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("template_property_id").description("The id of the template property."),
+                        fieldWithPath("predicate_id").description("The id of the predicate path of the template property."),
+                        fieldWithPath("object_id").description("The id of the object."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -67,7 +103,18 @@ internal class TemplateInstanceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:object_is_not_a_list")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Object "#temp1" for template property "R123" with predicate "P123" is not a list.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.template_property_id").value("R123"))
+            .andExpect(jsonPath("$.predicate_id").value("P123"))
+            .andExpect(jsonPath("$.object_id").value("#temp1"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("template_property_id").description("The id of the template property."),
+                        fieldWithPath("predicate_id").description("The id of the predicate path of the template property."),
+                        fieldWithPath("object_id").description("The id of the object."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -77,7 +124,18 @@ internal class TemplateInstanceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:object_is_not_a_literal")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Object "#temp1" for template property "R123" with predicate "P123" is not a literal.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.template_property_id").value("R123"))
+            .andExpect(jsonPath("$.predicate_id").value("P123"))
+            .andExpect(jsonPath("$.object_id").value("#temp1"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("template_property_id").description("The id of the template property."),
+                        fieldWithPath("predicate_id").description("The id of the predicate path of the template property."),
+                        fieldWithPath("object_id").description("The id of the object."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -87,7 +145,18 @@ internal class TemplateInstanceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:object_must_not_be_a_literal")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Object "#temp1" for template property "R123" with predicate "P123" must not be a literal.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.template_property_id").value("R123"))
+            .andExpect(jsonPath("$.predicate_id").value("P123"))
+            .andExpect(jsonPath("$.object_id").value("#temp1"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("template_property_id").description("The id of the template property."),
+                        fieldWithPath("predicate_id").description("The id of the predicate path of the template property."),
+                        fieldWithPath("object_id").description("The id of the object."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -97,7 +166,20 @@ internal class TemplateInstanceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:resource_is_not_an_instance_of_target_class")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Object "#temp1" for template property "R123" with predicate "P123" is not an instance of target class "C123".""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.template_property_id").value("R123"))
+            .andExpect(jsonPath("$.predicate_id").value("P123"))
+            .andExpect(jsonPath("$.object_id").value("#temp1"))
+            .andExpect(jsonPath("$.template_property_target_class").value("C123"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("template_property_id").description("The id of the template property."),
+                        fieldWithPath("predicate_id").description("The id of the predicate path of the template property."),
+                        fieldWithPath("object_id").description("The id of the object."),
+                        fieldWithPath("template_property_target_class").description("The target class of the template property."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -107,7 +189,22 @@ internal class TemplateInstanceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:label_does_not_match_pattern")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Label "label" for object "#temp1" for property "R123" with predicate "P123" does not match pattern "\d+".""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.template_property_id").value("R123"))
+            .andExpect(jsonPath("$.predicate_id").value("P123"))
+            .andExpect(jsonPath("$.object_id").value("#temp1"))
+            .andExpect(jsonPath("$.object_label").value("label"))
+            .andExpect(jsonPath("$.regex_pattern").value("\\d+"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("template_property_id").description("The id of the template property."),
+                        fieldWithPath("predicate_id").description("The id of the predicate path of the template property."),
+                        fieldWithPath("object_id").description("The id of the object."),
+                        fieldWithPath("object_label").description("The provided label of the object."),
+                        fieldWithPath("regex_pattern").description("The regex pattern the object label has to match."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -117,7 +214,18 @@ internal class TemplateInstanceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:unknown_template_properties")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Unknown properties for template "R123": "R1", "R2".""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.template_id").value("R123"))
+            .andExpect(jsonPath("$.template_property_ids.length()").value("2"))
+            .andExpect(jsonPath("$.template_property_ids[0]").value("R1"))
+            .andExpect(jsonPath("$.template_property_ids[1]").value("R2"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("template_id").description("The id of the template property."),
+                        fieldWithPath("template_property_ids").description("A list of unknown template property ids."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -127,7 +235,20 @@ internal class TemplateInstanceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:missing_property_values")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Missing values for property "R123" with predicate "P123". min: "5", found: "2".""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.template_property_id").value("R123"))
+            .andExpect(jsonPath("$.predicate_id").value("P123"))
+            .andExpect(jsonPath("$.min_value_count").value(5))
+            .andExpect(jsonPath("$.actual_value_count").value(2))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("template_property_id").description("The id of the template property."),
+                        fieldWithPath("predicate_id").description("The id of the predicate path of the template property."),
+                        fieldWithPath("min_value_count").description("The minimum number of template property values."),
+                        fieldWithPath("actual_value_count").description("The provided number of template property values."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -137,7 +258,20 @@ internal class TemplateInstanceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:too_many_property_values")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Too many values for property "R123" with predicate "P123". max: "2", found: "5".""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.template_property_id").value("R123"))
+            .andExpect(jsonPath("$.predicate_id").value("P123"))
+            .andExpect(jsonPath("$.max_value_count").value(2))
+            .andExpect(jsonPath("$.actual_value_count").value(5))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("template_property_id").description("The id of the template property."),
+                        fieldWithPath("predicate_id").description("The id of the predicate path of the template property."),
+                        fieldWithPath("max_value_count").description("The maximum number of template property values."),
+                        fieldWithPath("actual_value_count").description("The provided number of template property values."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -147,7 +281,22 @@ internal class TemplateInstanceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:invalid_literal")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Object "#temp1" with value "0.15" for property "R123" with predicate "P123" is not a valid "${Classes.boolean}".""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.template_property_id").value("R123"))
+            .andExpect(jsonPath("$.predicate_id").value("P123"))
+            .andExpect(jsonPath("$.object_id").value("#temp1"))
+            .andExpect(jsonPath("$.object_label").value("0.15"))
+            .andExpect(jsonPath("$.expected_datatype").value(Classes.boolean.value))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("template_property_id").description("The id of the template property."),
+                        fieldWithPath("predicate_id").description("The id of the predicate path of the template property."),
+                        fieldWithPath("object_id").description("The id of the object."),
+                        fieldWithPath("object_label").description("The provided label of the object."),
+                        fieldWithPath("expected_datatype").description("The enforced data type of the object."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -157,7 +306,22 @@ internal class TemplateInstanceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:mismatched_data_type")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Object "#temp1" with data type "String" for property "R123" with predicate "P123" does not match expected data type "xsd:boolean".""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.template_property_id").value("R123"))
+            .andExpect(jsonPath("$.predicate_id").value("P123"))
+            .andExpect(jsonPath("$.object_id").value("#temp1"))
+            .andExpect(jsonPath("$.actual_datatype").value("String"))
+            .andExpect(jsonPath("$.expected_datatype").value("xsd:boolean"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("template_property_id").description("The id of the template property."),
+                        fieldWithPath("predicate_id").description("The id of the predicate path of the template property."),
+                        fieldWithPath("object_id").description("The id of the object."),
+                        fieldWithPath("actual_datatype").description("The provided data type of the object."),
+                        fieldWithPath("expected_datatype").description("The expected data type of the object."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -167,7 +331,16 @@ internal class TemplateInstanceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:unrelated_template_property")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Template property "R456" does not belong to template "R123".""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.template_id").value("R123"))
+            .andExpect(jsonPath("$.template_property_id").value("R456"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("template_id").description("The id of the template."),
+                        fieldWithPath("template_property_id").description("The id of the template property."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -177,7 +350,22 @@ internal class TemplateInstanceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:number_too_low")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Number "5" for object "#temp1" for property "R123" with predicate "P123" must be at least "10".""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.template_property_id").value("R123"))
+            .andExpect(jsonPath("$.predicate_id").value("P123"))
+            .andExpect(jsonPath("$.object_id").value("#temp1"))
+            .andExpect(jsonPath("$.object_label").value("5"))
+            .andExpect(jsonPath("$.min_inclusive").value(10))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("template_property_id").description("The id of the template property."),
+                        fieldWithPath("predicate_id").description("The id of the predicate path of the template property."),
+                        fieldWithPath("object_id").description("The id of the object."),
+                        fieldWithPath("object_label").description("The provided label of the object."),
+                        fieldWithPath("min_inclusive").description("The minimum value the object can have."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -187,7 +375,22 @@ internal class TemplateInstanceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:number_too_high")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Number "10" for object "#temp1" for property "R123" with predicate "P123" must be at most "5".""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.template_property_id").value("R123"))
+            .andExpect(jsonPath("$.predicate_id").value("P123"))
+            .andExpect(jsonPath("$.object_id").value("#temp1"))
+            .andExpect(jsonPath("$.object_label").value("10"))
+            .andExpect(jsonPath("$.max_inclusive").value(5))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("template_property_id").description("The id of the template property."),
+                        fieldWithPath("predicate_id").description("The id of the predicate path of the template property."),
+                        fieldWithPath("object_id").description("The id of the object."),
+                        fieldWithPath("object_label").description("The provided label of the object."),
+                        fieldWithPath("max_inclusive").description("The maximum value the object can have."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -197,6 +400,15 @@ internal class TemplateInstanceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:template_instance_not_found")
             .andExpectTitle("Not Found")
             .andExpectDetail("""Template instance for resource "R456" and template id "R123" not found.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.template_id").value("R123"))
+            .andExpect(jsonPath("$.resource_id").value("R456"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("template_id").description("The id of the template."),
+                        fieldWithPath("resource_id").description("The id of the resource."),
+                    )
+                )
+            )
     }
 }

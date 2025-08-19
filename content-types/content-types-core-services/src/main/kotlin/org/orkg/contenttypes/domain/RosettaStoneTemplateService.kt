@@ -177,7 +177,7 @@ class RosettaStoneTemplateService(
                 val contributor = contributorRepository.findById(contributorId)
                     .orElseThrow { ContributorNotFound(contributorId) }
                 if (!contributor.isCurator) {
-                    throw NeitherOwnerNorCurator(contributorId)
+                    throw NeitherOwnerNorCurator(template.createdBy, contributorId, id)
                 }
             }
 

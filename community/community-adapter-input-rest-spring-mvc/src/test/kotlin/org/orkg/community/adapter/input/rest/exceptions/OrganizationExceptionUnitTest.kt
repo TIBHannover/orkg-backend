@@ -30,12 +30,12 @@ internal class OrganizationExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:organization_already_exists")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Organization with name "Cool name" already exists.""")
-            .andExpect(jsonPath("$.name", `is`("Cool name")))
+            .andExpect(jsonPath("$.organization_name", `is`("Cool name")))
             .andDo(
                 documentationHandler.document(
                     responseFields(exceptionResponseFields()).and(
-                        fieldWithPath("name").type("String").description("The name of the organization that already exists. (optional, either `name` or `display_id` is present)").optional(),
-                        fieldWithPath("display_id").type("String").description("The display_id of the organization that already exists. (optional, either `name` or `display_id` is present)").optional(),
+                        fieldWithPath("organization_name").description("The name of the organization. (optional, either `organization_name` or `organization_display_id` is present)"),
+                        fieldWithPath("organization_display_id").type("String").description("The display_id of the organization. (optional, either `organization_name` or `organization_display_id` is present)").optional(),
                     )
                 )
             )
@@ -48,7 +48,7 @@ internal class OrganizationExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:organization_already_exists")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Organization with display id "cool_name" already exists.""")
-            .andExpect(jsonPath("$.display_id", `is`("cool_name")))
+            .andExpect(jsonPath("$.organization_display_id", `is`("cool_name")))
     }
 
     @Test
@@ -58,12 +58,12 @@ internal class OrganizationExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:organization_not_found")
             .andExpectTitle("Not Found")
             .andExpectDetail("""Organization "f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc" not found.""")
-            .andExpect(jsonPath("$.id", `is`("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")))
+            .andExpect(jsonPath("$.organization_id", `is`("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")))
             .andDo(
                 documentationHandler.document(
                     responseFields(exceptionResponseFields()).and(
-                        fieldWithPath("id").description("The id of the organization that could not be found. (optional, either `id` or `display_id` is present)"),
-                        fieldWithPath("display_id").type("String").description("The display_id of the organization that could not be found. (optional, either `id` or `display_id` is present)").optional(),
+                        fieldWithPath("organization_id").description("The id of the organization. (optional, either `organization_id` or `organization_display_id` is present)"),
+                        fieldWithPath("organization_display_id").type("String").description("The display_id of the organization. (optional, either `organization_id` or `organization_display_id` is present)").optional(),
                     )
                 )
             )
@@ -76,7 +76,7 @@ internal class OrganizationExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:organization_not_found")
             .andExpectTitle("Not Found")
             .andExpectDetail("""Organization with display id "display_name" not found.""")
-            .andExpect(jsonPath("$.display_id", `is`("display_name")))
+            .andExpect(jsonPath("$.organization_display_id", `is`("display_name")))
     }
 
     @Test
@@ -86,7 +86,14 @@ internal class OrganizationExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:logo_not_found")
             .andExpectTitle("Not Found")
             .andExpectDetail("""Logo for organization "f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc" not found.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.organization_id", `is`("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("organization_id").description("The id of the organization. (optional, either `organization_id` or `organization_display_id` is present)"),
+                    )
+                )
+            )
     }
 
     @Test
@@ -106,6 +113,13 @@ internal class OrganizationExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:invalid_peer_review_type")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""The value "not a peer review type" is not a valid peer review type.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andExpect(jsonPath("$.peer_review_type", `is`("not a peer review type")))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("peer_review_type").description("The provided peer review type."),
+                    )
+                )
+            )
     }
 }

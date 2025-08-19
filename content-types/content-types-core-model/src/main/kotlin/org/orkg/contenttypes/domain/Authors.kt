@@ -3,6 +3,8 @@ package org.orkg.contenttypes.domain
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.Resource
+import java.io.Serial
+import java.io.Serializable
 
 // TODO: convert to representation and merge with SimpleAuthor?
 //       could use an abstraction of AuthorList (domain object) instead of List<Author> in Paper.
@@ -11,7 +13,12 @@ data class Author(
     val id: ThingId? = null,
     val identifiers: Map<String, List<String>>? = null,
     val homepage: ParsedIRI? = null,
-)
+) : Serializable {
+    companion object {
+        @Serial
+        private const val serialVersionUID: Long = -1085938787957039930L
+    }
+}
 
 data class ComparisonAuthor(
     val author: SimpleAuthor,

@@ -1,4 +1,5 @@
 plugins {
+    id("org.orkg.gradle.kotlin-library-with-test-fixtures")
     id("org.orkg.gradle.spring-library")
 }
 
@@ -13,6 +14,9 @@ dependencies {
     api("com.fasterxml.jackson.core:jackson-databind")
     implementation("org.springframework:spring-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+
+    testFixturesImplementation("io.kotest:kotest-assertions-shared")
+    testFixturesImplementation("io.kotest:kotest-common")
 }
 
 testing {

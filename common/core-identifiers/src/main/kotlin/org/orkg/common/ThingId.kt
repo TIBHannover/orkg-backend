@@ -1,6 +1,11 @@
 package org.orkg.common
 
-data class ThingId(val value: String) : Comparable<ThingId> {
+import java.io.Serial
+import java.io.Serializable
+
+data class ThingId(val value: String) :
+    Comparable<ThingId>,
+    Serializable {
     init {
         require(value.isNotBlank()) { "ID must not be blank" }
         require(value.matches(VALID_ID_REGEX)) { "Must only contain alphanumeric characters, dashes and underscores" }
@@ -9,6 +14,11 @@ data class ThingId(val value: String) : Comparable<ThingId> {
     override fun toString() = value
 
     override fun compareTo(other: ThingId) = value.compareTo(other.value)
+
+    companion object {
+        @Serial
+        private const val serialVersionUID: Long = -3190585433188613056L
+    }
 }
 
 @Suppress("RegExpSimplifiable")

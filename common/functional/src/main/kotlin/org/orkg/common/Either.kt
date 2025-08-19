@@ -1,6 +1,9 @@
 package org.orkg.common
 
-sealed interface Either<L, R> {
+import java.io.Serial
+import java.io.Serializable
+
+sealed interface Either<L, R> : Serializable {
     val isLeft: Boolean
     val isRight: Boolean
 
@@ -42,6 +45,11 @@ private data class Left<L, R>(val value: L) : Either<L, R> {
     override fun <T> mapRight(rightMapper: (R) -> T): Either<L, T> = Left(value)
 
     override fun <S, T> map(leftMapper: (L) -> S, rightMapper: (R) -> T): Either<S, T> = Left(leftMapper(value))
+
+    companion object {
+        @Serial
+        private const val serialVersionUID: Long = 4215803670109274228L
+    }
 }
 
 private data class Right<L, R>(val value: R) : Either<L, R> {
@@ -61,4 +69,9 @@ private data class Right<L, R>(val value: R) : Either<L, R> {
     override fun <T> mapRight(rightMapper: (R) -> T): Either<L, T> = Right(rightMapper(value))
 
     override fun <S, T> map(leftMapper: (L) -> S, rightMapper: (R) -> T): Either<S, T> = Right(rightMapper(value))
+
+    companion object {
+        @Serial
+        private const val serialVersionUID: Long = 642768739619297750L
+    }
 }

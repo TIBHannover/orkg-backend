@@ -33,6 +33,8 @@ default:
     - export GRADLE_USER_HOME=`pwd`/.gradle-user-home
     # Remove files that might be problematic (recommended by Travis CI)
     - rm -f  ${GRADLE_USER_HOME}/caches/modules-2/modules-2.lock
+  tags:
+    - saas-linux-medium-amd64
 
 stages:
   - build

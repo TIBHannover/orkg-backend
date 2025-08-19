@@ -8,8 +8,8 @@ import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.OnlyOneResearchFieldAllowed
+import org.orkg.contenttypes.domain.ResearchFieldNotFound
 import org.orkg.graph.domain.Classes
-import org.orkg.graph.domain.ResearchFieldNotFound
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
 import java.util.Optional

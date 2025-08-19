@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.InvalidLiteralDatatype
 import org.orkg.graph.domain.InvalidLiteralLabel
+import org.orkg.graph.domain.LiteralAlreadyExists
 import org.orkg.graph.domain.LiteralNotFound
 import org.orkg.graph.domain.LiteralNotModifiable
 import org.orkg.graph.domain.MAX_LABEL_LENGTH
@@ -71,5 +72,15 @@ internal class LiteralExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.errors[0].detail", `is`("""A literal datatype must be a URI or a "xsd:"-prefixed type.""")))
             .andExpect(jsonPath("$.errors[0].pointer", `is`("""#/datatype""")))
             .andDocumentWithValidationExceptionResponseFields()
+    }
+
+    @Test
+    fun literalAlreadyExists() {
+        documentedGetRequestTo(LiteralAlreadyExists(ThingId("L123")))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:literal_already_exists")
+            .andExpectTitle("Bad Request")
+            .andExpectDetail("""Literal "L123" already exists.""")
+            .andDocumentWithDefaultExceptionResponseFields()
     }
 }

@@ -2,8 +2,6 @@ package org.orkg.contenttypes.adapter.input.rest.exceptions
 
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.domain.InvalidBounds
-import org.orkg.contenttypes.domain.InvalidDataType
 import org.orkg.contenttypes.domain.InvalidLiteral
 import org.orkg.contenttypes.domain.LabelDoesNotMatchPattern
 import org.orkg.contenttypes.domain.MismatchedDataType
@@ -170,35 +168,6 @@ internal class TemplateInstanceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Template property "R456" does not belong to template "R123".""")
             .andDocumentWithDefaultExceptionResponseFields()
-    }
-
-    @Test
-    fun invalidBounds() {
-        documentedGetRequestTo(InvalidBounds(5, 4))
-            .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:invalid_bounds")
-            .andExpectTitle("Bad Request")
-            .andExpectDetail("""Invalid bounds. Min bound must be less than or equal to max bound. Found: min: "5", max: "4".""")
-            .andDocumentWithDefaultExceptionResponseFields()
-    }
-
-    @Test
-    fun invalidDatatype() {
-        documentedGetRequestTo(InvalidDataType(ThingId("int"), ThingId("string")))
-            .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:invalid_data_type")
-            .andExpectTitle("Bad Request")
-            .andExpectDetail("""Invalid datatype. Found "int", expected "string".""")
-            .andDocumentWithDefaultExceptionResponseFields()
-    }
-
-    @Test
-    fun invalidDatatypeWithSeveralPossibleTypes() {
-        get(InvalidDataType(ThingId("int"), ThingId("string"), ThingId("date"), ThingId("uri"), ThingId("float")))
-            .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:invalid_data_type")
-            .andExpectTitle("Bad Request")
-            .andExpectDetail("""Invalid datatype. Found "int", expected either of "string", "date", "uri", "float".""")
     }
 
     @Test

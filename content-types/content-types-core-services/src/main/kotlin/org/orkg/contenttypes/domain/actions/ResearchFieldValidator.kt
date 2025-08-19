@@ -2,8 +2,8 @@ package org.orkg.contenttypes.domain.actions
 
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.OnlyOneResearchFieldAllowed
+import org.orkg.contenttypes.domain.ResearchFieldNotFound
 import org.orkg.graph.domain.Classes
-import org.orkg.graph.domain.ResearchFieldNotFound
 import org.orkg.graph.output.ResourceRepository
 
 class ResearchFieldValidator<T, S>(

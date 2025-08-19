@@ -217,7 +217,7 @@ internal class ContributionControllerUnitTest : MockMvcBaseTest("contributions")
     @TestWithMockUser
     fun `Given a contribution request, when service reports paper not found, then status is 404 NOT FOUND`() {
         val paperId = ThingId("R123")
-        val exception = PaperNotFound(ThingId("R123"))
+        val exception = PaperNotFound.withId(ThingId("R123"))
         every { contributionService.create(any()) } throws exception
 
         post("/api/papers/{id}/contributions", paperId)

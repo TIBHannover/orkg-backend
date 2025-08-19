@@ -1,12 +1,12 @@
 package org.orkg.contenttypes.domain.actions.templates
 
 import org.orkg.common.ThingId
+import org.orkg.contenttypes.domain.ResearchFieldNotFound
 import org.orkg.contenttypes.domain.ResearchProblemNotFound
 import org.orkg.contenttypes.domain.actions.UpdateTemplateCommand
 import org.orkg.contenttypes.domain.actions.templates.UpdateTemplateAction.State
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.PredicateNotFound
-import org.orkg.graph.domain.ResearchFieldNotFound
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
 

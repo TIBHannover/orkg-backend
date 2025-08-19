@@ -74,7 +74,7 @@ include(
     "identity-management:idm-adapter-input-rest-spring-security-legacy",
 )
 include(
-    ":media-storage:media-storage-adapter-input-serialization",
+    ":media-storage:media-storage-adapter-input-rest-spring-mvc",
     ":media-storage:media-storage-adapter-output-spring-data-jpa",
     ":media-storage:media-storage-core-model",
     ":media-storage:media-storage-core-services",

@@ -52,7 +52,7 @@ class TemplateInstanceController(
     ): TemplateInstanceRepresentation =
         service.findById(id, instanceId)
             .mapToTemplateInstanceRepresentation(capabilities)
-            .orElseThrow { ResourceNotFound.withId(instanceId) }
+            .orElseThrow { ResourceNotFound(instanceId) }
 
     @GetMapping
     fun findAll(

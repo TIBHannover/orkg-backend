@@ -82,7 +82,7 @@ internal class LiteratureListExceptionUnitTest : MockMvcExceptionBaseTest() {
     }
 
     @Test
-    fun literatureListSectionTypeMismatchMustBeTextSection() {
+    fun literatureListSectionTypeMismatch_mustBeTextSection() {
         documentedGetRequestTo(LiteratureListSectionTypeMismatch.mustBeTextSection())
             .andExpectErrorStatus(BAD_REQUEST)
             .andExpectType("orkg:problem:literature_list_section_type_mismatch")
@@ -92,7 +92,7 @@ internal class LiteratureListExceptionUnitTest : MockMvcExceptionBaseTest() {
     }
 
     @Test
-    fun literatureListSectionTypeMismatchMustBeListSection() {
+    fun literatureListSectionTypeMismatch_mustBeListSection() {
         // TODO: add field
         get(LiteratureListSectionTypeMismatch.mustBeListSection())
             .andExpectErrorStatus(BAD_REQUEST)

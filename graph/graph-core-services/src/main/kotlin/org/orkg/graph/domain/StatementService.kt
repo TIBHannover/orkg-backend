@@ -106,7 +106,7 @@ class StatementService(
         statementRepository.findByStatementId(statementId).ifPresent {
             if (!it.modifiable) throw StatementNotModifiable(it.id)
             if (it.predicate.id == Predicates.hasListElement && it.subject is Resource && Classes.list in (it.subject as Resource).classes) {
-                throw ForbiddenStatementDeletion.usedInList()
+                throw StatementInUse.usedInList()
             }
             statementRepository.deleteByStatementId(statementId)
         }
@@ -121,7 +121,7 @@ class StatementService(
         statementRepository.findAllByStatementIdIn(statementIds, PageRequests.ALL).forEach {
             if (!it.modifiable) throw StatementNotModifiable(it.id)
             if (it.predicate.id == Predicates.hasListElement && it.subject is Resource && Classes.list in (it.subject as Resource).classes) {
-                throw ForbiddenStatementDeletion.usedInList()
+                throw StatementInUse.usedInList()
             }
         }
         statementRepository.deleteByStatementIds(statementIds)

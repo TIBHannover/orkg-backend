@@ -145,7 +145,7 @@ dependencies {
     runtimeOnly(project(":curation:curation-adapter-output-spring-data-neo4j"))
     runtimeOnly(project(":curation:curation-core-services"))
 
-    runtimeOnly(project(":media-storage:media-storage-adapter-input-serialization"))
+    runtimeOnly(project(":media-storage:media-storage-adapter-input-rest-spring-mvc"))
     runtimeOnly(project(":media-storage:media-storage-adapter-output-spring-data-jpa"))
     implementation(project(":media-storage:media-storage-core-model"))
     runtimeOnly(project(":media-storage:media-storage-ports-input"))

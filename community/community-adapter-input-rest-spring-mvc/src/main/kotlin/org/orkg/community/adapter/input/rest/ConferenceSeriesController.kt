@@ -3,11 +3,11 @@ package org.orkg.community.adapter.input.rest
 import com.fasterxml.jackson.annotation.JsonProperty
 import jakarta.validation.Valid
 import org.orkg.common.OrganizationId
-import org.orkg.community.domain.BadPeerReviewType
-import org.orkg.community.domain.ConferenceAlreadyExists
 import org.orkg.community.domain.ConferenceSeries
+import org.orkg.community.domain.ConferenceSeriesAlreadyExists
 import org.orkg.community.domain.ConferenceSeriesId
 import org.orkg.community.domain.ConferenceSeriesNotFound
+import org.orkg.community.domain.InvalidPeerReviewType
 import org.orkg.community.domain.Metadata
 import org.orkg.community.domain.PeerReviewType
 import org.orkg.community.input.ConferenceSeriesUseCases
@@ -37,9 +37,9 @@ class ConferenceSeriesController(
         uriComponentsBuilder: UriComponentsBuilder,
     ): ResponseEntity<Any> {
         if (service.findByName(conference.name).isPresent) {
-            throw ConferenceAlreadyExists.withName(conference.name)
+            throw ConferenceSeriesAlreadyExists.withName(conference.name)
         } else if (service.findByDisplayId(conference.displayId).isPresent) {
-            throw ConferenceAlreadyExists.withDisplayId(conference.displayId)
+            throw ConferenceSeriesAlreadyExists.withDisplayId(conference.displayId)
         }
         val response = service.create(
             id = null,
@@ -50,7 +50,7 @@ class ConferenceSeriesController(
             Metadata(
                 startDate = conference.metadata.startDate,
                 reviewType = PeerReviewType.fromOrNull(conference.metadata.reviewType)
-                    ?: throw BadPeerReviewType(conference.metadata.reviewType),
+                    ?: throw InvalidPeerReviewType(conference.metadata.reviewType),
             )
         )
         val location = uriComponentsBuilder

@@ -11,7 +11,6 @@ import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.output.ResearchFieldHierarchyRepository
 import org.orkg.contenttypes.output.ResearchFieldRepository
 import org.orkg.graph.domain.Classes
-import org.orkg.graph.domain.ResearchFieldNotFound
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.pageOf
 import org.springframework.data.domain.Page

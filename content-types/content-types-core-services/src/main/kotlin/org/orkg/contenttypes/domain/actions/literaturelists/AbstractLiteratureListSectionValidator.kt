@@ -27,7 +27,7 @@ class AbstractLiteratureListSectionValidator(
                     Description.ofOrNull(description) ?: throw InvalidDescription("description")
                 }
                 if (entry.id !in validationCache) {
-                    val resource = resourceRepository.findById(entry.id).orElseThrow { ResourceNotFound.withId(entry.id) }
+                    val resource = resourceRepository.findById(entry.id).orElseThrow { ResourceNotFound(entry.id) }
                     if (allowedListSectionEntryClasses.intersect(resource.classes).isEmpty()) {
                         throw InvalidListSectionEntry(entry.id, allowedListSectionEntryClasses)
                     }

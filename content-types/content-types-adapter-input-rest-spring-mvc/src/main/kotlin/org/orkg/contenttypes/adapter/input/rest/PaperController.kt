@@ -63,7 +63,7 @@ class PaperController(
         @PathVariable id: ThingId,
     ): PaperRepresentation = service.findById(id)
         .mapToPaperRepresentation()
-        .orElseThrow { PaperNotFound(id) }
+        .orElseThrow { PaperNotFound.withId(id) }
 
     @GetMapping("/{id}/contributors", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun findAllContributorsByPaperId(

@@ -29,6 +29,7 @@ import org.orkg.contenttypes.domain.OnlyOneObservatoryAllowed
 import org.orkg.contenttypes.domain.OnlyOneOrganizationAllowed
 import org.orkg.contenttypes.domain.OnlyOneResearchFieldAllowed
 import org.orkg.contenttypes.domain.RequiresAtLeastTwoContributions
+import org.orkg.contenttypes.domain.ResearchFieldNotFound
 import org.orkg.contenttypes.domain.testing.asciidoc.allowedComparisonTypeValues
 import org.orkg.contenttypes.domain.testing.fixtures.createComparison
 import org.orkg.contenttypes.domain.testing.fixtures.createComparisonConfig
@@ -36,7 +37,6 @@ import org.orkg.contenttypes.domain.testing.fixtures.createComparisonData
 import org.orkg.contenttypes.input.ComparisonUseCases
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
-import org.orkg.graph.domain.ResearchFieldNotFound
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
@@ -192,7 +192,6 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
     @Test
     fun `Given a comparison, when it is fetched by id and service reports missing comparison, then status is 404 NOT FOUND`() {
         val id = ThingId("Missing")
-        val exception = ComparisonNotFound(id)
         every { comparisonService.findById(id) } returns Optional.empty()
 
         get("/api/comparisons/{id}", id)

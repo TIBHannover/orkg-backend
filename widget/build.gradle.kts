@@ -9,8 +9,9 @@ dependencies {
     api("org.springframework:spring-context")
     api("org.springframework:spring-web")
     api(project(":common:core-identifiers"))
-    implementation(project(":common:spring-webmvc"))
     api(project(":graph:graph-ports-input"))
+    implementation(project(":common:spring-webmvc"))
+    implementation(project(":content-types:content-types-core-model"))
     implementation(project(":graph:graph-core-model"))
     implementation(project(":graph:graph-core-constants"))
 }

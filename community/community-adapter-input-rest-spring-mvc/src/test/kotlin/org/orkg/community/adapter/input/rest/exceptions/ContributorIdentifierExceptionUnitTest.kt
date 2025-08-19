@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.community.domain.ContributorIdentifierAlreadyExists
 import org.orkg.community.domain.UnknownIdentifierType
-import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -12,7 +11,7 @@ import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.test.context.ContextConfiguration
 
 @WebMvcTest
-@ContextConfiguration(classes = [ExceptionTestConfiguration::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [FixedClockConfig::class])
 internal class ContributorIdentifierExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun unknownIdentifierType() {

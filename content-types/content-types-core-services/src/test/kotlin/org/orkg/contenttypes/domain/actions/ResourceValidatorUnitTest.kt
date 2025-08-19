@@ -59,7 +59,7 @@ internal class ResourceValidatorUnitTest : MockkBaseTest {
         val id = ThingId("R123")
 
         every { resourceRepository.findById(any()) } returns Optional.empty()
-        every { exceptionFactory(any()) } returns ResourceNotFound.withId(id)
+        every { exceptionFactory(any()) } returns ResourceNotFound(id)
 
         assertThrows<ResourceNotFound> { resourceValidator(setOf(id), emptySet()) }
 
@@ -73,7 +73,7 @@ internal class ResourceValidatorUnitTest : MockkBaseTest {
         includeClasses.add(Classes.paper)
 
         every { resourceRepository.findById(any()) } returns Optional.of(createResource())
-        every { exceptionFactory(any()) } returns ResourceNotFound.withId(id)
+        every { exceptionFactory(any()) } returns ResourceNotFound(id)
 
         assertThrows<ResourceNotFound> { resourceValidator(setOf(id), emptySet()) }
 

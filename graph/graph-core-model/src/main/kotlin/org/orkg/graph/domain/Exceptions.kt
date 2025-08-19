@@ -10,20 +10,9 @@ import org.orkg.common.exceptions.createProblemURI
 import org.orkg.common.exceptions.jsonFieldPathToJsonPointerReference
 import org.springframework.http.HttpStatus
 
-class ResourceNotFound private constructor(
-    override val message: String,
-) : SimpleMessageException(HttpStatus.NOT_FOUND, message) {
-    companion object {
-        fun withId(id: ThingId) = withId(id.value)
-
-        fun withId(id: String) = ResourceNotFound("""Resource "$id" not found.""")
-
-        @Deprecated("Replace with PaperNotFound")
-        fun withDOI(doi: String) = ResourceNotFound("""Resource with DOI "$doi" not found.""")
-
-        @Deprecated("Replace with PaperNotFound")
-        fun withLabel(label: String) = ResourceNotFound("""Resource with label "$label" not found.""")
-    }
+class ResourceNotFound : SimpleMessageException {
+    constructor(id: String) : super(HttpStatus.NOT_FOUND, """Resource "$id" not found.""")
+    constructor(id: ThingId) : this(id.value)
 }
 
 class LiteralNotFound : SimpleMessageException {
@@ -40,7 +29,7 @@ class ClassNotFound private constructor(
 
         fun withId(id: String) = ClassNotFound("""Class "$id" not found.""", mapOf("id" to id))
 
-        fun withURI(uri: ParsedIRI) = ClassNotFound("""Class with URI "$uri" not found.""", mapOf("uri" to uri))
+        fun withURI(uri: ParsedIRI) = ClassNotFound("""Class with URI "$uri" not found.""", mapOf("uri" to uri.toString()))
     }
 }
 
@@ -84,12 +73,6 @@ class ListNotFound(id: ThingId) :
     SimpleMessageException(
         HttpStatus.NOT_FOUND,
         """List "$id" not found."""
-    )
-
-class ResearchFieldNotFound(id: ThingId) :
-    SimpleMessageException(
-        HttpStatus.NOT_FOUND,
-        """Research field "$id" not found."""
     )
 
 class ResourceInUse(id: ThingId) :
@@ -284,11 +267,11 @@ class InvalidStatement private constructor(
     }
 }
 
-class ForbiddenStatementDeletion private constructor(
+class StatementInUse private constructor(
     override val message: String,
 ) : SimpleMessageException(HttpStatus.BAD_REQUEST, message, null) {
     companion object {
-        fun usedInList() = ForbiddenStatementDeletion(
+        fun usedInList() = StatementInUse(
             "A statement cannot be deleted when it is used in a list. Please see the documentation on how to manage lists."
         )
     }
@@ -296,7 +279,7 @@ class ForbiddenStatementDeletion private constructor(
 
 class ListElementNotFound :
     PropertyValidationException(
-        "element",
+        jsonFieldPathToJsonPointerReference("elements"),
         "All elements inside the list have to exist."
     )
 
@@ -305,7 +288,7 @@ class InvalidSubclassRelation(
     parentId: ThingId,
 ) : SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """The class "$childId" cannot be a subclass of "$parentId".""""
+        """The class "$childId" cannot be a subclass of "$parentId"."""
     )
 
 class ParentClassAlreadyExists(
@@ -313,15 +296,15 @@ class ParentClassAlreadyExists(
     parentId: ThingId,
 ) : SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """The class "$childId" already has a parent class ($parentId).""""
+        """The class "$childId" already has a parent class ($parentId)."""
     )
 
-class EmptyChildIds : SimpleMessageException(HttpStatus.BAD_REQUEST, "The provided list is empty.")
+class EmptyChildIds : SimpleMessageException(HttpStatus.BAD_REQUEST, "The provided list of child classes is empty.")
 
 class ParentClassAlreadyHasChildren(id: ThingId) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """The class "$id" already has a child classes.""""
+        """The class "$id" already has a child classes."""
     )
 
 class NeitherOwnerNorCurator private constructor(

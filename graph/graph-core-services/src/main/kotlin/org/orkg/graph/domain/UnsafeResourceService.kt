@@ -36,7 +36,7 @@ class UnsafeResourceService(
     override fun update(command: UpdateCommand) {
         if (command.hasNoContents()) return
         val resource = repository.findById(command.id)
-            .orElseThrow { ResourceNotFound.withId(command.id) }
+            .orElseThrow { ResourceNotFound(command.id) }
         val updated = resource.apply(command)
         if (updated != resource) {
             repository.save(updated)

@@ -22,7 +22,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 @ContextConfiguration(classes = [FixedClockConfig::class])
 internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
-    fun invalidLabel() {
+    fun invalidLabel_withDefaultProperty() {
         documentedGetRequestTo(InvalidLabel())
             .andExpectErrorStatus(BAD_REQUEST)
             .andExpectType("orkg:problem:invalid_label")
@@ -33,7 +33,7 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
     }
 
     @Test
-    fun invalidLabelWithProperty() {
+    fun invalidLabel_withProperty() {
         get(InvalidLabel("title"))
             .andExpectErrorStatus(BAD_REQUEST)
             .andExpectType("orkg:problem:invalid_label")
@@ -43,7 +43,7 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
     }
 
     @Test
-    fun invalidDescription() {
+    fun invalidDescription_withDefaultProperty() {
         documentedGetRequestTo(InvalidDescription())
             .andExpectErrorStatus(BAD_REQUEST)
             .andExpectType("orkg:problem:invalid_description")
@@ -54,7 +54,7 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
     }
 
     @Test
-    fun invalidDescriptionWithProperty() {
+    fun invalidDescription_withProperty() {
         get(InvalidDescription("contents"))
             .andExpectErrorStatus(BAD_REQUEST)
             .andExpectType("orkg:problem:invalid_description")
@@ -64,7 +64,7 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
     }
 
     @Test
-    fun neitherOwnerNorCuratorDelete() {
+    fun neitherOwnerNorCurator_withContributorId() {
         documentedGetRequestTo(NeitherOwnerNorCurator(ContributorId(MockUserId.USER)))
             .andExpectErrorStatus(FORBIDDEN)
             .andExpectType("orkg:problem:neither_owner_nor_curator")
@@ -74,7 +74,7 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
     }
 
     @Test
-    fun neitherOwnerNorCuratorVisibility() {
+    fun neitherOwnerNorCurator_cannotChangeVisibility() {
         documentedGetRequestTo(NeitherOwnerNorCurator.cannotChangeVisibility(ThingId("R123")))
             .andExpectErrorStatus(FORBIDDEN)
             .andExpectType("orkg:problem:neither_owner_nor_curator")
@@ -84,7 +84,7 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
     }
 
     @Test
-    fun notACurator() {
+    fun notACurator_withContributorId() {
         documentedGetRequestTo(NotACurator(ContributorId(MockUserId.USER)))
             .andExpectErrorStatus(FORBIDDEN)
             .andExpectType("orkg:problem:not_a_curator")
@@ -94,7 +94,7 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
     }
 
     @Test
-    fun notACuratorCannotChangeVerifiedStatus() {
+    fun notACurator_cannotChangeVerifiedStatus() {
         documentedGetRequestTo(NotACurator.cannotChangeVerifiedStatus(ContributorId(MockUserId.USER)))
             .andExpectErrorStatus(FORBIDDEN)
             .andExpectType("orkg:problem:not_a_curator")

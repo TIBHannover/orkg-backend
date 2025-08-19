@@ -15,7 +15,7 @@ class PaperPublishableValidator(
     override fun invoke(command: PublishPaperCommand, state: State): State {
         val resource = resourceRepository.findById(command.id)
             .filter { Classes.paper in it.classes }
-            .orElseThrow { PaperNotFound(command.id) }
+            .orElseThrow { PaperNotFound.withId(command.id) }
         val subgraph = paperService.findSubgraph(resource)
         val paper = Paper.from(resource, subgraph.statements)
         return state.copy(paper = paper, statements = subgraph.statements)

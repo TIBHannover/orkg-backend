@@ -105,9 +105,10 @@ class InvalidUUID(
     uuid: String,
     cause: Throwable?,
 ) : PropertyValidationException(
-        property = "id",
+        property = jsonFieldPathToJsonPointerReference("id"),
         message = """Value "$uuid" is not a valid UUID.""",
-        cause = cause
+        cause = cause,
+        type = createProblemURI("invalid_uuid"),
     )
 
 class Forbidden : SimpleMessageException(HttpStatus.FORBIDDEN, """Forbidden.""")

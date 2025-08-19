@@ -2,7 +2,7 @@ package org.orkg.contenttypes.adapter.input.rest
 
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.adapter.input.rest.mapping.ContributionInfoRepresentationAdapter
-import org.orkg.contenttypes.domain.TooFewIDsError
+import org.orkg.contenttypes.domain.TooFewContributions
 import org.orkg.contenttypes.input.ComparisonContributionsUseCases
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -23,7 +23,7 @@ class ContributionComparisonController(
         pageable: Pageable,
     ): Page<ContributionInfoRepresentation> {
         if (contributionIds.size < 2) {
-            throw TooFewIDsError(contributionIds)
+            throw TooFewContributions(contributionIds)
         }
         return retrieveContributionComparisons.findAllContributionDetailsById(contributionIds, pageable)
             .mapToContributionInfoRepresentation()

@@ -147,7 +147,7 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
     @Test
     fun `Given a timeline is requested, when service reports missing resource, then status is 404 NOT FOUND`() {
         val id = ThingId("R123")
-        every { resourceService.findTimelineByResourceId(id, any()) } throws ResourceNotFound.withId(id)
+        every { resourceService.findTimelineByResourceId(id, any()) } throws ResourceNotFound(id)
 
         get("/api/resources/{id}/timeline", id)
             .perform()

@@ -2,9 +2,9 @@ package org.orkg.widget.domain
 
 import org.orkg.common.exceptions.MissingParameter
 import org.orkg.common.exceptions.TooManyParameters
+import org.orkg.contenttypes.domain.PaperNotFound
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.PUBLISHABLE_CLASSES
-import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.input.RetrieveResourceUseCase
 import org.orkg.graph.input.RetrieveStatementUseCase
 import org.orkg.widget.input.ResolveDOIUseCase
@@ -22,8 +22,8 @@ class ResolveDOIService(
         }
         val resource = when {
             doi != null -> service.findByDOI(doi, classes = PUBLISHABLE_CLASSES + Classes.paperVersion)
-                .orElseThrow { ResourceNotFound.withDOI(doi) }
-            title != null -> service.findPaperByTitle(title).orElseThrow { ResourceNotFound.withLabel(title) }
+                .orElseThrow { PaperNotFound.withDOI(doi) }
+            title != null -> service.findPaperByTitle(title).orElseThrow { PaperNotFound.withTitle(title) }
             else -> throw MissingParameter.requiresAtLeastOneOf("doi", "title")
         }
         val totalStatements =

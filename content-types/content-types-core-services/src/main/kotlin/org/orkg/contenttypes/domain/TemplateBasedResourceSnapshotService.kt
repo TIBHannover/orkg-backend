@@ -48,7 +48,7 @@ class TemplateBasedResourceSnapshotService(
 
     override fun create(command: CreateTemplateBasedResourceSnapshotUseCase.CreateCommand): SnapshotId {
         val resource = resourceRepository.findById(command.resourceId)
-            .orElseThrow { ResourceNotFound.withId(command.resourceId) }
+            .orElseThrow { ResourceNotFound(command.resourceId) }
         val template = templateUseCase.findById(command.templateId)
             .orElseThrow { TemplateNotFound(command.templateId) }
         if (template.targetClass.id !in resource.classes) {

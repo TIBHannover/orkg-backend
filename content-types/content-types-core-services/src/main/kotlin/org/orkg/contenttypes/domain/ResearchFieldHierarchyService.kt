@@ -4,7 +4,6 @@ import org.orkg.common.ThingId
 import org.orkg.contenttypes.input.ResearchFieldHierarchyUseCases
 import org.orkg.contenttypes.output.ResearchFieldHierarchyRepository
 import org.orkg.contenttypes.output.ResearchFieldRepository
-import org.orkg.graph.domain.ResearchFieldNotFound
 import org.orkg.graph.domain.Resource
 import org.orkg.spring.data.annotations.TransactionalOnNeo4j
 import org.springframework.data.domain.Page

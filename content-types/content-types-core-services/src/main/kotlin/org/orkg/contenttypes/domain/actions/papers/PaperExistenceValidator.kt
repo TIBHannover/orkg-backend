@@ -15,7 +15,7 @@ class PaperExistenceValidator(
     override fun invoke(command: UpdatePaperCommand, state: State): State {
         val resource = resourceRepository.findById(command.paperId)
             .filter { Classes.paper in it.classes }
-            .orElseThrow { PaperNotFound(command.paperId) }
+            .orElseThrow { PaperNotFound.withId(command.paperId) }
         val subgraph = paperService.findSubgraph(resource)
         val paper = Paper.from(resource, subgraph.statements)
         return state.copy(paper = paper, statements = subgraph.statements)

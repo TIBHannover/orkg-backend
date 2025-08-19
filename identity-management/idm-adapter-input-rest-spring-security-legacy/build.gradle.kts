@@ -11,7 +11,6 @@ testing {
             dependencies {
                 implementation(testFixtures(project(":common:spring-webmvc")))
                 implementation(testFixtures(project(":testing:spring")))
-                runtimeOnly("org.springframework.boot:spring-boot-starter-test")
                 implementation("io.kotest:kotest-assertions-api")
                 implementation("io.kotest:kotest-assertions-shared")
                 implementation("org.hamcrest:hamcrest")
@@ -19,10 +18,14 @@ testing {
                 implementation("org.junit.jupiter:junit-jupiter-params")
                 implementation("org.springframework.boot:spring-boot-test")
                 implementation("org.springframework.boot:spring-boot-test-autoconfigure")
+                implementation("org.springframework.restdocs:spring-restdocs-core")
+                implementation("org.springframework.restdocs:spring-restdocs-mockmvc")
                 implementation("org.springframework:spring-context")
                 implementation("org.springframework:spring-test")
                 implementation("io.kotest:kotest-assertions-core")
                 runtimeOnly("com.fasterxml.jackson.module:jackson-module-kotlin")
+                runtimeOnly("com.jayway.jsonpath:json-path")
+                runtimeOnly("org.springframework.boot:spring-boot-starter-test")
             }
         }
     }

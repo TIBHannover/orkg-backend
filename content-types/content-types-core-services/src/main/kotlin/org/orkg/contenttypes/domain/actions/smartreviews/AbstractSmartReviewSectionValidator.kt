@@ -51,7 +51,7 @@ class AbstractSmartReviewSectionValidator(
             is AbstractSmartReviewResourceSectionCommand -> {
                 validateWithCache(section.resource, validationCache) { resourceId ->
                     resourceRepository.findById(resourceId)
-                        .orElseThrow { ResourceNotFound.withId(resourceId) }
+                        .orElseThrow { ResourceNotFound(resourceId) }
                 }
             }
             is AbstractSmartReviewPredicateSectionCommand -> {

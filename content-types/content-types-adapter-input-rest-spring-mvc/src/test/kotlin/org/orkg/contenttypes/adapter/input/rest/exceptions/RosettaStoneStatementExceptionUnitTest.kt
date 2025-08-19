@@ -11,7 +11,9 @@ import org.orkg.contenttypes.domain.ObjectPositionValueDoesNotMatchPattern
 import org.orkg.contenttypes.domain.ObjectPositionValueTooHigh
 import org.orkg.contenttypes.domain.ObjectPositionValueTooLow
 import org.orkg.contenttypes.domain.RosettaStoneStatementInUse
+import org.orkg.contenttypes.domain.RosettaStoneStatementNotFound
 import org.orkg.contenttypes.domain.RosettaStoneStatementNotModifiable
+import org.orkg.contenttypes.domain.RosettaStoneStatementVersionNotFound
 import org.orkg.contenttypes.domain.TooManyInputPositions
 import org.orkg.contenttypes.domain.TooManyObjectPositionValues
 import org.orkg.contenttypes.domain.TooManySubjectPositionValues
@@ -20,6 +22,7 @@ import org.orkg.testing.spring.MockMvcExceptionBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.FORBIDDEN
+import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.test.context.ContextConfiguration
 
 @WebMvcTest
@@ -52,6 +55,26 @@ internal class RosettaStoneStatementExceptionUnitTest : MockMvcExceptionBaseTest
             .andExpectType("orkg:problem:rosetta_stone_statement_not_modifiable")
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Rosetta stone statement "R123" is not modifiable.""")
+            .andDocumentWithDefaultExceptionResponseFields()
+    }
+
+    @Test
+    fun rosettaStoneStatementNotFound() {
+        documentedGetRequestTo(RosettaStoneStatementNotFound(ThingId("R123")))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:rosetta_stone_statement_not_found")
+            .andExpectTitle("Not Found")
+            .andExpectDetail("""Rosetta stone statement "R123" not found.""")
+            .andDocumentWithDefaultExceptionResponseFields()
+    }
+
+    @Test
+    fun rosettaStoneStatementVersionNotFound() {
+        documentedGetRequestTo(RosettaStoneStatementVersionNotFound(ThingId("R123")))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:rosetta_stone_statement_version_not_found")
+            .andExpectTitle("Not Found")
+            .andExpectDetail("""Rosetta stone statement version "R123" not found.""")
             .andDocumentWithDefaultExceptionResponseFields()
     }
 

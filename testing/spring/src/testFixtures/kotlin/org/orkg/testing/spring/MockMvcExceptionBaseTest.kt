@@ -65,6 +65,11 @@ abstract class MockMvcExceptionBaseTest : MockMvcBaseTest("errors") {
     protected final fun ResultActions.andDocumentWithDefaultExceptionResponseFields() =
         andDo(documentationHandler.document(responseFields(exceptionResponseFields())))
 
+    protected final fun ResultActions.andDocumentWithoutDetailExceptionResponseFields(): ResultActions {
+        val fieldDescriptors = exceptionResponseFields().filter { it.path != "detail" && it.path != "message" }
+        return andDo(documentationHandler.document(responseFields(fieldDescriptors)))
+    }
+
     protected final fun ResultActions.andDocumentWithValidationExceptionResponseFields() =
         andDo(documentationHandler.document(responseFields(validationExceptionResponseFields())))
 

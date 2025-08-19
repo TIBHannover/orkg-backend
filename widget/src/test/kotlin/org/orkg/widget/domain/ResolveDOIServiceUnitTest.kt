@@ -11,9 +11,9 @@ import org.orkg.common.ThingId
 import org.orkg.common.exceptions.MissingParameter
 import org.orkg.common.exceptions.TooManyParameters
 import org.orkg.common.testing.fixtures.MockkDescribeSpec
+import org.orkg.contenttypes.domain.PaperNotFound
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.PUBLISHABLE_CLASSES
-import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.input.RetrieveResourceUseCase
 import org.orkg.graph.input.RetrieveStatementUseCase
 import org.orkg.graph.testing.fixtures.createResource
@@ -51,7 +51,7 @@ internal class ResolveDOIServiceUnitTest :
                 every { resourceUseCases.findByDOI("some DOI", publishableClasses) } returns Optional.empty()
 
                 it("should throw") {
-                    shouldThrowExactly<ResourceNotFound> {
+                    shouldThrowExactly<PaperNotFound> {
                         service.resolveDOI("some DOI", null)
                     }
                     verify(exactly = 1) { resourceUseCases.findByDOI("some DOI", publishableClasses) }
@@ -90,7 +90,7 @@ internal class ResolveDOIServiceUnitTest :
                 every { resourceUseCases.findPaperByTitle("some title") } returns Optional.empty()
 
                 it("should throw") {
-                    shouldThrowExactly<ResourceNotFound> {
+                    shouldThrowExactly<PaperNotFound> {
                         service.resolveDOI(null, "some title")
                     }
                     verify(exactly = 1) { resourceUseCases.findPaperByTitle("some title") }

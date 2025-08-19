@@ -11,7 +11,7 @@ class ContributionPaperValidator(
 ) : ContributionAction {
     override fun invoke(command: CreateContributionCommand, state: State): State {
         val paper = resourceRepository.findPaperById(command.paperId)
-            .orElseThrow { PaperNotFound(command.paperId) }
+            .orElseThrow { PaperNotFound.withId(command.paperId) }
         if (!paper.modifiable) {
             throw PaperNotModifiable(command.paperId)
         }

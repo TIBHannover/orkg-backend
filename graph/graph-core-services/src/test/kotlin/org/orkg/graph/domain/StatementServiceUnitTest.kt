@@ -795,7 +795,7 @@ internal class StatementServiceUnitTest :
                     every { statementRepository.findByStatementId(id) } returns Optional.of(fakeStatement)
 
                     withContext(Dispatchers.IO) {
-                        shouldThrow<ForbiddenStatementDeletion> {
+                        shouldThrow<StatementInUse> {
                             service.deleteById(id)
                         }
                     }
@@ -856,7 +856,7 @@ internal class StatementServiceUnitTest :
                     every { statementRepository.findAllByStatementIdIn(ids, any()) } returns PageImpl(fakeStatements)
 
                     withContext(Dispatchers.IO) {
-                        shouldThrow<ForbiddenStatementDeletion> {
+                        shouldThrow<StatementInUse> {
                             service.deleteAllById(ids)
                         }
                     }

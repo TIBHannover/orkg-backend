@@ -12,7 +12,7 @@ class TemplateInstanceSubjectValidator(
 ) : UpdateTemplateInstanceAction {
     override fun invoke(command: UpdateTemplateInstanceCommand, state: State): State {
         val subject = resourceRepository.findById(command.subject)
-            .orElseThrow { ResourceNotFound.withId(command.subject) }
+            .orElseThrow { ResourceNotFound(command.subject) }
         return state.copy(
             templateInstance = with(templateInstanceService) { subject.toTemplateInstance(state.template!!) }
         )

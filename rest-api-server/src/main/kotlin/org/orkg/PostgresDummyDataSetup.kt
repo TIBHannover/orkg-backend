@@ -6,9 +6,9 @@ import net.datafaker.Faker
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
-import org.orkg.community.domain.BadPeerReviewType
 import org.orkg.community.domain.ConferenceSeries
 import org.orkg.community.domain.Contributor
+import org.orkg.community.domain.InvalidPeerReviewType
 import org.orkg.community.domain.Metadata
 import org.orkg.community.domain.Observatory
 import org.orkg.community.domain.Organization
@@ -19,7 +19,6 @@ import org.orkg.community.input.DummyDataUseCases
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
 import org.orkg.community.input.UpdateObservatoryUseCase
-import org.orkg.community.input.UpdateObservatoryUseCase.UpdateCommand
 import org.orkg.community.input.UpdateOrganizationUseCases
 import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
@@ -200,7 +199,7 @@ class PostgresDummyDataSetup(
                 metadata = Metadata(
                     startDate = conferenceSeries.metadata.startDate,
                     reviewType = PeerReviewType.fromOrNull(conferenceSeries.metadata.reviewType.name)
-                        ?: throw BadPeerReviewType(conferenceSeries.metadata.reviewType.name),
+                        ?: throw InvalidPeerReviewType(conferenceSeries.metadata.reviewType.name),
                 )
             )
         }

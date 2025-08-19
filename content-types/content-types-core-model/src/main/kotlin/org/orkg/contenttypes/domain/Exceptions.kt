@@ -4,16 +4,23 @@ import org.orkg.common.ThingId
 import org.orkg.common.exceptions.PropertyValidationException
 import org.orkg.common.exceptions.SimpleMessageException
 import org.orkg.common.exceptions.createProblemURI
+import org.orkg.common.exceptions.jsonFieldPathToJsonPointerReference
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.springframework.http.HttpStatus
-import kotlin.collections.mapOf
 
-class PaperNotFound(id: ThingId) :
-    SimpleMessageException(
-        HttpStatus.NOT_FOUND,
-        """Paper "$id" not found."""
-    )
+class PaperNotFound private constructor(
+    override val message: String,
+    properties: Map<String, Any>,
+) : SimpleMessageException(HttpStatus.NOT_FOUND, message, properties = properties) {
+    companion object {
+        fun withId(id: ThingId) = PaperNotFound("""Paper "$id" not found.""", mapOf("id" to id))
+
+        fun withDOI(doi: String) = PaperNotFound("""Paper with DOI "$doi" not found.""", mapOf("doi" to doi))
+
+        fun withTitle(title: String) = PaperNotFound("""Paper with title "$title" not found.""", mapOf("paper_title" to title))
+    }
+}
 
 class ContributionNotFound(id: ThingId) :
     SimpleMessageException(
@@ -267,14 +274,17 @@ class InvalidTempId(id: String) :
 
 class PaperAlreadyExists private constructor(
     override val message: String,
-) : SimpleMessageException(HttpStatus.BAD_REQUEST, message) {
+    properties: Map<String, Any>,
+) : SimpleMessageException(HttpStatus.BAD_REQUEST, message, properties = properties) {
     companion object {
         fun withTitle(title: String) = PaperAlreadyExists(
-            """Paper with title "$title" already exists."""
+            """Paper with title "$title" already exists.""",
+            mapOf("paper_title" to title),
         )
 
         fun withIdentifier(identifier: String) = PaperAlreadyExists(
-            """Paper with identifier "$identifier" already exists."""
+            """Paper with identifier "$identifier" already exists.""",
+            mapOf("identifier" to identifier),
         )
     }
 }
@@ -292,13 +302,15 @@ class AmbiguousAuthor(author: Author) :
 class ThingIsNotAClass(id: ThingId) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Thing "$id" is not a class."""
+        """Thing "$id" is not a class.""",
+        type = createProblemURI("thing_is_not_a_class"),
     )
 
 class ThingIsNotAPredicate(id: String) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Thing "$id" is not a predicate."""
+        """Thing "$id" is not a predicate.""",
+        type = createProblemURI("thing_is_not_a_predicate"),
     )
 
 class InvalidStatementSubject(id: String) :
@@ -311,7 +323,11 @@ class EmptyContribution : SimpleMessageException {
     constructor() :
         super(HttpStatus.BAD_REQUEST, """Contribution does not contain any statements.""")
     constructor(index: Int) :
-        super(HttpStatus.BAD_REQUEST, """Contribution at index "$index" does not contain any statements.""")
+        super(
+            HttpStatus.BAD_REQUEST,
+            """Contribution at index "$index" does not contain any statements.""",
+            properties = mapOf("index" to index)
+        )
 }
 
 class TemplateAlreadyExistsForClass(
@@ -398,7 +414,8 @@ class ObjectIsNotAClass(
     id: String,
 ) : SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Object "$id" for template property "$templatePropertyId" with predicate "$predicateId" is not a class."""
+        """Object "$id" for template property "$templatePropertyId" with predicate "$predicateId" is not a class.""",
+        type = createProblemURI("object_is_not_a_class")
     )
 
 class ObjectIsNotAPredicate(
@@ -407,7 +424,8 @@ class ObjectIsNotAPredicate(
     id: String,
 ) : SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Object "$id" for template property "$templatePropertyId" with predicate "$predicateId" is not a predicate."""
+        """Object "$id" for template property "$templatePropertyId" with predicate "$predicateId" is not a predicate.""",
+        type = createProblemURI("object_is_not_a_predicate")
     )
 
 class ObjectIsNotAList(
@@ -416,7 +434,8 @@ class ObjectIsNotAList(
     id: String,
 ) : SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Object "$id" for template property "$templatePropertyId" with predicate "$predicateId" is not a list."""
+        """Object "$id" for template property "$templatePropertyId" with predicate "$predicateId" is not a list.""",
+        type = createProblemURI("object_is_not_a_list")
     )
 
 class ObjectIsNotALiteral(
@@ -425,7 +444,8 @@ class ObjectIsNotALiteral(
     id: String,
 ) : SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Object "$id" for template property "$templatePropertyId" with predicate "$predicateId" is not a literal."""
+        """Object "$id" for template property "$templatePropertyId" with predicate "$predicateId" is not a literal.""",
+        type = createProblemURI("object_is_not_a_literal")
     )
 
 class ObjectMustNotBeALiteral(
@@ -434,7 +454,8 @@ class ObjectMustNotBeALiteral(
     id: String,
 ) : SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Object "$id" for template property "$templatePropertyId" with predicate "$predicateId" must not be a literal."""
+        """Object "$id" for template property "$templatePropertyId" with predicate "$predicateId" must not be a literal.""",
+        type = createProblemURI("object_must_not_be_a_literal")
     )
 
 class ResourceIsNotAnInstanceOfTargetClass(
@@ -832,15 +853,16 @@ class InvalidSmartReviewTextSectionType(type: ThingId) :
 
 class InvalidDOI(doi: String) :
     PropertyValidationException(
-        "doi",
+        jsonFieldPathToJsonPointerReference("doi"),
         "The value passed as query parameter \"doi\" is not a valid DOI. The value sent was: $doi",
+        type = createProblemURI("invalid_doi")
     )
 
 class InvalidIdentifier(
     val name: String,
     cause: IllegalArgumentException,
 ) : PropertyValidationException(
-        name,
+        jsonFieldPathToJsonPointerReference(name),
         cause.message!!
     )
 
@@ -850,7 +872,7 @@ class ResearchProblemNotFound(id: ThingId) :
         """Research problem "$id" not found."""
     )
 
-class TooFewIDsError(ids: List<ThingId>) :
+class TooFewContributions(ids: List<ThingId>) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
         """Too few ids: At least two ids are required. Got only "${ids.size}"."""
@@ -888,4 +910,10 @@ class MissingTableRowValues(
 ) : SimpleMessageException(
         HttpStatus.BAD_REQUEST,
         """Row $index has less values than the header. Expected exactly $expectedSize values based on header."""
+    )
+
+class ResearchFieldNotFound(id: ThingId) :
+    SimpleMessageException(
+        HttpStatus.NOT_FOUND,
+        """Research field "$id" not found."""
     )

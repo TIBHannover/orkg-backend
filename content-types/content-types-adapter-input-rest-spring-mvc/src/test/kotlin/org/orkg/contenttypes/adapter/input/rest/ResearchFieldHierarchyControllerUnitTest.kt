@@ -11,10 +11,10 @@ import org.orkg.common.configuration.WebMvcConfiguration
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.community.input.RetrieveContributorUseCase
 import org.orkg.contenttypes.domain.ResearchFieldHierarchyEntry
+import org.orkg.contenttypes.domain.ResearchFieldNotFound
 import org.orkg.contenttypes.domain.ResearchFieldWithChildCount
 import org.orkg.contenttypes.input.ResearchFieldHierarchyUseCases
 import org.orkg.graph.domain.Classes
-import org.orkg.graph.domain.ResearchFieldNotFound
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.fixtures.createResource

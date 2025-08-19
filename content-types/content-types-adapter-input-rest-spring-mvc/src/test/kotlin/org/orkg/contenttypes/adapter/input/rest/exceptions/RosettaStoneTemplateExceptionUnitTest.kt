@@ -17,6 +17,7 @@ import org.orkg.contenttypes.domain.RosettaStoneTemplateInUse
 import org.orkg.contenttypes.domain.RosettaStoneTemplateLabelMustBeUpdated
 import org.orkg.contenttypes.domain.RosettaStoneTemplateLabelMustStartWithPreviousVersion
 import org.orkg.contenttypes.domain.RosettaStoneTemplateLabelUpdateRequiresNewTemplateProperties
+import org.orkg.contenttypes.domain.RosettaStoneTemplateNotFound
 import org.orkg.contenttypes.domain.RosettaStoneTemplateNotModifiable
 import org.orkg.contenttypes.domain.RosettaStoneTemplatePropertyNotModifiable
 import org.orkg.contenttypes.domain.TooManyNewRosettaStoneTemplateLabelSections
@@ -27,6 +28,7 @@ import org.orkg.testing.spring.restdocs.exceptionResponseFields
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.FORBIDDEN
+import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.context.ContextConfiguration
@@ -34,6 +36,16 @@ import org.springframework.test.context.ContextConfiguration
 @WebMvcTest
 @ContextConfiguration(classes = [CommonJacksonModule::class, FixedClockConfig::class])
 internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest() {
+    @Test
+    fun rosettaStoneTemplateNotFound() {
+        documentedGetRequestTo(RosettaStoneTemplateNotFound(ThingId("R123")))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:rosetta_stone_template_not_found")
+            .andExpectTitle("Not Found")
+            .andExpectDetail("""Rosetta stone template "R123" not found.""")
+            .andDocumentWithDefaultExceptionResponseFields()
+    }
+
     @Test
     fun invalidSubjectPositionPath() {
         documentedGetRequestTo(InvalidSubjectPositionPath())
@@ -75,7 +87,7 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
     }
 
     @Test
-    fun rosettaStoneTemplateInUseCantBeDeleted() {
+    fun rosettaStoneTemplateInUse_cantBeDeleted() {
         documentedGetRequestTo(RosettaStoneTemplateInUse.cantBeDeleted(ThingId("R123")))
             .andExpectErrorStatus(FORBIDDEN)
             .andExpectType("orkg:problem:rosetta_stone_template_in_use")
@@ -92,7 +104,7 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
     }
 
     @Test
-    fun rosettaStoneTemplateInUseCantUpdateProperty() {
+    fun rosettaStoneTemplateInUse_cantUpdateProperty() {
         get(RosettaStoneTemplateInUse.cantUpdateProperty(ThingId("R123"), "abc"))
             .andExpectErrorStatus(FORBIDDEN)
             .andExpectType("orkg:problem:rosetta_stone_template_in_use")
@@ -101,7 +113,7 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
     }
 
     @Test
-    fun missingFormattedLabelPlaceholderIndex() {
+    fun missingFormattedLabelPlaceholder_withIndex() {
         documentedGetRequestTo(MissingFormattedLabelPlaceholder(4))
             .andExpectErrorStatus(BAD_REQUEST)
             .andExpectType("orkg:problem:missing_formatted_label_placeholder")
@@ -118,7 +130,7 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
     }
 
     @Test
-    fun missingFormattedLabelPlaceholderPlaceholder() {
+    fun missingFormattedLabelPlaceholder_withPlaceholder() {
         get(MissingFormattedLabelPlaceholder("4"))
             .andExpectErrorStatus(BAD_REQUEST)
             .andExpectType("orkg:problem:missing_formatted_label_placeholder")

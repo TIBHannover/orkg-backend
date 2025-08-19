@@ -160,7 +160,7 @@ class PaperService(
     override fun findAllContributorsByPaperId(id: ThingId, pageable: Pageable): Page<ContributorId> =
         resourceRepository.findPaperById(id)
             .map { statementRepository.findAllContributorsByResourceId(id, pageable) }
-            .orElseThrow { PaperNotFound(id) }
+            .orElseThrow { PaperNotFound.withId(id) }
 
     override fun create(command: CreatePaperCommand): ThingId {
         val steps = listOf(

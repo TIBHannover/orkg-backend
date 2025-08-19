@@ -91,7 +91,7 @@ class ResourceService(
     override fun findTimelineByResourceId(id: ThingId, pageable: Pageable): Page<ResourceContributor> =
         repository.findById(id)
             .map { statementRepository.findTimelineByResourceId(id, pageable) }
-            .orElseThrow { ResourceNotFound.withId(id) }
+            .orElseThrow { ResourceNotFound(id) }
 
     override fun findAllPapersByObservatoryIdAndFilters(
         observatoryId: ObservatoryId?,
@@ -110,7 +110,7 @@ class ResourceService(
     override fun update(command: UpdateCommand) {
         if (command.hasNoContents()) return
         val resource = repository.findById(command.id)
-            .orElseThrow { ResourceNotFound.withId(command.id) }
+            .orElseThrow { ResourceNotFound(command.id) }
         if (!resource.modifiable) {
             throw ResourceNotModifiable(command.id)
         }
@@ -147,7 +147,7 @@ class ResourceService(
     }
 
     override fun delete(id: ThingId, contributorId: ContributorId) {
-        val resource = repository.findById(id).orElseThrow { ResourceNotFound.withId(id) }
+        val resource = repository.findById(id).orElseThrow { ResourceNotFound(id) }
 
         if (!resource.modifiable) {
             throw ResourceNotModifiable(resource.id)

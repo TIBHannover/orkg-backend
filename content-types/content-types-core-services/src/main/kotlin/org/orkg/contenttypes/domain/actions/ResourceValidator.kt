@@ -9,7 +9,7 @@ open class ResourceValidator<T, S>(
     private val newValueSelector: (T) -> Set<ThingId>?,
     private val oldValueSelector: (S) -> Set<ThingId> = { emptySet() },
     private val includeClasses: Set<ThingId> = emptySet(),
-    private val exceptionFactory: (ThingId) -> Throwable = { ResourceNotFound.withId(it) },
+    private val exceptionFactory: (ThingId) -> Throwable = { ResourceNotFound(it) },
 ) : Action<T, S> {
     override fun invoke(command: T, state: S): S {
         val newResources = newValueSelector(command)

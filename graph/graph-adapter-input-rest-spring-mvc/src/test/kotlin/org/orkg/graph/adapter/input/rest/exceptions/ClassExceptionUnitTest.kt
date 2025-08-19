@@ -92,7 +92,7 @@ internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
     }
 
     @Test
-    fun classNotFound() {
+    fun classNotFound_withId() {
         documentedGetRequestTo(ClassNotFound.withThingId(ThingId("C123")))
             .andExpectErrorStatus(NOT_FOUND)
             .andExpectType("orkg:problem:class_not_found")
@@ -102,11 +102,21 @@ internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andDo(
                 documentationHandler.document(
                     responseFields(exceptionResponseFields()).and(
-                        fieldWithPath("id").description("The id of the class. (optional, either `id` or `uri` is present)").optional(),
+                        fieldWithPath("id").description("The id of the class. (optional, either `id` or `uri` is present)"),
                         fieldWithPath("uri").type("URI").description("The uri of the class. (optional, either `id` or `uri` is present)").optional(),
                     )
                 )
             )
+    }
+
+    @Test
+    fun classNotFound_withURI() {
+        get(ClassNotFound.withURI(ParsedIRI("https://example.org/C123")))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:class_not_found")
+            .andExpectTitle("Not Found")
+            .andExpectDetail("""Class with URI "https://example.org/C123" not found.""")
+            .andExpect(jsonPath("$.uri", `is`("https://example.org/C123")))
     }
 
     @Test
@@ -116,6 +126,16 @@ internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:external_class_not_found")
             .andExpectTitle("Not Found")
             .andExpectDetail("""External class "R123" for ontology "skos" not found.""")
+            .andDocumentWithDefaultExceptionResponseFields()
+    }
+
+    @Test
+    fun reservedClassId() {
+        documentedGetRequestTo(ReservedClassId(ThingId("C123")))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:reserved_class_id")
+            .andExpectTitle("Bad Request")
+            .andExpectDetail("""Class id "C123" is reserved.""")
             .andDocumentWithDefaultExceptionResponseFields()
     }
 }

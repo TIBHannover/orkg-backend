@@ -1,0 +1,47 @@
+package org.orkg.community.adapter.input.rest.exceptions
+
+import org.junit.jupiter.api.Test
+import org.orkg.community.domain.InvalidFilterConfig
+import org.orkg.community.domain.ObservatoryFilterAlreadyExists
+import org.orkg.community.domain.ObservatoryFilterId
+import org.orkg.community.domain.ObservatoryFilterNotFound
+import org.orkg.testing.configuration.FixedClockConfig
+import org.orkg.testing.spring.MockMvcExceptionBaseTest
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.NOT_FOUND
+import org.springframework.test.context.ContextConfiguration
+
+@WebMvcTest
+@ContextConfiguration(classes = [FixedClockConfig::class])
+internal class ObservatoryFilterExceptionUnitTest : MockMvcExceptionBaseTest() {
+    @Test
+    fun observatoryFilterNotFound() {
+        documentedGetRequestTo(ObservatoryFilterNotFound(ObservatoryFilterId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:observatory_filter_not_found")
+            .andExpectTitle("Not Found")
+            .andExpectDetail("""Observatory filter "f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc" not found.""")
+            .andDocumentWithDefaultExceptionResponseFields()
+    }
+
+    @Test
+    fun invalidFilterConfig() {
+        documentedGetRequestTo(InvalidFilterConfig())
+            .andExpectErrorStatus(HttpStatus.BAD_REQUEST)
+            .andExpectType("orkg:problem:invalid_filter_config")
+            .andExpectTitle("Bad Request")
+            .andExpectDetail("""Invalid filter config.""")
+            .andDocumentWithDefaultExceptionResponseFields()
+    }
+
+    @Test
+    fun observatoryFilterAlreadyExists() {
+        documentedGetRequestTo(ObservatoryFilterAlreadyExists(ObservatoryFilterId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")))
+            .andExpectErrorStatus(HttpStatus.BAD_REQUEST)
+            .andExpectType("orkg:problem:observatory_filter_already_exists")
+            .andExpectTitle("Bad Request")
+            .andExpectDetail("""Observatory filter "f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc" already exists.""")
+            .andDocumentWithDefaultExceptionResponseFields()
+    }
+}

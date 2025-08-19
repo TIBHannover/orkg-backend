@@ -55,7 +55,7 @@ class ResourceController(
         @PathVariable id: ThingId,
         capabilities: MediaTypeCapabilities,
     ): ResourceRepresentation =
-        service.findById(id).mapToResourceRepresentation(capabilities).orElseThrow { ResourceNotFound.withId(id) }
+        service.findById(id).mapToResourceRepresentation(capabilities).orElseThrow { ResourceNotFound(id) }
 
     @GetMapping
     fun findAll(

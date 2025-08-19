@@ -22,7 +22,6 @@ import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.AuthorNotFound
 import org.orkg.contenttypes.domain.OnlyOneObservatoryAllowed
 import org.orkg.contenttypes.domain.OnlyOneOrganizationAllowed
-import org.orkg.contenttypes.domain.VisualizationNotFound
 import org.orkg.contenttypes.domain.testing.fixtures.createVisualization
 import org.orkg.contenttypes.input.VisualizationUseCases
 import org.orkg.graph.domain.ExactSearchString
@@ -115,7 +114,6 @@ internal class VisualizationControllerUnitTest : MockMvcBaseTest("visualizations
     @Test
     fun `Given a visualization, when it is fetched by id and service reports missing visualization, then status is 404 NOT FOUND`() {
         val id = ThingId("Missing")
-        val exception = VisualizationNotFound(id)
         every { visualizationService.findById(id) } returns Optional.empty()
 
         get("/api/visualizations/{id}", id)

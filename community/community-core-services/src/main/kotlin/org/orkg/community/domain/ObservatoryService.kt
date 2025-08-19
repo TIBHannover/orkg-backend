@@ -8,9 +8,9 @@ import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.UpdateObservatoryUseCase
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
+import org.orkg.contenttypes.domain.ResearchFieldNotFound
 import org.orkg.contenttypes.domain.SustainableDevelopmentGoalNotFound
 import org.orkg.graph.domain.Classes
-import org.orkg.graph.domain.ResearchFieldNotFound
 import org.orkg.graph.domain.Resources
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.spring.data.annotations.TransactionalOnJPA

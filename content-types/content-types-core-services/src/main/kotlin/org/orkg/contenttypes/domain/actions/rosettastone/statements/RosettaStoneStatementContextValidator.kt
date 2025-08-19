@@ -11,7 +11,7 @@ class RosettaStoneStatementContextValidator(
     override fun invoke(command: CreateRosettaStoneStatementCommand, state: State): State {
         command.context?.also { context ->
             resourceRepository.findById(context)
-                .orElseThrow { ResourceNotFound.withId(context) }
+                .orElseThrow { ResourceNotFound(context) }
         }
         return state
     }

@@ -52,7 +52,7 @@ class ResearchFieldController(
         capabilities: MediaTypeCapabilities,
     ): Page<PaperCountPerResearchProblemRepresentation> {
         resourceService.findById(id)
-            .orElseThrow { ResourceNotFound.withId(id) }
+            .orElseThrow { ResourceNotFound(id) }
         return service.findAllPaperCountsPerResearchProblem(id, pageable)
             .mapToPaperCountPerResearchProblemRepresentation(capabilities)
     }
@@ -71,7 +71,7 @@ class ResearchFieldController(
     ): Page<ResourceRepresentation> {
         // Add if condition to check if featured is present and pass the variable
         // Do the same for all
-        resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
+        resourceService.findById(id).orElseThrow { ResourceNotFound(id) }
         return service.findAllResearchProblemsByResearchField(
             id = id,
             visibility = visibility,
@@ -90,7 +90,7 @@ class ResearchFieldController(
         @PathVariable id: ThingId,
         pageable: Pageable,
     ): ResponseEntity<Page<Contributor>> {
-        resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
+        resourceService.findById(id).orElseThrow { ResourceNotFound(id) }
         return ok(service.findAllContributorsIncludingSubFields(id, pageable))
     }
 
@@ -106,7 +106,7 @@ class ResearchFieldController(
         featured: Optional<Boolean>,
         pageable: Pageable,
     ): ResponseEntity<Page<Contributor>> {
-        resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
+        resourceService.findById(id).orElseThrow { ResourceNotFound(id) }
         return ok(service.findAllContributorsExcludingSubFields(id, pageable))
     }
 
@@ -121,7 +121,7 @@ class ResearchFieldController(
         pageable: Pageable,
         capabilities: MediaTypeCapabilities,
     ): Page<ResourceRepresentation> {
-        resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
+        resourceService.findById(id).orElseThrow { ResourceNotFound(id) }
         return service.findAllResearchProblemsByResearchField(
             id = id,
             visibility = visibility,

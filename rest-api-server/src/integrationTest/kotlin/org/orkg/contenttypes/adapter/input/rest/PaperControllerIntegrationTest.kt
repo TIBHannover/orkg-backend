@@ -300,7 +300,7 @@ internal class PaperControllerIntegrationTest : MockMvcBaseTest("papers") {
             .perform()
             .andExpect(status().isNoContent)
 
-        val updatedPaper = paperService.findById(id).orElseThrow { PaperNotFound(id) }
+        val updatedPaper = paperService.findById(id).orElseThrow { PaperNotFound.withId(id) }
 
         updatedPaper.asClue {
             it.id shouldBe id

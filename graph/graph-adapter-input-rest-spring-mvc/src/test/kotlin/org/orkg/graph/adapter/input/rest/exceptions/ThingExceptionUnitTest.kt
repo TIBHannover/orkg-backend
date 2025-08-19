@@ -3,10 +3,12 @@ package org.orkg.graph.adapter.input.rest.exceptions
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.ThingAlreadyExists
+import org.orkg.graph.domain.ThingNotFound
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.test.context.ContextConfiguration
 
 @WebMvcTest
@@ -19,6 +21,16 @@ internal class ThingExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:thing_already_exists")
             .andExpectTitle("Bad Request")
             .andExpectDetail("""A thing with id "S123" already exists.""")
+            .andDocumentWithDefaultExceptionResponseFields()
+    }
+
+    @Test
+    fun thingNotFound() {
+        documentedGetRequestTo(ThingNotFound(ThingId("R123")))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:thing_not_found")
+            .andExpectTitle("Not Found")
+            .andExpectDetail("""Thing "R123" not found.""")
             .andDocumentWithDefaultExceptionResponseFields()
     }
 }

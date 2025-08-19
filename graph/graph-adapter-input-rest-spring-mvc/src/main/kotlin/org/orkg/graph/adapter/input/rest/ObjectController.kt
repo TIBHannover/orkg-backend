@@ -49,7 +49,7 @@ class ObjectController(
         currentUser: Authentication?,
     ): ResponseEntity<ResourceRepresentation> {
         resourceService.findById(id)
-            .orElseThrow { ResourceNotFound.withId(id) }
+            .orElseThrow { ResourceNotFound(id) }
         objectService.createObject(obj, id, currentUser.contributorId().value)
         val location = uriComponentsBuilder
             .path("/api/resources/{id}")

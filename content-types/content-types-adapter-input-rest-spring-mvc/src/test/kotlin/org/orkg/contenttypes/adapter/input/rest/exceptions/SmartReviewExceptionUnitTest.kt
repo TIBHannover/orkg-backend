@@ -7,6 +7,7 @@ import org.orkg.contenttypes.domain.InvalidSmartReviewTextSectionType
 import org.orkg.contenttypes.domain.OntologyEntityNotFound
 import org.orkg.contenttypes.domain.PublishedSmartReviewContentNotFound
 import org.orkg.contenttypes.domain.SmartReviewAlreadyPublished
+import org.orkg.contenttypes.domain.SmartReviewNotFound
 import org.orkg.contenttypes.domain.SmartReviewNotModifiable
 import org.orkg.contenttypes.domain.SmartReviewSectionTypeMismatch
 import org.orkg.contenttypes.domain.UnrelatedSmartReviewSection
@@ -65,7 +66,7 @@ internal class SmartReviewExceptionUnitTest : MockMvcExceptionBaseTest() {
     }
 
     @Test
-    fun smartReviewSectionTypeMismatchMustBeComparisonSection() {
+    fun smartReviewSectionTypeMismatch_mustBeComparisonSection() {
         documentedGetRequestTo(SmartReviewSectionTypeMismatch.mustBeComparisonSection())
             .andExpectErrorStatus(BAD_REQUEST)
             .andExpectType("orkg:problem:smart_review_section_type_mismatch")
@@ -81,7 +82,7 @@ internal class SmartReviewExceptionUnitTest : MockMvcExceptionBaseTest() {
     }
 
     @Test
-    fun smartReviewSectionTypeMismatchMustBeVisualizationSection() {
+    fun smartReviewSectionTypeMismatch_mustBeVisualizationSection() {
         get(SmartReviewSectionTypeMismatch.mustBeVisualizationSection())
             .andExpectErrorStatus(BAD_REQUEST)
             .andExpectType("orkg:problem:smart_review_section_type_mismatch")
@@ -90,7 +91,7 @@ internal class SmartReviewExceptionUnitTest : MockMvcExceptionBaseTest() {
     }
 
     @Test
-    fun smartReviewSectionTypeMismatchMustBeResourceSection() {
+    fun smartReviewSectionTypeMismatch_mustBeResourceSection() {
         get(SmartReviewSectionTypeMismatch.mustBeResourceSection())
             .andExpectErrorStatus(BAD_REQUEST)
             .andExpectType("orkg:problem:smart_review_section_type_mismatch")
@@ -99,7 +100,7 @@ internal class SmartReviewExceptionUnitTest : MockMvcExceptionBaseTest() {
     }
 
     @Test
-    fun smartReviewSectionTypeMismatchMustBePredicateSection() {
+    fun smartReviewSectionTypeMismatch_mustBePredicateSection() {
         get(SmartReviewSectionTypeMismatch.mustBePredicateSection())
             .andExpectErrorStatus(BAD_REQUEST)
             .andExpectType("orkg:problem:smart_review_section_type_mismatch")
@@ -108,7 +109,7 @@ internal class SmartReviewExceptionUnitTest : MockMvcExceptionBaseTest() {
     }
 
     @Test
-    fun smartReviewSectionTypeMismatchMustBeOntologySection() {
+    fun smartReviewSectionTypeMismatch_mustBeOntologySection() {
         get(SmartReviewSectionTypeMismatch.mustBeOntologySection())
             .andExpectErrorStatus(BAD_REQUEST)
             .andExpectType("orkg:problem:smart_review_section_type_mismatch")
@@ -117,7 +118,7 @@ internal class SmartReviewExceptionUnitTest : MockMvcExceptionBaseTest() {
     }
 
     @Test
-    fun smartReviewSectionTypeMismatchMustBeTextSection() {
+    fun smartReviewSectionTypeMismatch_mustBeTextSection() {
         get(SmartReviewSectionTypeMismatch.mustBeTextSection())
             .andExpectErrorStatus(BAD_REQUEST)
             .andExpectType("orkg:problem:smart_review_section_type_mismatch")
@@ -142,6 +143,16 @@ internal class SmartReviewExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType("orkg:problem:smart_review_not_modifiable")
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Smart review "R123" is not modifiable.""")
+            .andDocumentWithDefaultExceptionResponseFields()
+    }
+
+    @Test
+    fun smartReviewNotFound() {
+        documentedGetRequestTo(SmartReviewNotFound(ThingId("R123")))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:smart_review_not_found")
+            .andExpectTitle("Not Found")
+            .andExpectDetail("""Smart review "R123" not found.""")
             .andDocumentWithDefaultExceptionResponseFields()
     }
 }

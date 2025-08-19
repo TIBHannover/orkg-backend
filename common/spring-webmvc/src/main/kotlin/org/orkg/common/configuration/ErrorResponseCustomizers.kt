@@ -6,17 +6,25 @@ import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException
 import org.orkg.common.exceptions.ErrorResponseCustomizer.Companion.errorResponseCustomizer
 import org.orkg.common.exceptions.FieldError
 import org.orkg.common.exceptions.createProblemURI
+import org.springframework.beans.ConversionNotSupportedException
+import org.springframework.beans.TypeMismatchException
+import org.springframework.context.MessageSource
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.i18n.LocaleContextHolder
 import org.springframework.data.mapping.PropertyReferenceException
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.FORBIDDEN
+import org.springframework.http.ProblemDetail
 import org.springframework.http.converter.HttpMessageNotReadableException
+import org.springframework.http.converter.HttpMessageNotWritableException
 import org.springframework.security.access.AccessDeniedException
+import org.springframework.web.ErrorResponse
 import org.springframework.web.HttpMediaTypeNotAcceptableException
 import org.springframework.web.HttpMediaTypeNotSupportedException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
+import java.net.URI
 
 @Configuration
 class ErrorResponseCustomizers {
@@ -33,8 +41,8 @@ class ErrorResponseCustomizers {
         }
 
     @Bean
-    fun httpMessageNotReadableExceptionCustomizer() =
-        errorResponseCustomizer<HttpMessageNotReadableException> { ex, problemDetail, _ ->
+    fun httpMessageNotReadableExceptionCustomizer(messageSource: MessageSource?) =
+        errorResponseCustomizer<HttpMessageNotReadableException>(status = BAD_REQUEST) { ex, problemDetail, _ ->
             when (val cause = ex.cause) {
                 is UnrecognizedPropertyException -> {
                     problemDetail.type = createProblemURI("unknown_json_field")
@@ -56,6 +64,11 @@ class ErrorResponseCustomizers {
                     problemDetail.status = BAD_REQUEST.value()
                     problemDetail.detail = cause.originalMessage
                 }
+                else -> customizeSpringException<HttpMessageNotReadableException>(
+                    problemDetail = problemDetail,
+                    messageSource = messageSource,
+                    defaultDetail = "Failed to read request",
+                )
             }
         }
 
@@ -81,4 +94,64 @@ class ErrorResponseCustomizers {
         errorResponseCustomizer<MethodArgumentNotValidException>(status = BAD_REQUEST) { ex, problemDetail, _ ->
             problemDetail.setProperty("errors", ex.bindingResult.fieldErrors.map(FieldError::from))
         }
+
+    @Bean
+    fun conversionNotSupportedExceptionCustomizer(messageSource: MessageSource?) =
+        errorResponseCustomizer<ConversionNotSupportedException> { ex, problemDetail, _ ->
+            val args = arrayOf<Any?>(ex.propertyName, ex.value)
+            customizeSpringException<ConversionNotSupportedException>(
+                problemDetail = problemDetail,
+                messageSource = messageSource,
+                defaultDetail = "Failed to convert '${args[0]}' with value: '${args[1]}'",
+                args = args,
+            )
+        }
+
+    @Bean
+    fun httpMessageNotWritableExceptionCustomizer(messageSource: MessageSource?) =
+        errorResponseCustomizer<HttpMessageNotWritableException> { _, problemDetail, _ ->
+            customizeSpringException<HttpMessageNotWritableException>(
+                problemDetail = problemDetail,
+                messageSource = messageSource,
+                defaultDetail = "Failed to write request",
+            )
+        }
+
+    @Bean
+    fun typeMismatchExceptionCustomizer(messageSource: MessageSource?) =
+        errorResponseCustomizer<TypeMismatchException>(status = BAD_REQUEST) { ex, problemDetail, _ ->
+            val args = arrayOf<Any?>(ex.propertyName, ex.value)
+            customizeSpringException<TypeMismatchException>(
+                problemDetail = problemDetail,
+                messageSource = messageSource,
+                defaultDetail = "Failed to convert '${args[0]}' with value: '${args[1]}'",
+                args = args,
+            )
+        }
+
+    private inline fun <reified T : Throwable> customizeSpringException(
+        problemDetail: ProblemDetail,
+        messageSource: MessageSource?,
+        defaultDetail: String? = null,
+        args: Array<Any?>? = null,
+    ) {
+        if (messageSource != null) {
+            val locale = LocaleContextHolder.getLocale()
+            val type = messageSource.getMessage(ErrorResponse.getDefaultTypeMessageCode(T::class.java), null, null, locale)
+            if (type != null) {
+                problemDetail.type = URI.create(type)
+            }
+            val detail = messageSource.getMessage(ErrorResponse.getDefaultDetailMessageCode(T::class.java, null), args, null, locale)
+            if (detail != null) {
+                problemDetail.detail = detail
+            }
+            val title = messageSource.getMessage(ErrorResponse.getDefaultTitleMessageCode(T::class.java), null, null, locale)
+            if (title != null) {
+                problemDetail.title = title
+            }
+        }
+        if (problemDetail.detail == null) {
+            problemDetail.detail = defaultDetail
+        }
+    }
 }

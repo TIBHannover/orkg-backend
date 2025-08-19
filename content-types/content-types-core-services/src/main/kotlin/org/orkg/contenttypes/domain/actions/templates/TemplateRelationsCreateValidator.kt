@@ -1,11 +1,11 @@
 package org.orkg.contenttypes.domain.actions.templates
 
+import org.orkg.contenttypes.domain.ResearchFieldNotFound
 import org.orkg.contenttypes.domain.ResearchProblemNotFound
 import org.orkg.contenttypes.domain.actions.CreateTemplateCommand
 import org.orkg.contenttypes.domain.actions.templates.CreateTemplateAction.State
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.PredicateNotFound
-import org.orkg.graph.domain.ResearchFieldNotFound
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
 

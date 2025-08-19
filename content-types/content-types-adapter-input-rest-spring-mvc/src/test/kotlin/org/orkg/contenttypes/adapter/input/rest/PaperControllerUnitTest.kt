@@ -326,7 +326,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
     @Test
     fun `Given a paper, when contributors are fetched but paper is missing, then status 404 NOT FOUND`() {
         val id = ThingId("R123")
-        val exception = PaperNotFound(id)
+        val exception = PaperNotFound.withId(id)
         every { paperService.findAllContributorsByPaperId(id, any()) } throws exception
 
         get("/api/papers/{id}/contributors", id)
@@ -400,7 +400,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             "description" to description,
             "authors" to authors
         )
-        val exception = PaperNotFound(id)
+        val exception = PaperNotFound.withId(id)
 
         every { paperService.publish(any()) } throws exception
 
@@ -960,7 +960,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
     @TestWithMockUser
     fun `Given a paper update request, when service reports paper not found, then status is 404 NOT FOUND`() {
         val id = ThingId("R123")
-        val exception = PaperNotFound(id)
+        val exception = PaperNotFound.withId(id)
         every { paperService.update(any()) } throws exception
 
         put("/api/papers/{id}", id)

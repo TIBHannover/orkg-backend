@@ -3,7 +3,6 @@ package org.orkg.common.configuration
 import org.orkg.common.exceptions.ErrorController
 import org.orkg.common.exceptions.ErrorResponseCustomizer
 import org.springframework.beans.factory.ObjectProvider
-import org.springframework.boot.autoconfigure.web.ServerProperties
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorViewResolver
 import org.springframework.boot.web.servlet.error.ErrorAttributes
 import org.springframework.context.MessageSource
@@ -30,7 +29,6 @@ class ExceptionConfiguration {
 
     @Bean
     fun errorController(
-        serverProperties: ServerProperties,
         errorAttributes: ErrorAttributes,
         errorViewResolvers: ObjectProvider<ErrorViewResolver>,
         errorResponseCustomizers: List<ErrorResponseCustomizer<*>>,
@@ -39,7 +37,6 @@ class ExceptionConfiguration {
     ): ErrorController =
         ErrorController(
             errorAttributes = errorAttributes,
-            errorProperties = serverProperties.error,
             errorViewResolvers = errorViewResolvers.orderedStream().toList(),
             messageSource = messageSource,
             errorResponseCustomizers = errorResponseCustomizers,

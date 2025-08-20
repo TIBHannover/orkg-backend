@@ -122,9 +122,31 @@ internal class ErrorControllerUnitTest : MockMvcBaseTest("errors") {
             .andExpect(MockMvcResultMatchers.content().string(""))
     }
 
-    internal class ExtendsErrorResonse : ResponseStatusException(BAD_REQUEST, "Something went terribly wrong!", null)
+    // Since we need to use workaround to get the ErrorController to work in a MockMvc test (see ExceptionTestConfiguration),
+    // this test is NOT representative of what actually happens in the system in a production environment.
+    @Test
+    fun `Given an endpoint that does not return application json, when an error is thrown, it returns application json regardless`() {
+        get("/text-html")
+            .accept(MediaType.TEXT_HTML)
+            .contentType(MediaType.TEXT_HTML)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(header().string("Content-Type", `is`(MediaType.APPLICATION_PROBLEM_JSON_VALUE)))
+            .andExpect(jsonPath("$.type", `is`("about:blank")))
+            .andExpect(jsonPath("$.status", `is`(400)))
+            .andExpect(jsonPath("$.title", `is`("Bad Request")))
+            .andExpect(jsonPath("$.detail", `is`("Something went terribly wrong!")))
+            .andExpect(jsonPath("$.instance", `is`("/text-html")))
+            // legacy fields
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.message", `is`("Something went terribly wrong!")))
+            .andExpect(jsonPath("$.path", `is`("/text-html")))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
 
-    internal class NotExtendsErrorResonse(override val message: String) : Exception(message)
+    internal class ExtendsErrorResponse : ResponseStatusException(BAD_REQUEST, "Something went terribly wrong!", null)
+
+    internal class NotExtendsErrorResponse(override val message: String) : Exception(message)
 
     internal open class BaseException(override val message: String) : Exception(message)
 
@@ -138,10 +160,10 @@ internal class ErrorControllerUnitTest : MockMvcBaseTest("errors") {
     @RestController
     internal class TestController {
         @GetMapping("/extends-error-response")
-        fun extendsErrorResponse(): Nothing = throw ExtendsErrorResonse()
+        fun extendsErrorResponse(): Nothing = throw ExtendsErrorResponse()
 
         @GetMapping("/not-extends-error-response")
-        fun notExtendsErrorResponse(): Nothing = throw NotExtendsErrorResonse("Not Extends Error Resonse")
+        fun notExtendsErrorResponse(): Nothing = throw NotExtendsErrorResponse("Not Extends Error Response")
 
         @GetMapping("/specific-exception")
         fun specificException(): Nothing = throw SpecificException("Specific Exception")
@@ -151,6 +173,9 @@ internal class ErrorControllerUnitTest : MockMvcBaseTest("errors") {
 
         @GetMapping("/no-content-exception")
         fun noContentException(): Nothing = throw NoContentException()
+
+        @GetMapping("/text-html", produces = [MediaType.TEXT_HTML_VALUE])
+        fun textHtml(): Nothing = throw ExtendsErrorResponse()
     }
 
     @TestConfiguration

@@ -3,8 +3,7 @@ package org.orkg.common.exceptions
 import jakarta.servlet.RequestDispatcher
 import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.LoggerFactory
-import org.springframework.boot.autoconfigure.web.ErrorProperties
-import org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController
+import org.springframework.boot.autoconfigure.web.servlet.error.AbstractErrorController
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorViewResolver
 import org.springframework.boot.web.servlet.error.ErrorAttributes
 import org.springframework.context.MessageSource
@@ -32,19 +31,18 @@ import kotlin.reflect.full.isSubclassOf
 @RequestMapping("\${server.error.path:\${error.path:/error}}")
 class ErrorController(
     private val errorAttributes: ErrorAttributes,
-    errorProperties: ErrorProperties,
     errorViewResolvers: List<ErrorViewResolver>,
     private val messageSource: MessageSource?,
     private val errorResponseCustomizers: List<ErrorResponseCustomizer<*>>,
     private val clock: Clock,
-) : BasicErrorController(errorAttributes, errorProperties, errorViewResolvers) {
+) : AbstractErrorController(errorAttributes, errorViewResolvers) {
     private val logger = LoggerFactory.getLogger(this::class.java.name)
     private val errorResponseCustomizerCache = ConcurrentLruCache<KClass<out Throwable>, ErrorResponseCustomizer<Throwable>>(24) {
         getErrorResponseCustomizer(it) ?: ErrorResponseCustomizer.DEFAULT
     }
 
     @RequestMapping
-    override fun error(request: HttpServletRequest): ResponseEntity<Map<String, Any?>> {
+    fun error(request: HttpServletRequest): ResponseEntity<Map<String, Any?>> {
         val servletWebRequest = ServletWebRequest(request)
         val exception = errorAttributes.getError(servletWebRequest)
         val instance = servletWebRequest.getAttribute(RequestDispatcher.ERROR_REQUEST_URI, RequestAttributes.SCOPE_REQUEST) as? String

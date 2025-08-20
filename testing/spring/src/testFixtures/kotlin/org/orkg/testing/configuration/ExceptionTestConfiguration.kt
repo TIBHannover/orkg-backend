@@ -4,7 +4,7 @@ import jakarta.servlet.RequestDispatcher
 import jakarta.servlet.http.HttpServletRequest
 import org.orkg.common.configuration.ErrorResponseCustomizers
 import org.orkg.common.configuration.ExceptionConfiguration
-import org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController
+import org.orkg.common.exceptions.ErrorController
 import org.springframework.context.annotation.Import
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler
  */
 @ControllerAdvice
 @Import(ErrorResponseCustomizers::class, ExceptionConfiguration::class)
-class ExceptionTestConfiguration(private val errorController: BasicErrorController) {
+class ExceptionTestConfiguration(private val errorController: ErrorController) {
     @ExceptionHandler(Throwable::class)
     fun defaultErrorHandler(request: HttpServletRequest): ResponseEntity<*> {
         request.setAttribute(RequestDispatcher.ERROR_REQUEST_URI, request.pathInfo)

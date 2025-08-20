@@ -1,6 +1,7 @@
 package org.orkg.statistics.adapter.input.rest
 
 import org.orkg.statistics.adapter.input.rest.mapping.MetricRepresentationAdapter
+import org.orkg.statistics.adapter.input.rest.mapping.MetricRepresentationAdapter.MetricResponseFormat
 import org.orkg.statistics.input.StatisticsUseCases
 import org.springframework.http.MediaType
 import org.springframework.util.MultiValueMap
@@ -43,8 +44,12 @@ class StatisticsController(private val service: StatisticsUseCases) : MetricRepr
     fun findMetricByGroupAndName(
         @PathVariable group: String,
         @PathVariable name: String,
+        @RequestParam("response_format", required = false)
+        responseFormat: MetricResponseFormat = MetricResponseFormat.DEFAULT,
         @RequestParam parameters: MultiValueMap<String, String>,
-    ): MetricRepresentation =
-        service.findMetricByGroupAndName(group, name)
-            .let { metric -> metric.toMetricRepresentation(metric.value(parameters)) }
+    ): MetricRepresentation {
+        parameters.remove("response_format")
+        return service.findMetricByGroupAndName(group, name)
+            .let { metric -> metric.toMetricRepresentation(responseFormat, metric.value(parameters)) }
+    }
 }

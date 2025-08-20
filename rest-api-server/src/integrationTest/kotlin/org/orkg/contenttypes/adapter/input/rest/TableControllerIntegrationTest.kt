@@ -156,7 +156,6 @@ internal class TableControllerIntegrationTest : MockMvcBaseTest("tables") {
             .accept(TABLE_JSON_V1)
             .contentType(TABLE_JSON_V1)
             .perform()
-            .andPrint()
             .andExpect(status().isCreated)
             .andReturn()
             .response

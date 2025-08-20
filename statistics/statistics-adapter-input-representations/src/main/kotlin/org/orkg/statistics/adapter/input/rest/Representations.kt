@@ -3,13 +3,21 @@ package org.orkg.statistics.adapter.input.rest
 import com.fasterxml.jackson.annotation.JsonInclude
 import java.net.URI
 
-data class MetricRepresentation(
+interface MetricRepresentation {
+    val value: Number
+}
+
+data class SlimMetricRepresentation(
+    override val value: Number,
+) : MetricRepresentation
+
+data class DefaultMetricRepresentation(
     val name: String,
     val description: String,
     val group: String,
-    val value: Number,
+    override val value: Number,
     val parameters: List<ParameterSpecRepresentation<*>>,
-)
+) : MetricRepresentation
 
 data class ParameterSpecRepresentation<T>(
     val id: String,

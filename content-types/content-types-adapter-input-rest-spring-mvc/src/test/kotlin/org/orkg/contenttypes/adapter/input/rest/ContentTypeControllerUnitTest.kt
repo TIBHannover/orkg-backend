@@ -275,7 +275,6 @@ internal class ContentTypeControllerUnitTest : MockMvcBaseTest("content-types") 
             .accept(RESOURCE_JSON_V1)
             .perform()
             .andExpect(status().isOk)
-            .andPrint()
             .andExpectPage()
             .andExpectResource("$.content[0]") // only test first element, because jsonPath().value() aggregates fields to lists
             .andDo(

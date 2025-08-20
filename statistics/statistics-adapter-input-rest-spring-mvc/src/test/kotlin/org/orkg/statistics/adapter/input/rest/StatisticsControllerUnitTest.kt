@@ -7,10 +7,10 @@ import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.json.CommonJacksonModule
-import org.orkg.statistics.domain.SimpleMetric
-import org.orkg.statistics.domain.SingleValueParameterSpec
+import org.orkg.statistics.adapter.input.rest.mapping.MetricRepresentationAdapter.MetricResponseFormat
 import org.orkg.statistics.input.StatisticsUseCases
 import org.orkg.statistics.testing.fixtures.createMetrics
+import org.orkg.statistics.testing.fixtures.createSimpleMetric
 import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcBaseTest
@@ -20,10 +20,14 @@ import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
+import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.util.LinkedMultiValueMap
+
+val allowedMetricResponseFormatValues =
+    MetricResponseFormat.entries.sorted().joinToString(separator = ", ", prefix = "`", postfix = "`")
 
 @ContextConfiguration(
     classes = [StatisticsController::class, ExceptionTestConfiguration::class, CommonJacksonModule::class, FixedClockConfig::class]
@@ -90,20 +94,7 @@ internal class StatisticsControllerUnitTest : MockMvcBaseTest("statistics") {
     @Test
     @DisplayName("Given a metric, when fetched, then status is 200 OK and metric is returned")
     fun findMetricByGroupAndName() {
-        val intParameterSpec = SingleValueParameterSpec(
-            name = "parameter1",
-            description = "Description of the parameter.",
-            type = Int::class,
-            values = listOf(0, 1, 2, 3),
-            parser = { it.toInt() }
-        )
-        val metric = SimpleMetric(
-            name = "metric1",
-            description = "Description of the metric.",
-            group = "group1",
-            parameterSpecs = mapOf("filter" to intParameterSpec),
-            supplier = { 1 }
-        )
+        val metric = createSimpleMetric()
 
         every { service.findMetricByGroupAndName(metric.group, metric.name) } returns metric
 
@@ -121,6 +112,10 @@ internal class StatisticsControllerUnitTest : MockMvcBaseTest("statistics") {
                         parameterWithName("group").description("The name of the group of metrics."),
                         parameterWithName("name").description("The name of the metric.")
                     ),
+                    queryParameters(
+                        parameterWithName("response_format").description("The response format of the metric. Either of $allowedMetricResponseFormatValues. (optional, default: `${MetricResponseFormat.DEFAULT})`").optional(),
+                        parameterWithName("filter").ignored()
+                    ),
                     responseFields(
                         fieldWithPath("name").description("The name of the metric."),
                         fieldWithPath("description").description("The description of the metric."),
@@ -137,6 +132,21 @@ internal class StatisticsControllerUnitTest : MockMvcBaseTest("statistics") {
                 )
             )
             .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { service.findMetricByGroupAndName(metric.group, metric.name) }
+    }
+
+    @Test
+    fun `Given a metric, when fetched with slim reponse format, then status is 200 OK and metric is returned`() {
+        val metric = createSimpleMetric()
+
+        every { service.findMetricByGroupAndName(metric.group, metric.name) } returns metric
+
+        documentedGetRequestTo("/api/statistics/{group}/{name}", metric.group, metric.name)
+            .param("response_format", MetricResponseFormat.SLIM.name)
+            .perform()
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.value").value(metric.value(LinkedMultiValueMap()).toString()))
 
         verify(exactly = 1) { service.findMetricByGroupAndName(metric.group, metric.name) }
     }

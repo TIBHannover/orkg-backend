@@ -183,12 +183,12 @@ internal class TableControllerIntegrationTest : MockMvcBaseTest("tables") {
                 row.label shouldBe null
                 row.data.size shouldBe 2
                 row.data[0].shouldBeInstanceOf<LiteralReferenceRepresentation> { thing ->
-                    thing.id shouldBe null
+                    thing.id shouldNotBe null
                     thing.label shouldBe "header value"
                     thing.datatype shouldBe Literals.XSD.STRING.prefixedUri
                 }
                 row.data[1].shouldBeInstanceOf<LiteralReferenceRepresentation> { thing ->
-                    thing.id shouldBe null
+                    thing.id shouldNotBe null
                     thing.label shouldBe "other header name"
                     thing.datatype shouldBe Literals.XSD.STRING.prefixedUri
                 }
@@ -202,7 +202,7 @@ internal class TableControllerIntegrationTest : MockMvcBaseTest("tables") {
                     thing.classes shouldBe setOf(ThingId("Result"))
                 }
                 row.data[1].shouldBeInstanceOf<LiteralReferenceRepresentation> { thing ->
-                    thing.id shouldBe null
+                    thing.id shouldNotBe null
                     thing.label shouldBe "0.1"
                     thing.datatype shouldBe Literals.XSD.DECIMAL.prefixedUri
                 }

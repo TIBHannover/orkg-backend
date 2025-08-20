@@ -17,12 +17,12 @@ import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.Thing
 
 interface ThingReferenceRepresentationAdapter {
-    fun ThingReference.toThingReferenceRepresentation(): ThingReferenceRepresentation =
+    fun ThingReference.toThingReferenceRepresentation(maskLiteralId: Boolean = true): ThingReferenceRepresentation =
         when (this) {
             is ResourceReference -> toResourceReferenceRepresentation()
             is PredicateReference -> toPredicateReferenceRepresentation()
             is ClassReference -> toClassReferenceRepresentation()
-            is LiteralReference -> toLiteralReferenceRepresentation()
+            is LiteralReference -> toLiteralReferenceRepresentation(maskLiteralId)
         }
 
     fun ResourceReference.toResourceReferenceRepresentation(): ResourceReferenceRepresentation =
@@ -34,15 +34,15 @@ interface ThingReferenceRepresentationAdapter {
     fun ClassReference.toClassReferenceRepresentation(): ClassReferenceRepresentation =
         ClassReferenceRepresentation(id, label, uri)
 
-    fun LiteralReference.toLiteralReferenceRepresentation(): LiteralReferenceRepresentation =
-        LiteralReferenceRepresentation(label, datatype)
+    fun LiteralReference.toLiteralReferenceRepresentation(maskId: Boolean = true): LiteralReferenceRepresentation =
+        LiteralReferenceRepresentation(id.takeUnless { maskId }, label, datatype)
 
-    fun Thing.toThingReferenceRepresentation(): ThingReferenceRepresentation =
+    fun Thing.toThingReferenceRepresentation(maskLiteralId: Boolean = true): ThingReferenceRepresentation =
         when (this) {
             is Resource -> toResourceReferenceRepresentation()
             is Predicate -> toPredicateReferenceRepresentation()
             is Class -> toClassReferenceRepresentation()
-            is Literal -> toLiteralReferenceRepresentation()
+            is Literal -> toLiteralReferenceRepresentation(maskLiteralId)
         }
 
     fun Resource.toResourceReferenceRepresentation(): ResourceReferenceRepresentation =
@@ -54,6 +54,6 @@ interface ThingReferenceRepresentationAdapter {
     fun Class.toClassReferenceRepresentation(): ClassReferenceRepresentation =
         ClassReferenceRepresentation(id, label, uri)
 
-    fun Literal.toLiteralReferenceRepresentation(): LiteralReferenceRepresentation =
-        LiteralReferenceRepresentation(label, datatype)
+    fun Literal.toLiteralReferenceRepresentation(maskId: Boolean = true): LiteralReferenceRepresentation =
+        LiteralReferenceRepresentation(id.takeUnless { maskId }, label, datatype)
 }

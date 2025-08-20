@@ -33,6 +33,6 @@ interface TableRepresentationAdapter : ThingReferenceRepresentationAdapter {
     fun Row.toRowRepresentation(): RowRepresentation =
         RowRepresentation(
             label = label,
-            data = data.map { thing -> thing?.let { ThingReference.from(it).toThingReferenceRepresentation() } }
+            data = data.map { thing -> thing?.let { ThingReference.from(it, false).toThingReferenceRepresentation(false) } }
         )
 }

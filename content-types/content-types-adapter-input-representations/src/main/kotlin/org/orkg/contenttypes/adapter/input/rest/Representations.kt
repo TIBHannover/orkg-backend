@@ -672,10 +672,11 @@ data class ClassReferenceRepresentation(
 @JsonTypeName("literal_ref")
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class LiteralReferenceRepresentation(
+    override val id: ThingId?,
     override val label: String,
     val datatype: String,
 ) : ThingReferenceRepresentation {
-    override val id: ThingId? get() = null
+    constructor(label: String, datatype: String) : this(null, label, datatype)
 }
 
 data class StatementListRepresentation(val statements: List<StatementRepresentation>) {

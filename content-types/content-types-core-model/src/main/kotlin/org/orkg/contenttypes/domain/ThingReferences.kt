@@ -13,11 +13,11 @@ sealed interface ThingReference {
     val label: String
 
     companion object {
-        fun from(thing: Thing): ThingReference =
+        fun from(thing: Thing, maskLiteralId: Boolean = true): ThingReference =
             when (thing) {
                 is Resource -> ResourceReference(thing)
                 is Class -> ClassReference(thing)
-                is Literal -> LiteralReference(thing)
+                is Literal -> LiteralReference(thing, maskLiteralId)
                 is Predicate -> PredicateReference(thing)
             }
     }
@@ -47,12 +47,12 @@ data class ClassReference(
 }
 
 data class LiteralReference(
+    override val id: ThingId?,
     override val label: String,
     val datatype: String,
 ) : ThingReference {
-    constructor(literal: Literal) : this(literal.label, literal.datatype)
-
-    override val id: ThingId? get() = null
+    constructor(literal: Literal, maskId: Boolean = true) :
+        this(literal.id.takeUnless { maskId }, literal.label, literal.datatype)
 }
 
 inline val Set<ThingReference>.ids get() = mapNotNullTo(mutableSetOf()) { it.id }

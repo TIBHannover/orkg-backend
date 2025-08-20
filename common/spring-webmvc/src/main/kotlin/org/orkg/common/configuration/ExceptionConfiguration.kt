@@ -1,7 +1,7 @@
 package org.orkg.common.configuration
 
 import org.orkg.common.exceptions.ErrorController
-import org.orkg.common.exceptions.ErrorResponseCustomizer
+import org.orkg.common.exceptions.ProblemResponseFactory
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorViewResolver
 import org.springframework.boot.web.servlet.error.ErrorAttributes
@@ -31,15 +31,13 @@ class ExceptionConfiguration {
     fun errorController(
         errorAttributes: ErrorAttributes,
         errorViewResolvers: ObjectProvider<ErrorViewResolver>,
-        errorResponseCustomizers: List<ErrorResponseCustomizer<*>>,
-        messageSource: MessageSource,
+        problemResponseFactory: ProblemResponseFactory,
         clock: Clock,
     ): ErrorController =
         ErrorController(
             errorAttributes = errorAttributes,
+            problemResponseFactory = problemResponseFactory,
             errorViewResolvers = errorViewResolvers.orderedStream().toList(),
-            messageSource = messageSource,
-            errorResponseCustomizers = errorResponseCustomizers,
             clock = clock
         )
 }

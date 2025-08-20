@@ -6,49 +6,35 @@ import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.web.servlet.error.AbstractErrorController
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorViewResolver
 import org.springframework.boot.web.servlet.error.ErrorAttributes
-import org.springframework.context.MessageSource
-import org.springframework.context.i18n.LocaleContextHolder
-import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ProblemDetail
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
-import org.springframework.util.ConcurrentLruCache
-import org.springframework.web.ErrorResponse
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.context.request.RequestAttributes
 import org.springframework.web.context.request.ServletWebRequest
 import org.springframework.web.util.ContentCachingRequestWrapper
 import org.springframework.web.util.WebUtils
-import java.net.URI
 import java.time.Clock
 import java.time.OffsetDateTime
-import kotlin.reflect.KClass
-import kotlin.reflect.full.isSubclassOf
 
 @Controller
 @RequestMapping("\${server.error.path:\${error.path:/error}}")
 class ErrorController(
     private val errorAttributes: ErrorAttributes,
+    private val problemResponseFactory: ProblemResponseFactory,
     errorViewResolvers: List<ErrorViewResolver>,
-    private val messageSource: MessageSource?,
-    private val errorResponseCustomizers: List<ErrorResponseCustomizer<*>>,
     private val clock: Clock,
 ) : AbstractErrorController(errorAttributes, errorViewResolvers) {
     private val logger = LoggerFactory.getLogger(this::class.java.name)
-    private val errorResponseCustomizerCache = ConcurrentLruCache<KClass<out Throwable>, ErrorResponseCustomizer<Throwable>>(24) {
-        getErrorResponseCustomizer(it) ?: ErrorResponseCustomizer.DEFAULT
-    }
 
     @RequestMapping
     fun error(request: HttpServletRequest): ResponseEntity<Map<String, Any?>> {
         val servletWebRequest = ServletWebRequest(request)
         val exception = errorAttributes.getError(servletWebRequest)
         val instance = servletWebRequest.getAttribute(RequestDispatcher.ERROR_REQUEST_URI, RequestAttributes.SCOPE_REQUEST) as? String
-        val problemDetail = buildProblemDetail(exception, request, instance)
-        val httpHeaders = HttpHeaders()
-        errorResponseCustomizerCache.get(exception::class).customize(exception, problemDetail, httpHeaders)
+        val (httpHeaders, problemDetail) = problemResponseFactory.createProblemResponse(exception, getStatus(request), instance)
 
         if (exception is LoggedMessageException || problemDetail.status == HttpStatus.INTERNAL_SERVER_ERROR.value()) {
             if (exception is ServiceUnavailable) {
@@ -77,38 +63,6 @@ class ErrorController(
         if (value != null && properties?.contains(legacyFieldName) != true) {
             setProperty(legacyFieldName, value)
         }
-    }
-
-    private fun buildProblemDetail(
-        exception: Throwable?,
-        request: HttpServletRequest,
-        instance: String?,
-    ): ProblemDetail {
-        val problemDetail = if (exception is ErrorResponse) {
-            exception.updateAndGetBody(messageSource, LocaleContextHolder.getLocale())
-        } else {
-            val status = getStatus(request)
-            ProblemDetail.forStatus(status).apply {
-                title = status.reasonPhrase
-            }
-        }
-        if (problemDetail.title == null) {
-            problemDetail.title = (HttpStatus.resolve(problemDetail.status) ?: HttpStatus.INTERNAL_SERVER_ERROR).reasonPhrase
-        }
-        if (problemDetail.instance == null && instance != null) {
-            problemDetail.instance = URI.create(instance)
-        }
-        return problemDetail
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    private fun getErrorResponseCustomizer(ex: KClass<out Throwable>): ErrorResponseCustomizer<Throwable>? {
-        val matches = errorResponseCustomizers.filterTo(mutableListOf()) { ex.isSubclassOf(it.type) }
-        if (matches.size > 1) {
-            val comparator = KExceptionDepthComparator(ex)
-            matches.sortWith { a, b -> comparator.compare(a.type, b.type) }
-        }
-        return matches.firstOrNull() as? ErrorResponseCustomizer<Throwable>
     }
 
     private fun logException(throwable: Throwable, request: HttpServletRequest, path: String) {

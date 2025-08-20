@@ -30,6 +30,7 @@ testing {
         val test by getting(JvmTestSuite::class) {
             dependencies {
                 implementation(project(":common:serialization"))
+                implementation(testFixtures(project(":common:testing")))
                 implementation(testFixtures(project(":testing:spring")))
                 implementation("io.kotest:kotest-assertions-shared")
                 implementation("org.hamcrest:hamcrest")

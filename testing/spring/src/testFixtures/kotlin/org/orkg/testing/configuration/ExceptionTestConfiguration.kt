@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest
 import org.orkg.common.configuration.ErrorResponseCustomizers
 import org.orkg.common.configuration.ExceptionConfiguration
 import org.orkg.common.exceptions.ErrorController
+import org.orkg.common.exceptions.ProblemResponseFactory
 import org.springframework.context.annotation.Import
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler
  * See https://github.com/spring-projects/spring-boot/issues/5574
  */
 @ControllerAdvice
-@Import(ErrorResponseCustomizers::class, ExceptionConfiguration::class)
+@Import(ErrorResponseCustomizers::class, ExceptionConfiguration::class, ProblemResponseFactory::class)
 class ExceptionTestConfiguration(private val errorController: ErrorController) {
     @ExceptionHandler(Throwable::class)
     fun defaultErrorHandler(request: HttpServletRequest): ResponseEntity<*> {

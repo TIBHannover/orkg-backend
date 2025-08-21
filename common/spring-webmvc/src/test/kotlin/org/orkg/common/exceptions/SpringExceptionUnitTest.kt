@@ -12,6 +12,7 @@ import org.springframework.data.util.TypeInformation
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED
 import org.springframework.http.HttpStatus.NOT_ACCEPTABLE
@@ -24,6 +25,7 @@ import org.springframework.http.converter.HttpMessageNotWritableException
 import org.springframework.mock.http.client.MockClientHttpResponse
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
+import org.springframework.security.access.AccessDeniedException
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.validation.MapBindingResult
@@ -274,5 +276,14 @@ internal class SpringExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Failed to convert 'null' with value: 'null'""")
             .andDocumentWithDefaultExceptionResponseFields()
+    }
+
+    @Test
+    fun accessDeniedException() {
+        documentedGetRequestTo(AccessDeniedException("Access denied!"))
+            .andExpectErrorStatus(FORBIDDEN)
+            .andExpectType("orkg:problem:access_denied")
+            .andExpectTitle("Forbidden")
+            .andDocumentWithoutDetailExceptionResponseFields()
     }
 }

@@ -25,6 +25,7 @@ import org.springframework.web.HttpMediaTypeNotSupportedException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
 import java.net.URI
+import java.net.URISyntaxException
 
 @Configuration
 class ErrorResponseCustomizers {
@@ -127,6 +128,27 @@ class ErrorResponseCustomizers {
                 defaultDetail = "Failed to convert '${args[0]}' with value: '${args[1]}'",
                 args = args,
             )
+        }
+
+    @Bean
+    fun illegalArgumentExceptionCustomizer() =
+        errorResponseCustomizer<IllegalArgumentException> { ex, problemDetail, _ ->
+            when (ex.cause) {
+                is URISyntaxException -> {
+                    problemDetail.type = createProblemURI("invalid_iri")
+                    problemDetail.title = BAD_REQUEST.reasonPhrase
+                    problemDetail.status = BAD_REQUEST.value()
+                    problemDetail.detail = ex.message
+                    problemDetail.setProperty("iri", (ex.cause as URISyntaxException).input)
+                }
+            }
+        }
+
+    @Bean
+    fun uriSyntaxExceptionCustomizer() =
+        errorResponseCustomizer<URISyntaxException>("invalid_iri", BAD_REQUEST) { ex, problemDetail, _ ->
+            problemDetail.detail = ex.message
+            problemDetail.setProperty("iri", ex.input)
         }
 
     private inline fun <reified T : Throwable> customizeSpringException(

@@ -14,6 +14,7 @@ import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
+import java.net.URISyntaxException
 
 @ContextConfiguration(classes = [CommonSpringConfig::class])
 internal class ExceptionUnitTest : MockMvcExceptionBaseTest() {
@@ -153,5 +154,32 @@ internal class ExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Unauthorized")
             .andExpectDetail("""Unauthorized.""")
             .andDocumentWithDefaultExceptionResponseFields()
+    }
+
+    @Test
+    fun uriSyntaxException() {
+        get(URISyntaxException("http://example.org:-80", "Invalid URI"))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:invalid_iri")
+            .andExpectTitle("Bad Request")
+            .andExpectDetail("""Invalid URI: http://example.org:-80""")
+            .andExpect(jsonPath("$.iri", `is`("http://example.org:-80")))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields()).and(
+                        fieldWithPath("iri").description("The provided iri.")
+                    )
+                )
+            )
+    }
+
+    @Test
+    fun illegalArgumentException_causedByURISyntaxException() {
+        get(IllegalArgumentException("Invalid URI: http://example.org:-80", URISyntaxException("http://example.org:-80", "Invalid URI")))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType("orkg:problem:invalid_iri")
+            .andExpectTitle("Bad Request")
+            .andExpectDetail("""Invalid URI: http://example.org:-80""")
+            .andExpect(jsonPath("$.iri", `is`("http://example.org:-80")))
     }
 }

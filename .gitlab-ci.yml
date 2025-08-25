@@ -92,6 +92,13 @@ dummy_doc_build:
   extends: .build_documentation
   rules:
     - if: $CI_COMMIT_REF_NAME != $CI_DEFAULT_BRANCH
+  artifacts:
+    name: documentation
+    expose_as: documentation
+    expire_in: 3 mos
+    when: always
+    paths:
+      - documentation/build/docs/asciidoc/
 
 # Deploy documentation to GitLab Pages.
 pages:

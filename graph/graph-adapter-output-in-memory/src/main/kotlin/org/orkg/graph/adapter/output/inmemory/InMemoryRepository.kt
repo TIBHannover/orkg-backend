@@ -1,12 +1,11 @@
 package org.orkg.graph.adapter.output.inmemory
 
+import org.orkg.common.paged
 import org.orkg.graph.output.EntityRepository
 import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageImpl
-import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 
-abstract class InMemoryRepository<ID, T>(
+abstract class InMemoryRepository<ID, T : Any>(
     private val defaultComparator: Comparator<T>,
 ) : EntityRepository<T, ID> {
     abstract val entities: InMemoryEntityAdapter<ID, T>
@@ -42,15 +41,4 @@ interface InMemoryEntityAdapter<ID, T> : Iterable<T> {
     operator fun set(key: ID, value: T): T?
 
     override fun iterator(): Iterator<T> = values.iterator()
-}
-
-fun <T> List<T>.paged(pageable: Pageable): PageImpl<T> {
-    val content = this
-        .drop(pageable.pageNumber * pageable.pageSize)
-        .take(pageable.pageSize)
-    return PageImpl(
-        content,
-        PageRequest.of(pageable.pageNumber, pageable.pageSize),
-        this.size.toLong()
-    )
 }

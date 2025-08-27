@@ -9,4 +9,6 @@ dependencies {
     api(project(":data-import:data-import-core-model"))
 
     testFixturesApi(project(":data-import:data-import-ports-input"))
+    testFixturesImplementation(project(":data-import:data-import-core-model"))
+    testFixturesImplementation(testFixtures(project(":common:testing")))
 }

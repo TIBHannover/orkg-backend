@@ -8,10 +8,14 @@ dependencies {
     api("org.springframework:spring-web")
     api(project(":common:core-identifiers"))
     api(project(":common:spring-webmvc"))
+    implementation("dev.forkhandles:values4k")
+    implementation(project(":common:external-identifiers"))
     implementation(project(":graph:graph-core-constants"))
+    implementation(project(":graph:graph-core-model"))
 
     testFixturesImplementation(project(":common:core-identifiers"))
     testFixturesImplementation(project(":graph:graph-core-constants"))
+    testFixturesImplementation(testFixtures(project(":common:testing")))
 }
 
 testing {

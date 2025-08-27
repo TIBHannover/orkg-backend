@@ -37,6 +37,9 @@ orkg:
     reply-to:
       email: ""
       display-name: ""
+  import:
+    csv:
+      enabled: true
   export:
     rdf:
       # cron schedule for the rdf-dump

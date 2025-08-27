@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
     api("org.springframework.data:spring-data-commons")
+    implementation("org.springframework:spring-beans")
 }
 
 testing {
@@ -12,6 +13,7 @@ testing {
         val test by getting(JvmTestSuite::class) {
             dependencies {
                 implementation(testFixtures(project(":testing:spring")))
+                implementation("io.kotest:kotest-assertions-shared")
                 implementation("org.junit.jupiter:junit-jupiter-api")
                 implementation("org.springframework.boot:spring-boot-test")
                 implementation("org.springframework.boot:spring-boot-test-autoconfigure")

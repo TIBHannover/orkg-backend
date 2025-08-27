@@ -99,6 +99,9 @@ include(
     "data-import:data-import-core-model",
     "data-import:data-import-core-services",
     "data-import:data-import-ports-input",
+    "data-import:data-import-ports-output",
+    "data-import:data-import-adapter-output-in-memory",
+    "data-import:data-import-adapter-output-spring-data-jpa",
 )
 include(
     "profiling:profiling-core-model",

@@ -6,6 +6,12 @@ include::appendix/representations.adoc[leveloffset=+1]
 [[sorting-and-pagination]]
 include::appendix/sorting-and-pagination.adoc[leveloffset=+1]
 
+[[csv-types]]
+include::appendix/csv-types.adoc[leveloffset=+1]
+
+[[csv-formats]]
+include::appendix/csv-formats.adoc[leveloffset=+1]
+
 [[identifiers]]
 include::appendix/identifiers.adoc[leveloffset=+1]
 

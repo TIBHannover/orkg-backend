@@ -1,0 +1,9 @@
+= CSV Types
+
+The following CSV types are supported:
+
+[options="header"]
+|===============================
+| Type    | Description
+| `PAPER` | A CSV file that contains papers that can be imported into {orkg}. A detailed explanation on the format can be found https://orkg.org/help-center/article/16/Import_CSV_files_in_ORKG[here].
+|===============================

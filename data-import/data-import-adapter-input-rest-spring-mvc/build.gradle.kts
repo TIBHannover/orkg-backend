@@ -14,10 +14,10 @@ dependencies {
     api("org.springframework:spring-context")
     api("org.springframework:spring-web")
     api("com.fasterxml.jackson.core:jackson-databind")
+    api(project(":common:core-identifiers"))
     api(project(":common:spring-webmvc"))
     api(project(":data-import:data-import-ports-input"))
     api(project(":data-import:data-import-core-model"))
-    implementation(project(":common:core-identifiers"))
 }
 
 testing {
@@ -25,15 +25,18 @@ testing {
         val test by getting(JvmTestSuite::class) {
             dependencies {
                 implementation("com.ninja-squad:springmockk")
+                implementation("io.kotest:kotest-assertions-shared")
                 implementation("io.mockk:mockk-dsl")
                 implementation("io.mockk:mockk-jvm")
                 implementation("jakarta.servlet:jakarta.servlet-api")
+                implementation("org.hamcrest:hamcrest")
                 implementation("org.junit.jupiter:junit-jupiter-api")
                 implementation("org.springframework:spring-test")
                 implementation("org.springframework.boot:spring-boot-test-autoconfigure")
                 implementation("org.springframework.restdocs:spring-restdocs-core")
                 implementation("org.springframework.restdocs:spring-restdocs-mockmvc")
                 implementation(project(":common:serialization"))
+                implementation(testFixtures(project(":common:testing")))
                 implementation(testFixtures(project(":data-import:data-import-core-model")))
                 implementation(testFixtures(project(":testing:spring")))
                 runtimeOnly("com.jayway.jsonpath:json-path")

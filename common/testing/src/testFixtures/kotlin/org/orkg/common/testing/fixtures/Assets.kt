@@ -18,6 +18,8 @@ object Assets {
 
     fun png(name: String): ByteArray = fileContents("images/$name.png")
 
+    fun csv(name: String): String = fileContents("csvs/$name.csv").decodeToString()
+
     private fun fileContents(name: String): ByteArray =
         ClassPathResource(URI.create("classpath:/assets/$name").path).inputStream.use { it.readBytes() }
 }

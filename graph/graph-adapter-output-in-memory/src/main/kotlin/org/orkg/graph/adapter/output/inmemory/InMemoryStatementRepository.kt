@@ -5,6 +5,7 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.UnknownSortingProperty
+import org.orkg.common.paged
 import org.orkg.common.withDefaultSort
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Class

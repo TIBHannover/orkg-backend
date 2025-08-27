@@ -1,0 +1,11 @@
+= CSV Formats
+
+The following CSV formats are supported:
+
+[options="header"]
+|===============================
+| Format                      | Delimiter | Quote | Record Separator | Ignores Empty Lines
+| `DEFAULT`                   | `,`       | `"`   | `\r\n`           | `true`
+| `EXCEL_COMMA_DELIMITED`     | `,`       | `"`   | `\r\n`           | `false`
+| `EXCEL_SEMICOLON_DELIMITED` | `;`       | `"`   | `\r\n`           | `false`
+|===============================

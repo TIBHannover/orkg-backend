@@ -1,0 +1,100 @@
+= CSV Import
+
+A CSV is a comma separated list of values.
+They can be used to import data into the {orkg}.
+There are three workflow stages for a CSV:
+
+[mermaid]
+----
+stateDiagram-v2
+    direction LR
+    [*] --> UPLOADED
+    state "Stage 1: Upload" as UploadedStage {
+        UPLOADED --> VALIDATION_QUEUED : validate
+    }
+    state "Stage 2: Validation" as ValidationStage {
+        VALIDATION_QUEUED --> VALIDATION_RUNNING
+        VALIDATION_RUNNING --> VALIDATION_STOPPED
+        VALIDATION_RUNNING --> VALIDATION_DONE
+        VALIDATION_RUNNING --> VALIDATION_FAILED
+        VALIDATION_DONE --> IMPORT_QUEUED : import
+        VALIDATION_STOPPED --> VALIDATION_QUEUED
+    }
+    state "Stage 3: Import" as ImportStage {
+        IMPORT_QUEUED --> IMPORT_RUNNING
+        IMPORT_RUNNING --> IMPORT_STOPPED
+        IMPORT_RUNNING --> IMPORT_DONE
+        IMPORT_RUNNING --> IMPORT_FAILED
+        IMPORT_STOPPED --> IMPORT_QUEUED
+    }
+    VALIDATION_FAILED --> [*]
+    IMPORT_FAILED --> [*]
+    IMPORT_DONE --> [*]
+----
+
+[[csvs-fetch]]
+== Fetching CSVs
+
+A `GET` request provides information about a CSV.
+
+[NOTE]
+====
+1. This endpoint requires authentication.
+2. Only CSVs created by the active user can be fetched.
+3. Contents of a CSV need to be fetched separately. See <<csvs-data,Fetching CSV data>>.
+====
+
+operation::csvs-get-single[snippets='path-parameters,curl-request,http-response,response-fields']
+
+[[csvs-fetch-data]]
+== Fetching CSV data
+
+A `GET` request provides information about the contents of a CSV.
+
+operation::csvs-get-single-data[snippets='path-parameters,curl-request,http-response']
+
+[[csvs-list]]
+== Listing CSVs
+
+A `GET` request returns a <<sorting-and-pagination,paged>> list of <<csvs-fetch,CSVs>> of the current user.
+If no paging request parameters are provided, the default values will be used.
+
+[NOTE]
+====
+1. This endpoint requires authentication.
+2. Only CSVs created by the active user can be listed.
+3. Contents of each CSV need to be fetched separately. See <<csvs-data,Fetching CSV data>>.
+====
+
+operation::csvs-get-paged[snippets='curl-request']
+
+[[csvs-create]]
+== Creating CSVs
+
+A `POST` request creates a new CSV.
+The response status will be `201 Created` when successful.
+The CSV can be retrieved by following the URI in the `Location` header field.
+
+operation::csvs-create[snippets='request-parts,curl-request,response-headers,http-response']
+
+[[csvs-update]]
+== Updating CSVs
+
+A `PUT` request updates an existing CSV.
+The response status will be `204 No Content` when successful.
+
+[NOTE]
+====
+1. A CSV can only be updated as long as the import was not started yet.
+2. Updating a CSV will reset the state of the CSV to `UPLOADED`.
+====
+
+operation::csvs-update[snippets='path-parameters,request-parts,curl-request,http-response']
+
+[[csvs-delete]]
+== Deleting CSVs
+
+A `DELETE` request deletes a CSV associated with the given id.
+The response status will be `204 NO CONTENT` when successful.
+
+operation::csvs-delete[snippets='path-parameters,curl-request,http-response']

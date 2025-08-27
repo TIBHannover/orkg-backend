@@ -10,6 +10,8 @@ import org.orkg.testing.configuration.SecurityTestConfiguration
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
 import org.springframework.http.HttpMethod.PATCH
+import org.springframework.http.HttpMethod.POST
+import org.springframework.http.HttpMethod.PUT
 import org.springframework.http.MediaType
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.restdocs.RestDocumentationContextProvider
@@ -114,6 +116,14 @@ abstract class MockMvcBaseTest(val prefix: String) : MockkBaseTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .characterEncoding(Charsets.UTF_8.name())
 
+        fun postMultipart(urlTemplate: String, vararg uriVariables: Any): MockMultipartHttpServletRequestBuilder =
+            multipart(POST, urlTemplate, *uriVariables)
+                .characterEncoding(Charsets.UTF_8.name()) as MockMultipartHttpServletRequestBuilder
+
+        fun documentedPostMultipart(urlTemplate: String, vararg uriVariables: Any): MockMultipartHttpServletRequestBuilder =
+            postMultipart(urlTemplate, *uriVariables)
+                .requestAttr(RestDocumentationGenerator.ATTRIBUTE_NAME_URL_TEMPLATE, urlTemplate) as MockMultipartHttpServletRequestBuilder
+
         fun put(urlTemplate: String, vararg uriVariables: Any): MockHttpServletRequestBuilder =
             MockMvcRequestBuilders.put(urlTemplate, *uriVariables)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -125,6 +135,14 @@ abstract class MockMvcBaseTest(val prefix: String) : MockkBaseTest {
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .characterEncoding(Charsets.UTF_8.name())
+
+        fun putMultipart(urlTemplate: String, vararg uriVariables: Any): MockMultipartHttpServletRequestBuilder =
+            multipart(PUT, urlTemplate, *uriVariables)
+                .characterEncoding(Charsets.UTF_8.name()) as MockMultipartHttpServletRequestBuilder
+
+        fun documentedPutMultipart(urlTemplate: String, vararg uriVariables: Any): MockMultipartHttpServletRequestBuilder =
+            putMultipart(urlTemplate, *uriVariables)
+                .requestAttr(RestDocumentationGenerator.ATTRIBUTE_NAME_URL_TEMPLATE, urlTemplate) as MockMultipartHttpServletRequestBuilder
 
         fun patch(urlTemplate: String, vararg uriVariables: Any): MockHttpServletRequestBuilder =
             MockMvcRequestBuilders.patch(urlTemplate, *uriVariables)

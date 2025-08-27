@@ -3,6 +3,7 @@ package org.orkg.dataimport.domain
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.SimpleMessageException
 import org.orkg.common.exceptions.createProblemURI
+import org.orkg.dataimport.domain.csv.CSVID
 import org.orkg.dataimport.domain.jobs.JobId
 import org.springframework.http.HttpStatus
 import org.springframework.http.ProblemDetail
@@ -14,6 +15,36 @@ data class JobException(
         message = null,
         type = createProblemURI("job_execution_exception"),
         properties = mapOf("errors" to problemDetails),
+    )
+
+class CSVAlreadyExists :
+    SimpleMessageException(
+        status = HttpStatus.BAD_REQUEST,
+        message = "A CSV with the same data already exists.",
+        type = createProblemURI("csv_already_exists"),
+    )
+
+class CSVCannotBeBlank :
+    SimpleMessageException(
+        status = HttpStatus.BAD_REQUEST,
+        message = "The CSV can not be blank.",
+        type = createProblemURI("csv_cannot_be_blank"),
+    )
+
+class CSVNotFound(csvId: CSVID) :
+    SimpleMessageException(
+        status = HttpStatus.NOT_FOUND,
+        message = """CSV "$csvId" not found.""",
+        type = createProblemURI("csv_not_found"),
+        properties = mapOf("csv_id" to csvId)
+    )
+
+class CSVAlreadyImported(csvId: CSVID) :
+    SimpleMessageException(
+        status = HttpStatus.BAD_REQUEST,
+        message = """CSV "$csvId" was already imported.""",
+        type = createProblemURI("csv_already_imported"),
+        properties = mapOf("csv_id" to csvId)
     )
 
 class JobNotFound(jobId: JobId) :

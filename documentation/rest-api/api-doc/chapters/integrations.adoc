@@ -3,6 +3,9 @@
 [[rdf-integration]]
 include::integrations/rdf.adoc[leveloffset=+1]
 
+[[csv-import]]
+include::integrations/csv-import.adoc[leveloffset=+1]
+
 [[widget]]
 include::integrations/widget.adoc[leveloffset=+1]
 

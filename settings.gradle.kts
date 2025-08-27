@@ -98,6 +98,7 @@ include(
     "data-import:data-import-adapter-input-rest-spring-mvc",
     "data-import:data-import-core-model",
     "data-import:data-import-core-services",
+    "data-import:data-import-ports-input",
 )
 include(
     "profiling:profiling-core-model",

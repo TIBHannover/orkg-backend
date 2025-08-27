@@ -3,7 +3,70 @@ package org.orkg.dataimport.domain
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.SimpleMessageException
 import org.orkg.common.exceptions.createProblemURI
+import org.orkg.dataimport.domain.jobs.JobId
 import org.springframework.http.HttpStatus
+import org.springframework.http.ProblemDetail
+
+data class JobException(
+    val problemDetails: List<ProblemDetail> = emptyList(),
+) : SimpleMessageException(
+        status = HttpStatus.BAD_REQUEST,
+        message = null,
+        type = createProblemURI("job_execution_exception"),
+        properties = mapOf("errors" to problemDetails),
+    )
+
+class JobNotFound(jobId: JobId) :
+    SimpleMessageException(
+        status = HttpStatus.NOT_FOUND,
+        message = """Job "$jobId" not found.""",
+        properties = mapOf("job_id" to jobId)
+    )
+
+class JobResultNotFound(jobId: JobId) :
+    SimpleMessageException(
+        status = HttpStatus.NOT_FOUND,
+        message = """Result for job "$jobId" not found.""",
+        properties = mapOf("job_id" to jobId)
+    )
+
+class JobNotComplete(jobId: JobId) :
+    SimpleMessageException(
+        status = HttpStatus.BAD_REQUEST,
+        message = """Job "$jobId" is not complete.""",
+        properties = mapOf("job_id" to jobId)
+    )
+
+class JobNotRunning(jobId: JobId) :
+    SimpleMessageException(
+        status = HttpStatus.BAD_REQUEST,
+        message = """Job "$jobId" is not running.""",
+        properties = mapOf("job_id" to jobId)
+    )
+
+class JobAlreadyRunning(jobId: JobId) :
+    SimpleMessageException(
+        status = HttpStatus.BAD_REQUEST,
+        message = """Job "$jobId" is already running.""",
+        properties = mapOf("job_id" to jobId)
+    )
+
+class JobAlreadyComplete(jobId: JobId) :
+    SimpleMessageException(
+        status = HttpStatus.BAD_REQUEST,
+        message = """Job "$jobId" is already complete.""",
+        properties = mapOf("job_id" to jobId)
+    )
+
+class JobRestartFailed(
+    jobId: JobId,
+    override val cause: Throwable,
+) : SimpleMessageException(
+        status = HttpStatus.BAD_REQUEST,
+        message = """Could not restart job "$jobId".""",
+        cause = cause,
+        properties = mapOf("job_id" to jobId)
+    )
 
 class DuplicateCSVHeaders(
     duplicateHeaders: Map<String, List<Long>>,

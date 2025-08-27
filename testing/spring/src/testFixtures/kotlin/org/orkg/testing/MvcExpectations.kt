@@ -485,3 +485,9 @@ fun ResultActions.andExpectContributorIdentifier(path: String = "$"): ResultActi
     .andExpect(jsonPath("$path.type", `is`(notNullValue())))
     .andExpect(jsonPath("$path.value", `is`(notNullValue())))
     .andExpect(jsonPath("$path.created_at", `is`(notNullValue())))
+
+fun ResultActions.andExpectJobStatus(path: String = "$"): ResultActions = this
+    .andExpect(jsonPath("$path.job_id", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.job_name", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.context", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.status", `is`(notNullValue())))

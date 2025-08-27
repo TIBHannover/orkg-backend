@@ -168,6 +168,7 @@ dependencies {
     runtimeOnly(project(":data-import:data-import-adapter-input-rest-spring-mvc"))
     runtimeOnly(project(":data-import:data-import-core-model"))
     runtimeOnly(project(":data-import:data-import-core-services"))
+    runtimeOnly(project(":data-import:data-import-ports-input"))
 
     runtimeOnly(project(":widget"))
 

@@ -24,6 +24,11 @@ spring:
     username: ""
     password: ""
     protocol: smtp
+  batch:
+    job:
+      enabled: false
+    jdbc:
+      initialize-schema: never
 orkg:
   mail:
     from:
@@ -98,6 +103,7 @@ orkg:
     registration-endpoint: "${orkg.keycloak.host}/realms/${orkg.keycloak.realm}/clients-registrations/openid-connect"
   concurrent:
     task-scheduler-thread-pool-size: 3
+    job-executor-thread-pool-size: 2
   handles:
     prefix: "20.500.14488"
     admin-handle: "20.500.14488/ADMIN"

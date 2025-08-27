@@ -8,6 +8,7 @@ import org.hamcrest.Matchers.notNullValue
 import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.restdocs.exceptionResponseFields
+import org.orkg.testing.spring.restdocs.exceptionResponseFieldsWithoutDetail
 import org.orkg.testing.spring.restdocs.validationExceptionResponseFields
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestComponent
@@ -65,10 +66,8 @@ abstract class MockMvcExceptionBaseTest : MockMvcBaseTest("errors") {
     protected final fun ResultActions.andDocumentWithDefaultExceptionResponseFields() =
         andDo(documentationHandler.document(responseFields(exceptionResponseFields())))
 
-    protected final fun ResultActions.andDocumentWithoutDetailExceptionResponseFields(): ResultActions {
-        val fieldDescriptors = exceptionResponseFields().filter { it.path != "detail" && it.path != "message" }
-        return andDo(documentationHandler.document(responseFields(fieldDescriptors)))
-    }
+    protected final fun ResultActions.andDocumentWithoutDetailExceptionResponseFields(): ResultActions =
+        andDo(documentationHandler.document(responseFields(exceptionResponseFieldsWithoutDetail())))
 
     protected final fun ResultActions.andDocumentWithValidationExceptionResponseFields() =
         andDo(documentationHandler.document(responseFields(validationExceptionResponseFields())))

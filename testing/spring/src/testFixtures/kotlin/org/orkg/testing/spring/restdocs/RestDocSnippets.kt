@@ -65,6 +65,9 @@ fun exceptionResponseFields() = listOf(
     fieldWithPath("timestamp").description("The <<timestamp-representation,timestamp>> of when the error happened.").deprecated(),
 )
 
+fun exceptionResponseFieldsWithoutDetail() =
+    exceptionResponseFields().filter { it.path != "detail" && it.path != "message" }
+
 fun validationExceptionResponseFields() = listOf(
     fieldWithPath("type").description("A URI reference that identifies the problem type."),
     fieldWithPath("status").description("The HTTP status code of the error. This is equal to the status code of the request itself and MUST only be used for display purposes."),

@@ -4,9 +4,10 @@ plugins {
 }
 
 dependencies {
+    api("org.springframework.batch:spring-batch-core")
+    api("org.springframework:spring-web")
     api(project(":common:core-identifiers"))
     api(project(":common:spring-webmvc"))
-    implementation("org.springframework:spring-web")
     implementation(project(":graph:graph-core-constants"))
 
     testFixturesImplementation(project(":common:core-identifiers"))

@@ -1,0 +1,34 @@
+= Jobs
+
+Jobs are long running, asynchronous tasks that allow processing of large amounts of data.
+
+[[jobs-fetch-status]]
+== Fetching Job status
+
+A `GET` request provides information about a job.
+
+operation::jobs-get-status[snippets='path-parameters,curl-request,http-response,response-fields']
+
+[[jobs-fetch-results]]
+== Fetching Job results
+
+A `GET` request provides information about a the results of a job.
+
+[NOTE]
+====
+Results are only available for completed jobs.
+====
+
+operation::jobs-get-results[snippets='path-parameters,curl-request,http-response']
+
+[[jobs-stop]]
+== Stopping Jobs
+
+A `DELETE` request attempts to stop a running job.
+The response will be `201 NO CONTENT` when successful.
+
+operation::jobs-stop[snippets='path-parameters,curl-request,http-response']
+
+=== Response fields
+
+Response fields are specific for each job type.

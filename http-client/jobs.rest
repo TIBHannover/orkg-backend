@@ -1,0 +1,11 @@
+### Fetch job status
+GET {{server_url}}/api/jobs/{{job_id}}
+Authorization: Bearer {{access_token}}
+
+### Fetch job result
+GET {{server_url}}/api/jobs/{{job_id}}/results
+Authorization: Bearer {{access_token}}
+
+### Stop job result
+DELETE {{server_url}}/api/jobs/{{job_id}}
+Authorization: Bearer {{access_token}}

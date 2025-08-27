@@ -20,9 +20,13 @@ import org.orkg.common.testing.fixtures.TestBodyPublisher
 import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.contenttypes.domain.configuration.DataCiteConfiguration
 import org.orkg.contenttypes.output.testing.fixtures.createRegisterDoiCommand
+import org.springframework.http.HttpHeaders.ACCEPT
 import org.springframework.http.MediaType
+import java.io.ByteArrayInputStream
+import java.io.InputStream
 import java.net.URI
 import java.net.http.HttpClient
+import java.net.http.HttpHeaders
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.util.Base64
@@ -33,6 +37,100 @@ internal class DataCiteDoiServiceAdapterUnitTest : MockkBaseTest {
     private val objectMapper = ObjectMapper().registerKotlinModule()
     private val adapter =
         DataCiteDoiServiceAdapter(dataciteConfiguration, objectMapper, httpClient, ::TestBodyPublisher, fixedClock)
+
+    @Test
+    fun `Given a doi, when fetching its associated metadata, and external service returns success, it returns the medatadata`() {
+        val doi = DOI.of("10.3897/rio.7.e68513")
+        // Mock HttpClient dsl
+        val response = mockk<HttpResponse<InputStream>>()
+        val responseHeaders = createResponseHeaders()
+        val body = responseJson("datacite/doiLookupSuccess")
+
+        every { httpClient.send(any(), any<HttpResponse.BodyHandler<InputStream>>()) } returns response
+        every { response.statusCode() } returns 200
+        every { response.headers() } returns HttpHeaders.of(responseHeaders) { _, _ -> true }
+        every { response.body() } returns ByteArrayInputStream(body.toByteArray())
+
+        val result = adapter.findMetadataByDoi(doi)
+        result.isPresent shouldBe true
+        result.get() shouldBe objectMapper.readTree(body)
+
+        verify(exactly = 1) {
+            httpClient.send(
+                withArg<HttpRequest> { request ->
+                    request.method() shouldBe "GET"
+                    request.headers().map() shouldContainAll mapOf(
+                        ACCEPT to listOf("application/vnd.citationstyles.csl+json")
+                    )
+                    request.uri() shouldBe URI.create(doi.uri)
+                },
+                any<HttpResponse.BodyHandler<InputStream>>()
+            )
+        }
+        verify(exactly = 1) { response.statusCode() }
+        verify(exactly = 1) { response.headers() }
+        verify(exactly = 1) { response.body() }
+    }
+
+    @Test
+    fun `Given a doi, when fetching its associated metadata, and external service returns an invalid content type, it returns an empty result`() {
+        val doi = DOI.of("10.1000/182")
+        // Mock HttpClient dsl
+        val response = mockk<HttpResponse<InputStream>>()
+        val responseHeaders = createResponseHeaders(MediaType.TEXT_HTML_VALUE)
+
+        every { httpClient.send(any(), any<HttpResponse.BodyHandler<InputStream>>()) } returns response
+        every { response.statusCode() } returns 200
+        every { response.headers() } returns HttpHeaders.of(responseHeaders) { _, _ -> true }
+
+        val result = adapter.findMetadataByDoi(doi)
+        result.isPresent shouldBe false
+
+        verify(exactly = 1) {
+            httpClient.send(
+                withArg<HttpRequest> { request ->
+                    request.method() shouldBe "GET"
+                    request.headers().map() shouldContainAll mapOf(
+                        ACCEPT to listOf("application/vnd.citationstyles.csl+json")
+                    )
+                    request.uri() shouldBe URI.create(doi.uri)
+                },
+                any<HttpResponse.BodyHandler<InputStream>>()
+            )
+        }
+        verify(exactly = 1) { response.statusCode() }
+        verify(exactly = 1) { response.headers() }
+    }
+
+    @Test
+    fun `Given a doi, when fetching its associated metadata, and external service returns an error, it returns an empty result`() {
+        val doi = DOI.of("10.1000/182")
+        // Mock HttpClient dsl
+        val response = mockk<HttpResponse<InputStream>>()
+        val responseHeaders = createResponseHeaders()
+
+        every { httpClient.send(any(), any<HttpResponse.BodyHandler<InputStream>>()) } returns response
+        every { response.statusCode() } returns 404
+        every { response.headers() } returns HttpHeaders.of(responseHeaders) { _, _ -> true }
+
+        val result = adapter.findMetadataByDoi(doi)
+        result.isPresent shouldBe false
+
+        verify(exactly = 1) {
+            httpClient.send(
+                withArg<HttpRequest> { request ->
+                    request.method() shouldBe "GET"
+                    request.headers().map() shouldContainAll mapOf(
+                        ACCEPT to listOf("application/vnd.citationstyles.csl+json")
+                    )
+                    request.uri() shouldBe URI.create(doi.uri)
+                },
+                any<HttpResponse.BodyHandler<InputStream>>()
+            )
+        }
+        verify(exactly = 1) { response.statusCode() }
+        verify(exactly = 1) { response.headers() }
+    }
 
     @Test
     fun `Creating a doi, returns success`() {
@@ -114,4 +212,22 @@ internal class DataCiteDoiServiceAdapterUnitTest : MockkBaseTest {
         verify(exactly = 2) { response.statusCode() }
         verify(exactly = 1) { response.body() }
     }
+
+    private fun createResponseHeaders(
+        contentType: String = "application/vnd.citationstyles.csl+json",
+    ): Map<String, List<String>> = mapOf(
+        "Content-Type" to listOf(contentType),
+        "Content-Length" to listOf("2012"),
+        "Connection" to listOf("keep-alive"),
+        "vary" to listOf("Accept", "Accept-Encoding"),
+        "access-control-expose-headers" to listOf("Link"),
+        "access-control-allow-headers" to listOf("X-Requested-With", "Accept", "Accept-Encoding", "Accept-Charset", "Accept-Language", "Accept-Ranges", "Cache-Control"),
+        "access-control-allow-origin" to listOf("*"),
+        "content-encoding" to listOf("gzip"),
+        "server" to listOf("Jetty(9.4.40.v20210413)"),
+        "x-rate-limit-limit" to listOf("50"),
+        "x-rate-limit-interval" to listOf("1s"),
+        "x-api-pool" to listOf("public"),
+        "permissions-policy" to listOf("interest-cohort=()"),
+    )
 }

@@ -4,7 +4,7 @@ A CSV is a comma separated list of values.
 They can be used to import data into the {orkg}.
 There are three workflow stages for a CSV:
 
-[mermaid]
+[mermaid,format=svg,opts=interactive,width=100%]
 ----
 stateDiagram-v2
     direction LR
@@ -90,6 +90,118 @@ The response status will be `204 No Content` when successful.
 ====
 
 operation::csvs-update[snippets='path-parameters,request-parts,curl-request,http-response']
+
+[[csvs-validate]]
+== Validating CSVs
+
+Before a CSV can be imported, it must be valiated.
+The following endpoints describe the workflow of validating a CSV.
+
+[[csvs-validate-start]]
+=== Starting CSV Validation
+
+A `POST` request queues a new job to validate a CSV.
+The response status will be `202 Accepted` when successful.
+
+operation::csvs-start-validation[snippets='path-parameters,curl-request,http-response']
+
+[[csvs-validate-fetch-status]]
+=== Fetching CSV Validation Status
+
+A `GET` request provides information about the validation job status.
+
+[NOTE]
+====
+1. This endpoint requires authentication.
+2. Only jobs started by the active user can be fetched.
+====
+
+operation::csvs-get-validation-status[snippets='path-parameters,curl-request,http-response,response-fields']
+
+[[csvs-validate-fetch-results]]
+=== Fetching CSV Validation Results
+
+A `GET` request provides information about the validation results.
+
+[NOTE]
+====
+1. This endpoint requires authentication.
+2. Only jobs started by the active user can be fetched.
+3. Results are only available for completed validation jobs.
+4. The response status will be `400 BAD REQUEST` with response body contents of type orkg:problem:job_execution_exception, if the validation ran into an error.
+====
+
+operation::csvs-get-validation-results[snippets='path-parameters,curl-request,http-response,response-fields']
+
+[[csvs-validate-stop]]
+=== Stopping CSV Validation
+
+A `DELETE` request stops an active CSV validation job.
+The response status will be `204 No Content` when successful.
+
+[NOTE]
+====
+1. This endpoint requires authentication.
+2. Only jobs started by the active user can be stopped.
+====
+
+operation::csvs-stop-validation[snippets='path-parameters,curl-request,http-response']
+
+[[csvs-import]]
+== Importing CSVs
+
+After a CSV has been validated, it can be imported.
+The following endpoints describe the workflow of importing a CSV.
+
+[[csvs-import-start]]
+=== Starting a CSV Import
+
+A `POST` request queues a new job to import a CSV.
+The response status will be `202 Accepted` when successful.
+
+operation::csvs-start-import[snippets='path-parameters,curl-request,http-response']
+
+[[csvs-import-fetch-status]]
+=== Fetching CSV Import Status
+
+A `GET` request provides information about the import job status.
+
+[NOTE]
+====
+1. This endpoint requires authentication.
+2. Only jobs started by the active user can be fetched.
+====
+
+operation::csvs-get-import-status[snippets='path-parameters,curl-request,http-response,response-fields']
+
+[[csvs-import-fetch-results]]
+=== Fetching CSV Import Results
+
+A `GET` request provides information about the import results.
+
+[NOTE]
+====
+1. This endpoint requires authentication.
+2. Only jobs started by the active user can be fetched.
+3. Results are only available for completed imports.
+4. The response status will be `400 BAD REQUEST` with response body contents of type orkg:problem:job_execution_exception, if the import ran into an error.
+====
+
+operation::csvs-get-import-results[snippets='path-parameters,curl-request,http-response,response-fields']
+
+[[csvs-import-stop]]
+=== Stopping a CSV Import
+
+A `DELETE` request stops an active CSV import job.
+The response status will be `204 No Content` when successful.
+
+[NOTE]
+====
+1. This endpoint requires authentication.
+2. Only jobs started by the active user can be stopped.
+====
+
+operation::csvs-stop-import[snippets='path-parameters,curl-request,http-response']
 
 [[csvs-delete]]
 == Deleting CSVs

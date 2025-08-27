@@ -1,5 +1,6 @@
 package org.orkg.contenttypes.adapter.output.web
 
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.orkg.common.DOI
 import org.orkg.common.exceptions.ServiceUnavailable
@@ -16,6 +17,9 @@ import org.orkg.integration.datacite.json.DataCiteJson.Rights
 import org.orkg.integration.datacite.json.DataCiteJson.Subject
 import org.orkg.integration.datacite.json.DataCiteJson.Title
 import org.orkg.integration.datacite.json.DataCiteJson.Type
+import org.slf4j.LoggerFactory
+import org.springframework.http.HttpHeaders.ACCEPT
+import org.springframework.http.HttpHeaders.CONTENT_TYPE
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
@@ -26,6 +30,9 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.time.Clock
 import java.time.OffsetDateTime
+import java.util.Optional
+
+private const val CITATION_STYLE_LANGUAGE_JSON = "application/vnd.citationstyles.csl+json"
 
 @Component
 class DataCiteDoiServiceAdapter(
@@ -35,6 +42,27 @@ class DataCiteDoiServiceAdapter(
     private val bodyPublisherFactory: (String) -> HttpRequest.BodyPublisher = HttpRequest.BodyPublishers::ofString,
     private val clock: Clock = Clock.systemDefaultZone(),
 ) : DoiService {
+    private val logger = LoggerFactory.getLogger(this::class.java.name)
+
+    override fun findMetadataByDoi(doi: DOI): Optional<JsonNode> {
+        val request = HttpRequest.newBuilder(URI.create(doi.uri))
+            .header(ACCEPT, CITATION_STYLE_LANGUAGE_JSON)
+            .GET()
+            .build()
+        try {
+            val response = httpClient.send(request, HttpResponse.BodyHandlers.ofInputStream())
+            val contentType = response.headers().firstValue(CONTENT_TYPE).orElse(null)
+            if (response.statusCode() == HttpStatus.OK.value() && contentType == CITATION_STYLE_LANGUAGE_JSON) {
+                return Optional.of(response.body().use(objectMapper::readTree))
+            }
+        } catch (e: IOException) {
+            logger.error("DOI service threw an exception", e)
+        } catch (e: InterruptedException) {
+            logger.error("DOI service threw an exception", e)
+        }
+        return Optional.empty()
+    }
+
     override fun register(command: DoiService.RegisterCommand): DOI {
         val body = command.toDataCiteRequest(dataciteConfiguration.doiPrefix!!, dataciteConfiguration.publish!!, clock)
         val request = HttpRequest.newBuilder()

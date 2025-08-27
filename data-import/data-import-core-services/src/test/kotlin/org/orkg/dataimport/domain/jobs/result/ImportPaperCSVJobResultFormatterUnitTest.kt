@@ -1,0 +1,122 @@
+package org.orkg.dataimport.domain.jobs.result
+
+import com.fasterxml.jackson.databind.ObjectMapper
+import io.kotest.assertions.asClue
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.shouldBe
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
+import org.junit.jupiter.api.Test
+import org.orkg.common.testing.fixtures.MockkBaseTest
+import org.orkg.dataimport.domain.CSV_ID_FIELD
+import org.orkg.dataimport.domain.JobException
+import org.orkg.dataimport.domain.PROBLEMS
+import org.orkg.dataimport.domain.add
+import org.orkg.dataimport.domain.csv.CSVID
+import org.orkg.dataimport.domain.jobs.JobStatus.Status
+import org.orkg.dataimport.domain.testing.fixtures.createPaperCSVRecordImportResult
+import org.orkg.dataimport.output.PaperCSVRecordImportResultRepository
+import org.orkg.testing.pageOf
+import org.springframework.batch.core.BatchStatus
+import org.springframework.batch.core.JobExecution
+import org.springframework.batch.core.JobParametersBuilder
+import org.springframework.data.domain.PageRequest
+import org.springframework.http.ProblemDetail
+import java.util.Optional
+
+internal class ImportPaperCSVJobResultFormatterUnitTest : MockkBaseTest {
+    private val paperCSVRecordImportResultRepository: PaperCSVRecordImportResultRepository = mockk()
+    private val objectMapper: ObjectMapper = ObjectMapper()
+
+    private val importPaperCSVJobResultFormatter = ImportPaperCSVJobResultFormatter(paperCSVRecordImportResultRepository)
+
+    @Test
+    fun `Given a job execution, when status is pending, it returns an empty result`() {
+        val jobExecution = JobExecution(123)
+        jobExecution.status = BatchStatus.STARTING
+        val result = importPaperCSVJobResultFormatter.getResult(
+            jobExecution = jobExecution,
+            status = Status.PENDING,
+            pageable = PageRequest.of(0, 10),
+            objectMapper = objectMapper
+        )
+        result shouldBe Optional.empty()
+    }
+
+    @Test
+    fun `Given a job execution, when status is running, it returns an empty result`() {
+        val jobExecution = JobExecution(123)
+        jobExecution.status = BatchStatus.STARTED
+        val result = importPaperCSVJobResultFormatter.getResult(
+            jobExecution = jobExecution,
+            status = Status.RUNNING,
+            pageable = PageRequest.of(0, 10),
+            objectMapper = objectMapper
+        )
+        result shouldBe Optional.empty()
+    }
+
+    @Test
+    fun `Given a job execution, when status is stopped, it returns an empty result`() {
+        val jobExecution = JobExecution(123)
+        jobExecution.status = BatchStatus.STOPPED
+        val result = importPaperCSVJobResultFormatter.getResult(
+            jobExecution = jobExecution,
+            status = Status.STOPPED,
+            pageable = PageRequest.of(0, 10),
+            objectMapper = objectMapper
+        )
+        result shouldBe Optional.empty()
+    }
+
+    @Test
+    fun `Given a job execution, when status is failed, and execution context contains error messages, it returns a page of error objects`() {
+        val jobExecution = JobExecution(123)
+        jobExecution.status = BatchStatus.FAILED
+        val problemDetails = listOf<ProblemDetail>(ProblemDetail.forStatus(400))
+        jobExecution.executionContext.put(PROBLEMS, objectMapper.writeValueAsBytes(problemDetails))
+        val pageable = PageRequest.of(0, 10)
+
+        shouldThrow<JobException> {
+            importPaperCSVJobResultFormatter.getResult(jobExecution, Status.FAILED, pageable, objectMapper)
+        }.asClue {
+            it.problemDetails shouldBe problemDetails
+        }
+    }
+
+    @Test
+    fun `Given a job execution, when status is failed, and execution does not contain any error messages, it returns a page with a single default error object`() {
+        val jobExecution = JobExecution(123)
+        jobExecution.status = BatchStatus.FAILED
+        val pageable = PageRequest.of(0, 10)
+
+        shouldThrow<JobException> {
+            importPaperCSVJobResultFormatter.getResult(jobExecution, Status.FAILED, pageable, objectMapper)
+        }.asClue {
+            it.problemDetails shouldBe emptyList()
+        }
+    }
+
+    @Test
+    fun `Given a job execution, when status is done, it returns a page of result objects`() {
+        val csvId = CSVID("bf59dd89-6a4b-424b-b9d5-36042661e837")
+        val jobParameters = JobParametersBuilder().add(CSV_ID_FIELD, csvId).toJobParameters()
+        val jobExecution = JobExecution(123, jobParameters)
+        jobExecution.status = BatchStatus.COMPLETED
+        val pageable = PageRequest.of(0, 10)
+        val expected = pageOf(createPaperCSVRecordImportResult(), pageable = pageable)
+
+        every { paperCSVRecordImportResultRepository.findAllByCSVID(csvId, pageable) } returns expected
+
+        val result = importPaperCSVJobResultFormatter.getResult(
+            jobExecution = jobExecution,
+            status = Status.DONE,
+            pageable = pageable,
+            objectMapper = objectMapper
+        )
+        result shouldBe Optional.of(expected)
+
+        verify(exactly = 1) { paperCSVRecordImportResultRepository.findAllByCSVID(csvId, pageable) }
+    }
+}

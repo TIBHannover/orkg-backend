@@ -4,16 +4,20 @@ plugins {
 }
 
 dependencies {
+    api("org.eclipse.rdf4j:rdf4j-common-io")
     api("org.springframework.batch:spring-batch-core")
     api("org.springframework:spring-web")
     api(project(":common:core-identifiers"))
+    api(project(":common:functional"))
     api(project(":common:spring-webmvc"))
+    api(project(":content-types:content-types-core-model"))
+    api(project(":graph:graph-core-model"))
     implementation("dev.forkhandles:values4k")
     implementation(project(":common:external-identifiers"))
     implementation(project(":graph:graph-core-constants"))
-    implementation(project(":graph:graph-core-model"))
 
-    testFixturesImplementation(project(":common:core-identifiers"))
+    testFixturesApi("dev.forkhandles:fabrikate4k")
+    testFixturesApi(project(":common:core-identifiers"))
     testFixturesImplementation(project(":graph:graph-core-constants"))
     testFixturesImplementation(testFixtures(project(":common:testing")))
 }

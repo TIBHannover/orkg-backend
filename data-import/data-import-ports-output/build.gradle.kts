@@ -9,6 +9,7 @@ dependencies {
 
     testFixturesApi("org.junit.jupiter:junit-jupiter-api")
     testFixturesImplementation("io.kotest:kotest-assertions-shared")
+    testFixturesImplementation("org.eclipse.rdf4j:rdf4j-common-io")
     testFixturesImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
     testFixturesImplementation("org.springframework.data:spring-data-commons")
     testFixturesImplementation("dev.forkhandles:fabrikate4k")
@@ -17,5 +18,7 @@ dependencies {
     testFixturesImplementation(project(":common:core-identifiers"))
     testFixturesImplementation(project(":common:string-utils"))
     testFixturesImplementation(project(":data-import:data-import-core-model"))
+    testFixturesImplementation(project(":graph:graph-core-model"))
+    testFixturesImplementation(testFixtures(project(":data-import:data-import-core-model")))
     testFixturesImplementation(testFixtures(project(":graph:graph-core-model")))
 }

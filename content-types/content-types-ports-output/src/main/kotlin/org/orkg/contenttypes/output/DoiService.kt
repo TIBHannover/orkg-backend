@@ -1,10 +1,14 @@
 package org.orkg.contenttypes.output
 
+import com.fasterxml.jackson.databind.JsonNode
 import org.orkg.common.DOI
 import org.orkg.contenttypes.domain.Author
 import java.net.URI
+import java.util.Optional
 
 interface DoiService {
+    fun findMetadataByDoi(doi: DOI): Optional<JsonNode>
+
     fun register(command: RegisterCommand): DOI
 
     data class RegisterCommand(

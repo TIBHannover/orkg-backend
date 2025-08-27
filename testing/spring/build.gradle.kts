@@ -10,6 +10,7 @@ dependencies {
     testFixturesApi("org.apache.tomcat.embed:tomcat-embed-core") // for HttpServletRequest
     testFixturesApi("org.junit.jupiter:junit-jupiter-api")
     testFixturesApi("org.neo4j.driver:neo4j-java-driver")
+    testFixturesApi("org.springframework.batch:spring-batch-core")
     testFixturesApi("org.springframework.boot:spring-boot-autoconfigure")
     testFixturesApi("org.springframework.boot:spring-boot-test")
     testFixturesApi("org.springframework.boot:spring-boot-test-autoconfigure")
@@ -23,6 +24,7 @@ dependencies {
     testFixturesApi("org.springframework:spring-context")
     testFixturesApi("org.springframework:spring-core")
     testFixturesApi("org.springframework:spring-test")
+    testFixturesApi("org.springframework:spring-tx")
     testFixturesApi("org.springframework:spring-web")
     testFixturesApi("org.springframework.data:spring-data-commons")
     testFixturesApi("org.springframework.data:spring-data-neo4j")
@@ -42,5 +44,5 @@ dependencies {
     testFixturesImplementation("org.springframework.security:spring-security-crypto")
     testFixturesImplementation("org.springframework.security:spring-security-oauth2-jose")
     testFixturesImplementation("org.springframework.security:spring-security-oauth2-resource-server")
-    testFixturesImplementation("org.springframework:spring-tx")
+    testFixturesImplementation("org.springframework:spring-orm")
 }

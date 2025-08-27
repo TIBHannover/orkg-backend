@@ -16,8 +16,12 @@ dependencies {
     api(project(":common:spring-data"))
     api(project(":data-import:data-import-core-model"))
     api(project(":data-import:data-import-ports-output"))
+    api(project(":graph:graph-core-model"))
+    implementation("org.eclipse.rdf4j:rdf4j-common-io")
     implementation(project(":common:pagination"))
+    implementation(project(":common:serialization"))
     implementation(project(":common:string-utils"))
+    implementation(project(":content-types:content-types-core-model"))
     runtimeOnly("org.springframework.boot:spring-boot-starter-data-jpa")
 }
 

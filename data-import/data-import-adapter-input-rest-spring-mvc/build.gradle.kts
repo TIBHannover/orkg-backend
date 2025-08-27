@@ -9,6 +9,7 @@ plugins {
 dependencies {
     api("com.fasterxml.jackson.core:jackson-annotations")
     api("com.fasterxml.jackson.core:jackson-core")
+    api("org.eclipse.rdf4j:rdf4j-common-io")
     api("org.springframework.data:spring-data-commons")
     api("org.springframework.security:spring-security-core")
     api("org.springframework:spring-context")
@@ -16,8 +17,15 @@ dependencies {
     api("com.fasterxml.jackson.core:jackson-databind")
     api(project(":common:core-identifiers"))
     api(project(":common:spring-webmvc"))
+    api(project(":content-types:content-types-adapter-input-representations"))
+    api(project(":content-types:content-types-core-model"))
+    api(project(":graph:graph-core-model"))
     api(project(":data-import:data-import-ports-input"))
     api(project(":data-import:data-import-core-model"))
+    implementation(project(":common:functional"))
+
+    testFixturesApi("org.springframework.restdocs:spring-restdocs-core")
+    testFixturesImplementation(testFixtures(project(":data-import:data-import-core-model")))
 }
 
 testing {
@@ -37,7 +45,9 @@ testing {
                 implementation("org.springframework.restdocs:spring-restdocs-mockmvc")
                 implementation(project(":common:serialization"))
                 implementation(testFixtures(project(":common:testing")))
+                implementation(testFixtures(project(":content-types:content-types-adapter-input-rest-spring-mvc")))
                 implementation(testFixtures(project(":data-import:data-import-core-model")))
+                implementation(testFixtures(project(":graph:graph-core-model")))
                 implementation(testFixtures(project(":testing:spring")))
                 runtimeOnly("com.jayway.jsonpath:json-path")
                 runtimeOnly("org.springframework.boot:spring-boot-starter-validation")

@@ -1,0 +1,310 @@
+{
+    "indexed": {
+        "date-parts": [
+            [
+                2025,
+                7,
+                30
+            ]
+        ],
+        "date-time": "2025-07-30T16:48:09Z",
+        "timestamp": 1753894089727,
+        "version": "3.41.2"
+    },
+    "reference-count": 14,
+    "publisher": "Pensoft Publishers",
+    "license": [
+        {
+            "start": {
+                "date-parts": [
+                    [
+                        2021,
+                        5,
+                        26
+                    ]
+                ],
+                "date-time": "2021-05-26T00:00:00Z",
+                "timestamp": 1621987200000
+            },
+            "content-version": "vor",
+            "delay-in-days": 0,
+            "URL": "http:\/\/creativecommons.org\/licenses\/by\/4.0\/"
+        }
+    ],
+    "funder": [
+        {
+            "DOI": "10.13039\/501100000781",
+            "name": "European Research Council",
+            "doi-asserted-by": "publisher",
+            "id": [
+                {
+                    "id": "10.13039\/501100000781",
+                    "id-type": "DOI",
+                    "asserted-by": "publisher"
+                }
+            ]
+        }
+    ],
+    "content-domain": {
+        "domain": [
+            "riojournal.com"
+        ],
+        "crossmark-restriction": true
+    },
+    "abstract": "<jats:p>This document is an edited version of the original funding proposal entitled 'ORKG: Facilitating the Transfer of Research Results with the Open Research Knowledge Graph' that was submitted to the European Research Council (ERC) Proof of Concept (PoC) Grant in September 2020 (https:\/\/erc.europa.eu\/funding\/proof-concept). The proposal was evaluated by five reviewers and has been placed after the evaluations on the reserve list. The main document of the original proposal did not contain an abstract.<\/jats:p>",
+    "DOI": "10.3897\/rio.7.e68513",
+    "type": "journal-article",
+    "created": {
+        "date-parts": [
+            [
+                2021,
+                5,
+                26
+            ]
+        ],
+        "date-time": "2021-05-26T14:00:33Z",
+        "timestamp": 1622037633000
+    },
+    "update-policy": "https:\/\/doi.org\/10.3897\/crossmark-policy",
+    "source": "Crossref",
+    "is-referenced-by-count": 6,
+    "title": "ORKG: Facilitating the Transfer of Research Results with the Open Research Knowledge Graph",
+    "prefix": "10.3897",
+    "volume": "7",
+    "author": [
+        {
+            "ORCID": "https:\/\/orcid.org\/0000-0002-0698-2864",
+            "authenticated-orcid": true,
+            "given": "Sören",
+            "family": "Auer",
+            "sequence": "first",
+            "affiliation": []
+        },
+        {
+            "ORCID": "https:\/\/orcid.org\/0000-0001-5492-3212",
+            "authenticated-orcid": true,
+            "given": "Markus",
+            "family": "Stocker",
+            "sequence": "additional",
+            "affiliation": []
+        },
+        {
+            "ORCID": "https:\/\/orcid.org\/0000-0002-8280-0487",
+            "authenticated-orcid": true,
+            "given": "Lars",
+            "family": "Vogt",
+            "sequence": "additional",
+            "affiliation": []
+        },
+        {
+            "ORCID": "https:\/\/orcid.org\/0000-0003-0099-6509",
+            "authenticated-orcid": true,
+            "given": "Grischa",
+            "family": "Fraumann",
+            "sequence": "additional",
+            "affiliation": []
+        },
+        {
+            "given": "Alexandra",
+            "family": "Garatzogianni",
+            "sequence": "additional",
+            "affiliation": []
+        }
+    ],
+    "member": "2258",
+    "published-online": {
+        "date-parts": [
+            [
+                2021,
+                5,
+                26
+            ]
+        ]
+    },
+    "reference": [
+        {
+            "key": "68513_B7033243",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1002\/asi.23329"
+        },
+        {
+            "author": "(c&en)",
+            "key": "68513_B7033252",
+            "article-title": "Top instrument firms of 2018"
+        },
+        {
+            "author": "Commission",
+            "key": "68513_B7033260",
+            "article-title": "Digitising European Industry"
+        },
+        {
+            "key": "68513_B7033291",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1073\/pnas.1708272114"
+        },
+        {
+            "key": "68513_B7033301",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1117\/1.JMM.14.1.010101"
+        },
+        {
+            "author": "Markets",
+            "key": "68513_B7033310",
+            "article-title": "Life science instrumentation market by technology"
+        },
+        {
+            "author": "Markets",
+            "key": "68513_B7033318",
+            "article-title": "Global $10B Scientific & Technical Publishing Industry Report, 2019-2023"
+        },
+        {
+            "key": "68513_B7033327",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1016\/j.joi.2017.07.003"
+        },
+        {
+            "author": "Spinak",
+            "key": "68513_B7033336",
+            "article-title": "350 years of scientific publication: from the “Journal des Sçavans” and Philosophical Transactions to SciELO"
+        },
+        {
+            "key": "68513_B7033344",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.5334\/dsj-2020-018"
+        },
+        {
+            "author": "Statistics",
+            "key": "68513_B7033357",
+            "article-title": "How much does your country invest in R&D?"
+        },
+        {
+            "key": "68513_B7033408",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1145\/3383583.3398530"
+        },
+        {
+            "author": "WHO",
+            "key": "68513_B7033422",
+            "article-title": "Infodemic Management - Infodemiology"
+        },
+        {
+            "author": "Tale",
+            "key": "68513_B7033430",
+            "article-title": "What is Whole Tale?"
+        }
+    ],
+    "container-title": "Research Ideas and Outcomes",
+    "original-title": [],
+    "link": [
+        {
+            "URL": "https:\/\/riojournal.com\/article\/68513\/download\/pdf\/",
+            "content-type": "application\/pdf",
+            "content-version": "vor",
+            "intended-application": "text-mining"
+        },
+        {
+            "URL": "https:\/\/riojournal.com\/article\/68513\/download\/xml\/",
+            "content-type": "application\/xml",
+            "content-version": "vor",
+            "intended-application": "text-mining"
+        },
+        {
+            "URL": "https:\/\/riojournal.com\/article_preview.php?id=68513&skip_redirect=1",
+            "content-type": "unspecified",
+            "content-version": "vor",
+            "intended-application": "similarity-checking"
+        }
+    ],
+    "deposited": {
+        "date-parts": [
+            [
+                2021,
+                5,
+                26
+            ]
+        ],
+        "date-time": "2021-05-26T14:00:40Z",
+        "timestamp": 1622037640000
+    },
+    "score": 1,
+    "resource": {
+        "primary": {
+            "URL": "https:\/\/riojournal.com\/article\/68513\/"
+        }
+    },
+    "subtitle": [],
+    "short-title": [],
+    "issued": {
+        "date-parts": [
+            [
+                2021,
+                5,
+                26
+            ]
+        ]
+    },
+    "references-count": 14,
+    "URL": "http:\/\/dx.doi.org\/10.3897\/rio.7.e68513",
+    "relation": {},
+    "ISSN": [
+        "2367-7163"
+    ],
+    "subject": [],
+    "container-title-short": "RIO",
+    "published": {
+        "date-parts": [
+            [
+                2021,
+                5,
+                26
+            ]
+        ]
+    },
+    "assertion": [
+        {
+            "value": "Pensoft Publishers",
+            "name": "publisher",
+            "label": "This article is maintained by"
+        },
+        {
+            "value": "ORKG: Facilitating the Transfer of Research Results with the Open Research Knowledge Graph",
+            "name": "articletitle",
+            "label": "Article Title"
+        },
+        {
+            "value": "Research Ideas and Outcomes",
+            "name": "journaltitle",
+            "label": "Journal Title"
+        },
+        {
+            "name": "grant-information",
+            "label": "Grant Information"
+        },
+        {
+            "value": "http:\/\/creativecommons.org\/licenses\/by\/4.0\/",
+            "name": "copyright",
+            "label": "Copyright"
+        },
+        {
+            "value": "2021-05-11",
+            "order": 0,
+            "name": "received",
+            "label": "Received",
+            "group": {
+                "name": "publication_history",
+                "label": "Publication History"
+            }
+        },
+        {
+            "value": "2021-05-26",
+            "order": 2,
+            "name": "published",
+            "label": "Published",
+            "group": {
+                "name": "publication_history",
+                "label": "Publication History"
+            }
+        }
+    ],
+    "article-number": "e68513"
+}

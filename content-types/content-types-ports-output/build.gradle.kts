@@ -3,6 +3,7 @@ plugins {
 }
 
 dependencies {
+    api("com.fasterxml.jackson.core:jackson-databind")
     api("org.springframework.data:spring-data-commons")
     api(project(":common:core-identifiers"))
     api(project(":content-types:content-types-core-model"))

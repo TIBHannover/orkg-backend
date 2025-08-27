@@ -2,7 +2,7 @@
 @file:Suppress("UnstableApiUsage")
 
 plugins {
-    id("org.orkg.gradle.kotlin-library")
+    id("org.orkg.gradle.kotlin-library-with-test-fixtures")
     id("org.orkg.gradle.spring-library")
 }
 
@@ -18,6 +18,7 @@ dependencies {
     implementation(project(":common:spring-webmvc"))
     implementation(project(":integrations:datacite-serialization"))
     implementation("net.handle:handle-client")
+    implementation("org.slf4j:slf4j-api")
 }
 
 testing {

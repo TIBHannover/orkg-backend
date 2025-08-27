@@ -23,10 +23,15 @@ import org.orkg.dataimport.domain.csv.CSV.Type
 import org.orkg.dataimport.domain.csv.CSVID
 import org.orkg.dataimport.domain.jobs.JobId
 import org.orkg.dataimport.domain.testing.fixtures.createCSV
+import org.orkg.dataimport.input.ImportCSVUseCase
 import org.orkg.dataimport.input.JobUseCases
 import org.orkg.dataimport.input.UpdateCSVUseCase
+import org.orkg.dataimport.input.ValidateCSVUseCase
 import org.orkg.dataimport.input.testing.fixtures.createCSVCommand
 import org.orkg.dataimport.output.CSVRepository
+import org.orkg.dataimport.output.PaperCSVRecordImportResultRepository
+import org.orkg.dataimport.output.PaperCSVRecordRepository
+import org.orkg.dataimport.output.TypedCSVRecordRepository
 import org.orkg.testing.MockUserId
 import java.time.OffsetDateTime
 import java.util.Optional
@@ -36,11 +41,17 @@ internal class CSVServiceUnitTest : MockkBaseTest {
     private val repository: CSVRepository = mockk()
     private val jobUseCases: JobUseCases = mockk()
     private val contributorRepository: ContributorRepository = mockk()
+    private val typedCSVRecordRepository: TypedCSVRecordRepository = mockk()
+    private val paperCSVRecordRepository: PaperCSVRecordRepository = mockk()
+    private val paperCSVRecordImportResultRepository: PaperCSVRecordImportResultRepository = mockk()
 
     private val service = CSVService(
         repository,
         jobUseCases,
         contributorRepository,
+        typedCSVRecordRepository,
+        paperCSVRecordRepository,
+        paperCSVRecordImportResultRepository,
         fixedClock,
     )
 
@@ -146,12 +157,16 @@ internal class CSVServiceUnitTest : MockkBaseTest {
 
         every { repository.findById(csv.id) } returns Optional.of(csv)
         every { repository.existsByDataMD5(command.data!!.md5) } returns false
+        every { typedCSVRecordRepository.deleteAllByCSVID(csv.id) } just runs
+        every { paperCSVRecordRepository.deleteAllByCSVID(csv.id) } just runs
         every { repository.save(any()) } just runs
 
         service.update(command)
 
         verify(exactly = 1) { repository.findById(csv.id) }
         verify(exactly = 1) { repository.existsByDataMD5(command.data!!.md5) }
+        verify(exactly = 1) { typedCSVRecordRepository.deleteAllByCSVID(csv.id) }
+        verify(exactly = 1) { paperCSVRecordRepository.deleteAllByCSVID(csv.id) }
         verify(exactly = 1) {
             repository.save(
                 withArg {
@@ -184,6 +199,8 @@ internal class CSVServiceUnitTest : MockkBaseTest {
         every { repository.findById(csv.id) } returns Optional.of(csv)
         every { contributorRepository.findById(admin.id) } returns Optional.of(admin)
         every { repository.existsByDataMD5(command.data!!.md5) } returns false
+        every { typedCSVRecordRepository.deleteAllByCSVID(csv.id) } just runs
+        every { paperCSVRecordRepository.deleteAllByCSVID(csv.id) } just runs
         every { repository.save(any()) } just runs
 
         service.update(command)
@@ -191,6 +208,8 @@ internal class CSVServiceUnitTest : MockkBaseTest {
         verify(exactly = 1) { repository.findById(csv.id) }
         verify(exactly = 1) { contributorRepository.findById(admin.id) }
         verify(exactly = 1) { repository.existsByDataMD5(command.data!!.md5) }
+        verify(exactly = 1) { typedCSVRecordRepository.deleteAllByCSVID(csv.id) }
+        verify(exactly = 1) { paperCSVRecordRepository.deleteAllByCSVID(csv.id) }
         verify(exactly = 1) {
             repository.save(
                 withArg {
@@ -256,12 +275,16 @@ internal class CSVServiceUnitTest : MockkBaseTest {
 
         every { repository.findById(csv.id) } returns Optional.of(csv)
         every { jobUseCases.stopJob(csv.validationJobId!!, csv.createdBy) } just runs
+        every { typedCSVRecordRepository.deleteAllByCSVID(csv.id) } just runs
+        every { paperCSVRecordRepository.deleteAllByCSVID(csv.id) } just runs
         every { repository.save(any()) } just runs
 
         service.update(command)
 
         verify(exactly = 1) { repository.findById(csv.id) }
         verify(exactly = 1) { jobUseCases.stopJob(csv.validationJobId!!, csv.createdBy) }
+        verify(exactly = 1) { typedCSVRecordRepository.deleteAllByCSVID(csv.id) }
+        verify(exactly = 1) { paperCSVRecordRepository.deleteAllByCSVID(csv.id) }
         verify(exactly = 1) {
             repository.save(
                 withArg {
@@ -340,11 +363,15 @@ internal class CSVServiceUnitTest : MockkBaseTest {
         )
 
         every { repository.findById(csv.id) } returns Optional.of(csv)
+        every { typedCSVRecordRepository.deleteAllByCSVID(csv.id) } just runs
+        every { paperCSVRecordRepository.deleteAllByCSVID(csv.id) } just runs
         every { repository.save(any()) } just runs
 
         service.update(command)
 
         verify(exactly = 1) { repository.findById(csv.id) }
+        verify(exactly = 1) { typedCSVRecordRepository.deleteAllByCSVID(csv.id) }
+        verify(exactly = 1) { paperCSVRecordRepository.deleteAllByCSVID(csv.id) }
         verify(exactly = 1) {
             repository.save(
                 withArg {
@@ -362,16 +389,389 @@ internal class CSVServiceUnitTest : MockkBaseTest {
     }
 
     @Test
+    fun `Given a csv validation command, when csv state is valid, and the user is the owner, it starts the validation job`() {
+        val csv = createCSV()
+        val command = ValidateCSVUseCase.ValidateCommand(
+            id = csv.id,
+            contributorId = csv.createdBy,
+        )
+        val jobId = JobId(123)
+
+        every { repository.findById(csv.id) } returns Optional.of(csv)
+        every { repository.save(any()) } just runs
+        every { jobUseCases.runJob(csv.type.validateJobName, any()) } returns jobId
+
+        service.validate(command) shouldBe jobId
+
+        verify(exactly = 1) { repository.findById(csv.id) }
+        verify(exactly = 1) { repository.save(csv.copy(state = State.VALIDATION_QUEUED)) }
+        verify(exactly = 1) { jobUseCases.runJob(csv.type.validateJobName, any()) }
+    }
+
+    @Test
+    fun `Given a csv validation command, when csv state is valid, and the user is an admin, it starts the validation job`() {
+        val csv = createCSV()
+        val admin = createContributor(isAdmin = true)
+        val command = ValidateCSVUseCase.ValidateCommand(
+            id = csv.id,
+            contributorId = admin.id,
+        )
+        val jobId = JobId(123)
+
+        every { repository.findById(csv.id) } returns Optional.of(csv)
+        every { contributorRepository.findById(admin.id) } returns Optional.of(admin)
+        every { repository.save(any()) } just runs
+        every { jobUseCases.runJob(csv.type.validateJobName, any()) } returns jobId
+
+        service.validate(command) shouldBe jobId
+
+        verify(exactly = 1) { repository.findById(csv.id) }
+        verify(exactly = 1) { contributorRepository.findById(admin.id) }
+        verify(exactly = 1) { repository.save(csv.copy(state = State.VALIDATION_QUEUED)) }
+        verify(exactly = 1) { jobUseCases.runJob(csv.type.validateJobName, any()) }
+    }
+
+    @Test
+    fun `Given a csv validation command, when csv state is valid, and the user is not the owner and not an admin, it throws an exception`() {
+        val csv = createCSV()
+        val otherUser = createContributor()
+        val command = ValidateCSVUseCase.ValidateCommand(
+            id = csv.id,
+            contributorId = otherUser.id,
+        )
+
+        every { repository.findById(csv.id) } returns Optional.of(csv)
+        every { contributorRepository.findById(otherUser.id) } returns Optional.of(otherUser)
+
+        shouldThrow<CSVNotFound> { service.validate(command) }
+
+        verify(exactly = 1) { repository.findById(csv.id) }
+        verify(exactly = 1) { contributorRepository.findById(otherUser.id) }
+    }
+
+    @Test
+    fun `Given a csv validation command, when csv does not exist, it throws an exception`() {
+        val id = CSVID("bf59dd89-6a4b-424b-b9d5-36042661e837")
+        val command = ValidateCSVUseCase.ValidateCommand(
+            id = id,
+            contributorId = ContributorId(MockUserId.USER),
+        )
+
+        every { repository.findById(id) } returns Optional.empty()
+
+        shouldThrow<CSVNotFound> { service.validate(command) }
+
+        verify(exactly = 1) { repository.findById(id) }
+    }
+
+    @ParameterizedTest
+    @EnumSource(
+        State::class,
+        names = arrayOf("VALIDATION_DONE", "VALIDATION_FAILED", "IMPORT_RUNNING", "IMPORT_STOPPED", "IMPORT_FAILED", "IMPORT_DONE")
+    )
+    fun `Given a csv validation command, when csv is already validated, it throws an exception`(state: State) {
+        val csv = createCSV().copy(state = state)
+        val command = ValidateCSVUseCase.ValidateCommand(
+            id = csv.id,
+            contributorId = csv.createdBy,
+        )
+
+        every { repository.findById(csv.id) } returns Optional.of(csv)
+
+        shouldThrow<CSVAlreadyValidated> { service.validate(command) }
+
+        verify(exactly = 1) { repository.findById(csv.id) }
+    }
+
+    @ParameterizedTest
+    @EnumSource(
+        State::class,
+        names = arrayOf("VALIDATION_QUEUED", "VALIDATION_RUNNING")
+    )
+    fun `Given a csv validation command, when csv validation is already running, it throws an exception`(state: State) {
+        val csv = createCSV().copy(state = state)
+        val command = ValidateCSVUseCase.ValidateCommand(
+            id = csv.id,
+            contributorId = csv.createdBy,
+        )
+
+        every { repository.findById(csv.id) } returns Optional.of(csv)
+
+        shouldThrow<CSVValidationAlreadyRunning> { service.validate(command) }
+
+        verify(exactly = 1) { repository.findById(csv.id) }
+    }
+
+    @Test
+    fun `Given a csv validation command, when job service reports job already running, it throws an exception`() {
+        val csv = createCSV()
+        val command = ValidateCSVUseCase.ValidateCommand(
+            id = csv.id,
+            contributorId = csv.createdBy,
+        )
+
+        every { repository.findById(csv.id) } returns Optional.of(csv)
+        every { repository.save(any()) } just runs
+        every { jobUseCases.runJob(csv.type.validateJobName, any()) } throws JobAlreadyRunning(JobId(123))
+
+        shouldThrow<CSVValidationAlreadyRunning> { service.validate(command) }
+
+        verify(exactly = 1) { repository.findById(csv.id) }
+        verify(exactly = 1) { repository.save(csv.copy(state = State.VALIDATION_QUEUED)) }
+        verify(exactly = 1) { jobUseCases.runJob(csv.type.validateJobName, any()) }
+        verify(exactly = 1) { repository.save(csv.copy(state = State.VALIDATION_RUNNING)) }
+    }
+
+    @Test
+    fun `Given a csv validation command, when job service reports job restart failed, it throws an exception`() {
+        val csv = createCSV()
+        val command = ValidateCSVUseCase.ValidateCommand(
+            id = csv.id,
+            contributorId = csv.createdBy,
+        )
+
+        every { repository.findById(csv.id) } returns Optional.of(csv)
+        every { repository.save(any()) } just runs
+        every { jobUseCases.runJob(csv.type.validateJobName, any()) } throws JobRestartFailed(JobId(123), RuntimeException())
+
+        shouldThrow<CSVValidationRestartFailed> { service.validate(command) }
+
+        verify(exactly = 1) { repository.findById(csv.id) }
+        verify(exactly = 1) { repository.save(csv.copy(state = State.VALIDATION_QUEUED)) }
+        verify(exactly = 1) { jobUseCases.runJob(csv.type.validateJobName, any()) }
+        verify(exactly = 1) { repository.save(csv.copy(state = State.VALIDATION_FAILED)) }
+    }
+
+    @Test
+    fun `Given a csv validation command, when job service reports job already complete, it throws an exception`() {
+        val csv = createCSV()
+        val command = ValidateCSVUseCase.ValidateCommand(
+            id = csv.id,
+            contributorId = csv.createdBy,
+        )
+
+        every { repository.findById(csv.id) } returns Optional.of(csv)
+        every { repository.save(any()) } just runs
+        every { jobUseCases.runJob(csv.type.validateJobName, any()) } throws JobAlreadyComplete(JobId(123))
+
+        shouldThrow<CSVAlreadyValidated> { service.validate(command) }
+
+        verify(exactly = 1) { repository.findById(csv.id) }
+        verify(exactly = 1) { repository.save(csv.copy(state = State.VALIDATION_QUEUED)) }
+        verify(exactly = 1) { jobUseCases.runJob(csv.type.validateJobName, any()) }
+        verify(exactly = 1) { repository.save(csv.copy(state = State.VALIDATION_DONE)) }
+    }
+
+    @Test
+    fun `Given a csv import command, when csv state is valid, and the user is the owner, it starts the import job`() {
+        val csv = createCSV().copy(state = State.VALIDATION_DONE)
+        val command = ImportCSVUseCase.ImportCommand(
+            id = csv.id,
+            contributorId = csv.createdBy,
+        )
+        val jobId = JobId(123)
+
+        every { repository.findById(csv.id) } returns Optional.of(csv)
+        every { repository.save(any()) } just runs
+        every { jobUseCases.runJob(csv.type.importJobName, any()) } returns jobId
+
+        service.import(command) shouldBe jobId
+
+        verify(exactly = 1) { repository.findById(csv.id) }
+        verify(exactly = 1) { repository.save(csv.copy(state = State.IMPORT_QUEUED)) }
+        verify(exactly = 1) { jobUseCases.runJob(csv.type.importJobName, any()) }
+    }
+
+    @Test
+    fun `Given a csv import command, when csv state is valid, and the user is an admin, it starts the import job`() {
+        val csv = createCSV().copy(state = State.VALIDATION_DONE)
+        val admin = createContributor(isAdmin = true)
+        val command = ImportCSVUseCase.ImportCommand(
+            id = csv.id,
+            contributorId = admin.id,
+        )
+        val jobId = JobId(123)
+
+        every { repository.findById(csv.id) } returns Optional.of(csv)
+        every { contributorRepository.findById(admin.id) } returns Optional.of(admin)
+        every { repository.save(any()) } just runs
+        every { jobUseCases.runJob(csv.type.importJobName, any()) } returns jobId
+
+        service.import(command) shouldBe jobId
+
+        verify(exactly = 1) { repository.findById(csv.id) }
+        verify(exactly = 1) { contributorRepository.findById(admin.id) }
+        verify(exactly = 1) { repository.save(csv.copy(state = State.IMPORT_QUEUED)) }
+        verify(exactly = 1) { jobUseCases.runJob(csv.type.importJobName, any()) }
+    }
+
+    @Test
+    fun `Given a csv import command, when csv state is valid, and the user is not the owner and not an admin, it throws an exception`() {
+        val csv = createCSV().copy(state = State.VALIDATION_DONE)
+        val otherUser = createContributor()
+        val command = ImportCSVUseCase.ImportCommand(
+            id = csv.id,
+            contributorId = otherUser.id,
+        )
+
+        every { repository.findById(csv.id) } returns Optional.of(csv)
+        every { contributorRepository.findById(otherUser.id) } returns Optional.of(otherUser)
+
+        shouldThrow<CSVNotFound> { service.import(command) }
+
+        verify(exactly = 1) { repository.findById(csv.id) }
+        verify(exactly = 1) { contributorRepository.findById(otherUser.id) }
+    }
+
+    @Test
+    fun `Given a csv import command, when csv does not exist, it throws an exception`() {
+        val id = CSVID("bf59dd89-6a4b-424b-b9d5-36042661e837")
+        val command = ImportCSVUseCase.ImportCommand(
+            id = id,
+            contributorId = ContributorId(MockUserId.USER),
+        )
+
+        every { repository.findById(id) } returns Optional.empty()
+
+        shouldThrow<CSVNotFound> { service.import(command) }
+
+        verify(exactly = 1) { repository.findById(id) }
+    }
+
+    @ParameterizedTest
+    @EnumSource(
+        State::class,
+        names = arrayOf("IMPORT_FAILED", "IMPORT_DONE")
+    )
+    fun `Given a csv import command, when csv is already imported, it throws an exception`(state: State) {
+        val csv = createCSV().copy(state = state)
+        val command = ImportCSVUseCase.ImportCommand(
+            id = csv.id,
+            contributorId = csv.createdBy,
+        )
+
+        every { repository.findById(csv.id) } returns Optional.of(csv)
+
+        shouldThrow<CSVAlreadyImported> { service.import(command) }
+
+        verify(exactly = 1) { repository.findById(csv.id) }
+    }
+
+    @ParameterizedTest
+    @EnumSource(
+        State::class,
+        names = arrayOf("IMPORT_QUEUED", "IMPORT_RUNNING")
+    )
+    fun `Given a csv import command, when csv import is already running, it throws an exception`(state: State) {
+        val csv = createCSV().copy(state = state)
+        val command = ImportCSVUseCase.ImportCommand(
+            id = csv.id,
+            contributorId = csv.createdBy,
+        )
+
+        every { repository.findById(csv.id) } returns Optional.of(csv)
+
+        shouldThrow<CSVImportAlreadyRunning> { service.import(command) }
+
+        verify(exactly = 1) { repository.findById(csv.id) }
+    }
+
+    @ParameterizedTest
+    @EnumSource(
+        State::class,
+        names = arrayOf("UPLOADED", "VALIDATION_RUNNING", "VALIDATION_STOPPED", "VALIDATION_FAILED")
+    )
+    fun `Given a csv import command, when csv is not validated, it throws an exception`(state: State) {
+        val csv = createCSV().copy(state = state)
+        val command = ImportCSVUseCase.ImportCommand(
+            id = csv.id,
+            contributorId = csv.createdBy,
+        )
+
+        every { repository.findById(csv.id) } returns Optional.of(csv)
+
+        shouldThrow<CSVNotValidated> { service.import(command) }
+
+        verify(exactly = 1) { repository.findById(csv.id) }
+    }
+
+    @Test
+    fun `Given a csv import command, when job service reports job already running, it throws an exception`() {
+        val csv = createCSV().copy(state = State.VALIDATION_DONE)
+        val command = ImportCSVUseCase.ImportCommand(
+            id = csv.id,
+            contributorId = csv.createdBy,
+        )
+
+        every { repository.findById(csv.id) } returns Optional.of(csv)
+        every { repository.save(any()) } just runs
+        every { jobUseCases.runJob(csv.type.importJobName, any()) } throws JobAlreadyRunning(JobId(123))
+
+        shouldThrow<CSVImportAlreadyRunning> { service.import(command) }
+
+        verify(exactly = 1) { repository.findById(csv.id) }
+        verify(exactly = 1) { repository.save(csv.copy(state = State.IMPORT_QUEUED)) }
+        verify(exactly = 1) { jobUseCases.runJob(csv.type.importJobName, any()) }
+        verify(exactly = 1) { repository.save(csv.copy(state = State.IMPORT_RUNNING)) }
+    }
+
+    @Test
+    fun `Given a csv import command, when job service reports job restart failed, it throws an exception`() {
+        val csv = createCSV().copy(state = State.VALIDATION_DONE)
+        val command = ImportCSVUseCase.ImportCommand(
+            id = csv.id,
+            contributorId = csv.createdBy,
+        )
+
+        every { repository.findById(csv.id) } returns Optional.of(csv)
+        every { repository.save(any()) } just runs
+        every { jobUseCases.runJob(csv.type.importJobName, any()) } throws JobRestartFailed(JobId(123), RuntimeException())
+
+        shouldThrow<CSVImportRestartFailed> { service.import(command) }
+
+        verify(exactly = 1) { repository.findById(csv.id) }
+        verify(exactly = 1) { repository.save(csv.copy(state = State.IMPORT_QUEUED)) }
+        verify(exactly = 1) { jobUseCases.runJob(csv.type.importJobName, any()) }
+        verify(exactly = 1) { repository.save(csv.copy(state = State.IMPORT_FAILED)) }
+    }
+
+    @Test
+    fun `Given a csv import command, when job service reports job already complete, it throws an exception`() {
+        val csv = createCSV().copy(state = State.VALIDATION_DONE)
+        val command = ImportCSVUseCase.ImportCommand(
+            id = csv.id,
+            contributorId = csv.createdBy,
+        )
+
+        every { repository.findById(csv.id) } returns Optional.of(csv)
+        every { repository.save(any()) } just runs
+        every { jobUseCases.runJob(csv.type.importJobName, any()) } throws JobAlreadyComplete(JobId(123))
+
+        shouldThrow<CSVAlreadyImported> { service.import(command) }
+
+        verify(exactly = 1) { repository.findById(csv.id) }
+        verify(exactly = 1) { repository.save(csv.copy(state = State.IMPORT_QUEUED)) }
+        verify(exactly = 1) { jobUseCases.runJob(csv.type.importJobName, any()) }
+        verify(exactly = 1) { repository.save(csv.copy(state = State.IMPORT_DONE)) }
+    }
+
+    @Test
     fun `Given a csv delete command, when csv exists, and the user is the owner, it deletes the csv and all job results`() {
         val csv = createCSV()
 
         every { repository.findById(csv.id) } returns Optional.of(csv)
         every { repository.deleteById(csv.id) } just runs
+        every { typedCSVRecordRepository.deleteAllByCSVID(csv.id) } just runs
+        every { paperCSVRecordRepository.deleteAllByCSVID(csv.id) } just runs
+        every { paperCSVRecordImportResultRepository.deleteAllByCSVID(csv.id) } just runs
 
         service.deleteById(csv.id, csv.createdBy)
 
         verify(exactly = 1) { repository.findById(csv.id) }
         verify(exactly = 1) { repository.deleteById(csv.id) }
+        verify(exactly = 1) { typedCSVRecordRepository.deleteAllByCSVID(csv.id) }
+        verify(exactly = 1) { paperCSVRecordRepository.deleteAllByCSVID(csv.id) }
+        verify(exactly = 1) { paperCSVRecordImportResultRepository.deleteAllByCSVID(csv.id) }
     }
 
     @Test
@@ -382,12 +782,18 @@ internal class CSVServiceUnitTest : MockkBaseTest {
         every { repository.findById(csv.id) } returns Optional.of(csv)
         every { contributorRepository.findById(admin.id) } returns Optional.of(admin)
         every { repository.deleteById(csv.id) } just runs
+        every { typedCSVRecordRepository.deleteAllByCSVID(csv.id) } just runs
+        every { paperCSVRecordRepository.deleteAllByCSVID(csv.id) } just runs
+        every { paperCSVRecordImportResultRepository.deleteAllByCSVID(csv.id) } just runs
 
         service.deleteById(csv.id, admin.id)
 
         verify(exactly = 1) { repository.findById(csv.id) }
         verify(exactly = 1) { contributorRepository.findById(admin.id) }
         verify(exactly = 1) { repository.deleteById(csv.id) }
+        verify(exactly = 1) { typedCSVRecordRepository.deleteAllByCSVID(csv.id) }
+        verify(exactly = 1) { paperCSVRecordRepository.deleteAllByCSVID(csv.id) }
+        verify(exactly = 1) { paperCSVRecordImportResultRepository.deleteAllByCSVID(csv.id) }
     }
 
     @Test
@@ -411,12 +817,18 @@ internal class CSVServiceUnitTest : MockkBaseTest {
         every { repository.findById(csv.id) } returns Optional.of(csv)
         every { jobUseCases.stopJob(csv.validationJobId!!, csv.createdBy) } just runs
         every { repository.deleteById(csv.id) } just runs
+        every { typedCSVRecordRepository.deleteAllByCSVID(csv.id) } just runs
+        every { paperCSVRecordRepository.deleteAllByCSVID(csv.id) } just runs
+        every { paperCSVRecordImportResultRepository.deleteAllByCSVID(csv.id) } just runs
 
         service.deleteById(csv.id, csv.createdBy)
 
         verify(exactly = 1) { repository.findById(csv.id) }
         verify(exactly = 1) { jobUseCases.stopJob(csv.validationJobId!!, csv.createdBy) }
         verify(exactly = 1) { repository.deleteById(csv.id) }
+        verify(exactly = 1) { typedCSVRecordRepository.deleteAllByCSVID(csv.id) }
+        verify(exactly = 1) { paperCSVRecordRepository.deleteAllByCSVID(csv.id) }
+        verify(exactly = 1) { paperCSVRecordImportResultRepository.deleteAllByCSVID(csv.id) }
     }
 
     @Test
@@ -426,11 +838,17 @@ internal class CSVServiceUnitTest : MockkBaseTest {
         every { repository.findById(csv.id) } returns Optional.of(csv)
         every { jobUseCases.stopJob(csv.importJobId!!, csv.createdBy) } just runs
         every { repository.deleteById(csv.id) } just runs
+        every { typedCSVRecordRepository.deleteAllByCSVID(csv.id) } just runs
+        every { paperCSVRecordRepository.deleteAllByCSVID(csv.id) } just runs
+        every { paperCSVRecordImportResultRepository.deleteAllByCSVID(csv.id) } just runs
 
         service.deleteById(csv.id, csv.createdBy)
 
         verify(exactly = 1) { repository.findById(csv.id) }
         verify(exactly = 1) { jobUseCases.stopJob(csv.importJobId!!, csv.createdBy) }
         verify(exactly = 1) { repository.deleteById(csv.id) }
+        verify(exactly = 1) { typedCSVRecordRepository.deleteAllByCSVID(csv.id) }
+        verify(exactly = 1) { paperCSVRecordRepository.deleteAllByCSVID(csv.id) }
+        verify(exactly = 1) { paperCSVRecordImportResultRepository.deleteAllByCSVID(csv.id) }
     }
 }

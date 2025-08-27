@@ -24,7 +24,7 @@ sealed interface Either<L, R> : Serializable {
 
         fun <L, R> right(value: R): Either<L, R> = Right(value)
 
-        fun <T> Either<T, T>.merge() = fold({ it }, { it })
+        fun <T, L : T, R : T> Either<L, R>.merge(): T = fold({ it }, { it })
     }
 }
 

@@ -83,7 +83,8 @@ build:
     - job: build
       artifacts: false
   script:
-    - apt update && apt install --assume-yes graphviz
+    - apt update && apt install --assume-yes graphviz npm
+    - npm install -g @mermaid-js/mermaid-cli
     - ./gradlew --build-cache :documentation:asciidoctor
 
 # Attempt to build the documentation, although we do not deploy it to GitLab Pages.

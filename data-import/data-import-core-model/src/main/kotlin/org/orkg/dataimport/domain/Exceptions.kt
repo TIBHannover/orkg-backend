@@ -7,6 +7,7 @@ import org.orkg.dataimport.domain.csv.CSVID
 import org.orkg.dataimport.domain.jobs.JobId
 import org.springframework.http.HttpStatus
 import org.springframework.http.ProblemDetail
+import java.lang.IllegalArgumentException
 
 data class JobException(
     val problemDetails: List<ProblemDetail> = emptyList(),
@@ -39,11 +40,91 @@ class CSVNotFound(csvId: CSVID) :
         properties = mapOf("csv_id" to csvId)
     )
 
+class CSVValidationJobNotFound(
+    csvId: CSVID,
+    jobId: JobId? = null,
+) : SimpleMessageException(
+        status = HttpStatus.NOT_FOUND,
+        message = """CSV validation job not found.""",
+        type = createProblemURI("csv_validation_job_not_found"),
+        properties = mapOf(
+            "csv_id" to csvId,
+            "job_id" to jobId
+        )
+    )
+
+class CSVImportJobNotFound(
+    csvId: CSVID,
+    jobId: JobId? = null,
+) : SimpleMessageException(
+        status = HttpStatus.NOT_FOUND,
+        message = """CSV import job not found.""",
+        type = createProblemURI("csv_import_job_not_found"),
+        properties = mapOf(
+            "csv_id" to csvId,
+            "job_id" to jobId
+        )
+    )
+
+class CSVAlreadyValidated(csvId: CSVID) :
+    SimpleMessageException(
+        status = HttpStatus.BAD_REQUEST,
+        message = """CSV "$csvId" was already validated.""",
+        type = createProblemURI("csv_already_validated"),
+        properties = mapOf("csv_id" to csvId)
+    )
+
+class CSVValidationAlreadyRunning(csvId: CSVID) :
+    SimpleMessageException(
+        status = HttpStatus.BAD_REQUEST,
+        message = """Validation for CSV "$csvId" is already running.""",
+        type = createProblemURI("csv_validation_already_running"),
+        properties = mapOf("csv_id" to csvId)
+    )
+
+class CSVValidationRestartFailed(
+    csvId: CSVID,
+    override val cause: Throwable,
+) : SimpleMessageException(
+        status = HttpStatus.BAD_REQUEST,
+        message = """Could not restart validation for CSV "$csvId".""",
+        type = createProblemURI("csv_validation_restart_failed"),
+        cause = cause,
+        properties = mapOf("csv_id" to csvId)
+    )
+
+class CSVNotValidated(csvId: CSVID) :
+    SimpleMessageException(
+        status = HttpStatus.BAD_REQUEST,
+        message = """CSV "$csvId" must be validated before import.""",
+        type = createProblemURI("csv_not_validated"),
+        properties = mapOf("csv_id" to csvId)
+    )
+
 class CSVAlreadyImported(csvId: CSVID) :
     SimpleMessageException(
         status = HttpStatus.BAD_REQUEST,
         message = """CSV "$csvId" was already imported.""",
         type = createProblemURI("csv_already_imported"),
+        properties = mapOf("csv_id" to csvId)
+    )
+
+class CSVImportAlreadyRunning(csvId: CSVID) :
+    SimpleMessageException(
+        status = HttpStatus.BAD_REQUEST,
+        message = """Import for CSV "$csvId" is already running.""",
+        type = createProblemURI("csv_import_already_running"),
+        properties = mapOf("csv_id" to csvId)
+    )
+
+class CSVImportRestartFailed(
+    csvId: CSVID,
+    override val cause: Throwable,
+) : SimpleMessageException(
+        status = HttpStatus.BAD_REQUEST,
+        message = """Could not restart import for CSV "$csvId".""",
+        type = createProblemURI("csv_import_restart_failed"),
+        cause = cause,
         properties = mapOf("csv_id" to csvId)
     )
 
@@ -223,3 +304,63 @@ class InvalidCSVValue : SimpleMessageException {
     constructor(value: String, row: Long, column: Long, requiredType: ThingId) :
         this(value, row, column, IllegalArgumentException("""Value cannot be parsed as type "$requiredType"."""))
 }
+
+class PaperCSVMissingTitle(
+    itemNumber: Long,
+    lineNumber: Long,
+) : SimpleMessageException(
+        status = HttpStatus.BAD_REQUEST,
+        type = createProblemURI("paper_csv_missing_paper_title"),
+        message = """Missing title for paper in row $itemNumber (line $lineNumber).""",
+        properties = mapOf(
+            "item_number" to itemNumber,
+            "line_number" to lineNumber,
+        )
+    )
+
+class PaperCSVMissingResearchField(
+    itemNumber: Long,
+    lineNumber: Long,
+) : SimpleMessageException(
+        status = HttpStatus.BAD_REQUEST,
+        type = createProblemURI("paper_csv_missing_research_field"),
+        message = """Missing research field for paper in row $itemNumber (line $lineNumber).""",
+        properties = mapOf(
+            "item_number" to itemNumber,
+            "line_number" to lineNumber,
+        )
+    )
+
+class PaperCSVResourceNotFound(
+    id: ThingId,
+    itemNumber: Long,
+    lineNumber: Long,
+    column: Long,
+) : SimpleMessageException(
+        status = HttpStatus.BAD_REQUEST,
+        type = createProblemURI("paper_csv_resource_not_found"),
+        message = """Resource "$id" in row $itemNumber, column $column not found (line $lineNumber).""",
+        properties = mapOf(
+            "resource_id" to id,
+            "item_number" to itemNumber,
+            "line_number" to lineNumber,
+            "csv_column" to column,
+        )
+    )
+
+class PaperCSVThingNotFound(
+    id: ThingId,
+    itemNumber: Long,
+    lineNumber: Long,
+    column: Long,
+) : SimpleMessageException(
+        status = HttpStatus.BAD_REQUEST,
+        type = createProblemURI("paper_csv_thing_not_found"),
+        message = """Thing "$id" in row $itemNumber, column $column not found (line $lineNumber).""",
+        properties = mapOf(
+            "thing_id" to id,
+            "item_number" to itemNumber,
+            "line_number" to lineNumber,
+            "csv_column" to column,
+        )
+    )

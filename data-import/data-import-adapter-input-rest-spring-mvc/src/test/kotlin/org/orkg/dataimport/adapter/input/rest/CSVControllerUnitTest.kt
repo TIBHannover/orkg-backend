@@ -12,13 +12,28 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.common.testing.fixtures.Assets.csv
+import org.orkg.contenttypes.input.testing.fixtures.authorListFields
 import org.orkg.dataimport.adapter.input.rest.json.DataImportJacksonModule
 import org.orkg.dataimport.adapter.input.rest.mapping.JobResultRepresentationFactory
+import org.orkg.dataimport.adapter.input.rest.mapping.jobs.ImportPaperCSVJobResultRepresentationFormatter
+import org.orkg.dataimport.adapter.input.rest.mapping.jobs.ValidatePaperCSVJobResultRepresentationFormatter
 import org.orkg.dataimport.domain.csv.CSV
 import org.orkg.dataimport.domain.csv.CSVID
+import org.orkg.dataimport.domain.jobs.JobId
+import org.orkg.dataimport.domain.jobs.JobNames
 import org.orkg.dataimport.domain.testing.asciidoc.allowedCSVStateValues
+import org.orkg.dataimport.domain.testing.asciidoc.allowedEntityTypeValues
 import org.orkg.dataimport.domain.testing.fixtures.createCSV
+import org.orkg.dataimport.domain.testing.fixtures.createJobResult
+import org.orkg.dataimport.domain.testing.fixtures.createJobStatus
+import org.orkg.dataimport.domain.testing.fixtures.createPaperCSVRecord
+import org.orkg.dataimport.domain.testing.fixtures.createPaperCSVRecordImportResult
 import org.orkg.dataimport.input.CSVUseCases
+import org.orkg.dataimport.input.ImportCSVUseCase
+import org.orkg.dataimport.input.JobUseCases
+import org.orkg.dataimport.input.ValidateCSVUseCase
+import org.orkg.dataimport.testing.fixtures.jobStatusResponseFields
+import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectCSV
 import org.orkg.testing.andExpectPage
@@ -27,6 +42,7 @@ import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
+import org.orkg.testing.spring.restdocs.pagedResponseFields
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.mock.web.MockMultipartFile
@@ -53,6 +69,8 @@ import java.util.Optional
         CommonJacksonModule::class,
         DataImportJacksonModule::class,
         JobResultRepresentationFactory::class,
+        ImportPaperCSVJobResultRepresentationFormatter::class,
+        ValidatePaperCSVJobResultRepresentationFormatter::class,
         FixedClockConfig::class
     ]
 )
@@ -61,6 +79,9 @@ import java.util.Optional
 internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
     @MockkBean
     private lateinit var csvUseCases: CSVUseCases
+
+    @MockkBean
+    private lateinit var jobUseCases: JobUseCases
 
     @Test
     @TestWithMockUser
@@ -257,5 +278,274 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { csvUseCases.deleteById(id, contributorId) }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a csv, when fetching the validation job status, and service succeeds, then status is 200 OK and status is returned")
+    fun getValidationStatus() {
+        val jobId = JobId(123)
+        val id = CSVID("bf59dd89-6a4b-424b-b9d5-36042661e837")
+        val contributorId = ContributorId(MockUserId.USER)
+        val csv = createCSV().copy(validationJobId = jobId)
+        val status = createJobStatus().copy(
+            jobName = JobNames.VALIDATE_PAPER_CSV,
+            context = mapOf("csv_id" to id)
+        )
+
+        every { csvUseCases.findByIdAndCreatedBy(id, contributorId) } returns Optional.of(csv)
+        every { jobUseCases.findJobStatusById(jobId, contributorId) } returns Optional.of(status)
+
+        documentedGetRequestTo("/api/csvs/{id}/validate", id)
+            .perform()
+            .andExpect(status().isOk)
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the CSV to fetch the vaidation job status for."),
+                    ),
+                    responseFields(jobStatusResponseFields())
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { csvUseCases.findByIdAndCreatedBy(id, contributorId) }
+        verify(exactly = 1) { jobUseCases.findJobStatusById(jobId, contributorId) }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a csv, when fetching the validation job results, and service succeeds, then status is 200 OK and results are returned")
+    fun getValidationResults() {
+        val jobId = JobId(123)
+        val id = CSVID("bf59dd89-6a4b-424b-b9d5-36042661e837")
+        val contributorId = ContributorId(MockUserId.USER)
+        val csv = createCSV().copy(validationJobId = jobId)
+        val jobResult = createJobResult(
+            jobId = jobId,
+            jobName = JobNames.VALIDATE_PAPER_CSV,
+            value = Optional.of(pageOf(createPaperCSVRecord()))
+        )
+
+        every { csvUseCases.findByIdAndCreatedBy(id, contributorId) } returns Optional.of(csv)
+        every { jobUseCases.findJobResultById(jobId, contributorId, any()) } returns Optional.of(jobResult)
+
+        documentedGetRequestTo("/api/csvs/{id}/validate/results", id)
+            .perform()
+            .andExpect(status().isOk)
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the CSV to retrieve the validation job results for."),
+                    ),
+                    pagedResponseFields(
+                        fieldWithPath("id").description("The id of the parsed paper record."),
+                        fieldWithPath("csv_id").description("The id of the csv where the parsed paper record originated from."),
+                        fieldWithPath("item_number").description("The item number of the parsed paper record."),
+                        fieldWithPath("line_number").description("The line number of the parsed paper record within the CSV."),
+                        fieldWithPath("title").description("The title of the parsed paper record."),
+                        fieldWithPath("published_month").description("The publication month of the parsed paper record. (optional)"),
+                        fieldWithPath("published_year").description("The publication year of the parsed paper record. (optional)"),
+                        fieldWithPath("published_in").description("The publication venue of the parsed paper record. (optional)"),
+                        fieldWithPath("url").description("The url of the parsed paper record. (optional)"),
+                        fieldWithPath("doi").description("The DOI of the parsed paper record. (optional)"),
+                        fieldWithPath("research_field_id").description("The id of the research field of the parsed paper record."),
+                        fieldWithPath("extraction_method").description("The extraction method of the parsed paper record. Either of $allowedExtractionMethodValues."),
+                        fieldWithPath("statements[]").description("The list of parsed statements that will be added to a new contribution of the paper."),
+                        fieldWithPath("statements[].predicate_id").description("The id of the predicate of the statement. If present, indicates that an already existing predicate with the provided id will be reused. Mutually exclusive with `predicate_id`.").optional(),
+                        fieldWithPath("statements[].predicate_label").description("The label of the predicate of the statemment. If present, indicates that a new predicate will be created with the provided label. Mutually exclusive with `predicate_id`.").optional(),
+                        fieldWithPath("statements[].object").description("The object of the statement."),
+                        fieldWithPath("statements[].object.namespace").description("The namespace of the object. (optional)"),
+                        fieldWithPath("statements[].object.value").description("The value of the object. (optional)").optional(),
+                        fieldWithPath("statements[].object.type").description("The type of the object."),
+                    ).and(authorListFields(type = "parsed paper record", path = "content[*].authors"))
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { csvUseCases.findByIdAndCreatedBy(id, contributorId) }
+        verify(exactly = 1) { jobUseCases.findJobResultById(jobId, contributorId, any()) }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a csv, when starting the validation job, and service succeeds, then status is 202 ACCEPTED")
+    fun startValidation() {
+        val id = CSVID("bf59dd89-6a4b-424b-b9d5-36042661e837")
+        val contributorId = ContributorId(MockUserId.USER)
+        val command = ValidateCSVUseCase.ValidateCommand(id, contributorId)
+        val jobId = JobId(123)
+
+        every { csvUseCases.validate(command) } returns jobId
+
+        documentedPostRequestTo("/api/csvs/{id}/validate", id)
+            .perform()
+            .andExpect(status().isAccepted)
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the CSV to validate."),
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { csvUseCases.validate(command) }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a csv, when stopping the validation job, and service succeeds, then status is 204 NO CONTENT")
+    fun stopValidation() {
+        val jobId = JobId(123)
+        val id = CSVID("bf59dd89-6a4b-424b-b9d5-36042661e837")
+        val contributorId = ContributorId(MockUserId.USER)
+        val csv = createCSV().copy(validationJobId = jobId)
+
+        every { csvUseCases.findByIdAndCreatedBy(id, contributorId) } returns Optional.of(csv)
+        every { jobUseCases.stopJob(jobId, contributorId) } just runs
+
+        documentedDeleteRequestTo("/api/csvs/{id}/validate", id)
+            .perform()
+            .andExpect(status().isNoContent)
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the CSV to stop the validation job for."),
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { csvUseCases.findByIdAndCreatedBy(id, contributorId) }
+        verify(exactly = 1) { jobUseCases.stopJob(jobId, contributorId) }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a csv, when fetching the import job status, and service succeeds, then status is 200 OK and status is returned")
+    fun getImportStatus() {
+        val jobId = JobId(123)
+        val id = CSVID("bf59dd89-6a4b-424b-b9d5-36042661e837")
+        val contributorId = ContributorId(MockUserId.USER)
+        val csv = createCSV().copy(importJobId = jobId)
+        val status = createJobStatus().copy(
+            jobName = JobNames.VALIDATE_PAPER_CSV,
+            context = mapOf("csv_id" to id)
+        )
+
+        every { csvUseCases.findByIdAndCreatedBy(id, contributorId) } returns Optional.of(csv)
+        every { jobUseCases.findJobStatusById(jobId, contributorId) } returns Optional.of(status)
+
+        documentedGetRequestTo("/api/csvs/{id}/import", id)
+            .perform()
+            .andExpect(status().isOk)
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the CSV to fetch the vaidation job status for."),
+                    ),
+                    responseFields(jobStatusResponseFields())
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { csvUseCases.findByIdAndCreatedBy(id, contributorId) }
+        verify(exactly = 1) { jobUseCases.findJobStatusById(jobId, contributorId) }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a csv, when fetching the import job results, and service succeeds, then status is 200 OK and results are returned")
+    fun getImportResults() {
+        val jobId = JobId(123)
+        val id = CSVID("bf59dd89-6a4b-424b-b9d5-36042661e837")
+        val contributorId = ContributorId(MockUserId.USER)
+        val csv = createCSV().copy(importJobId = jobId)
+        val jobResult = createJobResult(
+            jobId = jobId,
+            jobName = JobNames.IMPORT_PAPER_CSV,
+            value = Optional.of(pageOf(createPaperCSVRecordImportResult()))
+        )
+
+        every { csvUseCases.findByIdAndCreatedBy(id, contributorId) } returns Optional.of(csv)
+        every { jobUseCases.findJobResultById(jobId, contributorId, any()) } returns Optional.of(jobResult)
+
+        documentedGetRequestTo("/api/csvs/{id}/import/results", id)
+            .perform()
+            .andExpect(status().isOk)
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the CSV to retrieve the import job results for."),
+                    ),
+                    pagedResponseFields(
+                        fieldWithPath("id").description("The id of the paper import result."),
+                        fieldWithPath("imported_entity_id").description("The id of the created entity."),
+                        fieldWithPath("imported_entity_type").description("The type of the created entity. Either of $allowedEntityTypeValues."),
+                        fieldWithPath("csv_id").description("The id of the csv."),
+                        fieldWithPath("item_number").description("The item number of the entity."),
+                        fieldWithPath("line_number").description("The line number of the entity."),
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { csvUseCases.findByIdAndCreatedBy(id, contributorId) }
+        verify(exactly = 1) { jobUseCases.findJobResultById(jobId, contributorId, any()) }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a csv, when starting the import job, and service succeeds, then status is 202 ACCEPTED")
+    fun startImport() {
+        val id = CSVID("bf59dd89-6a4b-424b-b9d5-36042661e837")
+        val contributorId = ContributorId(MockUserId.USER)
+        val command = ImportCSVUseCase.ImportCommand(id, contributorId)
+        val jobId = JobId(123)
+
+        every { csvUseCases.import(command) } returns jobId
+
+        documentedPostRequestTo("/api/csvs/{id}/import", id)
+            .perform()
+            .andExpect(status().isAccepted)
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the CSV to import."),
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { csvUseCases.import(command) }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a csv, when stopping the import job, and service succeeds, then status is 204 NO CONTENT")
+    fun stopImport() {
+        val jobId = JobId(123)
+        val id = CSVID("bf59dd89-6a4b-424b-b9d5-36042661e837")
+        val contributorId = ContributorId(MockUserId.USER)
+        val csv = createCSV().copy(importJobId = jobId)
+
+        every { csvUseCases.findByIdAndCreatedBy(id, contributorId) } returns Optional.of(csv)
+        every { jobUseCases.stopJob(jobId, contributorId) } just runs
+
+        documentedDeleteRequestTo("/api/csvs/{id}/import", id)
+            .perform()
+            .andExpect(status().isNoContent)
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the CSV to stop the import job for."),
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { csvUseCases.findByIdAndCreatedBy(id, contributorId) }
+        verify(exactly = 1) { jobUseCases.stopJob(jobId, contributorId) }
     }
 }

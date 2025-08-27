@@ -1,0 +1,79 @@
+### Create CSV
+POST {{server_url}}/api/csvs
+Authorization: Bearer {{access_token}}
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="file"; filename="papers.csv"
+
+< ../data-import/data-import-core-model/src/testFixtures/resources/assets/csvs/papers.csv
+
+--boundary
+Content-Disposition: form-data; name="type";
+
+PAPER
+--boundary--
+Content-Disposition: form-data; name="format";
+
+DEFAULT
+--boundary--
+
+> {%
+if (response.status == 201) {
+    const location = response.headers.valueOf("Location")
+    const id = location.substring(location.lastIndexOf('/') + 1)
+    client.global.set("csv_id", id);
+}
+%}
+
+### Fetch CSV
+GET {{server_url}}/api/csvs/{{csv_id}}
+Authorization: Bearer {{access_token}}
+
+### Fetch CSV data
+GET {{server_url}}/api/csvs/{{csv_id}}/data
+Authorization: Bearer {{access_token}}
+
+### List CSVs
+GET {{server_url}}/api/csvs
+Authorization: Bearer {{access_token}}
+
+### Start CSV validation
+POST {{server_url}}/api/csvs/{{csv_id}}/validate
+Authorization: Bearer {{access_token}}
+
+### Fetch CSV validation status
+GET {{server_url}}/api/csvs/{{csv_id}}/validate
+Authorization: Bearer {{access_token}}
+
+### Fetch CSV validation result
+GET {{server_url}}/api/csvs/{{csv_id}}/validate/results
+Authorization: Bearer {{access_token}}
+
+### Stop CSV validation
+DELETE {{server_url}}/api/csvs/{{csv_id}}/validate
+Authorization: Bearer {{access_token}}
+
+### Start CSV import
+POST {{server_url}}/api/csvs/{{csv_id}}/import
+Authorization: Bearer {{access_token}}
+
+### Fetch CSV import status
+GET {{server_url}}/api/csvs/{{csv_id}}/import
+Authorization: Bearer {{access_token}}
+
+### Fetch CSV import result
+GET {{server_url}}/api/csvs/{{csv_id}}/import/results
+Authorization: Bearer {{access_token}}
+
+### Stop CSV validation
+DELETE {{server_url}}/api/csvs/{{csv_id}}/import
+Authorization: Bearer {{access_token}}
+
+### Delete CSV
+GET {{server_url}}/api/csvs/{{csv_id}}
+Authorization: Bearer {{access_token}}
+
+### Get DOI
+GET http://doi.org/10.1000/182
+Accept: application/vnd.citationstyles.csl+json

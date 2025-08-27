@@ -165,6 +165,10 @@ dependencies {
     runtimeOnly(project(":profiling:profiling-core-services"))
     runtimeOnly(project(":profiling:profiling-ports-output"))
 
+    runtimeOnly(project(":data-import:data-import-adapter-input-rest-spring-mvc"))
+    runtimeOnly(project(":data-import:data-import-core-model"))
+    runtimeOnly(project(":data-import:data-import-core-services"))
+
     runtimeOnly(project(":widget"))
 
     // TODO: uncomment once test issues are resolved (docs in unit tests only, and idempotent)

@@ -22,6 +22,7 @@ dependencies {
     restdocs(project(withSnippets(":rest-api-server")))
     restdocs(project(withSnippets(":graph:graph-adapter-input-rest-spring-mvc")))
     restdocs(project(withSnippets(":data-export:data-export-adapters")))
+    restdocs(project(withSnippets(":data-import:data-import-adapter-input-rest-spring-mvc")))
     restdocs(project(withSnippets(":content-types:content-types-adapter-input-rest-spring-mvc")))
     restdocs(project(withSnippets(":community:community-adapter-input-rest-spring-mvc")))
     restdocs(project(withSnippets(":statistics:statistics-adapter-input-rest-spring-mvc")))

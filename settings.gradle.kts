@@ -95,6 +95,11 @@ include(
     "data-export:data-export-adapters",
 )
 include(
+    "data-import:data-import-adapter-input-rest-spring-mvc",
+    "data-import:data-import-core-model",
+    "data-import:data-import-core-services",
+)
+include(
     "profiling:profiling-core-model",
     "profiling:profiling-core-services",
     "profiling:profiling-ports-output",

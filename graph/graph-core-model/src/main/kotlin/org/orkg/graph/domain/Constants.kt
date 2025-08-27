@@ -2,6 +2,7 @@ package org.orkg.graph.domain
 
 import org.orkg.common.ThingId
 import org.orkg.common.isNormalized
+import org.orkg.common.isValidAbsoluteIRI
 import org.orkg.common.isValidBase64
 import org.orkg.common.isValidBoolean
 import org.orkg.common.isValidDate
@@ -97,6 +98,19 @@ object Literals {
 
             fun fromString(string: String): XSD? =
                 XSD.entries.singleOrNull { it.prefixedUri == string || it.uri == string }
+
+            fun fromValue(value: String): XSD = when {
+                value.isBlank() -> STRING
+                INT.canParse(value) -> INT
+                DECIMAL.canParse(value) -> DECIMAL
+                BOOLEAN.canParse(value) -> BOOLEAN
+                DATE.canParse(value) -> DATE
+                DURATION.canParse(value) -> DURATION
+                TIME.canParse(value) -> TIME
+                DATE_TIME.canParse(value) -> DATE_TIME
+                value.isValidAbsoluteIRI() -> URI
+                else -> STRING
+            }
         }
     }
 }

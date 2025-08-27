@@ -50,6 +50,7 @@ dependencies {
     api("io.hypersistence:hypersistence-utils-hibernate-63:3.9.9") // jsonb support for hibernate
     api("net.handle:handle-client:9.3.1")
     api("org.freemarker:freemarker:2.3.34")
+    api("org.apache.commons:commons-csv:1.14.0")
 
     // Declare constraints on all components that need alignment
     constraints {

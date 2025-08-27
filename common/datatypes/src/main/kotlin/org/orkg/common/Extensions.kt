@@ -24,6 +24,14 @@ fun String.isValidIRI(): Boolean {
     return true
 }
 
+fun String.isValidAbsoluteIRI(): Boolean {
+    try {
+        return ParsedIRI(this).isAbsolute
+    } catch (_: Exception) {
+        return false
+    }
+}
+
 fun String.isValidDate(): Boolean {
     try {
         DateTimeFormatter.ISO_DATE.parse(this)

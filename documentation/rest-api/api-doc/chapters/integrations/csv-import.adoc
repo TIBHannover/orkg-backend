@@ -4,6 +4,9 @@ A CSV is a comma separated list of values.
 They can be used to import data into the {orkg}.
 There are three workflow stages for a CSV:
 
+image::csv-import-flow.svg[format=svg,opts=interactive,width=100%,height=326]
+
+////
 [mermaid,format=svg,opts=interactive,width=100%]
 ----
 stateDiagram-v2
@@ -31,6 +34,7 @@ stateDiagram-v2
     IMPORT_FAILED --> [*]
     IMPORT_DONE --> [*]
 ----
+////
 
 [[csvs-fetch]]
 == Fetching CSVs

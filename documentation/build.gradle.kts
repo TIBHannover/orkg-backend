@@ -54,18 +54,6 @@ val aggregateRestDocsSnippets by tasks.registering(Copy::class) {
 
 val subfolders = listOf("api-doc", "architecture", "references")
 
-val asciidoctorCopyAssets by tasks.registering(Copy::class) {
-    layout.buildDirectory.dir(asciidoctor.get().outputDir.path)
-    into(asciidoctor.get().outputDir)
-    subfolders.forEach { subfolder ->
-        into(subfolder) {
-            from("rest-api") {
-                include("css/**", "img/**")
-            }
-        }
-    }
-}
-
 val asciidoctor by tasks.existing(AsciidoctorTask::class) {
     setSourceDir(file("rest-api"))
 
@@ -131,15 +119,22 @@ val asciidoctor by tasks.existing(AsciidoctorTask::class) {
     resources {
         from(sourceDir) {
             include("css/**", "img/**")
+            subfolders.forEach { subfolder ->
+                include("$subfolder/css/**", "$subfolder/img/**")
+            }
+        }
+        subfolders.forEach { subfolder ->
+            into(subfolder) {
+                from(sourceDir) {
+                    include("css/**", "img/**")
+                }
+            }
         }
     }
-
-    // FIXME: resolve potential caching and dependency issues
-    finalizedBy("asciidoctorCopyAssets")
 }
 
 val packageHTML by tasks.registering(Jar::class) {
-    from(asciidoctorCopyAssets)
+    from(asciidoctor)
 }
 
 val staticFiles by configurations.creating {
@@ -148,7 +143,7 @@ val staticFiles by configurations.creating {
 }
 
 tasks.named("build").configure {
-    dependsOn(asciidoctorCopyAssets)
+    dependsOn(asciidoctor)
 }
 
 artifacts {

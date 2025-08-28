@@ -4,6 +4,7 @@
 :toclevels: 5
 :icons: font
 :docinfo: shared,private
+:imagesdir: img
 
 // Non-document attributes
 include::../_default-attributes.adoc[]

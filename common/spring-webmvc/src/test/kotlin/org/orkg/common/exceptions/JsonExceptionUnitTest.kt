@@ -21,18 +21,19 @@ import org.springframework.web.bind.annotation.RestController
 internal class JsonExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun jsonMissingFieldException() {
+        val type = "orkg:problem:mismatched_json_input"
         documentedPostRequestTo("/errors/json")
             .content("""{"field": "abc", "nested": {}}""")
             .perform()
             .andExpectErrorResponse("/errors/json")
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:mismatched_json_input")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Field "$.nested.field" is either missing, "null", of invalid type, or contains "null" values.""")
             .andExpect(jsonPath("$.pointer", `is`("#/nested/field")))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("pointer").description("A JSON Pointer that describes the location of the problem within the request's content.")
                     )
                 )
@@ -41,18 +42,19 @@ internal class JsonExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun jsonUnknownFieldException() {
+        val type = "orkg:problem:unknown_json_field"
         documentedPostRequestTo("/errors/json")
             .content("""{"field": "abc", "nested": {"unknown": 1, "field": "def", "list": []}}""")
             .perform()
             .andExpectErrorResponse("/errors/json")
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:unknown_json_field")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Unknown field "$.nested.unknown".""")
             .andExpect(jsonPath("$.pointer", `is`("#/nested/unknown")))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("pointer").description("A JSON Pointer that describes the location of the problem within the request's content.")
                     )
                 )
@@ -114,16 +116,17 @@ internal class JsonExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun jsonMalformedException() {
+        val type = "orkg:problem:invalid_json"
         documentedPostRequestTo("/errors/json")
             .content("""{"field": "abc" "nested": {"field": "def", "list": []}}""")
             .contentType(MediaType.APPLICATION_JSON)
             .perform()
             .andExpectErrorResponse("/errors/json")
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:invalid_json")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Unexpected character ('"' (code 34)): was expecting comma to separate Object entries""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andDocumentWithDefaultExceptionResponseFields(type)
     }
 
     @TestComponent

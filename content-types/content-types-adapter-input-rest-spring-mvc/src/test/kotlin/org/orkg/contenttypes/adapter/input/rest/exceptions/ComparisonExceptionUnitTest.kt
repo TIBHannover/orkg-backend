@@ -26,15 +26,16 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 internal class ComparisonExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun comparisonAlreadyPublished() {
+        val type = "orkg:problem:comparison_already_published"
         documentedGetRequestTo(ComparisonAlreadyPublished(ThingId("R123")))
             .andExpectErrorStatus(FORBIDDEN)
-            .andExpectType("orkg:problem:comparison_already_published")
+            .andExpectType(type)
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Comparison "R123" is already published.""")
             .andExpect(jsonPath("$.comparison_id").value("R123"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("comparison_id").description("The id of the comparison."),
                     )
                 )
@@ -43,15 +44,16 @@ internal class ComparisonExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun comparisonNotModifiable() {
+        val type = "orkg:problem:comparison_not_modifiable"
         documentedGetRequestTo(ComparisonNotModifiable(ThingId("R123")))
             .andExpectErrorStatus(FORBIDDEN)
-            .andExpectType("orkg:problem:comparison_not_modifiable")
+            .andExpectType(type)
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Comparison "R123" is not modifiable.""")
             .andExpect(jsonPath("$.comparison_id").value("R123"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("comparison_id").description("The id of the comparison."),
                     )
                 )
@@ -60,15 +62,16 @@ internal class ComparisonExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun comparisonRelatedResourceNotModifiable() {
+        val type = "orkg:problem:comparison_related_resource_not_modifiable"
         documentedGetRequestTo(ComparisonRelatedResourceNotModifiable(ThingId("R123")))
             .andExpectErrorStatus(FORBIDDEN)
-            .andExpectType("orkg:problem:comparison_related_resource_not_modifiable")
+            .andExpectType(type)
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Comparison related resource "R123" is not modifiable.""")
             .andExpect(jsonPath("$.comparison_related_resource_id").value("R123"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("comparison_related_resource_id").description("The id of the comparison related resurce."),
                     )
                 )
@@ -77,15 +80,16 @@ internal class ComparisonExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun comparisonRelatedFigureNotModifiable() {
+        val type = "orkg:problem:comparison_related_figure_not_modifiable"
         documentedGetRequestTo(ComparisonRelatedFigureNotModifiable(ThingId("R123")))
             .andExpectErrorStatus(FORBIDDEN)
-            .andExpectType("orkg:problem:comparison_related_figure_not_modifiable")
+            .andExpectType(type)
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Comparison related figure "R123" is not modifiable.""")
             .andExpect(jsonPath("$.comparison_related_figure_id").value("R123"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("comparison_related_figure_id").description("The id of the comparison related figure."),
                     )
                 )
@@ -94,15 +98,16 @@ internal class ComparisonExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun comparisonNotFound() {
+        val type = "orkg:problem:comparison_not_found"
         documentedGetRequestTo(ComparisonNotFound(ThingId("R123")))
             .andExpectErrorStatus(HttpStatus.NOT_FOUND)
-            .andExpectType("orkg:problem:comparison_not_found")
+            .andExpectType(type)
             .andExpectTitle("Not Found")
             .andExpectDetail("""Comparison "R123" not found.""")
             .andExpect(jsonPath("$.comparison_id").value("R123"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("comparison_id").description("The id of the comparison."),
                     )
                 )
@@ -111,15 +116,16 @@ internal class ComparisonExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun comparisonRelatedResourceNotFound() {
+        val type = "orkg:problem:comparison_related_resource_not_found"
         documentedGetRequestTo(ComparisonRelatedResourceNotFound(ThingId("R123")))
             .andExpectErrorStatus(HttpStatus.NOT_FOUND)
-            .andExpectType("orkg:problem:comparison_related_resource_not_found")
+            .andExpectType(type)
             .andExpectTitle("Not Found")
             .andExpectDetail("""Comparison related resource "R123" not found.""")
             .andExpect(jsonPath("$.comparison_related_resource_id").value("R123"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("comparison_related_resource_id").description("The id of the comparison related resurce."),
                     )
                 )
@@ -128,15 +134,16 @@ internal class ComparisonExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun comparisonRelatedFigureNotFound() {
+        val type = "orkg:problem:comparison_related_figure_not_found"
         documentedGetRequestTo(ComparisonRelatedFigureNotFound(ThingId("R123")))
             .andExpectErrorStatus(HttpStatus.NOT_FOUND)
-            .andExpectType("orkg:problem:comparison_related_figure_not_found")
+            .andExpectType(type)
             .andExpectTitle("Not Found")
             .andExpectDetail("""Comparison related figure "R123" not found.""")
             .andExpect(jsonPath("$.comparison_related_figure_id").value("R123"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("comparison_related_figure_id").description("The id of the comparison related figure."),
                     )
                 )

@@ -39,15 +39,16 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun rosettaStoneTemplateNotFound() {
+        val type = "orkg:problem:rosetta_stone_template_not_found"
         documentedGetRequestTo(RosettaStoneTemplateNotFound(ThingId("R123")))
             .andExpectErrorStatus(NOT_FOUND)
-            .andExpectType("orkg:problem:rosetta_stone_template_not_found")
+            .andExpectType(type)
             .andExpectTitle("Not Found")
             .andExpectDetail("""Rosetta stone template "R123" not found.""")
             .andExpect(jsonPath("$.rosetta_stone_template_id").value("R123"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("rosetta_stone_template_id").description("The id of the rosetta stone template."),
                     )
                 )
@@ -56,15 +57,16 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
 
     @Test
     fun invalidSubjectPositionPath() {
+        val type = "orkg:problem:invalid_subject_position_path"
         documentedGetRequestTo(InvalidSubjectPositionPath())
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:invalid_subject_position_path")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Invalid subject position path. Must be "${Predicates.hasSubjectPosition}".""")
             .andExpect(jsonPath("$.input_position_index").value("0"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("input_position_index").description("The index of the subject position."),
                     )
                 )
@@ -73,15 +75,16 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
 
     @Test
     fun invalidObjectPositionPath() {
+        val type = "orkg:problem:invalid_object_position_path"
         documentedGetRequestTo(InvalidObjectPositionPath(5))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:invalid_object_position_path")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Invalid object position path for property at index "5". Must be "${Predicates.hasObjectPosition}".""")
             .andExpect(jsonPath("$.input_position_index").value("5"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("input_position_index").description("The index of the subject position."),
                     )
                 )
@@ -90,15 +93,16 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
 
     @Test
     fun rosettaStoneTemplateNotModifiable() {
+        val type = "orkg:problem:rosetta_stone_template_not_modifiable"
         documentedGetRequestTo(RosettaStoneTemplateNotModifiable(ThingId("R123")))
             .andExpectErrorStatus(FORBIDDEN)
-            .andExpectType("orkg:problem:rosetta_stone_template_not_modifiable")
+            .andExpectType(type)
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Rosetta stone template "R123" is not modifiable.""")
             .andExpect(jsonPath("$.rosetta_stone_template_id").value("R123"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("rosetta_stone_template_id").description("The id of the rosetta stone template."),
                     )
                 )
@@ -107,15 +111,16 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
 
     @Test
     fun rosettaStoneTemplatePropertyNotModifiable() {
+        val type = "orkg:problem:rosetta_stone_template_property_not_modifiable"
         documentedGetRequestTo(RosettaStoneTemplatePropertyNotModifiable(ThingId("R123")))
             .andExpectErrorStatus(FORBIDDEN)
-            .andExpectType("orkg:problem:rosetta_stone_template_property_not_modifiable")
+            .andExpectType(type)
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Rosetta stone template property "R123" is not modifiable.""")
             .andExpect(jsonPath("$.rosetta_stone_template_property_id").value("R123"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("rosetta_stone_template_property_id").description("The id of the rosetta stone template property."),
                     )
                 )
@@ -124,15 +129,16 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
 
     @Test
     fun rosettaStoneTemplateInUse_cantBeDeleted() {
+        val type = "orkg:problem:rosetta_stone_template_in_use"
         documentedGetRequestTo(RosettaStoneTemplateInUse.cantBeDeleted(ThingId("R123")))
             .andExpectErrorStatus(FORBIDDEN)
-            .andExpectType("orkg:problem:rosetta_stone_template_in_use")
+            .andExpectType(type)
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Unable to delete rosetta stone template "R123" because it is used in at least one (rosetta stone) statement.""")
             .andExpect(jsonPath("$.rosetta_stone_template_id").value("R123"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("rosetta_stone_template_id").description("The id of the rosetta stone template."),
                         fieldWithPath("property").type("String").description("The property of the template. (optional)").optional(),
                     )
@@ -153,15 +159,16 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
 
     @Test
     fun missingFormattedLabelPlaceholder_withIndex() {
+        val type = "orkg:problem:missing_formatted_label_placeholder"
         documentedGetRequestTo(MissingFormattedLabelPlaceholder(4))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:missing_formatted_label_placeholder")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Missing formatted label placeholder "{4}".""")
             .andExpect(jsonPath("$.input_position_index").value("4"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("input_position_index").description("The index of the rosetta stone template property."),
                         fieldWithPath("input_position_placeholder").type("String").description("The placeholder of the rosetta stone template property. (optional)").optional(),
                     )
@@ -182,76 +189,83 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
 
     @Test
     fun rosettaStoneTemplateLabelMustStartWithPreviousVersion() {
+        val type = "orkg:problem:rosetta_stone_template_label_must_start_with_previous_version"
         documentedGetRequestTo(RosettaStoneTemplateLabelMustStartWithPreviousVersion())
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:rosetta_stone_template_label_must_start_with_previous_version")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""The updated formatted label must start with the previous label.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andDocumentWithDefaultExceptionResponseFields(type)
     }
 
     @Test
     fun tooManyNewRosettaStoneTemplateLabelSections() {
+        val type = "orkg:problem:too_many_new_rosetta_stone_template_label_sections"
         documentedGetRequestTo(TooManyNewRosettaStoneTemplateLabelSections())
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:too_many_new_rosetta_stone_template_label_sections")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Too many new formatted label sections. Must be exactly one optional section per new template property.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andDocumentWithDefaultExceptionResponseFields(type)
     }
 
     @Test
     fun rosettaStoneTemplateLabelUpdateRequiresNewTemplateProperties() {
+        val type = "orkg:problem:rosetta_stone_template_label_update_requires_new_template_properties"
         documentedGetRequestTo(RosettaStoneTemplateLabelUpdateRequiresNewTemplateProperties())
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:rosetta_stone_template_label_update_requires_new_template_properties")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""The formatted label can only be updated in combination with the addition of new template properties.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andDocumentWithDefaultExceptionResponseFields(type)
     }
 
     @Test
     fun newRosettaStoneTemplateLabelSectionsMustBeOptional() {
+        val type = "orkg:problem:new_rosetta_stone_template_label_sections_must_be_optional"
         documentedGetRequestTo(NewRosettaStoneTemplateLabelSectionsMustBeOptional())
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:new_rosetta_stone_template_label_sections_must_be_optional")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""New sections of the formatted label must be optional.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andDocumentWithDefaultExceptionResponseFields(type)
     }
 
     @Test
     fun rosettaStoneTemplateLabelMustBeUpdated() {
+        val type = "orkg:problem:rosetta_stone_template_label_must_be_updated"
         documentedGetRequestTo(RosettaStoneTemplateLabelMustBeUpdated())
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:rosetta_stone_template_label_must_be_updated")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""The formatted label must be updated when updating template properties.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andDocumentWithDefaultExceptionResponseFields(type)
     }
 
     @Test
     fun newRosettaStoneTemplateExampleUsageMustStartWithPreviousExampleUsage() {
+        val type = "orkg:problem:new_rosetta_stone_template_example_usage_must_start_with_previous_example_usage"
         documentedGetRequestTo(NewRosettaStoneTemplateExampleUsageMustStartWithPreviousExampleUsage())
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:new_rosetta_stone_template_example_usage_must_start_with_previous_example_usage")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""New example usage must start with the previous example usage.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andDocumentWithDefaultExceptionResponseFields(type)
     }
 
     @Test
     fun newRosettaStoneTemplatePropertyMustBeOptional() {
+        val type = "orkg:problem:new_rosetta_stone_template_property_must_be_optional"
         documentedGetRequestTo(NewRosettaStoneTemplatePropertyMustBeOptional(4, "4"))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:new_rosetta_stone_template_property_must_be_optional")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""New rosetta stone template property "4" must be optional.""")
             .andExpect(jsonPath("$.input_position_index").value("4"))
             .andExpect(jsonPath("$.input_position_placeholder").value("4"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("input_position_index").description("The index of the rosetta stone template property."),
                         fieldWithPath("input_position_placeholder").description("The placeholder of the rosetta stone template property."),
                     )
@@ -261,45 +275,49 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
 
     @Test
     fun invalidSubjectPositionCardinality() {
+        val type = "orkg:problem:invalid_subject_position_cardinality"
         documentedGetRequestTo(InvalidSubjectPositionCardinality())
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:invalid_subject_position_cardinality")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Invalid subject position cardinality. Minimum cardinality must be at least one.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andDocumentWithDefaultExceptionResponseFields(type)
     }
 
     @Test
     fun invalidSubjectPositionType() {
+        val type = "orkg:problem:invalid_subject_position_type"
         documentedGetRequestTo(InvalidSubjectPositionType())
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:invalid_subject_position_type")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Invalid subject position type. Subject position must not be a literal property.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andDocumentWithDefaultExceptionResponseFields(type)
     }
 
     @Test
     fun missingSubjectPosition() {
+        val type = "orkg:problem:missing_subject_position"
         documentedGetRequestTo(MissingSubjectPosition())
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:missing_subject_position")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Missing subject position. There must be at least one property with path "${Predicates.hasSubjectPosition}" that has a minimum cardinality of at least one.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andDocumentWithDefaultExceptionResponseFields(type)
     }
 
     @Test
     fun missingPropertyPlaceholder() {
+        val type = "orkg:problem:missing_property_placeholder"
         documentedGetRequestTo(MissingPropertyPlaceholder(4))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:missing_property_placeholder")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Missing placeholder for property at index "4".""")
             .andExpect(jsonPath("$.input_position_index").value("4"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("input_position_index").description("The index of the rosetta stone template property."),
                     )
                 )

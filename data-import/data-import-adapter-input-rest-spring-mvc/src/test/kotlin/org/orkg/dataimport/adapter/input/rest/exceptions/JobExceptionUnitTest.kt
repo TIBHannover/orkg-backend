@@ -30,14 +30,15 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 internal class JobExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun jobException() {
+        val type = "orkg:problem:job_execution_exception"
         documentedGetRequestTo(JobException(listOf(ProblemDetail.forStatusAndDetail(BAD_REQUEST, "Example detail message"))))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:job_execution_exception")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpect(jsonPath("$.errors").isArray)
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFieldsWithoutDetail()).and(
+                    responseFields(exceptionResponseFieldsWithoutDetail(type)).and(
                         subsectionWithPath("errors[]").description("A list of RFC 9457 problem details."),
                     )
                 )
@@ -46,15 +47,16 @@ internal class JobExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun jobNotFound() {
+        val type = "orkg:problem:job_not_found"
         documentedGetRequestTo(JobNotFound(JobId("1")))
             .andExpectErrorStatus(NOT_FOUND)
-            .andExpectType("orkg:problem:job_not_found")
+            .andExpectType(type)
             .andExpectTitle("Not Found")
             .andExpectDetail("""Job "1" not found.""")
             .andExpect(jsonPath("$.job_id").value("1"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("job_id").description("The id of the job."),
                     )
                 )
@@ -63,15 +65,16 @@ internal class JobExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun jobResultNotFound() {
+        val type = "orkg:problem:job_result_not_found"
         documentedGetRequestTo(JobResultNotFound(JobId("1")))
             .andExpectErrorStatus(NOT_FOUND)
-            .andExpectType("orkg:problem:job_result_not_found")
+            .andExpectType(type)
             .andExpectTitle("Not Found")
             .andExpectDetail("""Result for job "1" not found.""".trimMargin())
             .andExpect(jsonPath("$.job_id").value("1"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("job_id").description("The id of the job."),
                     )
                 )
@@ -80,15 +83,16 @@ internal class JobExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun jobNotComplete() {
+        val type = "orkg:problem:job_not_complete"
         documentedGetRequestTo(JobNotComplete(JobId("1")))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:job_not_complete")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Job "1" is not complete.""")
             .andExpect(jsonPath("$.job_id").value("1"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("job_id").description("The id of the job."),
                     )
                 )
@@ -97,15 +101,16 @@ internal class JobExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun jobNotRunning() {
+        val type = "orkg:problem:job_not_running"
         documentedGetRequestTo(JobNotRunning(JobId("1")))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:job_not_running")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Job "1" is not running.""")
             .andExpect(jsonPath("$.job_id").value("1"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("job_id").description("The id of the job."),
                     )
                 )
@@ -114,15 +119,16 @@ internal class JobExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun jobAlreadyRunning() {
+        val type = "orkg:problem:job_already_running"
         documentedGetRequestTo(JobAlreadyRunning(JobId("1")))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:job_already_running")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Job "1" is already running.""")
             .andExpect(jsonPath("$.job_id").value("1"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("job_id").description("The id of the job."),
                     )
                 )
@@ -131,15 +137,16 @@ internal class JobExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun jobAlreadyComplete() {
+        val type = "orkg:problem:job_already_complete"
         documentedGetRequestTo(JobAlreadyComplete(JobId("1")))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:job_already_complete")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Job "1" is already complete.""")
             .andExpect(jsonPath("$.job_id").value("1"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("job_id").description("The id of the job."),
                     )
                 )
@@ -148,15 +155,16 @@ internal class JobExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun jobRestartFailed() {
+        val type = "orkg:problem:job_restart_failed"
         documentedGetRequestTo(JobRestartFailed(JobId("1"), Exception("Error")))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:job_restart_failed")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Could not restart job "1".""")
             .andExpect(jsonPath("$.job_id").value("1"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("job_id").description("The id of the job."),
                     )
                 )

@@ -16,23 +16,25 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 internal class IdentifierExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun invalidDOI() {
+        val type = "orkg:problem:invalid_doi"
         documentedGetRequestTo(InvalidDOI("not a doi"))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:invalid_doi")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpect(jsonPath("$.errors[0].detail", `is`("""The value passed as query parameter "doi" is not a valid DOI. The value sent was: not a doi""")))
             .andExpect(jsonPath("$.errors[0].pointer", `is`("""#/doi""")))
-            .andDocumentWithValidationExceptionResponseFields()
+            .andDocumentWithValidationExceptionResponseFields(type)
     }
 
     @Test
     fun invalidIdentifier() {
+        val type = "orkg:problem:invalid_identifier"
         documentedGetRequestTo(InvalidIdentifier("doi", IllegalArgumentException("Error")))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:invalid_identifier")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpect(jsonPath("$.errors[0].detail", `is`("""Error""")))
             .andExpect(jsonPath("$.errors[0].pointer", `is`("""#/doi""")))
-            .andDocumentWithValidationExceptionResponseFields()
+            .andDocumentWithValidationExceptionResponseFields(type)
     }
 }

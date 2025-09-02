@@ -23,16 +23,17 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 internal class PaperCSVExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun paperCSVMissingTitle() {
+        val type = "orkg:problem:paper_csv_missing_paper_title"
         documentedGetRequestTo(PaperCSVMissingTitle(1, 2))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:paper_csv_missing_paper_title")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Missing title for paper in row 1 (line 2).""")
             .andExpect(jsonPath("$.item_number").value("1"))
             .andExpect(jsonPath("$.line_number").value("2"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("item_number").description("The number of the paper within the CSV."),
                         fieldWithPath("line_number").description("The line within the CSV."),
                     )
@@ -42,16 +43,17 @@ internal class PaperCSVExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun paperCSVMissingResearchField() {
+        val type = "orkg:problem:paper_csv_missing_research_field"
         documentedGetRequestTo(PaperCSVMissingResearchField(1, 2))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:paper_csv_missing_research_field")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Missing research field for paper in row 1 (line 2).""")
             .andExpect(jsonPath("$.item_number").value("1"))
             .andExpect(jsonPath("$.line_number").value("2"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("item_number").description("The number of the paper within the CSV."),
                         fieldWithPath("line_number").description("The line within the CSV."),
                     )
@@ -61,9 +63,10 @@ internal class PaperCSVExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun paperCSVResourceNotFound() {
+        val type = "orkg:problem:paper_csv_resource_not_found"
         documentedGetRequestTo(PaperCSVResourceNotFound(ThingId("R123"), 1, 2, 4))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:paper_csv_resource_not_found")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Resource "R123" in row 1, column 4 not found (line 2).""")
             .andExpect(jsonPath("$.resource_id").value("R123"))
@@ -72,7 +75,7 @@ internal class PaperCSVExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.csv_column").value("4"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("resource_id").description("The id of the resource."),
                         fieldWithPath("item_number").description("The number of the paper within the CSV."),
                         fieldWithPath("line_number").description("The line within the CSV."),
@@ -84,9 +87,10 @@ internal class PaperCSVExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun paperCSVThingNotFound() {
+        val type = "orkg:problem:paper_csv_thing_not_found"
         documentedGetRequestTo(PaperCSVThingNotFound(ThingId("R123"), 1, 2, 4))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:paper_csv_thing_not_found")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Thing "R123" in row 1, column 4 not found (line 2).""")
             .andExpect(jsonPath("$.thing_id").value("R123"))
@@ -95,7 +99,7 @@ internal class PaperCSVExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.csv_column").value("4"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("thing_id").description("The id of the thing."),
                         fieldWithPath("item_number").description("The number of the paper within the CSV."),
                         fieldWithPath("line_number").description("The line within the CSV."),

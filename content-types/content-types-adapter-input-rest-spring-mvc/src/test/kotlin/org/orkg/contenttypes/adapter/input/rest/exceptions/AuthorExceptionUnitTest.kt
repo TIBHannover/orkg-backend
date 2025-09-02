@@ -23,15 +23,16 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 internal class AuthorExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun authorNotFound() {
+        val type = "orkg:problem:author_not_found"
         documentedGetRequestTo(AuthorNotFound(ThingId("R123")))
             .andExpectErrorStatus(NOT_FOUND)
-            .andExpectType("orkg:problem:author_not_found")
+            .andExpectType(type)
             .andExpectTitle("Not Found")
             .andExpectDetail("""Author "R123" not found.""")
             .andExpect(jsonPath("$.author_id").value("R123"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("author_id").description("The id of the author."),
                     )
                 )
@@ -47,16 +48,17 @@ internal class AuthorExceptionUnitTest : MockMvcExceptionBaseTest() {
                 "orcid" to listOf("0000-0002-1825-0097")
             )
         )
+        val type = "orkg:problem:ambiguous_author"
         documentedGetRequestTo(AmbiguousAuthor(author))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:ambiguous_author")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Ambiguous author definition with identifiers {orcid=[0000-0002-1825-0097]}.""")
             .andExpect(jsonPath("$.author_id").value("R147"))
             .andExpect(jsonPath("$.author_identifiers.orcid[0]").value("0000-0002-1825-0097"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("author_id").type("String").description("The id of the author. (optional)").optional(),
                         subsectionWithPath("author_identifiers").description("A map of associated author identifiers."),
                     )

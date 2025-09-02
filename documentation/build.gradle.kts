@@ -1,7 +1,7 @@
 import com.epages.restdocs.apispec.gradle.OpenApi3Task
 import groovy.lang.Closure
-import org.asciidoctor.gradle.jvm.AsciidoctorTask
 import io.swagger.v3.oas.models.servers.Server
+import org.asciidoctor.gradle.jvm.AsciidoctorTask
 
 plugins {
     id("org.orkg.gradle.asciidoctor")
@@ -36,7 +36,7 @@ dependencies {
 
 val aggregatedSnippetsDir = layout.buildDirectory.dir("generated-snippets")
 
-val aggregateRestDocsSnippets by tasks.registering(Copy::class) {
+val aggregateRestDocsSnippets by tasks.registering(Sync::class) {
     group = "documentation"
 
     // Explicitly add a dependency on the configuration, because it will not resolve otherwise.
@@ -45,11 +45,65 @@ val aggregateRestDocsSnippets by tasks.registering(Copy::class) {
     // Obtain the list of ZIP files (and extract them). This only works if the configuration was resolved.
     restdocs.files.forEach {
         from(zipTree(it)) {
+            // TODO: extract to copyspec, use "with" from gradle
             include("**/*.adoc")
             include("**/resource.json") // for OpenAPI documentation
         }
     }
     into(aggregatedSnippetsDir)
+}
+
+abstract class GenerateErrorListingTask : DefaultTask() {
+    @get:InputDirectory
+    abstract val snippetsDir: DirectoryProperty
+
+    @get:OutputFile
+    abstract val errorListing: RegularFileProperty
+
+    init {
+        group = "documentation"
+        snippetsDir.convention(project.layout.buildDirectory.dir("generated-snippets"))
+        errorListing.set(project.layout.buildDirectory.file("error-snippets/all-errors.adoc"))
+    }
+
+    companion object {
+        private val typeRegex = Regex("Always `([a-z:_]+)` for this error.")
+    }
+
+    @TaskAction
+    fun action() {
+        val errorFiles = snippetsDir.asFileTree.matching({ include("errors-*/response-fields.adoc") }).files.sorted()
+        val listingFile = errorListing.asFile.get()
+        val snippetsDir = snippetsDir.asFile.get()
+        listingFile.writer(Charsets.UTF_8).use { writer ->
+            // Customization of text is done in the documentation, this only produces a simple list of snippets.
+            // Headings are used to separate entries, and may need adjustments using "leveloffset" on include.
+            errorFiles.forEach { file ->
+                val type = findTypeFromText(file)
+                val anchorType = type.replace(":", "-").replace("_", "-")
+                writer.write(
+                    """
+                    |[discrete,#error-$anchorType]
+                    |== $type
+                    |[cols="1,1,3"]
+                    |include::{snippets}/${file.toRelativeString(snippetsDir)}[]
+                    |
+                    |
+                    """.trimMargin()
+                )
+            }
+        }
+    }
+
+    private fun findTypeFromText(file: File): String = file.useLines { lines ->
+        val line = lines.firstOrNull { typeRegex.containsMatchIn(it) } ?: throw RuntimeException("Cannot find a line containing the type!")
+        // We already know that we can match, so ignoring null handling
+        typeRegex.find(line)!!.groups[1]!!.value
+    }
+}
+
+val generateErrorListing by tasks.registering(GenerateErrorListingTask::class) {
+    inputs.files(aggregateRestDocsSnippets.get().outputs)
 }
 
 val subfolders = listOf("api-doc", "architecture", "references")
@@ -60,7 +114,7 @@ val asciidoctor by tasks.existing(AsciidoctorTask::class) {
     // Declare all generated Asciidoc snippets as inputs. This connects the tasks, so dependsOn() is not required.
     // Other outputs are filtered, because they do not affect the output of this task.
     val docSources = files(sourceDir).asFileTree.matching { include("**/*.adoc", "**/*.css", "**/*.svg", "**/*.html") }
-    inputs.files(docSources, aggregateRestDocsSnippets)
+    inputs.files(docSources, aggregateRestDocsSnippets, generateErrorListing)
         .withPathSensitivity(PathSensitivity.RELATIVE)
         .ignoreEmptyDirectories()
         .withPropertyName("asciidocFiles")
@@ -79,9 +133,12 @@ val asciidoctor by tasks.existing(AsciidoctorTask::class) {
         // This should be fixed in the Asciidoctor plugin, but never was.
         jvm {
             jvmArgs(
-                "--add-opens", "java.base/sun.nio.ch=ALL-UNNAMED",
-                "--add-opens", "java.base/java.io=ALL-UNNAMED",
-                "--add-opens", "java.base/java.security=ALL-UNNAMED",
+                "--add-opens",
+                "java.base/sun.nio.ch=ALL-UNNAMED",
+                "--add-opens",
+                "java.base/java.io=ALL-UNNAMED",
+                "--add-opens",
+                "java.base/java.security=ALL-UNNAMED",
             )
         }
     }

@@ -19,15 +19,16 @@ import org.springframework.util.MimeType
 internal class ExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun invalidMimeType() {
+        val type = "orkg:problem:invalid_mime_type"
         documentedGetRequestTo(InvalidMimeType(MimeType.valueOf("application/octet-stream")))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:invalid_mime_type")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Invalid mime type "application/octet-stream".""")
             .andExpect(jsonPath("$.mime_type").value("application/octet-stream"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("mime_type").description("The provided mime type. (optional)"),
                     )
                 )
@@ -36,11 +37,12 @@ internal class ExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun invalidImageData() {
+        val type = "orkg:problem:invalid_image_data"
         documentedGetRequestTo(InvalidImageData())
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:invalid_image_data")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Invalid image data.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andDocumentWithDefaultExceptionResponseFields(type)
     }
 }

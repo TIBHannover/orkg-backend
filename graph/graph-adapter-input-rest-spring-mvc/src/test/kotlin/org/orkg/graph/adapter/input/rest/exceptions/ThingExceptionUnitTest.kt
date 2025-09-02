@@ -22,15 +22,16 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 internal class ThingExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun thingAlreadyExists() {
+        val type = "orkg:problem:thing_already_exists"
         documentedGetRequestTo(ThingAlreadyExists(ThingId("R123")))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:thing_already_exists")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""A thing with id "R123" already exists.""")
             .andExpect(jsonPath("$.thing_id", `is`("R123")))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("thing_id").description("The id of the thing."),
                     )
                 )
@@ -39,15 +40,16 @@ internal class ThingExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun thingNotFound() {
+        val type = "orkg:problem:thing_not_found"
         documentedGetRequestTo(ThingNotFound(ThingId("R123")))
             .andExpectErrorStatus(NOT_FOUND)
-            .andExpectType("orkg:problem:thing_not_found")
+            .andExpectType(type)
             .andExpectTitle("Not Found")
             .andExpectDetail("""Thing "R123" not found.""")
             .andExpect(jsonPath("$.thing_id", `is`("R123")))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("thing_id").description("The id of the thing."),
                     )
                 )

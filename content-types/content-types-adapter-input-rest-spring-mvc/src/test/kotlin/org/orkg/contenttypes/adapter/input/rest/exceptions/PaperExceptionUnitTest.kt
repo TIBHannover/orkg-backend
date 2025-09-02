@@ -24,15 +24,16 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 internal class PaperExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun paperNotModifiable() {
+        val type = "orkg:problem:paper_not_modifiable"
         documentedGetRequestTo(PaperNotModifiable(ThingId("R123")))
             .andExpectErrorStatus(FORBIDDEN)
-            .andExpectType("orkg:problem:paper_not_modifiable")
+            .andExpectType(type)
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Paper "R123" is not modifiable.""")
             .andExpect(jsonPath("$.paper_id").value("R123"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("paper_id").description("The id of the paper."),
                     )
                 )
@@ -41,15 +42,16 @@ internal class PaperExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun paperNotFound_withId() {
+        val type = "orkg:problem:paper_not_found"
         documentedGetRequestTo(PaperNotFound.withId(ThingId("R123")))
             .andExpectErrorStatus(NOT_FOUND)
-            .andExpectType("orkg:problem:paper_not_found")
+            .andExpectType(type)
             .andExpectTitle("Not Found")
             .andExpectDetail("""Paper "R123" not found.""")
             .andExpect(jsonPath("$.paper_id").value("R123"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("paper_id").description("The id of the paper. (optional, either `paper_id`, `paper_title` or `paper_doi` is present)"),
                         fieldWithPath("paper_paper_title").type("String").description("The title of the paper. (optional, either `paper_id`, `paper_title` or `doi` is present)").optional(),
                         fieldWithPath("paper_doi").type("String").description("The doi of the paper. (optional, either `paper_id`, `paper_title` or `paper_doi` is present)").optional(),
@@ -80,15 +82,16 @@ internal class PaperExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun paperAlreadyExists_withTitle() {
+        val type = "orkg:problem:paper_already_exists"
         documentedGetRequestTo(PaperAlreadyExists.withTitle("Paper title"))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:paper_already_exists")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Paper with title "Paper title" already exists.""")
             .andExpect(jsonPath("$.paper_title", `is`("Paper title")))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("paper_title").description("The title of the paper. (optional, either `paper_title` or `paper_identifier` is present)"),
                         fieldWithPath("paper_identifier").type("String").description("The identifier of the paper. (optional, either `paper_title` or `paper_identifier` is present)").optional(),
                     )

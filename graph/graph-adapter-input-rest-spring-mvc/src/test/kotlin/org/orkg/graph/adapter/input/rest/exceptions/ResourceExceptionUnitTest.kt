@@ -29,15 +29,16 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 internal class ResourceExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun resourceNotModifiable() {
+        val type = "orkg:problem:resource_not_modifiable"
         documentedGetRequestTo(ResourceNotModifiable(ThingId("R123")))
             .andExpectErrorStatus(FORBIDDEN)
-            .andExpectType("orkg:problem:resource_not_modifiable")
+            .andExpectType(type)
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Resource "R123" is not modifiable.""")
             .andExpect(jsonPath("$.resource_id", `is`("R123")))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("resource_id").description("The id of the resource."),
                     )
                 )
@@ -46,15 +47,16 @@ internal class ResourceExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun resourceNotFound() {
+        val type = "orkg:problem:resource_not_found"
         documentedGetRequestTo(ResourceNotFound(ThingId("R123")))
             .andExpectErrorStatus(NOT_FOUND)
-            .andExpectType("orkg:problem:resource_not_found")
+            .andExpectType(type)
             .andExpectTitle("Not Found")
             .andExpectDetail("""Resource "R123" not found.""")
             .andExpect(jsonPath("$.resource_id", `is`("R123")))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("resource_id").description("The id of the resource."),
                     )
                 )
@@ -63,16 +65,17 @@ internal class ResourceExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun externalResourceNotFound() {
+        val type = "orkg:problem:external_resource_not_found"
         documentedGetRequestTo(ExternalResourceNotFound("skos", "R123"))
             .andExpectErrorStatus(NOT_FOUND)
-            .andExpectType("orkg:problem:external_resource_not_found")
+            .andExpectType(type)
             .andExpectTitle("Not Found")
             .andExpectDetail("""External resource "R123" for ontology "skos" not found.""")
             .andExpect(jsonPath("$.resource_id").value("R123"))
             .andExpect(jsonPath("$.ontology_id").value("skos"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("resource_id").description("The id of the resource. (optional, either `resource_id` or `resource_uri` is present)"),
                         fieldWithPath("resource_uri").type("URI").description("The uri of the resource. (optional, either `resource_id` or `resource_uri` is present)").optional(),
                         fieldWithPath("ontology_id").description("The id of the resource ontology."),
@@ -83,15 +86,16 @@ internal class ResourceExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun resourceInUse() {
+        val type = "orkg:problem:resource_in_use"
         documentedGetRequestTo(ResourceInUse(ThingId("R123")))
             .andExpectErrorStatus(FORBIDDEN)
-            .andExpectType("orkg:problem:resource_in_use")
+            .andExpectType(type)
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Unable to delete resource "R123" because it is used in at least one statement.""")
             .andExpect(jsonPath("$.resource_id", `is`("R123")))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("resource_id").description("The id of the resource."),
                     )
                 )
@@ -100,15 +104,16 @@ internal class ResourceExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun resourceAlreadyExists() {
+        val type = "orkg:problem:resource_already_exists"
         documentedGetRequestTo(ResourceAlreadyExists(ThingId("R123")))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:resource_already_exists")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Resource "R123" already exists.""")
             .andExpect(jsonPath("$.resource_id", `is`("R123")))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("resource_id").description("The id of the resource."),
                     )
                 )
@@ -117,16 +122,17 @@ internal class ResourceExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun invalidClassCollection() {
+        val type = "orkg:problem:invalid_class_collection"
         documentedGetRequestTo(InvalidClassCollection(listOf(ThingId("C123"))))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:invalid_class_collection")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""The collection of classes "[C123]" contains one or more invalid classes.""")
             .andExpect(jsonPath("$.class_ids.length()", `is`(1)))
             .andExpect(jsonPath("$.class_ids[0]", `is`("C123")))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("class_ids").description("The list of invalid classes."),
                     )
                 )
@@ -135,15 +141,16 @@ internal class ResourceExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun reservedClass() {
+        val type = "orkg:problem:reserved_class"
         documentedGetRequestTo(ReservedClass(Classes.list))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:reserved_class")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Class "${Classes.list}" is reserved and therefor cannot be set.""")
             .andExpect(jsonPath("$.class_id", `is`(Classes.list.value)))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("class_id").description("The id of the class."),
                     )
                 )

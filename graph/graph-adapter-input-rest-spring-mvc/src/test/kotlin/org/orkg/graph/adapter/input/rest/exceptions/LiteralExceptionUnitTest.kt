@@ -27,15 +27,16 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 internal class LiteralExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun literalNotModifiable() {
+        val type = "orkg:problem:literal_not_modifiable"
         documentedGetRequestTo(LiteralNotModifiable(ThingId("L123")))
             .andExpectErrorStatus(FORBIDDEN)
-            .andExpectType("orkg:problem:literal_not_modifiable")
+            .andExpectType(type)
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Literal "L123" is not modifiable.""")
             .andExpect(jsonPath("$.literal_id", `is`("L123")))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("literal_id").description("The id of the literal."),
                     )
                 )
@@ -44,15 +45,16 @@ internal class LiteralExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun literalNotFound() {
+        val type = "orkg:problem:literal_not_found"
         documentedGetRequestTo(LiteralNotFound(ThingId("L123")))
             .andExpectErrorStatus(NOT_FOUND)
-            .andExpectType("orkg:problem:literal_not_found")
+            .andExpectType(type)
             .andExpectTitle("Not Found")
             .andExpectDetail("""Literal "L123" not found.""")
             .andExpect(jsonPath("$.literal_id", `is`("L123")))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("literal_id").description("The id of the literal."),
                     )
                 )
@@ -61,13 +63,14 @@ internal class LiteralExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun invalidLiteralLabelTooLong() {
+        val type = "orkg:problem:invalid_literal_label"
         documentedGetRequestTo(InvalidLiteralLabel())
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:invalid_literal_label")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpect(jsonPath("$.errors[0].detail", `is`("""A literal must be at most $MAX_LABEL_LENGTH characters long.""")))
             .andExpect(jsonPath("$.errors[0].pointer", `is`("""#/label""")))
-            .andDocumentWithValidationExceptionResponseFields()
+            .andDocumentWithValidationExceptionResponseFields(type)
     }
 
     @Test
@@ -83,26 +86,28 @@ internal class LiteralExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun invalidLiteralDatatype() {
+        val type = "orkg:problem:invalid_literal_datatype"
         documentedGetRequestTo(InvalidLiteralDatatype())
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:invalid_literal_datatype")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpect(jsonPath("$.errors[0].detail", `is`("""A literal datatype must be a URI or a "xsd:"-prefixed type.""")))
             .andExpect(jsonPath("$.errors[0].pointer", `is`("""#/datatype""")))
-            .andDocumentWithValidationExceptionResponseFields()
+            .andDocumentWithValidationExceptionResponseFields(type)
     }
 
     @Test
     fun literalAlreadyExists() {
+        val type = "orkg:problem:literal_already_exists"
         documentedGetRequestTo(LiteralAlreadyExists(ThingId("L123")))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:literal_already_exists")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Literal "L123" already exists.""")
             .andExpect(jsonPath("$.literal_id", `is`("L123")))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("literal_id").description("The id of the literal."),
                     )
                 )

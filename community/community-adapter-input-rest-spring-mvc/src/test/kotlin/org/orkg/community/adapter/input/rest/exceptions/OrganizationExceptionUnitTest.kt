@@ -25,15 +25,16 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 internal class OrganizationExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun organizationAlreadyExists_withName() {
+        val type = "orkg:problem:organization_already_exists"
         documentedGetRequestTo(OrganizationAlreadyExists.withName("Cool name"))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:organization_already_exists")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Organization with name "Cool name" already exists.""")
             .andExpect(jsonPath("$.organization_name", `is`("Cool name")))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("organization_name").description("The name of the organization. (optional, either `organization_name` or `organization_display_id` is present)"),
                         fieldWithPath("organization_display_id").type("String").description("The display_id of the organization. (optional, either `organization_name` or `organization_display_id` is present)").optional(),
                     )
@@ -53,15 +54,16 @@ internal class OrganizationExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun organizationNotFound_withId() {
+        val type = "orkg:problem:organization_not_found"
         documentedGetRequestTo(OrganizationNotFound(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")))
             .andExpectErrorStatus(NOT_FOUND)
-            .andExpectType("orkg:problem:organization_not_found")
+            .andExpectType(type)
             .andExpectTitle("Not Found")
             .andExpectDetail("""Organization "f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc" not found.""")
             .andExpect(jsonPath("$.organization_id", `is`("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("organization_id").description("The id of the organization. (optional, either `organization_id` or `organization_display_id` is present)"),
                         fieldWithPath("organization_display_id").type("String").description("The display_id of the organization. (optional, either `organization_id` or `organization_display_id` is present)").optional(),
                     )
@@ -81,15 +83,16 @@ internal class OrganizationExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun logoNotFound() {
+        val type = "orkg:problem:logo_not_found"
         documentedGetRequestTo(LogoNotFound(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")))
             .andExpectErrorStatus(NOT_FOUND)
-            .andExpectType("orkg:problem:logo_not_found")
+            .andExpectType(type)
             .andExpectTitle("Not Found")
             .andExpectDetail("""Logo for organization "f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc" not found.""")
             .andExpect(jsonPath("$.organization_id", `is`("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("organization_id").description("The id of the organization. (optional, either `organization_id` or `organization_display_id` is present)"),
                     )
                 )
@@ -98,25 +101,27 @@ internal class OrganizationExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun invalidImageEncoding() {
+        val type = "orkg:problem:invalid_image_encoding"
         documentedGetRequestTo(InvalidImageEncoding())
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:invalid_image_encoding")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Invalid image encoding.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andDocumentWithDefaultExceptionResponseFields(type)
     }
 
     @Test
     fun invalidPeerReviewType() {
+        val type = "orkg:problem:invalid_peer_review_type"
         documentedGetRequestTo(InvalidPeerReviewType("not a peer review type"))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:invalid_peer_review_type")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""The value "not a peer review type" is not a valid peer review type.""")
             .andExpect(jsonPath("$.peer_review_type", `is`("not a peer review type")))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("peer_review_type").description("The provided peer review type."),
                     )
                 )

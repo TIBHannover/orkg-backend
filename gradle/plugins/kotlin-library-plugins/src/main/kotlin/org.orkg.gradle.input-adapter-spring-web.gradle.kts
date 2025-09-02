@@ -21,6 +21,9 @@ tasks {
     }
 
     tasks.named<Test>("test") {
+        doFirst {
+            restdocsSnippetsDir.get().asFile.deleteRecursively()
+        }
         outputs.dir(restdocsSnippetsDir).withPropertyName("restdocsSnippetsDirectory")
         finalizedBy(tasks.named("restdocsSnippetsZip"))
     }

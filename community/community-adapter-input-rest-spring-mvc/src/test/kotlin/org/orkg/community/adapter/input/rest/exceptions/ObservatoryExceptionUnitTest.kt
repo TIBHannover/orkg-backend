@@ -24,15 +24,16 @@ import java.util.UUID
 internal class ObservatoryExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun observatoryAlreadyExists_withId() {
+        val type = "orkg:problem:observatory_already_exists"
         documentedGetRequestTo(ObservatoryAlreadyExists.withId(ObservatoryId("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:observatory_already_exists")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Observatory with id "eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174" already exists.""")
             .andExpect(jsonPath("$.observatory_id", `is`("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("observatory_id").description("The id of the observatory that already exists. (optional, either `observatory_id`, `observatory_name` or `observatory_display_id` is present)"),
                         fieldWithPath("observatory_name").type("String").description("The name of the observatory that already exists. (optional, either `observatory_id `observatory_name` or `observatory_display_id` is present)").optional(),
                         fieldWithPath("observatory_display_id").type("String").description("The display_id of the observatory that already exists. (optional, either `observatory_id`, `observatory_name` or `observatory_display_id` is present)").optional(),
@@ -63,15 +64,16 @@ internal class ObservatoryExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun observatoryNotFound_withId() {
+        val type = "orkg:problem:observatory_not_found"
         documentedGetRequestTo(ObservatoryNotFound(ObservatoryId("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")))
             .andExpectErrorStatus(NOT_FOUND)
-            .andExpectType("orkg:problem:observatory_not_found")
+            .andExpectType(type)
             .andExpectTitle("Not Found")
             .andExpectDetail("""Observatory "eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174" not found.""")
             .andExpect(jsonPath("$.observatory_id", `is`("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("observatory_id").description("The id of the observatory. (optional, either `observatory_id` or `observatory_display_id` is present)"),
                         fieldWithPath("observatory_display_id").type("String").description("The display_id of the observatory. (optional, either `observatory_id` or `observatory_display_id` is present)").optional(),
                     )
@@ -91,15 +93,16 @@ internal class ObservatoryExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun observatoryMemberNotFound() {
+        val type = "orkg:problem:observatory_member_not_found"
         documentedGetRequestTo(ObservatoryMemberNotFound(UUID.fromString("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")))
             .andExpectErrorStatus(NOT_FOUND)
-            .andExpectType("orkg:problem:observatory_member_not_found")
+            .andExpectType(type)
             .andExpectTitle("Not Found")
             .andExpectDetail("""Observatory member "eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174" not found.""")
             .andExpect(jsonPath("$.contributor_id", `is`("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("contributor_id").description("The id of the contributor."),
                     )
                 )

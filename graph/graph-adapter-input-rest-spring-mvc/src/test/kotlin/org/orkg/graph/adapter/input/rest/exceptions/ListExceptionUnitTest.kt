@@ -25,15 +25,16 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 internal class ListExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun listInUse() {
+        val type = "orkg:problem:list_in_use"
         documentedGetRequestTo(ListInUse(ThingId("R123")))
             .andExpectErrorStatus(FORBIDDEN)
-            .andExpectType("orkg:problem:list_in_use")
+            .andExpectType(type)
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Unable to delete list "R123" because it is used in at least one statement.""")
             .andExpect(jsonPath("$.list_id", `is`("R123")))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("list_id").description("The id of the list."),
                     )
                 )
@@ -42,15 +43,16 @@ internal class ListExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun listNotFound() {
+        val type = "orkg:problem:list_not_found"
         documentedGetRequestTo(ListNotFound(ThingId("R123")))
             .andExpectErrorStatus(NOT_FOUND)
-            .andExpectType("orkg:problem:list_not_found")
+            .andExpectType(type)
             .andExpectTitle("Not Found")
             .andExpectDetail("""List "R123" not found.""")
             .andExpect(jsonPath("$.list_id", `is`("R123")))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("list_id").description("The id of the list."),
                     )
                 )
@@ -59,15 +61,16 @@ internal class ListExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun listNotModifiable() {
+        val type = "orkg:problem:list_not_modifiable"
         documentedGetRequestTo(ListNotModifiable(ThingId("R123")))
             .andExpectErrorStatus(FORBIDDEN)
-            .andExpectType("orkg:problem:list_not_modifiable")
+            .andExpectType(type)
             .andExpectTitle("Forbidden")
             .andExpectDetail("""List "R123" is not modifiable.""")
             .andExpect(jsonPath("$.list_id", `is`("R123")))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("list_id").description("The id of the list."),
                     )
                 )
@@ -76,12 +79,13 @@ internal class ListExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun listElementNotFound() {
+        val type = "orkg:problem:list_element_not_found"
         documentedGetRequestTo(ListElementNotFound())
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:list_element_not_found")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpect(jsonPath("$.errors[0].detail", `is`("""All elements inside the list have to exist.""")))
             .andExpect(jsonPath("$.errors[0].pointer", `is`("#/elements")))
-            .andDocumentWithValidationExceptionResponseFields()
+            .andDocumentWithValidationExceptionResponseFields(type)
     }
 }

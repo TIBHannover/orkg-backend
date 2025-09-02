@@ -29,16 +29,17 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 internal class SmartReviewExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun publishedSmartReviewContentNotFound() {
+        val type = "orkg:problem:published_smart_review_content_not_found"
         documentedGetRequestTo(PublishedSmartReviewContentNotFound(ThingId("R123"), ThingId("R456")))
             .andExpectErrorStatus(NOT_FOUND)
-            .andExpectType("orkg:problem:published_smart_review_content_not_found")
+            .andExpectType(type)
             .andExpectTitle("Not Found")
             .andExpectDetail("""Smart review content "R456" not found for smart review "R123".""")
             .andExpect(jsonPath("$.smart_review_id").value("R123"))
             .andExpect(jsonPath("$.smart_review_content_id").value("R456"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("smart_review_id").description("The id of the smart review."),
                         fieldWithPath("smart_review_content_id").description("The id of the requested content."),
                     )
@@ -48,9 +49,10 @@ internal class SmartReviewExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun ontologyEntityNotFound() {
+        val type = "orkg:problem:ontology_entity_not_found"
         documentedGetRequestTo(OntologyEntityNotFound(setOf(ThingId("not"), ThingId("found"))))
             .andExpectErrorStatus(NOT_FOUND)
-            .andExpectType("orkg:problem:ontology_entity_not_found")
+            .andExpectType(type)
             .andExpectTitle("Not Found")
             .andExpectDetail("""Ontology entity not found among entities "not", "found".""")
             .andExpect(jsonPath("$.ontology_entities.length()").value(2))
@@ -58,7 +60,7 @@ internal class SmartReviewExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.ontology_entities[1]").value("found"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("ontology_entities").description("The list of provided ontology entities."),
                     )
                 )
@@ -67,15 +69,16 @@ internal class SmartReviewExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun invalidSmartReviewTextSectionType() {
+        val type = "orkg:problem:invalid_smart_review_text_section_type"
         documentedGetRequestTo(InvalidSmartReviewTextSectionType(ThingId("comparison")))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:invalid_smart_review_text_section_type")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Invalid smart review text section type "comparison".""")
             .andExpect(jsonPath("$.smart_review_section_type").value("comparison"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("smart_review_section_type").description("The provided smart review section type."),
                     )
                 )
@@ -84,16 +87,17 @@ internal class SmartReviewExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun unrelatedSmartReviewSection() {
+        val type = "orkg:problem:unrelated_smart_review_section"
         documentedGetRequestTo(UnrelatedSmartReviewSection(ThingId("R123"), ThingId("R456")))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:unrelated_smart_review_section")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Smart review section "R456" does not belong to smart review "R123".""")
             .andExpect(jsonPath("$.smart_review_id").value("R123"))
             .andExpect(jsonPath("$.smart_review_section_id").value("R456"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("smart_review_id").description("The id of the smart review."),
                         fieldWithPath("smart_review_section_id").description("The id of the smart review section."),
                     )
@@ -103,15 +107,16 @@ internal class SmartReviewExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun smartReviewSectionTypeMismatch_mustBeComparisonSection() {
+        val type = "orkg:problem:smart_review_section_type_mismatch"
         documentedGetRequestTo(SmartReviewSectionTypeMismatch.mustBeComparisonSection())
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:smart_review_section_type_mismatch")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Invalid smart review section type. Must be a comparison section.""")
             .andExpect(jsonPath("$.expected_smart_review_section_type").value(Classes.comparisonSection.value))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("expected_smart_review_section_type").description("The expected type of the smart review section."),
                     )
                 )
@@ -170,15 +175,16 @@ internal class SmartReviewExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun smartReviewAlreadyPublished() {
+        val type = "orkg:problem:smart_review_already_published"
         documentedGetRequestTo(SmartReviewAlreadyPublished(ThingId("R123")))
             .andExpectErrorStatus(FORBIDDEN)
-            .andExpectType("orkg:problem:smart_review_already_published")
+            .andExpectType(type)
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Smart review "R123" is already published.""")
             .andExpect(jsonPath("$.smart_review_id").value("R123"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("smart_review_id").description("The id of the smart review."),
                     )
                 )
@@ -187,15 +193,16 @@ internal class SmartReviewExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun smartReviewNotModifiable() {
+        val type = "orkg:problem:smart_review_not_modifiable"
         documentedGetRequestTo(SmartReviewNotModifiable(ThingId("R123")))
             .andExpectErrorStatus(FORBIDDEN)
-            .andExpectType("orkg:problem:smart_review_not_modifiable")
+            .andExpectType(type)
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Smart review "R123" is not modifiable.""")
             .andExpect(jsonPath("$.smart_review_id").value("R123"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("smart_review_id").description("The id of the smart review."),
                     )
                 )
@@ -204,15 +211,16 @@ internal class SmartReviewExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun smartReviewNotFound() {
+        val type = "orkg:problem:smart_review_not_found"
         documentedGetRequestTo(SmartReviewNotFound(ThingId("R123")))
             .andExpectErrorStatus(NOT_FOUND)
-            .andExpectType("orkg:problem:smart_review_not_found")
+            .andExpectType(type)
             .andExpectTitle("Not Found")
             .andExpectDetail("""Smart review "R123" not found.""")
             .andExpect(jsonPath("$.smart_review_id").value("R123"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("smart_review_id").description("The id of the smart review."),
                     )
                 )

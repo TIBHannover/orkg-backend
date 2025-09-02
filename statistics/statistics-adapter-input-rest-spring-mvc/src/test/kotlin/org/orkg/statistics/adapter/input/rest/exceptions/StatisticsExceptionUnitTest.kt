@@ -20,15 +20,16 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 internal class StatisticsExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun groupNotFound() {
+        val type = "orkg:problem:group_not_found"
         documentedGetRequestTo(GroupNotFound("group1"))
             .andExpectErrorStatus(NOT_FOUND)
-            .andExpectType("orkg:problem:group_not_found")
+            .andExpectType(type)
             .andExpectTitle("Not Found")
             .andExpectDetail("""Group "group1" not found.""")
             .andExpect(jsonPath("$.group_name").value("group1"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("group_name").description("The name of the group."),
                     )
                 )
@@ -37,16 +38,17 @@ internal class StatisticsExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun metricNotFound() {
+        val type = "orkg:problem:metric_not_found"
         documentedGetRequestTo(MetricNotFound("group1", "metric1"))
             .andExpectErrorStatus(NOT_FOUND)
-            .andExpectType("orkg:problem:metric_not_found")
+            .andExpectType(type)
             .andExpectTitle("Not Found")
             .andExpectDetail("""Metric "group1-metric1" not found.""")
             .andExpect(jsonPath("$.group_name").value("group1"))
             .andExpect(jsonPath("$.metric_name").value("metric1"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("group_name").description("The name of the group."),
                         fieldWithPath("metric_name").description("The name of the metric."),
                     )
@@ -56,15 +58,16 @@ internal class StatisticsExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun tooManyParameterValues() {
+        val type = "orkg:problem:too_many_parameter_values"
         documentedGetRequestTo(TooManyParameterValues("param1"))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:too_many_parameter_values")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Too many values for parameter "param1".""")
             .andExpect(jsonPath("$.parameter_name").value("param1"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("parameter_name").description("The name of the parameter."),
                     )
                 )

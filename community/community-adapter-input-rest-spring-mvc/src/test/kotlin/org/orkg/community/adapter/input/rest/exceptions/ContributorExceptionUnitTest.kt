@@ -22,15 +22,16 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 internal class ContributorExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun contributorAlreadyExists() {
+        val type = "orkg:problem:contributor_already_exists"
         documentedGetRequestTo(ContributorAlreadyExists(ContributorId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:contributor_already_exists")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Contributor "f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc" already exists.""")
             .andExpect(jsonPath("$.contributor_id", `is`("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("contributor_id").description("The id of the contributor."),
                     )
                 )
@@ -39,15 +40,16 @@ internal class ContributorExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun contributorNotFound() {
+        val type = "orkg:problem:contributor_not_found"
         documentedGetRequestTo(ContributorNotFound(ContributorId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")))
             .andExpectErrorStatus(NOT_FOUND)
-            .andExpectType("orkg:problem:contributor_not_found")
+            .andExpectType(type)
             .andExpectTitle("Not Found")
             .andExpectDetail("""Contributor "f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc" not found.""")
             .andExpect(jsonPath("$.contributor_id", `is`("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("contributor_id").description("The id of the contributor."),
                     )
                 )

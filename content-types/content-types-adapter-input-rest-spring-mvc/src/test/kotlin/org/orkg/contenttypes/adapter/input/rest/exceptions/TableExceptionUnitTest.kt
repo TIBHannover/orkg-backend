@@ -27,15 +27,16 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 internal class TableExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun tableNotFound() {
+        val type = "orkg:problem:table_not_found"
         documentedGetRequestTo(TableNotFound(ThingId("R123")))
             .andExpectErrorStatus(NOT_FOUND)
-            .andExpectType("orkg:problem:table_not_found")
+            .andExpectType(type)
             .andExpectTitle("Not Found")
             .andExpectDetail("""Table "R123" not found.""")
             .andExpect(jsonPath("$.table_id").value("R123"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("table_id").description("The id of the table."),
                     )
                 )
@@ -44,26 +45,28 @@ internal class TableExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun missingTableRows() {
+        val type = "orkg:problem:missing_table_rows"
         documentedGetRequestTo(MissingTableRows())
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:missing_table_rows")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Missing table rows. At least one rows is required.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andDocumentWithDefaultExceptionResponseFields(type)
     }
 
     @Test
     fun missingTableHeaderValue() {
+        val type = "orkg:problem:missing_table_header_value"
         documentedGetRequestTo(MissingTableHeaderValue(5))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:missing_table_header_value")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Missing table header value at index 5.""")
             .andExpect(jsonPath("$.table_row_index").value("0"))
             .andExpect(jsonPath("$.table_column_index").value("5"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("table_row_index").description("The row index of the table. Always `0`."),
                         fieldWithPath("table_column_index").description("The column index of the table."),
                     )
@@ -73,16 +76,17 @@ internal class TableExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun tableHeaderValueMustBeLiteral() {
+        val type = "orkg:problem:table_header_value_must_be_literal"
         documentedGetRequestTo(TableHeaderValueMustBeLiteral(5))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:table_header_value_must_be_literal")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Table header value at index 5 must be a literal.""")
             .andExpect(jsonPath("$.table_row_index").value("0"))
             .andExpect(jsonPath("$.table_column_index").value("5"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("table_row_index").description("The row index of the table. Always `0`."),
                         fieldWithPath("table_column_index").description("The column index of the table."),
                     )
@@ -92,16 +96,17 @@ internal class TableExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun tooManyTableRowValues() {
+        val type = "orkg:problem:too_many_table_row_values"
         documentedGetRequestTo(TooManyTableRowValues(5, 10))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:too_many_table_row_values")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Row 5 has more values than the header. Expected exactly 10 values based on header.""")
             .andExpect(jsonPath("$.table_row_index").value("5"))
             .andExpect(jsonPath("$.expected_table_row_count").value("10"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("table_row_index").description("The row index of the table."),
                         fieldWithPath("expected_table_row_count").description("The expected number of row elements."),
                     )
@@ -111,16 +116,17 @@ internal class TableExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun missingTableRowValues() {
+        val type = "orkg:problem:missing_table_row_values"
         documentedGetRequestTo(MissingTableRowValues(10, 5))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:missing_table_row_values")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Row 10 has less values than the header. Expected exactly 5 values based on header.""")
             .andExpect(jsonPath("$.table_row_index").value("10"))
             .andExpect(jsonPath("$.expected_table_row_count").value("5"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("table_row_index").description("The row index of the table."),
                         fieldWithPath("expected_table_row_count").description("The expected number of row elements."),
                     )
@@ -130,15 +136,16 @@ internal class TableExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun tableNotModifiable() {
+        val type = "orkg:problem:table_not_modifiable"
         documentedGetRequestTo(TableNotModifiable(ThingId("R123")))
             .andExpectErrorStatus(FORBIDDEN)
-            .andExpectType("orkg:problem:table_not_modifiable")
+            .andExpectType(type)
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Table "R123" is not modifiable.""")
             .andExpect(jsonPath("$.table_id").value("R123"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("table_id").description("The id of the table."),
                     )
                 )

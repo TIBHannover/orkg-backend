@@ -52,8 +52,8 @@ fun <T : AbstractDescriptor<T>> AbstractDescriptor<T>.deprecated(): T =
 fun <T : AbstractDescriptor<T>> AbstractDescriptor<T>.deprecated(replaceWith: String): T =
     description(listOfNotNull("*Deprecated*. See `$replaceWith` for replacement.", description).joinToString(" "))
 
-fun exceptionResponseFields() = listOf(
-    fieldWithPath("type").description("A URI reference that identifies the problem type."),
+fun exceptionResponseFields(type: String) = listOf(
+    fieldWithPath("type").description("A URI reference that identifies the problem type. Always `$type` for this error."),
     fieldWithPath("status").description("The HTTP status code of the error. This is equal to the status code of the request itself and MUST only be used for display purposes."),
     fieldWithPath("title").description("A short, human-readable summary of the problem type."),
     fieldWithPath("detail").description("A human-readable explanation specific to this occurrence of the problem."),
@@ -65,11 +65,11 @@ fun exceptionResponseFields() = listOf(
     fieldWithPath("timestamp").description("The <<timestamp-representation,timestamp>> of when the error happened.").deprecated(),
 )
 
-fun exceptionResponseFieldsWithoutDetail() =
-    exceptionResponseFields().filter { it.path != "detail" && it.path != "message" }
+fun exceptionResponseFieldsWithoutDetail(type: String) =
+    exceptionResponseFields(type).filter { it.path != "detail" && it.path != "message" }
 
-fun validationExceptionResponseFields() = listOf(
-    fieldWithPath("type").description("A URI reference that identifies the problem type."),
+fun validationExceptionResponseFields(type: String) = listOf(
+    fieldWithPath("type").description("A URI reference that identifies the problem type. Always `$type` for this error."),
     fieldWithPath("status").description("The HTTP status code of the error. This is equal to the status code of the request itself and MUST only be used for display purposes."),
     fieldWithPath("title").description("A short, human-readable summary of the problem type."),
     fieldWithPath("instance").description("A URI reference that identifies the specific occurrence of the problem."),

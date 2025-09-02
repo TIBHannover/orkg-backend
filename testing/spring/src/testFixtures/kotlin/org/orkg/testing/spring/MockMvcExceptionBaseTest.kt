@@ -31,7 +31,7 @@ abstract class MockMvcExceptionBaseTest : MockMvcBaseTest("errors") {
     @MockkBean
     private lateinit var testController: TestController
 
-    protected final fun <T : Throwable> get(
+    protected fun <T : Throwable> get(
         throwable: T,
         urlTemplate: String = ERROR_ENDPOINT_PATH,
         vararg uriValues: Any,
@@ -40,7 +40,7 @@ abstract class MockMvcExceptionBaseTest : MockMvcBaseTest("errors") {
             get(urlTemplate, *uriValues).perform().andExpectErrorResponse()
         }
 
-    protected final fun <T : Throwable> documentedGetRequestTo(
+    protected fun <T : Throwable> documentedGetRequestTo(
         throwable: T,
         urlTemplate: String = ERROR_ENDPOINT_PATH,
         vararg uriValues: Any,
@@ -63,14 +63,14 @@ abstract class MockMvcExceptionBaseTest : MockMvcBaseTest("errors") {
         return result
     }
 
-    protected final fun ResultActions.andDocumentWithDefaultExceptionResponseFields() =
-        andDo(documentationHandler.document(responseFields(exceptionResponseFields())))
+    protected fun ResultActions.andDocumentWithDefaultExceptionResponseFields(type: String) =
+        andDo(documentationHandler.document(responseFields(exceptionResponseFields(type))))
 
-    protected final fun ResultActions.andDocumentWithoutDetailExceptionResponseFields(): ResultActions =
-        andDo(documentationHandler.document(responseFields(exceptionResponseFieldsWithoutDetail())))
+    protected final fun ResultActions.andDocumentWithoutDetailExceptionResponseFields(type: String): ResultActions =
+        andDo(documentationHandler.document(responseFields(exceptionResponseFieldsWithoutDetail(type))))
 
-    protected final fun ResultActions.andDocumentWithValidationExceptionResponseFields() =
-        andDo(documentationHandler.document(responseFields(validationExceptionResponseFields())))
+    protected fun ResultActions.andDocumentWithValidationExceptionResponseFields(type: String) =
+        andDo(documentationHandler.document(responseFields(validationExceptionResponseFields(type))))
 
     @TestComponent
     @RestController

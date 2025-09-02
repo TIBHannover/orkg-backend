@@ -27,13 +27,14 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun invalidLabel_withDefaultProperty() {
+        val type = "orkg:problem:invalid_label"
         documentedGetRequestTo(InvalidLabel())
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:invalid_label")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpect(jsonPath("$.errors[0].detail", `is`("""A label must not be blank or contain newlines and must be at most $MAX_LABEL_LENGTH characters long.""")))
             .andExpect(jsonPath("$.errors[0].pointer", `is`("""#/label""")))
-            .andDocumentWithValidationExceptionResponseFields()
+            .andDocumentWithValidationExceptionResponseFields(type)
     }
 
     @Test
@@ -48,13 +49,14 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun invalidDescription_withDefaultProperty() {
+        val type = "orkg:problem:invalid_description"
         documentedGetRequestTo(InvalidDescription())
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:invalid_description")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpect(jsonPath("$.errors[0].detail", `is`("""A description must not be blank and must be at most $MAX_LABEL_LENGTH characters long.""")))
             .andExpect(jsonPath("$.errors[0].pointer", `is`("""#/description""")))
-            .andDocumentWithValidationExceptionResponseFields()
+            .andDocumentWithValidationExceptionResponseFields(type)
     }
 
     @Test
@@ -69,9 +71,10 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun neitherOwnerNorCurator_defaultConstructor() {
+        val type = "orkg:problem:neither_owner_nor_curator"
         documentedGetRequestTo(NeitherOwnerNorCurator(ContributorId(MockUserId.CURATOR), ContributorId(MockUserId.USER), ThingId("R123")))
             .andExpectErrorStatus(FORBIDDEN)
-            .andExpectType("orkg:problem:neither_owner_nor_curator")
+            .andExpectType(type)
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Contributor <b7c81eed-52e1-4f7a-93bf-e6d331b8df7b> does not own the entity to be deleted and is not a curator.""")
             .andExpect(jsonPath("$.owner_id").value("c4e9e7c2-cd5f-4385-af09-071674304e37"))
@@ -79,7 +82,7 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.thing_id").value("R123"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("owner_id").description("The id of the owner."),
                         fieldWithPath("contributor_id").description("The id of the contributor."),
                         fieldWithPath("thing_id").description("The id of thing."),
@@ -102,15 +105,16 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun notACurator_defaultConstructor() {
+        val type = "orkg:problem:not_a_curator"
         documentedGetRequestTo(NotACurator(ContributorId(MockUserId.USER)))
             .andExpectErrorStatus(FORBIDDEN)
-            .andExpectType("orkg:problem:not_a_curator")
+            .andExpectType(type)
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Contributor <b7c81eed-52e1-4f7a-93bf-e6d331b8df7b> is not a curator.""")
             .andExpect(jsonPath("$.contributor_id").value("b7c81eed-52e1-4f7a-93bf-e6d331b8df7b"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("contributor_id").description("The id of the contributor."),
                     )
                 )

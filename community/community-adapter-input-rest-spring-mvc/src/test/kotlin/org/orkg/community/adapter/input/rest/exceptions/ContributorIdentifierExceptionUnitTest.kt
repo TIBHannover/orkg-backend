@@ -21,16 +21,17 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 internal class ContributorIdentifierExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun unknownIdentifierType() {
+        val type = "orkg:problem:unknown_identifier_type"
         documentedGetRequestTo(UnknownIdentifierType("doi"))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:unknown_identifier_type")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Unknown identifier type "doi".""")
             .andExpect(jsonPath("$.identifier_type", `is`("doi")))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
-                        fieldWithPath("identifier_type").description("The provided identifer type."),
+                    responseFields(exceptionResponseFields(type)).and(
+                        fieldWithPath("identifier_type").description("The provided identifier type."),
                     )
                 )
             )
@@ -38,16 +39,17 @@ internal class ContributorIdentifierExceptionUnitTest : MockMvcExceptionBaseTest
 
     @Test
     fun contributorIdentifierAlreadyExists() {
+        val type = "orkg:problem:contributor_identifier_already_exists"
         documentedGetRequestTo(ContributorIdentifierAlreadyExists(ContributorId("9d791767-245b-46e1-b260-2c00fb34efda"), "identifier"))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:contributor_identifier_already_exists")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Identifier "identifier" for contributor "9d791767-245b-46e1-b260-2c00fb34efda" already exists.""")
             .andExpect(jsonPath("$.contributor_id", `is`("9d791767-245b-46e1-b260-2c00fb34efda")))
             .andExpect(jsonPath("$.identifier_value", `is`("identifier")))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("contributor_id").description("The id of the contributor."),
                         fieldWithPath("identifier_value").description("The value of the identifier."),
                     )

@@ -16,14 +16,15 @@ import org.springframework.test.context.ContextConfiguration
 internal class ExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun oAuth2Exception_invalidRequest() {
+        val type = "orkg:problem:invalid_request"
         documentedGetRequestTo(LegacyAuthController.OAuth2Exception("invalid_request", "Missing grant type"))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:invalid_request")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Missing grant type""")
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("error_description").description("A short, human-readable summary of the problem type.")
                     )
                 )
@@ -32,14 +33,15 @@ internal class ExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun oAuth2Exception_unsupportedGrantType() {
+        val type = "orkg:problem:unsupported_grant_type"
         documentedGetRequestTo(LegacyAuthController.OAuth2Exception("unsupported_grant_type", "Unsupported grant type"))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:unsupported_grant_type")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Unsupported grant type""")
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("error_description").description("A short, human-readable summary of the problem type.")
                     )
                 )

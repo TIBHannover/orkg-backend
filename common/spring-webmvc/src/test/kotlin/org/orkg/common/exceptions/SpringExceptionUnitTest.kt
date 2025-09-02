@@ -51,14 +51,15 @@ import org.springframework.web.servlet.resource.NoResourceFoundException
 internal class SpringExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun propertyReferenceException() {
+        val type = "orkg:problem:unknown_property"
         documentedGetRequestTo(PropertyReferenceException("property", TypeInformation.OBJECT, emptyList()))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:unknown_property")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Unknown property "property".""")
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("property").description("The property that failed validation."),
                     )
                 )
@@ -67,43 +68,47 @@ internal class SpringExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun httpMediaTypeNotAcceptable() {
+        val type = "orkg:problem:http_media_type_not_acceptable"
         documentedGetRequestTo(HttpMediaTypeNotAcceptableException(listOf(MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML)))
             .andExpectErrorStatus(NOT_ACCEPTABLE)
-            .andExpectType("orkg:problem:http_media_type_not_acceptable")
+            .andExpectType(type)
             .andExpectTitle("Not Acceptable")
             .andExpectDetail("""Unsupported response media type. Please check the 'Accept' header for a list of supported media types.""")
             .andExpect(header().string("Accept", "application/json, application/xml"))
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andDocumentWithDefaultExceptionResponseFields(type)
     }
 
     @Test
     fun httpMediaTypeNotSupported() {
+        val type = "orkg:problem:http_media_type_not_supported"
         documentedGetRequestTo(HttpMediaTypeNotSupportedException(null as? MediaType?, listOf(MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML)))
             .andExpectErrorStatus(UNSUPPORTED_MEDIA_TYPE)
-            .andExpectType("orkg:problem:http_media_type_not_supported")
+            .andExpectType(type)
             .andExpectTitle("Unsupported Media Type")
             .andExpectDetail("""Unsupported request media type. Please check the 'Accept' header for a list of supported media types.""")
             .andExpect(header().string("Accept", "application/json, application/xml"))
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andDocumentWithDefaultExceptionResponseFields(type)
     }
 
     @Test
     fun asyncRequestTimeoutException() {
+        val type = "orkg:problem:async_request_timeout"
         documentedGetRequestTo(AsyncRequestTimeoutException())
             .andExpectErrorStatus(SERVICE_UNAVAILABLE)
-            .andExpectType("orkg:problem:async_request_timeout")
+            .andExpectType(type)
             .andExpectTitle("Service Unavailable")
-            .andDocumentWithoutDetailExceptionResponseFields()
+            .andDocumentWithoutDetailExceptionResponseFields(type)
     }
 
     @Test
     fun conversionNotSupportedException() {
+        val type = "orkg:problem:conversion_not_supported"
         documentedGetRequestTo(ConversionNotSupportedException(null as Any?, null, null))
             .andExpectErrorStatus(INTERNAL_SERVER_ERROR)
-            .andExpectType("orkg:problem:conversion_not_supported")
+            .andExpectType(type)
             .andExpectTitle("Internal Server Error")
             .andExpectDetail("""Failed to convert 'null' with value: 'null'""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andDocumentWithDefaultExceptionResponseFields(type)
     }
 
     @Test
@@ -115,42 +120,46 @@ internal class SpringExceptionUnitTest : MockMvcExceptionBaseTest() {
         val handlerMethodValidationException = HandlerMethodValidationException(
             MethodValidationResult.create(this, method, listOf(parameterValidationResult))
         )
+        val type = "orkg:problem:handler_method_validation"
         documentedGetRequestTo(handlerMethodValidationException)
             .andExpectErrorStatus(INTERNAL_SERVER_ERROR)
-            .andExpectType("orkg:problem:handler_method_validation")
+            .andExpectType(type)
             .andExpectTitle("Internal Server Error")
             .andExpectDetail("""Validation failure""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andDocumentWithDefaultExceptionResponseFields(type)
     }
 
     @Test
     fun httpMessageNotReadableException() {
+        val type = "orkg:problem:http_message_not_readable"
         documentedGetRequestTo(HttpMessageNotReadableException("Message not readable!", MockClientHttpResponse()))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:http_message_not_readable")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Failed to read request""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andDocumentWithDefaultExceptionResponseFields(type)
     }
 
     @Test
     fun httpMessageNotWritableException() {
+        val type = "orkg:problem:http_message_not_writable"
         documentedGetRequestTo(HttpMessageNotWritableException("Not writable!"))
             .andExpectErrorStatus(INTERNAL_SERVER_ERROR)
-            .andExpectType("orkg:problem:http_message_not_writable")
+            .andExpectType(type)
             .andExpectTitle("Internal Server Error")
             .andExpectDetail("""Failed to write request""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andDocumentWithDefaultExceptionResponseFields(type)
     }
 
     @Test
     fun httpRequestMethodNotSupportedException() {
+        val type = "orkg:problem:http_request_method_not_supported"
         documentedGetRequestTo(HttpRequestMethodNotSupportedException("PATCH"))
             .andExpectErrorStatus(METHOD_NOT_ALLOWED)
-            .andExpectType("orkg:problem:http_request_method_not_supported")
+            .andExpectType(type)
             .andExpectTitle("Method Not Allowed")
             .andExpectDetail("""Method 'PATCH' is not supported.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andDocumentWithDefaultExceptionResponseFields(type)
     }
 
     @Test
@@ -159,14 +168,15 @@ internal class SpringExceptionUnitTest : MockMvcExceptionBaseTest() {
             MethodParameter(this::class.java.getDeclaredMethod("methodArgumentNotValidException"), -1),
             MapBindingResult(mapOf("key" to "value"), "field")
         )
+        val type = "orkg:problem:invalid_argument"
         documentedGetRequestTo(methodArgumentNotValidException)
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:invalid_argument")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Invalid request content.""")
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("errors").description("An array of error descriptions.")
                     )
                 )
@@ -179,22 +189,24 @@ internal class SpringExceptionUnitTest : MockMvcExceptionBaseTest() {
             "header-name",
             MethodParameter(this::class.java.getDeclaredMethod("missingRequestHeaderException"), -1)
         )
+        val type = "orkg:problem:missing_request_header"
         documentedGetRequestTo(missingRequestHeaderException)
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:missing_request_header")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Required header 'header-name' is not present.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andDocumentWithDefaultExceptionResponseFields(type)
     }
 
     @Test
     fun missingServletRequestParameterException() {
+        val type = "orkg:problem:missing_request_parameter"
         documentedGetRequestTo(MissingServletRequestParameterException("name", "String"))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:missing_request_parameter")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Required parameter 'name' is not present.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andDocumentWithDefaultExceptionResponseFields(type)
     }
 
     @Test
@@ -203,12 +215,13 @@ internal class SpringExceptionUnitTest : MockMvcExceptionBaseTest() {
             "variable-name",
             MethodParameter(this::class.java.getDeclaredMethod("missingMatrixVariableException"), -1)
         )
+        val type = "orkg:problem:missing_matrix_variable"
         documentedGetRequestTo(missingMatrixVariableException)
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:missing_matrix_variable")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Required path parameter 'variable-name' is not present.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andDocumentWithDefaultExceptionResponseFields(type)
     }
 
     @Test
@@ -217,11 +230,12 @@ internal class SpringExceptionUnitTest : MockMvcExceptionBaseTest() {
             "variable-name",
             MethodParameter(this::class.java.getDeclaredMethod("missingPathVariableException"), -1)
         )
+        val type = "orkg:problem:missing_path_variable"
         documentedGetRequestTo(missingPathVariableException)
             .andExpectErrorStatus(INTERNAL_SERVER_ERROR)
-            .andExpectType("orkg:problem:missing_path_variable")
+            .andExpectType(type)
             .andExpectTitle("Internal Server Error")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andDocumentWithDefaultExceptionResponseFields(type)
     }
 
     @Test
@@ -230,60 +244,66 @@ internal class SpringExceptionUnitTest : MockMvcExceptionBaseTest() {
             "cookie-name",
             MethodParameter(this::class.java.getDeclaredMethod("missingRequestCookieException"), -1)
         )
+        val type = "orkg:problem:missing_request_cookie"
         documentedGetRequestTo(missingRequestCookieException)
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:missing_request_cookie")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Required cookie 'cookie-name' is not present.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andDocumentWithDefaultExceptionResponseFields(type)
     }
 
     @Test
     fun missingServletRequestPartException() {
+        val type = "orkg:problem:missing_request_part"
         documentedGetRequestTo(MissingServletRequestPartException("part"))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:missing_request_part")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Required part 'part' is not present.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andDocumentWithDefaultExceptionResponseFields(type)
     }
 
     @Test
     fun noHandlerFoundException() {
+        val type = "orkg:problem:handler_not_found"
         documentedGetRequestTo(NoHandlerFoundException("GET", "localhost", HttpHeaders()))
             .andExpectErrorStatus(NOT_FOUND)
-            .andExpectType("orkg:problem:handler_not_found")
+            .andExpectType(type)
             .andExpectTitle("Not Found")
             .andExpectDetail("""No endpoint GET localhost.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andDocumentWithDefaultExceptionResponseFields(type)
     }
 
     @Test
     fun noResourceFoundException() {
+        val type = "orkg:problem:not_found"
         documentedGetRequestTo(NoResourceFoundException(HttpMethod.GET, "/resource"))
             .andExpectErrorStatus(NOT_FOUND)
-            .andExpectType("orkg:problem:not_found")
+            .andExpectType(type)
             .andExpectTitle("Not Found")
             .andExpectDetail("""No static resource /resource.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andDocumentWithDefaultExceptionResponseFields(type)
     }
 
     @Test
     fun typeMismatchException() {
+        val type = "orkg:problem:type_mismatch"
         documentedGetRequestTo(TypeMismatchException(null as Any?, null))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:type_mismatch")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Failed to convert 'null' with value: 'null'""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andDocumentWithDefaultExceptionResponseFields(type)
     }
 
     @Test
     fun accessDeniedException() {
+        val type = "orkg:problem:access_denied"
         documentedGetRequestTo(AccessDeniedException("Access denied!"))
             .andExpectErrorStatus(FORBIDDEN)
-            .andExpectType("orkg:problem:access_denied")
+            .andExpectType(type)
             .andExpectTitle("Forbidden")
-            .andDocumentWithoutDetailExceptionResponseFields()
+            .andDocumentWithoutDetailExceptionResponseFields(type)
     }
 }

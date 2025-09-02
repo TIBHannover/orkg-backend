@@ -14,8 +14,12 @@ Although nanosecond precision is available currently, clients MUST NOT rely on i
 [[error-represenation]]
 == Errors
 
+This section lists all domain errors that can be thrown by the REST-API.
+Responses follow the https://datatracker.ietf.org/doc/html/rfc9457[RFC 9457] Problem Details for HTTP APIs format.
+The fields `type`, `status`, `title` and `instance` are part of _every_ problem response.
+
 [cols="1,1,3"]
-include::{snippets}/errors-unknown-parameter/response-fields.adoc[]
+include::{snippets}/../error-snippets/all-errors.adoc[leveloffset=+1]
 
 [[page-representation]]
 == Pages

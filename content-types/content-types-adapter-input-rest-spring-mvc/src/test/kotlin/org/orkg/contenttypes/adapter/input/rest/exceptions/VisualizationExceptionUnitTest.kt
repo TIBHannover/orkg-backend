@@ -19,15 +19,16 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 internal class VisualizationExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun visualizationNotFound() {
+        val type = "orkg:problem:visualization_not_found"
         documentedGetRequestTo(VisualizationNotFound(ThingId("R123")))
             .andExpectErrorStatus(NOT_FOUND)
-            .andExpectType("orkg:problem:visualization_not_found")
+            .andExpectType(type)
             .andExpectTitle("Not Found")
             .andExpectDetail("""Visualization "R123" not found.""")
             .andExpect(jsonPath("$.visualization_id").value("R123"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("visualization_id").description("The id of the visualization."),
                     )
                 )

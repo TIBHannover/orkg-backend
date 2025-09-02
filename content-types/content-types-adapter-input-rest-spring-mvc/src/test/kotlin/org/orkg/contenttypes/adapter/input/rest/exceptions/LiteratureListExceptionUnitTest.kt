@@ -29,16 +29,17 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 internal class LiteratureListExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun publishedLiteratureListContentNotFound() {
+        val type = "orkg:problem:published_literature_list_content_not_found"
         documentedGetRequestTo(PublishedLiteratureListContentNotFound(ThingId("R123"), ThingId("R456")))
             .andExpectErrorStatus(NOT_FOUND)
-            .andExpectType("orkg:problem:published_literature_list_content_not_found")
+            .andExpectType(type)
             .andExpectTitle("Not Found")
             .andExpectDetail("""Literature list content "R456" not found for literature list "R123".""")
             .andExpect(jsonPath("$.literature_list_id").value("R123"))
             .andExpect(jsonPath("$.literature_list_content_id").value("R456"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("literature_list_id").description("The id of the literature list."),
                         fieldWithPath("literature_list_content_id").description("The id of the requested content."),
                     )
@@ -48,15 +49,16 @@ internal class LiteratureListExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun literatureListAlreadyPublished() {
+        val type = "orkg:problem:literature_list_already_published"
         documentedGetRequestTo(LiteratureListAlreadyPublished(ThingId("R123")))
             .andExpectErrorStatus(FORBIDDEN)
-            .andExpectType("orkg:problem:literature_list_already_published")
+            .andExpectType(type)
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Literature list "R123" is already published.""")
             .andExpect(jsonPath("$.literature_list_id").value("R123"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("literature_list_id").description("The id of the literature list."),
                     )
                 )
@@ -65,15 +67,16 @@ internal class LiteratureListExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun literatureListNotFound() {
+        val type = "orkg:problem:literature_list_not_found"
         documentedGetRequestTo(LiteratureListNotFound(ThingId("R123")))
             .andExpectErrorStatus(NOT_FOUND)
-            .andExpectType("orkg:problem:literature_list_not_found")
+            .andExpectType(type)
             .andExpectTitle("Not Found")
             .andExpectDetail("""Literature list "R123" not found.""")
             .andExpect(jsonPath("$.literature_list_id").value("R123"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("literature_list_id").description("The id of the literature list."),
                     )
                 )
@@ -82,15 +85,16 @@ internal class LiteratureListExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun invalidListSectionEntry() {
+        val type = "orkg:problem:invalid_list_section_entry"
         documentedGetRequestTo(InvalidListSectionEntry(ThingId("R123"), setOf(ThingId("C1"), ThingId("C2"))))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:invalid_list_section_entry")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Invalid list section entry "R123". Must be an instance of either "C1", "C2".""")
             .andExpect(jsonPath("$.literature_list_section_id").value("R123"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("literature_list_section_id").description("The id of the literature list section."),
                         fieldWithPath("expected_classes[]").description("A list of expected class ids."),
                     )
@@ -100,15 +104,16 @@ internal class LiteratureListExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun invalidHeadingSize() {
+        val type = "orkg:problem:invalid_heading_size"
         documentedGetRequestTo(InvalidHeadingSize(5))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:invalid_heading_size")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Invalid heading size "5". Must be at least 1.""")
             .andExpect(jsonPath("$.heading_size").value("5"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("heading_size").description("The provided heading size."),
                     )
                 )
@@ -117,16 +122,17 @@ internal class LiteratureListExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun unrelatedLiteratureListSection() {
+        val type = "orkg:problem:unrelated_literature_list_section"
         documentedGetRequestTo(UnrelatedLiteratureListSection(ThingId("R123"), ThingId("R456")))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:unrelated_literature_list_section")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Literature list section "R456" does not belong to literature list "R123".""")
             .andExpect(jsonPath("$.literature_list_id").value("R123"))
             .andExpect(jsonPath("$.literature_list_section_id").value("R456"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("literature_list_id").description("The id of the literature list."),
                         fieldWithPath("literature_list_section_id").description("The id of the literature list section."),
                     )
@@ -136,15 +142,16 @@ internal class LiteratureListExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun literatureListSectionTypeMismatch_mustBeTextSection() {
+        val type = "orkg:problem:literature_list_section_type_mismatch"
         documentedGetRequestTo(LiteratureListSectionTypeMismatch.mustBeTextSection())
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:literature_list_section_type_mismatch")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Invalid literature list section type. Must be a text section.""")
             .andExpect(jsonPath("$.expected_literature_list_section_type").value(Classes.textSection.value))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("expected_literature_list_section_type").description("The expected type of the literature list section."),
                     )
                 )
@@ -163,15 +170,16 @@ internal class LiteratureListExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun literatureListNotModifiable() {
+        val type = "orkg:problem:literature_list_not_modifiable"
         documentedGetRequestTo(LiteratureListNotModifiable(ThingId("R123")))
             .andExpectErrorStatus(FORBIDDEN)
-            .andExpectType("orkg:problem:literature_list_not_modifiable")
+            .andExpectType(type)
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Literature list "R123" is not modifiable.""")
             .andExpect(jsonPath("$.literature_list_id").value("R123"))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("literature_list_id").description("The id of the literature list."),
                     )
                 )

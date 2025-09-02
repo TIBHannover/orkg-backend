@@ -31,15 +31,16 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 internal class StatementExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun statementNotModifiable() {
+        val type = "orkg:problem:statement_not_modifiable"
         documentedGetRequestTo(StatementNotModifiable(StatementId("S123")))
             .andExpectErrorStatus(FORBIDDEN)
-            .andExpectType("orkg:problem:statement_not_modifiable")
+            .andExpectType(type)
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Statement "S123" is not modifiable.""")
             .andExpect(jsonPath("$.statement_id", `is`("S123")))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("statement_id").description("The id of the statement."),
                     )
                 )
@@ -48,12 +49,13 @@ internal class StatementExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun invalidStatement_isListElementStatement() {
+        val type = "orkg:problem:invalid_statement"
         documentedGetRequestTo(InvalidStatement.isListElementStatement())
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:invalid_statement")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""A list element statement cannot be managed using the statements endpoint. Please see the documentation on how to manage lists.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andDocumentWithDefaultExceptionResponseFields(type)
     }
 
     @Test
@@ -76,15 +78,16 @@ internal class StatementExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun statementAlreadyExists() {
+        val type = "orkg:problem:statement_already_exists"
         documentedGetRequestTo(StatementAlreadyExists(StatementId("S123")))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:statement_already_exists")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Statement already exists with id "S123".""")
             .andExpect(jsonPath("$.statement_id", `is`("S123")))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("statement_id").description("The id of the statement."),
                     )
                 )
@@ -93,15 +96,16 @@ internal class StatementExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun statementNotFound() {
+        val type = "orkg:problem:statement_not_found"
         documentedGetRequestTo(StatementNotFound(StatementId("S123")))
             .andExpectErrorStatus(NOT_FOUND)
-            .andExpectType("orkg:problem:statement_not_found")
+            .andExpectType(type)
             .andExpectTitle("Not Found")
             .andExpectDetail("""Statement "S123" not found.""")
             .andExpect(jsonPath("$.statement_id", `is`("S123")))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("statement_id").description("The id of the statement."),
                     )
                 )
@@ -110,15 +114,16 @@ internal class StatementExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun statementSubjectNotFound() {
+        val type = "orkg:problem:statement_subject_not_found"
         documentedGetRequestTo(StatementSubjectNotFound(ThingId("R123")))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:statement_subject_not_found")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Subject "R123" not found.""")
             .andExpect(jsonPath("$.subject_id", `is`("R123")))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("subject_id").description("The id of the subject."),
                     )
                 )
@@ -127,15 +132,16 @@ internal class StatementExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun statementPredicateNotFound() {
+        val type = "orkg:problem:statement_predicate_not_found"
         documentedGetRequestTo(StatementPredicateNotFound(ThingId("P123")))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:statement_predicate_not_found")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Predicate "P123" not found.""")
             .andExpect(jsonPath("$.predicate_id", `is`("P123")))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("predicate_id").description("The id of the predicate."),
                     )
                 )
@@ -144,15 +150,16 @@ internal class StatementExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun statementObjectNotFound() {
+        val type = "orkg:problem:statement_object_not_found"
         documentedGetRequestTo(StatementObjectNotFound(ThingId("R123")))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:statement_object_not_found")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Object "R123" not found.""")
             .andExpect(jsonPath("$.object_id", `is`("R123")))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("object_id").description("The id of the object."),
                     )
                 )
@@ -161,11 +168,12 @@ internal class StatementExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun statementInUse_usedInList() {
+        val type = "orkg:problem:statement_in_use"
         documentedGetRequestTo(StatementInUse.usedInList())
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:statement_in_use")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""A statement cannot be deleted when it is used in a list. Please see the documentation on how to manage lists.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andDocumentWithDefaultExceptionResponseFields(type)
     }
 }

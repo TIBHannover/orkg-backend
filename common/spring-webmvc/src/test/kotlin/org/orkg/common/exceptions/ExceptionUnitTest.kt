@@ -20,26 +20,28 @@ import java.net.URISyntaxException
 internal class ExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun serviceUnavailable() {
+        val type = "orkg:problem:service_unavailable"
         documentedGetRequestTo(ServiceUnavailable.create("TEST", 500, "irrelevant"))
             .andExpectErrorStatus(SERVICE_UNAVAILABLE)
-            .andExpectType("orkg:problem:service_unavailable")
+            .andExpectType(type)
             .andExpectTitle("Service Unavailable")
             .andExpectDetail("Service unavailable.")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andDocumentWithDefaultExceptionResponseFields(type)
     }
 
     @Test
     fun malformedMediaTypeCapability() {
+        val type = "orkg:problem:malformed_media_type_capability"
         documentedGetRequestTo(MalformedMediaTypeCapability("formatted-label", "true"))
             .andExpectErrorStatus(HttpStatus.NOT_ACCEPTABLE)
-            .andExpectType("orkg:problem:malformed_media_type_capability")
+            .andExpectType(type)
             .andExpectTitle("Not Acceptable")
             .andExpectDetail("""Malformed value "true" for media type capability "formatted-label".""")
             .andExpect(jsonPath("capability_name", `is`("formatted-label")))
             .andExpect(jsonPath("capability_value", `is`("true")))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("capability_name").description("The name of the media type capability."),
                         fieldWithPath("capability_value").description("The value of the media type capability."),
                     )
@@ -49,15 +51,16 @@ internal class ExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun missingParameter_requiresAtLeastOneOf() {
+        val type = "orkg:problem:missing_parameter"
         documentedGetRequestTo(MissingParameter.requiresAtLeastOneOf("param1", "param2"))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:missing_parameter")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Missing parameter: At least one parameter out of "param1", "param2" is required.""")
             .andExpect(jsonPath("parameter_names", `is`(listOf("param1", "param2"))))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("parameter_names").description("A list of possible parameters.")
                     )
                 )
@@ -66,15 +69,16 @@ internal class ExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun tooManyParameters_requiresExactlyOneOf() {
+        val type = "orkg:problem:too_many_parameters"
         documentedGetRequestTo(TooManyParameters.requiresExactlyOneOf("param1", "param2"))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:too_many_parameters")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Too many parameters: Only exactly one out of "param1", "param2" is allowed.""")
             .andExpect(jsonPath("parameter_names", `is`(listOf("param1", "param2"))))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("parameter_names").description("A list of allowed parameters.")
                     )
                 )
@@ -93,15 +97,16 @@ internal class ExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun unknownParameter() {
+        val type = "orkg:problem:unknown_parameter"
         documentedGetRequestTo(UnknownParameter("formatted-label"))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:unknown_parameter")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Unknown parameter "formatted-label".""")
             .andExpect(jsonPath("parameter_name", `is`("formatted-label")))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("parameter_name").description("The name of the unknown parameter.")
                     )
                 )
@@ -110,15 +115,16 @@ internal class ExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun unknownSortingProperty() {
+        val type = "orkg:problem:unknown_sorting_property"
         documentedGetRequestTo(UnknownSortingProperty("unknown"))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:unknown_sorting_property")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Unknown sorting property "unknown".""")
             .andExpect(jsonPath("property_name", `is`("unknown")))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("property_name").description("The name of the unknown property.")
                     )
                 )
@@ -127,46 +133,50 @@ internal class ExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun invalidUUID() {
+        val type = "orkg:problem:invalid_uuid"
         documentedGetRequestTo(InvalidUUID("not a uuid", null))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:invalid_uuid")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpect(jsonPath("$.errors[0].detail", `is`("""Value "not a uuid" is not a valid UUID.""")))
             .andExpect(jsonPath("$.errors[0].pointer", `is`("""#/id""")))
-            .andDocumentWithValidationExceptionResponseFields()
+            .andDocumentWithValidationExceptionResponseFields(type)
     }
 
     @Test
     fun forbidden() {
+        val type = "orkg:problem:forbidden"
         documentedGetRequestTo(Forbidden())
             .andExpectErrorStatus(FORBIDDEN)
-            .andExpectType("orkg:problem:forbidden")
+            .andExpectType(type)
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Forbidden.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andDocumentWithDefaultExceptionResponseFields(type)
     }
 
     @Test
     fun unauthorized() {
+        val type = "orkg:problem:unauthorized"
         documentedGetRequestTo(Unauthorized())
             .andExpectErrorStatus(UNAUTHORIZED)
-            .andExpectType("orkg:problem:unauthorized")
+            .andExpectType(type)
             .andExpectTitle("Unauthorized")
             .andExpectDetail("""Unauthorized.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andDocumentWithDefaultExceptionResponseFields(type)
     }
 
     @Test
     fun uriSyntaxException() {
+        val type = "orkg:problem:invalid_iri"
         get(URISyntaxException("http://example.org:-80", "Invalid URI"))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:invalid_iri")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Invalid URI: http://example.org:-80""")
             .andExpect(jsonPath("$.iri", `is`("http://example.org:-80")))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("iri").description("The provided iri.")
                     )
                 )

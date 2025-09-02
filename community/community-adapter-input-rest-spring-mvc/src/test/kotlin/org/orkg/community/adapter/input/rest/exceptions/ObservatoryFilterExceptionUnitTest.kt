@@ -23,15 +23,16 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 internal class ObservatoryFilterExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun observatoryFilterNotFound() {
+        val type = "orkg:problem:observatory_filter_not_found"
         documentedGetRequestTo(ObservatoryFilterNotFound(ObservatoryFilterId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")))
             .andExpectErrorStatus(NOT_FOUND)
-            .andExpectType("orkg:problem:observatory_filter_not_found")
+            .andExpectType(type)
             .andExpectTitle("Not Found")
             .andExpectDetail("""Observatory filter "f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc" not found.""")
             .andExpect(jsonPath("$.observatory_filter_id", `is`("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("observatory_filter_id").description("The id of the observatory filter."),
                     )
                 )
@@ -40,25 +41,27 @@ internal class ObservatoryFilterExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun invalidFilterConfig() {
+        val type = "orkg:problem:invalid_filter_config"
         documentedGetRequestTo(InvalidFilterConfig())
             .andExpectErrorStatus(HttpStatus.BAD_REQUEST)
-            .andExpectType("orkg:problem:invalid_filter_config")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Invalid filter config.""")
-            .andDocumentWithDefaultExceptionResponseFields()
+            .andDocumentWithDefaultExceptionResponseFields(type)
     }
 
     @Test
     fun observatoryFilterAlreadyExists() {
+        val type = "orkg:problem:observatory_filter_already_exists"
         documentedGetRequestTo(ObservatoryFilterAlreadyExists(ObservatoryFilterId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")))
             .andExpectErrorStatus(HttpStatus.BAD_REQUEST)
-            .andExpectType("orkg:problem:observatory_filter_already_exists")
+            .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Observatory filter "f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc" already exists.""")
             .andExpect(jsonPath("$.observatory_filter_id", `is`("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")))
             .andDo(
                 documentationHandler.document(
-                    responseFields(exceptionResponseFields()).and(
+                    responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("observatory_filter_id").description("The id of the observatory filter."),
                     )
                 )

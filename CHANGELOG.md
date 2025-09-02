@@ -6,10 +6,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added `response_format` parameter to metrics endpoint.
+  (See: [!1318](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1318))
+- Added all possible error responses for domain exceptions to documentation.
+  (See: [!1348](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1348))
+- Added administrator-only endpoints for managing asynchronous jobs.
+  (See: [!1340](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1340))
+- Added endpoints for uploading and managing CSV files.
+  (See: [!1341](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1341))
+- Added endpoints for validating and importing paper CSVs.
+  (Closes: [#150](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/150))
+### Changed
+- Error responses are now [RFC 9457](https://datatracker.ietf.org/doc/html/rfc9457) compliant.
+  (Closes: [#442](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/442))
+- Unescaped IRIs will now be accepted and automatically escaped on all endpoints.
+  (See: [!1333](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1333))
+- The table endpoint now returns the ids of literals.
+  (See: [!1324](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1324))
+### Fixed
+- Fixed spelling mistake in configuration property `orkg.concurrent.task-scheduler-thread-pool-size`.
 
 ## [0.86.2] - 2025-08-12
 ### Fixed
-- Fixed temporary temp files of dumps sometimes not being deleted.
+- Fixed temporary files of dumps sometimes not being deleted.
   (See: [!1329](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1329))
 
 ## [0.86.1] - 2025-07-28

@@ -10,5 +10,5 @@ value class Description private constructor(override val value: String) : Value<
 }
 
 private val isValidDescription: Validation<String> = {
-    it.isEmpty().or(it.isNotBlank().and(it.length <= MAX_LABEL_LENGTH))
+    it.isEmpty().or(it.isNotBlank().and(it.contains("\u0000").not()).and(it.length <= MAX_LABEL_LENGTH))
 }

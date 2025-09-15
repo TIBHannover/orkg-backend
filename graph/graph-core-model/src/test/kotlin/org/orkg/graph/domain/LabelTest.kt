@@ -23,6 +23,14 @@ internal class LabelTest {
         }
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = ["\u0000abcd", "ab\u0000cd", "abcd\u0000"])
+    fun `A string containing a NULL character cannot be converted to a label`(input: String) {
+        assertThrows(IllegalArgumentException::class.java) {
+            Label.of(input)
+        }
+    }
+
     @Test
     fun `An empty string is a valid label`() {
         assertThatCode { Label.of("") }.doesNotThrowAnyException()

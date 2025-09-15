@@ -146,7 +146,7 @@ internal class AuthorValidatorUnitTest : MockkBaseTest {
 
         assertThrows<InvalidLabel> { authorValidator.validate(authors) }.asClue {
             it.property shouldBe "authors[0].name"
-            it.message shouldBe """A label must not be blank or contain newlines and must be at most $MAX_LABEL_LENGTH characters long."""
+            it.message shouldBe """A label must not be blank or contain newlines or NULL characters and must be at most $MAX_LABEL_LENGTH characters long."""
         }
     }
 

@@ -12,5 +12,5 @@ value class Label private constructor(override val value: String) : Value<String
 }
 
 private val isValidLabel: Validation<String> = {
-    it.isEmpty().or(it.isNotBlank().and(it.contains("\n").not()).and(it.length <= MAX_LABEL_LENGTH))
+    it.isEmpty().or(it.isNotBlank().and(it.contains("\n").not()).and(it.contains("\u0000").not()).and(it.length <= MAX_LABEL_LENGTH))
 }

@@ -22,6 +22,14 @@ internal class DescriptionTest {
         assertThat(actual).isNotNull
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = ["\u0000abcd", "ab\u0000cd", "abcd\u0000"])
+    fun `A string containing a NULL character cannot be converted to a description`(input: String) {
+        assertThrows(IllegalArgumentException::class.java) {
+            Description.of(input)
+        }
+    }
+
     @Test
     fun `An empty string is a valid description`() {
         assertThatCode { Description.of("") }.doesNotThrowAnyException()

@@ -283,13 +283,13 @@ class URINotAbsolute(uri: ParsedIRI) :
 class InvalidLabel(val property: String = "label") :
     PropertyValidationException(
         jsonFieldPathToJsonPointerReference(property),
-        "A label must not be blank or contain newlines and must be at most $MAX_LABEL_LENGTH characters long."
+        "A label must not be blank or contain newlines or NULL characters and must be at most $MAX_LABEL_LENGTH characters long."
     )
 
 class InvalidDescription(val property: String = "description") :
     PropertyValidationException(
         jsonFieldPathToJsonPointerReference(property),
-        "A description must not be blank and must be at most $MAX_LABEL_LENGTH characters long."
+        "A description must not be blank or contain NULL characters and must be at most $MAX_LABEL_LENGTH characters long."
     )
 
 class InvalidLiteralLabel : PropertyValidationException {

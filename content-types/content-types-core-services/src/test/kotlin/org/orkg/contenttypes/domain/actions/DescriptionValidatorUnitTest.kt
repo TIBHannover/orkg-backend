@@ -21,6 +21,11 @@ internal class DescriptionValidatorUnitTest {
 
     @Test
     fun `Given a description, when invalid, it throws an exception`() {
+        assertThrows<InvalidDescription> { descriptionValidator("\u0000", Unit) }
+    }
+
+    @Test
+    fun `Given a description, when too long, it throws an exception`() {
         assertThrows<InvalidDescription> { descriptionValidator("a".repeat(MAX_LABEL_LENGTH + 1), Unit) }
     }
 }

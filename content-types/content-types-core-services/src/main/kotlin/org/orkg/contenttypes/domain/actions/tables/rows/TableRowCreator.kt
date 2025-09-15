@@ -16,6 +16,7 @@ import org.orkg.contenttypes.domain.actions.tables.TableThingsCommandUpdateCreat
 import org.orkg.contenttypes.domain.actions.tables.TableThingsCommandUpdateValidator
 import org.orkg.contenttypes.domain.actions.tables.TableUpdateValidationCacheInitializer
 import org.orkg.contenttypes.domain.actions.tables.rows.CreateTableRowAction.State
+import org.orkg.contenttypes.domain.actions.tables.toRowCommand
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.UnsafeClassUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases

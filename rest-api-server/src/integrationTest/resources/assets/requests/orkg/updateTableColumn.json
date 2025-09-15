@@ -1,0 +1,19 @@
+{
+    "resources": null,
+    "literals": {
+        "#temp1": {
+            "label": "updated column",
+            "data_type": "xsd:string"
+        }
+    },
+    "predicates": null,
+    "classes": null,
+    "lists": null,
+    "column": [
+        "#temp1",
+        null,
+        "R123",
+        "L123",
+        "R123"
+    ]
+}

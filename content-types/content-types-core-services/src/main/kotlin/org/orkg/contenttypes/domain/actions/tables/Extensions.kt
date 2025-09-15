@@ -1,4 +1,4 @@
-package org.orkg.contenttypes.domain.actions.tables.rows
+package org.orkg.contenttypes.domain.actions.tables
 
 import org.orkg.contenttypes.domain.Table
 import org.orkg.contenttypes.input.RowCommand

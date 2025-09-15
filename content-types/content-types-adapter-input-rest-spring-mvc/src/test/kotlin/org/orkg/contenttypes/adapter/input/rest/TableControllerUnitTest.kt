@@ -19,6 +19,7 @@ import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.contenttypes.adapter.input.rest.TableController.CreateTableRequest
+import org.orkg.contenttypes.adapter.input.rest.TableController.TableColumnRequest
 import org.orkg.contenttypes.adapter.input.rest.TableController.TableRowRequest
 import org.orkg.contenttypes.adapter.input.rest.TableController.UpdateTableRequest
 import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
@@ -446,7 +447,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                         fieldWithPath("classes").description("Definition of classes that need to be created. (optional)"),
                         fieldWithPath("classes.*.label").type("String").description("The label of the class.").optional(),
                         fieldWithPath("classes.*.uri").type("String").description("The uri of the class.").optional(),
-                        fieldWithPath("row").description("The table row. It must have the same length as the table header"),
+                        fieldWithPath("row").description("The table row. It must have the same length as the table header."),
                         fieldWithPath("row.label").description("The label of the row. (optional)").optional(),
                         subsectionWithPath("row.data[]").description("The ordered list of values (thing ids, temporary ids or `null`) of the row.").optional(),
                     )
@@ -485,6 +486,152 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { tableService.deleteTableRow(withArg { it.rowIndex shouldBe index }) }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a table column create request, when service succeeds, it creates the table column")
+    fun createTableColumn() {
+        val id = ThingId("R123")
+        every { tableService.createTableColumn(any()) } returns ThingId("R456")
+
+        post("/api/tables/{id}/columns", id)
+            .content(tableColumnRequest())
+            .accept(TABLE_COLUMN_JSON_V1)
+            .contentType(TABLE_COLUMN_JSON_V1)
+            .perform()
+            .andExpect(status().isCreated)
+            .andExpect(header().string("Location", endsWith("/api/tables/$id")))
+
+        verify(exactly = 1) { tableService.createTableColumn(withArg { it.columnIndex shouldBe null }) }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a table column create request, when service succeeds, it creates the table column at the specified index")
+    fun createTableColumnAtIndex() {
+        val id = ThingId("R123")
+        val index = 5
+        every { tableService.createTableColumn(any()) } returns ThingId("R456")
+
+        documentedPostRequestTo("/api/tables/{id}/columns/{index}", id, 5)
+            .content(tableColumnRequest())
+            .accept(TABLE_COLUMN_JSON_V1)
+            .contentType(TABLE_COLUMN_JSON_V1)
+            .perform()
+            .andExpect(status().isCreated)
+            .andExpect(header().string("Location", endsWith("/api/tables/$id")))
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the table."),
+                        parameterWithName("index").description("The insertion index the of the column. If not specified, the column will be appended at the end of the table. (optional)"),
+                    ),
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the updated table can be fetched from.")
+                    ),
+                    requestFields(
+                        fieldWithPath("resources").description("Definition of resources that need to be created. (optional)"),
+                        fieldWithPath("resources.*.label").type("String").description("The label of the resource.").optional(),
+                        fieldWithPath("resources.*.classes").type("Array").description("The list of classes of the resource.").optional(),
+                        fieldWithPath("literals").description("Definition of literals that need to be created. (optional)"),
+                        fieldWithPath("literals.*.label").type("String").description("The value of the literal.").optional(),
+                        fieldWithPath("literals.*.data_type").type("String").description("The data type of the literal.").optional(),
+                        fieldWithPath("predicates").description("Definition of predicates that need to be created. (optional)"),
+                        fieldWithPath("predicates.*.label").type("String").description("The label of the predicate.").optional(),
+                        fieldWithPath("predicates.*.description").type("String").description("The description of the predicate.").optional(),
+                        fieldWithPath("lists").description("Definition of lists that need to be created (optional)."),
+                        fieldWithPath("lists.*.label").type("String").description("The label of the list.").optional(),
+                        fieldWithPath("lists.*.elements").type("Array").description("The IDs of the elements of the list.").optional(),
+                        fieldWithPath("classes").description("Definition of classes that need to be created. (optional)"),
+                        fieldWithPath("classes.*.label").type("String").description("The label of the class.").optional(),
+                        fieldWithPath("classes.*.uri").type("String").description("The uri of the class.").optional(),
+                        fieldWithPath("column[]").description("The ordered list of column values (thing ids, temporary ids or `null`). The first values always represents the header of the table and must be a string literal."),
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { tableService.createTableColumn(withArg { it.columnIndex shouldBe index }) }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a table column update request, when service succeeds, it update the table column")
+    fun updateTableColumn() {
+        val id = ThingId("R123")
+        val index = 5
+        every { tableService.updateTableColumn(any()) } just runs
+
+        documentedPutRequestTo("/api/tables/{id}/columns/{index}", id, 5)
+            .content(tableColumnRequest())
+            .accept(TABLE_COLUMN_JSON_V1)
+            .contentType(TABLE_COLUMN_JSON_V1)
+            .perform()
+            .andExpect(status().isNoContent)
+            .andExpect(header().string("Location", endsWith("/api/tables/$id")))
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the table."),
+                        parameterWithName("index").description("The index of the column."),
+                    ),
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the updated table can be fetched from.")
+                    ),
+                    requestFields(
+                        fieldWithPath("resources").description("Definition of resources that need to be created. (optional)"),
+                        fieldWithPath("resources.*.label").type("String").description("The label of the resource.").optional(),
+                        fieldWithPath("resources.*.classes").type("Array").description("The list of classes of the resource.").optional(),
+                        fieldWithPath("literals").description("Definition of literals that need to be created. (optional)"),
+                        fieldWithPath("literals.*.label").type("String").description("The value of the literal.").optional(),
+                        fieldWithPath("literals.*.data_type").type("String").description("The data type of the literal.").optional(),
+                        fieldWithPath("predicates").description("Definition of predicates that need to be created. (optional)"),
+                        fieldWithPath("predicates.*.label").type("String").description("The label of the predicate.").optional(),
+                        fieldWithPath("predicates.*.description").type("String").description("The description of the predicate.").optional(),
+                        fieldWithPath("lists").description("Definition of lists that need to be created (optional)."),
+                        fieldWithPath("lists.*.label").type("String").description("The label of the list.").optional(),
+                        fieldWithPath("lists.*.elements").type("Array").description("The IDs of the elements of the list.").optional(),
+                        fieldWithPath("classes").description("Definition of classes that need to be created. (optional)"),
+                        fieldWithPath("classes.*.label").type("String").description("The label of the class.").optional(),
+                        fieldWithPath("classes.*.uri").type("String").description("The uri of the class.").optional(),
+                        fieldWithPath("column[]").description("The ordered list of column values (thing ids, temporary ids or `null`). The first values always represents the header of the table and must be a string literal."),
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { tableService.updateTableColumn(withArg { it.columnIndex shouldBe index }) }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a table column delete request, when service succeeds, it deletes the table column")
+    fun deleteTableColumn() {
+        val id = ThingId("R123")
+        val index = 5
+        every { tableService.deleteTableColumn(any()) } just runs
+
+        documentedDeleteRequestTo("/api/tables/{id}/columns/{index}", id, 5)
+            .accept(TABLE_COLUMN_JSON_V1)
+            .contentType(TABLE_COLUMN_JSON_V1)
+            .perform()
+            .andExpect(status().isNoContent)
+            .andExpect(header().string("Location", endsWith("/api/tables/$id")))
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the table."),
+                        parameterWithName("index").description("The index of the column."),
+                    ),
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the updated table can be fetched from.")
+                    ),
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { tableService.deleteTableColumn(withArg { it.columnIndex shouldBe index }) }
     }
 
     private fun createTableRequest() =
@@ -614,5 +761,17 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                 label = "row 3",
                 data = listOf("R456", "#temp1", null)
             ),
+        )
+
+    private fun tableColumnRequest() =
+        TableColumnRequest(
+            resources = emptyMap(),
+            literals = mapOf(
+                "#temp1" to CreateLiteralRequestPart("column 1", Literals.XSD.STRING.prefixedUri),
+            ),
+            predicates = emptyMap(),
+            lists = emptyMap(),
+            classes = emptyMap(),
+            column = listOf("#temp1", null, "R456"),
         )
 }

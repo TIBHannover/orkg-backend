@@ -8,6 +8,7 @@ import org.orkg.common.exceptions.jsonFieldPathToJsonPointerReference
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.springframework.http.HttpStatus
+import kotlin.collections.mapOf
 
 class PaperNotFound private constructor(
     override val message: String,
@@ -1177,6 +1178,13 @@ class TooFewTableRows(id: ThingId) :
         properties = mapOf("table_id" to id),
     )
 
+class TooFewTableColumns(id: ThingId) :
+    SimpleMessageException(
+        HttpStatus.BAD_REQUEST,
+        """The table "$id" has too few columns. At least one column is required.""",
+        properties = mapOf("table_id" to id),
+    )
+
 class MissingTableHeaderValue(index: Int) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
@@ -1211,6 +1219,13 @@ class InvalidTableRowIndex(index: Int) :
         properties = mapOf("table_row_index" to index),
     )
 
+class InvalidTableColumnIndex(index: Int) :
+    SimpleMessageException(
+        HttpStatus.BAD_REQUEST,
+        """Invalid table column index $index.""",
+        properties = mapOf("table_column_index" to index),
+    )
+
 class TooManyTableRowValues(
     index: Int,
     expectedSize: Int,
@@ -1231,6 +1246,30 @@ class MissingTableRowValues(
         """Row $index has less values than the header. Expected exactly $expectedSize values based on header.""",
         properties = mapOf(
             "table_row_index" to index,
+            "expected_table_row_count" to expectedSize,
+        ),
+    )
+
+class MissingTableColumnValues(
+    index: Int,
+    expectedSize: Int,
+) : SimpleMessageException(
+        HttpStatus.BAD_REQUEST,
+        """Table column $index is missing values. Expected exactly $expectedSize values.""",
+        properties = mapOf(
+            "table_column_index" to index,
+            "expected_table_row_count" to expectedSize,
+        ),
+    )
+
+class TooManyTableColumnValues(
+    index: Int,
+    expectedSize: Int,
+) : SimpleMessageException(
+        HttpStatus.BAD_REQUEST,
+        """Table column $index has too many values. Expected exactly $expectedSize values.""",
+        properties = mapOf(
+            "table_column_index" to index,
             "expected_table_row_count" to expectedSize,
         ),
     )

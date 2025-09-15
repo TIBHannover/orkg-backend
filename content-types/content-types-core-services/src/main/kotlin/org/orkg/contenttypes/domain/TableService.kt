@@ -7,16 +7,22 @@ import org.orkg.common.ThingId
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.domain.actions.Action
+import org.orkg.contenttypes.domain.actions.CreateTableColumnCommand
+import org.orkg.contenttypes.domain.actions.CreateTableColumnState
 import org.orkg.contenttypes.domain.actions.CreateTableCommand
 import org.orkg.contenttypes.domain.actions.CreateTableRowCommand
 import org.orkg.contenttypes.domain.actions.CreateTableRowState
 import org.orkg.contenttypes.domain.actions.CreateTableState
+import org.orkg.contenttypes.domain.actions.DeleteTableColumnCommand
+import org.orkg.contenttypes.domain.actions.DeleteTableColumnState
 import org.orkg.contenttypes.domain.actions.DeleteTableRowCommand
 import org.orkg.contenttypes.domain.actions.DeleteTableRowState
 import org.orkg.contenttypes.domain.actions.LabelValidator
 import org.orkg.contenttypes.domain.actions.ObservatoryValidator
 import org.orkg.contenttypes.domain.actions.OrganizationValidator
 import org.orkg.contenttypes.domain.actions.TempIdValidator
+import org.orkg.contenttypes.domain.actions.UpdateTableColumnCommand
+import org.orkg.contenttypes.domain.actions.UpdateTableColumnState
 import org.orkg.contenttypes.domain.actions.UpdateTableCommand
 import org.orkg.contenttypes.domain.actions.UpdateTableRowCommand
 import org.orkg.contenttypes.domain.actions.UpdateTableRowState
@@ -43,6 +49,13 @@ import org.orkg.contenttypes.domain.actions.tables.TableThingsCommandCreateValid
 import org.orkg.contenttypes.domain.actions.tables.TableThingsCommandUpdateCreator
 import org.orkg.contenttypes.domain.actions.tables.TableThingsCommandUpdateValidator
 import org.orkg.contenttypes.domain.actions.tables.TableUpdateValidationCacheInitializer
+import org.orkg.contenttypes.domain.actions.tables.columns.TableColumnCreateValidator
+import org.orkg.contenttypes.domain.actions.tables.columns.TableColumnCreator
+import org.orkg.contenttypes.domain.actions.tables.columns.TableColumnDeleter
+import org.orkg.contenttypes.domain.actions.tables.columns.TableColumnIndexCreateValidator
+import org.orkg.contenttypes.domain.actions.tables.columns.TableColumnIndexDeleteValidator
+import org.orkg.contenttypes.domain.actions.tables.columns.TableColumnIndexUpdateValidator
+import org.orkg.contenttypes.domain.actions.tables.columns.TableColumnUpdater
 import org.orkg.contenttypes.domain.actions.tables.rows.TableRowCreator
 import org.orkg.contenttypes.domain.actions.tables.rows.TableRowDeleter
 import org.orkg.contenttypes.domain.actions.tables.rows.TableRowIndexCreateValidator
@@ -158,7 +171,7 @@ class TableService(
     }
 
     override fun createTableRow(command: CreateTableRowCommand): ThingId {
-        val steps = listOf<Action<CreateTableRowCommand, CreateTableRowState>>(
+        val steps = listOf(
             TableExistenceValidator(this, resourceRepository, CreateTableRowCommand::tableId) { table, statements -> copy(table = table, statements = statements) },
             TableModifiableValidator { it.table!! },
             TableRowIndexCreateValidator(),
@@ -185,6 +198,37 @@ class TableService(
             TableRowDeleter(thingRepository, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases),
         )
         steps.execute(command, DeleteTableRowState())
+    }
+
+    override fun createTableColumn(command: CreateTableColumnCommand): ThingId {
+        val steps = listOf(
+            TableExistenceValidator(this, resourceRepository, CreateTableColumnCommand::tableId) { table, statements -> copy(table = table, statements = statements) },
+            TableModifiableValidator { it.table!! },
+            TableColumnIndexCreateValidator(),
+            TableColumnCreateValidator(),
+            TableColumnCreator(thingRepository, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, classRepository, unsafeClassUseCases, unsafePredicateUseCases, statementRepository, listService),
+        )
+        return steps.execute(command, CreateTableColumnState()).columnId!!
+    }
+
+    override fun updateTableColumn(command: UpdateTableColumnCommand) {
+        val steps = listOf(
+            TableExistenceValidator(this, resourceRepository, UpdateTableColumnCommand::tableId) { table, statements -> copy(table = table, statements = statements) },
+            TableModifiableValidator { it.table!! },
+            TableColumnIndexUpdateValidator(),
+            TableColumnUpdater(thingRepository, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, classRepository, unsafeClassUseCases, unsafePredicateUseCases, statementRepository, listService),
+        )
+        steps.execute(command, UpdateTableColumnState())
+    }
+
+    override fun deleteTableColumn(command: DeleteTableColumnCommand) {
+        val steps = listOf(
+            TableExistenceValidator(this, resourceRepository, DeleteTableColumnCommand::tableId) { table, statements -> copy(table = table, statements = statements) },
+            TableModifiableValidator { it.table!! },
+            TableColumnIndexDeleteValidator(),
+            TableColumnDeleter(thingRepository, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases),
+        )
+        steps.execute(command, DeleteTableColumnState())
     }
 
     internal fun findSubgraph(resource: Resource): ContentTypeSubgraph {

@@ -1,0 +1,24 @@
+{
+    "resources": {
+        "#temp2": {
+            "label": "MOTO4",
+            "classes": []
+        }
+    },
+    "literals": {
+        "#temp1": {
+            "label": "inserted column",
+            "data_type": "xsd:string"
+        }
+    },
+    "predicates": null,
+    "classes": null,
+    "lists": null,
+    "column": [
+        "#temp1",
+        "L123",
+        "#temp2",
+        null,
+        "R123"
+    ]
+}

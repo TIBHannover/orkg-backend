@@ -10,10 +10,13 @@ import org.orkg.contenttypes.input.CreateListCommandPart
 import org.orkg.contenttypes.input.CreateLiteralCommandPart
 import org.orkg.contenttypes.input.CreatePredicateCommandPart
 import org.orkg.contenttypes.input.CreateResourceCommandPart
+import org.orkg.contenttypes.input.CreateTableColumnUseCase
 import org.orkg.contenttypes.input.CreateTableRowUseCase
 import org.orkg.contenttypes.input.CreateTableUseCase
+import org.orkg.contenttypes.input.DeleteTableColumnUseCase
 import org.orkg.contenttypes.input.DeleteTableRowUseCase
 import org.orkg.contenttypes.input.RowCommand
+import org.orkg.contenttypes.input.UpdateTableColumnUseCase
 import org.orkg.contenttypes.input.UpdateTableRowUseCase
 import org.orkg.contenttypes.input.UpdateTableUseCase
 import org.orkg.graph.domain.ExtractionMethod
@@ -176,4 +179,38 @@ fun deleteTableRowCommand() = DeleteTableRowUseCase.DeleteCommand(
     tableId = ThingId("R123"),
     contributorId = ContributorId("460d4019-57c8-4d30-9087-e7e5129e1c24"),
     rowIndex = 2,
+)
+
+fun createTableColumnCommand() = CreateTableColumnUseCase.CreateCommand(
+    tableId = ThingId("R123"),
+    contributorId = ContributorId("460d4019-57c8-4d30-9087-e7e5129e1c24"),
+    columnIndex = 2,
+    resources = emptyMap(),
+    literals = mapOf(
+        "#temp1" to CreateLiteralCommandPart("column 1", Literals.XSD.STRING.prefixedUri),
+    ),
+    predicates = emptyMap(),
+    lists = emptyMap(),
+    classes = emptyMap(),
+    column = listOf("#temp1", null, "R456"),
+)
+
+fun updateTableColumnCommand() = UpdateTableColumnUseCase.UpdateCommand(
+    tableId = ThingId("R123"),
+    contributorId = ContributorId("460d4019-57c8-4d30-9087-e7e5129e1c24"),
+    columnIndex = 2,
+    resources = emptyMap(),
+    literals = mapOf(
+        "#temp1" to CreateLiteralCommandPart("column 1", Literals.XSD.STRING.prefixedUri),
+    ),
+    predicates = emptyMap(),
+    lists = emptyMap(),
+    classes = emptyMap(),
+    column = listOf("#temp1", null, "R456"),
+)
+
+fun deleteTableColumnCommand() = DeleteTableColumnUseCase.DeleteCommand(
+    tableId = ThingId("R123"),
+    contributorId = ContributorId("460d4019-57c8-4d30-9087-e7e5129e1c24"),
+    columnIndex = 2,
 )

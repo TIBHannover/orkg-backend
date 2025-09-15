@@ -14,10 +14,13 @@ import org.orkg.common.contributorId
 import org.orkg.common.validation.NullableNotBlank
 import org.orkg.contenttypes.adapter.input.rest.mapping.TableRepresentationAdapter
 import org.orkg.contenttypes.domain.TableNotFound
+import org.orkg.contenttypes.input.CreateTableColumnUseCase
 import org.orkg.contenttypes.input.CreateTableRowUseCase
 import org.orkg.contenttypes.input.CreateTableUseCase
+import org.orkg.contenttypes.input.DeleteTableColumnUseCase
 import org.orkg.contenttypes.input.DeleteTableRowUseCase
 import org.orkg.contenttypes.input.TableUseCases
+import org.orkg.contenttypes.input.UpdateTableColumnUseCase
 import org.orkg.contenttypes.input.UpdateTableRowUseCase
 import org.orkg.contenttypes.input.UpdateTableUseCase
 import org.orkg.graph.domain.ExtractionMethod
@@ -46,6 +49,7 @@ import java.time.OffsetDateTime
 
 const val TABLE_JSON_V1 = "application/vnd.orkg.table.v1+json"
 const val TABLE_ROW_JSON_V1 = "application/vnd.orkg.table.row.v1+json"
+const val TABLE_COLUMN_JSON_V1 = "application/vnd.orkg.table.column.v1+json"
 
 @RestController
 @RequestMapping("/api/tables", produces = [TABLE_JSON_V1])
@@ -161,6 +165,59 @@ class TableController(
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
         service.deleteTableRow(DeleteTableRowUseCase.DeleteCommand(id, userId, index))
+        val location = uriComponentsBuilder
+            .path("/api/tables/{id}")
+            .buildAndExpand(id)
+            .toUri()
+        return noContent().location(location).build()
+    }
+
+    @RequireLogin
+    @PostMapping(path = ["/{id}/columns", "/{id}/columns/{index}"], consumes = [TABLE_COLUMN_JSON_V1], produces = [TABLE_COLUMN_JSON_V1])
+    fun createTableColumn(
+        @PathVariable id: ThingId,
+        @PathVariable(required = false) @PositiveOrZero index: Int?,
+        @RequestBody @Valid request: TableColumnRequest,
+        uriComponentsBuilder: UriComponentsBuilder,
+        currentUser: Authentication?,
+    ): ResponseEntity<Any> {
+        val userId = currentUser.contributorId()
+        service.createTableColumn(request.toCreateCommand(id, userId, index))
+        val location = uriComponentsBuilder
+            .path("/api/tables/{id}")
+            .buildAndExpand(id)
+            .toUri()
+        return created(location).build()
+    }
+
+    @RequireLogin
+    @PutMapping("/{id}/columns/{index}", consumes = [TABLE_COLUMN_JSON_V1], produces = [TABLE_COLUMN_JSON_V1])
+    fun updateTableColumn(
+        @PathVariable id: ThingId,
+        @PathVariable @PositiveOrZero index: Int,
+        @RequestBody @Valid request: TableColumnRequest,
+        uriComponentsBuilder: UriComponentsBuilder,
+        currentUser: Authentication?,
+    ): ResponseEntity<Any> {
+        val userId = currentUser.contributorId()
+        service.updateTableColumn(request.toUpdateCommand(id, userId, index))
+        val location = uriComponentsBuilder
+            .path("/api/tables/{id}")
+            .buildAndExpand(id)
+            .toUri()
+        return noContent().location(location).build()
+    }
+
+    @RequireLogin
+    @DeleteMapping("/{id}/columns/{index}", consumes = [TABLE_COLUMN_JSON_V1], produces = [TABLE_COLUMN_JSON_V1])
+    fun deleteTableColumn(
+        @PathVariable id: ThingId,
+        @PathVariable @PositiveOrZero index: Int,
+        uriComponentsBuilder: UriComponentsBuilder,
+        currentUser: Authentication?,
+    ): ResponseEntity<Any> {
+        val userId = currentUser.contributorId()
+        service.deleteTableColumn(DeleteTableColumnUseCase.DeleteCommand(id, userId, index))
         val location = uriComponentsBuilder
             .path("/api/tables/{id}")
             .buildAndExpand(id)
@@ -287,6 +344,47 @@ class TableController(
                 classes = classes?.mapValues { it.value.toCreateCommand() }.orEmpty(),
                 lists = lists?.mapValues { it.value.toCreateCommand() }.orEmpty(),
                 row = row.toRowCommand(),
+            )
+    }
+
+    data class TableColumnRequest(
+        @field:Valid
+        val resources: Map<String, CreateResourceRequestPart>?,
+        @field:Valid
+        val literals: Map<String, CreateLiteralRequestPart>?,
+        @field:Valid
+        val predicates: Map<String, CreatePredicateRequestPart>?,
+        @field:Valid
+        val classes: Map<String, CreateClassRequestPart>?,
+        @field:Valid
+        val lists: Map<String, CreateListRequestPart>?,
+        @field:Valid
+        val column: List<String?>,
+    ) {
+        fun toCreateCommand(tableId: ThingId, contributorId: ContributorId, columnIndex: Int?): CreateTableColumnUseCase.CreateCommand =
+            CreateTableColumnUseCase.CreateCommand(
+                tableId = tableId,
+                contributorId = contributorId,
+                columnIndex = columnIndex,
+                resources = resources?.mapValues { it.value.toCreateCommand() }.orEmpty(),
+                literals = literals?.mapValues { it.value.toCreateCommand() }.orEmpty(),
+                predicates = predicates?.mapValues { it.value.toCreateCommand() }.orEmpty(),
+                classes = classes?.mapValues { it.value.toCreateCommand() }.orEmpty(),
+                lists = lists?.mapValues { it.value.toCreateCommand() }.orEmpty(),
+                column = column,
+            )
+
+        fun toUpdateCommand(tableId: ThingId, contributorId: ContributorId, columnIndex: Int): UpdateTableColumnUseCase.UpdateCommand =
+            UpdateTableColumnUseCase.UpdateCommand(
+                tableId = tableId,
+                contributorId = contributorId,
+                columnIndex = columnIndex,
+                resources = resources?.mapValues { it.value.toCreateCommand() }.orEmpty(),
+                literals = literals?.mapValues { it.value.toCreateCommand() }.orEmpty(),
+                predicates = predicates?.mapValues { it.value.toCreateCommand() }.orEmpty(),
+                classes = classes?.mapValues { it.value.toCreateCommand() }.orEmpty(),
+                lists = lists?.mapValues { it.value.toCreateCommand() }.orEmpty(),
+                column = column,
             )
     }
 }

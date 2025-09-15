@@ -20,7 +20,10 @@ interface TableUseCases :
     UpdateTableUseCase,
     CreateTableRowUseCase,
     UpdateTableRowUseCase,
-    DeleteTableRowUseCase
+    DeleteTableRowUseCase,
+    CreateTableColumnUseCase,
+    UpdateTableColumnUseCase,
+    DeleteTableColumnUseCase
 
 interface RetrieveTableUseCase {
     fun findById(id: ThingId): Optional<Table>
@@ -114,6 +117,48 @@ interface DeleteTableRowUseCase {
         val tableId: ThingId,
         val contributorId: ContributorId,
         val rowIndex: Int,
+    )
+}
+
+interface CreateTableColumnUseCase {
+    fun createTableColumn(command: CreateCommand): ThingId
+
+    data class CreateCommand(
+        val tableId: ThingId,
+        val contributorId: ContributorId,
+        val columnIndex: Int?,
+        override val resources: Map<String, CreateResourceCommandPart>,
+        override val literals: Map<String, CreateLiteralCommandPart>,
+        override val predicates: Map<String, CreatePredicateCommandPart>,
+        override val classes: Map<String, CreateClassCommandPart>,
+        override val lists: Map<String, CreateListCommandPart>,
+        val column: List<String?>,
+    ) : CreateThingsCommand
+}
+
+interface UpdateTableColumnUseCase {
+    fun updateTableColumn(command: UpdateCommand)
+
+    data class UpdateCommand(
+        val tableId: ThingId,
+        val contributorId: ContributorId,
+        val columnIndex: Int,
+        override val resources: Map<String, CreateResourceCommandPart>,
+        override val literals: Map<String, CreateLiteralCommandPart>,
+        override val predicates: Map<String, CreatePredicateCommandPart>,
+        override val classes: Map<String, CreateClassCommandPart>,
+        override val lists: Map<String, CreateListCommandPart>,
+        val column: List<String?>,
+    ) : CreateThingsCommand
+}
+
+interface DeleteTableColumnUseCase {
+    fun deleteTableColumn(command: DeleteCommand)
+
+    data class DeleteCommand(
+        val tableId: ThingId,
+        val contributorId: ContributorId,
+        val columnIndex: Int,
     )
 }
 

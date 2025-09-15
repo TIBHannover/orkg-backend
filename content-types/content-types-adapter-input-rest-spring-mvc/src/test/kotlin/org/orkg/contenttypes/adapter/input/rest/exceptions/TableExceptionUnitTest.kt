@@ -4,7 +4,9 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.contenttypes.domain.CannotDeleteTableHeader
+import org.orkg.contenttypes.domain.InvalidTableColumnIndex
 import org.orkg.contenttypes.domain.InvalidTableRowIndex
+import org.orkg.contenttypes.domain.MissingTableColumnValues
 import org.orkg.contenttypes.domain.MissingTableHeaderValue
 import org.orkg.contenttypes.domain.MissingTableRowValues
 import org.orkg.contenttypes.domain.MissingTableRows
@@ -13,7 +15,9 @@ import org.orkg.contenttypes.domain.TableHeaderValueMustBeLiteral
 import org.orkg.contenttypes.domain.TableNotFound
 import org.orkg.contenttypes.domain.TableNotModifiable
 import org.orkg.contenttypes.domain.TableRowNotFound
+import org.orkg.contenttypes.domain.TooFewTableColumns
 import org.orkg.contenttypes.domain.TooFewTableRows
+import org.orkg.contenttypes.domain.TooManyTableColumnValues
 import org.orkg.contenttypes.domain.TooManyTableRowValues
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
@@ -107,6 +111,24 @@ internal class TableExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Too few table rows for table "R123". At least one row is required.""")
+            .andExpect(jsonPath("$.table_id").value("R123"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields(type)).and(
+                        fieldWithPath("table_id").description("The id of the table."),
+                    )
+                )
+            )
+    }
+
+    @Test
+    fun tooFewTableColumns() {
+        val type = "orkg:problem:too_few_table_columns"
+        documentedGetRequestTo(TooFewTableColumns(ThingId("R123")))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType(type)
+            .andExpectTitle("Bad Request")
+            .andExpectDetail("""The table "R123" has too few columns. At least one column is required.""")
             .andExpect(jsonPath("$.table_id").value("R123"))
             .andDo(
                 documentationHandler.document(
@@ -245,7 +267,65 @@ internal class TableExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andDo(
                 documentationHandler.document(
                     responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("table_row_index").description("The row index of the table. (always `0`)"),
+                        fieldWithPath("table_row_index").description("The row index of the table."),
+                    )
+                )
+            )
+    }
+
+    @Test
+    fun invalidTableColumnIndex() {
+        val type = "orkg:problem:invalid_table_column_index"
+        documentedGetRequestTo(InvalidTableColumnIndex(-1))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType(type)
+            .andExpectTitle("Bad Request")
+            .andExpectDetail("""Invalid table column index -1.""")
+            .andExpect(jsonPath("$.table_column_index").value("-1"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields(type)).and(
+                        fieldWithPath("table_column_index").description("The column index of the table."),
+                    )
+                )
+            )
+    }
+
+    @Test
+    fun missingTableColumnValues() {
+        val type = "orkg:problem:missing_table_column_values"
+        documentedGetRequestTo(MissingTableColumnValues(5, 3))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType(type)
+            .andExpectTitle("Bad Request")
+            .andExpectDetail("""Table column 5 is missing values. Expected exactly 3 values.""")
+            .andExpect(jsonPath("$.table_column_index").value("5"))
+            .andExpect(jsonPath("$.expected_table_row_count").value("3"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields(type)).and(
+                        fieldWithPath("table_column_index").description("The column index of the table."),
+                        fieldWithPath("expected_table_row_count").description("The expected number of column values."),
+                    )
+                )
+            )
+    }
+
+    @Test
+    fun tooManyTableColumnValues() {
+        val type = "orkg:problem:too_many_table_column_values"
+        documentedGetRequestTo(TooManyTableColumnValues(5, 3))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType(type)
+            .andExpectTitle("Bad Request")
+            .andExpectDetail("""Table column 5 has too many values. Expected exactly 3 values.""")
+            .andExpect(jsonPath("$.table_column_index").value("5"))
+            .andExpect(jsonPath("$.expected_table_row_count").value("3"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields(type)).and(
+                        fieldWithPath("table_column_index").description("The column index of the table."),
+                        fieldWithPath("expected_table_row_count").description("The expected number of column values."),
                     )
                 )
             )

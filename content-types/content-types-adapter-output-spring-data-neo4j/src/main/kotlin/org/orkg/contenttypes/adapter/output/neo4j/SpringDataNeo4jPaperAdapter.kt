@@ -163,8 +163,7 @@ class SpringDataNeo4jPaperAdapter(
                         node.relationshipTo(researchFieldNode, RELATED)
                     }
                 },
-                doi?.let { node.relationshipTo(node("Literal").withProperties("label", anonParameter(doi))) },
-                doiPrefix?.let { node.relationshipTo(node("Literal").named(doiLiteral)) },
+                if (doi != null || doiPrefix != null) node.relationshipTo(node("Literal").named(doiLiteral), RELATED) else null,
                 sustainableDevelopmentGoal?.let {
                     node.relationshipTo(node("SustainableDevelopmentGoal").withProperties("id", anonParameter(it.value)), RELATED)
                         .withProperties("predicate_id", literalOf<String>(Predicates.sustainableDevelopmentGoal.value))
@@ -175,7 +174,8 @@ class SpringDataNeo4jPaperAdapter(
                 }.orEmpty().toTypedArray()
             )
             val patternBoundWhere = listOf(
-                doiPrefix.toCondition { doiLiteral.property("label").startsWith(anonParameter(it.dropLastWhile { c -> c == '/' } + '/')) }
+                doi.toCondition { toLower(doiLiteral.property("label")).eq(anonParameter(doi)) },
+                doiPrefix.toCondition { toLower(doiLiteral.property("label")).startsWith(anonParameter(it.lowercase().dropLastWhile { c -> c == '/' } + '/')) }
             ).reduceOrNull(Condition::and) ?: noCondition()
             val match = label?.let {
                 when (label) {

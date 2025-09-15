@@ -179,9 +179,9 @@ fun <
         context("by doi") {
             val expectedCount = 3
             val resources = fabricator.random<List<Resource>>().toPapers().toMutableList()
-            val doi = "10.564/531453"
+            val doi = "10.564/531453abc"
             val doiLiteral = fabricator.random<Literal>().copy(
-                label = doi,
+                label = doi.uppercase(),
                 datatype = Literals.XSD.STRING.prefixedUri
             )
             val hasDoi = createPredicate(Predicates.hasDOI)

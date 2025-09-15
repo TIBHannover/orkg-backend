@@ -3,7 +3,7 @@
 import java.time.Instant
 
 plugins {
-    kotlin("jvm") version "2.1.10"
+    kotlin("jvm") version "2.2.10"
     id("com.avast.gradle.docker-compose") version "0.17.12"
 }
 

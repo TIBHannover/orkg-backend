@@ -8,7 +8,7 @@ dependencies {
     // TODO: We need 2.0 features, but do not necessarily need the latest Kotlin version.
     //       Once Spring Boot comes with 2.0, we should use this version, unless there is a good reason.
     //       The entries below (kotlin, kotlinx) should be deleted, and the line in the root plugin should be uncommented.
-    api(platform(kotlin("bom", "2.1.20")))
+    api(platform(kotlin("bom", "2.2.10")))
     api(platform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:1.10.1"))
     // Platforms not included in Spring Boot
     api(platform("dev.forkhandles:forkhandles-bom:2.22.2.1"))

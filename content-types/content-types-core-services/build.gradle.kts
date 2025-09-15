@@ -40,17 +40,16 @@ testing {
     suites {
         val test by getting(JvmTestSuite::class) {
             dependencies {
-                implementation("io.kotest:kotest-assertions-api")
+                implementation("io.kotest:kotest-assertions-core")
                 implementation("io.kotest:kotest-assertions-shared")
                 implementation("io.kotest:kotest-common")
+                implementation("io.kotest:kotest-runner-junit5")
                 implementation("io.mockk:mockk-dsl")
                 implementation("io.mockk:mockk-jvm")
                 implementation("org.assertj:assertj-core")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
                 implementation("org.junit.jupiter:junit-jupiter-api")
                 implementation("org.junit.jupiter:junit-jupiter-params")
-                implementation("io.kotest:kotest-assertions-core")
-                implementation("io.kotest:kotest-runner-junit5")
                 implementation(project(":content-types:content-types-core-services"))
                 implementation(project(":media-storage:media-storage-core-model"))
                 implementation(testFixtures(project(":common:testing")))

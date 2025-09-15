@@ -13,7 +13,7 @@ testing {
                 implementation("org.jetbrains.kotlin:kotlin-stdlib") // "downgrade" from api()
                 runtimeOnly("org.springframework.boot:spring-boot-starter-test")
                 runtimeOnly("org.springframework.boot:spring-boot-starter-data-neo4j")
-                implementation("io.kotest:kotest-framework-api")
+                implementation("io.kotest:kotest-framework-engine")
                 implementation("org.springframework:spring-beans")
                 implementation("io.kotest:kotest-runner-junit5")
                 runtimeOnly("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-starter")
@@ -21,7 +21,7 @@ testing {
                 implementation(project(":graph:graph-ports-output"))
                 implementation(testFixtures(project(":curation:curation-ports-output")))
                 implementation(testFixtures(project(":testing:spring")))
-                runtimeOnly("io.kotest.extensions:kotest-extensions-spring")
+                runtimeOnly("io.kotest:kotest-extensions-spring")
                 runtimeOnly("io.kotest:kotest-runner-junit5")
                 runtimeOnly(project(":migrations:neo4j-migrations"))
             }

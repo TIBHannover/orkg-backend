@@ -29,7 +29,7 @@ testing {
             dependencies {
                 implementation(project(":graph:graph-core-model"))
 
-                implementation("io.kotest:kotest-assertions-shared")
+                implementation("io.kotest:kotest-assertions-core")
                 implementation("org.junit.jupiter:junit-jupiter-api")
                 implementation("org.junit.jupiter:junit-jupiter-params")
                 implementation("org.assertj:assertj-core")

@@ -17,6 +17,7 @@ testing {
     suites {
         val test by getting(JvmTestSuite::class) {
             dependencies {
+                implementation("io.kotest:kotest-assertions-core")
                 implementation("io.kotest:kotest-assertions-shared")
                 implementation("org.junit.jupiter:junit-jupiter-api")
                 implementation(testFixtures(project(":statistics:statistics-core-model")))

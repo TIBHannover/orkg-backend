@@ -31,7 +31,7 @@ dependencies {
 
     testFixturesApi(project(":common:core-identifiers"))
 
-    testApi("io.kotest:kotest-framework-api")
+    testApi("io.kotest:kotest-framework-engine")
 }
 
 testing {
@@ -41,7 +41,7 @@ testing {
                 implementation(project(":graph:graph-adapter-output-spring-data-neo4j"))
                 implementation(testFixtures(project(":common:testing")))
                 implementation(testFixtures(project(":graph:graph-core-model")))
-                implementation("io.kotest:kotest-assertions-shared")
+                implementation("io.kotest:kotest-assertions-core")
                 implementation("org.junit.jupiter:junit-jupiter-api")
                 implementation("org.springframework:spring-beans")
                 implementation("org.springframework:spring-test")
@@ -51,12 +51,10 @@ testing {
                 implementation(testFixtures(project(":graph:graph-core-model")))
                 implementation(testFixtures(project(":graph:graph-ports-output")))
                 implementation(testFixtures(project(":testing:spring")))
-                implementation("io.kotest:kotest-assertions-shared")
                 implementation("org.springframework:spring-beans")
                 implementation("org.springframework:spring-test")
-                implementation("io.kotest:kotest-assertions-core")
                 runtimeOnly("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-starter")
-                runtimeOnly("io.kotest.extensions:kotest-extensions-spring")
+                runtimeOnly("io.kotest:kotest-extensions-spring")
                 runtimeOnly("io.kotest:kotest-runner-junit5")
                 runtimeOnly(project(":migrations:neo4j-migrations"))
             }

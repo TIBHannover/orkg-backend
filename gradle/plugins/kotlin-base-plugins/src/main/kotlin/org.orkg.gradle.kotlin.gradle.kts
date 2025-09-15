@@ -52,6 +52,7 @@ tasks.withType<Test>().configureEach {
     // testLogging.showStandardStreams = true
 
     systemProperty("file.encoding", "UTF-8")
+    systemProperty("kotest.framework.config.fqn", "org.orkg.testing.configuration.KotestProjectConfiguration")
 }
 
 configurations.all {

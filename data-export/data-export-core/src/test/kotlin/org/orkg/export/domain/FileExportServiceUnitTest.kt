@@ -130,5 +130,5 @@ internal class FileExportServiceUnitTest :
             }
         }
     }) {
-    override fun isolationMode() = IsolationMode.InstancePerLeaf
+    override fun isolationMode() = IsolationMode.InstancePerTest
 }

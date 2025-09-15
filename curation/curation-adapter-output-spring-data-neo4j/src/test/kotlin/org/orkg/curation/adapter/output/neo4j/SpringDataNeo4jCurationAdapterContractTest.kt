@@ -53,7 +53,7 @@ internal class SpringDataNeo4jCurationAdapterContractTest(
             )
         )
 
-        finalizeSpec {
+        afterSpec {
             springDataNeo4jStatementAdapter.deleteAll()
             springDataNeo4jClassAdapter.deleteAll()
             springDataNeo4jLiteralAdapter.deleteAll()

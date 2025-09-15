@@ -27,17 +27,18 @@ dependencies {
     implementation(project(":integrations:datacite-serialization"))
     implementation(project(":graph:graph-core-constants"))
 
-    testFixturesImplementation("io.kotest:kotest-runner-junit5")
+    testFixturesImplementation("io.kotest:kotest-assertions-core")
     testFixturesImplementation("io.kotest:kotest-assertions-shared")
+    testFixturesImplementation("io.kotest:kotest-runner-junit5")
 }
 
 testing {
     suites {
         val test by getting(JvmTestSuite::class) {
             dependencies {
+                implementation("io.kotest:kotest-assertions-core")
                 implementation("io.kotest:kotest-assertions-shared")
                 implementation("io.kotest:kotest-common")
-                implementation("io.kotest:kotest-framework-api")
                 implementation("io.kotest:kotest-framework-engine")
                 implementation("io.mockk:mockk-dsl")
                 implementation("io.mockk:mockk-jvm")

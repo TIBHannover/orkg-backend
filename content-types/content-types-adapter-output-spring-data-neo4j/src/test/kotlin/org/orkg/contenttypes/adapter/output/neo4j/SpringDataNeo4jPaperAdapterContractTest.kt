@@ -51,7 +51,7 @@ internal class SpringDataNeo4jPaperAdapterContractTest(
             )
         )
 
-        finalizeSpec {
+        afterSpec {
             springDataNeo4jStatementAdapter.deleteAll()
             springDataNeo4jClassAdapter.deleteAll()
             springDataNeo4jLiteralAdapter.deleteAll()

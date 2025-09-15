@@ -12,7 +12,7 @@ dependencies {
     api(platform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:1.10.1"))
     // Platforms not included in Spring Boot
     api(platform("dev.forkhandles:forkhandles-bom:2.22.2.1"))
-    api(platform("io.kotest:kotest-bom:5.9.1"))
+    api(platform("io.kotest:kotest-bom:6.0.2"))
     api(platform("org.eclipse.rdf4j:rdf4j-bom:5.1.2"))
 
     // Third-party versions not provided by Spring, and without platform/BOM
@@ -35,10 +35,6 @@ dependencies {
     val neo4jMigrationsVersion = "2.17.0"
     api("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-starter:$neo4jMigrationsVersion")
     api("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-autoconfigure:$neo4jMigrationsVersion")
-
-    // Kotest
-    api("io.kotest.extensions:kotest-extensions-spring:1.3.0")
-    api("io.kotest.extensions:kotest-extensions-testcontainers:2.0.2")
 
     // Testcontainers
     api("com.github.dasniko:testcontainers-keycloak:3.6.0")

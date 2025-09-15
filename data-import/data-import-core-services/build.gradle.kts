@@ -24,7 +24,7 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-core")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("dev.forkhandles:values4k")
-    implementation("io.kotest:kotest-assertions-api")
+    implementation("io.kotest:kotest-assertions-core")
     implementation("io.kotest:kotest-assertions-shared")
     implementation("org.eclipse.rdf4j:rdf4j-common-io")
     implementation("org.springframework:spring-web")
@@ -43,8 +43,10 @@ testing {
     suites {
         val test by getting(JvmTestSuite::class) {
             dependencies {
-                implementation("io.kotest:kotest-assertions-api")
                 implementation("io.kotest:kotest-assertions-core")
+                implementation("io.kotest:kotest-assertions-shared")
+                implementation("io.kotest:kotest-common")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
                 implementation("org.junit.jupiter:junit-jupiter-api")
                 implementation("org.junit.jupiter:junit-jupiter-params")
                 implementation(testFixtures(project(":data-import:data-import-core-model")))

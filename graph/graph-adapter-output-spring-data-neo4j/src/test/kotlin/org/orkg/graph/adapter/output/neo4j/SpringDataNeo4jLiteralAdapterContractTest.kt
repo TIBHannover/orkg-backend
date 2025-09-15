@@ -33,7 +33,7 @@ internal class SpringDataNeo4jLiteralAdapterContractTests(
         include(literalRepositoryContract(springDataNeo4jLiteralAdapter))
         include(neo4jLiteralRepositoryContract(springDataNeo4jLiteralAdapter, neo4jClient))
 
-        finalizeSpec {
+        afterSpec {
             springDataNeo4jLiteralAdapter.deleteAll()
         }
     })

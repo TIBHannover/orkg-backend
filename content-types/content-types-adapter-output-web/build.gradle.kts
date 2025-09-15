@@ -26,15 +26,14 @@ testing {
         val test by getting(JvmTestSuite::class) {
             dependencies {
                 implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-                implementation("io.kotest:kotest-assertions-api")
+                implementation("io.kotest:kotest-assertions-core")
                 implementation("io.kotest:kotest-assertions-shared")
                 implementation("io.kotest:kotest-common")
+                implementation("io.kotest:kotest-runner-junit5")
                 implementation("io.mockk:mockk-dsl")
                 implementation("io.mockk:mockk-jvm")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
                 implementation("org.junit.jupiter:junit-jupiter-api")
-                implementation("io.kotest:kotest-assertions-core")
-                implementation("io.kotest:kotest-runner-junit5")
                 implementation(testFixtures(project(":common:spring-webmvc")))
                 implementation(testFixtures(project(":common:testing")))
                 implementation(testFixtures(project(":content-types:content-types-ports-output")))

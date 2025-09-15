@@ -7,6 +7,7 @@ dependencies {
     testFixturesImplementation(project(":constants"))
     testFixturesApi("com.github.dasniko:testcontainers-keycloak")
     testFixturesApi("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-autoconfigure")
+    testFixturesApi("io.kotest:kotest-framework-engine-jvm")
     testFixturesApi("org.apache.tomcat.embed:tomcat-embed-core") // for HttpServletRequest
     testFixturesApi("org.junit.jupiter:junit-jupiter-api")
     testFixturesApi("org.neo4j.driver:neo4j-java-driver")
@@ -38,6 +39,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":common:testing")))
     testFixturesImplementation("com.epages:restdocs-api-spec-mockmvc")
     testFixturesImplementation("com.ninja-squad:springmockk")
+    testFixturesImplementation("io.kotest:kotest-extensions-spring")
     testFixturesImplementation("io.mockk:mockk-dsl")
     testFixturesImplementation("io.mockk:mockk-jvm")
     testFixturesImplementation("org.hamcrest:hamcrest")

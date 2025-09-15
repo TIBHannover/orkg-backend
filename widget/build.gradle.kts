@@ -20,9 +20,11 @@ testing {
     suites {
         val test by getting(JvmTestSuite::class) {
             dependencies {
+                implementation("io.kotest:kotest-assertions-core")
                 implementation("io.kotest:kotest-assertions-shared")
                 implementation("io.kotest:kotest-common")
-                implementation("io.kotest:kotest-framework-api")
+                implementation("io.kotest:kotest-framework-engine")
+                implementation("io.kotest:kotest-runner-junit5")
                 implementation("io.mockk:mockk-dsl")
                 implementation("io.mockk:mockk-jvm")
                 implementation("org.hamcrest:hamcrest")
@@ -33,8 +35,6 @@ testing {
                 implementation("org.springframework.boot:spring-boot-test-autoconfigure")
                 implementation("org.springframework.restdocs:spring-restdocs-core")
                 implementation("org.springframework:spring-test")
-                implementation("io.kotest:kotest-framework-datatest")
-                implementation("io.kotest:kotest-runner-junit5")
                 implementation("com.ninja-squad:springmockk")
                 implementation("org.springframework.restdocs:spring-restdocs-mockmvc")
                 implementation(project(":common:serialization"))

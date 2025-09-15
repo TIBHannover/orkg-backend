@@ -40,7 +40,7 @@ internal class SpringDataNeo4jListAdapterContractTest(
             )
         )
 
-        finalizeSpec {
+        afterSpec {
             springDataNeo4jResourceAdapter.deleteAll()
             springDataNeo4jStatementAdapter.deleteAll()
             springDataNeo4jPredicateAdapter.deleteAll()

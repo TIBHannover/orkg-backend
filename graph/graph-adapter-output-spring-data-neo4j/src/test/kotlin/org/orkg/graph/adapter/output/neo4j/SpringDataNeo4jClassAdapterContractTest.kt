@@ -37,7 +37,7 @@ internal class SpringDataNeo4jClassAdapterContractTests(
         )
         include(neo4jClassRepositoryContract(springDataNeo4jClassAdapter, neo4jClient))
 
-        finalizeSpec {
+        afterSpec {
             springDataNeo4jClassAdapter.deleteAll()
         }
     })

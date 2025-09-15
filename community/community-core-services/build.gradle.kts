@@ -34,6 +34,7 @@ testing {
                 implementation(testFixtures(project(":community:community-ports-input")))
                 implementation(testFixtures(project(":media-storage:media-storage-core-model")))
                 implementation("dev.forkhandles:values4k")
+                implementation("io.kotest:kotest-assertions-core")
                 implementation("io.kotest:kotest-assertions-shared")
                 implementation("io.mockk:mockk-dsl")
                 implementation("io.mockk:mockk-jvm")

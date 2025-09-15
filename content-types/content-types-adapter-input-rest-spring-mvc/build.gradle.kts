@@ -46,12 +46,13 @@ testing {
     suites {
         val test by getting(JvmTestSuite::class) {
             dependencies {
-                implementation("io.kotest:kotest-assertions-api")
+                implementation("io.kotest:kotest-assertions-core")
                 implementation("io.kotest:kotest-assertions-shared")
                 implementation("io.mockk:mockk-dsl")
                 implementation("io.mockk:mockk-jvm")
                 implementation("org.eclipse.rdf4j:rdf4j-common-io")
                 implementation("org.hamcrest:hamcrest")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
                 implementation("org.junit.jupiter:junit-jupiter-api")
                 implementation("org.junit.jupiter:junit-jupiter-params")
                 runtimeOnly("org.springframework.boot:spring-boot-starter-security")
@@ -61,6 +62,7 @@ testing {
                 implementation("org.springframework.restdocs:spring-restdocs-core")
                 implementation("org.springframework:spring-test")
                 implementation("io.kotest:kotest-assertions-core")
+                implementation("io.kotest:kotest-assertions-shared")
                 implementation("com.ninja-squad:springmockk")
                 implementation("org.springframework.restdocs:spring-restdocs-mockmvc")
                 implementation(project(":content-types:content-types-adapter-input-rest-spring-mvc"))

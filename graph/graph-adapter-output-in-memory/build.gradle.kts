@@ -21,7 +21,7 @@ testing {
         val test by getting(JvmTestSuite::class) {
             dependencies {
                 implementation(testFixtures(project(":graph:graph-ports-output")))
-                implementation("io.kotest:kotest-framework-api")
+                implementation("io.kotest:kotest-framework-engine")
                 runtimeOnly("io.kotest:kotest-runner-junit5")
             }
         }

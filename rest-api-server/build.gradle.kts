@@ -1,5 +1,6 @@
 @file:Suppress("UnstableApiUsage")
 
+import org.gradle.kotlin.dsl.implementation
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 import org.springframework.boot.gradle.tasks.run.BootRun
 
@@ -22,7 +23,7 @@ testing {
                 implementation(testFixtures(project(":common:spring-webmvc")))
                 implementation(testFixtures(project(":testing:spring")))
 
-                implementation("io.kotest:kotest-assertions-api")
+                implementation("io.kotest:kotest-assertions-core")
                 implementation("io.kotest:kotest-assertions-shared")
                 implementation("org.jetbrains.kotlin:kotlin-reflect")
                 implementation("org.junit.jupiter:junit-jupiter-api")
@@ -53,6 +54,7 @@ testing {
                 implementation("com.ninja-squad:springmockk")
                 runtimeOnly("org.postgresql:postgresql")
                 implementation("io.kotest:kotest-assertions-core")
+                implementation("io.kotest:kotest-assertions-shared")
                 implementation("dev.forkhandles:values4k")
                 implementation("io.rest-assured:rest-assured")
                 implementation("org.hamcrest:hamcrest")
@@ -241,9 +243,9 @@ dependencies {
     "integrationTestRuntimeOnly"("io.kotest:kotest-runner-junit5")
     "integrationTestRuntimeOnly"("io.kotest:kotest-assertions-core")
     "integrationTestRuntimeOnly"("io.kotest:kotest-property")
-    "integrationTestRuntimeOnly"("io.kotest.extensions:kotest-extensions-spring")
-    "integrationTestRuntimeOnly"("io.kotest.extensions:kotest-extensions-testcontainers")
-    "integrationTestRuntimeOnly"("io.kotest:kotest-framework-datatest")
+    "integrationTestRuntimeOnly"("io.kotest:kotest-extensions-spring")
+    "integrationTestRuntimeOnly"("io.kotest:kotest-extensions-testcontainers")
+    "integrationTestRuntimeOnly"("io.kotest:kotest-framework-engine")
     "integrationTestApi"(project(":common:core-identifiers"))
     "integrationTestApi"(project(":community:community-core-model"))
     "integrationTestApi"(project(":community:community-ports-input"))
@@ -258,6 +260,7 @@ dependencies {
     "integrationTestImplementation"("com.fasterxml.jackson.core:jackson-core")
     "integrationTestImplementation"("com.fasterxml.jackson.module:jackson-module-kotlin")
     "integrationTestImplementation"("org.apache.tomcat.embed:tomcat-embed-core")
+    "integrationTestImplementation"("org.jetbrains.kotlinx:kotlinx-coroutines-core")
     "integrationTestImplementation"("org.junit.jupiter:junit-jupiter-api")
     "integrationTestImplementation"("org.junit.jupiter:junit-jupiter-params")
     "integrationTestImplementation"("org.springframework.boot:spring-boot-test")

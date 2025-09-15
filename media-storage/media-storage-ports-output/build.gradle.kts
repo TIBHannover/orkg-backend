@@ -6,6 +6,7 @@ dependencies {
     api(project(":media-storage:media-storage-core-model"))
 
     testFixturesApi("org.junit.jupiter:junit-jupiter-api")
+    testFixturesImplementation("io.kotest:kotest-assertions-core")
     testFixturesImplementation("io.kotest:kotest-assertions-shared")
     testFixturesImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
     testFixturesImplementation("io.kotest:kotest-runner-junit5")

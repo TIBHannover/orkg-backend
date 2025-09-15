@@ -33,7 +33,7 @@ testing {
         val test by getting(JvmTestSuite::class) {
             dependencies {
                 implementation("com.ninja-squad:springmockk")
-                implementation("io.kotest:kotest-assertions-shared")
+                implementation("io.kotest:kotest-assertions-core")
                 implementation("io.mockk:mockk-dsl")
                 implementation("io.mockk:mockk-jvm")
                 implementation("jakarta.servlet:jakarta.servlet-api")

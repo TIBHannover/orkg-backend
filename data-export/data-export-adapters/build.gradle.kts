@@ -18,11 +18,10 @@ testing {
                 implementation("org.springframework.restdocs:spring-restdocs-core")
                 implementation("org.springframework:spring-test")
                 implementation("io.kotest:kotest-assertions-core")
+                implementation("io.kotest:kotest-assertions-shared")
                 implementation("com.ninja-squad:springmockk")
                 implementation("org.springframework.restdocs:spring-restdocs-mockmvc")
                 implementation(project(":data-export:data-export-core"))
-                implementation("io.kotest:kotest-assertions-api")
-                implementation("io.kotest:kotest-assertions-shared")
             }
         }
     }

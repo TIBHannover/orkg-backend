@@ -22,7 +22,7 @@ testing {
                 runtimeOnly("org.springframework.boot:spring-boot-starter-test")
                 runtimeOnly("org.springframework.boot:spring-boot-starter-data-jpa")
                 runtimeOnly(project(":migrations:liquibase"))
-                runtimeOnly("io.kotest.extensions:kotest-extensions-spring")
+                runtimeOnly("io.kotest:kotest-extensions-spring")
                 runtimeOnly("org.liquibase:liquibase-core")
                 runtimeOnly("org.postgresql:postgresql")
                 implementation("org.springframework:spring-beans")

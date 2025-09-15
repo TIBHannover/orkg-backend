@@ -6,9 +6,9 @@ plugins {
 }
 
 dependencies {
-    testFixturesApi("io.kotest:kotest-framework-api")
+    testFixturesApi("io.kotest:kotest-framework-engine")
     testFixturesApi(project(":graph:graph-ports-output"))
-    testFixturesImplementation("io.kotest:kotest-assertions-shared")
+    testFixturesImplementation("io.kotest:kotest-assertions-core")
     testFixturesImplementation("dev.forkhandles:fabrikate4k")
     testFixturesImplementation("io.kotest:kotest-runner-junit5")
     testFixturesImplementation(project(":common:core-identifiers"))

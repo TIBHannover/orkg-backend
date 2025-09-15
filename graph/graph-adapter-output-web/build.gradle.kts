@@ -23,14 +23,14 @@ testing {
     suites {
         val test by getting(JvmTestSuite::class) {
             dependencies {
+                implementation("io.kotest:kotest-assertions-core")
                 implementation("io.kotest:kotest-assertions-shared")
+                implementation("io.kotest:kotest-runner-junit5")
                 implementation("io.mockk:mockk-dsl")
                 implementation("io.mockk:mockk-jvm")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
                 implementation("org.junit.jupiter:junit-jupiter-api")
                 implementation("org.junit.jupiter:junit-jupiter-params")
-                implementation("io.kotest:kotest-runner-junit5")
-                implementation("io.kotest:kotest-assertions-core")
                 implementation(project(":common:serialization"))
                 implementation(project(":graph:graph-adapter-input-rest-spring-mvc"))
                 implementation(testFixtures(project(":common:testing")))

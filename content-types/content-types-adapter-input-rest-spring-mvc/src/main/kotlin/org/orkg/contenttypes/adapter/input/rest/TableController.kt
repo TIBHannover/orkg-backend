@@ -3,6 +3,7 @@ package org.orkg.contenttypes.adapter.input.rest
 import com.fasterxml.jackson.annotation.JsonProperty
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.PositiveOrZero
 import jakarta.validation.constraints.Size
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
@@ -13,8 +14,11 @@ import org.orkg.common.contributorId
 import org.orkg.common.validation.NullableNotBlank
 import org.orkg.contenttypes.adapter.input.rest.mapping.TableRepresentationAdapter
 import org.orkg.contenttypes.domain.TableNotFound
+import org.orkg.contenttypes.input.CreateTableRowUseCase
 import org.orkg.contenttypes.input.CreateTableUseCase
+import org.orkg.contenttypes.input.DeleteTableRowUseCase
 import org.orkg.contenttypes.input.TableUseCases
+import org.orkg.contenttypes.input.UpdateTableRowUseCase
 import org.orkg.contenttypes.input.UpdateTableUseCase
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.SearchString
@@ -28,6 +32,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
 import org.springframework.http.ResponseEntity.noContent
 import org.springframework.security.core.Authentication
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -40,6 +45,7 @@ import org.springframework.web.util.UriComponentsBuilder
 import java.time.OffsetDateTime
 
 const val TABLE_JSON_V1 = "application/vnd.orkg.table.v1+json"
+const val TABLE_ROW_JSON_V1 = "application/vnd.orkg.table.row.v1+json"
 
 @RestController
 @RequestMapping("/api/tables", produces = [TABLE_JSON_V1])
@@ -102,6 +108,59 @@ class TableController(
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
         service.update(request.toUpdateCommand(id, userId))
+        val location = uriComponentsBuilder
+            .path("/api/tables/{id}")
+            .buildAndExpand(id)
+            .toUri()
+        return noContent().location(location).build()
+    }
+
+    @RequireLogin
+    @PostMapping(path = ["/{id}/rows", "/{id}/rows/{index}"], consumes = [TABLE_ROW_JSON_V1], produces = [TABLE_ROW_JSON_V1])
+    fun createTableRow(
+        @PathVariable id: ThingId,
+        @PathVariable(required = false) @PositiveOrZero index: Int?,
+        @RequestBody @Valid request: TableRowRequest,
+        uriComponentsBuilder: UriComponentsBuilder,
+        currentUser: Authentication?,
+    ): ResponseEntity<Any> {
+        val userId = currentUser.contributorId()
+        service.createTableRow(request.toCreateCommand(id, userId, index))
+        val location = uriComponentsBuilder
+            .path("/api/tables/{id}")
+            .buildAndExpand(id)
+            .toUri()
+        return created(location).build()
+    }
+
+    @RequireLogin
+    @PutMapping("/{id}/rows/{index}", consumes = [TABLE_ROW_JSON_V1], produces = [TABLE_ROW_JSON_V1])
+    fun updateTableRow(
+        @PathVariable id: ThingId,
+        @PathVariable @PositiveOrZero index: Int,
+        @RequestBody @Valid request: TableRowRequest,
+        uriComponentsBuilder: UriComponentsBuilder,
+        currentUser: Authentication?,
+    ): ResponseEntity<Any> {
+        val userId = currentUser.contributorId()
+        service.updateTableRow(request.toUpdateCommand(id, userId, index))
+        val location = uriComponentsBuilder
+            .path("/api/tables/{id}")
+            .buildAndExpand(id)
+            .toUri()
+        return noContent().location(location).build()
+    }
+
+    @RequireLogin
+    @DeleteMapping("/{id}/rows/{index}", consumes = [TABLE_ROW_JSON_V1], produces = [TABLE_ROW_JSON_V1])
+    fun deleteTableRow(
+        @PathVariable id: ThingId,
+        @PathVariable @PositiveOrZero index: Int,
+        uriComponentsBuilder: UriComponentsBuilder,
+        currentUser: Authentication?,
+    ): ResponseEntity<Any> {
+        val userId = currentUser.contributorId()
+        service.deleteTableRow(DeleteTableRowUseCase.DeleteCommand(id, userId, index))
         val location = uriComponentsBuilder
             .path("/api/tables/{id}")
             .buildAndExpand(id)
@@ -187,6 +246,47 @@ class TableController(
                 organizations = organizations,
                 extractionMethod = extractionMethod,
                 visibility = visibility
+            )
+    }
+
+    data class TableRowRequest(
+        @field:Valid
+        val resources: Map<String, CreateResourceRequestPart>?,
+        @field:Valid
+        val literals: Map<String, CreateLiteralRequestPart>?,
+        @field:Valid
+        val predicates: Map<String, CreatePredicateRequestPart>?,
+        @field:Valid
+        val classes: Map<String, CreateClassRequestPart>?,
+        @field:Valid
+        val lists: Map<String, CreateListRequestPart>?,
+        @field:Valid
+        val row: RowRequest,
+    ) {
+        fun toCreateCommand(tableId: ThingId, contributorId: ContributorId, rowIndex: Int?): CreateTableRowUseCase.CreateCommand =
+            CreateTableRowUseCase.CreateCommand(
+                tableId = tableId,
+                contributorId = contributorId,
+                rowIndex = rowIndex,
+                resources = resources?.mapValues { it.value.toCreateCommand() }.orEmpty(),
+                literals = literals?.mapValues { it.value.toCreateCommand() }.orEmpty(),
+                predicates = predicates?.mapValues { it.value.toCreateCommand() }.orEmpty(),
+                classes = classes?.mapValues { it.value.toCreateCommand() }.orEmpty(),
+                lists = lists?.mapValues { it.value.toCreateCommand() }.orEmpty(),
+                row = row.toRowCommand(),
+            )
+
+        fun toUpdateCommand(tableId: ThingId, contributorId: ContributorId, rowIndex: Int): UpdateTableRowUseCase.UpdateCommand =
+            UpdateTableRowUseCase.UpdateCommand(
+                tableId = tableId,
+                contributorId = contributorId,
+                rowIndex = rowIndex,
+                resources = resources?.mapValues { it.value.toCreateCommand() }.orEmpty(),
+                literals = literals?.mapValues { it.value.toCreateCommand() }.orEmpty(),
+                predicates = predicates?.mapValues { it.value.toCreateCommand() }.orEmpty(),
+                classes = classes?.mapValues { it.value.toCreateCommand() }.orEmpty(),
+                lists = lists?.mapValues { it.value.toCreateCommand() }.orEmpty(),
+                row = row.toRowCommand(),
             )
     }
 }

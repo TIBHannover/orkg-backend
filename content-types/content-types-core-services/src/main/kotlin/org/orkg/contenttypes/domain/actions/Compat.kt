@@ -25,6 +25,9 @@ import org.orkg.contenttypes.domain.actions.smartreviews.sections.DeleteSmartRev
 import org.orkg.contenttypes.domain.actions.smartreviews.sections.UpdateSmartReviewSectionAction
 import org.orkg.contenttypes.domain.actions.tables.CreateTableAction
 import org.orkg.contenttypes.domain.actions.tables.UpdateTableAction
+import org.orkg.contenttypes.domain.actions.tables.rows.CreateTableRowAction
+import org.orkg.contenttypes.domain.actions.tables.rows.DeleteTableRowAction
+import org.orkg.contenttypes.domain.actions.tables.rows.UpdateTableRowAction
 import org.orkg.contenttypes.domain.actions.templates.CreateTemplateAction
 import org.orkg.contenttypes.domain.actions.templates.UpdateTemplateAction
 import org.orkg.contenttypes.domain.actions.templates.instances.UpdateTemplateInstanceAction
@@ -42,12 +45,14 @@ import org.orkg.contenttypes.input.CreateRosettaStoneStatementUseCase
 import org.orkg.contenttypes.input.CreateRosettaStoneTemplateUseCase
 import org.orkg.contenttypes.input.CreateSmartReviewSectionUseCase
 import org.orkg.contenttypes.input.CreateSmartReviewUseCase
+import org.orkg.contenttypes.input.CreateTableRowUseCase
 import org.orkg.contenttypes.input.CreateTableUseCase
 import org.orkg.contenttypes.input.CreateTemplatePropertyUseCase
 import org.orkg.contenttypes.input.CreateTemplateUseCase
 import org.orkg.contenttypes.input.CreateVisualizationUseCase
 import org.orkg.contenttypes.input.DeleteLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.DeleteSmartReviewSectionUseCase
+import org.orkg.contenttypes.input.DeleteTableRowUseCase
 import org.orkg.contenttypes.input.PublishComparisonUseCase
 import org.orkg.contenttypes.input.PublishLiteratureListUseCase
 import org.orkg.contenttypes.input.PublishPaperUseCase
@@ -62,6 +67,7 @@ import org.orkg.contenttypes.input.UpdateRosettaStoneStatementUseCase
 import org.orkg.contenttypes.input.UpdateRosettaStoneTemplateUseCase
 import org.orkg.contenttypes.input.UpdateSmartReviewSectionUseCase
 import org.orkg.contenttypes.input.UpdateSmartReviewUseCase
+import org.orkg.contenttypes.input.UpdateTableRowUseCase
 import org.orkg.contenttypes.input.UpdateTableUseCase
 import org.orkg.contenttypes.input.UpdateTemplateInstanceUseCase
 import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase
@@ -81,6 +87,7 @@ internal typealias CreateRosettaStoneTemplateCommand = CreateRosettaStoneTemplat
 internal typealias CreateSmartReviewCommand = CreateSmartReviewUseCase.CreateCommand
 internal typealias CreateSmartReviewSectionCommand = CreateSmartReviewSectionUseCase.CreateCommand
 internal typealias CreateTableCommand = CreateTableUseCase.CreateCommand
+internal typealias CreateTableRowCommand = CreateTableRowUseCase.CreateCommand
 internal typealias CreateTemplateCommand = CreateTemplateUseCase.CreateCommand
 internal typealias CreateTemplatePropertyCommand = CreateTemplatePropertyUseCase.CreateCommand
 internal typealias CreateVisualizationCommand = CreateVisualizationUseCase.CreateCommand
@@ -96,12 +103,14 @@ internal typealias UpdateRosettaStoneTemplateCommand = UpdateRosettaStoneTemplat
 internal typealias UpdateSmartReviewCommand = UpdateSmartReviewUseCase.UpdateCommand
 internal typealias UpdateSmartReviewSectionCommand = UpdateSmartReviewSectionUseCase.UpdateCommand
 internal typealias UpdateTableCommand = UpdateTableUseCase.UpdateCommand
+internal typealias UpdateTableRowCommand = UpdateTableRowUseCase.UpdateCommand
 internal typealias UpdateTemplateCommand = UpdateTemplateUseCase.UpdateCommand
 internal typealias UpdateTemplateInstanceCommand = UpdateTemplateInstanceUseCase.UpdateCommand
 internal typealias UpdateTemplatePropertyCommand = UpdateTemplatePropertyUseCase.UpdateCommand
 
 internal typealias DeleteLiteratureListSectionCommand = DeleteLiteratureListSectionUseCase.DeleteCommand
 internal typealias DeleteSmartReviewSectionCommand = DeleteSmartReviewSectionUseCase.DeleteCommand
+internal typealias DeleteTableRowCommand = DeleteTableRowUseCase.DeleteCommand
 
 internal typealias PublishComparisonCommand = PublishComparisonUseCase.PublishCommand
 internal typealias PublishLiteratureListCommand = PublishLiteratureListUseCase.PublishCommand
@@ -117,6 +126,7 @@ internal typealias CreateRosettaStoneTemplateState = CreateRosettaStoneTemplateA
 internal typealias CreateSmartReviewSectionState = CreateSmartReviewSectionAction.State
 internal typealias CreateSmartReviewState = CreateSmartReviewAction.State
 internal typealias CreateTableState = CreateTableAction.State
+internal typealias CreateTableRowState = CreateTableRowAction.State
 internal typealias CreateTemplatePropertyState = CreateTemplatePropertyAction.State
 internal typealias CreateTemplateState = CreateTemplateAction.State
 
@@ -129,6 +139,7 @@ internal typealias UpdateRosettaStoneTemplateState = UpdateRosettaStoneTemplateA
 internal typealias UpdateSmartReviewSectionState = UpdateSmartReviewSectionAction.State
 internal typealias UpdateSmartReviewState = UpdateSmartReviewAction.State
 internal typealias UpdateTableState = UpdateTableAction.State
+internal typealias UpdateTableRowState = UpdateTableRowAction.State
 internal typealias UpdateTemplateInstanceState = UpdateTemplateInstanceAction.State
 internal typealias UpdateTemplatePropertyState = UpdateTemplatePropertyAction.State
 internal typealias UpdateTemplateState = UpdateTemplateAction.State
@@ -141,6 +152,7 @@ internal typealias PublishSmartReviewState = PublishSmartReviewAction.State
 
 internal typealias DeleteLiteratureListSectionState = DeleteLiteratureListSectionAction.State
 internal typealias DeleteSmartReviewSectionState = DeleteSmartReviewSectionAction.State
+internal typealias DeleteTableRowState = DeleteTableRowAction.State
 
 internal typealias ContributionState = ContributionAction.State
 internal typealias VisualizationState = VisualizationAction.State

@@ -1,0 +1,20 @@
+{
+    "resources": null,
+    "literals": null,
+    "predicates": null,
+    "classes": {
+        "#temp1": {
+            "label": "updated test class",
+            "uri": "https://orkg.org/class/C123456"
+        }
+    },
+    "lists": null,
+    "row": {
+        "label": "updated row",
+        "data": [
+            "#temp1",
+            "R123",
+            null
+        ]
+    }
+}

@@ -1,0 +1,38 @@
+= Table Rows
+
+The following endpoints can be used to manipulate individual rows of tables.
+
+NOTE: The following endpoints use content negotiation, meaning that the contents of the response json depend on the specified `Accept` and `Content-Type` headers of each request.
+
+[[table-rows-create]]
+== Creating Table Rows
+
+A `POST` request creates a new table row with the given parameters.
+The response will be `201 Created` when successful.
+The updated table (object) can be retrieved by following the URI in the `Location` header field.
+
+operation::tables-create-table-row-at-index[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+
+[[table-rows-edit]]
+== Updating Table Rows
+
+A `PUT` request updates an existing row of a table with the given parameters.
+The response will be `204 No Content` when successful.
+The updated table (object) can be retrieved by following the URI in the `Location` header field.
+
+operation::tables-update-table-row[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+
+[[table-rows-delete]]
+== Deleting Table Rows
+
+A `DELETE` request deletes an existing row of a table.
+The response will be `204 No Content` when successful.
+The updated table (object) can be retrieved by following the URI in the `Location` header field.
+
+[NOTE]
+====
+1. The table header (first row) cannot be deleted.
+2. There must at least be two rows left after deletion.
+====
+
+operation::tables-delete-table-row[snippets='path-parameters,curl-request,http-response']

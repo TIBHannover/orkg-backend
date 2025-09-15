@@ -10,8 +10,11 @@ import org.orkg.contenttypes.input.CreateListCommandPart
 import org.orkg.contenttypes.input.CreateLiteralCommandPart
 import org.orkg.contenttypes.input.CreatePredicateCommandPart
 import org.orkg.contenttypes.input.CreateResourceCommandPart
+import org.orkg.contenttypes.input.CreateTableRowUseCase
 import org.orkg.contenttypes.input.CreateTableUseCase
+import org.orkg.contenttypes.input.DeleteTableRowUseCase
 import org.orkg.contenttypes.input.RowCommand
+import org.orkg.contenttypes.input.UpdateTableRowUseCase
 import org.orkg.contenttypes.input.UpdateTableUseCase
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
@@ -127,4 +130,50 @@ fun updateTableCommand() = UpdateTableUseCase.UpdateCommand(
     ),
     extractionMethod = ExtractionMethod.UNKNOWN,
     visibility = Visibility.DEFAULT,
+)
+
+fun createTableRowCommand() = CreateTableRowUseCase.CreateCommand(
+    tableId = ThingId("R123"),
+    contributorId = ContributorId("460d4019-57c8-4d30-9087-e7e5129e1c24"),
+    rowIndex = 2,
+    resources = mapOf(
+        "#temp1" to CreateResourceCommandPart(
+            label = "MOTO2",
+            classes = setOf(ThingId("Result"))
+        )
+    ),
+    literals = emptyMap(),
+    predicates = emptyMap(),
+    lists = emptyMap(),
+    classes = emptyMap(),
+    row = RowCommand(
+        label = "updated",
+        data = listOf("R456", null, "#temp1")
+    )
+)
+
+fun updateTableRowCommand() = UpdateTableRowUseCase.UpdateCommand(
+    tableId = ThingId("R123"),
+    contributorId = ContributorId("460d4019-57c8-4d30-9087-e7e5129e1c24"),
+    rowIndex = 2,
+    resources = mapOf(
+        "#temp1" to CreateResourceCommandPart(
+            label = "MOTO2",
+            classes = setOf(ThingId("Result"))
+        )
+    ),
+    literals = emptyMap(),
+    predicates = emptyMap(),
+    lists = emptyMap(),
+    classes = emptyMap(),
+    row = RowCommand(
+        label = "updated",
+        data = listOf("R456", null, "#temp1")
+    )
+)
+
+fun deleteTableRowCommand() = DeleteTableRowUseCase.DeleteCommand(
+    tableId = ThingId("R123"),
+    contributorId = ContributorId("460d4019-57c8-4d30-9087-e7e5129e1c24"),
+    rowIndex = 2,
 )

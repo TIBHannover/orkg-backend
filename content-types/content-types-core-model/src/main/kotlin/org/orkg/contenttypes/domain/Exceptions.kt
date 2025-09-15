@@ -113,6 +113,30 @@ class TableNotFound(id: ThingId) :
         properties = mapOf("table_id" to id)
     )
 
+class TableRowNotFound(
+    id: ThingId,
+    index: Int,
+) : SimpleMessageException(
+        HttpStatus.NOT_FOUND,
+        """Table row $index for table "$id" not found.""",
+        properties = mapOf(
+            "table_id" to id,
+            "table_row_index" to index,
+        )
+    )
+
+class TableColumnNotFound(
+    id: ThingId,
+    index: Int,
+) : SimpleMessageException(
+        HttpStatus.NOT_FOUND,
+        """Table column $index for table "$id" not found.""",
+        properties = mapOf(
+            "table_id" to id,
+            "table_column_index" to index,
+        )
+    )
+
 class TemplateInstanceNotFound(
     templateId: ThingId,
     resourceId: ThingId,
@@ -1143,7 +1167,14 @@ class TooFewContributions(ids: List<ThingId>) :
 class MissingTableRows :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Missing table rows. At least one rows is required."""
+        """Missing table rows. At least one row is required."""
+    )
+
+class TooFewTableRows(id: ThingId) :
+    SimpleMessageException(
+        HttpStatus.BAD_REQUEST,
+        """Too few table rows for table "$id". At least one row is required.""",
+        properties = mapOf("table_id" to id),
     )
 
 class MissingTableHeaderValue(index: Int) :
@@ -1164,6 +1195,20 @@ class TableHeaderValueMustBeLiteral(index: Int) :
             "table_row_index" to 0,
             "table_column_index" to index,
         ),
+    )
+
+class CannotDeleteTableHeader :
+    SimpleMessageException(
+        HttpStatus.FORBIDDEN,
+        """The table header cannot be deleted.""",
+        properties = mapOf("table_row_index" to 0),
+    )
+
+class InvalidTableRowIndex(index: Int) :
+    SimpleMessageException(
+        HttpStatus.BAD_REQUEST,
+        """Invalid table row index $index.""",
+        properties = mapOf("table_row_index" to index),
     )
 
 class TooManyTableRowValues(

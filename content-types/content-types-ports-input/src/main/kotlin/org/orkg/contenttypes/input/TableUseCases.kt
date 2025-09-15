@@ -17,7 +17,10 @@ import java.util.Optional
 interface TableUseCases :
     RetrieveTableUseCase,
     CreateTableUseCase,
-    UpdateTableUseCase
+    UpdateTableUseCase,
+    CreateTableRowUseCase,
+    UpdateTableRowUseCase,
+    DeleteTableRowUseCase
 
 interface RetrieveTableUseCase {
     fun findById(id: ThingId): Optional<Table>
@@ -70,6 +73,48 @@ interface UpdateTableUseCase {
         val extractionMethod: ExtractionMethod?,
         val visibility: Visibility?,
     ) : CreateThingsCommand
+}
+
+interface CreateTableRowUseCase {
+    fun createTableRow(command: CreateCommand): ThingId
+
+    data class CreateCommand(
+        val tableId: ThingId,
+        val contributorId: ContributorId,
+        val rowIndex: Int?,
+        override val resources: Map<String, CreateResourceCommandPart>,
+        override val literals: Map<String, CreateLiteralCommandPart>,
+        override val predicates: Map<String, CreatePredicateCommandPart>,
+        override val classes: Map<String, CreateClassCommandPart>,
+        override val lists: Map<String, CreateListCommandPart>,
+        val row: RowCommand,
+    ) : CreateThingsCommand
+}
+
+interface UpdateTableRowUseCase {
+    fun updateTableRow(command: UpdateCommand)
+
+    data class UpdateCommand(
+        val tableId: ThingId,
+        val contributorId: ContributorId,
+        val rowIndex: Int,
+        override val resources: Map<String, CreateResourceCommandPart>,
+        override val literals: Map<String, CreateLiteralCommandPart>,
+        override val predicates: Map<String, CreatePredicateCommandPart>,
+        override val classes: Map<String, CreateClassCommandPart>,
+        override val lists: Map<String, CreateListCommandPart>,
+        val row: RowCommand,
+    ) : CreateThingsCommand
+}
+
+interface DeleteTableRowUseCase {
+    fun deleteTableRow(command: DeleteCommand)
+
+    data class DeleteCommand(
+        val tableId: ThingId,
+        val contributorId: ContributorId,
+        val rowIndex: Int,
+    )
 }
 
 data class RowCommand(

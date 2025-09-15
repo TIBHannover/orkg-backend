@@ -1,0 +1,20 @@
+{
+    "resources": {
+        "#temp1": {
+            "label": "MOTO3",
+            "classes": []
+        }
+    },
+    "literals": null,
+    "predicates": null,
+    "classes": null,
+    "lists": null,
+    "row": {
+        "label": "inserted row",
+        "data": [
+            null,
+            "L123",
+            "#temp1"
+        ]
+    }
+}

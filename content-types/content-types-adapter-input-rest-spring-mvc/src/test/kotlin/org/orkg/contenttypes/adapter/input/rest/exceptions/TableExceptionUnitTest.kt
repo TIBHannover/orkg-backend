@@ -3,12 +3,17 @@ package org.orkg.contenttypes.adapter.input.rest.exceptions
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.json.CommonJacksonModule
+import org.orkg.contenttypes.domain.CannotDeleteTableHeader
+import org.orkg.contenttypes.domain.InvalidTableRowIndex
 import org.orkg.contenttypes.domain.MissingTableHeaderValue
 import org.orkg.contenttypes.domain.MissingTableRowValues
 import org.orkg.contenttypes.domain.MissingTableRows
+import org.orkg.contenttypes.domain.TableColumnNotFound
 import org.orkg.contenttypes.domain.TableHeaderValueMustBeLiteral
 import org.orkg.contenttypes.domain.TableNotFound
 import org.orkg.contenttypes.domain.TableNotModifiable
+import org.orkg.contenttypes.domain.TableRowNotFound
+import org.orkg.contenttypes.domain.TooFewTableRows
 import org.orkg.contenttypes.domain.TooManyTableRowValues
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
@@ -44,14 +49,72 @@ internal class TableExceptionUnitTest : MockMvcExceptionBaseTest() {
     }
 
     @Test
+    fun tableRowNotFound() {
+        val type = "orkg:problem:table_row_not_found"
+        documentedGetRequestTo(TableRowNotFound(ThingId("R123"), 5))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType(type)
+            .andExpectTitle("Not Found")
+            .andExpectDetail("""Table row 5 for table "R123" not found.""")
+            .andExpect(jsonPath("$.table_id").value("R123"))
+            .andExpect(jsonPath("$.table_row_index").value("5"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields(type)).and(
+                        fieldWithPath("table_id").description("The id of the table."),
+                        fieldWithPath("table_row_index").description("The row index of the table."),
+                    )
+                )
+            )
+    }
+
+    @Test
+    fun tableColumnNotFound() {
+        val type = "orkg:problem:table_column_not_found"
+        documentedGetRequestTo(TableColumnNotFound(ThingId("R123"), 5))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType(type)
+            .andExpectTitle("Not Found")
+            .andExpectDetail("""Table column 5 for table "R123" not found.""")
+            .andExpect(jsonPath("$.table_id").value("R123"))
+            .andExpect(jsonPath("$.table_column_index").value("5"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields(type)).and(
+                        fieldWithPath("table_id").description("The id of the table."),
+                        fieldWithPath("table_column_index").description("The column index of the table."),
+                    )
+                )
+            )
+    }
+
+    @Test
     fun missingTableRows() {
         val type = "orkg:problem:missing_table_rows"
         documentedGetRequestTo(MissingTableRows())
             .andExpectErrorStatus(BAD_REQUEST)
             .andExpectType(type)
             .andExpectTitle("Bad Request")
-            .andExpectDetail("""Missing table rows. At least one rows is required.""")
+            .andExpectDetail("""Missing table rows. At least one row is required.""")
             .andDocumentWithDefaultExceptionResponseFields(type)
+    }
+
+    @Test
+    fun tooFewTableRows() {
+        val type = "orkg:problem:too_few_table_rows"
+        documentedGetRequestTo(TooFewTableRows(ThingId("R123")))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType(type)
+            .andExpectTitle("Bad Request")
+            .andExpectDetail("""Too few table rows for table "R123". At least one row is required.""")
+            .andExpect(jsonPath("$.table_id").value("R123"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields(type)).and(
+                        fieldWithPath("table_id").description("The id of the table."),
+                    )
+                )
+            )
     }
 
     @Test
@@ -147,6 +210,42 @@ internal class TableExceptionUnitTest : MockMvcExceptionBaseTest() {
                 documentationHandler.document(
                     responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("table_id").description("The id of the table."),
+                    )
+                )
+            )
+    }
+
+    @Test
+    fun cannotDeleteTableHeader() {
+        val type = "orkg:problem:cannot_delete_table_header"
+        documentedGetRequestTo(CannotDeleteTableHeader())
+            .andExpectErrorStatus(FORBIDDEN)
+            .andExpectType(type)
+            .andExpectTitle("Forbidden")
+            .andExpectDetail("""The table header cannot be deleted.""")
+            .andExpect(jsonPath("$.table_row_index").value("0"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields(type)).and(
+                        fieldWithPath("table_row_index").description("The row index of the table. (always `0`)"),
+                    )
+                )
+            )
+    }
+
+    @Test
+    fun invalidTableRowIndex() {
+        val type = "orkg:problem:invalid_table_row_index"
+        documentedGetRequestTo(InvalidTableRowIndex(-1))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType(type)
+            .andExpectTitle("Bad Request")
+            .andExpectDetail("""Invalid table row index -1.""")
+            .andExpect(jsonPath("$.table_row_index").value("-1"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields(type)).and(
+                        fieldWithPath("table_row_index").description("The row index of the table. (always `0`)"),
                     )
                 )
             )

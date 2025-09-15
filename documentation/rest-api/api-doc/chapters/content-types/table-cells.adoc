@@ -1,0 +1,14 @@
+= Table Cells
+
+The following endpoints can be used to manipulate individual cells of tables.
+
+NOTE: The following endpoints use content negotiation, meaning that the contents of the response json depend on the specified `Accept` and `Content-Type` headers of each request.
+
+[[table-cells-edit]]
+== Updating Table Cells
+
+A `PUT` request updates an existing cell of a table with the given parameters.
+The response will be `204 No Content` when successful.
+The updated table (object) can be retrieved by following the URI in the `Location` header field.
+
+operation::tables-update-table-cell[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']

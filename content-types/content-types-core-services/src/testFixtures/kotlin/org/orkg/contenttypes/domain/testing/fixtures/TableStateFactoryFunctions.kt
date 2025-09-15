@@ -1,9 +1,9 @@
 package org.orkg.contenttypes.domain.testing.fixtures
 
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.domain.actions.tables.UpdateTableAction.State.CellGraph
-import org.orkg.contenttypes.domain.actions.tables.UpdateTableAction.State.ColumnGraph
-import org.orkg.contenttypes.domain.actions.tables.UpdateTableAction.State.RowGraph
+import org.orkg.contenttypes.domain.actions.tables.CellGraph
+import org.orkg.contenttypes.domain.actions.tables.ColumnGraph
+import org.orkg.contenttypes.domain.actions.tables.RowGraph
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates

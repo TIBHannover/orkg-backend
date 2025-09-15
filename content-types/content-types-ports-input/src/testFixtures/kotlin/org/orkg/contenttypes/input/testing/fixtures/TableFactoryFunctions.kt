@@ -16,6 +16,7 @@ import org.orkg.contenttypes.input.CreateTableUseCase
 import org.orkg.contenttypes.input.DeleteTableColumnUseCase
 import org.orkg.contenttypes.input.DeleteTableRowUseCase
 import org.orkg.contenttypes.input.RowCommand
+import org.orkg.contenttypes.input.UpdateTableCellUseCase
 import org.orkg.contenttypes.input.UpdateTableColumnUseCase
 import org.orkg.contenttypes.input.UpdateTableRowUseCase
 import org.orkg.contenttypes.input.UpdateTableUseCase
@@ -213,4 +214,12 @@ fun deleteTableColumnCommand() = DeleteTableColumnUseCase.DeleteCommand(
     tableId = ThingId("R123"),
     contributorId = ContributorId("460d4019-57c8-4d30-9087-e7e5129e1c24"),
     columnIndex = 2,
+)
+
+fun updateTableCellCommand() = UpdateTableCellUseCase.UpdateCommand(
+    tableId = ThingId("R123"),
+    contributorId = ContributorId("460d4019-57c8-4d30-9087-e7e5129e1c24"),
+    rowIndex = 1,
+    columnIndex = 1,
+    id = ThingId("R4156"),
 )

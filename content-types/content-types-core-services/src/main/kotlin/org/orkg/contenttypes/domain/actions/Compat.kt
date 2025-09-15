@@ -25,6 +25,7 @@ import org.orkg.contenttypes.domain.actions.smartreviews.sections.DeleteSmartRev
 import org.orkg.contenttypes.domain.actions.smartreviews.sections.UpdateSmartReviewSectionAction
 import org.orkg.contenttypes.domain.actions.tables.CreateTableAction
 import org.orkg.contenttypes.domain.actions.tables.UpdateTableAction
+import org.orkg.contenttypes.domain.actions.tables.cells.UpdateTableCellAction
 import org.orkg.contenttypes.domain.actions.tables.columns.CreateTableColumnAction
 import org.orkg.contenttypes.domain.actions.tables.columns.DeleteTableColumnAction
 import org.orkg.contenttypes.domain.actions.tables.columns.UpdateTableColumnAction
@@ -72,6 +73,7 @@ import org.orkg.contenttypes.input.UpdateRosettaStoneStatementUseCase
 import org.orkg.contenttypes.input.UpdateRosettaStoneTemplateUseCase
 import org.orkg.contenttypes.input.UpdateSmartReviewSectionUseCase
 import org.orkg.contenttypes.input.UpdateSmartReviewUseCase
+import org.orkg.contenttypes.input.UpdateTableCellUseCase
 import org.orkg.contenttypes.input.UpdateTableColumnUseCase
 import org.orkg.contenttypes.input.UpdateTableRowUseCase
 import org.orkg.contenttypes.input.UpdateTableUseCase
@@ -110,6 +112,7 @@ internal typealias UpdateRosettaStoneTemplateCommand = UpdateRosettaStoneTemplat
 internal typealias UpdateSmartReviewCommand = UpdateSmartReviewUseCase.UpdateCommand
 internal typealias UpdateSmartReviewSectionCommand = UpdateSmartReviewSectionUseCase.UpdateCommand
 internal typealias UpdateTableCommand = UpdateTableUseCase.UpdateCommand
+internal typealias UpdateTableCellCommand = UpdateTableCellUseCase.UpdateCommand
 internal typealias UpdateTableColumnCommand = UpdateTableColumnUseCase.UpdateCommand
 internal typealias UpdateTableRowCommand = UpdateTableRowUseCase.UpdateCommand
 internal typealias UpdateTemplateCommand = UpdateTemplateUseCase.UpdateCommand
@@ -149,6 +152,7 @@ internal typealias UpdateRosettaStoneTemplateState = UpdateRosettaStoneTemplateA
 internal typealias UpdateSmartReviewSectionState = UpdateSmartReviewSectionAction.State
 internal typealias UpdateSmartReviewState = UpdateSmartReviewAction.State
 internal typealias UpdateTableState = UpdateTableAction.State
+internal typealias UpdateTableCellState = UpdateTableCellAction.State
 internal typealias UpdateTableColumnState = UpdateTableColumnAction.State
 internal typealias UpdateTableRowState = UpdateTableRowAction.State
 internal typealias UpdateTemplateInstanceState = UpdateTemplateInstanceAction.State

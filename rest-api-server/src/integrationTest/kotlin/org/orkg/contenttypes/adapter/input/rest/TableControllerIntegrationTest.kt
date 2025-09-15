@@ -873,6 +873,110 @@ internal class TableControllerIntegrationTest : MockMvcBaseTest("tables") {
             .andExpect(status().isNoContent)
 
         assertTableMatchesExpectedResult(id)
+
+        // test single cell update
+
+        put("/api/tables/{id}/cells/{row}/{column}", id, 3, 2)
+            .content(requestJson("orkg/updateTableCell"))
+            .accept(TABLE_CELL_JSON_V1)
+            .contentType(TABLE_CELL_JSON_V1)
+            .perform()
+            .andExpect(status().isNoContent)
+
+        tableService.findById(id).orElseThrow { TableNotFound(id) }.asClue {
+            it.id shouldBe id
+            it.label shouldBe "updated example table"
+            it.rows.size shouldBe 5
+            it.rows[0].asClue { row ->
+                row.label shouldBe null
+                row.data.size shouldBe 3
+                row.data[0].shouldBeInstanceOf<Literal> { thing ->
+                    thing.id shouldNotBe null
+                    thing.label shouldBe "header value"
+                    thing.datatype shouldBe Literals.XSD.STRING.prefixedUri
+                }
+                row.data[1].shouldBeInstanceOf<Literal> { thing ->
+                    thing.id shouldNotBe null
+                    thing.label shouldBe "other header name"
+                    thing.datatype shouldBe Literals.XSD.STRING.prefixedUri
+                }
+                row.data[2].shouldBeInstanceOf<Literal> { thing ->
+                    thing.id shouldNotBe null
+                    thing.label shouldBe "column 3"
+                    thing.datatype shouldBe Literals.XSD.STRING.prefixedUri
+                }
+            }
+            it.rows[1].asClue { row ->
+                row.label shouldBe "row 1"
+                row.data.size shouldBe 3
+                row.data[0].shouldBeInstanceOf<Resource> { thing ->
+                    thing.id shouldNotBe null
+                    thing.label shouldBe "MOTO2"
+                    thing.classes shouldBe emptySet()
+                }
+                row.data[1].shouldBeInstanceOf<Literal> { thing ->
+                    thing.id shouldNotBe null
+                    thing.label shouldBe "0.8"
+                    thing.datatype shouldBe Literals.XSD.DECIMAL.prefixedUri
+                }
+                row.data[2].shouldBeInstanceOf<Resource> { thing ->
+                    thing.id shouldBe ThingId("R123")
+                    thing.label shouldBe "some resource"
+                    thing.classes shouldBe emptySet()
+                }
+            }
+            it.rows[2].asClue { row ->
+                row.label shouldBe "row 2"
+                row.data.size shouldBe 3
+                row.data[0].shouldBeInstanceOf<Predicate> { thing ->
+                    thing.id shouldNotBe null
+                    thing.label shouldBe "has other Result"
+                }
+                row.data[1].shouldBeInstanceOf<Class> { thing ->
+                    thing.id shouldBe ThingId("C123")
+                    thing.label shouldBe "some class"
+                    thing.uri shouldBe null
+                }
+                row.data[2].shouldBeInstanceOf<Predicate> { thing ->
+                    thing.id shouldBe ThingId("P123")
+                    thing.label shouldBe "some predicate"
+                }
+            }
+            it.rows[3].asClue { row ->
+                row.label shouldBe "row 3"
+                row.data.size shouldBe 3
+                row.data[0].shouldBeInstanceOf<Class> { thing ->
+                    thing.id shouldNotBe null
+                    thing.label shouldBe "some other test class"
+                    thing.uri shouldBe ParsedIRI.create("https://orkg.org/class/C12345")
+                }
+                row.data[1] shouldBe null
+                row.data[2].shouldBeInstanceOf<Resource> { thing ->
+                    thing.id shouldBe ThingId("R123")
+                    thing.label shouldBe "some resource"
+                    thing.classes shouldBe emptySet()
+                }
+            }
+            it.rows[4].asClue { row ->
+                row.label shouldBe "row 4"
+                row.data.size shouldBe 3
+                row.data[0] shouldBe null
+                row.data[1].shouldBeInstanceOf<Resource> { thing ->
+                    thing.id shouldNotBe null
+                    thing.label shouldBe "different list"
+                    thing.classes shouldBe setOf(Classes.list)
+                }
+                row.data[2] shouldBe null
+            }
+            it.observatories shouldBe listOf(ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3"))
+            it.organizations shouldBe listOf(OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"))
+            it.extractionMethod shouldBe ExtractionMethod.UNKNOWN
+            it.createdAt shouldNotBe null
+            it.createdBy shouldBe ContributorId(MockUserId.USER)
+            it.visibility shouldBe Visibility.DEFAULT
+            it.modifiable shouldBe true
+            it.unlistedBy shouldBe null
+        }
     }
 
     private fun assertTableMatchesExpectedResult(id: ThingId) {

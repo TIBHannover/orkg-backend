@@ -21,6 +21,8 @@ import org.orkg.contenttypes.domain.actions.LabelValidator
 import org.orkg.contenttypes.domain.actions.ObservatoryValidator
 import org.orkg.contenttypes.domain.actions.OrganizationValidator
 import org.orkg.contenttypes.domain.actions.TempIdValidator
+import org.orkg.contenttypes.domain.actions.UpdateTableCellCommand
+import org.orkg.contenttypes.domain.actions.UpdateTableCellState
 import org.orkg.contenttypes.domain.actions.UpdateTableColumnCommand
 import org.orkg.contenttypes.domain.actions.UpdateTableColumnState
 import org.orkg.contenttypes.domain.actions.UpdateTableCommand
@@ -49,6 +51,9 @@ import org.orkg.contenttypes.domain.actions.tables.TableThingsCommandCreateValid
 import org.orkg.contenttypes.domain.actions.tables.TableThingsCommandUpdateCreator
 import org.orkg.contenttypes.domain.actions.tables.TableThingsCommandUpdateValidator
 import org.orkg.contenttypes.domain.actions.tables.TableUpdateValidationCacheInitializer
+import org.orkg.contenttypes.domain.actions.tables.cells.TableCellIndexValidator
+import org.orkg.contenttypes.domain.actions.tables.cells.TableCellUpdater
+import org.orkg.contenttypes.domain.actions.tables.cells.TableCellValueValidator
 import org.orkg.contenttypes.domain.actions.tables.columns.TableColumnCreateValidator
 import org.orkg.contenttypes.domain.actions.tables.columns.TableColumnCreator
 import org.orkg.contenttypes.domain.actions.tables.columns.TableColumnDeleter
@@ -69,6 +74,7 @@ import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.ListUseCases
+import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeClassUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafePredicateUseCases
@@ -99,6 +105,7 @@ class TableService(
     private val listService: ListUseCases,
     private val observatoryRepository: ObservatoryRepository,
     private val organizationRepository: OrganizationRepository,
+    private val statementUseCases: StatementUseCases,
 ) : TableUseCases {
     override fun findById(id: ThingId): Optional<Table> =
         resourceRepository.findById(id)
@@ -229,6 +236,17 @@ class TableService(
             TableColumnDeleter(thingRepository, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases),
         )
         steps.execute(command, DeleteTableColumnState())
+    }
+
+    override fun updateTableCell(command: UpdateTableCellCommand) {
+        val steps = listOf<Action<UpdateTableCellCommand, UpdateTableCellState>>(
+            TableExistenceValidator(this, resourceRepository, UpdateTableCellCommand::tableId) { table, statements -> copy(table = table, statements = statements) },
+            TableModifiableValidator { it.table!! },
+            TableCellIndexValidator(),
+            TableCellValueValidator(thingRepository),
+            TableCellUpdater(unsafeStatementUseCases, unsafeResourceUseCases, unsafeLiteralUseCases, statementUseCases),
+        )
+        steps.execute(command, UpdateTableCellState())
     }
 
     internal fun findSubgraph(resource: Resource): ContentTypeSubgraph {

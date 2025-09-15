@@ -20,6 +20,7 @@ import org.orkg.contenttypes.input.CreateTableUseCase
 import org.orkg.contenttypes.input.DeleteTableColumnUseCase
 import org.orkg.contenttypes.input.DeleteTableRowUseCase
 import org.orkg.contenttypes.input.TableUseCases
+import org.orkg.contenttypes.input.UpdateTableCellUseCase
 import org.orkg.contenttypes.input.UpdateTableColumnUseCase
 import org.orkg.contenttypes.input.UpdateTableRowUseCase
 import org.orkg.contenttypes.input.UpdateTableUseCase
@@ -50,6 +51,7 @@ import java.time.OffsetDateTime
 const val TABLE_JSON_V1 = "application/vnd.orkg.table.v1+json"
 const val TABLE_ROW_JSON_V1 = "application/vnd.orkg.table.row.v1+json"
 const val TABLE_COLUMN_JSON_V1 = "application/vnd.orkg.table.column.v1+json"
+const val TABLE_CELL_JSON_V1 = "application/vnd.orkg.table.cell.v1+json"
 
 @RestController
 @RequestMapping("/api/tables", produces = [TABLE_JSON_V1])
@@ -225,6 +227,25 @@ class TableController(
         return noContent().location(location).build()
     }
 
+    @RequireLogin
+    @PutMapping("/{id}/cells/{row}/{column}", consumes = [TABLE_CELL_JSON_V1], produces = [TABLE_CELL_JSON_V1])
+    fun updateTableColumn(
+        @PathVariable id: ThingId,
+        @PathVariable @PositiveOrZero row: Int,
+        @PathVariable @PositiveOrZero column: Int,
+        @RequestBody @Valid request: UpdateTableCellRequest,
+        uriComponentsBuilder: UriComponentsBuilder,
+        currentUser: Authentication?,
+    ): ResponseEntity<Any> {
+        val userId = currentUser.contributorId()
+        service.updateTableCell(request.toUpdateCommand(id, userId, row, column))
+        val location = uriComponentsBuilder
+            .path("/api/tables/{id}")
+            .buildAndExpand(id)
+            .toUri()
+        return noContent().location(location).build()
+    }
+
     data class CreateTableRequest(
         @field:NotBlank
         val label: String,
@@ -386,5 +407,17 @@ class TableController(
                 lists = lists?.mapValues { it.value.toCreateCommand() }.orEmpty(),
                 column = column,
             )
+    }
+
+    data class UpdateTableCellRequest(
+        val id: ThingId?,
+    ) {
+        fun toUpdateCommand(
+            tableId: ThingId,
+            contributorId: ContributorId,
+            rowIndex: Int,
+            columnIndex: Int,
+        ): UpdateTableCellUseCase.UpdateCommand =
+            UpdateTableCellUseCase.UpdateCommand(tableId, contributorId, rowIndex, columnIndex, id)
     }
 }

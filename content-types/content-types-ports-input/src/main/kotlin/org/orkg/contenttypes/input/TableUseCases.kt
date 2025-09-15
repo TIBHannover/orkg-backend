@@ -23,7 +23,8 @@ interface TableUseCases :
     DeleteTableRowUseCase,
     CreateTableColumnUseCase,
     UpdateTableColumnUseCase,
-    DeleteTableColumnUseCase
+    DeleteTableColumnUseCase,
+    UpdateTableCellUseCase
 
 interface RetrieveTableUseCase {
     fun findById(id: ThingId): Optional<Table>
@@ -159,6 +160,18 @@ interface DeleteTableColumnUseCase {
         val tableId: ThingId,
         val contributorId: ContributorId,
         val columnIndex: Int,
+    )
+}
+
+interface UpdateTableCellUseCase {
+    fun updateTableCell(command: UpdateCommand)
+
+    data class UpdateCommand(
+        val tableId: ThingId,
+        val contributorId: ContributorId,
+        val rowIndex: Int,
+        val columnIndex: Int,
+        val id: ThingId?,
     )
 }
 

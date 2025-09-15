@@ -19,6 +19,7 @@ import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.input.ListUseCases
+import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeClassUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafePredicateUseCases
@@ -51,6 +52,7 @@ internal class TableServiceUnitTest : MockkBaseTest {
     private val listService: ListUseCases = mockk()
     private val observatoryRepository: ObservatoryRepository = mockk()
     private val organizationRepository: OrganizationRepository = mockk()
+    private val statementUseCases: StatementUseCases = mockk()
 
     private val service = TableService(
         resourceRepository,
@@ -65,6 +67,7 @@ internal class TableServiceUnitTest : MockkBaseTest {
         listService,
         observatoryRepository,
         organizationRepository,
+        statementUseCases,
     )
 
     @Test

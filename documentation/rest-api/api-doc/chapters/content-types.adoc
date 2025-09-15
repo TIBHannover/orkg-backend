@@ -38,6 +38,9 @@ include::content-types/smart-review-sections.adoc[leveloffset=+1]
 [[tables]]
 include::content-types/tables.adoc[leveloffset=+1]
 
+[[table-cells]]
+include::content-types/table-cells.adoc[leveloffset=+1]
+
 [[table-columns]]
 include::content-types/table-columns.adoc[leveloffset=+1]
 

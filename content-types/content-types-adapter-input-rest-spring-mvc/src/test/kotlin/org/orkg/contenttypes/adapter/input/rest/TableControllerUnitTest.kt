@@ -364,7 +364,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
         val index = 5
         every { tableService.createTableRow(any()) } returns ThingId("R456")
 
-        documentedPostRequestTo("/api/tables/{id}/rows/{index}", id, 5)
+        documentedPostRequestTo("/api/tables/{id}/rows/{index}", id, index)
             .content(tableRowRequest())
             .accept(TABLE_ROW_JSON_V1)
             .contentType(TABLE_ROW_JSON_V1)
@@ -409,13 +409,13 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
 
     @Test
     @TestWithMockUser
-    @DisplayName("Given a table row update request, when service succeeds, it update the table row")
+    @DisplayName("Given a table row update request, when service succeeds, it updates the table row")
     fun updateTableRow() {
         val id = ThingId("R123")
         val index = 5
         every { tableService.updateTableRow(any()) } just runs
 
-        documentedPutRequestTo("/api/tables/{id}/rows/{index}", id, 5)
+        documentedPutRequestTo("/api/tables/{id}/rows/{index}", id, index)
             .content(tableRowRequest())
             .accept(TABLE_ROW_JSON_V1)
             .contentType(TABLE_ROW_JSON_V1)
@@ -466,7 +466,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
         val index = 5
         every { tableService.deleteTableRow(any()) } just runs
 
-        documentedDeleteRequestTo("/api/tables/{id}/rows/{index}", id, 5)
+        documentedDeleteRequestTo("/api/tables/{id}/rows/{index}", id, index)
             .accept(TABLE_ROW_JSON_V1)
             .contentType(TABLE_ROW_JSON_V1)
             .perform()
@@ -514,7 +514,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
         val index = 5
         every { tableService.createTableColumn(any()) } returns ThingId("R456")
 
-        documentedPostRequestTo("/api/tables/{id}/columns/{index}", id, 5)
+        documentedPostRequestTo("/api/tables/{id}/columns/{index}", id, index)
             .content(tableColumnRequest())
             .accept(TABLE_COLUMN_JSON_V1)
             .contentType(TABLE_COLUMN_JSON_V1)
@@ -557,13 +557,13 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
 
     @Test
     @TestWithMockUser
-    @DisplayName("Given a table column update request, when service succeeds, it update the table column")
+    @DisplayName("Given a table column update request, when service succeeds, it updates the table column")
     fun updateTableColumn() {
         val id = ThingId("R123")
         val index = 5
         every { tableService.updateTableColumn(any()) } just runs
 
-        documentedPutRequestTo("/api/tables/{id}/columns/{index}", id, 5)
+        documentedPutRequestTo("/api/tables/{id}/columns/{index}", id, index)
             .content(tableColumnRequest())
             .accept(TABLE_COLUMN_JSON_V1)
             .contentType(TABLE_COLUMN_JSON_V1)
@@ -612,7 +612,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
         val index = 5
         every { tableService.deleteTableColumn(any()) } just runs
 
-        documentedDeleteRequestTo("/api/tables/{id}/columns/{index}", id, 5)
+        documentedDeleteRequestTo("/api/tables/{id}/columns/{index}", id, index)
             .accept(TABLE_COLUMN_JSON_V1)
             .contentType(TABLE_COLUMN_JSON_V1)
             .perform()
@@ -632,6 +632,50 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { tableService.deleteTableColumn(withArg { it.columnIndex shouldBe index }) }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a table cell update request, when service succeeds, it updates the table column")
+    fun updateTableCell() {
+        val id = ThingId("R123")
+        val rowIndex = 5
+        val columnIndex = 4
+        every { tableService.updateTableCell(any()) } just runs
+
+        documentedPutRequestTo("/api/tables/{id}/cells/{row}/{column}", id, rowIndex, columnIndex)
+            .content(updateTableCellRequest())
+            .accept(TABLE_CELL_JSON_V1)
+            .contentType(TABLE_CELL_JSON_V1)
+            .perform()
+            .andExpect(status().isNoContent)
+            .andExpect(header().string("Location", endsWith("/api/tables/$id")))
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the table."),
+                        parameterWithName("row").description("The index of the row."),
+                        parameterWithName("column").description("The index of the column."),
+                    ),
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the updated table can be fetched from.")
+                    ),
+                    requestFields(
+                        fieldWithPath("id").description("The id of the thing that should replace the current value of the cell. If `null`, the current value will be removed."),
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) {
+            tableService.updateTableCell(
+                withArg {
+                    it.tableId shouldBe id
+                    it.rowIndex shouldBe rowIndex
+                    it.columnIndex shouldBe columnIndex
+                }
+            )
+        }
     }
 
     private fun createTableRequest() =
@@ -774,4 +818,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
             classes = emptyMap(),
             column = listOf("#temp1", null, "R456"),
         )
+
+    private fun updateTableCellRequest() =
+        TableController.UpdateTableCellRequest(ThingId("R5646"))
 }

@@ -1,10 +1,12 @@
 import com.epages.restdocs.apispec.gradle.OpenApi3Task
+import com.epages.restdocs.apispec.gradle.PluginOauth2Configuration
 import groovy.lang.Closure
 import io.swagger.v3.oas.models.servers.Server
 import org.asciidoctor.gradle.jvm.AsciidoctorTask
+import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
 plugins {
-    id("org.orkg.gradle.asciidoctor")
+    id("org.orkg.gradle.openapi")
     id("java-library")
 }
 
@@ -207,13 +209,28 @@ artifacts {
     add("staticFiles", packageHTML)
 }
 
+val openApiServerUrls = listOf("http://localhost:8080")
+val openApiAuthServerUrl = "http://localhost:8888/realms/orkg"
+
 openapi3 {
     snippetsDirectory = layout.buildDirectory.dir("generated-snippets").get().asFile.path
-    // tagDescriptionsPropertiesFile = layout.projectDirectory.file("rest-api/openapi-tags.yaml").asFile.path
 
     title = "Open Research Knowledge Graph (ORKG) REST API"
     version = "${project.version}"
-    setServer(serverClosure { url = "http://localhost:8080" })
+    format = "yaml"
+    setServers(openApiServerUrls.map { serverClosure { url = it } })
+    setOauth2SecuritySchemeDefinition(
+        oauthConfigClosure {
+            flows = arrayOf(
+                "authorizationCode",
+                "clientCredentials",
+                "implicit",
+                "password",
+            )
+            tokenUrl = "$openApiAuthServerUrl/protocol/openid-connect/token"
+            authorizationUrl = "$openApiAuthServerUrl/protocol/openid-connect/auth"
+        }
+    )
 }
 
 tasks {
@@ -222,7 +239,44 @@ tasks {
     withType(OpenApi3Task::class).configureEach {
         dependsOn(asciidoctor)
     }
+
+    register<GenerateTask>("generateTypescriptClient") {
+        setGroup("openapi client generation")
+        generatorName.set("typescript-fetch")
+        inputSpec.set(layout.buildDirectory.file("api-spec/openapi3.yaml").get().asFile.path)
+        outputDir.set(layout.buildDirectory.dir("generated-clients/typescript-client").get().asFile.path)
+        dependsOn("openapi3")
+    }
+
+    register<GenerateTask>("generatePythonClient") {
+        setGroup("openapi client generation")
+        generatorName.set("python")
+        inputSpec.set(layout.buildDirectory.file("api-spec/openapi3.yaml").get().asFile.path)
+        outputDir.set(layout.buildDirectory.dir("generated-clients/python-client").get().asFile.path)
+        dependsOn("openapi3")
+    }
+
+    register<GenerateTask>("generateRClient") {
+        setGroup("openapi client generation")
+        generatorName.set("r")
+        inputSpec.set(layout.buildDirectory.file("api-spec/openapi3.yaml").get().asFile.path)
+        outputDir.set(layout.buildDirectory.dir("generated-clients/r-client").get().asFile.path)
+        dependsOn("openapi3")
+    }
+
+    register("generateAllClients") {
+        dependsOn(
+            "generateTypescriptClient",
+            "generatePythonClient",
+            "generateRClient"
+        )
+    }
 }
 
 @Suppress("UNCHECKED_CAST")
-fun serverClosure(action: Server.() -> Unit): Closure<Server> = closureOf(action) as Closure<Server>
+fun serverClosure(action: Server.() -> Unit): Closure<Server> =
+    closureOf(action) as Closure<Server>
+
+@Suppress("UNCHECKED_CAST")
+fun oauthConfigClosure(action: PluginOauth2Configuration.() -> Unit): Closure<PluginOauth2Configuration> =
+    closureOf(action) as Closure<PluginOauth2Configuration>

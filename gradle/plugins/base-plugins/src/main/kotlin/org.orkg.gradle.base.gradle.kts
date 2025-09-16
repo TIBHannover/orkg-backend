@@ -5,8 +5,5 @@ plugins {
 
 group = "org.orkg"
 
-/*
 // Set the version from 'version.txt'
-version = providers.fileContents(
-    rootProject.layout.projectDirectory.file("gradle/version.txt")).asText.getOrElse("")
-*/
+version = providers.fileContents(rootProject.layout.projectDirectory.file("version.txt")).asText.map(String::trim).getOrElse("SNAPSHOT")

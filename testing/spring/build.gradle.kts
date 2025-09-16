@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
     testFixturesImplementation(project(":constants"))
+    testFixturesApi("com.epages:restdocs-api-spec")
     testFixturesApi("com.github.dasniko:testcontainers-keycloak")
     testFixturesApi("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-autoconfigure")
     testFixturesApi("io.kotest:kotest-framework-engine-jvm")
@@ -37,7 +38,6 @@ dependencies {
     testFixturesApi("org.testcontainers:testcontainers")
     testFixturesApi(project(":common:spring-webmvc"))
     testFixturesApi(testFixtures(project(":common:testing")))
-    testFixturesImplementation("com.epages:restdocs-api-spec-mockmvc")
     testFixturesImplementation("com.ninja-squad:springmockk")
     testFixturesImplementation("io.kotest:kotest-extensions-spring")
     testFixturesImplementation("io.mockk:mockk-dsl")

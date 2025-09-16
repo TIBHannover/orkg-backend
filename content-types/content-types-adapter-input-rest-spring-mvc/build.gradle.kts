@@ -40,6 +40,8 @@ dependencies {
     testFixturesImplementation(project(":common:datatypes"))
     testFixturesImplementation(project(":common:core-identifiers"))
     testFixturesImplementation(project(":graph:graph-core-constants"))
+    testFixturesImplementation(testFixtures(project(":graph:graph-core-model")))
+    testFixturesImplementation(testFixtures(project(":testing:spring")))
 }
 
 testing {

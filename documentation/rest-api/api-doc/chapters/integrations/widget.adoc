@@ -1,19 +1,4 @@
 = ORKG Widget
 :icons: font
 
-WARNING: This API is intended for internal use of the https://gitlab.com/TIBHannover/orkg/orkg-frontend/-/blob/master/widget/README.md[ORKG widget], and not meant to be consumed by clients.
-  It is documented here for completeness.
-  Client authors can ignore it.
-
-
-The widget can obtain information via a `GET` request to `/api/widgets/` by providing one of the request parameters.
-All request parameters are mutually exclusive.
-Providing none or more than one will respond with status code 400 (Bad Request).
-
-operation::widget-success[snippets=query-parameters]
-
-operation::widget-success[snippets=curl-request]
-
-operation::widget-success[snippets=http-response]
-
-operation::widget-success[snippets=response-fields]
+operation::widget-success[snippets='description,query-parameters,curl-request,http-response,response-fields']

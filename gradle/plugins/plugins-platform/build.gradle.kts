@@ -18,6 +18,7 @@ dependencies.constraints {
     api("org.asciidoctor:asciidoctor-gradle-jvm-gems:$asciidoctorVersion")
     val restdocsSpecVersion = "0.19.4"
     api("com.epages.restdocs-api-spec:com.epages.restdocs-api-spec.gradle.plugin:$restdocsSpecVersion")
+    api("org.openapitools:openapi-generator-gradle-plugin:7.15.0")
 
     api("dev.jacomet.gradle.plugins:logging-capabilities:0.11.1")
     api("org.gradlex:jvm-dependency-conflict-resolution:2.1.2")

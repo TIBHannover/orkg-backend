@@ -1,7 +1,5 @@
 package org.orkg.widget.adapter.input.rest
 
-import com.epages.restdocs.apispec.ResourceDocumentation.resource
-import com.epages.restdocs.apispec.ResourceSnippetParameters
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
@@ -22,13 +20,11 @@ import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectError
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectTitle
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
 import org.orkg.widget.input.ResolveDOIUseCase
+import org.orkg.widget.input.ResolveDOIUseCase.WidgetInfo
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -51,26 +47,12 @@ internal class WidgetControllerUnitTest : MockMvcBaseTest("widget") {
 
     @Test
     fun success() {
-        every { resolveDOIUseCase.resolveDOI(EXAMPLE_DOI, null) } returns ResolveDOIUseCase.WidgetInfo(
+        every { resolveDOIUseCase.resolveDOI(EXAMPLE_DOI, null) } returns WidgetInfo(
             id = ThingId("R1234"),
             doi = EXAMPLE_DOI,
             title = "Some very interesting title",
             numberOfStatements = 23,
             `class` = "Paper",
-        )
-
-        // FIXME: Deduplicate parameter and field specification
-        val queryParameters = arrayOf(
-            parameterWithName("doi").description("The DOI of the resource to search.").optional(),
-            parameterWithName("title").description("The title of the resource to search.").optional(),
-        )
-        val responseFields = arrayOf(
-            // The order here determines the order in the generated table. More relevant items should be up.
-            fieldWithPath("id").description("The identifier of the resource."),
-            fieldWithPath("doi").description("The DOI of the resource. May be `null` if the resource does not have a DOI."),
-            fieldWithPath("title").description("The title of the resource."),
-            fieldWithPath("class").description("The class of the resource. Always one of ${Asciidoc.formatPublishableClasses()}."),
-            fieldWithPath("num_statements").description("The number of statements connected to the resource if the class is `Paper`, or 0 in all other cases."),
         )
 
         documentedGetRequestTo("/api/widgets")
@@ -82,29 +64,31 @@ internal class WidgetControllerUnitTest : MockMvcBaseTest("widget") {
             .andExpect(jsonPath("$.doi", `is`(EXAMPLE_DOI)))
             .andExpect(jsonPath("$.title", `is`("Some very interesting title")))
             .andExpect(jsonPath("$.num_statements", `is`(23)))
-            .andDo(
-                document(
-                    identifier,
-                    resource(
-                        ResourceSnippetParameters.builder()
-                            .tag(prefix)
-                            .summary("Obtain basic information for display in the widget")
-                            .description(
-                                """
-                                **NOTE**: This is an **internal API** for the [ORKG widget](https://gitlab.com/TIBHannover/orkg/orkg-frontend/-/blob/master/widget/README.md) and should not be used directly!
-                                
-                                The widget can obtain information for resources with one of the following classes: ${Asciidoc.formatPublishableClasses()}.
-                                All request parameters are mutually exclusive.
-                                """.trimIndent()
-                            )
-                            .queryParameters(*queryParameters)
-                            .responseFields(*responseFields)
-                            .build()
-                    ),
-                    queryParameters(*queryParameters),
-                    responseFields(*responseFields)
+            .andDocument {
+                summary("Fetching widget info")
+                description(
+                    """
+                    WARNING: This API is intended for internal use of the https://gitlab.com/TIBHannover/orkg/orkg-frontend/-/blob/master/widget/README.md[ORKG widget], and not meant to be consumed by clients.
+                      It is documented here for completeness.
+                      Client authors can ignore it.
+
+                    The widget can obtain information via a `GET` request to `/api/widgets/` by providing one of the request parameters.
+                    All request parameters are mutually exclusive.
+                    Providing none or more than one will respond with status code 400 (Bad Request).
+                    """
                 )
-            )
+                queryParameters(
+                    parameterWithName("doi").description("The DOI of the resource to search.").optional(),
+                    parameterWithName("title").description("The title of the resource to search.").optional(),
+                )
+                responseFields<WidgetInfo>(
+                    fieldWithPath("id").description("The identifier of the resource."),
+                    fieldWithPath("doi").description("The DOI of the resource. May be `null` if the resource does not have a DOI."),
+                    fieldWithPath("title").description("The title of the resource."),
+                    fieldWithPath("class").description("The class of the resource. Always one of ${Asciidoc.formatPublishableClasses()}."),
+                    fieldWithPath("num_statements").description("The number of statements connected to the resource if the class is `Paper`, or 0 in all other cases."),
+                )
+            }
 
         verify(exactly = 1) { resolveDOIUseCase.resolveDOI(EXAMPLE_DOI, null) }
     }

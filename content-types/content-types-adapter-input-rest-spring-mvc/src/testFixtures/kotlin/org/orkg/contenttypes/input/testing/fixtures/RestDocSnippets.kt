@@ -1,5 +1,8 @@
 package org.orkg.contenttypes.input.testing.fixtures
 
+import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
+import org.orkg.graph.testing.asciidoc.allowedVisibilityValues
+import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.restdocs.payload.FieldDescriptor
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 
@@ -45,4 +48,35 @@ fun sustainableDevelopmentGoalsFields(type: String, path: String = "sdgs"): List
     fieldWithPath(path).description("The list of sustainable development goals that the $type belongs to."),
     fieldWithPath("$path[].id").description("The ID of the sustainable development goal."),
     fieldWithPath("$path[].label").description("The label of the sustainable development goal."),
+)
+
+fun paperResponseFields(): List<FieldDescriptor> = listOf(
+    fieldWithPath("id").description("The identifier of the paper."),
+    fieldWithPath("title").description("The title of the paper."),
+    fieldWithPath("research_fields").description("The list of research fields the paper is assigned to."),
+    fieldWithPath("research_fields[].id").description("The id of the research field."),
+    fieldWithPath("research_fields[].label").description("The label of the research field."),
+    fieldWithPath("contributions").description("The list of contributions of the paper."),
+    fieldWithPath("contributions[].id").description("The ID of the contribution."),
+    fieldWithPath("contributions[].label").description("The label of the contribution."),
+    fieldWithPath("organizations[]").description("The list of IDs of the organizations the paper belongs to."),
+    fieldWithPath("observatories[]").description("The list of IDs of the observatories the paper belongs to."),
+    fieldWithPath("mentionings[]").description("Set of important resources in the paper."),
+    fieldWithPath("mentionings[].id").description("The ID of the mentioned resource."),
+    fieldWithPath("mentionings[].label").description("The label of the mentioned resource."),
+    fieldWithPath("mentionings[].classes").description("The class ids of the mentioned resource."),
+    fieldWithPath("mentionings[]._class").description("Indicates which type of entity was returned. Always has the value `resource_ref`."),
+    fieldWithPath("extraction_method").description("""The method used to extract the paper resource. Can be one of $allowedExtractionMethodValues."""),
+    timestampFieldWithPath("created_at", "the paper resource was created"),
+    // TODO: Add links to documentation of special user UUIDs.
+    fieldWithPath("created_by").description("The UUID of the user or service who created this paper."),
+    fieldWithPath("verified").description("Determines if the paper was verified by a curator."),
+    fieldWithPath("visibility").description("""Visibility of the paper. Can be one of $allowedVisibilityValues."""),
+    fieldWithPath("modifiable").description("Whether this paper can be modified."),
+    fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this paper.").optional(),
+    fieldWithPath("_class").description("Indicates which type of entity was returned. Always has the value `paper`."),
+    *authorListFields("paper").toTypedArray(),
+    *publicationInfoFields("paper").toTypedArray(),
+    *sustainableDevelopmentGoalsFields("paper").toTypedArray(),
+    *paperIdentifierFields().toTypedArray()
 )

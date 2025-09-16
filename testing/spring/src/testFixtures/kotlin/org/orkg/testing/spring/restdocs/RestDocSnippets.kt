@@ -10,7 +10,7 @@ import org.springframework.restdocs.snippet.AbstractDescriptor
 import java.time.OffsetDateTime
 
 fun pageableDetailedFieldParameters(): List<FieldDescriptor> = listOf(
-    fieldWithPath("content").description("The result of the request as a (sorted) array."),
+    fieldWithPath("content[]").description("The result of the request as a (sorted) array."),
     subsectionWithPath("page").description("Paging information."),
     fieldWithPath("page.number").description("The number of the current page."),
     fieldWithPath("page.size").description("The size of the current page."),
@@ -18,16 +18,15 @@ fun pageableDetailedFieldParameters(): List<FieldDescriptor> = listOf(
     fieldWithPath("page.total_pages").description("The total number of pages."),
 )
 
-fun pagedResponseFields(vararg fieldDescriptor: FieldDescriptor): ResponseFieldsSnippet {
-    val responseFields = applyPathPrefix("content[].", fieldDescriptor.asList())
-    responseFields += listOf(
-        "page",
-        "page.number",
-        "page.size",
-        "page.total_elements",
-        "page.total_pages",
-    ).map { fieldWithPath(it).ignored() }
-    return responseFields(responseFields)
+fun pagedResponseFields(vararg fieldDescriptor: FieldDescriptor): ResponseFieldsSnippet =
+    responseFields(pagedResponseFields(fieldDescriptor.asList()))
+
+fun pagedResponseFields(fieldDescriptors: List<FieldDescriptor>, ignorePageFields: Boolean = true): List<FieldDescriptor> {
+    val pageResponseFields = pageableDetailedFieldParameters()
+    if (ignorePageFields) {
+        pageResponseFields.forEach { it.ignored() }
+    }
+    return pageResponseFields + applyPathPrefix("content[].", fieldDescriptors)
 }
 
 /**
@@ -44,7 +43,7 @@ fun timestampFieldWithPath(path: String, suffix: String): FieldDescriptor = fiel
         "The <<timestamp-representation,timestamp>> when $suffix. " +
             "(Also see https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/OffsetDateTime.html[JavaDoc])."
     )
-    .type(OffsetDateTime::class.simpleName)
+    .type("String")
 
 fun <T : AbstractDescriptor<T>> AbstractDescriptor<T>.deprecated(): T =
     description(listOfNotNull("*Deprecated*", description).joinToString(" "))

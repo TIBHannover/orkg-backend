@@ -6,6 +6,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added endpoints for managing individual table rows.
+  (See: [!1345](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1345))
+- Added endpoints for managing individual table columns.
+  (See: [!1346](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1346))
+- Added an endpoint for managing individual table cells.
+  (See: [!1347](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1347))
+### Changed
+- Updated to Kotlin 2.2.10.
+  (See: [!1350](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1350))
+- NULL characters (\u0000) are no longer allowed in thing labels.
+  (See: [!1355](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1355))
+- Outgoing HTTP requests now use a configurable 'User-Agent' header.
+  (See: [!1352](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1352))
+### Fixed
+- Fixed filtering papers by DOI being case sensitive.
+  (Closes: [#651](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/651))
+- Fixed status 503 when importing resources, predicates or classes from WikiData.
+  (See: [!1352](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1352))
 
 ## [0.87.0] - 2025-09-02
 ### Added

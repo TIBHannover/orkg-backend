@@ -22,6 +22,9 @@ import org.orkg.common.testing.fixtures.Assets.responseJson
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.graph.adapter.input.rest.json.GraphJacksonModule
 import org.orkg.graph.domain.ExternalThing
+import org.springframework.http.HttpHeaders.ACCEPT
+import org.springframework.http.HttpHeaders.USER_AGENT
+import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 import java.net.http.HttpClient
@@ -30,12 +33,13 @@ import java.util.stream.Stream
 
 internal class OLSRepositoryAdapterUnitTest : MockkBaseTest {
     private val olsHostUrl = "https://example.org/ols"
+    private val userAgent = "test user agent"
     private val httpClient: HttpClient = mockk()
     private val objectMapper = ObjectMapper()
         .findAndRegisterModules()
         .registerModules(CommonJacksonModule(), GraphJacksonModule())
         .disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
-    private val repository = OLSServiceAdapter(objectMapper, httpClient, olsHostUrl)
+    private val repository = OLSServiceAdapter(objectMapper, httpClient, userAgent, olsHostUrl)
 
     @ParameterizedTest
     @MethodSource("validInputs")
@@ -63,7 +67,8 @@ internal class OLSRepositoryAdapterUnitTest : MockkBaseTest {
                 withArg {
                     it.uri() shouldBe userInput.toUri(ontologyId, entityType)
                     it.headers().map() shouldContainAll mapOf(
-                        "Accept" to listOf("application/json")
+                        ACCEPT to listOf(APPLICATION_JSON_VALUE),
+                        USER_AGENT to listOf(userAgent),
                     )
                 },
                 any<HttpResponse.BodyHandler<String>>()
@@ -97,7 +102,8 @@ internal class OLSRepositoryAdapterUnitTest : MockkBaseTest {
                 withArg {
                     it.uri() shouldBe userInput.toUri(ontologyId, entityType)
                     it.headers().map() shouldContainAll mapOf(
-                        "Accept" to listOf("application/json")
+                        ACCEPT to listOf(APPLICATION_JSON_VALUE),
+                        USER_AGENT to listOf(userAgent),
                     )
                 },
                 any<HttpResponse.BodyHandler<String>>()
@@ -131,7 +137,8 @@ internal class OLSRepositoryAdapterUnitTest : MockkBaseTest {
                 withArg {
                     it.uri() shouldBe userInput.toUri(ontologyId, entityType)
                     it.headers().map() shouldContainAll mapOf(
-                        "Accept" to listOf("application/json")
+                        ACCEPT to listOf(APPLICATION_JSON_VALUE),
+                        USER_AGENT to listOf(userAgent),
                     )
                 },
                 any<HttpResponse.BodyHandler<String>>()

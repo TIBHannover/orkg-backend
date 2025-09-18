@@ -20,6 +20,9 @@ import org.orkg.common.testing.fixtures.Assets.responseJson
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.graph.adapter.input.rest.json.GraphJacksonModule
 import org.orkg.graph.domain.ExternalThing
+import org.springframework.http.HttpHeaders.ACCEPT
+import org.springframework.http.HttpHeaders.USER_AGENT
+import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpResponse
@@ -28,12 +31,13 @@ import java.util.stream.Stream
 internal class GeoNamesRepositoryAdapterUnitTest : MockkBaseTest {
     private val geoNamesHostUrl = "https://example.org/geonames"
     private val geoNamesUser = "testuser"
+    private val userAgent = "test user agent"
     private val httpClient: HttpClient = mockk()
     private val objectMapper = ObjectMapper()
         .findAndRegisterModules()
         .registerModules(CommonJacksonModule(), GraphJacksonModule())
         .disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
-    private val repository = GeoNamesServiceAdapter(objectMapper, httpClient, geoNamesHostUrl, geoNamesUser)
+    private val repository = GeoNamesServiceAdapter(objectMapper, httpClient, userAgent, geoNamesHostUrl, geoNamesUser)
 
     @ParameterizedTest
     @MethodSource("validInputs")
@@ -60,7 +64,8 @@ internal class GeoNamesRepositoryAdapterUnitTest : MockkBaseTest {
                 withArg {
                     it.uri() shouldBe URI.create("$geoNamesHostUrl/get?geonameId=$entityId&username=$geoNamesUser")
                     it.headers().map() shouldContainAll mapOf(
-                        "Accept" to listOf("application/json")
+                        ACCEPT to listOf(APPLICATION_JSON_VALUE),
+                        USER_AGENT to listOf(userAgent),
                     )
                 },
                 any<HttpResponse.BodyHandler<String>>()
@@ -93,7 +98,8 @@ internal class GeoNamesRepositoryAdapterUnitTest : MockkBaseTest {
                 withArg {
                     it.uri() shouldBe URI.create("$geoNamesHostUrl/get?geonameId=$entityId&username=$geoNamesUser")
                     it.headers().map() shouldContainAll mapOf(
-                        "Accept" to listOf("application/json")
+                        ACCEPT to listOf(APPLICATION_JSON_VALUE),
+                        USER_AGENT to listOf(userAgent),
                     )
                 },
                 any<HttpResponse.BodyHandler<String>>()
@@ -126,7 +132,8 @@ internal class GeoNamesRepositoryAdapterUnitTest : MockkBaseTest {
                 withArg {
                     it.uri() shouldBe URI.create("$geoNamesHostUrl/get?geonameId=$entityId&username=$geoNamesUser")
                     it.headers().map() shouldContainAll mapOf(
-                        "Accept" to listOf("application/json")
+                        ACCEPT to listOf(APPLICATION_JSON_VALUE),
+                        USER_AGENT to listOf(userAgent),
                     )
                 },
                 any<HttpResponse.BodyHandler<String>>()

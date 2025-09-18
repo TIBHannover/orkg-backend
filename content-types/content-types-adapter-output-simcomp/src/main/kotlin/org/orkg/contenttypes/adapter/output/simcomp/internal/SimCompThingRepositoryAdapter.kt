@@ -6,13 +6,15 @@ import org.orkg.common.exceptions.ServiceUnavailable
 import org.orkg.common.send
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Profile
+import org.springframework.http.HttpHeaders.ACCEPT
+import org.springframework.http.HttpHeaders.CONTENT_TYPE
+import org.springframework.http.HttpHeaders.USER_AGENT
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.util.UriComponentsBuilder
 import java.io.IOException
 import java.net.http.HttpClient
-import java.net.http.HttpClient.Version.HTTP_1_1
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.util.Optional
@@ -23,6 +25,8 @@ class SimCompThingRepositoryAdapter(
     private val objectMapper: ObjectMapper,
     private val httpClient: HttpClient,
     private val bodyPublisherFactory: (String) -> HttpRequest.BodyPublisher = HttpRequest.BodyPublishers::ofString,
+    @param:Value("\${orkg.http.user-agent}")
+    private val userAgent: String,
     @Value("\${orkg.simcomp.host}")
     private val host: String,
     @Value("\${orkg.simcomp.api-key}")
@@ -35,10 +39,9 @@ class SimCompThingRepositoryAdapter(
             .queryParam("thing_key", id.value)
             .build()
             .toUri()
-        val request = HttpRequest.newBuilder()
-            .uri(uri)
-            .version(HTTP_1_1)
-            .header("Accept", MediaType.APPLICATION_JSON_VALUE)
+        val request = HttpRequest.newBuilder(uri)
+            .header(ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+            .header(USER_AGENT, userAgent)
             .GET()
             .build()
         val result = httpClient.send(request, "SimComp") { response ->
@@ -58,11 +61,10 @@ class SimCompThingRepositoryAdapter(
             .path("/thing/") // The trailing slash is important, otherwise we get a redirect (307)
             .build()
             .toUri()
-        val request = HttpRequest.newBuilder()
-            .uri(uri)
-            .version(HTTP_1_1)
-            .header("Accept", MediaType.APPLICATION_JSON_VALUE)
-            .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+        val request = HttpRequest.newBuilder(uri)
+            .header(ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+            .header(CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+            .header(USER_AGENT, userAgent)
             .POST(bodyPublisherFactory(objectMapper.writeValueAsString(body)))
             .build()
         try {
@@ -86,11 +88,10 @@ class SimCompThingRepositoryAdapter(
             .path("/thing/") // The trailing slash is important, otherwise we get a redirect (307)
             .build()
             .toUri()
-        val request = HttpRequest.newBuilder()
-            .uri(uri)
-            .version(HTTP_1_1)
-            .header("Accept", MediaType.APPLICATION_JSON_VALUE)
-            .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+        val request = HttpRequest.newBuilder(uri)
+            .header(ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+            .header(CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+            .header(USER_AGENT, userAgent)
             .header("X-API-KEY", apiKey)
             .PUT(bodyPublisherFactory(objectMapper.writeValueAsString(body)))
             .build()

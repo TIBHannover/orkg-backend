@@ -8,6 +8,8 @@ import org.orkg.graph.output.ExternalClassService
 import org.orkg.graph.output.ExternalPredicateService
 import org.orkg.graph.output.ExternalResourceService
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpHeaders.ACCEPT
+import org.springframework.http.HttpHeaders.USER_AGENT
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.util.UriComponentsBuilder
@@ -20,6 +22,8 @@ import java.util.regex.Pattern
 class OLSServiceAdapter(
     private val objectMapper: ObjectMapper,
     private val httpClient: HttpClient,
+    @param:Value("\${orkg.http.user-agent}")
+    private val userAgent: String,
     @Value("\${orkg.external-services.ols.host}")
     private val host: String,
 ) : ExternalResourceService,
@@ -78,9 +82,9 @@ class OLSServiceAdapter(
     }
 
     private fun fetch(uri: URI): ExternalThing? {
-        val request = HttpRequest.newBuilder()
-            .uri(uri)
-            .header("Accept", MediaType.APPLICATION_JSON_VALUE)
+        val request = HttpRequest.newBuilder(uri)
+            .header(ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+            .header(USER_AGENT, userAgent)
             .GET()
             .build()
         return httpClient.send(request, "OntologyLookupService") { response ->

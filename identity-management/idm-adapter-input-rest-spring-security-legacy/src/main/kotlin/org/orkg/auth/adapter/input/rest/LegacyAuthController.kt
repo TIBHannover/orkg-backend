@@ -9,6 +9,8 @@ import org.orkg.common.exceptions.Unauthorized
 import org.orkg.common.exceptions.createProblemURI
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpHeaders.CONTENT_TYPE
+import org.springframework.http.HttpHeaders.USER_AGENT
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.MediaType
@@ -33,6 +35,8 @@ class LegacyAuthController(
     private val httpClient: HttpClient,
     private val objectMapper: ObjectMapper,
     private val bodyPublisherFactory: (String) -> HttpRequest.BodyPublisher = BodyPublishers::ofString,
+    @param:Value("\${orkg.http.user-agent}")
+    private val userAgent: String,
     @Value("\${orkg.oauth.legacy-client-id}")
     private val legacyClientId: String,
     @Value("\${orkg.oauth.legacy-client-secret}")
@@ -66,9 +70,9 @@ class LegacyAuthController(
         val formData = request.entries.joinToString("&") { (key, value) ->
             "$key=${URLEncoder.encode(value, Charsets.UTF_8)}"
         }
-        val keycloakRequest = HttpRequest.newBuilder()
-            .uri(URI.create(tokenEndpoint))
-            .headers(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+        val keycloakRequest = HttpRequest.newBuilder(URI.create(tokenEndpoint))
+            .header(CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+            .header(USER_AGENT, userAgent)
             .POST(bodyPublisherFactory(formData))
             .build()
         try {

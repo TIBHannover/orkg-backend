@@ -18,6 +18,9 @@ import org.orkg.community.output.KeycloakEventStateRepository
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Profile
+import org.springframework.http.HttpHeaders.ACCEPT
+import org.springframework.http.HttpHeaders.AUTHORIZATION
+import org.springframework.http.HttpHeaders.USER_AGENT
 import org.springframework.http.MediaType
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
@@ -39,6 +42,8 @@ class KeycloakEventProcessor(
     private val keycloak: Keycloak,
     private val keycloakEventStateRepository: KeycloakEventStateRepository,
     private val httpClient: HttpClient,
+    @param:Value("\${orkg.http.user-agent}")
+    private val userAgent: String,
     private val objectMapper: ObjectMapper,
     @Value("\${orkg.keycloak.host}")
     private val host: String,
@@ -158,8 +163,9 @@ class KeycloakEventProcessor(
     private fun sendRequest(uri: URI): HttpResponse<String> {
         val request = HttpRequest.newBuilder(uri)
             .version(HTTP_1_1) // JDK 21 does not handle HTTP/2 GOAWAY frames correctly. See https://bugs.openjdk.org/browse/JDK-8335181
-            .header("Accept", MediaType.APPLICATION_JSON_VALUE)
-            .header("Authorization", "Bearer ${keycloak.tokenManager().accessTokenString}")
+            .header(ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+            .header(AUTHORIZATION, "Bearer ${keycloak.tokenManager().accessTokenString}")
+            .header(USER_AGENT, userAgent)
             .GET()
             .build()
         return httpClient.send(request, HttpResponse.BodyHandlers.ofString())

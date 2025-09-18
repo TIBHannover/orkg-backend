@@ -20,6 +20,9 @@ import org.orkg.common.testing.fixtures.Assets.responseJson
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.graph.adapter.input.rest.json.GraphJacksonModule
 import org.orkg.graph.domain.ExternalThing
+import org.springframework.http.HttpHeaders.ACCEPT
+import org.springframework.http.HttpHeaders.USER_AGENT
+import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpResponse
@@ -27,12 +30,13 @@ import java.util.stream.Stream
 
 internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
     private val wikidataHostUrl = "https://example.org/wikidata"
+    private val userAgent = "test user agent"
     private val httpClient: HttpClient = mockk()
     private val objectMapper = ObjectMapper()
         .findAndRegisterModules()
         .registerModules(CommonJacksonModule(), GraphJacksonModule())
         .disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
-    private val repository = WikidataServiceAdapter(objectMapper, httpClient, wikidataHostUrl)
+    private val repository = WikidataServiceAdapter(objectMapper, httpClient, userAgent, wikidataHostUrl)
 
     @ParameterizedTest
     @MethodSource("validInputs")
@@ -61,7 +65,8 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
                 withArg {
                     it.uri() shouldBe URI.create("$wikidataHostUrl/w/api.php?action=wbgetentities&ids=$entityId&format=json&languages=en&props=labels%7Cdescriptions%7Cdatatype%7Cclaims")
                     it.headers().map() shouldContainAll mapOf(
-                        "Accept" to listOf("application/json")
+                        ACCEPT to listOf(APPLICATION_JSON_VALUE),
+                        USER_AGENT to listOf(userAgent),
                     )
                 },
                 any<HttpResponse.BodyHandler<String>>()
@@ -96,7 +101,8 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
                 withArg {
                     it.uri() shouldBe URI.create("$wikidataHostUrl/w/api.php?action=wbgetentities&ids=$entityId&format=json&languages=en&props=labels%7Cdescriptions%7Cdatatype%7Cclaims")
                     it.headers().map() shouldContainAll mapOf(
-                        "Accept" to listOf("application/json")
+                        ACCEPT to listOf(APPLICATION_JSON_VALUE),
+                        USER_AGENT to listOf(userAgent),
                     )
                 },
                 any<HttpResponse.BodyHandler<String>>()
@@ -130,7 +136,8 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
                 withArg {
                     it.uri() shouldBe URI.create("$wikidataHostUrl/w/api.php?action=wbgetentities&ids=$entityId&format=json&languages=en&props=labels%7Cdescriptions%7Cdatatype%7Cclaims")
                     it.headers().map() shouldContainAll mapOf(
-                        "Accept" to listOf("application/json")
+                        ACCEPT to listOf(APPLICATION_JSON_VALUE),
+                        USER_AGENT to listOf(userAgent),
                     )
                 },
                 any<HttpResponse.BodyHandler<String>>()

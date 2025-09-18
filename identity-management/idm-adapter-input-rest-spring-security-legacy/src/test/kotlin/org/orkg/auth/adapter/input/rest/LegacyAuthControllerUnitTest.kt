@@ -26,6 +26,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpHeaders.CONTENT_TYPE
+import org.springframework.http.HttpHeaders.USER_AGENT
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE
 import org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED
@@ -46,6 +48,7 @@ import java.util.Base64
 
 @TestPropertySource(
     properties = [
+        "orkg.http.user-agent=test user agent",
         "orkg.oauth.legacy-client-id=orkg-client",
         "orkg.oauth.legacy-client-secret=secret",
         "orkg.oauth.token-endpoint=http://localhost:1234/path/to/token/endpoint",
@@ -137,7 +140,8 @@ internal class LegacyAuthControllerUnitTest : MockMvcBaseTest("legacy-auth") {
                 withArg<HttpRequest> { request ->
                     request.method() shouldBe "POST"
                     request.headers().map() shouldContainAll mapOf(
-                        HttpHeaders.CONTENT_TYPE to listOf(APPLICATION_FORM_URLENCODED_VALUE)
+                        CONTENT_TYPE to listOf(APPLICATION_FORM_URLENCODED_VALUE),
+                        USER_AGENT to listOf("test user agent"),
                     )
                     request.uri() shouldBe URI.create(tokenEndpoint)
                     request.bodyPublisher().asClue { body ->
@@ -244,7 +248,8 @@ internal class LegacyAuthControllerUnitTest : MockMvcBaseTest("legacy-auth") {
                 withArg<HttpRequest> { request ->
                     request.method() shouldBe "POST"
                     request.headers().map() shouldContainAll mapOf(
-                        HttpHeaders.CONTENT_TYPE to listOf(APPLICATION_FORM_URLENCODED_VALUE)
+                        CONTENT_TYPE to listOf(APPLICATION_FORM_URLENCODED_VALUE),
+                        USER_AGENT to listOf("test user agent"),
                     )
                     request.uri() shouldBe URI.create(tokenEndpoint)
                     request.bodyPublisher().asClue { body ->
@@ -305,7 +310,8 @@ internal class LegacyAuthControllerUnitTest : MockMvcBaseTest("legacy-auth") {
                 withArg<HttpRequest> { request ->
                     request.method() shouldBe "POST"
                     request.headers().map() shouldContainAll mapOf(
-                        HttpHeaders.CONTENT_TYPE to listOf(APPLICATION_FORM_URLENCODED_VALUE)
+                        CONTENT_TYPE to listOf(APPLICATION_FORM_URLENCODED_VALUE),
+                        USER_AGENT to listOf("test user agent"),
                     )
                     request.uri() shouldBe URI.create(tokenEndpoint)
                     request.bodyPublisher().asClue { body ->
@@ -365,7 +371,8 @@ internal class LegacyAuthControllerUnitTest : MockMvcBaseTest("legacy-auth") {
                 withArg<HttpRequest> { request ->
                     request.method() shouldBe "POST"
                     request.headers().map() shouldContainAll mapOf(
-                        HttpHeaders.CONTENT_TYPE to listOf(APPLICATION_FORM_URLENCODED_VALUE)
+                        CONTENT_TYPE to listOf(APPLICATION_FORM_URLENCODED_VALUE),
+                        USER_AGENT to listOf("test user agent"),
                     )
                     request.uri() shouldBe URI.create(tokenEndpoint)
                     request.bodyPublisher().asClue { body ->

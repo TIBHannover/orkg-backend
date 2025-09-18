@@ -379,6 +379,12 @@ tasks {
         }
         includeEmptyDirs = false
     }
+
+    named<ProcessResources>("processResources") {
+        filesMatching("config/application.yml") {
+            expand(project.properties)
+        }
+    }
 }
 
 artifacts {

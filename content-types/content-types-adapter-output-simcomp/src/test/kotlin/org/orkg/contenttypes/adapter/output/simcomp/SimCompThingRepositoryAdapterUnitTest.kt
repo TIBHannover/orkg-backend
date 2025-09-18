@@ -37,6 +37,9 @@ import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.testing.fixtures.createStatement
+import org.springframework.http.HttpHeaders.CONTENT_TYPE
+import org.springframework.http.HttpHeaders.USER_AGENT
+import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import java.io.IOException
 import java.net.URI
 import java.net.http.HttpClient
@@ -48,13 +51,14 @@ import java.util.UUID
 internal class SimCompThingRepositoryAdapterUnitTest : MockkBaseTest {
     private val simCompHostUrl = "https://example.org/simcomp"
     private val simCompApiKey = "TEST_API_KEY"
+    private val userAgent = "test user agent"
     private val httpClient: HttpClient = mockk()
     private val objectMapper = ObjectMapper()
         .findAndRegisterModules()
         .registerModules(CommonJacksonModule(), GraphJacksonModule(), SimCompJacksonModule())
         .disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
     private val adapter =
-        SimCompThingRepositoryAdapter(objectMapper, httpClient, ::TestBodyPublisher, simCompHostUrl, simCompApiKey)
+        SimCompThingRepositoryAdapter(objectMapper, httpClient, ::TestBodyPublisher, userAgent, simCompHostUrl, simCompApiKey)
 
     @Test
     fun `Given a thing id, when fetching list contents, it returns the list`() {
@@ -244,7 +248,8 @@ internal class SimCompThingRepositoryAdapterUnitTest : MockkBaseTest {
             httpClient.send(
                 withArg {
                     it.uri() shouldBe URI.create("$simCompHostUrl/thing/")
-                    it.headers().map()["Content-Type"]!!.single() shouldBe "application/json"
+                    it.headers().map()[CONTENT_TYPE]!!.single() shouldBe APPLICATION_JSON_VALUE
+                    it.headers().map()[USER_AGENT]!!.single() shouldBe userAgent
                     it.bodyPublisher().isPresent shouldBe true
                     it.bodyPublisher().get().shouldBeInstanceOf<TestBodyPublisher>().asClue { bodyPublisher ->
                         bodyPublisher.content shouldBe objectMapper.writeValueAsString(request)
@@ -337,7 +342,8 @@ internal class SimCompThingRepositoryAdapterUnitTest : MockkBaseTest {
             httpClient.send(
                 withArg {
                     it.uri() shouldBe URI.create("$simCompHostUrl/thing/")
-                    it.headers().map()["Content-Type"]!!.single() shouldBe "application/json"
+                    it.headers().map()[CONTENT_TYPE]!!.single() shouldBe APPLICATION_JSON_VALUE
+                    it.headers().map()[USER_AGENT]!!.single() shouldBe userAgent
                     it.headers().map()["X-API-KEY"]!!.single() shouldBe simCompApiKey
                     it.bodyPublisher().isPresent shouldBe true
                     it.bodyPublisher().get().shouldBeInstanceOf<TestBodyPublisher>().asClue { bodyPublisher ->

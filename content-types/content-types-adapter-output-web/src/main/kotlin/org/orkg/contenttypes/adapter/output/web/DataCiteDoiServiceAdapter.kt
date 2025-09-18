@@ -18,8 +18,11 @@ import org.orkg.integration.datacite.json.DataCiteJson.Subject
 import org.orkg.integration.datacite.json.DataCiteJson.Title
 import org.orkg.integration.datacite.json.DataCiteJson.Type
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders.ACCEPT
+import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.http.HttpHeaders.CONTENT_TYPE
+import org.springframework.http.HttpHeaders.USER_AGENT
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
@@ -40,6 +43,8 @@ class DataCiteDoiServiceAdapter(
     private val objectMapper: ObjectMapper,
     private val httpClient: HttpClient,
     private val bodyPublisherFactory: (String) -> HttpRequest.BodyPublisher = HttpRequest.BodyPublishers::ofString,
+    @param:Value("\${orkg.http.user-agent}")
+    private val userAgent: String,
     private val clock: Clock = Clock.systemDefaultZone(),
 ) : DoiService {
     private val logger = LoggerFactory.getLogger(this::class.java.name)
@@ -47,6 +52,7 @@ class DataCiteDoiServiceAdapter(
     override fun findMetadataByDoi(doi: DOI): Optional<JsonNode> {
         val request = HttpRequest.newBuilder(URI.create(doi.uri))
             .header(ACCEPT, CITATION_STYLE_LANGUAGE_JSON)
+            .header(USER_AGENT, userAgent)
             .GET()
             .build()
         try {
@@ -65,11 +71,11 @@ class DataCiteDoiServiceAdapter(
 
     override fun register(command: DoiService.RegisterCommand): DOI {
         val body = command.toDataCiteRequest(dataciteConfiguration.doiPrefix!!, dataciteConfiguration.publish!!, clock)
-        val request = HttpRequest.newBuilder()
-            .uri(URI.create(dataciteConfiguration.url!!))
-            .header("Content-Type", "application/vnd.api+json; utf-8")
-            .header("Authorization", "Basic ${dataciteConfiguration.encodedCredentials}")
-            .header("Accept", MediaType.APPLICATION_JSON_VALUE)
+        val request = HttpRequest.newBuilder(URI.create(dataciteConfiguration.url!!))
+            .header(CONTENT_TYPE, "application/vnd.api+json; utf-8")
+            .header(AUTHORIZATION, "Basic ${dataciteConfiguration.encodedCredentials}")
+            .header(ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+            .header(USER_AGENT, userAgent)
             .POST(bodyPublisherFactory(objectMapper.writeValueAsString(body)))
             .build()
         try {

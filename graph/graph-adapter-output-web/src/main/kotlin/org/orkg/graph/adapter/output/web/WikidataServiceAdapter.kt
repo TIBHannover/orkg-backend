@@ -11,6 +11,8 @@ import org.orkg.graph.output.ExternalPredicateService
 import org.orkg.graph.output.ExternalResourceService
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.util.Predicates
+import org.springframework.http.HttpHeaders.ACCEPT
+import org.springframework.http.HttpHeaders.USER_AGENT
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
@@ -24,6 +26,8 @@ import java.util.regex.Pattern
 class WikidataServiceAdapter(
     private val objectMapper: ObjectMapper,
     private val httpClient: HttpClient,
+    @param:Value("\${orkg.http.user-agent}")
+    private val userAgent: String,
     @Value("\${orkg.external-services.wikidata.host}")
     private val host: String,
 ) : ExternalResourceService,
@@ -73,9 +77,9 @@ class WikidataServiceAdapter(
             .queryParam("props", "labels|descriptions|datatype|claims")
             .build()
             .toUri()
-        val request = HttpRequest.newBuilder()
-            .uri(uri)
-            .header("Accept", MediaType.APPLICATION_JSON_VALUE)
+        val request = HttpRequest.newBuilder(uri)
+            .header(ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+            .header(USER_AGENT, userAgent)
             .GET()
             .build()
         return httpClient.send(request, "Wikidata") { response ->

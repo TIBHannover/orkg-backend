@@ -21,7 +21,11 @@ import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.contenttypes.domain.configuration.DataCiteConfiguration
 import org.orkg.contenttypes.output.testing.fixtures.createRegisterDoiCommand
 import org.springframework.http.HttpHeaders.ACCEPT
+import org.springframework.http.HttpHeaders.AUTHORIZATION
+import org.springframework.http.HttpHeaders.CONTENT_TYPE
+import org.springframework.http.HttpHeaders.USER_AGENT
 import org.springframework.http.MediaType
+import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import java.io.ByteArrayInputStream
 import java.io.InputStream
 import java.net.URI
@@ -34,9 +38,10 @@ import java.util.Base64
 internal class DataCiteDoiServiceAdapterUnitTest : MockkBaseTest {
     private val dataciteConfiguration: DataCiteConfiguration = mockk()
     private val httpClient: HttpClient = mockk()
+    private val userAgent = "test user agent"
     private val objectMapper = ObjectMapper().registerKotlinModule()
     private val adapter =
-        DataCiteDoiServiceAdapter(dataciteConfiguration, objectMapper, httpClient, ::TestBodyPublisher, fixedClock)
+        DataCiteDoiServiceAdapter(dataciteConfiguration, objectMapper, httpClient, ::TestBodyPublisher, userAgent, fixedClock)
 
     @Test
     fun `Given a doi, when fetching its associated metadata, and external service returns success, it returns the medatadata`() {
@@ -60,7 +65,8 @@ internal class DataCiteDoiServiceAdapterUnitTest : MockkBaseTest {
                 withArg<HttpRequest> { request ->
                     request.method() shouldBe "GET"
                     request.headers().map() shouldContainAll mapOf(
-                        ACCEPT to listOf("application/vnd.citationstyles.csl+json")
+                        ACCEPT to listOf("application/vnd.citationstyles.csl+json"),
+                        USER_AGENT to listOf(userAgent),
                     )
                     request.uri() shouldBe URI.create(doi.uri)
                 },
@@ -91,7 +97,8 @@ internal class DataCiteDoiServiceAdapterUnitTest : MockkBaseTest {
                 withArg<HttpRequest> { request ->
                     request.method() shouldBe "GET"
                     request.headers().map() shouldContainAll mapOf(
-                        ACCEPT to listOf("application/vnd.citationstyles.csl+json")
+                        ACCEPT to listOf("application/vnd.citationstyles.csl+json"),
+                        USER_AGENT to listOf(userAgent),
                     )
                     request.uri() shouldBe URI.create(doi.uri)
                 },
@@ -121,7 +128,8 @@ internal class DataCiteDoiServiceAdapterUnitTest : MockkBaseTest {
                 withArg<HttpRequest> { request ->
                     request.method() shouldBe "GET"
                     request.headers().map() shouldContainAll mapOf(
-                        ACCEPT to listOf("application/vnd.citationstyles.csl+json")
+                        ACCEPT to listOf("application/vnd.citationstyles.csl+json"),
+                        USER_AGENT to listOf(userAgent),
                     )
                     request.uri() shouldBe URI.create(doi.uri)
                 },
@@ -162,9 +170,10 @@ internal class DataCiteDoiServiceAdapterUnitTest : MockkBaseTest {
                 withArg<HttpRequest> { request ->
                     request.method() shouldBe "POST"
                     request.headers().map() shouldContainAll mapOf(
-                        "Content-Type" to listOf("application/vnd.api+json; utf-8"),
-                        "Authorization" to listOf("Basic $encodedCredentials"),
-                        "Accept" to listOf(MediaType.APPLICATION_JSON_VALUE)
+                        CONTENT_TYPE to listOf("application/vnd.api+json; utf-8"),
+                        AUTHORIZATION to listOf("Basic $encodedCredentials"),
+                        ACCEPT to listOf(APPLICATION_JSON_VALUE),
+                        USER_AGENT to listOf(userAgent),
                     )
                     request.uri() shouldBe URI.create(dataCiteUri)
                     request.bodyPublisher().asClue { body ->

@@ -24,11 +24,13 @@ import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.graph.input.ResourceUseCases
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.context.annotation.Profile
 import org.springframework.data.domain.PageRequest
+import org.springframework.http.HttpHeaders.USER_AGENT
 import org.springframework.stereotype.Component
 import java.net.URI
 import java.net.http.HttpClient
@@ -48,6 +50,9 @@ class PostgresDummyDataSetup(
     private val objectMapper: ObjectMapper,
     private val dummyDataUseCases: DummyDataUseCases,
     private val contributorRepository: ContributorRepository,
+    private val httpClient: HttpClient,
+    @param:Value("\${orkg.http.user-agent}")
+    private val userAgent: String,
 ) : ApplicationRunner {
     @Autowired
     private lateinit var context: ConfigurableApplicationContext
@@ -92,11 +97,10 @@ class PostgresDummyDataSetup(
     }
 
     private fun fetchOrganizations(url: String = "https://orkg.org/api/organizations/"): List<Organization> {
-        val client = HttpClient.newBuilder().build()
-        val request = HttpRequest.newBuilder()
-            .uri(URI.create(url))
+        val request = HttpRequest.newBuilder(URI.create(url))
+            .header(USER_AGENT, userAgent)
             .build()
-        val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+        val response = httpClient.send(request, HttpResponse.BodyHandlers.ofString())
         return objectMapper.readValue(response.body(), object : TypeReference<List<Organization>>() {})
     }
 
@@ -225,11 +229,10 @@ class PostgresDummyDataSetup(
     }
 
     private fun fetchOrganizationContributors(id: OrganizationId): List<Contributor> {
-        val client = HttpClient.newBuilder().build()
-        val request = HttpRequest.newBuilder()
-            .uri(URI.create("https://orkg.org/api/organizations/$id/users"))
+        val request = HttpRequest.newBuilder(URI.create("https://orkg.org/api/organizations/$id/users"))
+            .header(USER_AGENT, userAgent)
             .build()
-        val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+        val response = httpClient.send(request, HttpResponse.BodyHandlers.ofString())
         return objectMapper.readValue(response.body(), object : TypeReference<List<Contributor>>() {})
     }
 
@@ -240,13 +243,12 @@ class PostgresDummyDataSetup(
         fetchPaged(Contributor::class.java, action) { page -> "https://orkg.org/api/observatories/$id/users?page=$page&size=50" }
 
     private fun <T> fetchPaged(`class`: Class<T>, action: (T) -> Unit, url: (Int) -> String) {
-        val client = HttpClient.newBuilder().build()
         var page = 0
         while (true) {
-            val request = HttpRequest.newBuilder()
-                .uri(URI.create(url(page)))
+            val request = HttpRequest.newBuilder(URI.create(url(page)))
+                .header(USER_AGENT, userAgent)
                 .build()
-            val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+            val response = httpClient.send(request, HttpResponse.BodyHandlers.ofString())
             val pageResponse = objectMapper.readTree(response.body()) // We cant parse Page or PageImpl without custom deserializers
             pageResponse.path("content")
                 .map { objectMapper.treeToValue(it, `class`) }

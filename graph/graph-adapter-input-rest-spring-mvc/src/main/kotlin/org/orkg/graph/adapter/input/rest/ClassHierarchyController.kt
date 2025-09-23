@@ -134,7 +134,7 @@ class ClassHierarchyController(
         service.findClassHierarchy(id, pageable).mapToClassHierarchyEntryRepresentation()
 
     data class CreateChildrenRequest(
-        @Size(min = 1)
+        @field:Size(min = 1)
         @JsonProperty("child_ids")
         val childIds: Set<ThingId>,
     )

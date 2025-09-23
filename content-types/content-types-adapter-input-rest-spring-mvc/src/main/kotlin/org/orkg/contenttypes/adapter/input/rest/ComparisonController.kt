@@ -144,11 +144,11 @@ class ComparisonController(
     }
 
     data class CreateComparisonRequest(
-        @NotBlank
+        @field:NotBlank
         val title: String,
-        @NotBlank
+        @field:NotBlank
         val description: String,
-        @Size(min = 1, max = 1)
+        @field:Size(min = 1, max = 1)
         @JsonProperty("research_fields")
         val researchFields: List<ThingId>,
         @field:Valid
@@ -160,9 +160,9 @@ class ComparisonController(
         val data: ComparisonData,
         val visualizations: List<ThingId>?,
         val references: List<String>,
-        @Size(max = 1)
+        @field:Size(max = 1)
         val observatories: List<ObservatoryId>,
-        @Size(max = 1)
+        @field:Size(max = 1)
         val organizations: List<OrganizationId>,
         @JsonProperty("is_anonymized")
         val isAnonymized: Boolean,
@@ -190,11 +190,11 @@ class ComparisonController(
     }
 
     data class UpdateComparisonRequest(
-        @NotBlank
+        @field:NotBlank
         val title: String?,
-        @NotBlank
+        @field:NotBlank
         val description: String?,
-        @Size(min = 1, max = 1)
+        @field:Size(min = 1, max = 1)
         @JsonProperty("research_fields")
         val researchFields: List<ThingId>?,
         @field:Valid
@@ -206,9 +206,9 @@ class ComparisonController(
         val data: ComparisonData?,
         val visualizations: List<ThingId>?,
         val references: List<String>?,
-        @Size(max = 1)
+        @field:Size(max = 1)
         val observatories: List<ObservatoryId>?,
-        @Size(max = 1)
+        @field:Size(max = 1)
         val organizations: List<OrganizationId>?,
         @JsonProperty("is_anonymized")
         val isAnonymized: Boolean?,

@@ -121,7 +121,7 @@ class ClassController(
     @PatchMapping("/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun update(
         @PathVariable id: ThingId,
-        @Valid @RequestBody request: UpdateClassRequest,
+        @RequestBody @Valid request: UpdateClassRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         currentUser: Authentication?,
     ): ResponseEntity<Any> {

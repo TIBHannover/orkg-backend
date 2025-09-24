@@ -21,6 +21,7 @@ import org.orkg.graph.testing.fixtures.createList
 import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
+import org.orkg.testing.MockUserId
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import java.util.Optional
@@ -103,6 +104,14 @@ internal class ListServiceUnitTest : MockkBaseTest {
         verify(exactly = 1) { repository.nextIdentity() }
         verify(exactly = 1) { thingRepository.existsAllById(command.elements.toSet()) }
         verify(exactly = 1) { repository.save(any(), any()) }
+    }
+
+    @Test
+    fun `given a list is updated, when updating no properties, it does nothing`() {
+        val id = ThingId("R123")
+        val contributorId = ContributorId(MockUserId.USER)
+
+        service.update(UpdateListUseCase.UpdateCommand(id, contributorId))
     }
 
     @Test

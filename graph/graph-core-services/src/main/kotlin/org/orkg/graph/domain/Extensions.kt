@@ -1,6 +1,7 @@
 package org.orkg.graph.domain
 
 import org.orkg.graph.input.UpdateClassUseCase
+import org.orkg.graph.input.UpdateListUseCase
 import org.orkg.graph.input.UpdateLiteralUseCase
 import org.orkg.graph.input.UpdatePredicateUseCase
 import org.orkg.graph.input.UpdateResourceUseCase
@@ -95,4 +96,13 @@ fun Class.apply(command: UpdateClassUseCase.ReplaceCommand): Class =
         label = command.label,
         uri = command.uri,
         modifiable = command.modifiable ?: modifiable,
+    )
+
+fun UpdateListUseCase.UpdateCommand.hasNoContents(): Boolean =
+    label == null && elements == null
+
+fun List.apply(command: UpdateListUseCase.UpdateCommand): List =
+    copy(
+        label = command.label ?: label,
+        elements = command.elements ?: elements
     )

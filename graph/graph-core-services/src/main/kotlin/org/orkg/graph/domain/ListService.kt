@@ -23,8 +23,7 @@ class ListService(
     private val clock: Clock,
 ) : ListUseCases {
     override fun create(command: CreateListUseCase.CreateCommand): ThingId {
-        val label = Label.ofOrNull(command.label)?.value
-            ?: throw InvalidLabel()
+        Label.ofOrNull(command.label) ?: throw InvalidLabel()
         val id = command.id
             ?.also { id -> thingRepository.findById(id).ifPresent { throw ThingAlreadyExists(id) } }
             ?: repository.nextIdentity()
@@ -33,7 +32,7 @@ class ListService(
         }
         val list = List(
             id = id,
-            label = label,
+            label = command.label,
             elements = command.elements,
             createdAt = OffsetDateTime.now(clock),
             createdBy = command.contributorId,
@@ -54,23 +53,19 @@ class ListService(
     override fun existsById(id: ThingId): Boolean = repository.existsById(id)
 
     override fun update(command: UpdateListUseCase.UpdateCommand) {
+        if (command.hasNoContents()) return
         val list = repository.findById(command.id)
             .orElseThrow { ListNotFound(command.id) }
         if (!list.modifiable) {
             throw ListNotModifiable(command.id)
         }
-        val label = command.label?.also {
-            Label.ofOrNull(it) ?: throw InvalidLabel()
-        }
-        val elements = command.elements?.also {
+        command.label?.also { Label.ofOrNull(it) ?: throw InvalidLabel() }
+        command.elements?.also {
             if (it.isNotEmpty() && !thingRepository.existsAllById(it.toSet())) {
                 throw ListElementNotFound()
             }
         }
-        val updated = list.copy(
-            label = label ?: list.label,
-            elements = elements ?: list.elements
-        )
+        val updated = list.apply(command)
         if (updated != list) {
             repository.save(updated, command.contributorId)
         }

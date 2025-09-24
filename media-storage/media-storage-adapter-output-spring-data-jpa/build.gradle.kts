@@ -19,6 +19,7 @@ testing {
     suites {
         val test by getting(JvmTestSuite::class) {
             dependencies {
+                compileOnly("org.junit.jupiter:junit-jupiter-api")
                 runtimeOnly("org.springframework.boot:spring-boot-starter-test")
                 runtimeOnly("org.springframework.boot:spring-boot-starter-data-jpa")
                 runtimeOnly(project(":migrations:liquibase"))
@@ -27,7 +28,6 @@ testing {
                 runtimeOnly("org.postgresql:postgresql")
                 implementation("org.springframework:spring-beans")
                 runtimeOnly("org.springframework.boot:spring-boot-starter-data-jpa")
-                implementation("org.junit.jupiter:junit-jupiter-api")
                 implementation("org.springframework.boot:spring-boot-test-autoconfigure")
                 implementation("org.springframework:spring-test")
                 implementation(testFixtures(project(":media-storage:media-storage-ports-output")))

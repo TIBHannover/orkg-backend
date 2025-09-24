@@ -28,6 +28,7 @@ dependencies {
 
     implementation("org.eclipse.rdf4j:rdf4j-common-io")
     implementation("org.apache.lucene:lucene-queryparser")
+    implementation("org.jetbrains:annotations")
 
     testFixturesApi(project(":common:core-identifiers"))
 

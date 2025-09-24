@@ -22,7 +22,7 @@ dependencies.constraints {
 
     api("dev.jacomet.gradle.plugins:logging-capabilities:0.11.1")
     api("org.gradlex:jvm-dependency-conflict-resolution:2.1.2")
-    api("com.autonomousapps:dependency-analysis-gradle-plugin:2.19.0")
+    api("com.autonomousapps.dependency-analysis:com.autonomousapps.dependency-analysis.gradle.plugin:3.0.4")
     api("com.osacky.doctor:doctor-plugin:0.10.0")
     api("com.github.ben-manes:gradle-versions-plugin:0.52.0")
     api("dev.iurysouza:modulegraph:0.12.0")

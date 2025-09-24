@@ -16,7 +16,7 @@ testing {
     suites {
         val test by getting(JvmTestSuite::class) {
             dependencies {
-                implementation("org.junit.jupiter:junit-jupiter-api")
+                compileOnly("org.junit.jupiter:junit-jupiter-api")
                 implementation(testFixtures(project(":data-import:data-import-ports-output")))
             }
         }

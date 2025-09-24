@@ -35,7 +35,7 @@ testing {
                 runtimeOnly("org.liquibase:liquibase-core")
                 runtimeOnly("org.postgresql:postgresql")
                 runtimeOnly(project(":migrations:liquibase"))
-                implementation("org.junit.jupiter:junit-jupiter-api")
+                compileOnly("org.junit.jupiter:junit-jupiter-api")
                 implementation("org.springframework:spring-beans")
                 implementation("org.springframework:spring-orm")
                 implementation("org.springframework:spring-test")

@@ -11,6 +11,7 @@ dependencies {
     api("org.springframework.data:spring-data-neo4j")
     api("org.springframework:spring-context")
     api("org.apiguardian:apiguardian-api")
+    implementation("org.jetbrains:annotations")
 }
 
 testing {

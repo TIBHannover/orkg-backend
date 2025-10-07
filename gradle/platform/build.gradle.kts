@@ -36,6 +36,11 @@ dependencies {
     api("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-starter:$neo4jMigrationsVersion")
     api("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-autoconfigure:$neo4jMigrationsVersion")
 
+    // JWT
+    api("io.jsonwebtoken:jjwt-api:0.13.0")
+    api("io.jsonwebtoken:jjwt-impl:0.13.0")
+    api("io.jsonwebtoken:jjwt-jackson:0.13.0")
+
     // Testcontainers
     api("com.github.dasniko:testcontainers-keycloak:3.6.0")
 

@@ -10,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.orkg.common.configuration.SpringJacksonConfiguration
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.testing.configuration.SecurityTestConfiguration
+import org.orkg.testing.configuration.UnsecureJwtDecoder
 import org.orkg.testing.spring.restdocs.DocumentationBuilder
 import org.orkg.testing.spring.restdocs.snippets.DescriptionSnippet.Companion.description
 import org.springframework.beans.factory.annotation.Autowired
@@ -54,7 +55,7 @@ import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 
-@Import(SecurityTestConfiguration::class, SpringJacksonConfiguration::class)
+@Import(SecurityTestConfiguration::class, SpringJacksonConfiguration::class, UnsecureJwtDecoder::class)
 @ExtendWith(RestDocumentationExtension::class)
 @TestPropertySource(properties = ["spring.jackson.mapper.sort-properties-alphabetically=true"])
 abstract class MockMvcBaseTest(val prefix: String) : MockkBaseTest {
@@ -83,6 +84,7 @@ abstract class MockMvcBaseTest(val prefix: String) : MockkBaseTest {
 
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
             .apply<DefaultMockMvcBuilder>(springSecurity())
+            .apply<DefaultMockMvcBuilder>(MockMvcAuthenticationConfigurer())
             .apply<DefaultMockMvcBuilder>(
                 documentationConfiguration(restDocumentation)
                     .operationPreprocessors()

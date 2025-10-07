@@ -1,5 +1,6 @@
 package org.orkg.testing.annotations
 
+import io.jsonwebtoken.Jwts
 import org.orkg.testing.MockUserId
 import org.springframework.core.annotation.AliasFor
 import org.springframework.security.core.Authentication
@@ -41,16 +42,28 @@ annotation class WithMockAuthentication(
                 authentication = authentication(annotation)
             }
 
-        private fun authentication(annotation: WithMockAuthentication): Authentication =
-            JwtAuthenticationToken(
-                Jwt.withTokenValue("test")
+        private fun authentication(annotation: WithMockAuthentication): Authentication {
+            val subject = annotation.userId
+            val claims = mapOf(
+                "email_verified" to true,
+                "preferred_username" to annotation.username,
+                "email" to annotation.email,
+                "realm_access" to mapOf(
+                    "roles" to annotation.authorities.map { it.replaceFirst("ROLE_", "").lowercase() }
+                )
+            )
+            val tokenValue = Jwts.builder()
+                .subject(subject)
+                .claims(claims)
+                .compact()
+            return JwtAuthenticationToken(
+                Jwt.withTokenValue(tokenValue)
                     .header(JwtClaimNames.SUB, annotation.userId)
-                    .claim("email_verified", true)
-                    .claim("preferred_username", annotation.username)
-                    .claim("email", annotation.email)
+                    .claims { it += claims }
                     .build(),
                 annotation.authorities.map(::SimpleGrantedAuthority),
                 annotation.userId,
             )
+        }
     }
 }

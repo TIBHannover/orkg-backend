@@ -10,6 +10,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.eclipse.rdf4j.common.net.ParsedIRI
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -19,6 +20,8 @@ import org.orkg.common.json.CommonJacksonModule
 import org.orkg.common.testing.fixtures.Assets.responseJson
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.graph.adapter.input.rest.json.GraphJacksonModule
+import org.orkg.graph.domain.ExternalEntityIsNotAClass
+import org.orkg.graph.domain.ExternalEntityIsNotAResource
 import org.orkg.graph.domain.ExternalThing
 import org.springframework.http.HttpHeaders.ACCEPT
 import org.springframework.http.HttpHeaders.USER_AGENT
@@ -40,30 +43,22 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
 
     @ParameterizedTest
     @MethodSource("validInputs")
-    @Suppress("UNUSED_PARAMETER")
-    fun <T> `Given an ontology id and user input, when wikidata returns success, it returns the external object`(
-        entityId: String,
-        userInput: T,
-        methodInvoker: (WikidataServiceAdapter, String, T) -> ExternalThing?,
-        successResponse: String,
-        notFoundResponse: String,
-        expectedResult: ExternalThing,
-    ) {
+    fun <T> `Given an ontology id and user input, when wikidata returns success, it returns the external object`(params: TestParameters<T>) {
         // Mock HttpClient dsl
         val response = mockk<HttpResponse<String>>()
 
         every { httpClient.send(any(), any<HttpResponse.BodyHandler<String>>()) } returns response
         every { response.statusCode() } returns 200
-        every { response.body() } returns successResponse
+        every { response.body() } returns params.successResponse
 
-        val result = methodInvoker(repository, "wikidata", userInput)
+        val result = params.methodInvoker(repository, "wikidata", params.userInput)
         result shouldNotBe null
-        result shouldBe expectedResult
+        result shouldBe params.expectedResult
 
         verify(exactly = 1) {
             httpClient.send(
                 withArg {
-                    it.uri() shouldBe URI.create("$wikidataHostUrl/w/api.php?action=wbgetentities&ids=$entityId&format=json&languages=en&props=labels%7Cdescriptions%7Cdatatype%7Cclaims")
+                    it.uri() shouldBe URI.create("$wikidataHostUrl/w/api.php?action=wbgetentities&ids=${params.entityId}&format=json&languages=en&props=labels%7Cdescriptions%7Cdatatype%7Cclaims")
                     it.headers().map() shouldContainAll mapOf(
                         ACCEPT to listOf(APPLICATION_JSON_VALUE),
                         USER_AGENT to listOf(userAgent),
@@ -78,28 +73,51 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
 
     @ParameterizedTest
     @MethodSource("validInputs")
-    @Suppress("UNUSED_PARAMETER")
-    fun <T> `Given an ontology id and user input, when wikidata returns status not found, it returns null`(
-        entityId: String,
-        userInput: T,
-        methodInvoker: (WikidataServiceAdapter, String, T) -> ExternalThing?,
-        successResponse: String,
-        notFoundResponse: String,
-    ) {
+    fun <T> `Given an ontology id and user input, when wikidata returns status not found, it returns null`(params: TestParameters<T>) {
         // Mock HttpClient dsl
         val response = mockk<HttpResponse<String>>()
 
         every { httpClient.send(any(), any<HttpResponse.BodyHandler<String>>()) } returns response
         every { response.statusCode() } returns 200
-        every { response.body() } returns notFoundResponse
+        every { response.body() } returns params.notFoundResponse
 
-        val result = methodInvoker(repository, "wikidata", userInput)
+        val result = params.methodInvoker(repository, "wikidata", params.userInput)
         result shouldBe null
 
         verify(exactly = 1) {
             httpClient.send(
                 withArg {
-                    it.uri() shouldBe URI.create("$wikidataHostUrl/w/api.php?action=wbgetentities&ids=$entityId&format=json&languages=en&props=labels%7Cdescriptions%7Cdatatype%7Cclaims")
+                    it.uri() shouldBe URI.create("$wikidataHostUrl/w/api.php?action=wbgetentities&ids=${params.entityId}&format=json&languages=en&props=labels%7Cdescriptions%7Cdatatype%7Cclaims")
+                    it.headers().map() shouldContainAll mapOf(
+                        ACCEPT to listOf(APPLICATION_JSON_VALUE),
+                        USER_AGENT to listOf(userAgent),
+                    )
+                },
+                any<HttpResponse.BodyHandler<String>>()
+            )
+        }
+        verify(exactly = 1) { response.statusCode() }
+        verify(exactly = 1) { response.body() }
+    }
+
+    @ParameterizedTest
+    @MethodSource("typeMismatch")
+    fun <T> `Given an ontology id and user input, when wikidata returns returns success but entity does not match expected type, it throws an exception`(params: TypeMismatchTestParameters<T>) {
+        // Mock HttpClient dsl
+        val response = mockk<HttpResponse<String>>()
+
+        every { httpClient.send(any(), any<HttpResponse.BodyHandler<String>>()) } returns response
+        every { response.statusCode() } returns 200
+        every { response.body() } returns params.notFoundResponse
+
+        Assertions.assertThrows(params.throwable::class.java) {
+            params.methodInvoker(repository, "wikidata", params.userInput)
+        }
+
+        verify(exactly = 1) {
+            httpClient.send(
+                withArg {
+                    it.uri() shouldBe URI.create("$wikidataHostUrl/w/api.php?action=wbgetentities&ids=${params.entityId}&format=json&languages=en&props=labels%7Cdescriptions%7Cdatatype%7Cclaims")
                     it.headers().map() shouldContainAll mapOf(
                         ACCEPT to listOf(APPLICATION_JSON_VALUE),
                         USER_AGENT to listOf(userAgent),
@@ -114,11 +132,7 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
 
     @ParameterizedTest
     @MethodSource("validInputs")
-    fun <T> `Given an ontology id and user input, when wikidata service is not available, it throws an exception`(
-        entityId: String,
-        userInput: T,
-        methodInvoker: (WikidataServiceAdapter, String, T) -> ExternalThing?,
-    ) {
+    fun <T> `Given an ontology id and user input, when wikidata service is not available, it throws an exception`(params: TestParameters<T>) {
         // Mock HttpClient dsl
         val response = mockk<HttpResponse<String>>()
 
@@ -126,7 +140,7 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
         every { response.statusCode() } returns 500
         every { response.body() } returns "Error message"
 
-        assertThrows<ServiceUnavailable> { methodInvoker(repository, "wikidata", userInput) }.asClue {
+        assertThrows<ServiceUnavailable> { params.methodInvoker(repository, "wikidata", params.userInput) }.asClue {
             it.message shouldBe "Service unavailable."
             it.internalMessage shouldBe """Wikidata service returned status 500 with error response: "Error message"."""
         }
@@ -134,7 +148,7 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             httpClient.send(
                 withArg {
-                    it.uri() shouldBe URI.create("$wikidataHostUrl/w/api.php?action=wbgetentities&ids=$entityId&format=json&languages=en&props=labels%7Cdescriptions%7Cdatatype%7Cclaims")
+                    it.uri() shouldBe URI.create("$wikidataHostUrl/w/api.php?action=wbgetentities&ids=${params.entityId}&format=json&languages=en&props=labels%7Cdescriptions%7Cdatatype%7Cclaims")
                     it.headers().map() shouldContainAll mapOf(
                         ACCEPT to listOf(APPLICATION_JSON_VALUE),
                         USER_AGENT to listOf(userAgent),
@@ -149,13 +163,8 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
 
     @ParameterizedTest
     @MethodSource("validInputs")
-    @Suppress("UNUSED_PARAMETER")
-    fun <T> `Given an ontology id and user input, when ontology is invalid, it returns null`(
-        entityId: String,
-        userInput: T,
-        methodInvoker: (WikidataServiceAdapter, String, T) -> ExternalThing?,
-    ) {
-        val result = methodInvoker(repository, "not wikidata", userInput)
+    fun <T> `Given an ontology id and user input, when ontology is invalid, it returns null`(params: TestParameters<T>) {
+        val result = params.methodInvoker(repository, "not wikidata", params.userInput)
         result shouldBe null
     }
 
@@ -169,130 +178,136 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
         result shouldBe null
     }
 
+    data class TestParameters<T>(
+        val entityId: String,
+        val userInput: T,
+        val methodInvoker: (WikidataServiceAdapter, String, T) -> ExternalThing?,
+        val successResponse: String,
+        val notFoundResponse: String,
+        val expectedResult: ExternalThing,
+    )
+
+    data class TypeMismatchTestParameters<T>(
+        val entityId: String,
+        val userInput: T,
+        val methodInvoker: (WikidataServiceAdapter, String, T) -> ExternalThing?,
+        val successResponse: String,
+        val notFoundResponse: String,
+        val throwable: Throwable,
+    )
+
     companion object {
         @JvmStatic
         fun validInputs(): Stream<Arguments> = Stream.of(
-            Arguments.of(
-                "Q42",
-                "Q42",
-                WikidataServiceAdapter::findResourceByShortForm,
-                responseJson("wikidata/itemSuccess"),
-                responseJson("wikidata/entityNotFound"),
-                ExternalThing(
+            TestParameters(
+                entityId = "Q42",
+                userInput = "Q42",
+                methodInvoker = WikidataServiceAdapter::findResourceByShortForm,
+                successResponse = responseJson("wikidata/itemSuccess"),
+                notFoundResponse = responseJson("wikidata/entityNotFound"),
+                expectedResult = ExternalThing(
                     uri = ParsedIRI.create("https://www.wikidata.org/entity/Q42"),
                     label = "Douglas Adams",
                     description = "English author and humourist (1952-2001)"
                 )
             ),
-            Arguments.of(
-                "Q42",
-                "Q42",
-                WikidataServiceAdapter::findClassByShortForm,
-                responseJson("wikidata/itemSuccess"),
-                responseJson("wikidata/entityNotFound"),
-                ExternalThing(
+            TestParameters(
+                entityId = "Q42",
+                userInput = "Q42",
+                methodInvoker = WikidataServiceAdapter::findClassByShortForm,
+                successResponse = responseJson("wikidata/itemSuccess"),
+                notFoundResponse = responseJson("wikidata/entityNotFound"),
+                expectedResult = ExternalThing(
                     uri = ParsedIRI.create("https://www.wikidata.org/entity/Q42"),
                     label = "Douglas Adams",
                     description = "English author and humourist (1952-2001)"
                 )
             ),
-            Arguments.of(
-                "P30",
-                "P30",
-                WikidataServiceAdapter::findPredicateByShortForm,
-                responseJson("wikidata/propertySuccess"),
-                responseJson("wikidata/entityNotFound"),
-                ExternalThing(
+            TestParameters(
+                entityId = "P30",
+                userInput = "P30",
+                methodInvoker = WikidataServiceAdapter::findPredicateByShortForm,
+                successResponse = responseJson("wikidata/propertySuccess"),
+                notFoundResponse = responseJson("wikidata/entityNotFound"),
+                expectedResult = ExternalThing(
                     uri = ParsedIRI.create("https://www.wikidata.org/entity/P30"),
                     label = "continent",
                     description = "continent of which the subject is a part"
                 )
             ),
-            Arguments.of(
-                "Q42",
-                ParsedIRI.create("https://www.wikidata.org/entity/Q42"),
-                WikidataServiceAdapter::findResourceByURI,
-                responseJson("wikidata/itemSuccess"),
-                responseJson("wikidata/entityNotFound"),
-                ExternalThing(
+            TestParameters(
+                entityId = "Q42",
+                userInput = ParsedIRI.create("https://www.wikidata.org/entity/Q42"),
+                methodInvoker = WikidataServiceAdapter::findResourceByURI,
+                successResponse = responseJson("wikidata/itemSuccess"),
+                notFoundResponse = responseJson("wikidata/entityNotFound"),
+                expectedResult = ExternalThing(
                     uri = ParsedIRI.create("https://www.wikidata.org/entity/Q42"),
                     label = "Douglas Adams",
                     description = "English author and humourist (1952-2001)"
                 )
             ),
-            Arguments.of(
-                "Q42",
-                ParsedIRI.create("https://www.wikidata.org/entity/Q42"),
-                WikidataServiceAdapter::findClassByURI,
-                responseJson("wikidata/itemSuccess"),
-                responseJson("wikidata/entityNotFound"),
-                ExternalThing(
+            TestParameters(
+                entityId = "Q42",
+                userInput = ParsedIRI.create("https://www.wikidata.org/entity/Q42"),
+                methodInvoker = WikidataServiceAdapter::findClassByURI,
+                successResponse = responseJson("wikidata/itemSuccess"),
+                notFoundResponse = responseJson("wikidata/entityNotFound"),
+                expectedResult = ExternalThing(
                     uri = ParsedIRI.create("https://www.wikidata.org/entity/Q42"),
                     label = "Douglas Adams",
                     description = "English author and humourist (1952-2001)"
                 )
             ),
-            Arguments.of(
-                "P30",
-                ParsedIRI.create("https://www.wikidata.org/entity/P30"),
-                WikidataServiceAdapter::findPredicateByURI,
-                responseJson("wikidata/propertySuccess"),
-                responseJson("wikidata/entityNotFound"),
-                ExternalThing(
+            TestParameters(
+                entityId = "P30",
+                userInput = ParsedIRI.create("https://www.wikidata.org/entity/P30"),
+                methodInvoker = WikidataServiceAdapter::findPredicateByURI,
+                successResponse = responseJson("wikidata/propertySuccess"),
+                notFoundResponse = responseJson("wikidata/entityNotFound"),
+                expectedResult = ExternalThing(
                     uri = ParsedIRI.create("https://www.wikidata.org/entity/P30"),
                     label = "continent",
                     description = "continent of which the subject is a part"
                 )
+            )
+        ).map(Arguments::of)
+
+        @JvmStatic
+        fun typeMismatch(): Stream<Arguments> = Stream.of(
+            TypeMismatchTestParameters(
+                entityId = "Q42",
+                userInput = "Q42",
+                methodInvoker = WikidataServiceAdapter::findResourceByShortForm,
+                successResponse = responseJson("wikidata/resourceSuccess"),
+                notFoundResponse = responseJson("wikidata/classSuccess"), // should fail, because response contains a class and not a resource
+                throwable = ExternalEntityIsNotAResource("wikidata", "Q42")
             ),
-            Arguments.of(
-                "Q42",
-                "Q42",
-                WikidataServiceAdapter::findResourceByShortForm,
-                responseJson("wikidata/resourceSuccess"),
-                responseJson("wikidata/classSuccess"), // should fail, because response contains a class and not a resource
-                ExternalThing(
-                    uri = ParsedIRI.create("https://www.wikidata.org/entity/Q42"),
-                    label = "Douglas Adams",
-                    description = "English author and humourist (1952-2001)"
-                )
+            TypeMismatchTestParameters(
+                entityId = "Q42",
+                userInput = "Q42",
+                methodInvoker = WikidataServiceAdapter::findClassByShortForm,
+                successResponse = responseJson("wikidata/classSuccess"),
+                notFoundResponse = responseJson("wikidata/resourceSuccess"), // should fail, because response contains a resource and not a class
+                throwable = ExternalEntityIsNotAClass("wikidata", "Q42")
             ),
-            Arguments.of(
-                "Q42",
-                "Q42",
-                WikidataServiceAdapter::findClassByShortForm,
-                responseJson("wikidata/classSuccess"),
-                responseJson("wikidata/resourceSuccess"), // should fail, because response contains a resource and not a class
-                ExternalThing(
-                    uri = ParsedIRI.create("https://www.wikidata.org/entity/Q42"),
-                    label = "Douglas Adams",
-                    description = "English author and humourist (1952-2001)"
-                )
+            TypeMismatchTestParameters(
+                entityId = "Q42",
+                userInput = ParsedIRI.create("https://www.wikidata.org/entity/Q42"),
+                methodInvoker = WikidataServiceAdapter::findResourceByURI,
+                successResponse = responseJson("wikidata/resourceSuccess"),
+                notFoundResponse = responseJson("wikidata/classSuccess"), // should fail, because response contains a class and not a resource
+                throwable = ExternalEntityIsNotAResource("wikidata", ParsedIRI.create("https://www.wikidata.org/entity/Q42"))
             ),
-            Arguments.of(
-                "Q42",
-                ParsedIRI.create("https://www.wikidata.org/entity/Q42"),
-                WikidataServiceAdapter::findResourceByURI,
-                responseJson("wikidata/resourceSuccess"),
-                responseJson("wikidata/classSuccess"), // should fail, because response contains a class and not a resource
-                ExternalThing(
-                    uri = ParsedIRI.create("https://www.wikidata.org/entity/Q42"),
-                    label = "Douglas Adams",
-                    description = "English author and humourist (1952-2001)"
-                )
+            TypeMismatchTestParameters(
+                entityId = "Q42",
+                userInput = ParsedIRI.create("https://www.wikidata.org/entity/Q42"),
+                methodInvoker = WikidataServiceAdapter::findClassByURI,
+                successResponse = responseJson("wikidata/classSuccess"),
+                notFoundResponse = responseJson("wikidata/resourceSuccess"), // should fail, because response contains a resource and not a class
+                throwable = ExternalEntityIsNotAClass("wikidata", ParsedIRI.create("https://www.wikidata.org/entity/Q42"))
             ),
-            Arguments.of(
-                "Q42",
-                ParsedIRI.create("https://www.wikidata.org/entity/Q42"),
-                WikidataServiceAdapter::findClassByURI,
-                responseJson("wikidata/classSuccess"),
-                responseJson("wikidata/resourceSuccess"), // should fail, because response contains a resource and not a class
-                ExternalThing(
-                    uri = ParsedIRI.create("https://www.wikidata.org/entity/Q42"),
-                    label = "Douglas Adams",
-                    description = "English author and humourist (1952-2001)"
-                )
-            ),
-        )
+        ).map(Arguments::of)
 
         @JvmStatic
         fun invalidInputs(): Stream<Arguments> = Stream.of(

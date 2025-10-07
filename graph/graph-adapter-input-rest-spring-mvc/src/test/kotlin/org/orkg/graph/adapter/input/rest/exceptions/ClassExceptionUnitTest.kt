@@ -11,6 +11,7 @@ import org.orkg.graph.domain.ClassNotFound
 import org.orkg.graph.domain.ClassNotModifiable
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExternalClassNotFound
+import org.orkg.graph.domain.ExternalEntityIsNotAClass
 import org.orkg.graph.domain.ReservedClassId
 import org.orkg.graph.domain.URIAlreadyInUse
 import org.orkg.graph.domain.URINotAbsolute
@@ -164,6 +165,27 @@ internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
                         fieldWithPath("class_id").description("The id of the class. (optional, either `class_id` or `class_uri` is present)"),
                         fieldWithPath("class_uri").type("URI").description("The uri of the class. (optional, either `class_id` or `class_uri` is present)").optional(),
                         fieldWithPath("ontology_id").description("The id of the class ontology."),
+                    )
+                )
+            )
+    }
+
+    @Test
+    fun externalEntityIsNotAClass() {
+        val type = "orkg:problem:external_entity_is_not_a_class"
+        documentedGetRequestTo(ExternalEntityIsNotAClass("wikidata", "Q42"))
+            .andExpectErrorStatus(FORBIDDEN)
+            .andExpectType(type)
+            .andExpectTitle("Forbidden")
+            .andExpectDetail("""Entity "Q42" for ontology "wikidata" is not a class.""")
+            .andExpect(jsonPath("$.entity_id").value("Q42"))
+            .andExpect(jsonPath("$.ontology_id").value("wikidata"))
+            .andDo(
+                documentationHandler.document(
+                    responseFields(exceptionResponseFields(type)).and(
+                        fieldWithPath("entity_id").description("The id of the entity. (optional, either `entity_id` or `entity_uri` is present)"),
+                        fieldWithPath("entity_uri").type("URI").description("The uri of the entity. (optional, either `entity_id` or `entity_uri` is present)").optional(),
+                        fieldWithPath("ontology_id").description("The id of the entity ontology."),
                     )
                 )
             )

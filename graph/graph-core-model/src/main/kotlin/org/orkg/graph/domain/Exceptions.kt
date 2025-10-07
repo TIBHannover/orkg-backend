@@ -131,6 +131,52 @@ class ExternalClassNotFound : SimpleMessageException {
         )
 }
 
+class ExternalEntityIsNotAResource : SimpleMessageException {
+    constructor(ontologyId: String, id: String) :
+        super(
+            HttpStatus.FORBIDDEN,
+            """Entity "$id" for ontology "$ontologyId" is not a resource.""",
+            type = createProblemURI("external_entity_is_not_a_resource"),
+            properties = mapOf(
+                "entity_id" to id,
+                "ontology_id" to ontologyId,
+            ),
+        )
+    constructor(ontologyId: String, uri: ParsedIRI) :
+        super(
+            HttpStatus.FORBIDDEN,
+            """Entity "$uri" for ontology "$ontologyId" is not a resource.""",
+            type = createProblemURI("external_entity_is_not_a_resource"),
+            properties = mapOf(
+                "entity_uri" to uri.toString(),
+                "ontology_id" to ontologyId,
+            ),
+        )
+}
+
+class ExternalEntityIsNotAClass : SimpleMessageException {
+    constructor(ontologyId: String, id: String) :
+        super(
+            HttpStatus.FORBIDDEN,
+            """Entity "$id" for ontology "$ontologyId" is not a class.""",
+            type = createProblemURI("external_entity_is_not_a_class"),
+            properties = mapOf(
+                "entity_id" to id,
+                "ontology_id" to ontologyId,
+            ),
+        )
+    constructor(ontologyId: String, uri: ParsedIRI) :
+        super(
+            HttpStatus.FORBIDDEN,
+            """Entity "$uri" for ontology "$ontologyId" is not a class.""",
+            type = createProblemURI("external_entity_is_not_a_class"),
+            properties = mapOf(
+                "entity_uri" to uri.toString(),
+                "ontology_id" to ontologyId,
+            ),
+        )
+}
+
 class ListNotFound(id: ThingId) :
     SimpleMessageException(
         HttpStatus.NOT_FOUND,

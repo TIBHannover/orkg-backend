@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.exceptions.ServiceUnavailable
 import org.orkg.common.send
+import org.orkg.graph.domain.ExternalEntityIsNotAClass
+import org.orkg.graph.domain.ExternalEntityIsNotAResource
 import org.orkg.graph.domain.ExternalThing
 import org.orkg.graph.output.ExternalClassService
 import org.orkg.graph.output.ExternalPredicateService
@@ -28,7 +30,7 @@ class WikidataServiceAdapter(
     private val httpClient: HttpClient,
     @param:Value("\${orkg.http.user-agent}")
     private val userAgent: String,
-    @Value("\${orkg.external-services.wikidata.host}")
+    @param:Value("\${orkg.external-services.wikidata.host}")
     private val host: String,
 ) : ExternalResourceService,
     ExternalClassService,
@@ -39,16 +41,16 @@ class WikidataServiceAdapter(
     private val propertyPattern = Pattern.compile("""https?://(?:www\.)?wikidata.org/entity/(P[0-9]+)/?""")
 
     override fun findResourceByShortForm(ontologyId: String, shortForm: String): ExternalThing? =
-        fetch(ontologyId, shortForm, itemIdPattern, ::isResource)
+        fetch(ontologyId, shortForm, itemIdPattern, ::isResource) { ExternalEntityIsNotAResource(ontologyId, shortForm) }
 
     override fun findResourceByURI(ontologyId: String, uri: ParsedIRI): ExternalThing? =
-        fetch(ontologyId, uri.toString(), itemPattern, ::isResource)
+        fetch(ontologyId, uri.toString(), itemPattern, ::isResource) { ExternalEntityIsNotAResource(ontologyId, uri) }
 
     override fun findClassByShortForm(ontologyId: String, shortForm: String): ExternalThing? =
-        fetch(ontologyId, shortForm, itemIdPattern, ::isClass)
+        fetch(ontologyId, shortForm, itemIdPattern, ::isClass) { ExternalEntityIsNotAClass(ontologyId, shortForm) }
 
     override fun findClassByURI(ontologyId: String, uri: ParsedIRI): ExternalThing? =
-        fetch(ontologyId, uri.toString(), itemPattern, ::isClass)
+        fetch(ontologyId, uri.toString(), itemPattern, ::isClass) { ExternalEntityIsNotAClass(ontologyId, uri) }
 
     override fun findPredicateByShortForm(ontologyId: String, shortForm: String): ExternalThing? =
         fetch(ontologyId, shortForm, propertyIdPattern)
@@ -65,6 +67,7 @@ class WikidataServiceAdapter(
         input: String,
         pattern: Pattern,
         predicate: Predicate<JsonNode> = Predicates.isTrue(),
+        typeMismatchExceptionFactory: (() -> Throwable)? = null,
     ): ExternalThing? {
         if (!supportsOntology(ontologyId)) return null
         val id = pattern.matchSingleGroupOrNull(input) ?: return null
@@ -94,6 +97,9 @@ class WikidataServiceAdapter(
             }
             val entity = tree.path("entities").path(id)
             if (!predicate.test(entity.path("claims"))) {
+                if (typeMismatchExceptionFactory != null) {
+                    throw typeMismatchExceptionFactory()
+                }
                 return@send null
             }
             ExternalThing(

@@ -32,6 +32,7 @@ interface PaperRepository {
         sustainableDevelopmentGoal: ThingId? = null,
         mentionings: Set<ThingId>? = null,
         researchProblem: ThingId? = null,
+        venue: ThingId? = null,
     ): Page<Resource>
 
     fun count(
@@ -50,5 +51,6 @@ interface PaperRepository {
         sustainableDevelopmentGoal: ThingId? = null,
         mentionings: Set<ThingId>? = null,
         researchProblem: ThingId? = null,
+        venue: ThingId? = null,
     ): Long
 }

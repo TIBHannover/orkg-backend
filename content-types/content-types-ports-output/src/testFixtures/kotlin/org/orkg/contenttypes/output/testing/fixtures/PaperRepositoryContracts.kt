@@ -909,6 +909,58 @@ fun <
                 }
             }
         }
+        context("by venue") {
+            val expectedCount = 3
+            val resources = fabricator.random<List<Resource>>().toPapers().toMutableList()
+            val venue = fabricator.random<Resource>().copy(classes = setOf(Classes.venue))
+            val hasVenue = createPredicate(Predicates.hasVenue)
+            val expected = resources.take(expectedCount)
+
+            expected.forEach {
+                saveStatement(
+                    fabricator.random<GeneralStatement>().copy(
+                        subject = it,
+                        predicate = hasVenue,
+                        `object` = venue
+                    )
+                )
+            }
+
+            resources.drop(expectedCount).forEach {
+                saveStatement(
+                    fabricator.random<GeneralStatement>().copy(
+                        subject = it,
+                        predicate = hasVenue,
+                        `object` = fabricator.random<Resource>().copy(
+                            classes = setOf(Classes.venue)
+                        )
+                    )
+                )
+            }
+
+            val result = repository.findAll(
+                pageable = PageRequest.of(0, 5),
+                venue = venue.id,
+            )
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe expectedCount
+                result.content shouldContainAll expected
+            }
+            it("pages the result correctly") {
+                result.size shouldBe 5
+                result.number shouldBe 0
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe expectedCount
+            }
+            it("sorts the results by creation date by default") {
+                result.content.zipWithNext { a, b ->
+                    a.createdAt shouldBeLessThan b.createdAt
+                }
+            }
+        }
         context("using all parameters") {
             val researchField = fabricator.random<Resource>().copy(
                 classes = setOf(Classes.researchField)
@@ -916,6 +968,7 @@ fun <
             val hasResearchField = createPredicate(Predicates.hasResearchField)
             val hasDoi = createPredicate(Predicates.hasDOI)
             val hasSDG = createPredicate(Predicates.sustainableDevelopmentGoal)
+            val hasVenue = createPredicate(Predicates.hasVenue)
             fabricator.random<List<Resource>>().toPapers().forEachIndexed { index, paper ->
                 saveStatement(
                     fabricator.random<GeneralStatement>().copy(
@@ -983,6 +1036,14 @@ fun <
                 classes = setOf(Classes.problem)
             )
             expected.associateResearchProblem(researchProblem)
+            val venue = fabricator.random<Resource>().copy(classes = setOf(Classes.venue))
+            saveStatement(
+                fabricator.random<GeneralStatement>().copy(
+                    subject = expected,
+                    predicate = hasVenue,
+                    `object` = venue
+                )
+            )
 
             val result = repository.findAll(
                 pageable = PageRequest.of(0, 5),
@@ -999,6 +1060,7 @@ fun <
                 includeSubfields = true,
                 sustainableDevelopmentGoal = sdg,
                 researchProblem = researchProblem.id,
+                venue = venue.id,
             )
 
             it("returns the correct result") {

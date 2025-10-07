@@ -130,6 +130,13 @@ private val researchProblemParameter = SingleValueParameterSpec(
     parser = ::ThingId
 )
 
+private val venueParameter = SingleValueParameterSpec(
+    name = "Venue filter",
+    description = "Filter for venue id.",
+    type = ThingId::class,
+    parser = ::ThingId
+)
+
 private val contentTypeClassParameter = MultiValueParameterSpec(
     name = "Content-Type class filter",
     description = "Filter for one or more content-type classes. If absent, all content-type classes are included.",
@@ -182,6 +189,7 @@ class ContentTypeMetrics {
             "verified" to verifiedParameter,
             "sdg" to sdgParameter,
             "research_problem" to researchProblemParameter,
+            "venue" to venueParameter,
         ),
         supplier = { parameters ->
             paperRepository.count(
@@ -196,6 +204,7 @@ class ContentTypeMetrics {
                 sustainableDevelopmentGoal = parameters[sdgParameter],
                 verified = parameters[verifiedParameter],
                 researchProblem = parameters[researchProblemParameter],
+                venue = parameters[venueParameter],
             )
         }
     )

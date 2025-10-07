@@ -79,6 +79,7 @@ class SpringDataNeo4jPaperAdapter(
         sustainableDevelopmentGoal: ThingId?,
         mentionings: Set<ThingId>?,
         researchProblem: ThingId?,
+        venue: ThingId?,
     ): Page<Resource> =
         buildFindAllQuery(
             sort = pageable.sort.orElseGet { Sort.by("created_at") },
@@ -97,6 +98,7 @@ class SpringDataNeo4jPaperAdapter(
             sustainableDevelopmentGoal = sustainableDevelopmentGoal,
             mentionings = mentionings,
             researchProblem = researchProblem,
+            venue = venue,
         ).fetch(pageable, false)
 
     override fun count(
@@ -115,6 +117,7 @@ class SpringDataNeo4jPaperAdapter(
         sustainableDevelopmentGoal: ThingId?,
         mentionings: Set<ThingId>?,
         researchProblem: ThingId?,
+        venue: ThingId?,
     ): Long =
         buildFindAllQuery(
             label = label,
@@ -132,6 +135,7 @@ class SpringDataNeo4jPaperAdapter(
             sustainableDevelopmentGoal = sustainableDevelopmentGoal,
             mentionings = mentionings,
             researchProblem = researchProblem,
+            venue = venue,
         ).count()
 
     private fun buildFindAllQuery(
@@ -151,6 +155,7 @@ class SpringDataNeo4jPaperAdapter(
         sustainableDevelopmentGoal: ThingId?,
         mentionings: Set<ThingId>?,
         researchProblem: ThingId?,
+        venue: ThingId?,
     ) = cypherQueryBuilderFactory.newBuilder(QueryCache.Uncached)
         .withCommonQuery {
             val node = node("Paper").named("node")
@@ -181,6 +186,10 @@ class SpringDataNeo4jPaperAdapter(
                     // we are not checking for predicate ids here, because the computational overhead is too high and results are expected to be almost identical
                     node.relationshipTo(node(Classes.contribution), RELATED)
                         .relationshipTo(node(Classes.problem).withProperties("id", anonParameter(it.value)), RELATED)
+                },
+                venue?.let {
+                    node.relationshipTo(node(Classes.venue).withProperties("id", anonParameter(it.value)), RELATED)
+                        .withProperties("predicate_id", literalOf<String>(Predicates.hasVenue.value))
                 },
             )
             val patternBoundWhere = listOf(

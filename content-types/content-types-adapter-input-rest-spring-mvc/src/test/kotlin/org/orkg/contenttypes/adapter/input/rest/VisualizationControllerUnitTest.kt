@@ -130,7 +130,7 @@ internal class VisualizationControllerUnitTest : MockMvcBaseTest("visualizations
     @DisplayName("Given several visualizations, when they are fetched, then status is 200 OK and visualizations are returned")
     fun getPaged() {
         every {
-            visualizationService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+            visualizationService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         } returns pageOf(createVisualization())
 
         documentedGetRequestTo("/api/visualizations")
@@ -143,7 +143,7 @@ internal class VisualizationControllerUnitTest : MockMvcBaseTest("visualizations
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) {
-            visualizationService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+            visualizationService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         }
     }
 
@@ -151,7 +151,7 @@ internal class VisualizationControllerUnitTest : MockMvcBaseTest("visualizations
     @DisplayName("Given several visualizations, when filtering by several parameters, then status is 200 OK and visualizations are returned")
     fun getPagedWithParameters() {
         val visualization = createVisualization()
-        every { visualizationService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns pageOf(visualization)
+        every { visualizationService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns pageOf(visualization)
 
         val label = "label"
         val exact = true
@@ -163,6 +163,7 @@ internal class VisualizationControllerUnitTest : MockMvcBaseTest("visualizations
         val organizationId = OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f")
         val researchFieldId = ThingId("R456")
         val includeSubfields = true
+        val researchProblemId = ThingId("R357")
 
         documentedGetRequestTo("/api/visualizations")
             .param("title", label)
@@ -175,6 +176,7 @@ internal class VisualizationControllerUnitTest : MockMvcBaseTest("visualizations
             .param("organization_id", organizationId.value.toString())
             .param("research_field", researchFieldId.value)
             .param("include_subfields", includeSubfields.toString())
+            .param("research_problem", researchProblemId.value)
             .accept(VISUALIZATION_JSON_V2)
             .contentType(VISUALIZATION_JSON_V2)
             .perform()
@@ -194,6 +196,7 @@ internal class VisualizationControllerUnitTest : MockMvcBaseTest("visualizations
                         parameterWithName("organization_id").description("Filter for the UUID of the organization that the visualization belongs to. (optional)"),
                         parameterWithName("research_field").description("Filter for research field id. The research field of a visualization is determined by the research field of a linking comparison. (optional)"),
                         parameterWithName("include_subfields").description("Flag for whether subfields are included in the search or not. (optional, default: false)"),
+                        parameterWithName("research_problem").description("Filter for research problem id. (optional)").optional(),
                     )
                 )
             )
@@ -212,7 +215,8 @@ internal class VisualizationControllerUnitTest : MockMvcBaseTest("visualizations
                 observatoryId = observatoryId,
                 organizationId = organizationId,
                 researchField = researchFieldId,
-                includeSubfields = includeSubfields
+                includeSubfields = includeSubfields,
+                researchProblem = researchProblemId,
             )
         }
     }
@@ -221,7 +225,7 @@ internal class VisualizationControllerUnitTest : MockMvcBaseTest("visualizations
     fun `Given several visualizations, when invalid sorting property is specified, then status is 400 BAD REQUEST`() {
         val exception = UnknownSortingProperty("unknown")
         every {
-            visualizationService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+            visualizationService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         } throws exception
 
         get("/api/visualizations")
@@ -232,7 +236,7 @@ internal class VisualizationControllerUnitTest : MockMvcBaseTest("visualizations
             .andExpectType("orkg:problem:unknown_sorting_property")
 
         verify(exactly = 1) {
-            visualizationService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+            visualizationService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         }
     }
 

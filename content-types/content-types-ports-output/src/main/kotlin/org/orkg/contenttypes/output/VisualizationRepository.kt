@@ -23,6 +23,7 @@ interface VisualizationRepository {
         organizationId: OrganizationId? = null,
         researchField: ThingId? = null,
         includeSubfields: Boolean = false,
+        researchProblem: ThingId? = null,
     ): Page<Resource>
 
     fun count(
@@ -35,5 +36,6 @@ interface VisualizationRepository {
         organizationId: OrganizationId? = null,
         researchField: ThingId? = null,
         includeSubfields: Boolean = false,
+        researchProblem: ThingId? = null,
     ): Long
 }

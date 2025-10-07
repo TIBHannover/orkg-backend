@@ -43,6 +43,7 @@ interface RetrievePaperUseCase {
         includeSubfields: Boolean = false,
         sustainableDevelopmentGoal: ThingId? = null,
         mentionings: Set<ThingId>? = emptySet(),
+        researchProblem: ThingId? = null,
     ): Page<Paper>
 
     fun findAllContributorsByPaperId(id: ThingId, pageable: Pageable): Page<ContributorId>

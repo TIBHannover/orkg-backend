@@ -161,13 +161,13 @@ class SpringDataNeo4jComparisonAdapter(
                     },
                     doi?.let { node.relationshipTo(node("Literal").withProperties("label", anonParameter(doi))) },
                     sustainableDevelopmentGoal?.let {
-                        node.relationshipTo(node("SustainableDevelopmentGoal").withProperties("id", anonParameter(it.value)), RELATED)
+                        node.relationshipTo(node(Classes.sustainableDevelopmentGoal).withProperties("id", anonParameter(it.value)), RELATED)
                             .withProperties("predicate_id", literalOf<String>(Predicates.sustainableDevelopmentGoal.value))
                     },
                     researchProblem?.let {
                         // we are not checking for predicate ids here, because the computational overhead is too high and results are expected to be almost identical
-                        node.relationshipTo(node("Contribution"), RELATED)
-                            .relationshipTo(node("Resource", "Problem").withProperties("id", anonParameter(it.value)), RELATED)
+                        node.relationshipTo(node(Classes.contribution), RELATED)
+                            .relationshipTo(node(Classes.problem).withProperties("id", anonParameter(it.value)), RELATED)
                     }
                 )
             }

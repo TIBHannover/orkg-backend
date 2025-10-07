@@ -138,6 +138,7 @@ class PaperService(
         includeSubfields: Boolean,
         sustainableDevelopmentGoal: ThingId?,
         mentionings: Set<ThingId>?,
+        researchProblem: ThingId?,
     ): Page<Paper> =
         paperRepository.findAll(
             pageable = pageable,
@@ -154,7 +155,8 @@ class PaperService(
             researchField = researchField,
             includeSubfields = includeSubfields,
             sustainableDevelopmentGoal = sustainableDevelopmentGoal,
-            mentionings = mentionings
+            mentionings = mentionings,
+            researchProblem = researchProblem,
         ).pmap { it.toPaper() }
 
     override fun findAllContributorsByPaperId(id: ThingId, pageable: Pageable): Page<ContributorId> =

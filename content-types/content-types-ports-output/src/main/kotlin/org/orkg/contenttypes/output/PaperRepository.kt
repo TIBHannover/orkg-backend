@@ -31,6 +31,7 @@ interface PaperRepository {
         includeSubfields: Boolean = false,
         sustainableDevelopmentGoal: ThingId? = null,
         mentionings: Set<ThingId>? = null,
+        researchProblem: ThingId? = null,
     ): Page<Resource>
 
     fun count(
@@ -48,5 +49,6 @@ interface PaperRepository {
         includeSubfields: Boolean = false,
         sustainableDevelopmentGoal: ThingId? = null,
         mentionings: Set<ThingId>? = null,
+        researchProblem: ThingId? = null,
     ): Long
 }

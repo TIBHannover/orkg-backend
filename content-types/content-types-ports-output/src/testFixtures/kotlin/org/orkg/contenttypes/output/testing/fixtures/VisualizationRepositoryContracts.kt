@@ -85,6 +85,7 @@ fun <
 
     fun List<Resource>.toVisualizations(): List<Resource> = map { it.copy(classes = setOf(Classes.visualization)) }
 
+    // TODO: remove comparison parameter, because value is always the same
     fun Resource.associateResearchField(researchField: Resource, comparison: Resource) {
         saveStatement(
             fabricator.random<GeneralStatement>().copy(
@@ -98,6 +99,36 @@ fun <
                 subject = comparison,
                 predicate = createPredicate(Predicates.hasVisualization),
                 `object` = this
+            )
+        )
+    }
+
+    fun Resource.associateResearchProblem(researchProblem: Resource) {
+        val comparison = fabricator.random<Resource>().copy(
+            classes = setOf(Classes.comparison)
+        )
+        val contribution = fabricator.random<Resource>().copy(
+            classes = setOf(Classes.contribution)
+        )
+        saveStatement(
+            fabricator.random<GeneralStatement>().copy(
+                subject = comparison,
+                predicate = createPredicate(Predicates.hasVisualization),
+                `object` = this
+            )
+        )
+        saveStatement(
+            fabricator.random<GeneralStatement>().copy(
+                subject = comparison,
+                predicate = createPredicate(Predicates.comparesContribution),
+                `object` = contribution
+            )
+        )
+        saveStatement(
+            fabricator.random<GeneralStatement>().copy(
+                subject = contribution,
+                predicate = createPredicate(Predicates.hasResearchProblem),
+                `object` = researchProblem
             )
         )
     }
@@ -502,11 +533,53 @@ fun <
                 }
             }
         }
+        context("by research problem") {
+            val expectedCount = 3
+            val resources = fabricator.random<List<Resource>>().toVisualizations().toMutableList()
+            val researchProblem = fabricator.random<Resource>().copy(
+                classes = setOf(Classes.problem)
+            )
+            val expected = resources.take(expectedCount)
+
+            expected.forEach { it.associateResearchProblem(researchProblem) }
+
+            resources.drop(expectedCount).forEach {
+                it.associateResearchProblem(
+                    fabricator.random<Resource>().copy(
+                        classes = setOf(Classes.problem)
+                    )
+                )
+            }
+
+            val result = repository.findAll(
+                pageable = PageRequest.of(0, 5),
+                researchProblem = researchProblem.id,
+            )
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe expectedCount
+                result.content shouldContainAll expected
+            }
+            it("pages the result correctly") {
+                result.size shouldBe 5
+                result.number shouldBe 0
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe expectedCount
+            }
+            it("sorts the results by creation date by default") {
+                result.content.zipWithNext { a, b ->
+                    a.createdAt shouldBeLessThan b.createdAt
+                }
+            }
+        }
         context("using all parameters") {
             val resources = fabricator.random<List<Resource>>().toVisualizations().toMutableList()
             val label = "label-to-find"
             val createdBy = ContributorId(UUID.randomUUID())
             val researchField = fabricator.random<Resource>().copy(classes = setOf(Classes.researchField))
+            val researchProblem = fabricator.random<Resource>().copy(classes = setOf(Classes.problem))
 
             val expected = resources[0].copy(
                 label = label,
@@ -520,6 +593,7 @@ fun <
                     classes = setOf(Classes.comparison)
                 )
             )
+            expected.associateResearchProblem(researchProblem)
 
             resources.drop(1).forEach(resourceRepository::save)
 
@@ -533,6 +607,7 @@ fun <
                 visibility = VisibilityFilter.ALL_LISTED,
                 researchField = researchField.id,
                 includeSubfields = true,
+                researchProblem = researchProblem.id,
                 pageable = PageRequest.of(0, 5)
             )
 

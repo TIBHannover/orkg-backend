@@ -62,6 +62,7 @@ class VisualizationController(
         @RequestParam("organization_id", required = false) organizationId: OrganizationId?,
         @RequestParam("research_field", required = false) researchField: ThingId?,
         @RequestParam("include_subfields", required = false) includeSubfields: Boolean = false,
+        @RequestParam("research_problem", required = false) researchProblem: ThingId?,
         pageable: Pageable,
     ): Page<VisualizationRepresentation> =
         service.findAll(
@@ -74,6 +75,7 @@ class VisualizationController(
             organizationId = organizationId,
             researchField = researchField,
             includeSubfields = includeSubfields,
+            researchProblem = researchProblem,
             pageable = pageable
         ).mapToVisualizationRepresentation()
 

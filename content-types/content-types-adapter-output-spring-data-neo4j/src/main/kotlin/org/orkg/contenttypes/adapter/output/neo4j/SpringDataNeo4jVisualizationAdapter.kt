@@ -60,6 +60,7 @@ class SpringDataNeo4jVisualizationAdapter(
         organizationId: OrganizationId?,
         researchField: ThingId?,
         includeSubfields: Boolean,
+        researchProblem: ThingId?,
     ): Page<Resource> =
         buildFindAllQuery(
             sort = pageable.sort.orElseGet { Sort.by("created_at") },
@@ -71,7 +72,8 @@ class SpringDataNeo4jVisualizationAdapter(
             observatoryId = observatoryId,
             organizationId = organizationId,
             researchField = researchField,
-            includeSubfields = includeSubfields
+            includeSubfields = includeSubfields,
+            researchProblem = researchProblem,
         ).fetch(pageable, false)
 
     override fun count(
@@ -84,6 +86,7 @@ class SpringDataNeo4jVisualizationAdapter(
         organizationId: OrganizationId?,
         researchField: ThingId?,
         includeSubfields: Boolean,
+        researchProblem: ThingId?,
     ): Long =
         buildFindAllQuery(
             sort = Sort.unsorted(),
@@ -95,7 +98,8 @@ class SpringDataNeo4jVisualizationAdapter(
             observatoryId = observatoryId,
             organizationId = organizationId,
             researchField = researchField,
-            includeSubfields = includeSubfields
+            includeSubfields = includeSubfields,
+            researchProblem = researchProblem,
         ).count()
 
     private fun buildFindAllQuery(
@@ -109,6 +113,7 @@ class SpringDataNeo4jVisualizationAdapter(
         organizationId: OrganizationId?,
         researchField: ThingId?,
         includeSubfields: Boolean,
+        researchProblem: ThingId?,
     ) = cypherQueryBuilderFactory.newBuilder(QueryCache.Uncached)
         .withCommonQuery {
             val patterns: (Node) -> Collection<PatternElement> = { node ->
@@ -125,7 +130,13 @@ class SpringDataNeo4jVisualizationAdapter(
                             node.relationshipFrom(node(Classes.comparison), RELATED)
                                 .relationshipTo(researchFieldNode, RELATED)
                         }
-                    }
+                    },
+                    researchProblem?.let {
+                        // we are not checking for predicate ids here, because the computational overhead is too high and results are expected to be almost identical
+                        node.relationshipFrom(node(Classes.comparison))
+                            .relationshipTo(node(Classes.contribution), RELATED)
+                            .relationshipTo(node(Classes.problem).withProperties("id", anonParameter(it.value)), RELATED)
+                    },
                 )
             }
             val node = name("node")

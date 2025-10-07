@@ -66,6 +66,7 @@ class VisualizationService(
         organizationId: OrganizationId?,
         researchField: ThingId?,
         includeSubfields: Boolean,
+        researchProblem: ThingId?,
         pageable: Pageable,
     ): Page<Visualization> =
         visualizationRepository.findAll(
@@ -78,6 +79,7 @@ class VisualizationService(
             organizationId = organizationId,
             researchField = researchField,
             includeSubfields = includeSubfields,
+            researchProblem = researchProblem,
             pageable = pageable
         ).map { it.toVisualization() }
 

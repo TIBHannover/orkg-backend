@@ -31,6 +31,7 @@ interface RetrieveVisualizationUseCase {
         organizationId: OrganizationId? = null,
         researchField: ThingId? = null,
         includeSubfields: Boolean = false,
+        researchProblem: ThingId? = null,
         pageable: Pageable,
     ): Page<Visualization>
 }

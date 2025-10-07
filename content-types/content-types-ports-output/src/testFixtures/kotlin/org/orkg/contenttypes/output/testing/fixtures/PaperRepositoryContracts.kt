@@ -88,6 +88,26 @@ fun <
 
     fun List<Resource>.toPapers(): List<Resource> = map { it.copy(classes = setOf(Classes.paper)) }
 
+    fun Resource.associateResearchProblem(researchProblem: Resource) {
+        val contribution = fabricator.random<Resource>().copy(
+            classes = setOf(Classes.contribution)
+        )
+        saveStatement(
+            fabricator.random<GeneralStatement>().copy(
+                subject = this,
+                predicate = createPredicate(Predicates.hasContribution),
+                `object` = contribution
+            )
+        )
+        saveStatement(
+            fabricator.random<GeneralStatement>().copy(
+                subject = contribution,
+                predicate = createPredicate(Predicates.hasResearchProblem),
+                `object` = researchProblem
+            )
+        )
+    }
+
     describe("finding several papers") {
         context("using no parameters") {
             val resources = fabricator.random<List<Resource>>().toPapers()
@@ -848,6 +868,47 @@ fun <
                 }
             }
         }
+        context("by research problem") {
+            val expectedCount = 3
+            val resources = fabricator.random<List<Resource>>().toPapers().toMutableList()
+            val researchProblem = fabricator.random<Resource>().copy(
+                classes = setOf(Classes.problem)
+            )
+            val expected = resources.take(expectedCount)
+
+            expected.forEach { it.associateResearchProblem(researchProblem) }
+
+            resources.drop(expectedCount).forEach {
+                it.associateResearchProblem(
+                    fabricator.random<Resource>().copy(
+                        classes = setOf(Classes.problem)
+                    )
+                )
+            }
+
+            val result = repository.findAll(
+                pageable = PageRequest.of(0, 5),
+                researchProblem = researchProblem.id,
+            )
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe expectedCount
+                result.content shouldContainAll expected
+            }
+            it("pages the result correctly") {
+                result.size shouldBe 5
+                result.number shouldBe 0
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe expectedCount
+            }
+            it("sorts the results by creation date by default") {
+                result.content.zipWithNext { a, b ->
+                    a.createdAt shouldBeLessThan b.createdAt
+                }
+            }
+        }
         context("using all parameters") {
             val researchField = fabricator.random<Resource>().copy(
                 classes = setOf(Classes.researchField)
@@ -883,6 +944,11 @@ fun <
                         `object` = researchField
                     )
                 )
+                paper.associateResearchProblem(
+                    fabricator.random<Resource>().copy(
+                        classes = setOf(Classes.problem)
+                    )
+                )
             }
 
             val expected = createResource(classes = setOf(Classes.paper), verified = true)
@@ -913,6 +979,10 @@ fun <
                     )
                 )
             )
+            val researchProblem = fabricator.random<Resource>().copy(
+                classes = setOf(Classes.problem)
+            )
+            expected.associateResearchProblem(researchProblem)
 
             val result = repository.findAll(
                 pageable = PageRequest.of(0, 5),
@@ -927,7 +997,8 @@ fun <
                 organizationId = expected.organizationId,
                 researchField = researchField.id,
                 includeSubfields = true,
-                sustainableDevelopmentGoal = sdg
+                sustainableDevelopmentGoal = sdg,
+                researchProblem = researchProblem.id,
             )
 
             it("returns the correct result") {

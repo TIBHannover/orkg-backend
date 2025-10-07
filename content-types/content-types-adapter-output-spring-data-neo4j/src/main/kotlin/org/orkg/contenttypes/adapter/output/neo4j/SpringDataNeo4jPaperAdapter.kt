@@ -78,6 +78,7 @@ class SpringDataNeo4jPaperAdapter(
         includeSubfields: Boolean,
         sustainableDevelopmentGoal: ThingId?,
         mentionings: Set<ThingId>?,
+        researchProblem: ThingId?,
     ): Page<Resource> =
         buildFindAllQuery(
             sort = pageable.sort.orElseGet { Sort.by("created_at") },
@@ -94,7 +95,8 @@ class SpringDataNeo4jPaperAdapter(
             researchField = researchField,
             includeSubfields = includeSubfields,
             sustainableDevelopmentGoal = sustainableDevelopmentGoal,
-            mentionings = mentionings
+            mentionings = mentionings,
+            researchProblem = researchProblem,
         ).fetch(pageable, false)
 
     override fun count(
@@ -112,6 +114,7 @@ class SpringDataNeo4jPaperAdapter(
         includeSubfields: Boolean,
         sustainableDevelopmentGoal: ThingId?,
         mentionings: Set<ThingId>?,
+        researchProblem: ThingId?,
     ): Long =
         buildFindAllQuery(
             label = label,
@@ -127,7 +130,8 @@ class SpringDataNeo4jPaperAdapter(
             researchField = researchField,
             includeSubfields = includeSubfields,
             sustainableDevelopmentGoal = sustainableDevelopmentGoal,
-            mentionings = mentionings
+            mentionings = mentionings,
+            researchProblem = researchProblem,
         ).count()
 
     private fun buildFindAllQuery(
@@ -146,6 +150,7 @@ class SpringDataNeo4jPaperAdapter(
         includeSubfields: Boolean,
         sustainableDevelopmentGoal: ThingId?,
         mentionings: Set<ThingId>?,
+        researchProblem: ThingId?,
     ) = cypherQueryBuilderFactory.newBuilder(QueryCache.Uncached)
         .withCommonQuery {
             val node = node("Paper").named("node")
@@ -165,13 +170,18 @@ class SpringDataNeo4jPaperAdapter(
                 },
                 if (doi != null || doiPrefix != null) node.relationshipTo(node("Literal").named(doiLiteral), RELATED) else null,
                 sustainableDevelopmentGoal?.let {
-                    node.relationshipTo(node("SustainableDevelopmentGoal").withProperties("id", anonParameter(it.value)), RELATED)
+                    node.relationshipTo(node(Classes.sustainableDevelopmentGoal).withProperties("id", anonParameter(it.value)), RELATED)
                         .withProperties("predicate_id", literalOf<String>(Predicates.sustainableDevelopmentGoal.value))
                 },
                 *mentionings?.map {
                     node.relationshipTo(node("Resource").withProperties("id", anonParameter(it.value)), RELATED)
                         .withProperties("predicate_id", literalOf<String>(Predicates.mentions.value))
-                }.orEmpty().toTypedArray()
+                }.orEmpty().toTypedArray(),
+                researchProblem?.let {
+                    // we are not checking for predicate ids here, because the computational overhead is too high and results are expected to be almost identical
+                    node.relationshipTo(node(Classes.contribution), RELATED)
+                        .relationshipTo(node(Classes.problem).withProperties("id", anonParameter(it.value)), RELATED)
+                },
             )
             val patternBoundWhere = listOf(
                 doi.toCondition { toLower(doiLiteral.property("label")).eq(anonParameter(doi)) },

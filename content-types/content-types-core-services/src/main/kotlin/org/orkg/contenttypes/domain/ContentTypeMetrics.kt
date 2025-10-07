@@ -123,6 +123,13 @@ private val verifiedParameter = SingleValueParameterSpec(
     parser = { it.toBoolean() }
 )
 
+private val researchProblemParameter = SingleValueParameterSpec(
+    name = "Research problem filter",
+    description = "Filter for research problem id.",
+    type = ThingId::class,
+    parser = ::ThingId
+)
+
 private val contentTypeClassParameter = MultiValueParameterSpec(
     name = "Content-Type class filter",
     description = "Filter for one or more content-type classes. If absent, all content-type classes are included.",
@@ -173,7 +180,8 @@ class ContentTypeMetrics {
         group = "content-types",
         parameterSpecs = sharedContentTypeParameters + mapOf(
             "verified" to verifiedParameter,
-            "sdg" to sdgParameter
+            "sdg" to sdgParameter,
+            "research_problem" to researchProblemParameter,
         ),
         supplier = { parameters ->
             paperRepository.count(
@@ -187,6 +195,7 @@ class ContentTypeMetrics {
                 visibility = parameters[visibilityParameter],
                 sustainableDevelopmentGoal = parameters[sdgParameter],
                 verified = parameters[verifiedParameter],
+                researchProblem = parameters[researchProblemParameter],
             )
         }
     )

@@ -6,7 +6,6 @@ import org.orkg.common.ThingId
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.graph.domain.InvalidSubclassRelation
 import org.orkg.graph.domain.ParentClassAlreadyExists
-import org.orkg.graph.domain.ParentClassAlreadyHasChildren
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
 import org.orkg.testing.spring.restdocs.exceptionResponseFields
@@ -55,24 +54,6 @@ internal class ClassHierarchyExceptionUnitTest : MockMvcExceptionBaseTest() {
                     responseFields(exceptionResponseFields(type)).and(
                         fieldWithPath("class_id").description("The id of the class."),
                         fieldWithPath("parent_class_id").description("The id of the parent class."),
-                    )
-                )
-            )
-    }
-
-    @Test
-    fun parentClassAlreadyHasChildren() {
-        val type = "orkg:problem:parent_class_already_has_children"
-        documentedGetRequestTo(ParentClassAlreadyHasChildren(ThingId("C123")))
-            .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType(type)
-            .andExpectTitle("Bad Request")
-            .andExpectDetail("""The class "C123" already has one or more child classes.""")
-            .andExpect(jsonPath("$.class_id", `is`("C123")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("class_id").description("The id of the class."),
                     )
                 )
             )

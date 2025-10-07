@@ -83,7 +83,7 @@ fun <
 
     describe("finding the child-classes of a class") {
         context("when no children exist") {
-            val result = repository.findAllChildrenByAncestorId(ThingId("4"), PageRequest.of(0, 5))
+            val result = repository.findAllChildrenByParentId(ThingId("4"), PageRequest.of(0, 5))
 
             it("returns the correct result") {
                 result shouldNotBe null
@@ -104,7 +104,7 @@ fun <
         }
         describe("when several children exist") {
             createTree()
-            val result = repository.findAllChildrenByAncestorId(ThingId("1"), PageRequest.of(0, 5))
+            val result = repository.findAllChildrenByParentId(ThingId("1"), PageRequest.of(0, 5))
 
             it("returns the correct result") {
                 result shouldNotBe null

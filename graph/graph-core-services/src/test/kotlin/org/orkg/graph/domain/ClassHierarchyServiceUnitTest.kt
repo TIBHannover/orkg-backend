@@ -10,6 +10,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.common.testing.fixtures.fixedClock
+import org.orkg.graph.input.CreateClassHierarchyUseCase
 import org.orkg.graph.output.ClassHierarchyRepository
 import org.orkg.graph.output.ClassRelationRepository
 import org.orkg.graph.output.ClassRepository
@@ -28,45 +29,34 @@ internal class ClassHierarchyServiceUnitTest : MockkBaseTest {
     fun `given a class relation is created, when the parent id and child id are identical, then an exception is thrown`() {
         val parentId = ThingId("identical")
         val childId = ThingId("identical")
+        val command = CreateClassHierarchyUseCase.CreateCommand(
+            contributorId = ContributorId.UNKNOWN,
+            parentId = parentId,
+            childIds = setOf(childId)
+        )
 
         every { classRepository.findById(parentId) } returns Optional.of(createClass(id = parentId))
 
-        val exception = assertThrows<InvalidSubclassRelation> {
-            service.create(ContributorId.UNKNOWN, parentId, setOf(childId), false)
-        }
+        val exception = assertThrows<InvalidSubclassRelation> { service.create(command) }
         assertThat(exception.message).isEqualTo(InvalidSubclassRelation(childId, parentId).message)
 
         verify(exactly = 1) { classRepository.findById(parentId) }
     }
 
     @Test
-    fun `given a class relation is created, when the parent id is not a leaf, then an exception is thrown`() {
-        val parentId = ThingId("parent")
-        val childId = ThingId("child")
-
-        every { classRepository.findById(parentId) } returns Optional.of(createClass(id = parentId))
-        every { repository.existsChildren(parentId) } returns true
-
-        val exception = assertThrows<ParentClassAlreadyHasChildren> {
-            service.create(ContributorId.UNKNOWN, parentId, setOf(childId), true)
-        }
-        assertThat(exception.message).isEqualTo(ParentClassAlreadyHasChildren(parentId).message)
-
-        verify(exactly = 1) { classRepository.findById(parentId) }
-        verify(exactly = 1) { repository.existsChildren(parentId) }
-    }
-
-    @Test
     fun `given a class relation is created, when the child class cannot be found, then an exception is thrown`() {
         val parentId = ThingId("parent")
         val childId = ThingId("child")
+        val command = CreateClassHierarchyUseCase.CreateCommand(
+            contributorId = ContributorId.UNKNOWN,
+            parentId = parentId,
+            childIds = setOf(childId)
+        )
 
         every { classRepository.findById(parentId) } returns Optional.of(createClass(id = parentId))
         every { classRepository.findById(childId) } returns Optional.empty()
 
-        val exception = assertThrows<ClassNotFound> {
-            service.create(ContributorId.UNKNOWN, parentId, setOf(childId), false)
-        }
+        val exception = assertThrows<ClassNotFound> { service.create(command) }
         assertThat(exception.message).isEqualTo(ClassNotFound.withThingId(childId).message)
 
         verify(exactly = 1) { classRepository.findById(parentId) }
@@ -77,12 +67,15 @@ internal class ClassHierarchyServiceUnitTest : MockkBaseTest {
     fun `given a class relation is created, when the parent class cannot be found, then an exception is thrown`() {
         val parentId = ThingId("parent")
         val childId = ThingId("child")
+        val command = CreateClassHierarchyUseCase.CreateCommand(
+            contributorId = ContributorId.UNKNOWN,
+            parentId = parentId,
+            childIds = setOf(childId)
+        )
 
         every { classRepository.findById(parentId) } returns Optional.empty()
 
-        val exception = assertThrows<ClassNotFound> {
-            service.create(ContributorId.UNKNOWN, parentId, setOf(childId), false)
-        }
+        val exception = assertThrows<ClassNotFound> { service.create(command) }
         assertThat(exception.message).isEqualTo(ClassNotFound.withThingId(parentId).message)
 
         verify(exactly = 1) { classRepository.findById(parentId) }
@@ -92,14 +85,17 @@ internal class ClassHierarchyServiceUnitTest : MockkBaseTest {
     fun `given a class relation is created, when the child already has a parent class, then an exception is thrown`() {
         val parentId = ThingId("parent")
         val childId = ThingId("child")
+        val command = CreateClassHierarchyUseCase.CreateCommand(
+            contributorId = ContributorId.UNKNOWN,
+            parentId = parentId,
+            childIds = setOf(childId)
+        )
 
         every { classRepository.findById(childId) } returns Optional.of(createClass(id = childId))
         every { classRepository.findById(parentId) } returns Optional.of(createClass(id = parentId))
         every { repository.findParentByChildId(childId) } returns Optional.of(createClass(id = parentId))
 
-        val exception = assertThrows<ParentClassAlreadyExists> {
-            service.create(ContributorId.UNKNOWN, parentId, setOf(childId), false)
-        }
+        val exception = assertThrows<ParentClassAlreadyExists> { service.create(command) }
         assertThat(exception.message).isEqualTo(ParentClassAlreadyExists(childId, parentId).message)
 
         verify(exactly = 1) { classRepository.findById(childId) }
@@ -111,15 +107,18 @@ internal class ClassHierarchyServiceUnitTest : MockkBaseTest {
     fun `given a class relation is created, when the child already has the parent class as a child, then an exception is thrown`() {
         val parentId = ThingId("parent")
         val childId = ThingId("child")
+        val command = CreateClassHierarchyUseCase.CreateCommand(
+            contributorId = ContributorId.UNKNOWN,
+            parentId = parentId,
+            childIds = setOf(childId)
+        )
 
         every { classRepository.findById(childId) } returns Optional.of(createClass(id = childId))
         every { classRepository.findById(parentId) } returns Optional.of(createClass(id = parentId))
         every { repository.findParentByChildId(childId) } returns Optional.empty()
         every { repository.existsChild(childId, parentId) } returns true
 
-        val exception = assertThrows<InvalidSubclassRelation> {
-            service.create(ContributorId.UNKNOWN, parentId, setOf(childId), false)
-        }
+        val exception = assertThrows<InvalidSubclassRelation> { service.create(command) }
         assertThat(exception.message).isEqualTo(InvalidSubclassRelation(childId, parentId).message)
 
         verify(exactly = 1) { classRepository.findById(childId) }
@@ -132,6 +131,11 @@ internal class ClassHierarchyServiceUnitTest : MockkBaseTest {
     fun `given a class relation is created, it returns success`() {
         val parentId = ThingId("parent")
         val childId = ThingId("child")
+        val command = CreateClassHierarchyUseCase.CreateCommand(
+            contributorId = ContributorId.UNKNOWN,
+            parentId = parentId,
+            childIds = setOf(childId)
+        )
 
         every { classRepository.findById(childId) } returns Optional.of(createClass(id = childId))
         every { classRepository.findById(parentId) } returns Optional.of(createClass(id = parentId))
@@ -139,7 +143,7 @@ internal class ClassHierarchyServiceUnitTest : MockkBaseTest {
         every { repository.existsChild(childId, parentId) } returns false
         every { relationRepository.saveAll(any()) } returns Unit
 
-        service.create(ContributorId.UNKNOWN, parentId, setOf(childId), false)
+        service.create(command)
 
         verify(exactly = 1) { classRepository.findById(childId) }
         verify(exactly = 1) { classRepository.findById(parentId) }
@@ -155,7 +159,7 @@ internal class ClassHierarchyServiceUnitTest : MockkBaseTest {
         every { classRepository.findById(childId) } returns Optional.empty()
 
         val exception = assertThrows<ClassNotFound> {
-            service.findAllChildrenByAncestorId(childId, PageRequest.of(0, 5))
+            service.findAllChildrenByParentId(childId, PageRequest.of(0, 5))
         }
         assertThat(exception.message).isEqualTo(ClassNotFound.withThingId(childId).message)
 
@@ -168,12 +172,12 @@ internal class ClassHierarchyServiceUnitTest : MockkBaseTest {
         val pageable = PageRequest.of(0, 5)
 
         every { classRepository.findById(childId) } returns Optional.of(createClass(id = childId))
-        every { repository.findAllChildrenByAncestorId(childId, pageable) } returns PageImpl(listOf())
+        every { repository.findAllChildrenByParentId(childId, pageable) } returns PageImpl(listOf())
 
-        service.findAllChildrenByAncestorId(childId, pageable)
+        service.findAllChildrenByParentId(childId, pageable)
 
         verify(exactly = 1) { classRepository.findById(childId) }
-        verify(exactly = 1) { repository.findAllChildrenByAncestorId(childId, pageable) }
+        verify(exactly = 1) { repository.findAllChildrenByParentId(childId, pageable) }
     }
 
     @Test

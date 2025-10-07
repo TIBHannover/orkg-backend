@@ -132,7 +132,7 @@ class SpringDataNeo4jClassHierarchyAdapter(
             .run()
     }
 
-    override fun findAllChildrenByAncestorId(id: ThingId, pageable: Pageable): Page<ChildClass> = cypherQueryBuilderFactory.newBuilder()
+    override fun findAllChildrenByParentId(id: ThingId, pageable: Pageable): Page<ChildClass> = cypherQueryBuilderFactory.newBuilder()
         .withCommonQuery {
             match(
                 node("Class")

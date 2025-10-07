@@ -1,8 +1,8 @@
 package org.orkg.graph.domain
 
-import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.graph.input.ClassHierarchyUseCases
+import org.orkg.graph.input.CreateClassHierarchyUseCase
 import org.orkg.graph.output.ClassHierarchyRepository
 import org.orkg.graph.output.ClassRelationRepository
 import org.orkg.graph.output.ClassRepository
@@ -22,35 +22,34 @@ class ClassHierarchyService(
     private val classRepository: ClassRepository,
     private val clock: Clock,
 ) : ClassHierarchyUseCases {
-    override fun create(userId: ContributorId, parentId: ThingId, childIds: Set<ThingId>, checkIfParentIsLeaf: Boolean) {
-        val parent = classRepository.findById(parentId)
-            .orElseThrow { ClassNotFound.withThingId(parentId) }
-        if (checkIfParentIsLeaf && repository.existsChildren(parentId)) {
-            throw ParentClassAlreadyHasChildren(parentId)
-        }
-        val classRelations = mutableSetOf<ClassSubclassRelation>()
-        for (childId in childIds) {
-            if (childId == parentId) throw InvalidSubclassRelation(childId, parentId)
+    override fun create(command: CreateClassHierarchyUseCase.CreateCommand) {
+        val parent = classRepository.findById(command.parentId)
+            .orElseThrow { ClassNotFound.withThingId(command.parentId) }
+        val classRelations = command.childIds.map { childId ->
+            if (childId == command.parentId) {
+                throw InvalidSubclassRelation(childId, command.parentId)
+            }
             val child = classRepository.findById(childId)
                 .orElseThrow { ClassNotFound.withThingId(childId) }
-            val currentParent = repository.findParentByChildId(childId)
-            if (currentParent.isPresent) throw ParentClassAlreadyExists(childId, parentId)
-            if (repository.existsChild(childId, parentId)) throw InvalidSubclassRelation(childId, parentId)
-
-            val classRelation = ClassSubclassRelation(
-                child,
-                parent,
-                OffsetDateTime.now(clock),
-                userId
+            repository.findParentByChildId(childId).ifPresent {
+                throw ParentClassAlreadyExists(childId, command.parentId)
+            }
+            if (repository.existsChild(childId, command.parentId)) {
+                throw InvalidSubclassRelation(childId, command.parentId)
+            }
+            ClassSubclassRelation(
+                child = child,
+                parent = parent,
+                createdAt = OffsetDateTime.now(clock),
+                createdBy = command.contributorId,
             )
-            classRelations.add(classRelation)
         }
-        relationRepository.saveAll(classRelations)
+        relationRepository.saveAll(classRelations.toSet())
     }
 
-    override fun findAllChildrenByAncestorId(id: ThingId, pageable: Pageable): Page<ChildClass> =
+    override fun findAllChildrenByParentId(id: ThingId, pageable: Pageable): Page<ChildClass> =
         classRepository.findById(id)
-            .map { repository.findAllChildrenByAncestorId(id, pageable) }
+            .map { repository.findAllChildrenByParentId(id, pageable) }
             .orElseThrow { ClassNotFound.withThingId(id) }
 
     override fun findParentByChildId(id: ThingId): Optional<Class> =

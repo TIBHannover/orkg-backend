@@ -2,6 +2,8 @@ package org.orkg.graph.adapter.input.rest
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
+import io.mockk.just
+import io.mockk.runs
 import io.mockk.verify
 import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.DisplayName
@@ -19,6 +21,7 @@ import org.orkg.graph.domain.ParentClassAlreadyExists
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.ClassHierarchyUseCases
 import org.orkg.graph.input.ClassUseCases
+import org.orkg.graph.input.CreateClassHierarchyUseCase
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.fixtures.createClass
@@ -82,7 +85,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
         val childId = ThingId("childId")
         val response = ChildClass(createClass(id = childId), 1)
 
-        every { classHierarchyService.findAllChildrenByAncestorId(parentId, any()) } returns PageImpl(listOf(response))
+        every { classHierarchyService.findAllChildrenByParentId(parentId, any()) } returns PageImpl(listOf(response))
         every { statementService.findAllDescriptionsById(any()) } returns emptyMap()
 
         documentedGetRequestTo("/api/classes/{id}/children", parentId)
@@ -105,7 +108,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { classHierarchyService.findAllChildrenByAncestorId(parentId, any()) }
+        verify(exactly = 1) { classHierarchyService.findAllChildrenByParentId(parentId, any()) }
         verify(exactly = 1) { statementService.findAllDescriptionsById(any()) }
     }
 
@@ -113,14 +116,14 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
     fun `Given a parent class id, when service reports the parent class cannot be found while searching for its children, then status is 404 NOT FOUND`() {
         val parentId = ThingId("parentId")
 
-        every { classHierarchyService.findAllChildrenByAncestorId(parentId, any()) } throws ClassNotFound.withThingId(parentId)
+        every { classHierarchyService.findAllChildrenByParentId(parentId, any()) } throws ClassNotFound.withThingId(parentId)
 
         get("/api/classes/{id}/children", parentId)
             .perform()
             .andExpectErrorStatus(NOT_FOUND)
             .andExpectType("orkg:problem:class_not_found")
 
-        verify(exactly = 1) { classHierarchyService.findAllChildrenByAncestorId(parentId, any()) }
+        verify(exactly = 1) { classHierarchyService.findAllChildrenByParentId(parentId, any()) }
     }
 
     @Test
@@ -265,8 +268,13 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
         val parentId = ThingId("parentId")
         val childId = ThingId("childId")
         val request = mapOf("child_ids" to setOf(childId))
+        val command = CreateClassHierarchyUseCase.CreateCommand(
+            contributorId = ContributorId(MockUserId.CURATOR),
+            parentId = parentId,
+            childIds = setOf(childId)
+        )
 
-        every { classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), true) } returns Unit
+        every { classHierarchyService.create(command) } just runs
 
         documentedPostRequestTo("/api/classes/{id}/children", parentId)
             .content(request)
@@ -288,7 +296,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), true) }
+        verify(exactly = 1) { classHierarchyService.create(command) }
     }
 
     @Test
@@ -297,10 +305,13 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
         val parentId = ThingId("parentId")
         val childId = ThingId("childId")
         val request = mapOf("child_ids" to setOf(childId))
+        val command = CreateClassHierarchyUseCase.CreateCommand(
+            contributorId = ContributorId(MockUserId.CURATOR),
+            parentId = parentId,
+            childIds = setOf(childId)
+        )
 
-        every {
-            classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), true)
-        } throws ClassNotFound.withThingId(childId)
+        every { classHierarchyService.create(command) } throws ClassNotFound.withThingId(childId)
 
         post("/api/classes/{id}/children", parentId)
             .content(request)
@@ -308,7 +319,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
             .andExpectErrorStatus(NOT_FOUND)
             .andExpectType("orkg:problem:class_not_found")
 
-        verify(exactly = 1) { classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), true) }
+        verify(exactly = 1) { classHierarchyService.create(command) }
     }
 
     @Test
@@ -316,10 +327,13 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
     fun `Given a parent class id and a child class id, when service reports input classes are the same, then status is 400 BAD REQUEST`() {
         val classId = ThingId("parentId")
         val request = mapOf("child_ids" to setOf(classId))
+        val command = CreateClassHierarchyUseCase.CreateCommand(
+            contributorId = ContributorId(MockUserId.CURATOR),
+            parentId = classId,
+            childIds = setOf(classId)
+        )
 
-        every {
-            classHierarchyService.create(ContributorId(MockUserId.CURATOR), classId, setOf(classId), true)
-        } throws InvalidSubclassRelation(classId, classId)
+        every { classHierarchyService.create(command) } throws InvalidSubclassRelation(classId, classId)
 
         post("/api/classes/{id}/children", classId)
             .content(request)
@@ -327,7 +341,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
             .andExpectErrorStatus(BAD_REQUEST)
             .andExpectType("orkg:problem:invalid_subclass_relation")
 
-        verify(exactly = 1) { classHierarchyService.create(ContributorId(MockUserId.CURATOR), classId, setOf(classId), true) }
+        verify(exactly = 1) { classHierarchyService.create(command) }
     }
 
     @Test
@@ -337,10 +351,13 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
         val otherParentId = ThingId("other")
         val childId = ThingId("childId")
         val request = mapOf("child_ids" to setOf(childId))
+        val command = CreateClassHierarchyUseCase.CreateCommand(
+            contributorId = ContributorId(MockUserId.CURATOR),
+            parentId = parentId,
+            childIds = setOf(childId)
+        )
 
-        every {
-            classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), true)
-        } throws ParentClassAlreadyExists(childId, otherParentId)
+        every { classHierarchyService.create(command) } throws ParentClassAlreadyExists(childId, otherParentId)
 
         post("/api/classes/{id}/children", parentId)
             .content(request)
@@ -348,7 +365,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
             .andExpectErrorStatus(BAD_REQUEST)
             .andExpectType("orkg:problem:parent_class_already_exists")
 
-        verify(exactly = 1) { classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), true) }
+        verify(exactly = 1) { classHierarchyService.create(command) }
     }
 
     @Test
@@ -358,8 +375,13 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
         val parentId = ThingId("parentId")
         val childId = ThingId("childId")
         val request = mapOf("child_ids" to setOf(childId))
+        val command = CreateClassHierarchyUseCase.CreateCommand(
+            contributorId = ContributorId(MockUserId.CURATOR),
+            parentId = parentId,
+            childIds = setOf(childId)
+        )
 
-        every { classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), false) } returns Unit
+        every { classHierarchyService.create(command) } returns Unit
 
         documentedPatchRequestTo("/api/classes/{id}/children", parentId)
             .content(request)
@@ -381,14 +403,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) {
-            classHierarchyService.create(
-                ContributorId(MockUserId.CURATOR),
-                parentId,
-                setOf(childId),
-                false
-            )
-        }
+        verify(exactly = 1) { classHierarchyService.create(command) }
     }
 
     @Test
@@ -397,10 +412,13 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
         val parentId = ThingId("parentId")
         val childId = ThingId("childId")
         val request = mapOf("child_ids" to setOf(childId))
+        val command = CreateClassHierarchyUseCase.CreateCommand(
+            contributorId = ContributorId(MockUserId.CURATOR),
+            parentId = parentId,
+            childIds = setOf(childId)
+        )
 
-        every {
-            classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), false)
-        } throws ClassNotFound.withThingId(childId)
+        every { classHierarchyService.create(command) } throws ClassNotFound.withThingId(childId)
 
         patch("/api/classes/{id}/children", parentId)
             .content(request)
@@ -408,7 +426,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
             .andExpectErrorStatus(NOT_FOUND)
             .andExpectType("orkg:problem:class_not_found")
 
-        verify(exactly = 1) { classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), false) }
+        verify(exactly = 1) { classHierarchyService.create(command) }
     }
 
     @Test
@@ -416,10 +434,13 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
     fun `Given a parent class id and a child class id, when service reports input classes are the same for a patch request, then status is 400 BAD REQUEST`() {
         val classId = ThingId("parentId")
         val request = mapOf("child_ids" to setOf(classId))
+        val command = CreateClassHierarchyUseCase.CreateCommand(
+            contributorId = ContributorId(MockUserId.CURATOR),
+            parentId = classId,
+            childIds = setOf(classId)
+        )
 
-        every {
-            classHierarchyService.create(ContributorId(MockUserId.CURATOR), classId, setOf(classId), false)
-        } throws InvalidSubclassRelation(classId, classId)
+        every { classHierarchyService.create(command) } throws InvalidSubclassRelation(classId, classId)
 
         patch("/api/classes/{id}/children", classId)
             .content(request)
@@ -427,7 +448,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
             .andExpectErrorStatus(BAD_REQUEST)
             .andExpectType("orkg:problem:invalid_subclass_relation")
 
-        verify(exactly = 1) { classHierarchyService.create(ContributorId(MockUserId.CURATOR), classId, setOf(classId), false) }
+        verify(exactly = 1) { classHierarchyService.create(command) }
     }
 
     @Test
@@ -437,10 +458,13 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
         val otherParentId = ThingId("other")
         val childId = ThingId("childId")
         val request = mapOf("child_ids" to setOf(childId))
+        val command = CreateClassHierarchyUseCase.CreateCommand(
+            contributorId = ContributorId(MockUserId.CURATOR),
+            parentId = parentId,
+            childIds = setOf(childId)
+        )
 
-        every {
-            classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), false)
-        } throws ParentClassAlreadyExists(childId, otherParentId)
+        every { classHierarchyService.create(command) } throws ParentClassAlreadyExists(childId, otherParentId)
 
         patch("/api/classes/{id}/children", parentId)
             .content(request)
@@ -448,7 +472,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
             .andExpectErrorStatus(BAD_REQUEST)
             .andExpectType("orkg:problem:parent_class_already_exists")
 
-        verify(exactly = 1) { classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), false) }
+        verify(exactly = 1) { classHierarchyService.create(command) }
     }
 
     @Test
@@ -497,8 +521,13 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
         val parentId = ThingId("parentId")
         val childId = ThingId("childId")
         val request = mapOf("parent_id" to parentId)
+        val command = CreateClassHierarchyUseCase.CreateCommand(
+            contributorId = ContributorId(MockUserId.CURATOR),
+            parentId = parentId,
+            childIds = setOf(childId)
+        )
 
-        every { classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), false) } returns Unit
+        every { classHierarchyService.create(command) } returns Unit
 
         documentedPostRequestTo("/api/classes/{id}/parent", childId)
             .content(request)
@@ -520,7 +549,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), false) }
+        verify(exactly = 1) { classHierarchyService.create(command) }
     }
 
     @Test
@@ -529,10 +558,13 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
         val parentId = ThingId("parentId")
         val childId = ThingId("childId")
         val request = mapOf("parent_id" to parentId)
+        val command = CreateClassHierarchyUseCase.CreateCommand(
+            contributorId = ContributorId(MockUserId.CURATOR),
+            parentId = parentId,
+            childIds = setOf(childId)
+        )
 
-        every {
-            classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), false)
-        } throws ClassNotFound.withThingId(childId)
+        every { classHierarchyService.create(command) } throws ClassNotFound.withThingId(childId)
 
         post("/api/classes/{id}/parent", childId)
             .content(request)
@@ -540,7 +572,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
             .andExpectErrorStatus(NOT_FOUND)
             .andExpectType("orkg:problem:class_not_found")
 
-        verify(exactly = 1) { classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), false) }
+        verify(exactly = 1) { classHierarchyService.create(command) }
     }
 
     @Test
@@ -548,10 +580,13 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
     fun `Given a child class id and a parent class id, when service reports input classes are the same, then status is 400 BAD REQUEST`() {
         val classId = ThingId("parentId")
         val request = mapOf("parent_id" to classId)
+        val command = CreateClassHierarchyUseCase.CreateCommand(
+            contributorId = ContributorId(MockUserId.CURATOR),
+            parentId = classId,
+            childIds = setOf(classId)
+        )
 
-        every {
-            classHierarchyService.create(ContributorId(MockUserId.CURATOR), classId, setOf(classId), false)
-        } throws InvalidSubclassRelation(classId, classId)
+        every { classHierarchyService.create(command) } throws InvalidSubclassRelation(classId, classId)
 
         post("/api/classes/{id}/parent", classId)
             .content(request)
@@ -559,7 +594,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
             .andExpectErrorStatus(BAD_REQUEST)
             .andExpectType("orkg:problem:invalid_subclass_relation")
 
-        verify(exactly = 1) { classHierarchyService.create(ContributorId(MockUserId.CURATOR), classId, setOf(classId), false) }
+        verify(exactly = 1) { classHierarchyService.create(command) }
     }
 
     @Test
@@ -569,10 +604,13 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
         val otherParentId = ThingId("other")
         val childId = ThingId("childId")
         val request = mapOf("parent_id" to parentId)
+        val command = CreateClassHierarchyUseCase.CreateCommand(
+            contributorId = ContributorId(MockUserId.CURATOR),
+            parentId = parentId,
+            childIds = setOf(childId)
+        )
 
-        every {
-            classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), false)
-        } throws ParentClassAlreadyExists(childId, otherParentId)
+        every { classHierarchyService.create(command) } throws ParentClassAlreadyExists(childId, otherParentId)
 
         post("/api/classes/{id}/parent", childId)
             .content(request)
@@ -580,7 +618,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
             .andExpectErrorStatus(BAD_REQUEST)
             .andExpectType("orkg:problem:parent_class_already_exists")
 
-        verify(exactly = 1) { classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), false) }
+        verify(exactly = 1) { classHierarchyService.create(command) }
     }
 
     @Test

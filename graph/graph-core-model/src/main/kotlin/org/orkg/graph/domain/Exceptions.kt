@@ -437,13 +437,6 @@ class ParentClassAlreadyExists(
         ),
     )
 
-class ParentClassAlreadyHasChildren(id: ThingId) :
-    SimpleMessageException(
-        HttpStatus.BAD_REQUEST,
-        """The class "$id" already has one or more child classes.""",
-        properties = mapOf("class_id" to id),
-    )
-
 class NeitherOwnerNorCurator private constructor(
     status: HttpStatus,
     override val message: String,

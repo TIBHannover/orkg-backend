@@ -15,7 +15,7 @@ interface ClassHierarchyUseCases :
     DeleteClassHierarchyUseCase
 
 interface RetrieveClassHierarchyUseCase {
-    fun findAllChildrenByAncestorId(id: ThingId, pageable: Pageable): Page<ChildClass>
+    fun findAllChildrenByParentId(id: ThingId, pageable: Pageable): Page<ChildClass>
 
     fun findParentByChildId(id: ThingId): Optional<Class>
 
@@ -29,7 +29,13 @@ interface RetrieveClassHierarchyUseCase {
 }
 
 interface CreateClassHierarchyUseCase {
-    fun create(userId: ContributorId, parentId: ThingId, childIds: Set<ThingId>, checkIfParentIsLeaf: Boolean)
+    fun create(command: CreateCommand)
+
+    data class CreateCommand(
+        val contributorId: ContributorId,
+        val parentId: ThingId,
+        val childIds: Set<ThingId>,
+    )
 }
 
 interface DeleteClassHierarchyUseCase {

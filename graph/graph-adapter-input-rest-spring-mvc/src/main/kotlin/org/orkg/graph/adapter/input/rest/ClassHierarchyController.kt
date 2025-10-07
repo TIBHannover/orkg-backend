@@ -9,6 +9,7 @@ import org.orkg.common.contributorId
 import org.orkg.graph.adapter.input.rest.mapping.ChildClassRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.mapping.ClassHierarchyEntryRepresentationAdapter
 import org.orkg.graph.input.ClassHierarchyUseCases
+import org.orkg.graph.input.CreateClassHierarchyUseCase
 import org.orkg.graph.input.StatementUseCases
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -36,11 +37,11 @@ class ClassHierarchyController(
 ) : ClassHierarchyEntryRepresentationAdapter,
     ChildClassRepresentationAdapter {
     @GetMapping("/{id}/children")
-    fun findAllChildrenByAncestorId(
+    fun findAllChildrenByParentId(
         @PathVariable id: ThingId,
         pageable: Pageable,
     ): Page<ChildClassRepresentation> =
-        service.findAllChildrenByAncestorId(id, pageable).mapToChildClassRepresentation()
+        service.findAllChildrenByParentId(id, pageable).mapToChildClassRepresentation()
 
     @GetMapping("/{id}/parent")
     fun findParentByChildId(
@@ -63,11 +64,17 @@ class ClassHierarchyController(
     @RequireCuratorRole
     fun createParentRelation(
         @PathVariable id: ThingId,
-        @RequestBody request: CreateParentRequest,
+        @RequestBody request: CreateParentRelationRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         currentUser: Authentication?,
     ): ResponseEntity<Any> {
-        service.create(currentUser.contributorId(), request.parentId, setOf(id), false)
+        service.create(
+            CreateClassHierarchyUseCase.CreateCommand(
+                contributorId = currentUser.contributorId(),
+                parentId = request.parentId,
+                childIds = setOf(id),
+            )
+        )
         val location = uriComponentsBuilder
             .path("/api/classes/{id}/parent")
             .buildAndExpand(id)
@@ -92,11 +99,17 @@ class ClassHierarchyController(
     @RequireCuratorRole
     fun createChildRelations(
         @PathVariable id: ThingId,
-        @RequestBody @Valid request: CreateChildrenRequest,
+        @RequestBody @Valid request: CreateChildRelationsRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         currentUser: Authentication?,
     ): ResponseEntity<Any> {
-        service.create(currentUser.contributorId(), id, request.childIds, true)
+        service.create(
+            CreateClassHierarchyUseCase.CreateCommand(
+                contributorId = currentUser.contributorId(),
+                parentId = id,
+                childIds = request.childIds,
+            )
+        )
         val location = uriComponentsBuilder
             .path("/api/classes/{id}/children")
             .buildAndExpand(id)
@@ -108,11 +121,18 @@ class ClassHierarchyController(
     @RequireCuratorRole
     fun updateChildRelations(
         @PathVariable id: ThingId,
-        @RequestBody @Valid request: CreateChildrenRequest,
+        @RequestBody @Valid request: UpdateChildRelationsRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         currentUser: Authentication?,
     ): ResponseEntity<Any> {
-        service.create(currentUser.contributorId(), id, request.childIds, false)
+        // Since we are using PATCH semantics, we only create new relations
+        service.create(
+            CreateClassHierarchyUseCase.CreateCommand(
+                contributorId = currentUser.contributorId(),
+                parentId = id,
+                childIds = request.childIds,
+            )
+        )
         val location = uriComponentsBuilder
             .path("/api/classes/{id}/children")
             .buildAndExpand(id)
@@ -133,14 +153,20 @@ class ClassHierarchyController(
     ): Page<ClassHierarchyEntryRepresentation> =
         service.findClassHierarchy(id, pageable).mapToClassHierarchyEntryRepresentation()
 
-    data class CreateChildrenRequest(
+    data class CreateChildRelationsRequest(
         @field:Size(min = 1)
-        @JsonProperty("child_ids")
+        @param:JsonProperty("child_ids")
         val childIds: Set<ThingId>,
     )
 
-    data class CreateParentRequest(
-        @JsonProperty("parent_id")
+    data class UpdateChildRelationsRequest(
+        @field:Size(min = 1)
+        @param:JsonProperty("child_ids")
+        val childIds: Set<ThingId>,
+    )
+
+    data class CreateParentRelationRequest(
+        @param:JsonProperty("parent_id")
         val parentId: ThingId,
     )
 }

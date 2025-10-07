@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable
 import java.util.Optional
 
 interface ClassHierarchyRepository {
-    fun findAllChildrenByAncestorId(id: ThingId, pageable: Pageable): Page<ChildClass>
+    fun findAllChildrenByParentId(id: ThingId, pageable: Pageable): Page<ChildClass>
 
     fun findParentByChildId(id: ThingId): Optional<Class>
 

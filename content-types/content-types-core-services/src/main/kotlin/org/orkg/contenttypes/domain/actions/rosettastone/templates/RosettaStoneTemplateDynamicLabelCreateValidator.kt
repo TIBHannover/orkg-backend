@@ -1,14 +1,14 @@
 package org.orkg.contenttypes.domain.actions.rosettastone.templates
 
-import org.orkg.contenttypes.domain.MissingFormattedLabelPlaceholder
+import org.orkg.contenttypes.domain.MissingDynamicLabelPlaceholder
 import org.orkg.contenttypes.domain.actions.CreateRosettaStoneTemplateCommand
 import org.orkg.contenttypes.domain.actions.rosettastone.templates.CreateRosettaStoneTemplateAction.State
 
-class RosettaStoneTemplateFormattedLabelCreateValidator : CreateRosettaStoneTemplateAction {
+class RosettaStoneTemplateDynamicLabelCreateValidator : CreateRosettaStoneTemplateAction {
     override fun invoke(command: CreateRosettaStoneTemplateCommand, state: State): State {
         command.properties.forEachIndexed { index, _ ->
-            if (!command.formattedLabel.value.contains("{$index}")) {
-                throw MissingFormattedLabelPlaceholder(index)
+            if (!command.dynamicLabel.template.contains("{$index}")) {
+                throw MissingDynamicLabelPlaceholder(index)
             }
         }
         return state

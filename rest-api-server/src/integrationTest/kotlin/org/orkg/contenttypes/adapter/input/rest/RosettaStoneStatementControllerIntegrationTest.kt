@@ -42,8 +42,8 @@ import org.orkg.createPredicates
 import org.orkg.createResource
 import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.DynamicLabel
 import org.orkg.graph.domain.ExtractionMethod
-import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.Literal
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicate
@@ -214,7 +214,7 @@ internal class RosettaStoneStatementControllerIntegrationTest : MockMvcBaseTest(
             it.classId shouldNotBe null
             it.versionId shouldNotBe id
             it.latestVersion shouldBe id
-            it.formattedLabel shouldBe "{0} {1} {2} {3} {4} {5}"
+            it.dynamicLabel shouldBe DynamicLabel("{0} {1} {2} {3} {4} {5}")
             it.subjects.asClue { subjects ->
                 subjects.size shouldBe 3
                 subjects[0] shouldBe ResourceReferenceRepresentation(ThingId("R258"), "label", setOf(ThingId("C28")))
@@ -304,11 +304,12 @@ internal class RosettaStoneStatementControllerIntegrationTest : MockMvcBaseTest(
                 templateTargetClassId shouldNotBe null
                 templateTargetClassId shouldBe rosettaStoneStatement.classId
             }
-            it.label shouldBe ""
+            it.label shouldBe "label, label and Updated Subject Resource hasResult, label and updated new class 9876543210 and 123456 4 and 5 some updated literal value and custom type label, label and list"
             it.versions.size shouldBe 2
             it.versions[0].asClue { version ->
                 version.id shouldBe rosettaStoneStatement.versionId
-                version.formattedLabel shouldBe FormattedLabel.of("{0} {1} {2} {3} {4} {5}")
+                version.label shouldBe "label, label and Subject Resource label, hasResult and new class 123456 and 0123456789 5 and 1 custom type and some literal value label, label and list"
+                version.dynamicLabel shouldBe DynamicLabel("{0} {1} {2} {3} {4} {5}")
                 version.subjects.asClue { subjects ->
                     subjects.size shouldBe 3
                     subjects[0].shouldBeInstanceOf<Resource>().asClue { subject ->
@@ -413,7 +414,8 @@ internal class RosettaStoneStatementControllerIntegrationTest : MockMvcBaseTest(
             }
             it.versions[1].asClue { version ->
                 version.id shouldNotBe updatedId
-                version.formattedLabel shouldBe FormattedLabel.of("{0} {1} {2} {3} {4} {5}")
+                version.label shouldBe "label, label and Updated Subject Resource hasResult, label and updated new class 9876543210 and 123456 4 and 5 some updated literal value and custom type label, label and list"
+                version.dynamicLabel shouldBe DynamicLabel("{0} {1} {2} {3} {4} {5}")
                 version.subjects.asClue { subjects ->
                     subjects.size shouldBe 3
                     subjects[0].shouldBeInstanceOf<Resource>().asClue { subject ->
@@ -530,7 +532,7 @@ internal class RosettaStoneStatementControllerIntegrationTest : MockMvcBaseTest(
             contributorId = ContributorId(MockUserId.USER),
             label = "rosetta stone template",
             description = "rosetta stone template description",
-            formattedLabel = FormattedLabel.of("{0} {1} {2} {3} {4} {5}"),
+            dynamicLabel = DynamicLabel("{0} {1} {2} {3} {4} {5}"),
             exampleUsage = "example statement usage",
             properties = listOf(
                 ResourcePropertyCommand(

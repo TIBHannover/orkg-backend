@@ -903,13 +903,13 @@ class MissingPropertyPlaceholder(index: Int) :
         properties = mapOf("input_position_index" to index)
     )
 
-class MissingFormattedLabelPlaceholder : SimpleMessageException {
+class MissingDynamicLabelPlaceholder : SimpleMessageException {
     constructor(index: Int, placeholder: String? = null) : super(
         HttpStatus.BAD_REQUEST,
         if (placeholder == null) {
-            """Missing formatted label placeholder "{$index}"."""
+            """Missing dynamic label placeholder "{$index}"."""
         } else {
-            """Missing formatted label placeholder for input position "$placeholder"."""
+            """Missing dynamic label placeholder for input position "$placeholder"."""
         },
         properties = mapOf(
             "input_position_index" to index,
@@ -921,31 +921,31 @@ class MissingFormattedLabelPlaceholder : SimpleMessageException {
 class RosettaStoneTemplateLabelMustStartWithPreviousVersion :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """The updated formatted label must start with the previous label."""
+        """The updated dynamic label must start with the previous label."""
     )
 
 class TooManyNewRosettaStoneTemplateLabelSections :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Too many new formatted label sections. Must be exactly one optional section per new template property."""
+        """Too many new dynamic label sections. Must be exactly one optional section per new template property."""
     )
 
 class RosettaStoneTemplateLabelUpdateRequiresNewTemplateProperties :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """The formatted label can only be updated in combination with the addition of new template properties."""
+        """The dynamic label can only be updated in combination with the addition of new template properties."""
     )
 
 class NewRosettaStoneTemplateLabelSectionsMustBeOptional :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """New sections of the formatted label must be optional."""
+        """New sections of the dynamic label must be optional."""
     )
 
 class RosettaStoneTemplateLabelMustBeUpdated :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """The formatted label must be updated when updating template properties."""
+        """The dynamic label must be updated when updating template properties."""
     )
 
 class NewRosettaStoneTemplateExampleUsageMustStartWithPreviousExampleUsage :

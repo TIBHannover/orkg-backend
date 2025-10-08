@@ -18,7 +18,7 @@ import org.orkg.graph.adapter.output.neo4j.toResource
 import org.orkg.graph.adapter.output.neo4j.toThing
 import org.orkg.graph.adapter.output.neo4j.toThingId
 import org.orkg.graph.domain.Classes
-import org.orkg.graph.domain.FormattedLabel
+import org.orkg.graph.domain.DynamicLabel
 import org.orkg.graph.domain.Thing
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
@@ -68,7 +68,8 @@ data class RosettaStoneStatementMapper(
                 }
                 metadata["version"].asLong() to RosettaStoneStatementVersion(
                     id = node.id,
-                    formattedLabel = FormattedLabel.of(metadata["formatted_label"].asString()),
+                    label = node.label,
+                    dynamicLabel = DynamicLabel(metadata["dynamic_label"].asString()),
                     subjects = subjects,
                     objects = objects,
                     createdAt = node.createdAt,

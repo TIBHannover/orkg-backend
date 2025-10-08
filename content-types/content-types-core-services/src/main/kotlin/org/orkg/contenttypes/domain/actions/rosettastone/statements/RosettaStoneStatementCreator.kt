@@ -16,11 +16,18 @@ class RosettaStoneStatementCreator(
     private val clock: Clock = Clock.systemDefaultZone(),
 ) : CreateRosettaStoneStatementAction {
     override fun invoke(command: CreateRosettaStoneStatementCommand, state: State): State {
+        val dynamicLabel = state.rosettaStoneTemplate!!.dynamicLabel
+        val subjects = command.subjects.map { state.resolve(it) }
+        val objects = command.objects.map { objects -> objects.map { state.resolve(it) } }
+        val values = (listOf(subjects) + objects)
+            .mapIndexed { index, values -> index.toString() to values.map { it.label } }
+            .toMap()
         val version = RosettaStoneStatementVersion(
             id = rosettaStoneStatementRepository.nextIdentity(),
-            formattedLabel = state.rosettaStoneTemplate!!.formattedLabel,
-            subjects = command.subjects.map { state.resolve(it) },
-            objects = command.objects.map { objects -> objects.map { state.resolve(it) } },
+            label = dynamicLabel.render(values),
+            dynamicLabel = dynamicLabel,
+            subjects = subjects,
+            objects = objects,
             createdAt = OffsetDateTime.now(clock),
             createdBy = command.contributorId,
             certainty = command.certainty,
@@ -36,7 +43,7 @@ class RosettaStoneStatementCreator(
             contextId = command.context,
             templateId = command.templateId,
             templateTargetClassId = state.rosettaStoneTemplate.targetClass,
-            label = "", // empty label, because we do want the underlying resource to be findable via resource search endpoints
+            label = version.label,
             versions = listOf(version),
             observatories = command.observatories,
             organizations = command.organizations,

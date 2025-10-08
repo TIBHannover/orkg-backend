@@ -11,7 +11,7 @@ import org.orkg.contenttypes.domain.ResourceTemplateProperty
 import org.orkg.contenttypes.domain.RosettaStoneTemplate
 import org.orkg.contenttypes.domain.StringLiteralTemplateProperty
 import org.orkg.graph.domain.Classes
-import org.orkg.graph.domain.FormattedLabel
+import org.orkg.graph.domain.DynamicLabel
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Visibility
@@ -21,7 +21,7 @@ fun createRosettaStoneTemplate() = RosettaStoneTemplate(
     id = ThingId("R21325"),
     label = "Dummy Rosetta Stone Template Label",
     description = "Some description about the rosetta stone template",
-    formattedLabel = FormattedLabel.of("{P32}"),
+    dynamicLabel = DynamicLabel("{P32}"),
     targetClass = ThingId("targetClass"),
     exampleUsage = "example sentence of the statement",
     properties = listOf(

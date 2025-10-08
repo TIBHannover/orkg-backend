@@ -35,7 +35,7 @@ import org.orkg.createOrganization
 import org.orkg.createPredicates
 import org.orkg.createResource
 import org.orkg.graph.domain.Classes
-import org.orkg.graph.domain.FormattedLabel
+import org.orkg.graph.domain.DynamicLabel
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Visibility
@@ -197,7 +197,7 @@ internal class RosettaStoneTemplateControllerIntegrationTest : MockMvcBaseTest("
             it.id shouldBe id
             it.label shouldBe "rosetta stone template"
             it.description shouldBe "rosetta stone template description"
-            it.formattedLabel shouldBe "{0} {1} {2} {3} {4} {5}"
+            it.dynamicLabel shouldBe DynamicLabel("{0} {1} {2} {3} {4} {5}")
             it.exampleUsage shouldBe "example statement usage"
             it.targetClass shouldNotBe null
             it.properties.size shouldBe 6
@@ -304,7 +304,7 @@ internal class RosettaStoneTemplateControllerIntegrationTest : MockMvcBaseTest("
             it.id shouldBe id
             it.label shouldBe "updated rosetta stone template"
             it.description shouldBe "updated rosetta stone template description"
-            it.formattedLabel shouldBe FormattedLabel.of("updated {0} {1} {2} {3} {4} {5}")
+            it.dynamicLabel shouldBe DynamicLabel("updated {0} {1} {2} {3} {4} {5}")
             it.exampleUsage shouldBe "updated example statement usage"
             it.targetClass shouldBe rosettaStoneTemplate.targetClass
             it.properties.size shouldBe 6

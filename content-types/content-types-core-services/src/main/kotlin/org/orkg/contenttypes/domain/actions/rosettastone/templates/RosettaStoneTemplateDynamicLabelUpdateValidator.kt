@@ -1,6 +1,6 @@
 package org.orkg.contenttypes.domain.actions.rosettastone.templates
 
-import org.orkg.contenttypes.domain.MissingFormattedLabelPlaceholder
+import org.orkg.contenttypes.domain.MissingDynamicLabelPlaceholder
 import org.orkg.contenttypes.domain.NewRosettaStoneTemplateLabelSectionsMustBeOptional
 import org.orkg.contenttypes.domain.RosettaStoneTemplateLabelMustBeUpdated
 import org.orkg.contenttypes.domain.RosettaStoneTemplateLabelMustStartWithPreviousVersion
@@ -10,16 +10,15 @@ import org.orkg.contenttypes.domain.TooManyNewRosettaStoneTemplateLabelSections
 import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneTemplateCommand
 import org.orkg.contenttypes.domain.actions.rosettastone.templates.UpdateRosettaStoneTemplateAction.State
 import org.orkg.contenttypes.input.TemplatePropertyCommand
-import org.orkg.graph.domain.DynamicLabel
 import org.orkg.graph.domain.DynamicLabel.PlaceholderComponent
 import org.orkg.graph.domain.DynamicLabel.SectionComponent
 import org.orkg.graph.domain.DynamicLabel.TextComponent
 
-class RosettaStoneTemplateFormattedLabelUpdateValidator : UpdateRosettaStoneTemplateAction {
+class RosettaStoneTemplateDynamicLabelUpdateValidator : UpdateRosettaStoneTemplateAction {
     override fun invoke(command: UpdateRosettaStoneTemplateCommand, state: State): State {
-        if (command.formattedLabel != null && command.formattedLabel != state.rosettaStoneTemplate!!.formattedLabel) {
+        if (command.dynamicLabel != null && command.dynamicLabel != state.rosettaStoneTemplate!!.dynamicLabel) {
             val properties = command.properties ?: state.rosettaStoneTemplate.properties
-            val newDynamicLabel = DynamicLabel(command.formattedLabel!!.value)
+            val newDynamicLabel = command.dynamicLabel!!
             val keys = newDynamicLabel.components.mapNotNullTo(mutableSetOf()) { component ->
                 when (component) {
                     is PlaceholderComponent -> component.key
@@ -38,13 +37,13 @@ class RosettaStoneTemplateFormattedLabelUpdateValidator : UpdateRosettaStoneTemp
                         else -> null
                     }
                 }
-                throw MissingFormattedLabelPlaceholder(propertyIndex, placeholder)
+                throw MissingDynamicLabelPlaceholder(propertyIndex, placeholder)
             }
             if (state.isUsedInRosettaStoneStatement) {
                 if (command.properties == null || command.properties!!.size <= state.rosettaStoneTemplate.properties.size) {
                     throw RosettaStoneTemplateLabelUpdateRequiresNewTemplateProperties()
                 }
-                val oldDynamicLabel = DynamicLabel(state.rosettaStoneTemplate.formattedLabel.value)
+                val oldDynamicLabel = state.rosettaStoneTemplate.dynamicLabel
                 if (newDynamicLabel.components.size < oldDynamicLabel.components.size) {
                     throw RosettaStoneTemplateLabelMustStartWithPreviousVersion()
                 }

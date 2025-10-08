@@ -8,7 +8,7 @@ import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
-class RosettaStoneTemplateFormattedLabelCreator(
+class RosettaStoneTemplateDynamicLabelCreator(
     private val unsafeLiteralUseCases: UnsafeLiteralUseCases,
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
 ) : CreateRosettaStoneTemplateAction {
@@ -16,7 +16,7 @@ class RosettaStoneTemplateFormattedLabelCreator(
         val literalId = unsafeLiteralUseCases.create(
             CreateLiteralUseCase.CreateCommand(
                 contributorId = command.contributorId,
-                label = command.formattedLabel.value
+                label = command.dynamicLabel.template
             )
         )
         unsafeStatementUseCases.create(

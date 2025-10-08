@@ -7,7 +7,7 @@ import org.orkg.contenttypes.domain.InvalidObjectPositionPath
 import org.orkg.contenttypes.domain.InvalidSubjectPositionCardinality
 import org.orkg.contenttypes.domain.InvalidSubjectPositionPath
 import org.orkg.contenttypes.domain.InvalidSubjectPositionType
-import org.orkg.contenttypes.domain.MissingFormattedLabelPlaceholder
+import org.orkg.contenttypes.domain.MissingDynamicLabelPlaceholder
 import org.orkg.contenttypes.domain.MissingPropertyPlaceholder
 import org.orkg.contenttypes.domain.MissingSubjectPosition
 import org.orkg.contenttypes.domain.NewRosettaStoneTemplateExampleUsageMustStartWithPreviousExampleUsage
@@ -158,13 +158,13 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
     }
 
     @Test
-    fun missingFormattedLabelPlaceholder_withIndex() {
-        val type = "orkg:problem:missing_formatted_label_placeholder"
-        documentedGetRequestTo(MissingFormattedLabelPlaceholder(4))
+    fun missingDynamicLabelPlaceholder_withIndex() {
+        val type = "orkg:problem:missing_dynamic_label_placeholder"
+        documentedGetRequestTo(MissingDynamicLabelPlaceholder(4))
             .andExpectErrorStatus(BAD_REQUEST)
             .andExpectType(type)
             .andExpectTitle("Bad Request")
-            .andExpectDetail("""Missing formatted label placeholder "{4}".""")
+            .andExpectDetail("""Missing dynamic label placeholder "{4}".""")
             .andExpect(jsonPath("$.input_position_index").value("4"))
             .andDo(
                 documentationHandler.document(
@@ -177,12 +177,12 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
     }
 
     @Test
-    fun missingFormattedLabelPlaceholder_withPlaceholder() {
-        get(MissingFormattedLabelPlaceholder(4, "4"))
+    fun missingDynamicLabelPlaceholder_withPlaceholder() {
+        get(MissingDynamicLabelPlaceholder(4, "4"))
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:missing_formatted_label_placeholder")
+            .andExpectType("orkg:problem:missing_dynamic_label_placeholder")
             .andExpectTitle("Bad Request")
-            .andExpectDetail("""Missing formatted label placeholder for input position "4".""")
+            .andExpectDetail("""Missing dynamic label placeholder for input position "4".""")
             .andExpect(jsonPath("$.input_position_index").value("4"))
             .andExpect(jsonPath("$.input_position_placeholder").value("4"))
     }
@@ -194,7 +194,7 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
             .andExpectErrorStatus(BAD_REQUEST)
             .andExpectType(type)
             .andExpectTitle("Bad Request")
-            .andExpectDetail("""The updated formatted label must start with the previous label.""")
+            .andExpectDetail("""The updated dynamic label must start with the previous label.""")
             .andDocumentWithDefaultExceptionResponseFields(type)
     }
 
@@ -205,7 +205,7 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
             .andExpectErrorStatus(BAD_REQUEST)
             .andExpectType(type)
             .andExpectTitle("Bad Request")
-            .andExpectDetail("""Too many new formatted label sections. Must be exactly one optional section per new template property.""")
+            .andExpectDetail("""Too many new dynamic label sections. Must be exactly one optional section per new template property.""")
             .andDocumentWithDefaultExceptionResponseFields(type)
     }
 
@@ -216,7 +216,7 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
             .andExpectErrorStatus(BAD_REQUEST)
             .andExpectType(type)
             .andExpectTitle("Bad Request")
-            .andExpectDetail("""The formatted label can only be updated in combination with the addition of new template properties.""")
+            .andExpectDetail("""The dynamic label can only be updated in combination with the addition of new template properties.""")
             .andDocumentWithDefaultExceptionResponseFields(type)
     }
 
@@ -227,7 +227,7 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
             .andExpectErrorStatus(BAD_REQUEST)
             .andExpectType(type)
             .andExpectTitle("Bad Request")
-            .andExpectDetail("""New sections of the formatted label must be optional.""")
+            .andExpectDetail("""New sections of the dynamic label must be optional.""")
             .andDocumentWithDefaultExceptionResponseFields(type)
     }
 
@@ -238,7 +238,7 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
             .andExpectErrorStatus(BAD_REQUEST)
             .andExpectType(type)
             .andExpectTitle("Bad Request")
-            .andExpectDetail("""The formatted label must be updated when updating template properties.""")
+            .andExpectDetail("""The dynamic label must be updated when updating template properties.""")
             .andDocumentWithDefaultExceptionResponseFields(type)
     }
 

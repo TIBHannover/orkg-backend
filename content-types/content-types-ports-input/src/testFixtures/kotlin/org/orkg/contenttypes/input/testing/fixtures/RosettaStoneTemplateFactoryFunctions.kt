@@ -13,14 +13,14 @@ import org.orkg.contenttypes.input.StringLiteralPropertyCommand
 import org.orkg.contenttypes.input.UntypedPropertyCommand
 import org.orkg.contenttypes.input.UpdateRosettaStoneTemplateUseCase
 import org.orkg.graph.domain.Classes
-import org.orkg.graph.domain.FormattedLabel
+import org.orkg.graph.domain.DynamicLabel
 import org.orkg.graph.domain.Predicates
 
 fun createRosettaStoneTemplateCommand() = CreateRosettaStoneTemplateUseCase.CreateCommand(
     contributorId = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
     label = "Dummy Rosetta Stone Template Label",
     description = "Some description about the rosetta stone template",
-    formattedLabel = FormattedLabel.of("{0} {1} {2} {3} {4} {5}"),
+    dynamicLabel = DynamicLabel("{0} {1} {2} {3} {4} {5}"),
     exampleUsage = "example sentence of the statement",
     properties = listOf(
         createSubjectPositionTemplatePropertyCommand(),
@@ -45,7 +45,7 @@ fun updateRosettaStoneTemplateCommand() = UpdateRosettaStoneTemplateUseCase.Upda
     contributorId = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
     label = "Updated dummy Rosetta Stone Template Label",
     description = "Updated description about the rosetta stone template",
-    formattedLabel = FormattedLabel.of("Updated {0} {1} {2} {3} {4} {5}"),
+    dynamicLabel = DynamicLabel("Updated {0} {1} {2} {3} {4} {5}"),
     exampleUsage = "updated example sentence of the statement",
     properties = listOf(
         createSubjectPositionTemplatePropertyCommand(),

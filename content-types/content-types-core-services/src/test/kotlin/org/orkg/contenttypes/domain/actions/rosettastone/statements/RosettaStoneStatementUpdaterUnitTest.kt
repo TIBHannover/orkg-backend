@@ -19,6 +19,7 @@ import org.orkg.contenttypes.input.testing.fixtures.from
 import org.orkg.contenttypes.input.testing.fixtures.updateRosettaStoneStatementCommand
 import org.orkg.contenttypes.output.RosettaStoneStatementRepository
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.DynamicLabel
 import org.orkg.graph.output.ThingRepository
 import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createLiteral
@@ -45,8 +46,9 @@ internal class RosettaStoneStatementUpdaterUnitTest : MockkBaseTest {
         val r321 = createResource(ThingId("R321"))
         val r741 = createResource(ThingId("R741"))
         val c123 = createClass(ThingId("C123"))
+        val dynamicLabel = DynamicLabel("{0}")
         val state = UpdateRosettaStoneStatementState(
-            rosettaStoneTemplate = createRosettaStoneTemplate(),
+            rosettaStoneTemplate = createRosettaStoneTemplate().copy(dynamicLabel = dynamicLabel),
             rosettaStoneStatement = originalStatement,
             validationCache = mapOf(
                 "R258" to Either.right(r258),
@@ -76,6 +78,18 @@ internal class RosettaStoneStatementUpdaterUnitTest : MockkBaseTest {
         val temp3 = createPredicate(ThingId("Temp3"))
         val temp4 = createResource(ThingId("Temp4"), classes = setOf(Classes.list))
         val temp5 = createClass(ThingId("Temp5"))
+        val subjects = listOf(r258, r369, temp1)
+        val objects = listOf(
+            listOf(r987, r654, temp2, temp3),
+            listOf(r321, r741, temp4, temp5)
+        )
+        val updatedLabel = dynamicLabel.render(
+            mapOf(
+                "0" to subjects,
+                "1" to objects[0],
+                "2" to objects[1],
+            ).mapValues { (_, value) -> value.map { it.label } }
+        )
 
         every { rosettaStoneStatementRepository.nextIdentity() } returns rosettaStoneStatementVersionId
         every { thingRepository.findById(ThingId("Temp1")) } returns Optional.of(temp1)
@@ -108,16 +122,14 @@ internal class RosettaStoneStatementUpdaterUnitTest : MockkBaseTest {
                     it.contextId shouldBe originalStatement.contextId
                     it.templateId shouldBe originalStatement.templateId
                     it.templateTargetClassId shouldBe originalStatement.templateTargetClassId
-                    it.label shouldBe originalStatement.label
+                    it.label shouldBe updatedLabel
                     it.versions.size shouldBe 2
                     it.versions[0] shouldBe originalStatement.versions.single()
                     it.versions[1].asClue { version ->
                         version.id shouldBe rosettaStoneStatementVersionId
-                        version.subjects shouldBe listOf(r258, r369, temp1)
-                        version.objects shouldBe listOf(
-                            listOf(r987, r654, temp2, temp3),
-                            listOf(r321, r741, temp4, temp5)
-                        )
+                        version.label shouldBe updatedLabel
+                        version.subjects shouldBe subjects
+                        version.objects shouldBe objects
                         version.createdAt shouldBe OffsetDateTime.now(fixedClock)
                         version.createdBy shouldBe command.contributorId
                         version.certainty shouldBe command.certainty

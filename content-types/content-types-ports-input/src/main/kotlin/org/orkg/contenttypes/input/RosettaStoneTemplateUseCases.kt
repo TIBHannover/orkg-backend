@@ -5,7 +5,7 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.RosettaStoneStatement
-import org.orkg.graph.domain.FormattedLabel
+import org.orkg.graph.domain.DynamicLabel
 import org.orkg.graph.domain.VisibilityFilter
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -42,7 +42,7 @@ interface CreateRosettaStoneTemplateUseCase {
         val contributorId: ContributorId,
         val label: String,
         val description: String,
-        val formattedLabel: FormattedLabel,
+        val dynamicLabel: DynamicLabel,
         val exampleUsage: String,
         val properties: List<TemplatePropertyCommand>,
         val observatories: List<ObservatoryId>,
@@ -58,7 +58,7 @@ interface UpdateRosettaStoneTemplateUseCase {
         val contributorId: ContributorId,
         val label: String?,
         val description: String?,
-        val formattedLabel: FormattedLabel?,
+        val dynamicLabel: DynamicLabel?,
         val exampleUsage: String?,
         val properties: List<TemplatePropertyCommand>?,
         val observatories: List<ObservatoryId>?,

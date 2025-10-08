@@ -42,7 +42,6 @@ dependencies {
     api("org.neo4j.driver:neo4j-java-driver")
     api("org.neo4j:neo4j-cypher-dsl")
     api(project(":common:neo4j-dsl"))
-    implementation("dev.forkhandles:values4k")
     implementation("org.jetbrains:annotations")
     implementation(project(":graph:graph-core-constants"))
 }

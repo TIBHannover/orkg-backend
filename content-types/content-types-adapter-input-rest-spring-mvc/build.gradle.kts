@@ -52,6 +52,7 @@ testing {
                 implementation("io.kotest:kotest-assertions-shared")
                 implementation("io.mockk:mockk-dsl")
                 implementation("io.mockk:mockk-jvm")
+                implementation("org.assertj:assertj-core")
                 implementation("org.eclipse.rdf4j:rdf4j-common-io")
                 implementation("org.hamcrest:hamcrest")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")

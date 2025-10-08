@@ -11,7 +11,7 @@ import org.orkg.contenttypes.domain.RosettaStoneStatement
 import org.orkg.contenttypes.domain.RosettaStoneStatementVersion
 import org.orkg.contenttypes.domain.TemplateInstance
 import org.orkg.graph.domain.Class
-import org.orkg.graph.domain.FormattedLabel
+import org.orkg.graph.domain.DynamicLabel
 import org.orkg.graph.domain.Predicate
 import org.orkg.graph.domain.Resource
 import kotlin.math.absoluteValue
@@ -19,7 +19,8 @@ import kotlin.math.absoluteValue
 class RosettaStoneStatementVersionFabricator : Fabricator<RosettaStoneStatementVersion> {
     override fun invoke(fabrikate: Fabrikate): RosettaStoneStatementVersion = RosettaStoneStatementVersion(
         id = fabrikate.random(),
-        formattedLabel = FormattedLabel.of(fabrikate.random()),
+        label = fabrikate.random(),
+        dynamicLabel = DynamicLabel(fabrikate.random()),
         subjects = listOf(fabrikate.random<Resource>(), fabrikate.random<Predicate>(), fabrikate.random<Class>()),
         objects = listOf(
             listOf(fabrikate.random<Resource>(), fabrikate.random<Predicate>(), fabrikate.random<Class>()),

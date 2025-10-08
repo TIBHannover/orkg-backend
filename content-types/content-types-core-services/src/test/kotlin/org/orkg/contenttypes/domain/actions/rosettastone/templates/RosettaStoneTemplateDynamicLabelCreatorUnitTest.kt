@@ -17,11 +17,11 @@ import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
-internal class RosettaStoneTemplateFormattedLabelCreatorUnitTest : MockkBaseTest {
+internal class RosettaStoneTemplateDynamicLabelCreatorUnitTest : MockkBaseTest {
     private val unsafeLiteralUseCases: UnsafeLiteralUseCases = mockk()
     private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
 
-    private val rosettaStoneTemplateFormattedLabelCreator = RosettaStoneTemplateFormattedLabelCreator(unsafeLiteralUseCases, unsafeStatementUseCases)
+    private val rosettaStoneTemplateDynamicLabelCreator = RosettaStoneTemplateDynamicLabelCreator(unsafeLiteralUseCases, unsafeStatementUseCases)
 
     @Test
     fun `Given a rosetta stone template create command, then it creates a new formatted label statement`() {
@@ -30,28 +30,28 @@ internal class RosettaStoneTemplateFormattedLabelCreatorUnitTest : MockkBaseTest
         val state = CreateRosettaStoneTemplateState(
             rosettaStoneTemplateId = rosettaStoneTemplateId
         )
-        val formattedLabelLiteralId = ThingId("R124")
+        val dynamicLabelLiteralId = ThingId("R124")
 
         every {
             unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
-                    label = command.formattedLabel.value
+                    label = command.dynamicLabel.template
                 )
             )
-        } returns formattedLabelLiteralId
+        } returns dynamicLabelLiteralId
         every {
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = state.rosettaStoneTemplateId!!,
                     predicateId = Predicates.templateLabelFormat,
-                    objectId = formattedLabelLiteralId
+                    objectId = dynamicLabelLiteralId
                 )
             )
         } returns StatementId("S1")
 
-        val result = rosettaStoneTemplateFormattedLabelCreator(command, state)
+        val result = rosettaStoneTemplateDynamicLabelCreator(command, state)
 
         result.asClue {
             it.rosettaStoneTemplateId shouldBe state.rosettaStoneTemplateId
@@ -61,7 +61,7 @@ internal class RosettaStoneTemplateFormattedLabelCreatorUnitTest : MockkBaseTest
             unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
-                    label = command.formattedLabel.value
+                    label = command.dynamicLabel.template
                 )
             )
         }
@@ -71,7 +71,7 @@ internal class RosettaStoneTemplateFormattedLabelCreatorUnitTest : MockkBaseTest
                     contributorId = command.contributorId,
                     subjectId = state.rosettaStoneTemplateId!!,
                     predicateId = Predicates.templateLabelFormat,
-                    objectId = formattedLabelLiteralId
+                    objectId = dynamicLabelLiteralId
                 )
             )
         }

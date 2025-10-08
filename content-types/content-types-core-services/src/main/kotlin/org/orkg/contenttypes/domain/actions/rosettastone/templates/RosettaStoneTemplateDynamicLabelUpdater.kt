@@ -8,7 +8,7 @@ import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
-class RosettaStoneTemplateFormattedLabelUpdater(
+class RosettaStoneTemplateDynamicLabelUpdater(
     private val singleStatementPropertyUpdater: SingleStatementPropertyUpdater,
 ) : UpdateRosettaStoneTemplateAction {
     constructor(
@@ -20,13 +20,13 @@ class RosettaStoneTemplateFormattedLabelUpdater(
     )
 
     override fun invoke(command: UpdateRosettaStoneTemplateCommand, state: State): State {
-        if (command.formattedLabel != state.rosettaStoneTemplate!!.formattedLabel) {
+        if (command.dynamicLabel != state.rosettaStoneTemplate!!.dynamicLabel) {
             singleStatementPropertyUpdater.updateOptionalProperty(
                 statements = state.statements[command.templateId].orEmpty(),
                 contributorId = command.contributorId,
                 subjectId = command.templateId,
                 predicateId = Predicates.templateLabelFormat,
-                label = command.formattedLabel?.value
+                label = command.dynamicLabel?.template
             )
         }
         return state

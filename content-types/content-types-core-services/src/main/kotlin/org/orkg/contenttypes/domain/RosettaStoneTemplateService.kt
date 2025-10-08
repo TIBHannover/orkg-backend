@@ -23,13 +23,13 @@ import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneT
 import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateDescriptionCreator
 import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateDescriptionUpdateValidator
 import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateDescriptionUpdater
+import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateDynamicLabelCreateValidator
+import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateDynamicLabelCreator
+import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateDynamicLabelUpdateValidator
+import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateDynamicLabelUpdater
 import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateExampleUsageUpdateValidator
 import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateExampleUsageUpdater
 import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateExistenceValidator
-import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateFormattedLabelCreateValidator
-import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateFormattedLabelCreator
-import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateFormattedLabelUpdateValidator
-import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateFormattedLabelUpdater
 import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateLabelUpdateValidator
 import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateModifiableValidator
 import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplatePropertiesCreateValidator
@@ -116,14 +116,14 @@ class RosettaStoneTemplateService(
         val steps = listOf(
             LabelValidator { it.label },
             DescriptionValidator { it.description },
-            RosettaStoneTemplateFormattedLabelCreateValidator(),
+            RosettaStoneTemplateDynamicLabelCreateValidator(),
             RosettaStoneTemplatePropertiesCreateValidator(predicateRepository, classRepository),
             OrganizationValidator(organizationRepository, { it.organizations }),
             ObservatoryValidator(observatoryRepository, { it.observatories }),
             RosettaStoneTemplateResourceCreator(unsafeResourceUseCases),
             RosettaStoneTemplateTargetClassCreator(unsafeClassUseCases, unsafeStatementUseCases, unsafeLiteralUseCases),
             RosettaStoneTemplateDescriptionCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
-            RosettaStoneTemplateFormattedLabelCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
+            RosettaStoneTemplateDynamicLabelCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
             RosettaStoneTemplateClosedCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
             RosettaStoneTemplatePropertiesCreator(unsafeResourceUseCases, unsafeLiteralUseCases, unsafeStatementUseCases)
         )
@@ -136,14 +136,14 @@ class RosettaStoneTemplateService(
             RosettaStoneTemplateModifiableValidator(rosettaStoneStatementRepository),
             RosettaStoneTemplateLabelUpdateValidator(),
             RosettaStoneTemplateDescriptionUpdateValidator(),
-            RosettaStoneTemplateFormattedLabelUpdateValidator(),
+            RosettaStoneTemplateDynamicLabelUpdateValidator(),
             RosettaStoneTemplateExampleUsageUpdateValidator(),
             RosettaStoneTemplatePropertiesUpdateValidator(predicateRepository, classRepository),
             OrganizationValidator(organizationRepository, { it.organizations }, { it.rosettaStoneTemplate!!.organizations }),
             ObservatoryValidator(observatoryRepository, { it.observatories }, { it.rosettaStoneTemplate!!.observatories }),
             RosettaStoneTemplateResourceUpdater(unsafeResourceUseCases),
             RosettaStoneTemplateDescriptionUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
-            RosettaStoneTemplateFormattedLabelUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
+            RosettaStoneTemplateDynamicLabelUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
             RosettaStoneTemplateExampleUsageUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
             RosettaStoneTemplatePropertiesUpdater(unsafeLiteralUseCases, resourceService, unsafeResourceUseCases, statementService, unsafeStatementUseCases),
         )

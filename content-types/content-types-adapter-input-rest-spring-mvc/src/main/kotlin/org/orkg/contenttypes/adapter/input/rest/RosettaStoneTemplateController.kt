@@ -16,7 +16,7 @@ import org.orkg.contenttypes.domain.RosettaStoneTemplateNotFound
 import org.orkg.contenttypes.input.CreateRosettaStoneTemplateUseCase
 import org.orkg.contenttypes.input.RosettaStoneTemplateUseCases
 import org.orkg.contenttypes.input.UpdateRosettaStoneTemplateUseCase
-import org.orkg.graph.domain.FormattedLabel
+import org.orkg.graph.domain.DynamicLabel
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
 import org.springframework.data.domain.Page
@@ -128,7 +128,7 @@ class RosettaStoneTemplateController(
         val description: String,
         @field:NotBlank
         @JsonProperty("formatted_label")
-        val formattedLabel: String,
+        val dynamicLabel: String,
         @field:NotBlank
         @JsonProperty("example_usage")
         val exampleUsage: String,
@@ -145,7 +145,7 @@ class RosettaStoneTemplateController(
                 contributorId = contributorId,
                 label = label,
                 description = description,
-                formattedLabel = FormattedLabel.of(formattedLabel),
+                dynamicLabel = DynamicLabel(dynamicLabel),
                 exampleUsage = exampleUsage,
                 properties = properties.map { it.toTemplatePropertyCommand() },
                 observatories = observatories,
@@ -160,7 +160,7 @@ class RosettaStoneTemplateController(
         val description: String?,
         @field:NullableNotBlank
         @JsonProperty("formatted_label")
-        val formattedLabel: String?,
+        val dynamicLabel: String?,
         @field:NotBlank
         @JsonProperty("example_usage")
         val exampleUsage: String?,
@@ -178,7 +178,7 @@ class RosettaStoneTemplateController(
                 contributorId = contributorId,
                 label = label,
                 description = description,
-                formattedLabel = formattedLabel?.let { FormattedLabel.of(it) },
+                dynamicLabel = dynamicLabel?.let(::DynamicLabel),
                 exampleUsage = exampleUsage,
                 properties = properties?.map { it.toTemplatePropertyCommand() },
                 observatories = observatories,

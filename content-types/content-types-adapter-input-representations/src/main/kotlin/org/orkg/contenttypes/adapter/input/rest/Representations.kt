@@ -38,6 +38,7 @@ import org.orkg.graph.adapter.input.rest.ResourceRepresentation
 import org.orkg.graph.adapter.input.rest.SimpleAuthorRepresentation
 import org.orkg.graph.adapter.input.rest.StatementRepresentation
 import org.orkg.graph.adapter.input.rest.ThingRepresentation
+import org.orkg.graph.domain.DynamicLabel
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Visibility
 import java.time.OffsetDateTime
@@ -403,7 +404,7 @@ data class RosettaStoneTemplateRepresentation(
     val label: String,
     val description: String?,
     @get:JsonProperty("formatted_label")
-    val formattedLabel: String?, // FIXME: The type should be FormattedLabel, but value classes cannot be parsed by jackson
+    val dynamicLabel: DynamicLabel?,
     @get:JsonProperty("target_class")
     val targetClass: ThingId,
     @get:JsonProperty("example_usage")
@@ -605,7 +606,7 @@ data class RosettaStoneStatementRepresentation(
     @get:JsonProperty("latest_version_id")
     val latestVersion: ThingId,
     @get:JsonProperty("formatted_label")
-    val formattedLabel: String,
+    val dynamicLabel: DynamicLabel,
     val subjects: List<ThingReferenceRepresentation>,
     val objects: List<List<ThingReferenceRepresentation>>,
     @get:JsonProperty("created_at")

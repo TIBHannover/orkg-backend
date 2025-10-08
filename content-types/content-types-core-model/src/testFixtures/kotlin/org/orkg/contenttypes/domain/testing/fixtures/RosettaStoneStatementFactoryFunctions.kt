@@ -7,8 +7,8 @@ import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Certainty
 import org.orkg.contenttypes.domain.RosettaStoneStatement
 import org.orkg.contenttypes.domain.RosettaStoneStatementVersion
+import org.orkg.graph.domain.DynamicLabel
 import org.orkg.graph.domain.ExtractionMethod
-import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.testing.fixtures.createResource
 import java.time.OffsetDateTime
@@ -36,7 +36,8 @@ fun createRosettaStoneStatement() = RosettaStoneStatement(
 
 fun createRosettaStoneStatementVersion() = RosettaStoneStatementVersion(
     id = ThingId("R147"),
-    formattedLabel = FormattedLabel.of("{0} {1} {2}"),
+    label = "Dummy Rosetta Stone Statement Label",
+    dynamicLabel = DynamicLabel("{0} {1} {2}"),
     subjects = listOf(
         createResource(id = ThingId("R258")),
         createResource(id = ThingId("R369"))

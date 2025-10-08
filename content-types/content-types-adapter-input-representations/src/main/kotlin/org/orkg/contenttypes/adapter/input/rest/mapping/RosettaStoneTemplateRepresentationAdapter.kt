@@ -17,7 +17,7 @@ interface RosettaStoneTemplateRepresentationAdapter : TemplatePropertyRepresenta
             id = id,
             label = label,
             description = description,
-            formattedLabel = formattedLabel.value,
+            dynamicLabel = dynamicLabel,
             targetClass = targetClass,
             exampleUsage = exampleUsage,
             properties = properties.map { it.toTemplatePropertyRepresentation() },

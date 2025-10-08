@@ -5,7 +5,7 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.Classes
-import org.orkg.graph.domain.FormattedLabel
+import org.orkg.graph.domain.DynamicLabel
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
@@ -16,7 +16,7 @@ data class RosettaStoneTemplate(
     val id: ThingId,
     val label: String,
     val description: String?,
-    val formattedLabel: FormattedLabel,
+    val dynamicLabel: DynamicLabel,
     val targetClass: ThingId,
     val exampleUsage: String?,
     val properties: List<TemplateProperty>,
@@ -37,10 +37,10 @@ data class RosettaStoneTemplate(
                 description = directStatements
                     .wherePredicate(Predicates.description)
                     .singleOrNull()?.`object`?.label,
-                formattedLabel = directStatements
+                dynamicLabel = directStatements
                     .wherePredicate(Predicates.templateLabelFormat)
                     .single()
-                    .let { FormattedLabel.of(it.`object`.label) },
+                    .let { DynamicLabel(it.`object`.label) },
                 targetClass = directStatements
                     .wherePredicate(Predicates.shTargetClass)
                     .single()

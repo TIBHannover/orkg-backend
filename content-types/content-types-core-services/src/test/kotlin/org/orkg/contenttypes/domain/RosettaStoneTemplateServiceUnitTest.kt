@@ -27,7 +27,7 @@ import org.orkg.contenttypes.domain.testing.fixtures.createRosettaStoneTemplate
 import org.orkg.contenttypes.output.RosettaStoneStatementRepository
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
-import org.orkg.graph.domain.FormattedLabel
+import org.orkg.graph.domain.DynamicLabel
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.NeitherOwnerNorCurator
 import org.orkg.graph.domain.Predicates
@@ -99,7 +99,7 @@ internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
             observatoryId = ObservatoryId(UUID.randomUUID())
         )
         val description = "rosetta stone template description"
-        val formattedLabel = FormattedLabel.of("{P32}")
+        val dynamicLabel = DynamicLabel("{P32}")
         val targetClassId = ThingId("targetClass")
         val exampleUsage = "example usage of template"
         val predicateId = ThingId("P22")
@@ -195,7 +195,7 @@ internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.templateLabelFormat),
-                `object` = createLiteral(label = formattedLabel.value)
+                `object` = createLiteral(label = dynamicLabel.template)
             ),
             createStatement(
                 subject = expected,
@@ -488,7 +488,7 @@ internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
             template.id shouldBe expected.id
             template.label shouldBe expected.label
             template.description shouldBe description
-            template.formattedLabel shouldBe formattedLabel
+            template.dynamicLabel shouldBe dynamicLabel
             template.targetClass shouldBe targetClassId
             template.exampleUsage shouldBe exampleUsage
             template.properties.size shouldBe 5

@@ -318,7 +318,7 @@ internal class RosettaStoneTemplateControllerUnitTest : MockMvcBaseTest("rosetta
         RosettaStoneTemplateController.CreateRosettaStoneTemplateRequest(
             label = "Dummy Rosetta Stone Template Label",
             description = "Some description about the Rosetta Stone Template",
-            formattedLabel = "{P32}",
+            dynamicLabel = "{P32}",
             exampleUsage = "example sentence of the statement",
             properties = listOf(
                 untypedTemplatePropertyRequest(),
@@ -339,7 +339,7 @@ internal class RosettaStoneTemplateControllerUnitTest : MockMvcBaseTest("rosetta
         RosettaStoneTemplateController.UpdateRosettaStoneTemplateRequest(
             label = "Dummy Rosetta Stone Template Label",
             description = "Some description about the Rosetta Stone Template",
-            formattedLabel = "{P32}",
+            dynamicLabel = "{P32}",
             exampleUsage = "example sentence of the statement",
             properties = listOf(
                 untypedTemplatePropertyRequest(),

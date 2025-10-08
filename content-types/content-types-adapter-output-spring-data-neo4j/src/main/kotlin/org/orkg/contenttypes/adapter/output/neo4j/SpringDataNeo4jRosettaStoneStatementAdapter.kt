@@ -367,7 +367,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
                                 "__labels__" to listOf("RosettaStoneStatement", "Version", statement.templateTargetClassId.value),
                                 "__properties__" to mapOf(
                                     "id" to version.id.value,
-                                    "label" to statement.label,
+                                    "label" to version.label,
                                     "created_by" to version.createdBy.toString(),
                                     "created_at" to version.createdAt.format(ISO_OFFSET_DATE_TIME),
                                     "observatory_id" to (version.observatories.singleOrNull() ?: ObservatoryId.UNKNOWN).value.toString(),
@@ -394,7 +394,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
                                     }
                                 },
                                 "__metadata__" to mapOf(
-                                    "formatted_label" to version.formattedLabel.value,
+                                    "dynamic_label" to version.dynamicLabel.template,
                                     "certainty" to version.certainty.name,
                                     "negated" to version.negated,
                                     "version" to index + (versionInfo?.second?.toInt() ?: 0),

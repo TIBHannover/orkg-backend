@@ -4,8 +4,8 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.graph.domain.DynamicLabel
 import org.orkg.graph.domain.ExtractionMethod
-import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.domain.Visibility
 import java.time.OffsetDateTime
@@ -45,7 +45,8 @@ data class RosettaStoneStatement(
 
 data class RosettaStoneStatementVersion(
     val id: ThingId,
-    val formattedLabel: FormattedLabel,
+    val label: String,
+    val dynamicLabel: DynamicLabel,
     val subjects: List<Thing>,
     val objects: List<List<Thing>>,
     val createdAt: OffsetDateTime,

@@ -6,6 +6,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added research problem filter to paper and visualization endpoint.
+  (See: [!1364](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1364))
+- Added venue filter to paper endpoint.
+  (See: [!1385](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1385))
+- Added authentication flows to OpenAPI documentation.
+  (See: [!1357](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1357))
+### Changed
+- Importing a WikiData entity with a mismatched target entity type will now return status `403 FORBIDDEN` instead of status `404 NOT FOUND`.
+  (Closes: [#659](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/659))
+- Creating child relations no longer throws a `orkg:error:parent_class_already_has_children` exception.
+  (See: [!1361](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1361))
+- The label of rosetta stone statement (latest) version resources is now set to the rendered version of the dynamic label at the time of creation.
+  (See: [!1366](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1366))
+### Fixed
+- Fixed response body validation for class hierarchy and comparison endpoints.
+  (See: [!1358](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1358))
+- The rosetta stone statement type class now gets correctly assigned to each rosetta stone statement version resource.
+  (See: [!1369](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1369))
+### Removed
+- Removed problem type `orkg:error:parent_class_already_has_children`.
+  (See: [!1361](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1361))
 
 ## [0.88.0] - 2025-09-18
 ### Added

@@ -246,7 +246,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
             CREATE (latest:RosettaStoneStatement:LatestVersion:Resource:Thing {version: 0})
             WITH latest
             SET latest += ${'$'}__properties__
-            SET latest:`${statement.templateTargetClassId}`
+            SET latest:$(${'$'}__labels__)
             WITH latest
             CALL (latest) {
                 UNWIND ${'$'}__labels__ AS label
@@ -273,6 +273,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
                 CREATE (version)-[:METADATA]->(metadata:RosettaStoneStatementMetadata)
                 WITH __version__, version, metadata, latest
                 SET version += __version__.__properties__
+                SET version:$(__version__.__labels__)
                 SET metadata += __version__.__metadata__
                 WITH latest, __version__, version
                 CALL (latest, __version__, version) {
@@ -306,6 +307,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
             WITH latest
             WHERE latest.version = (coalesce(${'$'}__version__, 0) + 1)
             SET latest += ${'$'}__properties__
+            SET latest:$(${'$'}__labels__)
             WITH latest
             CALL (latest) {
                 UNWIND ${'$'}__versions__ AS __version__
@@ -313,7 +315,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
                 CREATE (version)-[:METADATA]->(metadata:RosettaStoneStatementMetadata)
                 WITH latest, __version__, version, metadata
                 SET version += __version__.__properties__
-                SET version:`${statement.templateTargetClassId}`
+                SET version:$(__version__.__labels__)
                 SET metadata += __version__.__metadata__
                 WITH latest, __version__, version
                 CALL (latest, __version__, version) {

@@ -9,7 +9,6 @@ import org.springframework.boot.ApplicationRunner
 import org.springframework.context.annotation.Profile
 import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.data.neo4j.core.fetchAs
-import org.springframework.stereotype.Component
 import kotlin.time.measureTime
 
 private const val UPDATE_STATEMENT_LABEL_QUERY = """MATCH (n:RosettaStoneStatement {id: ${'$'}id}) SET n.label = ${'$'}label"""
@@ -28,7 +27,7 @@ private const val FETCH_STATEMENTS_WITHOUT_LABEL_QUERY =
     LIMIT 1000
     """
 
-@Component
+// @Component
 @Profile("development", "docker", "production")
 class RosettaStoneStatementLabelMigrator(
     private val rosettaStoneStatementRepository: RosettaStoneStatementRepository,

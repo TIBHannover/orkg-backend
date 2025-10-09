@@ -9,6 +9,7 @@ import org.springframework.boot.ApplicationRunner
 import org.springframework.context.annotation.Profile
 import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.data.neo4j.core.fetchAs
+import org.springframework.stereotype.Component
 import kotlin.time.measureTime
 
 private const val UPDATE_STATEMENT_LABEL_QUERY = """MATCH (n:RosettaStoneStatement {id: ${'$'}id}) SET n.label = ${'$'}label"""
@@ -23,11 +24,13 @@ private const val FETCH_STATEMENTS_WITHOUT_LABEL_QUERY =
         WHERE version.label = ""
         RETURN DISTINCT latest.id AS id
     }
+    WITH id
+    WHERE NOT id IN ${'$'}ignored
     RETURN id
     LIMIT 1000
     """
 
-// @Component
+@Component
 @Profile("development", "docker", "production")
 class RosettaStoneStatementLabelMigrator(
     private val rosettaStoneStatementRepository: RosettaStoneStatementRepository,
@@ -38,30 +41,43 @@ class RosettaStoneStatementLabelMigrator(
     override fun run(args: ApplicationArguments?) {
         logger.info("Migrating rosetta stone statement labels...")
 
+        val ignored = mutableSetOf<ThingId>()
         val time = measureTime {
-            var ids = fetchStatementIds()
+            var ids = fetchStatementIds(ignored)
             while (ids.isNotEmpty()) {
                 ids.forEach { id ->
-                    val statement = rosettaStoneStatementRepository.findByIdOrVersionId(id).get()
-                    val versions = statement.versions.map { version ->
-                        val values = (listOf(version.subjects) + version.objects)
-                            .mapIndexed { index, values -> index.toString() to values.map { it.label } }
-                            .toMap()
-                        val label = version.dynamicLabel.render(values)
-                        version.id to label
+                    try {
+                        val statement = rosettaStoneStatementRepository.findByIdOrVersionId(id).get()
+                        val versions = statement.versions.map { version ->
+                            val values = (listOf(version.subjects) + version.objects)
+                                .mapIndexed { index, values -> index.toString() to values.map { it.label } }
+                                .toMap()
+                            val label = version.dynamicLabel.render(values)
+                            version.id to label
+                        }
+                        updateStatementLabel(statement.id, versions.last().second)
+                        versions.forEach { (id, label) -> updateStatementLabel(id, label) }
+                    } catch (_: NoSuchElementException) {
+                        ignored.add(id)
+                        logger.error("""Could not find rosetta stone statement version with id "{}".""", id)
+                    } catch (t: Throwable) {
+                        ignored.add(id)
+                        logger.error("""Error migrating label for rosetta stone statement with id "{}".""", id, t)
                     }
-                    updateStatementLabel(statement.id, versions.last().second)
-                    versions.forEach { (id, label) -> updateStatementLabel(id, label) }
                 }
-                ids = fetchStatementIds()
+                ids = fetchStatementIds(ignored)
             }
         }
 
+        if (ignored.isNotEmpty()) {
+            logger.info("Ignored rosetta stone statments: {}", ignored)
+        }
         logger.info("Done migrating rosetta stone statement labels. Took {}.", time)
     }
 
-    private fun fetchStatementIds(): List<ThingId> =
+    private fun fetchStatementIds(ignored: Set<ThingId>): List<ThingId> =
         neo4jClient.query(FETCH_STATEMENTS_WITHOUT_LABEL_QUERY)
+            .bindAll(mapOf("ignored" to ignored.map { it.value }))
             .fetchAs<ThingId>()
             .mappedBy { _, r -> r["id"].toThingId()!! }
             .all()

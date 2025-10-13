@@ -10,6 +10,7 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId
+import org.orkg.common.validation.NullableNotBlank
 import org.orkg.contenttypes.adapter.input.rest.mapping.ComparisonRepresentationAdapter
 import org.orkg.contenttypes.domain.ComparisonConfig
 import org.orkg.contenttypes.domain.ComparisonData
@@ -146,9 +147,8 @@ class ComparisonController(
     data class CreateComparisonRequest(
         @field:NotBlank
         val title: String,
-        @field:NotBlank
         val description: String,
-        @field:Size(min = 1, max = 1)
+        @field:Size(max = 1)
         @JsonProperty("research_fields")
         val researchFields: List<ThingId>,
         @field:Valid
@@ -190,9 +190,9 @@ class ComparisonController(
     }
 
     data class UpdateComparisonRequest(
-        @field:NotBlank
+        @field:NullableNotBlank
         val title: String?,
-        @field:NotBlank
+        @field:NullableNotBlank
         val description: String?,
         @field:Size(min = 1, max = 1)
         @JsonProperty("research_fields")

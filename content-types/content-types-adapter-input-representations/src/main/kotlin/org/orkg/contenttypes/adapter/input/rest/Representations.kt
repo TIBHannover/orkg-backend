@@ -605,6 +605,7 @@ data class RosettaStoneStatementRepresentation(
     val versionId: ThingId,
     @get:JsonProperty("latest_version_id")
     val latestVersion: ThingId,
+    val label: String,
     @get:JsonProperty("formatted_label")
     val dynamicLabel: DynamicLabel,
     val subjects: List<ThingReferenceRepresentation>,

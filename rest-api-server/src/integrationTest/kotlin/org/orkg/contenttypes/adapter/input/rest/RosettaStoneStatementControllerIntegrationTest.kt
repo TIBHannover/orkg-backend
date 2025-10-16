@@ -214,6 +214,7 @@ internal class RosettaStoneStatementControllerIntegrationTest : MockMvcBaseTest(
             it.classId shouldNotBe null
             it.versionId shouldNotBe id
             it.latestVersion shouldBe id
+            it.label shouldBe "label, label and Subject Resource label, hasResult and new class 123456 and 0123456789 5 and 1 custom type and some literal value label, label and list"
             it.dynamicLabel shouldBe DynamicLabel("{0} {1} {2} {3} {4} {5}")
             it.subjects.asClue { subjects ->
                 subjects.size shouldBe 3

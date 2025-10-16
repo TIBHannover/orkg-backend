@@ -95,6 +95,7 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
                         fieldWithPath("class_id").description("The identifier of the class of the rosetta stone statement. This class is equivalent to the target class of the template used to instantiate the rosetta stone statement."),
                         fieldWithPath("version_id").description("The ID of the backing version of the rosetta stone statement contents."),
                         fieldWithPath("latest_version_id").description("The ID of the rosetta stone statement that always points to the latest version of this statement."),
+                        fieldWithPath("label").description("The rendered label of the rosetta stone statement at the time of instantiation."),
                         fieldWithPath("formatted_label").description("The formatted label at the time of creation of the template used to instantiate the rosetta stone statement."),
                         subsectionWithPath("subjects[]").description("The ordered list of subject instance references used in the rosetta stone statement."),
                         fieldWithPath("objects[]").description("The ordered list of object position instances used in the rosetta stone statement."),

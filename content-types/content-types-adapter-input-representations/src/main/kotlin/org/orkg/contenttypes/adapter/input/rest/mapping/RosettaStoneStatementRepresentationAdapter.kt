@@ -34,6 +34,7 @@ interface RosettaStoneStatementRepresentationAdapter : ThingReferenceRepresentat
             classId = templateTargetClassId,
             versionId = version.id,
             latestVersion = id,
+            label = version.label,
             dynamicLabel = version.dynamicLabel,
             subjects = version.subjects.map { it.toThingReferenceRepresentation() },
             objects = version.objects.map { objects -> objects.map { it.toThingReferenceRepresentation() } },

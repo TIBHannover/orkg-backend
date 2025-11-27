@@ -4,7 +4,7 @@ import org.orkg.constants.BuildConfig
 import org.springframework.boot.test.util.TestPropertyValues
 import org.springframework.context.ApplicationContextInitializer
 import org.springframework.context.ConfigurableApplicationContext
-import org.testcontainers.containers.PostgreSQLContainer
+import org.testcontainers.postgresql.PostgreSQLContainer
 import org.testcontainers.utility.DockerImageName
 
 /**
@@ -14,7 +14,7 @@ class PostgresContainerInitializer : ApplicationContextInitializer<ConfigurableA
     // TODO: might be nice to aggregate values for debugging, if possible
 
     companion object {
-        val postgresContainer: PostgreSQLContainer<*> =
+        val postgresContainer: PostgreSQLContainer =
             PostgreSQLContainer(DockerImageName.parse(BuildConfig.CONTAINER_IMAGE_POSTGRES))
     }
 
@@ -23,7 +23,7 @@ class PostgresContainerInitializer : ApplicationContextInitializer<ConfigurableA
         TestPropertyValues.of(postgresContainer.settings()).applyTo(applicationContext)
     }
 
-    private fun PostgreSQLContainer<*>.settings() = listOf(
+    private fun PostgreSQLContainer.settings() = listOf(
         "spring.datasource.url=${getJdbcUrl()}",
         "spring.datasource.username=$username",
         "spring.datasource.password=$password",

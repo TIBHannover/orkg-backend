@@ -2,7 +2,7 @@ package org.orkg.common.configuration
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.Module
-import com.fasterxml.jackson.module.kotlin.KotlinFeature.StrictNullChecks
+import com.fasterxml.jackson.module.kotlin.KotlinFeature.NewStrictNullChecks
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.orkg.common.json.CommonJacksonModule
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
@@ -17,7 +17,7 @@ class CommonSpringConfig {
 
     @Bean
     fun kotlinJacksonModule(): Module = KotlinModule.Builder()
-        .enable(StrictNullChecks)
+        .enable(NewStrictNullChecks)
         .build()
 
     @Bean

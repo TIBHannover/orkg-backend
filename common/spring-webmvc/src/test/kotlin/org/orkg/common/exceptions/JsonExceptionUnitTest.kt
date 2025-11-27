@@ -96,8 +96,8 @@ internal class JsonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectErrorStatus(BAD_REQUEST)
             .andExpectType("orkg:problem:mismatched_json_input")
             .andExpectTitle("Bad Request")
-            .andExpectDetail("""Field "$.nested.list" is either missing, "null", of invalid type, or contains "null" values.""")
-            .andExpect(jsonPath("$.pointer", `is`("#/nested/list")))
+            .andExpectDetail("""Field "$.nested.list[0]" is either missing, "null", of invalid type, or contains "null" values.""")
+            .andExpect(jsonPath("$.pointer", `is`("#/nested/list/0")))
     }
 
     @Test

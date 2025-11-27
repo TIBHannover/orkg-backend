@@ -14,9 +14,12 @@ dependencies {
     api(platform("dev.forkhandles:forkhandles-bom:2.22.2.1"))
     api(platform("io.kotest:kotest-bom:6.0.2"))
     api(platform("org.eclipse.rdf4j:rdf4j-bom:5.1.2"))
+    api(platform("org.testcontainers:testcontainers-bom:2.0.1")) // TODO: remove once spring includes tescontainers 2.0.2+ in their BOM
 
     // Third-party versions not provided by Spring, and without platform/BOM
     api("io.mockk:mockk:1.13.17") // anchor for MockKVirtualPlatformAlignmentRule
+
+    api(platform("com.fasterxml.jackson:jackson-bom:2.20.1"))
 
     // The Lucene Query Parser version should match the one used by the currently used Neo4j database.
     // Although newer versions should not be a problem, differences in the syntax can be a problem.
@@ -42,7 +45,8 @@ dependencies {
     api("io.jsonwebtoken:jjwt-jackson:0.13.0")
 
     // Testcontainers
-    api("com.github.dasniko:testcontainers-keycloak:3.6.0")
+    api("org.testcontainers:testcontainers:2.0.2") // force testcontainers core to 2.0.2 (higher than latest bom) to fix issues with docker 29
+    api("com.github.dasniko:testcontainers-keycloak:3.9.0")
 
     api("com.redfin:contractual:3.0.0")
     api("org.jbibtex:jbibtex:1.0.20")

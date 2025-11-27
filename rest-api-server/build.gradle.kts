@@ -235,9 +235,9 @@ dependencies {
     //
     // TODO: Most of the runtime dependencies may not be needed, needs checking
     "integrationTestRuntimeOnly"("org.testcontainers:testcontainers")
-    "integrationTestRuntimeOnly"("org.testcontainers:junit-jupiter")
-    "integrationTestRuntimeOnly"("org.testcontainers:postgresql")
-    "integrationTestRuntimeOnly"("org.testcontainers:neo4j")
+    "integrationTestRuntimeOnly"("org.testcontainers:testcontainers-junit-jupiter")
+    "integrationTestRuntimeOnly"("org.testcontainers:testcontainers-postgresql")
+    "integrationTestRuntimeOnly"("org.testcontainers:testcontainers-neo4j")
     "integrationTestRuntimeOnly"("io.kotest:kotest-runner-junit5")
     "integrationTestRuntimeOnly"("io.kotest:kotest-assertions-core")
     "integrationTestRuntimeOnly"("io.kotest:kotest-property")

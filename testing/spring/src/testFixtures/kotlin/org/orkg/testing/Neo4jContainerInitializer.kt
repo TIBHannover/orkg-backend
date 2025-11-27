@@ -4,7 +4,7 @@ import org.orkg.constants.BuildConfig
 import org.springframework.boot.test.util.TestPropertyValues
 import org.springframework.context.ApplicationContextInitializer
 import org.springframework.context.ConfigurableApplicationContext
-import org.testcontainers.containers.Neo4jContainer
+import org.testcontainers.neo4j.Neo4jContainer
 import org.testcontainers.utility.DockerImageName
 
 /**
@@ -14,7 +14,7 @@ class Neo4jContainerInitializer : ApplicationContextInitializer<ConfigurableAppl
     // TODO: might be nice to aggregate values for debugging, if possible
 
     companion object {
-        val neo4jContainer: Neo4jContainer<*> = Neo4jContainer(DockerImageName.parse(BuildConfig.CONTAINER_IMAGE_NEO4J))
+        val neo4jContainer: Neo4jContainer = Neo4jContainer(DockerImageName.parse(BuildConfig.CONTAINER_IMAGE_NEO4J))
             .withNeo4jConfig("initial.dbms.default_database", "orkg")
             .withNeo4jConfig("apoc.custom.procedures.refresh", "100")
             .withoutAuthentication()
@@ -26,7 +26,7 @@ class Neo4jContainerInitializer : ApplicationContextInitializer<ConfigurableAppl
         TestPropertyValues.of(settingsForSDN(neo4jContainer)).applyTo(applicationContext)
     }
 
-    private fun settingsForSDN(neo4j: Neo4jContainer<*>) = listOf(
+    private fun settingsForSDN(neo4j: Neo4jContainer) = listOf(
         "spring.neo4j.uri=${neo4j.boltUrl}",
         "spring.neo4j.authentication.username=neo4j",
         "spring.neo4j.authentication.password=${neo4j.adminPassword}"

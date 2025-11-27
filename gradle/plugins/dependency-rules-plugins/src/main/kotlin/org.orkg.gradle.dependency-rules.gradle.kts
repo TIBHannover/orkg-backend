@@ -2,6 +2,7 @@ import org.gradlex.jvm.dependency.conflict.detection.rules.CapabilityDefinition
 import org.orkg.gradle.metadatarules.versionalignment.JacksonBomAlignmentRule
 import org.orkg.gradle.metadatarules.versionalignment.MockKVirtualPlatformAlignmentRule
 import org.orkg.gradle.metadatarules.versionalignment.RestdocsApiSpecVirtualPlatformAlignmentRule
+import org.orkg.gradle.metadatarules.versionalignment.TestcontainersBomAlignmentRule
 
 plugins {
     id("dev.jacomet.logging-capabilities")
@@ -22,4 +23,5 @@ dependencies.components {
     all<JacksonBomAlignmentRule>()
     all<MockKVirtualPlatformAlignmentRule>()
     all<RestdocsApiSpecVirtualPlatformAlignmentRule>()
+    all<TestcontainersBomAlignmentRule>()
 }

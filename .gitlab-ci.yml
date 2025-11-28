@@ -6,6 +6,9 @@ variables:
   DOCKER_DRIVER: overlay2
   # Disable Gradle daemon during build
   GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+  GIT_SUBMODULE_STRATEGY: recursive
+  GIT_SUBMODULE_FORCE_HTTPS: true
+  GIT_SUBMODULE_DEPTH: 1
 
 default:
   cache:

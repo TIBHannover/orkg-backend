@@ -20,6 +20,19 @@ However, it needs other services to start properly.
 Services are managed via https://www.docker.com/[Docker].
 Please follow the respective installation instructions for your operating system or distribution.
 
+=== Cloning
+
+The backend API project uses git submodules in order to include external components in the build process.
+You can clone the repository including all of its submodules by running:
+
+    git clone --recurse-submodules https://gitlab.com/TIBHannover/orkg/orkg-backend.git
+
+Or if you already cloned the project without including submodules:
+
+    cd orkg-backend
+    git submodule init --recursive
+    git submodule update
+
 === Stand-alone application
 
 NOTE: Running the application stand-alone is mostly for development purposes.

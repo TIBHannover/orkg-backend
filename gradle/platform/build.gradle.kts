@@ -27,11 +27,6 @@ dependencies {
     // for the version that is used in the respective version, and check the compatibility.
     api("org.apache.lucene:lucene-queryparser:10.1.0")
 
-    // Restdocs API Spec (OpenAPI)
-    val apiSpecVersion = "0.19.4"
-    api("com.epages:restdocs-api-spec:$apiSpecVersion") // also acts as anchor for RestdocsApiSpecVirtualPlatformAlignmentRule
-    api("com.epages:restdocs-api-spec-mockmvc:$apiSpecVersion")
-
     val keycloakAdminClientVersion = "26.0.5"
     api("org.keycloak:keycloak-admin-client:$keycloakAdminClientVersion")
 

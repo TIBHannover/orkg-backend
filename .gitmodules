@@ -1,0 +1,3 @@
+[submodule "include/restdocs-api-spec"]
+	path = include/restdocs-api-spec
+	url = https://gitlab.com/TIBHannover/orkg/restdocs-api-spec.git

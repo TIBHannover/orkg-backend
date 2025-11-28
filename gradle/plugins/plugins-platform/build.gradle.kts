@@ -16,8 +16,6 @@ dependencies.constraints {
     // Not fixed in 4.0.2 yet, possibly in later versions.
     api("org.asciidoctor:asciidoctor-gradle-jvm:$asciidoctorVersion")
     api("org.asciidoctor:asciidoctor-gradle-jvm-gems:$asciidoctorVersion")
-    val restdocsSpecVersion = "0.19.4"
-    api("com.epages.restdocs-api-spec:com.epages.restdocs-api-spec.gradle.plugin:$restdocsSpecVersion")
     api("org.openapitools:openapi-generator-gradle-plugin:7.15.0")
 
     api("dev.jacomet.gradle.plugins:logging-capabilities:0.11.1")

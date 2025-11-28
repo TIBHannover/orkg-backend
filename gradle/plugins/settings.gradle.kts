@@ -1,5 +1,6 @@
 pluginManagement {
     includeBuild("../meta-plugins")
+    includeBuild("../../include/restdocs-api-spec")
 }
 plugins {
     id("org.orkg.gradle.settings")
@@ -8,4 +9,5 @@ plugins {
 dependencyResolutionManagement {
     repositories.gradlePluginPortal()
     includeBuild("../meta-plugins") // for 'build-parameters'
+    includeBuild("../../include/restdocs-api-spec")
 }

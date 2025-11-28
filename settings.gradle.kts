@@ -8,6 +8,8 @@ plugins {
 
 rootProject.name = "orkg-backend"
 
+includeBuild("include/restdocs-api-spec")
+
 include("documentation")
 include(
     "common:testing",

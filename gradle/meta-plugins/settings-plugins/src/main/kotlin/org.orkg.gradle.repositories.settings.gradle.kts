@@ -10,6 +10,9 @@ pluginManagement {
     if (File(rootDir, "../plugins").exists()) {
         includeBuild("../plugins")
     }
+    if (File(rootDir, "../../include/restdocs-api-spec").exists()) {
+        includeBuild("../../include/restdocs-api-spec")
+    }
 }
 
 dependencyResolutionManagement {

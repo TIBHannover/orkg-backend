@@ -13,7 +13,7 @@ dependencies {
     // Platforms not included in Spring Boot
     api(platform("dev.forkhandles:forkhandles-bom:2.22.2.1"))
     api(platform("io.kotest:kotest-bom:6.0.2"))
-    api(platform("org.eclipse.rdf4j:rdf4j-bom:5.1.2"))
+    api(platform("org.eclipse.rdf4j:rdf4j-bom:5.1.3"))
     api(platform("org.testcontainers:testcontainers-bom:2.0.1")) // TODO: remove once spring includes tescontainers 2.0.2+ in their BOM
 
     // Third-party versions not provided by Spring, and without platform/BOM

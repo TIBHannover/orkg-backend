@@ -118,8 +118,12 @@ class DocumentationBuilder(private val documentationContext: DocumentationContex
     inline fun <reified T : Any> responseFields(fieldDescriptors: FieldDescriptors) =
         responseFields(T::class, fieldDescriptors.fieldDescriptors)
 
-    fun responseFields(schemName: String, references: References) {
-        this.responseSchema = schema(schemName, references)
+    fun simpleResponse(simpleType: SimpleType) {
+        this.responseSchema = schema(simpleType.name.lowercase())
+    }
+
+    fun responseFields(schemaName: String, references: References) {
+        this.responseSchema = schema(schemaName, references)
     }
 
     fun responseFields(schemaClass: KClass<*>, references: References) {

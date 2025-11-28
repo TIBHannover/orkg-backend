@@ -60,6 +60,7 @@ configurations.all {
     exclude(group = "junit", module = "junit")
     exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     exclude(group = "org.mockito")
+    exclude(group = "jakarta.json")
 }
 
 // Configure common test runtime dependencies for *all* projects

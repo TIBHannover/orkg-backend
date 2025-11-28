@@ -21,6 +21,17 @@ import org.springframework.web.util.UriComponentsBuilder
 import java.io.StringWriter
 import java.net.URI
 
+private val supportedRdfFormats = listOf(
+    RDFFormat.NTRIPLES,
+    RDFFormat.RDFXML,
+    RDFFormat.N3,
+    RDFFormat.JSONLD,
+    RDFFormat.TRIG,
+    RDFFormat.NQUADS,
+    RDFFormat.TURTLE,
+    RDFFormat.TURTLE,
+).flatMap { format -> format.mimeTypes.map { mimeType -> mimeType to format } }.toMap()
+
 @RestController
 @RequestMapping("/api/vocab", produces = [MediaType.APPLICATION_JSON_VALUE])
 class VocabController(
@@ -29,7 +40,15 @@ class VocabController(
 ) {
     @GetMapping(
         "/resource/{id}",
-        produces = ["text/plain", "application/n-triples", "application/rdf+xml", "text/n3", "text/turtle", "application/json", "application/turtle", "application/trig", "application/n-quads"]
+        produces = [
+            "application/n-triples", "text/plain", // N-Triples
+            "application/rdf+xml", "application/xml", "text/xml", // RDF XML
+            "text/n3", "text/rdf+n3", // N3
+            "application/ld+json", // JSON-LD
+            "application/trig", "application/x-trig", // TriG
+            "application/n-quads", "text/x-nquads", "text/nquads", // N-Quads
+            "text/turtle", "application/x-turtle", // Turtle
+        ]
     )
     fun resource(
         @PathVariable id: ThingId,
@@ -48,7 +67,15 @@ class VocabController(
 
     @GetMapping(
         "/predicate/{id}",
-        produces = ["text/plain", "application/n-triples", "application/rdf+xml", "text/n3", "text/turtle", "application/json", "application/turtle", "application/trig", "application/n-quads"]
+        produces = [
+            "application/n-triples", "text/plain", // N-Triples
+            "application/rdf+xml", "application/xml", "text/xml", // RDF XML
+            "text/n3", "text/rdf+n3", // N3
+            "application/ld+json", // JSON-LD
+            "application/trig", "application/x-trig", // TriG
+            "application/n-quads", "text/x-nquads", "text/nquads", // N-Quads
+            "text/turtle", "application/x-turtle", // Turtle
+        ]
     )
     fun predicate(
         @PathVariable id: ThingId,
@@ -67,7 +94,15 @@ class VocabController(
 
     @GetMapping(
         "/class/{id}",
-        produces = ["text/plain", "application/n-triples", "application/rdf+xml", "text/n3", "text/turtle", "application/json", "application/turtle", "application/trig", "application/n-quads"]
+        produces = [
+            "application/n-triples", "text/plain", // N-Triples
+            "application/rdf+xml", "application/xml", "text/xml", // RDF XML
+            "text/n3", "text/rdf+n3", // N3
+            "application/ld+json", // JSON-LD
+            "application/trig", "application/x-trig", // TriG
+            "application/n-quads", "text/x-nquads", "text/nquads", // N-Quads
+            "text/turtle", "application/x-turtle", // Turtle
+        ]
     )
     fun `class`(
         @PathVariable id: ThingId,
@@ -81,19 +116,7 @@ class VocabController(
     }
 
     private fun checkAcceptHeader(acceptHeader: String): Boolean = (
-        acceptHeader in arrayOf(
-            "application/n-triples",
-            "application/rdf+xml",
-            "text/n3",
-            "text/turtle",
-            "application/json",
-            "application/turtle",
-            "application/trig",
-            "application/x-trig",
-            "application/n-quads",
-            "text/x-nquads",
-            "text/nquads"
-        )
+        acceptHeader.split(Regex(";|,"))[0] in supportedRdfFormats
     )
 
     private fun createRedirectResponse(
@@ -110,23 +133,9 @@ class VocabController(
                 .toUri()
         ).build()
 
-    private fun getRdfSerialization(
-        model: Model?,
-        accept: String,
-    ): String {
+    private fun getRdfSerialization(model: Model, accept: String): String {
         val writer = StringWriter()
-        val format = when (accept) {
-            "application/n-triples" -> RDFFormat.NTRIPLES
-            "application/rdf+xml" -> RDFFormat.RDFXML
-            "text/n3" -> RDFFormat.N3
-            "application/json" -> RDFFormat.JSONLD
-            "application/trig" -> RDFFormat.TRIG
-            "application/x-trig" -> RDFFormat.TRIG
-            "application/n-quads" -> RDFFormat.NQUADS
-            "text/x-nquads" -> RDFFormat.NQUADS
-            "text/nquads" -> RDFFormat.NQUADS
-            else -> RDFFormat.TURTLE
-        }
+        val format = supportedRdfFormats.getOrDefault(accept.split(Regex(";|,"))[0], RDFFormat.TURTLE)
         Rio.write(model, writer, format)
         return writer.toString()
     }

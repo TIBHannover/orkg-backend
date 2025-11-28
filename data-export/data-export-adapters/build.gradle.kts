@@ -1,4 +1,5 @@
 plugins {
+    id("java-test-fixtures")
     id("org.orkg.gradle.input-adapter-spring-web")
 }
 
@@ -9,6 +10,7 @@ testing {
                 implementation(testFixtures(project(":testing:spring")))
                 implementation(testFixtures(project(":graph:graph-core-model")))
                 runtimeOnly("org.springframework.boot:spring-boot-starter-test")
+                implementation("com.epages:restdocs-api-spec")
                 implementation("io.mockk:mockk-dsl")
                 implementation("io.mockk:mockk-jvm")
                 implementation("org.hamcrest:hamcrest")
@@ -44,7 +46,15 @@ dependencies {
     implementation("org.eclipse.rdf4j:rdf4j-model-api")
     implementation("org.eclipse.rdf4j:rdf4j-rio-api")
     implementation("org.slf4j:slf4j-api")
+    runtimeOnly("org.eclipse.rdf4j:rdf4j-rio-jsonld")
     runtimeOnly("org.eclipse.rdf4j:rdf4j-rio-n3")
+    runtimeOnly("org.eclipse.rdf4j:rdf4j-rio-ntriples")
+    runtimeOnly("org.eclipse.rdf4j:rdf4j-rio-nquads")
     runtimeOnly("org.eclipse.rdf4j:rdf4j-rio-rdfxml")
     runtimeOnly("org.eclipse.rdf4j:rdf4j-rio-trig")
+
+    testFixturesApi("org.springframework:spring-context")
+    testFixturesApi("org.springframework.boot:spring-boot-test")
+    testFixturesApi(project(":common:spring-webmvc"))
+    testFixturesApi(testFixtures(project(":testing:spring")))
 }

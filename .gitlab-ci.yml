@@ -13,14 +13,16 @@ variables:
 default:
   cache:
     # Dedicated cache the Gradle wrapper
-    - key:
+    - &gradle_wrapper_cache
+      key:
         files:
           - gradle/wrapper/gradle-wrapper.properties
         prefix: gradle-wrapper
       paths:
         - .gradle-user-home/wrapper/
     # Regular Gradle cache, for all things Gradle needs. Uses the cache from the default branch if none was found.
-    - key: gradle-$CI_COMMIT_REF_SLUG
+    - &gradle_cache
+      key: gradle-$CI_COMMIT_REF_SLUG
       fallback_keys:
         - gradle-$CI_DEFAULT_BRANCH
       paths:
@@ -45,69 +47,60 @@ stages:
   - verify
   - deploy
 
-compile:
-  stage: build
-  extends: .gradle_build_job
-  script:
-    - ./gradlew --build-cache compileAll buildHealth
-  needs: []
-  rules:
-    - when: always
-
 build:
   stage: build
   extends: .gradle_build_job
-  # Enable Docker-in-Docker (DinD) for TestContainers and Docker image builds.
   services:
     - docker:dind
+  needs: []
   script:
-    - ./gradlew --build-cache build
+    - apt update && apt install --assume-yes graphviz
+    - ./gradlew --build-cache spotlessCheck buildHealth build asciidoctor openapi3
   coverage: '/^Coverage:\s(\d+\.\d+%)/'
   artifacts:
+    name: build
     when: always
     paths:
       - '**/build/reports/'
       - rest-api-server/build/libs/rest-api-server-*.jar
+      - documentation/build/docs/asciidoc/
+      - documentation/build/api-spec/openapi3.yaml
     reports:
       junit: rest-api-server/build/test-results/**/TEST-*.xml
-  needs:
-    - job: compile
-      artifacts: false
   rules:
     - when: always
 
-# Template job for building all documentation. These jobs rely on the Gradle build cache
-# because Spring RestDoc snippets are generated from the test, and we do not want to re-run those.
-# Results from these tasks are not written back to the cache, because the jobs are leaf nodes, and to save some time.
-.build_documentation:
-  stage: deploy
+generate_api_clients:
+  stage: package
   extends: .gradle_build_job
+  when: manual
+  cache:
+    - <<: *gradle_cache
+      policy: pull
+    - <<: *gradle_wrapper_cache
+      policy: pull
   needs:
     - job: build
       artifacts: false
   script:
-    - apt update && apt install --assume-yes graphviz
-    - ./gradlew --build-cache :documentation:asciidoctor
-
-# Attempt to build the documentation, although we do not deploy it to GitLab Pages.
-# This ensures that everything works as expected and prevents surprises when merging.
-dummy_doc_build:
-  extends: .build_documentation
+    - ./gradlew --build-cache :documentation:generateAllClients
+  artifacts:
+    name: api-clients
+    expose_as: api-clients
+    expire_in: 1 mos
+    paths:
+      - documentation/build/generated-clients
   rules:
     - if: $CI_COMMIT_REF_NAME != $CI_DEFAULT_BRANCH
-  artifacts:
-    name: documentation
-    expose_as: documentation
-    expire_in: 3 mos
-    when: always
-    paths:
-      - documentation/build/docs/asciidoc/
 
 # Deploy documentation to GitLab Pages.
 pages:
+  stage: deploy
   resource_group: gitlab-pages
-  extends: .build_documentation
-  after_script:
+  needs:
+    - job: build
+      artifacts: true
+  script:
     - mkdir -p public
     - cp -r documentation/build/docs/asciidoc/* public/
   artifacts:
@@ -120,6 +113,11 @@ pages:
 .docker_build_instructions:
   stage: package
   extends: .gradle_build_job
+  cache:
+    - <<: *gradle_cache
+      policy: pull
+    - <<: *gradle_wrapper_cache
+      policy: pull
   needs:
     - job: build
       artifacts: false

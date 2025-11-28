@@ -332,10 +332,6 @@ val staticFiles by configurations.creating {
     isCanBeResolved = false
 }
 
-tasks.named("build").configure {
-    dependsOn(asciidoctor)
-}
-
 artifacts {
     add("staticFiles", packageHTML)
 }
@@ -422,10 +418,11 @@ tasks {
     }
 
     register("generateAllClients") {
+        setGroup("openapi client generation")
         dependsOn(
             "generateTypescriptClient",
             "generatePythonClient",
-            "generateRClient"
+            "generateRClient",
         )
     }
 }

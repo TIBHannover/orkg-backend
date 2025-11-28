@@ -114,7 +114,6 @@ class SmartReviewController(
     fun findPublishedContentById(
         @PathVariable id: ThingId,
         @PathVariable contentId: ThingId,
-        pageable: Pageable,
         capabilities: MediaTypeCapabilities,
     ): Any =
         service.findPublishedContentById(id, contentId)
@@ -210,7 +209,7 @@ class SmartReviewController(
     @PostMapping("/{id}/publish", produces = [SMART_REVIEW_JSON_V1])
     fun publish(
         @PathVariable id: ThingId,
-        @RequestBody @Valid request: PublishRequest,
+        @RequestBody @Valid request: PublishSmartReviewRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         currentUser: Authentication?,
     ): ResponseEntity<Any> {
@@ -302,7 +301,7 @@ class SmartReviewController(
     @JsonSubTypes(
         value = [
             JsonSubTypes.Type(SmartReviewComparisonSectionRequest::class),
-            JsonSubTypes.Type(SmartReviewVisualizationSection::class),
+            JsonSubTypes.Type(SmartReviewVisualizationSectionRequest::class),
             JsonSubTypes.Type(SmartReviewResourceSectionRequest::class),
             JsonSubTypes.Type(SmartReviewPredicateSectionRequest::class),
             JsonSubTypes.Type(SmartReviewOntologySectionRequest::class),
@@ -361,7 +360,7 @@ class SmartReviewController(
             )
     }
 
-    data class SmartReviewVisualizationSection(
+    data class SmartReviewVisualizationSectionRequest(
         override val heading: String,
         val visualization: ThingId?,
     ) : SmartReviewSectionRequest {
@@ -537,7 +536,7 @@ class SmartReviewController(
             )
     }
 
-    data class PublishRequest(
+    data class PublishSmartReviewRequest(
         @field:NotBlank
         val changelog: String,
         @JsonProperty("assign_doi")

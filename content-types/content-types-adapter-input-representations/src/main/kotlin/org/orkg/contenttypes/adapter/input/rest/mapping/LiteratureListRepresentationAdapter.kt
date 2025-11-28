@@ -1,9 +1,9 @@
 package org.orkg.contenttypes.adapter.input.rest.mapping
 
-import org.orkg.contenttypes.adapter.input.rest.ListSectionRepresentation
+import org.orkg.contenttypes.adapter.input.rest.LiteratureListListSectionRepresentation
 import org.orkg.contenttypes.adapter.input.rest.LiteratureListRepresentation
 import org.orkg.contenttypes.adapter.input.rest.LiteratureListSectionRepresentation
-import org.orkg.contenttypes.adapter.input.rest.TextSectionRepresentation
+import org.orkg.contenttypes.adapter.input.rest.LiteratureListTextSectionRepresentation
 import org.orkg.contenttypes.domain.LiteratureList
 import org.orkg.contenttypes.domain.LiteratureListListSection
 import org.orkg.contenttypes.domain.LiteratureListSection
@@ -44,10 +44,10 @@ interface LiteratureListRepresentationAdapter :
 
     private fun LiteratureListSection.toLiteratureListSectionRepresentation(): LiteratureListSectionRepresentation =
         when (this) {
-            is LiteratureListListSection -> ListSectionRepresentation(id, entries.map { it.toEntryRepresentation() })
-            is LiteratureListTextSection -> TextSectionRepresentation(id, heading, headingSize, text)
+            is LiteratureListListSection -> LiteratureListListSectionRepresentation(id, entries.map { it.toEntryRepresentation() })
+            is LiteratureListTextSection -> LiteratureListTextSectionRepresentation(id, heading, headingSize, text)
         }
 
-    private fun LiteratureListListSection.Entry.toEntryRepresentation(): ListSectionRepresentation.EntryRepresentation =
-        ListSectionRepresentation.EntryRepresentation(value.toResourceReferenceRepresentation(), description)
+    private fun LiteratureListListSection.Entry.toEntryRepresentation(): LiteratureListListSectionRepresentation.EntryRepresentation =
+        LiteratureListListSectionRepresentation.EntryRepresentation(value.toResourceReferenceRepresentation(), description)
 }

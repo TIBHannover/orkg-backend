@@ -1,7 +1,6 @@
 package org.orkg.contenttypes.adapter.input.rest
 
 import jakarta.validation.Valid
-import jakarta.validation.constraints.NotBlank
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.RequireLogin
@@ -121,10 +120,10 @@ class ComparisonRelatedFigureController(
 
     data class UpdateComparisonRelatedFigureRequest(
         val label: String?,
-        @field:NotBlank
-        val image: String,
-        @field:NotBlank
-        val description: String,
+        @field:NullableNotBlank
+        val image: String?,
+        @field:NullableNotBlank
+        val description: String?,
     ) {
         fun toUpdateCommand(comparisonId: ThingId, comparisonRelatedFigureId: ThingId, contributorId: ContributorId) =
             UpdateComparisonRelatedFigureUseCase.UpdateCommand(

@@ -7,26 +7,20 @@ NOTE: The following endpoints use content negotiation, meaning that the contents
 [[table-columns-create]]
 == Creating Table Columns
 
-A `POST` request creates a new table column with the given parameters.
-The response will be `201 Created` when successful.
-The updated table (object) can be retrieved by following the URI in the `Location` header field.
+include::{snippets}/tables_create-column-at-index/description.adoc[]
 
-operation::tables_create-table-column-at-index[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::tables_create-column-at-index[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[table-columns-edit]]
 == Updating Table Columns
 
-A `PUT` request updates an existing column of a table with the given parameters.
-The response will be `204 No Content` when successful.
-The updated table (object) can be retrieved by following the URI in the `Location` header field.
+include::{snippets}/tables_update-column/description.adoc[]
 
-operation::tables_update-table-column[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::tables_update-column[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[table-columns-delete]]
 == Deleting Table Columns
 
-A `DELETE` request deletes an existing column of a table.
-The response will be `204 No Content` when successful.
-The updated table (object) can be retrieved by following the URI in the `Location` header field.
+include::{snippets}/tables_delete-column/description.adoc[]
 
-operation::tables_delete-table-column[snippets='path-parameters,curl-request,http-response']
+operation::tables_delete-column[snippets='path-parameters,curl-request,http-response']

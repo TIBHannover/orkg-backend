@@ -23,7 +23,7 @@ internal class IdentifierExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpect(jsonPath("$.errors[0].detail", `is`("""The value passed as query parameter "doi" is not a valid DOI. The value sent was: not a doi""")))
             .andExpect(jsonPath("$.errors[0].pointer", `is`("""#/doi""")))
-            .andDocumentWithValidationExceptionResponseFields(type)
+            .andDocumentWithValidationExceptionResponseFields(InvalidDOI::class, type)
     }
 
     @Test
@@ -35,6 +35,6 @@ internal class IdentifierExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpect(jsonPath("$.errors[0].detail", `is`("""Error""")))
             .andExpect(jsonPath("$.errors[0].pointer", `is`("""#/doi""")))
-            .andDocumentWithValidationExceptionResponseFields(type)
+            .andDocumentWithValidationExceptionResponseFields(InvalidIdentifier::class, type)
     }
 }

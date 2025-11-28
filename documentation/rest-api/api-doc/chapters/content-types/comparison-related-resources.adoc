@@ -9,42 +9,34 @@ NOTE: The following endpoints use content negotiation, meaning that the contents
 [[comparisons-related-resource-fetch]]
 == Fetching Comparison Related Resources
 
-A `GET` request provides information about a comparison related resource.
+include::{snippets}/comparison-related-resources_find-by-id-and-comparison-id/description.adoc[]
 
-operation::comparison-related-resources_get-single[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::comparison-related-resources_find-by-id-and-comparison-id[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[comparisons-related-resource-list]]
 == Listing Comparison Related Resources
 
-A `GET` request returns a <<sorting-and-pagination,paged>> list of <<comparisons-related-resource-fetch,comparison related resources>>.
+include::{snippets}/comparison-related-resources_find-all-by-comparison-id/description.adoc[]
 
-operation::comparison-related-resources_get-paged[snippets='path-parameters,curl-request']
+operation::comparison-related-resources_find-all-by-comparison-id[snippets='path-parameters,curl-request']
 
 [[comparisons-related-resource-create]]
 == Creating Comparison Related Resources
 
-A `POST` request creates a new comparison related resource with all the given parameters.
-The response will be `201 Created` when successful.
-The comparison related resource (object) can be retrieved by following the URI in the `Location` header field.
+include::{snippets}/comparison-related-resources_create/description.adoc[]
 
 operation::comparison-related-resources_create[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[comparisons-related-resource-edit]]
 == Updating Comparison Related Resources
 
-A `PUT` request updates an existing comparison related resource with all the given parameters.
-The response will be `204 No Content` when successful.
-The updated comparison related resource (object) can be retrieved by following the URI in the `Location` header field.
-
-NOTE: Top level fields that were mandatory when creating the comparison related resource can be omitted or `null`, meaning that the corresponding fields should not be updated.
+include::{snippets}/comparison-related-resources_update/description.adoc[]
 
 operation::comparison-related-resources_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[comparisons-related-resource-delete]]
 == Deleting Comparison Related Resources
 
-A `DELETE` request deletes a comparison related resource by ID.
-The response will be `204 No Content` when successful.
-The updated comparison (object) can be retrieved by following the URI in the `Location` header field.
+include::{snippets}/comparison-related-resources_delete/description.adoc[]
 
 operation::comparison-related-resources_delete[snippets='path-parameters,curl-request,response-headers,http-response']

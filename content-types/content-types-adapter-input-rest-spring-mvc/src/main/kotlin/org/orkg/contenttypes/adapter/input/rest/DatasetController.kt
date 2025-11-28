@@ -25,7 +25,7 @@ class DatasetController(
             .mapToDatasetRepresentation()
 
     @GetMapping("/api/datasets/{id}/problems")
-    fun findAllByDatasetId(
+    fun findAllResearchProblemsByDatasetId(
         @PathVariable id: ThingId,
         pageable: Pageable,
     ): Page<ResearchProblem> =

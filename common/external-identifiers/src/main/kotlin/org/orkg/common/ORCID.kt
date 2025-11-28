@@ -1,7 +1,7 @@
 package org.orkg.common
 
-private val VALID_ORCID_REGEX = Regex("""^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$""")
-private val VALID_ORCID_URI_REGEX = Regex("""^https?://orcid\.org/(\d{4}-\d{4}-\d{4}-\d{3}[\dX])$""")
+internal val VALID_ORCID_REGEX = Regex("""^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$""")
+internal val VALID_ORCID_URI_REGEX = Regex("""^https?://orcid\.org/(\d{4}-\d{4}-\d{4}-\d{3}[\dX])$""")
 
 @JvmInline
 value class ORCID private constructor(override val value: String) : IdentifierValue {

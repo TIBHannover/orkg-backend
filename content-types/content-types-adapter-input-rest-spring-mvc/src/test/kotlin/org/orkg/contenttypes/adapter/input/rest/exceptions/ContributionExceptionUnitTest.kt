@@ -12,7 +12,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
@@ -28,13 +27,12 @@ internal class ContributionExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Not Found")
             .andExpectDetail("""Contribution "R123" not found.""")
             .andExpect(jsonPath("$.contribution_id").value("R123"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("contribution_id").description("The id of the contribution."),
-                    )
+            .andDocument {
+                responseFields<ContributionNotFound>(
+                    fieldWithPath("contribution_id").description("The id of the contribution."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -46,12 +44,11 @@ internal class ContributionExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Too few ids: At least two ids are required. Got only "1".""")
             .andExpect(jsonPath("$.contribution_ids[0]").value("R123"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("contribution_ids[]").description("The ids of the provided contributions."),
-                    )
+            .andDocument {
+                responseFields<TooFewContributions>(
+                    fieldWithPath("contribution_ids[]").description("The ids of the provided contributions."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 }

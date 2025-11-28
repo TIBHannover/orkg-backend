@@ -1,5 +1,6 @@
 package org.orkg.common
 
+import org.orkg.common.validation.NullableNotBlank
 import org.orkg.testing.spring.restdocs.DocumentationContextProvider
 import org.springframework.boot.test.context.TestComponent
 import org.springframework.restdocs.constraints.Constraint
@@ -20,6 +21,13 @@ class CommonDocumentationContextProvider : DocumentationContextProvider {
         when (type) {
             ThingId::class -> constraints.add(thingIdConstraint)
             UUID::class, ContributorId::class, ObservatoryId::class, OrganizationId::class -> constraints.add(uuidConstraint)
+        }
+        if (constraints.isNotEmpty()) {
+            constraints.toList().forEachIndexed { index, constraint ->
+                if (constraint.name == NullableNotBlank::class.qualifiedName) {
+                    constraints[index] = nullableNotBlankPatternConstraint
+                }
+            }
         }
     }
 }

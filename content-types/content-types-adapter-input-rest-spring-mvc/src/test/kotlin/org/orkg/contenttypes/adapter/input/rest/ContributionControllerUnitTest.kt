@@ -7,56 +7,52 @@ import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.common.json.CommonJacksonModule
+import org.orkg.common.exceptions.UnknownSortingProperty
+import org.orkg.contenttypes.adapter.input.rest.ContributionController.CreateContributionRequest
 import org.orkg.contenttypes.adapter.input.rest.PaperController.CreatePaperRequest.ContributionRequestPart
 import org.orkg.contenttypes.adapter.input.rest.PaperController.CreatePaperRequest.ContributionRequestPart.StatementObjectRequest
+import org.orkg.contenttypes.domain.ContributionNotFound
 import org.orkg.contenttypes.domain.DuplicateTempIds
 import org.orkg.contenttypes.domain.EmptyContribution
 import org.orkg.contenttypes.domain.InvalidStatementSubject
 import org.orkg.contenttypes.domain.InvalidTempId
 import org.orkg.contenttypes.domain.PaperNotFound
+import org.orkg.contenttypes.domain.PaperNotModifiable
 import org.orkg.contenttypes.domain.ThingIsNotAClass
 import org.orkg.contenttypes.domain.ThingIsNotAPredicate
 import org.orkg.contenttypes.domain.ThingNotDefined
 import org.orkg.contenttypes.domain.testing.fixtures.createContribution
 import org.orkg.contenttypes.input.ContributionUseCases
+import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerUnitTestConfiguration
+import org.orkg.contenttypes.input.testing.fixtures.contributionResponseFields
+import org.orkg.graph.domain.InvalidLabel
+import org.orkg.graph.domain.InvalidLiteralDatatype
+import org.orkg.graph.domain.InvalidLiteralLabel
+import org.orkg.graph.domain.ReservedClass
 import org.orkg.graph.domain.ThingNotFound
+import org.orkg.graph.domain.URIAlreadyInUse
+import org.orkg.graph.domain.URINotAbsolute
 import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
-import org.orkg.graph.testing.asciidoc.allowedVisibilityValues
 import org.orkg.testing.andExpectContribution
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.annotations.TestWithMockUser
-import org.orkg.testing.configuration.ExceptionTestConfiguration
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
-import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
-import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.Optional
 
-@ContextConfiguration(
-    classes = [
-        ContributionController::class,
-        ExceptionTestConfiguration::class,
-        CommonJacksonModule::class,
-        FixedClockConfig::class
-    ]
-)
+@ContextConfiguration(classes = [ContributionController::class, ContentTypeControllerUnitTestConfiguration::class])
 @WebMvcTest(controllers = [ContributionController::class])
 internal class ContributionControllerUnitTest : MockMvcBaseTest("contributions") {
     @MockkBean
@@ -64,7 +60,7 @@ internal class ContributionControllerUnitTest : MockMvcBaseTest("contributions")
 
     @Test
     @DisplayName("Given a contribution, when it is fetched by id and service succeeds, then status is 200 OK and contribution is returned")
-    fun getSingle() {
+    fun findById() {
         val contribution = createContribution()
         every { contributionService.findById(contribution.id) } returns Optional.of(contribution)
 
@@ -74,26 +70,19 @@ internal class ContributionControllerUnitTest : MockMvcBaseTest("contributions")
             .perform()
             .andExpect(status().isOk)
             .andExpectContribution()
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the contribution to retrieve.")
-                    ),
-                    responseFields(
-                        fieldWithPath("id").description("The identifier of the contribution."),
-                        fieldWithPath("label").description("The label of the contribution."),
-                        fieldWithPath("classes").description("The classes of the contribution resource."),
-                        subsectionWithPath("properties").description("A map of predicate ids to lists of thing ids, that represent the statements that this contribution consists of."),
-                        fieldWithPath("extraction_method").description("""The method used to extract the contribution resource. Can be one of $allowedExtractionMethodValues."""),
-                        timestampFieldWithPath("created_at", "the contribution resource was created"),
-                        // TODO: Add links to documentation of special user UUIDs.
-                        fieldWithPath("created_by").description("The UUID of the user or service who created this contribution."),
-                        fieldWithPath("visibility").description("""Visibility of the contribution. Can be one of $allowedVisibilityValues."""),
-                        fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this contribution.").optional()
-                    )
+            .andDocument {
+                summary("Fetching contributions")
+                description(
+                    """
+                    A `GET` request provides information about a contribution.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the contribution to retrieve."),
+                )
+                responseFields<ContributionRepresentation>(contributionResponseFields())
+                throws(ContributionNotFound::class)
+            }
 
         verify(exactly = 1) { contributionService.findById(contribution.id) }
     }
@@ -114,7 +103,7 @@ internal class ContributionControllerUnitTest : MockMvcBaseTest("contributions")
 
     @Test
     @DisplayName("Given several contributions, then status is 200 OK and contributions are returned")
-    fun getPaged() {
+    fun findAll() {
         val contribution = createContribution()
         every { contributionService.findAll(any()) } returns pageOf(contribution)
 
@@ -125,7 +114,18 @@ internal class ContributionControllerUnitTest : MockMvcBaseTest("contributions")
             .andExpect(status().isOk)
             .andExpectPage()
             .andExpectContribution("$.content[*]")
-            .andDo(generateDefaultDocSnippets())
+            .andDocument {
+                summary("Listing contributions")
+                description(
+                    """
+                    A `GET` request returns a <<sorting-and-pagination,paged>> list of <<contributions-fetch,contributions>>.
+                    If no paging request parameters are provided, the default values will be used.
+                    """
+                )
+                pagedQueryParameters()
+                pagedResponseFields<ContributionRepresentation>(contributionResponseFields())
+                throws(UnknownSortingProperty::class)
+            }
 
         verify(exactly = 1) { contributionService.findAll(any()) }
     }
@@ -145,34 +145,62 @@ internal class ContributionControllerUnitTest : MockMvcBaseTest("contributions")
             .perform()
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("/api/contributions/$contributionId")))
-            .andDo(
-                documentationHandler.document(
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the newly created contribution can be fetched from.")
-                    ),
-                    requestFields(
-                        fieldWithPath("extraction_method").description("""The method used to extract the contribution resource. Can be one of $allowedExtractionMethodValues. (default: "UNKNOWN")""").optional(),
-                        fieldWithPath("resources").description("Definition of resources that need to be created."),
-                        fieldWithPath("resources.*.label").description("The label of the resource."),
-                        fieldWithPath("resources.*.classes").description("The list of classes of the resource."),
-                        fieldWithPath("literals").description("Definition of literals that need to be created."),
-                        fieldWithPath("literals.*.label").description("The value of the literal."),
-                        fieldWithPath("literals.*.data_type").description("The data type of the literal."),
-                        fieldWithPath("predicates").description("Definition of predicates that need to be created."),
-                        fieldWithPath("predicates.*.label").description("The label of the predicate."),
-                        fieldWithPath("predicates.*.description").description("The description of the predicate."),
-                        fieldWithPath("lists").description("Definition of lists that need to be created."),
-                        fieldWithPath("lists.*.label").description("The label of the list."),
-                        fieldWithPath("lists.*.elements").description("The IDs of the elements of the list."),
-                        fieldWithPath("contribution").description("List of definitions of contribution that need to be created."),
-                        fieldWithPath("contribution.label").description("Label of the contribution."),
-                        fieldWithPath("contribution.classes").description("The classes of the contribution resource."),
-                        subsectionWithPath("contribution.statements").description("Recursive map of statements contained within the contribution."),
-                        fieldWithPath("contribution.statements.*[].id").description("The ID of the object of the statement.")
-                    )
+            .andDocument {
+                summary("Creating contributions")
+                description(
+                    """
+                    A `POST` request creates a new contribution with all the given parameters.
+                    The response will be `201 Created` when successful.
+                    The contribution (object) can be retrieved by following the URI in the `Location` header field.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the newly created contribution can be fetched from."),
+                )
+                requestFields<CreateContributionRequest>(
+                    fieldWithPath("extraction_method").description("""The method used to extract the contribution resource. Can be one of $allowedExtractionMethodValues. (default: `UNKNOWN`)""").optional(),
+                    fieldWithPath("resources").description("A map of temporary ids to resource definitions for resources that need to be created. (optional)").optional(),
+                    fieldWithPath("resources.*").type("Object").description("Defines a single resource that needs to be created in the process."),
+                    fieldWithPath("resources.*.label").description("The label of the resource."),
+                    fieldWithPath("resources.*.classes").description("The list of classes of the resource."),
+                    fieldWithPath("literals").description("A map of temporary ids to literal definitions for literals that need to be created. (optional)").optional(),
+                    fieldWithPath("literals.*").type("Object").description("Defines a single literal that needs to be created in the process."),
+                    fieldWithPath("literals.*.label").description("The value of the literal."),
+                    fieldWithPath("literals.*.data_type").description("The data type of the literal."),
+                    fieldWithPath("predicates").description("A map of temporary ids to predicate definitions for predicates that need to be created. (optional)").optional(),
+                    fieldWithPath("predicates.*").type("Object").description("Defines a single predicate that needs to be created in the process."),
+                    fieldWithPath("predicates.*.label").description("The label of the predicate."),
+                    fieldWithPath("predicates.*.description").description("The description of the predicate."),
+                    fieldWithPath("lists").description("A map of temporary ids to list definitions for lists that need to be created. (optional)").optional(),
+                    fieldWithPath("lists.*").type("Object").description("Defines a single list that needs to be created in the process."),
+                    fieldWithPath("lists.*.label").description("The label of the list."),
+                    fieldWithPath("lists.*.elements").description("The IDs of the elements of the list."),
+                    fieldWithPath("contribution").description("List of definitions of contribution that need to be created."),
+                    fieldWithPath("contribution.label").description("Label of the contribution."),
+                    fieldWithPath("contribution.classes").description("The classes of the contribution resource. (optional)").optional(),
+                    fieldWithPath("contribution.statements").description("A recursive map of predicate id to list of statements contained within the contribution."),
+                    fieldWithPath("contribution.statements.*").description("A predicate id."),
+                    subsectionWithPath("contribution.statements.*[]").description("A list of statement object requests."),
+                )
+                throws(
+                    InvalidTempId::class,
+                    DuplicateTempIds::class,
+                    PaperNotFound::class,
+                    PaperNotModifiable::class,
+                    ThingNotDefined::class,
+                    ThingNotFound::class,
+                    ReservedClass::class,
+                    ThingIsNotAClass::class,
+                    InvalidLabel::class,
+                    InvalidLiteralLabel::class,
+                    InvalidLiteralDatatype::class,
+                    URINotAbsolute::class,
+                    URIAlreadyInUse::class,
+                    EmptyContribution::class,
+                    ThingIsNotAPredicate::class,
+                    InvalidStatementSubject::class,
+                )
+            }
 
         verify(exactly = 1) { contributionService.create(any()) }
     }
@@ -340,7 +368,7 @@ internal class ContributionControllerUnitTest : MockMvcBaseTest("contributions")
     }
 
     private fun createContributionRequest() =
-        ContributionController.CreateContributionRequest(
+        CreateContributionRequest(
             resources = mapOf(
                 "#temp1" to CreateResourceRequestPart(
                     label = "MOTO",

@@ -10,45 +10,35 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
-import org.orkg.common.json.CommonJacksonModule
-import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
+import org.orkg.contenttypes.adapter.input.rest.ComparisonRelatedResourceController.CreateComparisonRelatedResourceRequest
+import org.orkg.contenttypes.adapter.input.rest.ComparisonRelatedResourceController.UpdateComparisonRelatedResourceRequest
 import org.orkg.contenttypes.domain.ComparisonNotFound
+import org.orkg.contenttypes.domain.ComparisonRelatedResourceNotFound
+import org.orkg.contenttypes.domain.ComparisonRelatedResourceNotModifiable
 import org.orkg.contenttypes.domain.testing.fixtures.createComparisonRelatedResource
 import org.orkg.contenttypes.input.ComparisonRelatedResourceUseCases
+import org.orkg.contenttypes.input.testing.fixtures.comparisonRelatedResourceResponseFields
+import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerUnitTestConfiguration
+import org.orkg.graph.domain.InvalidLabel
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectComparisonRelatedResource
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.annotations.TestWithMockUser
-import org.orkg.testing.configuration.ExceptionTestConfiguration
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
-import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
-import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.Optional
 
-@ContextConfiguration(
-    classes = [
-        ComparisonRelatedResourceController::class,
-        ExceptionTestConfiguration::class,
-        CommonJacksonModule::class,
-        ContentTypeJacksonModule::class,
-        FixedClockConfig::class
-    ]
-)
+@ContextConfiguration(classes = [ComparisonRelatedResourceController::class, ContentTypeControllerUnitTestConfiguration::class])
 @WebMvcTest(controllers = [ComparisonRelatedResourceController::class])
 internal class ComparisonRelatedResourceControllerUnitTest : MockMvcBaseTest("comparison-related-resources") {
     @MockkBean
@@ -56,7 +46,7 @@ internal class ComparisonRelatedResourceControllerUnitTest : MockMvcBaseTest("co
 
     @Test
     @DisplayName("Given a comparison related resource, when fetched by id, then status is 200 OK and comparison related resource is returned")
-    fun getSingle() {
+    fun findByIdAndComparisonId() {
         val comparisonId = ThingId("R123")
         val comparisonRelatedResource = createComparisonRelatedResource()
 
@@ -69,26 +59,19 @@ internal class ComparisonRelatedResourceControllerUnitTest : MockMvcBaseTest("co
             .perform()
             .andExpect(status().isOk)
             .andExpectComparisonRelatedResource()
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the comparison."),
-                        parameterWithName("comparisonRelatedResourceId").description("The identifier of the comparison related resource to retrieve.")
-                    ),
-                    responseFields(
-                        // The order here determines the order in the generated table. More relevant items should be up.
-                        fieldWithPath("id").description("The identifier of the comparison related resource."),
-                        fieldWithPath("label").description("The title of label comparison related resource."),
-                        fieldWithPath("image").description("The url for the image of the comparison related resource."),
-                        fieldWithPath("url").description("The url of the comparison related resource."),
-                        fieldWithPath("description").description("The description of the comparison related resource."),
-                        timestampFieldWithPath("created_at", "the comparison related resource was created"),
-                        // TODO: Add links to documentation of special user UUIDs.
-                        fieldWithPath("created_by").description("The UUID of the user or service who created this comparison related resource.")
-                    )
+            .andDocument {
+                summary("Fetching comparison related resources")
+                description(
+                    """
+                    A `GET` request provides information about a comparison related resource.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the comparison."),
+                    parameterWithName("comparisonRelatedResourceId").description("The identifier of the comparison related resource to retrieve."),
+                )
+                responseFields<ComparisonRelatedResourceRepresentation>(comparisonRelatedResourceResponseFields())
+            }
 
         verify(exactly = 1) { comparisonRelatedResourceService.findByIdAndComparisonId(comparisonId, comparisonRelatedResource.id) }
     }
@@ -113,7 +96,7 @@ internal class ComparisonRelatedResourceControllerUnitTest : MockMvcBaseTest("co
 
     @Test
     @DisplayName("Given several comparison related resources, when fetched, then status is 200 OK and comparison related resources are returned")
-    fun getPaged() {
+    fun findAllByComparisonId() {
         val comparisonId = ThingId("R123")
         val comparisonRelatedResource = listOf(createComparisonRelatedResource())
 
@@ -125,14 +108,19 @@ internal class ComparisonRelatedResourceControllerUnitTest : MockMvcBaseTest("co
             .andExpect(status().isOk)
             .andExpectPage()
             .andExpectComparisonRelatedResource("$.content[*]")
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the comparison."),
-                    )
+            .andDocument {
+                summary("Listing comparison related resources")
+                description(
+                    """
+                    A `GET` request returns a <<sorting-and-pagination,paged>> list of <<comparisons-related-resource-fetch,comparison related resources>>.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the comparison."),
+                )
+                pagedQueryParameters()
+                pagedResponseFields<ComparisonRelatedResourceRepresentation>(comparisonRelatedResourceResponseFields())
+            }
 
         verify(exactly = 1) { comparisonRelatedResourceService.findAllByComparisonId(comparisonId, any()) }
     }
@@ -152,23 +140,29 @@ internal class ComparisonRelatedResourceControllerUnitTest : MockMvcBaseTest("co
             .perform()
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("/api/comparisons/$comparisonId/related-resources/$id")))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The comparison to attach the comparison related resource to.")
-                    ),
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the newly created comparison related resource can be fetched from.")
-                    ),
-                    requestFields(
-                        fieldWithPath("label").description("The label of the comparison related resource."),
-                        fieldWithPath("image").description("The url to the image of the comparison related resource. (optional)"),
-                        fieldWithPath("url").description("The url of the comparison related resource. (optional)"),
-                        fieldWithPath("description").description("The description of the comparison related resource. (optional)")
-                    )
+            .andDocument {
+                summary("Creating comparison related resources")
+                description(
+                    """
+                    A `POST` request creates a new comparison related resource with all the given parameters.
+                    The response will be `201 Created` when successful.
+                    The comparison related resource (object) can be retrieved by following the URI in the `Location` header field.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The comparison to attach the comparison related resource to."),
+                )
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the newly created comparison related resource can be fetched from."),
+                )
+                requestFields<CreateComparisonRelatedResourceRequest>(
+                    fieldWithPath("label").description("The label of the comparison related resource."),
+                    fieldWithPath("image").description("The url to the image of the comparison related resource. (optional)").optional(),
+                    fieldWithPath("url").description("The url of the comparison related resource. (optional)").optional(),
+                    fieldWithPath("description").description("The description of the comparison related resource. (optional)").optional(),
+                )
+                throws(InvalidLabel::class, ComparisonNotFound::class)
+            }
 
         verify(exactly = 1) { comparisonRelatedResourceService.create(any()) }
     }
@@ -206,24 +200,37 @@ internal class ComparisonRelatedResourceControllerUnitTest : MockMvcBaseTest("co
             .perform()
             .andExpect(status().isNoContent)
             .andExpect(header().string("Location", endsWith("/api/comparisons/$comparisonId/related-resources/$id")))
-            .andDo(
-                documentationHandler.document(
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the updated comparison related resource can be fetched from.")
-                    ),
-                    pathParameters(
-                        parameterWithName("id").description("The id of the comparison the comparison related resource belongs to."),
-                        parameterWithName("comparisonRelatedFigureId").description("The identifier of the comparison related resource to update.")
-                    ),
-                    requestFields(
-                        fieldWithPath("label").description("The label of the comparison related resource. (optional)"),
-                        fieldWithPath("image").description("The url to the image of the comparison related resource."),
-                        fieldWithPath("url").description("The url of the comparison related resource."),
-                        fieldWithPath("description").description("The description of the comparison related resource.")
-                    )
+            .andDocument {
+                summary("Updating comparison related resources")
+                description(
+                    """
+                    A `PUT` request updates an existing comparison related resource with all the given parameters.
+                    The response will be `204 No Content` when successful.
+                    The updated comparison related resource (object) can be retrieved by following the URI in the `Location` header field.
+                    
+                    NOTE: Top level fields that were mandatory when creating the comparison related resource can be omitted or `null`, meaning that the corresponding fields should not be updated.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the updated comparison related resource can be fetched from."),
+                )
+                pathParameters(
+                    parameterWithName("id").description("The id of the comparison the comparison related resource belongs to."),
+                    parameterWithName("comparisonRelatedFigureId").description("The identifier of the comparison related resource to update."),
+                )
+                requestFields<UpdateComparisonRelatedResourceRequest>(
+                    fieldWithPath("label").description("The label of the comparison related resource. (optional)").optional(),
+                    fieldWithPath("image").description("The url to the image of the comparison related resource. (optional)").optional(),
+                    fieldWithPath("url").description("The url of the comparison related resource. (optional)").optional(),
+                    fieldWithPath("description").description("The description of the comparison related resource. (optional)").optional(),
+                )
+                throws(
+                    ComparisonRelatedResourceNotModifiable::class,
+                    ComparisonNotFound::class,
+                    InvalidLabel::class,
+                    ComparisonRelatedResourceNotFound::class
+                )
+            }
 
         verify(exactly = 1) { comparisonRelatedResourceService.update(any()) }
     }
@@ -248,18 +255,24 @@ internal class ComparisonRelatedResourceControllerUnitTest : MockMvcBaseTest("co
             .perform()
             .andExpect(status().isNoContent)
             .andExpect(header().string("Location", endsWith("/api/comparisons/$comparisonId")))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the comparison."),
-                        parameterWithName("comparisonRelatedResourceId").description("The identifier of the comparison related resource to delete.")
-                    ),
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the updated comparison can be fetched from.")
-                    )
+            .andDocument {
+                summary("Deleting comparison related resources")
+                description(
+                    """
+                    A `DELETE` request deletes a comparison related resource by ID.
+                    The response will be `204 No Content` when successful.
+                    The updated comparison (object) can be retrieved by following the URI in the `Location` header field.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the comparison."),
+                    parameterWithName("comparisonRelatedResourceId").description("The identifier of the comparison related resource to delete."),
+                )
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the updated comparison can be fetched from."),
+                )
+                throws(ComparisonRelatedResourceNotFound::class, ComparisonRelatedResourceNotModifiable::class)
+            }
 
         verify(exactly = 1) {
             comparisonRelatedResourceService.delete(
@@ -271,7 +284,7 @@ internal class ComparisonRelatedResourceControllerUnitTest : MockMvcBaseTest("co
     }
 
     private fun createComparisonRelatedResourceRequest() =
-        ComparisonRelatedResourceController.CreateComparisonRelatedResourceRequest(
+        CreateComparisonRelatedResourceRequest(
             label = "related resource",
             image = "https://example.org/test.png",
             url = "https://orkg.org/resources/R1000",
@@ -279,7 +292,7 @@ internal class ComparisonRelatedResourceControllerUnitTest : MockMvcBaseTest("co
         )
 
     private fun updateComparisonRelatedResourceRequest() =
-        ComparisonRelatedResourceController.UpdateComparisonRelatedResourceRequest(
+        UpdateComparisonRelatedResourceRequest(
             label = "related resource",
             image = "https://example.org/test.png",
             url = "https://orkg.org/resources/R1000",

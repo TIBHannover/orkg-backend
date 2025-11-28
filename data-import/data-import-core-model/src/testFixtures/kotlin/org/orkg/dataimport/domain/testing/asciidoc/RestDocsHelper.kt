@@ -5,10 +5,10 @@ import org.orkg.dataimport.domain.csv.papers.PaperCSVRecordImportResult
 import org.orkg.dataimport.domain.jobs.JobStatus
 
 val allowedCSVStateValues =
-    CSV.State.entries.sorted().joinToString(separator = ", ", prefix = "`", postfix = "`")
+    CSV.State.entries.sorted().joinToString(separator = "`, `", prefix = "`", postfix = "`")
 
 val allowedJobStatusValues =
-    JobStatus.Status.entries.sorted().joinToString(separator = ", ", prefix = "`", postfix = "`")
+    JobStatus.Status.entries.sorted().joinToString(separator = "`, `", prefix = "`", postfix = "`")
 
 val allowedEntityTypeValues =
-    PaperCSVRecordImportResult.Type.entries.sorted().joinToString(separator = ", ", prefix = "`", postfix = "`")
+    PaperCSVRecordImportResult.Type.entries.sorted().joinToString(separator = "`, `", prefix = "`", postfix = "`")

@@ -154,7 +154,7 @@ class PaperController(
     @PostMapping("/{id}/publish", produces = [MediaType.APPLICATION_JSON_VALUE], consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun publish(
         @PathVariable id: ThingId,
-        @RequestBody @Valid request: PublishRequest,
+        @RequestBody @Valid request: PublishPaperRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         currentUser: Authentication?,
     ): ResponseEntity<Any> {
@@ -330,7 +330,7 @@ class PaperController(
             )
     }
 
-    data class PublishRequest(
+    data class PublishPaperRequest(
         @field:NotBlank
         val subject: String,
         @field:NotBlank

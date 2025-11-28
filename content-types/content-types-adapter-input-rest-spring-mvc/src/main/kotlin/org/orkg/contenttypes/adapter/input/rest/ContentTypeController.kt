@@ -71,7 +71,7 @@ class ContentTypeController(
     }
 
     @GetMapping(produces = [RESOURCE_JSON_V1])
-    fun findAllAsResource(
+    fun findAllAsResources(
         @RequestParam("classes", required = false, defaultValue = "") classes: Set<ContentTypeClass>,
         @RequestParam("visibility", required = false) visibility: VisibilityFilter?,
         @RequestParam("created_by", required = false) createdBy: ContributorId?,
@@ -90,7 +90,7 @@ class ContentTypeController(
         if (authorId != null && authorName != null) {
             throw TooManyParameters.atMostOneOf("author_id", "author_name")
         }
-        return service.findAllAsResource(
+        return service.findAllAsResources(
             pageable = pageable,
             classes = classes.ifEmpty { ContentTypeClass.entries.toSet() },
             visibility = visibility,

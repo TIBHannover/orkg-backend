@@ -114,7 +114,6 @@ class LiteratureListController(
     fun findPublishedContentById(
         @PathVariable id: ThingId,
         @PathVariable contentId: ThingId,
-        pageable: Pageable,
         capabilities: MediaTypeCapabilities,
     ): ResponseEntity<Any> =
         service.findPublishedContentById(id, contentId)
@@ -211,7 +210,7 @@ class LiteratureListController(
     @PostMapping("/{id}/publish", consumes = [LITERATURE_LIST_JSON_V1])
     fun publish(
         @PathVariable id: ThingId,
-        @RequestBody @Valid request: PublishRequest,
+        @RequestBody @Valid request: PublishLiteratureListRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         currentUser: Authentication?,
     ): ResponseEntity<Any> {
@@ -394,7 +393,7 @@ class LiteratureListController(
             )
     }
 
-    data class PublishRequest(
+    data class PublishLiteratureListRequest(
         @field:NotBlank
         val changelog: String,
     ) {

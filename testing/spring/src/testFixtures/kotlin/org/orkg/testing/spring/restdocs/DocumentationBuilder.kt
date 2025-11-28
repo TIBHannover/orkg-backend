@@ -7,6 +7,7 @@ import com.epages.restdocs.apispec.References
 import com.epages.restdocs.apispec.Schema
 import com.epages.restdocs.apispec.Schema.Companion.schema
 import com.epages.restdocs.apispec.SimpleType
+import org.springframework.restdocs.constraints.Constraint
 import org.springframework.restdocs.constraints.ValidatorConstraintResolver
 import org.springframework.restdocs.headers.HeaderDescriptor
 import org.springframework.restdocs.hypermedia.LinkDescriptor
@@ -14,7 +15,6 @@ import org.springframework.restdocs.payload.FieldDescriptor
 import org.springframework.restdocs.payload.PayloadDocumentation.applyPathPrefix
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.request.ParameterDescriptor
-import org.springframework.restdocs.snippet.Attributes
 import kotlin.reflect.KClass
 import org.orkg.testing.spring.restdocs.pagedResponseFields as pagedResponseFieldsWrapper
 
@@ -113,6 +113,10 @@ class DocumentationBuilder(private val documentationContext: DocumentationContex
     inline fun <reified T : Any> responseFields(fieldDescriptors: FieldDescriptors) =
         responseFields(T::class, fieldDescriptors.fieldDescriptors)
 
+    fun responseFields(schemName: String, references: References) {
+        this.responseSchema = schema(schemName, references)
+    }
+
     fun responseFields(schemaClass: KClass<*>, references: References) {
         this.responseSchema = schema(schemaClass.simpleName!!, references)
     }
@@ -189,7 +193,7 @@ class DocumentationBuilder(private val documentationContext: DocumentationContex
         queryParameters(requestParameters.map { ParameterDescriptorWithType.fromParameterDescriptor(it) })
 
     fun pagedQueryParameters() =
-        pagedQueryParameters(emptyList())
+        pagedQueryParameters(emptyList<ParameterDescriptorWithType>())
 
     fun pagedQueryParameters(vararg requestParameters: ParameterDescriptorWithType) =
         pagedQueryParameters(requestParameters.toList())
@@ -213,7 +217,7 @@ class DocumentationBuilder(private val documentationContext: DocumentationContex
     }
 
     fun pagedQueryParameters(vararg requestParameters: ParameterDescriptor) =
-        pagedQueryParameters(requestParameters.map { ParameterDescriptorWithType.fromParameterDescriptor(it) })
+        pagedQueryParameters(requestParameters.toList().map { ParameterDescriptorWithType.fromParameterDescriptor(it) })
 
     fun formParameters(vararg formParameters: ParameterDescriptorWithType) =
         formParameters(formParameters.toList())
@@ -258,34 +262,53 @@ class DocumentationBuilder(private val documentationContext: DocumentationContex
 
     private fun FieldDescriptor.enhance(enclosingClass: KClass<*>): FieldDescriptor {
         val propertyPath = PropertyPathResolver.resolve(path, enclosingClass) ?: return this
-        val jType = propertyPath.type
+        val jType = propertyPath.fieldType
         val kType = jType.kotlin
-        val constraints = validatorConstraintResolver.resolveForProperty(jType.name, propertyPath.enclosingClass)
+        val constraints = mutableListOf<Constraint>()
+        if (propertyPath.fieldName != null) {
+            constraints += validatorConstraintResolver.resolveForProperty(propertyPath.fieldName, propertyPath.enclosingClass)
+        }
         documentationContext.applyConstraints(constraints, kType)
-        if (!attributes.contains("schemaName") && !jType.isJvmType() && !documentationContext.hasTypeMapping(kType)) {
-            references(kType)
+        if (!attributes.contains("schemaName")) {
+            if (isExternalType(jType)) {
+                references(kType)
+            } else if (path.isWildCard(jType) && propertyPath.typeArgument != null && isExternalType(propertyPath.typeArgument)) {
+                references(propertyPath.typeArgument.kotlin)
+            }
         }
         if (!attributes.contains("itemsType") && jType.isArrayOrIterable() && propertyPath.typeArgument != null) {
             val jItemsType = propertyPath.typeArgument
-            val kItemsType = jItemsType.kotlin
-            val itemsTypeName = documentationContext.resolveTypeName(kItemsType)
-            documentationContext.applyConstraints(constraints, kItemsType)
-            if (jItemsType.isJvmType() || isPrimitiveType(itemsTypeName)) {
-                arrayItemsType(itemsTypeName)
+            if (jItemsType.isArrayOrIterable()) {
+                arrayItemsType("array")
+            } else if (jItemsType.isEnum()) {
+                arrayItemsType("enum")
+                @Suppress("UNCHECKED_CAST")
+                enumValues(jItemsType as Class<out Enum<*>>)
             } else {
-                arrayItemsType("object")
-                references(kItemsType)
+                val kItemsType = jItemsType.kotlin
+                val itemsTypeName = documentationContext.resolveTypeName(kItemsType)
+                documentationContext.applyConstraints(constraints, kItemsType)
+                if (jItemsType.isJvmType() || isPrimitiveType(itemsTypeName)) {
+                    arrayItemsType(itemsTypeName)
+                } else {
+                    arrayItemsType("object")
+                    references(kItemsType)
+                }
             }
         }
         if (!attributes.contains("enumValues") && jType.isEnum) {
+            type("enum")
             @Suppress("UNCHECKED_CAST")
-            enum(kType as KClass<out Enum<*>>)
+            enumValues(jType as Class<out Enum<*>>)
         }
         if (constraints.isNotEmpty()) {
-            attributes(Attributes.Attribute("validationConstraints", constraints))
+            constraints(constraints)
         }
         return this
     }
+
+    private fun String.isWildCard(type: Class<*>): Boolean =
+        endsWith("*") && Map::class.java.isAssignableFrom(type)
 
     private fun Class<*>.isArrayOrIterable(): Boolean =
         isArray || Iterable::class.java.isAssignableFrom(this)
@@ -298,6 +321,9 @@ class DocumentationBuilder(private val documentationContext: DocumentationContex
             "string", "number", "integer", "boolean", "array" -> true
             else -> false
         }
+
+    private fun isExternalType(type: Class<*>): Boolean =
+        !type.isJvmType() && !documentationContext.hasTypeMapping(type.kotlin) && !type.isEnum
 
     internal fun build() = DocumentationParameters(
         summary = summary,

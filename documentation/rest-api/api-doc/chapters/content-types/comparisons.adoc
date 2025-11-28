@@ -9,58 +9,38 @@ NOTE: The following endpoints use content negotiation, meaning that the contents
 [[comparisons-fetch]]
 == Fetching Comparisons
 
-A `GET` request provides information about a comparison.
+include::{snippets}/comparisons_find-by-id/description.adoc[]
 
-operation::comparisons_get-single[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::comparisons_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[comparisons-list]]
 == Listing Comparisons
 
-A `GET` request returns a <<sorting-and-pagination,paged>> list of <<comparisons-fetch,comparisons>>.
-If no paging request parameters are provided, the default values will be used.
-
-NOTE: Fetching comparisons by DOI, title or contributor does also return previous versions of comparisons.
+include::{snippets}/comparisons_find-all/description.adoc[]
 
 operation::comparisons_get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::comparisons_get-paged-with-parameters[snippets='query-parameters,curl-request']
+operation::comparisons_find-all[snippets='query-parameters,curl-request']
 
 [[comparisons-create]]
 == Creating Comparisons
 
-A `POST` request creates a new comparison with all the given parameters.
-The response will be `201 Created` when successful.
-The comparison (object) can be retrieved by following the URI in the `Location` header field.
+include::{snippets}/comparisons_create/description.adoc[]
 
 operation::comparisons_create[snippets='request-fields,curl-request,response-headers,http-response']
 
 [[comparisons-edit]]
 == Updating Comparisons
 
-A `PUT` request updates an existing comparison with all the given parameters.
-The response will be `204 No Content` when successful.
-The updated comparison (object) can be retrieved by following the URI in the `Location` header field.
-
-[NOTE]
-====
-1. All fields at the top level in the request can be omitted or `null`, meaning that the corresponding fields should not be updated.
-2. The same rules as for <<resources-edit,updating resources>> apply when updating the visibility of a comparison.
-====
-
-WARNING: Author names will not be updated if a resource id is specified for a given author.
+include::{snippets}/comparisons_update/description.adoc[]
 
 operation::comparisons_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[comparisons-publish]]
 == Publishing Comparisons
 
-A `POST` request publishes an existing comparison with the given parameters.
-It automatically adds additional publication information, such as month and year published.
-All comparison cell contents will be archived in a separate database.
-Optionally, a DOI can be assigned to the comparison resource.
-The response will be `201 Created` when successful.
-The published comparison (object) can be retrieved by following the URI in the `Location` header field.
+include::{snippets}/comparisons_publish/description.adoc[]
 
 operation::comparisons_publish[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']

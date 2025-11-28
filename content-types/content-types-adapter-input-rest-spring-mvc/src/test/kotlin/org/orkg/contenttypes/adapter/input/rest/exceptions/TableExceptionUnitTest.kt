@@ -43,13 +43,12 @@ internal class TableExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Not Found")
             .andExpectDetail("""Table "R123" not found.""")
             .andExpect(jsonPath("$.table_id").value("R123"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("table_id").description("The id of the table."),
-                    )
+            .andDocument {
+                responseFields<TableNotFound>(
+                    fieldWithPath("table_id").description("The id of the table."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -62,14 +61,13 @@ internal class TableExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectDetail("""Table row 5 for table "R123" not found.""")
             .andExpect(jsonPath("$.table_id").value("R123"))
             .andExpect(jsonPath("$.table_row_index").value("5"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("table_id").description("The id of the table."),
-                        fieldWithPath("table_row_index").description("The row index of the table."),
-                    )
+            .andDocument {
+                responseFields<TableRowNotFound>(
+                    fieldWithPath("table_id").description("The id of the table."),
+                    fieldWithPath("table_row_index").description("The row index of the table."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -82,14 +80,13 @@ internal class TableExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectDetail("""Table column 5 for table "R123" not found.""")
             .andExpect(jsonPath("$.table_id").value("R123"))
             .andExpect(jsonPath("$.table_column_index").value("5"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("table_id").description("The id of the table."),
-                        fieldWithPath("table_column_index").description("The column index of the table."),
-                    )
+            .andDocument {
+                responseFields<TableColumnNotFound>(
+                    fieldWithPath("table_id").description("The id of the table."),
+                    fieldWithPath("table_column_index").description("The column index of the table."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -100,7 +97,7 @@ internal class TableExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Missing table rows. At least one row is required.""")
-            .andDocumentWithDefaultExceptionResponseFields(type)
+            .andDocumentWithDefaultExceptionResponseFields(MissingTableRows::class, type)
     }
 
     @Test
@@ -112,13 +109,12 @@ internal class TableExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Too few table rows for table "R123". At least one row is required.""")
             .andExpect(jsonPath("$.table_id").value("R123"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("table_id").description("The id of the table."),
-                    )
+            .andDocument {
+                responseFields<TooFewTableRows>(
+                    fieldWithPath("table_id").description("The id of the table."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -130,13 +126,12 @@ internal class TableExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""The table "R123" has too few columns. At least one column is required.""")
             .andExpect(jsonPath("$.table_id").value("R123"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("table_id").description("The id of the table."),
-                    )
+            .andDocument {
+                responseFields<TooFewTableColumns>(
+                    fieldWithPath("table_id").description("The id of the table."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -149,14 +144,13 @@ internal class TableExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectDetail("""Missing table header value at index 5.""")
             .andExpect(jsonPath("$.table_row_index").value("0"))
             .andExpect(jsonPath("$.table_column_index").value("5"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("table_row_index").description("The row index of the table. Always `0`."),
-                        fieldWithPath("table_column_index").description("The column index of the table."),
-                    )
+            .andDocument {
+                responseFields<MissingTableHeaderValue>(
+                    fieldWithPath("table_row_index").description("The row index of the table. Always `0`."),
+                    fieldWithPath("table_column_index").description("The column index of the table."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -169,14 +163,13 @@ internal class TableExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectDetail("""Table header value at index 5 must be a literal.""")
             .andExpect(jsonPath("$.table_row_index").value("0"))
             .andExpect(jsonPath("$.table_column_index").value("5"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("table_row_index").description("The row index of the table. Always `0`."),
-                        fieldWithPath("table_column_index").description("The column index of the table."),
-                    )
+            .andDocument {
+                responseFields<TableHeaderValueMustBeLiteral>(
+                    fieldWithPath("table_row_index").description("The row index of the table. Always `0`."),
+                    fieldWithPath("table_column_index").description("The column index of the table."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -189,14 +182,13 @@ internal class TableExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectDetail("""Row 5 has more values than the header. Expected exactly 10 values based on header.""")
             .andExpect(jsonPath("$.table_row_index").value("5"))
             .andExpect(jsonPath("$.expected_table_row_count").value("10"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("table_row_index").description("The row index of the table."),
-                        fieldWithPath("expected_table_row_count").description("The expected number of row elements."),
-                    )
+            .andDocument {
+                responseFields<TooManyTableRowValues>(
+                    fieldWithPath("table_row_index").description("The row index of the table."),
+                    fieldWithPath("expected_table_row_count").description("The expected number of row elements."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -209,14 +201,13 @@ internal class TableExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectDetail("""Row 10 has less values than the header. Expected exactly 5 values based on header.""")
             .andExpect(jsonPath("$.table_row_index").value("10"))
             .andExpect(jsonPath("$.expected_table_row_count").value("5"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("table_row_index").description("The row index of the table."),
-                        fieldWithPath("expected_table_row_count").description("The expected number of row elements."),
-                    )
+            .andDocument {
+                responseFields<MissingTableRowValues>(
+                    fieldWithPath("table_row_index").description("The row index of the table."),
+                    fieldWithPath("expected_table_row_count").description("The expected number of row elements."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -228,13 +219,12 @@ internal class TableExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Table "R123" is not modifiable.""")
             .andExpect(jsonPath("$.table_id").value("R123"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("table_id").description("The id of the table."),
-                    )
+            .andDocument {
+                responseFields<TableNotModifiable>(
+                    fieldWithPath("table_id").description("The id of the table."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -246,13 +236,12 @@ internal class TableExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Forbidden")
             .andExpectDetail("""The table header cannot be deleted.""")
             .andExpect(jsonPath("$.table_row_index").value("0"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("table_row_index").description("The row index of the table. (always `0`)"),
-                    )
+            .andDocument {
+                responseFields<CannotDeleteTableHeader>(
+                    fieldWithPath("table_row_index").description("The row index of the table. (always `0`)"),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -264,13 +253,12 @@ internal class TableExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Invalid table row index -1.""")
             .andExpect(jsonPath("$.table_row_index").value("-1"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("table_row_index").description("The row index of the table."),
-                    )
+            .andDocument {
+                responseFields<InvalidTableRowIndex>(
+                    fieldWithPath("table_row_index").description("The row index of the table."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -282,13 +270,12 @@ internal class TableExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Invalid table column index -1.""")
             .andExpect(jsonPath("$.table_column_index").value("-1"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("table_column_index").description("The column index of the table."),
-                    )
+            .andDocument {
+                responseFields<InvalidTableColumnIndex>(
+                    fieldWithPath("table_column_index").description("The column index of the table."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -301,14 +288,13 @@ internal class TableExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectDetail("""Table column 5 is missing values. Expected exactly 3 values.""")
             .andExpect(jsonPath("$.table_column_index").value("5"))
             .andExpect(jsonPath("$.expected_table_row_count").value("3"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("table_column_index").description("The column index of the table."),
-                        fieldWithPath("expected_table_row_count").description("The expected number of column values."),
-                    )
+            .andDocument {
+                responseFields<MissingTableColumnValues>(
+                    fieldWithPath("table_column_index").description("The column index of the table."),
+                    fieldWithPath("expected_table_row_count").description("The expected number of column values."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -321,13 +307,12 @@ internal class TableExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectDetail("""Table column 5 has too many values. Expected exactly 3 values.""")
             .andExpect(jsonPath("$.table_column_index").value("5"))
             .andExpect(jsonPath("$.expected_table_row_count").value("3"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("table_column_index").description("The column index of the table."),
-                        fieldWithPath("expected_table_row_count").description("The expected number of column values."),
-                    )
+            .andDocument {
+                responseFields<TooManyTableColumnValues>(
+                    fieldWithPath("table_column_index").description("The column index of the table."),
+                    fieldWithPath("expected_table_row_count").description("The expected number of column values."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 }

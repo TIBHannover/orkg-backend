@@ -6,21 +6,20 @@ Some benchmarks are imported into the ORKG.
 [[benchmarks-summary]]
 == Listing Benchmark Summaries
 
-A `GET` request returns a <<sorting-and-pagination,paged>> list of benchmark summaries.
+include::{snippets}/benchmarks_find-all-benchmark-summaries/description.adoc[]
 
-operation::benchmarks_fetch-benchmark-summaries[snippets='curl-request,http-response,response-fields']
+operation::benchmarks_find-all-benchmark-summaries[snippets='curl-request,http-response,response-fields']
 
 [[benchmarks-by-field-list]]
-== Listing Benchmarks Summaries by Research Field
+== Listing Benchmark Summaries by Research Field
 
-A `GET` request returns a <<sorting-and-pagination,paged>> list of benchmark summaries under a certain research field.
+include::{snippets}/benchmarks_find-all-benchmark-summaries-by-research-field/description.adoc[]
 
-operation::benchmarks_fetch-benchmark-summary-for-research-field[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::benchmarks_find-all-benchmark-summaries-by-research-field[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[research-fields-with-bechmark-list]]
 == Listing Research Fields with Benchmarks
 
-A `GET` request returns a <<sorting-and-pagination,paged>> list of all the research fields associated with benchmarks.
-This includes all research fields that have papers containing benchmarks in their contributions.
+include::{snippets}/benchmarks_find-all-research-fields-with-benchmarks/description.adoc[]
 
-operation::benchmarks_fetch-research-fields-with-benchmarks[snippets='curl-request,http-response,response-fields']
+operation::benchmarks_find-all-research-fields-with-benchmarks[snippets='curl-request,http-response,response-fields']

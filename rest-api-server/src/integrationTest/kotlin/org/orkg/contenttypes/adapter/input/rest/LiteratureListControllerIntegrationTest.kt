@@ -259,20 +259,20 @@ internal class LiteratureListControllerIntegrationTest : MockMvcBaseTest("litera
             it.unlistedBy shouldBe null
             it.published shouldBe false
             it.sections.size shouldBe 2
-            it.sections[0].shouldBeInstanceOf<TextSectionRepresentation>().asClue { section ->
+            it.sections[0].shouldBeInstanceOf<LiteratureListTextSectionRepresentation>().asClue { section ->
                 section.id shouldNotBe null
                 section.heading shouldBe "this is a heading"
                 section.headingSize shouldBe 2
                 section.text shouldBe "text contents of this section"
             }
-            it.sections[1].shouldBeInstanceOf<ListSectionRepresentation>().asClue { section ->
+            it.sections[1].shouldBeInstanceOf<LiteratureListListSectionRepresentation>().asClue { section ->
                 section.id shouldNotBe null
                 section.entries shouldBe listOf(
-                    ListSectionRepresentation.EntryRepresentation(
+                    LiteratureListListSectionRepresentation.EntryRepresentation(
                         ResourceReferenceRepresentation(ThingId("R3003"), "Some resource", setOf(Classes.paper)),
                         "example description"
                     ),
-                    ListSectionRepresentation.EntryRepresentation(
+                    LiteratureListListSectionRepresentation.EntryRepresentation(
                         ResourceReferenceRepresentation(ThingId("R3004"), "Some other resource", setOf(Classes.software)),
                         null
                     )

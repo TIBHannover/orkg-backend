@@ -1,7 +1,7 @@
 package org.orkg.common
 
-private val VALID_WIKIDATA_ID_REGEX = Regex("""^Q\d+$""")
-private val VALID_WIKIDATA_ID_URI_REGEX = Regex("""^https?://(?:www\.)?wikidata\.org/wiki/(Q\d+)$""")
+internal val VALID_WIKIDATA_ID_REGEX = Regex("""^Q\d+$""")
+internal val VALID_WIKIDATA_ID_URI_REGEX = Regex("""^https?://(?:www\.)?wikidata\.org/wiki/(Q\d+)$""")
 
 @JvmInline
 value class WikidataId private constructor(override val value: String) : IdentifierValue {

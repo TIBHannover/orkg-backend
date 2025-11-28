@@ -20,7 +20,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
@@ -36,13 +35,12 @@ internal class TemplateExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Not Found")
             .andExpectDetail("""Template "R123" not found.""")
             .andExpect(jsonPath("$.template_id").value("R123"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("template_id").description("The id of the template."),
-                    )
+            .andDocument {
+                responseFields<TemplateNotFound>(
+                    fieldWithPath("template_id").description("The id of the template."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -55,14 +53,13 @@ internal class TemplateExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectDetail("""Class "C123" already has template "R123".""")
             .andExpect(jsonPath("$.template_id").value("R123"))
             .andExpect(jsonPath("$.template_target_class_id").value("C123"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("template_id").description("The id of the template."),
-                        fieldWithPath("template_target_class_id").description("The target class of the template."),
-                    )
+            .andDocument {
+                responseFields<TemplateAlreadyExistsForClass>(
+                    fieldWithPath("template_id").description("The id of the template."),
+                    fieldWithPath("template_target_class_id").description("The id of target class of the template."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -74,13 +71,12 @@ internal class TemplateExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Invalid min count "-1". Must be at least 0.""")
             .andExpect(jsonPath("$.min_count").value("-1"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("min_count").description("The provided min count."),
-                    )
+            .andDocument {
+                responseFields<InvalidMinCount>(
+                    fieldWithPath("min_count").description("The provided min count."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -92,13 +88,12 @@ internal class TemplateExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Invalid max count "-1". Must be at least 0.""")
             .andExpect(jsonPath("$.max_count").value("-1"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("max_count").description("The provided max count."),
-                    )
+            .andDocument {
+                responseFields<InvalidMaxCount>(
+                    fieldWithPath("max_count").description("The provided max count."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -111,14 +106,13 @@ internal class TemplateExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectDetail("""Invalid cardinality. Min count must be less than max count. Found: min: "5", max: "2".""")
             .andExpect(jsonPath("$.min_cardinality").value("5"))
             .andExpect(jsonPath("$.max_cardinality").value("2"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("min_cardinality").description("The provided min cardinality."),
-                        fieldWithPath("max_cardinality").description("The provided max cardinality."),
-                    )
+            .andDocument {
+                responseFields<InvalidCardinality>(
+                    fieldWithPath("min_cardinality").description("The provided min cardinality."),
+                    fieldWithPath("max_cardinality").description("The provided max cardinality."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -131,14 +125,13 @@ internal class TemplateExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectDetail("""Invalid bounds. Min bound must be less than or equal to max bound. Found: min: "5", max: "2".""")
             .andExpect(jsonPath("$.min_count").value("5"))
             .andExpect(jsonPath("$.max_count").value("2"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("min_count").description("The provided min count."),
-                        fieldWithPath("max_count").description("The provided max count."),
-                    )
+            .andDocument {
+                responseFields<InvalidBounds>(
+                    fieldWithPath("min_count").description("The provided min count."),
+                    fieldWithPath("max_count").description("The provided max count."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -151,14 +144,13 @@ internal class TemplateExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectDetail("""Invalid datatype. Found "C123", expected "Boolean".""")
             .andExpect(jsonPath("$.actual_data_type").value("C123"))
             .andExpect(jsonPath("$.expected_data_types[0]").value(Classes.boolean.value))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("actual_data_type").description("The provided data type."),
-                        fieldWithPath("expected_data_types").description("A list of expected data types."),
-                    )
+            .andDocument {
+                responseFields<InvalidDataType>(
+                    fieldWithPath("actual_data_type").description("The provided data type."),
+                    fieldWithPath("expected_data_types").description("A list of expected data types."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -170,13 +162,12 @@ internal class TemplateExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Invalid regex pattern "\".""")
             .andExpect(jsonPath("$.regex_pattern").value("\\"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("regex_pattern").description("The provided regex pattern."),
-                    )
+            .andDocument {
+                responseFields<InvalidRegexPattern>(
+                    fieldWithPath("regex_pattern").description("The provided regex pattern."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -188,12 +179,11 @@ internal class TemplateExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Template "R123" is closed.""")
             .andExpect(jsonPath("$.template_id").value("R123"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("template_id").description("The id of the template."),
-                    )
+            .andDocument {
+                responseFields<TemplateClosed>(
+                    fieldWithPath("template_id").description("The id of the template."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 }

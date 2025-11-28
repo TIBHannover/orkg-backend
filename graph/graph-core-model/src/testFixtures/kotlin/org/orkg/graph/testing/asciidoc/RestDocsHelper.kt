@@ -7,16 +7,16 @@ import org.springframework.restdocs.request.ParameterDescriptor
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 
 val allowedExtractionMethodValues =
-    ExtractionMethod.entries.sorted().joinToString(separator = ", ", prefix = "`", postfix = "`")
+    ExtractionMethod.entries.sorted().joinToString(separator = "`, `", prefix = "`", postfix = "`")
 
 val allowedVisibilityValues =
-    Visibility.entries.sorted().joinToString(separator = ", ", prefix = "`", postfix = "`")
+    Visibility.entries.sorted().joinToString(separator = "`, `", prefix = "`", postfix = "`")
 
 val allowedVisibilityFilterValues =
-    VisibilityFilter.entries.sorted().joinToString(separator = ", ", prefix = "`", postfix = "`")
+    VisibilityFilter.entries.sorted().joinToString(separator = "`, `", prefix = "`", postfix = "`")
 
 val allowedThingClassValues =
-    listOf("class", "resource", "predicate", "literal").sorted().joinToString(separator = ", ", prefix = "`", postfix = "`")
+    listOf("class", "resource", "predicate", "literal").sorted().joinToString(separator = "`, `", prefix = "`", postfix = "`")
 
 fun visibilityFilterRequestParameter(): ParameterDescriptor =
     parameterWithName("visibility")

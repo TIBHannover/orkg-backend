@@ -9,42 +9,34 @@ NOTE: The following endpoints use content negotiation, meaning that the contents
 [[comparisons-related-figure-fetch]]
 == Fetching Comparison Related Figures
 
-A `GET` request provides information about a comparison related figure.
+include::{snippets}/comparison-related-figures_find-by-id-and-comparison-id/description.adoc[]
 
-operation::comparison-related-figures_get-single[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::comparison-related-figures_find-by-id-and-comparison-id[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[comparisons-related-figure-list]]
 == Listing Comparison Related Figures
 
-A `GET` request returns a <<sorting-and-pagination,paged>> list of <<comparisons-related-figure-fetch,comparison related figures>>.
+include::{snippets}/comparison-related-figures_find-all-by-comparison-id/description.adoc[]
 
-operation::comparison-related-figures_get-paged[snippets='path-parameters,curl-request']
+operation::comparison-related-figures_find-all-by-comparison-id[snippets='path-parameters,curl-request']
 
 [[comparisons-related-figure-create]]
 == Creating Comparison Related Figures
 
-A `POST` request creates a new comparison related figure with all the given parameters.
-The response will be `201 Created` when successful.
-The comparison related figure (object) can be retrieved by following the URI in the `Location` header field.
+include::{snippets}/comparison-related-figures_create/description.adoc[]
 
 operation::comparison-related-figures_create[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[comparisons-related-figure-edit]]
 == Updating Comparison Related Figures
 
-A `PUT` request updates an existing comparison related figure with all the given parameters.
-The response will be `204 No Content` when successful.
-The updated comparison related figure (object) can be retrieved by following the URI in the `Location` header field.
-
-NOTE: Top level fields that were mandatory when creating the comparison related figure can be omitted or `null`, meaning that the corresponding fields should not be updated.
+include::{snippets}/comparison-related-figures_update/description.adoc[]
 
 operation::comparison-related-figures_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[comparisons-related-figure-delete]]
 == Deleting Comparison Related Figures
 
-A `DELETE` request deletes a comparison related figure by ID.
-The response will be `204 No Content` when successful.
-The updated comparison (object) can be retrieved by following the URI in the `Location` header field.
+include::{snippets}/comparison-related-figures_delete/description.adoc[]
 
 operation::comparison-related-figures_delete[snippets='path-parameters,curl-request,response-headers,http-response']

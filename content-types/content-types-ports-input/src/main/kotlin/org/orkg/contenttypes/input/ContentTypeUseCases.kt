@@ -31,7 +31,7 @@ interface RetrieveContentTypeUseCase {
         authorName: String? = null,
     ): Page<ContentType>
 
-    fun findAllAsResource(
+    fun findAllAsResources(
         pageable: Pageable,
         classes: Set<ContentTypeClass> = ContentTypeClass.entries.toSet(),
         visibility: VisibilityFilter? = null,

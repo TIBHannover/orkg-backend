@@ -131,7 +131,7 @@ class ComparisonController(
     @PostMapping("/{id}/publish", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun publish(
         @PathVariable id: ThingId,
-        @RequestBody @Valid request: PublishRequest,
+        @RequestBody @Valid request: PublishComparisonRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         currentUser: Authentication?,
     ): ResponseEntity<Any> {
@@ -238,7 +238,7 @@ class ComparisonController(
             )
     }
 
-    data class PublishRequest(
+    data class PublishComparisonRequest(
         @field:NotBlank
         val subject: String,
         @field:NotBlank

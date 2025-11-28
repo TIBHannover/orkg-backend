@@ -9,23 +9,20 @@ NOTE: The following endpoints use content negotiation, meaning that the contents
 [[contributions-fetch]]
 == Fetching Contributions
 
-A `GET` request provides information about a contribution.
+include::{snippets}/contributions_find-by-id/description.adoc[]
 
-operation::contributions_get-single[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::contributions_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[contributions-list]]
 == Listing Contributions
 
-A `GET` request returns a <<sorting-and-pagination,paged>> list of <<contributions-fetch,contributions>>.
-If no paging request parameters are provided, the default values will be used.
+include::{snippets}/contributions_find-all/description.adoc[]
 
-operation::contributions_get-paged[snippets='curl-request']
+operation::contributions_find-all[snippets='curl-request']
 
 [[contributions-create]]
 == Creating Contributions
 
-A `POST` request creates a new contribution with all the given parameters.
-The response will be `201 Created` when successful.
-The contribution (object) can be retrieved by following the URI in the `Location` header field.
+include::{snippets}/contributions_create/description.adoc[]
 
 operation::contributions_create[snippets='request-fields,curl-request,http-response']

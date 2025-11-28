@@ -5,27 +5,21 @@ The provided endpoints allow to operate across multiple concepts.
 [[content-types-list]]
 == Listing Content-Types
 
-A `GET` request returns a <<sorting-and-pagination,paged>> list of content-types.
-If no paging request parameters are provided, the default values will be used.
-
-NOTE: Whenever possible, individual content-type endpoints should be used, to optimize performance.
+include::{snippets}/content-types_find-all/description.adoc[]
 
 operation::content-types_get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::content-types_get-paged-with-parameters[snippets='query-parameters']
+operation::content-types_find-all[snippets='query-parameters']
 
 [[content-types-list-as-resource]]
 == Listing Content-Types as Resources
 
-A `GET` request returns a <<sorting-and-pagination,paged>> list of content-type <<resources-fetch,resources>>.
-If no paging request parameters are provided, the default values will be used.
-
-NOTE: Whenever possible, individual content-type endpoints should be used, to optimize performance.
+include::{snippets}/content-types_find-all-as-resources/description.adoc[]
 
 operation::content-types_get-paged-as-resource[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::content-types_get-paged-as-resource-with-parameters[snippets='query-parameters']
+operation::content-types_find-all-as-resources[snippets='query-parameters']

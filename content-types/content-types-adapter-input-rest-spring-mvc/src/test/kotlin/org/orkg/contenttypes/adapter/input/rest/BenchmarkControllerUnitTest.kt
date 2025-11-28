@@ -6,34 +6,22 @@ import io.mockk.verify
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.common.json.CommonJacksonModule
-import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
 import org.orkg.contenttypes.domain.BenchmarkSummary
 import org.orkg.contenttypes.domain.ResearchField
 import org.orkg.contenttypes.domain.ResearchProblem
 import org.orkg.contenttypes.input.BenchmarkUseCases
 import org.orkg.contenttypes.input.ResearchFieldUseCases
-import org.orkg.testing.configuration.ExceptionTestConfiguration
-import org.orkg.testing.configuration.FixedClockConfig
+import org.orkg.contenttypes.input.testing.fixtures.benchmarkSummaryResponseFields
+import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerUnitTestConfiguration
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
-import org.orkg.testing.spring.restdocs.pagedResponseFields
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@ContextConfiguration(
-    classes = [
-        BenchmarkController::class,
-        ExceptionTestConfiguration::class,
-        CommonJacksonModule::class,
-        ContentTypeJacksonModule::class,
-        FixedClockConfig::class
-    ]
-)
+@ContextConfiguration(classes = [BenchmarkController::class, ContentTypeControllerUnitTestConfiguration::class])
 @WebMvcTest(controllers = [BenchmarkController::class])
 internal class BenchmarkControllerUnitTest : MockMvcBaseTest("benchmarks") {
     @MockkBean
@@ -44,7 +32,7 @@ internal class BenchmarkControllerUnitTest : MockMvcBaseTest("benchmarks") {
 
     @Test
     @DisplayName("Given a set of benchmarks, when fetching all associated research fields, then status is 200 OK and research fields are returned")
-    fun fetchResearchFieldsWithBenchmarks() {
+    fun findAllResearchFieldsWithBenchmarks() {
         every { retrieveResearchField.findAllWithBenchmarks(any()) } returns pageOf(
             ResearchField(id = "R11", label = "Science"),
             ResearchField(id = "R12", label = "Life Sciences")
@@ -53,22 +41,27 @@ internal class BenchmarkControllerUnitTest : MockMvcBaseTest("benchmarks") {
         documentedGetRequestTo("/api/research-fields/benchmarks")
             .perform()
             .andExpect(status().isOk)
-            .andDo(
-                documentationHandler.document(
-                    pagedResponseFields(
-                        fieldWithPath("id").description("The identifier of the research field.").optional(),
-                        fieldWithPath("label").description("The label of the research field.").optional(),
-                    )
+            .andDocument {
+                summary("Listing research fields with benchmarks")
+                description(
+                    """
+                    A `GET` request returns a <<sorting-and-pagination,paged>> list of all the research fields associated with benchmarks.
+                    This includes all research fields that have papers containing benchmarks in their contributions.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pagedQueryParameters()
+                pagedResponseFields<ResearchField>(
+                    fieldWithPath("id").description("The identifier of the research field.").optional(),
+                    fieldWithPath("label").description("The label of the research field.").optional(),
+                )
+            }
 
         verify(exactly = 1) { retrieveResearchField.findAllWithBenchmarks(any()) }
     }
 
     @Test
     @DisplayName("Given a set of benchmarks, when fetching their summaries by research field, then status is 200 OK and benchmark summaries are returned")
-    fun fetchBenchmarkSummaryForResearchField() {
+    fun findAllBenchmarkSummariesByResearchField() {
         val researchFieldId = ThingId("R11")
 
         every { retrieveBenchmarks.findAllBenchmarkSummariesByResearchFieldId(researchFieldId, any()) } returns pageOf(
@@ -86,32 +79,26 @@ internal class BenchmarkControllerUnitTest : MockMvcBaseTest("benchmarks") {
         documentedGetRequestTo("/api/benchmarks/summary/research-field/{id}", researchFieldId)
             .perform()
             .andExpect(status().isOk)
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the research field.")
-                    ),
-                    pagedResponseFields(
-                        fieldWithPath("total_papers").description("The total number of papers."),
-                        fieldWithPath("total_datasets").description("The total number of datasets related."),
-                        fieldWithPath("total_codes").description("The total number of code urls."),
-                        fieldWithPath("research_problem").description("Research problem concerned with this research field."),
-                        fieldWithPath("research_problem.id").description("The identifier of the research problem."),
-                        fieldWithPath("research_problem.label").description("The label of the research problem."),
-                        fieldWithPath("research_fields").description("List of research fields for a benchmark summary"),
-                        fieldWithPath("research_fields[].id").description("The identifier of the research field.").optional(),
-                        fieldWithPath("research_fields[].label").description("The label of the research field.").optional(),
-                    )
+            .andDocument {
+                summary("Listing benchmark summaries by research field")
+                description(
+                    """
+                    A `GET` request returns a <<sorting-and-pagination,paged>> list of benchmark summaries under a certain research field.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the research field.")
+                )
+                pagedQueryParameters()
+                pagedResponseFields<BenchmarkSummaryRepresentation>(benchmarkSummaryResponseFields())
+            }
 
         verify(exactly = 1) { retrieveBenchmarks.findAllBenchmarkSummariesByResearchFieldId(researchFieldId, any()) }
     }
 
     @Test
     @DisplayName("Given a set of benchmarks, when fetching their summaries, then status is 200 OK and benchmark summaries are returned")
-    fun fetchBenchmarkSummaries() {
+    fun findAllBenchmarkSummaries() {
         every { retrieveBenchmarks.findAllBenchmarkSummaries(any()) } returns pageOf(
             BenchmarkSummary(
                 researchProblem = ResearchProblem(id = ThingId("R456"), label = "Problem 1"),
@@ -127,22 +114,16 @@ internal class BenchmarkControllerUnitTest : MockMvcBaseTest("benchmarks") {
         documentedGetRequestTo("/api/benchmarks/summary")
             .perform()
             .andExpect(status().isOk)
-            .andDo(
-                documentationHandler.document(
-                    pagedResponseFields(
-                        fieldWithPath("total_papers").description("The total number of papers."),
-                        fieldWithPath("total_datasets").description("The total number of datasets related."),
-                        fieldWithPath("total_codes").description("The total number of code urls."),
-                        fieldWithPath("research_problem").description("Research problem concerned with this research field."),
-                        fieldWithPath("research_problem.id").description("The identifier of the research problem."),
-                        fieldWithPath("research_problem.label").description("The label of the research problem."),
-                        fieldWithPath("research_fields").description("List of research fields for a benchmark summary"),
-                        fieldWithPath("research_fields[].id").description("The identifier of the research field.").optional(),
-                        fieldWithPath("research_fields[].label").description("The label of the research field.").optional(),
-                    )
+            .andDocument {
+                summary("Listing benchmark summaries")
+                description(
+                    """
+                    A `GET` request returns a <<sorting-and-pagination,paged>> list of benchmark summaries.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pagedQueryParameters()
+                pagedResponseFields<BenchmarkSummaryRepresentation>(benchmarkSummaryResponseFields())
+            }
 
         verify(exactly = 1) { retrieveBenchmarks.findAllBenchmarkSummaries(any()) }
     }

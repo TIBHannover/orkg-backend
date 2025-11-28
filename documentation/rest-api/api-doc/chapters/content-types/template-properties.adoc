@@ -12,23 +12,16 @@ NOTE: The following endpoints use content negotiation, meaning that the contents
 [[template-properties-create-untyped-property]]
 === Creating Untyped Template Properties
 
-A `POST` request creates a new template property without any type constraints.
-The response will be `201 Created` when successful.
-The updated template (object) can be retrieved by following the URI in the `Location` header field.
+include::{snippets}/templates_create-property_untyped/description.adoc[]
 
-operation::templates_create-untyped-property[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::templates_create-property_untyped[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[template-properties-edit-untyped-property]]
 === Updating Untyped Template Properties
 
-A `PUT` request updates an existing template property of any type with all the given parameters and converts it to an untyped template property if necessary.
-If the previous template property had a type constraint, it will be removed in the process.
-The response will be `204 No Content` when successful.
-The updated template property (object) can be retrieved by following the URI in the `Location` header field.
+include::{snippets}/templates_update-property_untyped/description.adoc[]
 
-NOTE: All fields at the top level in the request can be omitted or `null`, except for optional fields, meaning that the corresponding fields should not be updated.
-
-operation::templates_update-untyped-property[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::templates_update-property_untyped[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[template-properties-other-literal-properties]]
 == Literal Template Properties
@@ -36,22 +29,16 @@ operation::templates_update-untyped-property[snippets='path-parameters,request-f
 [[template-properties-create-other-literal-property]]
 === Creating Literal Template Properties
 
-A `POST` request creates a new literal template property for the given datatype, without any additional constraints.
-The response will be `201 Created` when successful.
-The updated template (object) can be retrieved by following the URI in the `Location` header field.
+include::{snippets}/templates_create-property_other-literal/description.adoc[]
 
-operation::templates_create-other-literal-property[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::templates_create-property_other-literal[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[template-properties-edit-other-literal-property]]
 === Updating Literal Template Properties
 
-A `PUT` request updates an existing template property of any type with all the given parameters and converts it to a literal template property if necessary.
-The response will be `204 No Content` when successful.
-The updated template property (object) can be retrieved by following the URI in the `Location` header field.
+include::{snippets}/templates_update-property_other-literal/description.adoc[]
 
-NOTE: All fields at the top level in the request can be omitted or `null`, except for optional fields, meaning that the corresponding fields should not be updated.
-
-operation::templates_update-other-literal-property[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::templates_update-property_other-literal[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[template-properties-string-literal-properties]]
 == String Literal Template Properties
@@ -59,22 +46,16 @@ operation::templates_update-other-literal-property[snippets='path-parameters,req
 [[template-properties-create-string-literal-property]]
 === Creating String Literal Template Properties
 
-A `POST` request creates a new string template property, with an optional `pattern` constraint.
-The response will be `201 Created` when successful.
-The updated template (object) can be retrieved by following the URI in the `Location` header field.
+include::{snippets}/templates_create-property_string-literal/description.adoc[]
 
-operation::templates_create-string-literal-property[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::templates_create-property_string-literal[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[template-properties-edit-string-literal-property]]
 === Updating String Literal Template Properties
 
-A `PUT` request updates an existing template property of any type with all the given parameters and converts it to a string literal template property if necessary.
-The response will be `204 No Content` when successful.
-The updated template property (object) can be retrieved by following the URI in the `Location` header field.
+include::{snippets}/templates_update-property_string-literal/description.adoc[]
 
-NOTE: All fields at the top level in the request can be omitted or `null`, except for optional fields, meaning that the corresponding fields should not be updated.
-
-operation::templates_update-string-literal-property[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::templates_update-property_string-literal[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[template-properties-number-literal-properties]]
 == Number Literal Template Properties
@@ -82,22 +63,16 @@ operation::templates_update-string-literal-property[snippets='path-parameters,re
 [[template-properties-create-number-literal-property]]
 === Creating Number Literal Template Properties
 
-A `POST` request creates a new number template property, with optional boundary constraints.
-The response will be `201 Created` when successful.
-The updated template (object) can be retrieved by following the URI in the `Location` header field.
+include::{snippets}/templates_create-property_number-literal/description.adoc[]
 
-operation::templates_create-number-literal-property[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::templates_create-property_number-literal[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[template-properties-edit-number-literal-property]]
 === Updating Number Literal Template Properties
 
-A `PUT` request updates an existing template property of any type with all the given parameters and converts it to a number literal template property if necessary.
-The response will be `204 No Content` when successful.
-The updated template property (object) can be retrieved by following the URI in the `Location` header field.
+include::{snippets}/templates_update-property_untyped/description.adoc[]
 
-NOTE: All fields at the top level in the request can be omitted or `null`, except for optional fields, meaning that the corresponding fields should not be updated.
-
-operation::templates_update-untyped-property[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::templates_update-property_untyped[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[template-properties-resource-properties]]
 == Resource Template Properties
@@ -105,19 +80,13 @@ operation::templates_update-untyped-property[snippets='path-parameters,request-f
 [[template-properties-create-resource-property]]
 === Creating Resource Template Properties
 
-A `POST` request creates a new resource template property for the given datatype, without any additional constraints.
-The response will be `201 Created` when successful.
-The updated template (object) can be retrieved by following the URI in the `Location` header field.
+include::{snippets}/templates_create-property_resource/description.adoc[]
 
-operation::templates_create-resource-property[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::templates_create-property_resource[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[template-properties-edit-resource-property]]
 === Updating Resource Template Properties
 
-A `PUT` request updates an existing template property of any type with all the given parameters and converts it to a resource template property if necessary.
-The response will be `204 No Content` when successful.
-The updated template property (object) can be retrieved by following the URI in the `Location` header field.
+include::{snippets}/templates_update-property_resource/description.adoc[]
 
-NOTE: All fields at the top level in the request can be omitted or `null`, except for optional fields, meaning that the corresponding fields should not be updated.
-
-operation::templates_update-resource-property[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::templates_update-property_resource[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']

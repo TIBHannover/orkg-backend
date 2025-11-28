@@ -13,42 +13,69 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.common.json.CommonJacksonModule
-import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
+import org.orkg.common.exceptions.UnknownSortingProperty
+import org.orkg.community.domain.ContributorNotFound
+import org.orkg.community.domain.ObservatoryNotFound
+import org.orkg.community.domain.OrganizationNotFound
+import org.orkg.contenttypes.adapter.input.rest.RosettaStoneTemplateController.CreateRosettaStoneTemplateRequest
+import org.orkg.contenttypes.adapter.input.rest.RosettaStoneTemplateController.UpdateRosettaStoneTemplateRequest
+import org.orkg.contenttypes.domain.InvalidBounds
+import org.orkg.contenttypes.domain.InvalidCardinality
+import org.orkg.contenttypes.domain.InvalidDataType
+import org.orkg.contenttypes.domain.InvalidMaxCount
+import org.orkg.contenttypes.domain.InvalidMinCount
+import org.orkg.contenttypes.domain.InvalidObjectPositionPath
+import org.orkg.contenttypes.domain.InvalidRegexPattern
+import org.orkg.contenttypes.domain.InvalidSubjectPositionCardinality
+import org.orkg.contenttypes.domain.InvalidSubjectPositionPath
+import org.orkg.contenttypes.domain.InvalidSubjectPositionType
+import org.orkg.contenttypes.domain.MissingDynamicLabelPlaceholder
+import org.orkg.contenttypes.domain.MissingPropertyPlaceholder
+import org.orkg.contenttypes.domain.MissingSubjectPosition
+import org.orkg.contenttypes.domain.NewRosettaStoneTemplateExampleUsageMustStartWithPreviousExampleUsage
+import org.orkg.contenttypes.domain.NewRosettaStoneTemplateLabelSectionsMustBeOptional
+import org.orkg.contenttypes.domain.NewRosettaStoneTemplatePropertyMustBeOptional
+import org.orkg.contenttypes.domain.OnlyOneObservatoryAllowed
+import org.orkg.contenttypes.domain.OnlyOneOrganizationAllowed
+import org.orkg.contenttypes.domain.RosettaStoneTemplateInUse
+import org.orkg.contenttypes.domain.RosettaStoneTemplateLabelMustBeUpdated
+import org.orkg.contenttypes.domain.RosettaStoneTemplateLabelMustStartWithPreviousVersion
+import org.orkg.contenttypes.domain.RosettaStoneTemplateLabelUpdateRequiresNewTemplateProperties
+import org.orkg.contenttypes.domain.RosettaStoneTemplateNotFound
+import org.orkg.contenttypes.domain.RosettaStoneTemplateNotModifiable
+import org.orkg.contenttypes.domain.RosettaStoneTemplatePropertyNotModifiable
+import org.orkg.contenttypes.domain.TooManyNewRosettaStoneTemplateLabelSections
 import org.orkg.contenttypes.domain.testing.fixtures.createRosettaStoneTemplate
 import org.orkg.contenttypes.input.RosettaStoneTemplateUseCases
+import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerUnitTestConfiguration
 import org.orkg.contenttypes.input.testing.fixtures.numberLiteralTemplatePropertyRequest
 import org.orkg.contenttypes.input.testing.fixtures.otherLiteralTemplatePropertyRequest
 import org.orkg.contenttypes.input.testing.fixtures.resourceTemplatePropertyRequest
+import org.orkg.contenttypes.input.testing.fixtures.rosettaStoneTemplateResponseFields
 import org.orkg.contenttypes.input.testing.fixtures.stringLiteralTemplatePropertyRequest
 import org.orkg.contenttypes.input.testing.fixtures.untypedTemplatePropertyRequest
+import org.orkg.graph.domain.ClassNotFound
 import org.orkg.graph.domain.ExactSearchString
+import org.orkg.graph.domain.InvalidDescription
+import org.orkg.graph.domain.InvalidLabel
+import org.orkg.graph.domain.NeitherOwnerNorCurator
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.testing.asciidoc.allowedVisibilityFilterValues
-import org.orkg.graph.testing.asciidoc.allowedVisibilityValues
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectRosettaStoneTemplate
 import org.orkg.testing.annotations.TestWithMockUser
-import org.orkg.testing.configuration.ExceptionTestConfiguration
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
-import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
-import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.pathParameters
-import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -57,15 +84,7 @@ import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import java.util.Optional
 
-@ContextConfiguration(
-    classes = [
-        RosettaStoneTemplateController::class,
-        ExceptionTestConfiguration::class,
-        CommonJacksonModule::class,
-        ContentTypeJacksonModule::class,
-        FixedClockConfig::class
-    ]
-)
+@ContextConfiguration(classes = [RosettaStoneTemplateController::class, ContentTypeControllerUnitTestConfiguration::class])
 @WebMvcTest(controllers = [RosettaStoneTemplateController::class])
 internal class RosettaStoneTemplateControllerUnitTest : MockMvcBaseTest("rosetta-stone-templates") {
     @MockkBean
@@ -76,7 +95,7 @@ internal class RosettaStoneTemplateControllerUnitTest : MockMvcBaseTest("rosetta
 
     @Test
     @DisplayName("Given a template, when it is fetched by id and service succeeds, then status is 200 OK and template is returned")
-    fun getSingle() {
+    fun findById() {
         val template = createRosettaStoneTemplate()
         every { templateService.findById(template.id) } returns Optional.of(template)
 
@@ -86,32 +105,19 @@ internal class RosettaStoneTemplateControllerUnitTest : MockMvcBaseTest("rosetta
             .perform()
             .andExpect(status().isOk)
             .andExpectRosettaStoneTemplate()
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the rosetta stone template to retrieve.")
-                    ),
-                    responseFields(
-                        // The order here determines the order in the generated table. More relevant items should be up.
-                        fieldWithPath("id").description("The identifier of the rosetta stone template."),
-                        fieldWithPath("label").description("The label of the rosetta stone template."),
-                        fieldWithPath("description").description("The description of the rosetta stone template."),
-                        fieldWithPath("formatted_label").description("The formatted label pattern of the rosetta stone template."),
-                        fieldWithPath("target_class").description("The target class of the rosetta stone template."),
-                        fieldWithPath("example_usage").description("One or more example sentences that demonstrate the usage of the statement that this template models."),
-                        subsectionWithPath("properties").description("The list of properties of the rosetta stone template. See <<template-properties,template properties>> for more information."),
-                        fieldWithPath("organizations[]").description("The list of IDs of the organizations the rosetta stone template belongs to."),
-                        fieldWithPath("observatories[]").description("The list of IDs of the observatories the rosetta stone template belongs to."),
-                        timestampFieldWithPath("created_at", "the rosetta stone template resource was created"),
-                        // TODO: Add links to documentation of special user UUIDs.
-                        fieldWithPath("created_by").description("The UUID of the user or service who created this rosetta stone template."),
-                        fieldWithPath("visibility").description("""Visibility of the rosetta stone template. Can be one of $allowedVisibilityValues."""),
-                        fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this rosetta stone template.").optional(),
-                        fieldWithPath("modifiable").description("Whether the rosetta stone template can be modified.")
-                    )
+            .andDocument {
+                summary("Fetching rosetta stone templates")
+                description(
+                    """
+                    A `GET` request provides information about a template.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the rosetta stone template to retrieve.")
+                )
+                responseFields<RosettaStoneTemplateRepresentation>(rosettaStoneTemplateResponseFields())
+                throws(RosettaStoneTemplateNotFound::class)
+            }
 
         verify(exactly = 1) { templateService.findById(template.id) }
     }
@@ -150,7 +156,7 @@ internal class RosettaStoneTemplateControllerUnitTest : MockMvcBaseTest("rosetta
 
     @Test
     @DisplayName("Given several rosetta stone templates, when filtering by several parameters, then status is 200 OK and rosetta stone templates are returned")
-    fun getPagedWithParameters() {
+    fun findAll() {
         val template = createRosettaStoneTemplate()
         val q = "example"
         val exact = true
@@ -188,21 +194,27 @@ internal class RosettaStoneTemplateControllerUnitTest : MockMvcBaseTest("rosetta
             .andExpect(status().isOk)
             .andExpectPage()
             .andExpectRosettaStoneTemplate("$.content[*]")
-            .andDo(
-                documentationHandler.document(
-                    queryParameters(
-                        parameterWithName("q").description("Optional filter for the rosetta stone template label.").optional(),
-                        parameterWithName("exact").description("Optional flag for whether label matching should be exact. (default: false)").optional(),
-                        parameterWithName("visibility").description("""Optional filter for visibility. Either of $allowedVisibilityFilterValues.""").optional(),
-                        parameterWithName("created_by").description("Optional filter for the UUID of the user or service who created the rosetta stone template.").optional(),
-                        parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned rosetta stone template can have. (optional)"),
-                        parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned rosetta stone template can have. (optional)"),
-                        parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the rosetta stone template belongs to. (optional)"),
-                        parameterWithName("organization_id").description("Filter for the UUID of the organization that the rosetta stone template belongs to. (optional)")
-                    )
+            .andDocument {
+                summary("Listing rosetta stone templates")
+                description(
+                    """
+                    A `GET` request returns a <<sorting-and-pagination,paged>> list of <<rosetta-stone-templates-fetch,rosetta stone templates>>.
+                    If no paging request parameters are provided, the default values will be used.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pagedQueryParameters(
+                    parameterWithName("q").description("Optional filter for the rosetta stone template label.").optional(),
+                    parameterWithName("exact").description("Optional flag for whether label matching should be exact. (default: false)").optional(),
+                    parameterWithName("visibility").description("""Optional filter for visibility. Either of $allowedVisibilityFilterValues.""").optional(),
+                    parameterWithName("created_by").description("Optional filter for the UUID of the user or service who created the rosetta stone template.").optional(),
+                    parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned rosetta stone template can have. (optional)").optional(),
+                    parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned rosetta stone template can have. (optional)").optional(),
+                    parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the rosetta stone template belongs to. (optional)").optional(),
+                    parameterWithName("organization_id").description("Filter for the UUID of the organization that the rosetta stone template belongs to. (optional)").optional(),
+                )
+                pagedResponseFields<RosettaStoneTemplateRepresentation>(rosettaStoneTemplateResponseFields())
+                throws(UnknownSortingProperty::class)
+            }
 
         verify(exactly = 1) {
             templateService.findAll(
@@ -232,23 +244,54 @@ internal class RosettaStoneTemplateControllerUnitTest : MockMvcBaseTest("rosetta
             .perform()
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("/api/rosetta-stone/templates/$id")))
-            .andDo(
-                documentationHandler.document(
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the newly created rosetta stone template can be fetched from.")
-                    ),
-                    requestFields(
-                        fieldWithPath("label").description("The label of the rosetta stone template."),
-                        fieldWithPath("description").description("The description of the rosetta stone template."),
-                        fieldWithPath("formatted_label").description("The formatted label pattern of the rosetta stone template."),
-                        fieldWithPath("example_usage").description("One or more example sentences that demonstrate the usage of the statement that this template models."),
-                        subsectionWithPath("properties").description("""The list of properties of the rosetta stone template. The first property defines the subject position of the statement and is required to have a path of `hasSubjectPosition`, must have a minimum cardinality of at least one and is not a literal template property. All other properties define a object position, which must have a path of `hasObjectPosition`. At least one property is required to create a new rosetta stone template. See <<template-properties,template properties>> for more information."""),
-                        fieldWithPath("organizations[]").description("The list of IDs of the organizations the rosetta stone template belongs to."),
-                        fieldWithPath("observatories[]").description("The list of IDs of the observatories the rosetta stone template belongs to."),
-                    )
+            .andDocument {
+                summary("Creating rosetta stone templates")
+                description(
+                    """
+                    A `POST` request creates a new rosetta stone template with all the given parameters.
+                    The response will be `201 Created` when successful.
+                    The rosetta stone template (object) can be retrieved by following the URI in the `Location` header field.
+                    
+                    NOTE: The first property of a rosetta stone template defines the subject position of the statement and is required to have a path of `hasSubjectPosition`, must have a minimum cardinality of at least one and is not a literal template property.
+                          All other properties define an object position, which must have a path of `hasObjectPosition`.
+                          At least one property is required to create a new rosetta stone template.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the newly created rosetta stone template can be fetched from.")
+                )
+                requestFields<CreateRosettaStoneTemplateRequest>(
+                    fieldWithPath("label").description("The label of the rosetta stone template."),
+                    fieldWithPath("description").description("The description of the rosetta stone template."),
+                    fieldWithPath("formatted_label").description("The formatted label pattern of the rosetta stone template."),
+                    fieldWithPath("example_usage").description("One or more example sentences that demonstrate the usage of the statement that this template models."),
+                    subsectionWithPath("properties").description("""The list of properties of the rosetta stone template. The first property defines the subject position of the statement and is required to have a path of `hasSubjectPosition`, must have a minimum cardinality of at least one and is not a literal template property. All other properties define a object position, which must have a path of `hasObjectPosition`. At least one property is required to create a new rosetta stone template. See <<template-properties,template properties>> for more information."""),
+                    fieldWithPath("organizations[]").description("The list of IDs of the organizations the rosetta stone template belongs to."),
+                    fieldWithPath("observatories[]").description("The list of IDs of the observatories the rosetta stone template belongs to."),
+                )
+                throws(
+                    InvalidLabel::class,
+                    InvalidDescription::class,
+                    MissingDynamicLabelPlaceholder::class,
+                    MissingSubjectPosition::class,
+                    InvalidSubjectPositionPath::class,
+                    InvalidSubjectPositionCardinality::class,
+                    InvalidSubjectPositionType::class,
+                    InvalidObjectPositionPath::class,
+                    MissingPropertyPlaceholder::class,
+                    InvalidMinCount::class,
+                    InvalidMaxCount::class,
+                    InvalidCardinality::class,
+                    InvalidDataType::class,
+                    InvalidRegexPattern::class,
+                    InvalidBounds::class,
+                    ClassNotFound::class,
+                    OnlyOneOrganizationAllowed::class,
+                    OrganizationNotFound::class,
+                    OnlyOneObservatoryAllowed::class,
+                    ObservatoryNotFound::class,
+                )
+            }
 
         verify(exactly = 1) { templateService.create(any()) }
     }
@@ -267,26 +310,68 @@ internal class RosettaStoneTemplateControllerUnitTest : MockMvcBaseTest("rosetta
             .perform()
             .andExpect(status().isNoContent)
             .andExpect(header().string("Location", endsWith("/api/rosetta-stone/templates/$id")))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the rosetta stone template.")
-                    ),
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the updated rosetta stone template can be fetched from.")
-                    ),
-                    requestFields(
-                        fieldWithPath("label").description("The updated label of the rosetta stone template. After the rosetta stone template has been used to instantiate a rosetta stone statement, it is no longer possible to update the label. (optional)"),
-                        fieldWithPath("description").description("The updated description of the rosetta stone template. After the rosetta stone template has been used to instantiate a rosetta stone statement, it is no longer possible to update the description. (optional)"),
-                        fieldWithPath("formatted_label").description("The updated formatted label pattern of the rosetta stone template. After the rosetta stone template has been used to instantiate a rosetta stone statement, is only possible to append sections to the formatted label. (optional)"),
-                        fieldWithPath("example_usage").description("One or more updated example sentences that demonstrate the usage of the statement that this template models. After the rosetta stone template has been used to instantiate a rosetta stone statement, is only possible to append text to the example usage. (optional)"),
-                        subsectionWithPath("properties").description("""The updated list of properties of the rosetta stone template. The first property defines the subject position of the statement and is required to have a path of `hasSubjectPosition`, must have a minimum cardinality of at least one and is not a literal template property. All other properties define a object position, which must have a path of `hasObjectPosition`. See <<template-properties,template properties>> for more information. After the rosetta stone template has been used to instantiate a rosetta stone statement, is only possible to append new object positions. (optional)"""),
-                        fieldWithPath("organizations[]").description("The updated list of IDs of the organizations the rosetta stone template belongs to. (optional)"),
-                        fieldWithPath("observatories[]").description("The updated list of IDs of the observatories the rosetta stone template belongs to. (optional)"),
-                    )
+            .andDocument {
+                summary("Updating rosetta stone templates")
+                description(
+                    """
+                    A `PUT` request updates an existing rosetta stone template with all the given parameters.
+                    The response will be `204 No Content` when successful.
+                    The updated rosetta stone template (object) can be retrieved by following the URI in the `Location` header field.
+                    
+                    NOTE: Only rosetta stone templates that have not been used to create a rosetta stone statement can be fully updated.
+                          Otherwise, it is only possible to add new object positions and to insert a section for that specific object position properties into the formatted label.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the rosetta stone template.")
+                )
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the updated rosetta stone template can be fetched from.")
+                )
+                requestFields<UpdateRosettaStoneTemplateRequest>(
+                    fieldWithPath("label").description("The updated label of the rosetta stone template. After the rosetta stone template has been used to instantiate a rosetta stone statement, it is no longer possible to update the label. (optional)").optional(),
+                    fieldWithPath("description").description("The updated description of the rosetta stone template. After the rosetta stone template has been used to instantiate a rosetta stone statement, it is no longer possible to update the description. (optional)").optional(),
+                    fieldWithPath("formatted_label").description("The updated formatted label pattern of the rosetta stone template. After the rosetta stone template has been used to instantiate a rosetta stone statement, is only possible to append sections to the formatted label. (optional)").optional(),
+                    fieldWithPath("example_usage").description("One or more updated example sentences that demonstrate the usage of the statement that this template models. After the rosetta stone template has been used to instantiate a rosetta stone statement, is only possible to append text to the example usage. (optional)").optional(),
+                    subsectionWithPath("properties").description("""The updated list of properties of the rosetta stone template. The first property defines the subject position of the statement and is required to have a path of `hasSubjectPosition`, must have a minimum cardinality of at least one and is not a literal template property. All other properties define a object position, which must have a path of `hasObjectPosition`. See <<template-properties,template properties>> for more information. After the rosetta stone template has been used to instantiate a rosetta stone statement, is only possible to append new object positions. (optional)""").optional(),
+                    fieldWithPath("organizations[]").description("The updated list of IDs of the organizations the rosetta stone template belongs to. (optional)").optional(),
+                    fieldWithPath("observatories[]").description("The updated list of IDs of the observatories the rosetta stone template belongs to. (optional)").optional(),
+                )
+                throws(
+                    RosettaStoneTemplateNotFound::class,
+                    RosettaStoneTemplateNotModifiable::class,
+                    RosettaStoneTemplateInUse::class,
+                    InvalidLabel::class,
+                    RosettaStoneTemplateInUse::class,
+                    InvalidDescription::class,
+                    MissingDynamicLabelPlaceholder::class,
+                    RosettaStoneTemplateLabelUpdateRequiresNewTemplateProperties::class,
+                    RosettaStoneTemplateLabelMustStartWithPreviousVersion::class,
+                    TooManyNewRosettaStoneTemplateLabelSections::class,
+                    NewRosettaStoneTemplateLabelSectionsMustBeOptional::class,
+                    RosettaStoneTemplateLabelMustBeUpdated::class,
+                    NewRosettaStoneTemplateExampleUsageMustStartWithPreviousExampleUsage::class,
+                    RosettaStoneTemplatePropertyNotModifiable::class,
+                    NewRosettaStoneTemplatePropertyMustBeOptional::class,
+                    MissingSubjectPosition::class,
+                    InvalidSubjectPositionPath::class,
+                    InvalidSubjectPositionCardinality::class,
+                    InvalidSubjectPositionType::class,
+                    InvalidObjectPositionPath::class,
+                    MissingPropertyPlaceholder::class,
+                    InvalidMinCount::class,
+                    InvalidMaxCount::class,
+                    InvalidCardinality::class,
+                    InvalidDataType::class,
+                    InvalidRegexPattern::class,
+                    InvalidBounds::class,
+                    ClassNotFound::class,
+                    OnlyOneOrganizationAllowed::class,
+                    OrganizationNotFound::class,
+                    OnlyOneObservatoryAllowed::class,
+                    ObservatoryNotFound::class,
+                )
+            }
 
         verify(exactly = 1) { templateService.update(any()) }
     }
@@ -302,20 +387,33 @@ internal class RosettaStoneTemplateControllerUnitTest : MockMvcBaseTest("rosetta
             .accept(ROSETTA_STONE_TEMPLATE_JSON_V1)
             .perform()
             .andExpect(status().isNoContent)
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The id of the rosetta stone template to delete.")
-                    )
+            .andDocument {
+                summary("Deleting rosetta stone templates")
+                description(
+                    """
+                    A `DELETE` request deletes a rosetta stone template.
+                    The response will be `204 No Content` when successful.
+                    
+                    NOTE: A rosetta stone template can only be deleted when it is not used for any <<rosetta-stone-statements,rosetta stone statement>>.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The id of the rosetta stone template to delete.")
+                )
+                throws(
+                    RosettaStoneTemplateNotFound::class,
+                    RosettaStoneTemplateNotModifiable::class,
+                    RosettaStoneTemplateInUse::class,
+                    ContributorNotFound::class,
+                    NeitherOwnerNorCurator::class,
+                )
+            }
 
         verify(exactly = 1) { templateService.delete(id, ContributorId(MockUserId.USER)) }
     }
 
     private fun createRosettaStoneTemplateRequest() =
-        RosettaStoneTemplateController.CreateRosettaStoneTemplateRequest(
+        CreateRosettaStoneTemplateRequest(
             label = "Dummy Rosetta Stone Template Label",
             description = "Some description about the Rosetta Stone Template",
             dynamicLabel = "{P32}",
@@ -336,7 +434,7 @@ internal class RosettaStoneTemplateControllerUnitTest : MockMvcBaseTest("rosetta
         )
 
     private fun updateRosettaStoneTemplateRequest() =
-        RosettaStoneTemplateController.UpdateRosettaStoneTemplateRequest(
+        UpdateRosettaStoneTemplateRequest(
             label = "Dummy Rosetta Stone Template Label",
             description = "Some description about the Rosetta Stone Template",
             dynamicLabel = "{P32}",

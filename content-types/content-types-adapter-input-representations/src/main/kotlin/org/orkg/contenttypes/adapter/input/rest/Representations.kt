@@ -82,6 +82,10 @@ data class PaperRepresentation(
 
 data class PublicationInfoRepresentation(
     @get:JsonProperty("published_month")
+    // no runtime effect, but used for documentation
+    @field:Min(1)
+    // no runtime effect, but used for documentation
+    @field:Max(12)
     val publishedMonth: Int?,
     @get:JsonProperty("published_year")
     val publishedYear: Long?,
@@ -472,8 +476,8 @@ data class LiteratureListRepresentation(
 )
 @JsonSubTypes(
     value = [
-        JsonSubTypes.Type(ListSectionRepresentation::class),
-        JsonSubTypes.Type(TextSectionRepresentation::class)
+        JsonSubTypes.Type(LiteratureListListSectionRepresentation::class),
+        JsonSubTypes.Type(LiteratureListTextSectionRepresentation::class)
     ]
 )
 sealed interface LiteratureListSectionRepresentation {
@@ -481,7 +485,7 @@ sealed interface LiteratureListSectionRepresentation {
 }
 
 @JsonTypeName("list")
-data class ListSectionRepresentation(
+data class LiteratureListListSectionRepresentation(
     override val id: ThingId,
     val entries: List<EntryRepresentation>,
 ) : LiteratureListSectionRepresentation {
@@ -492,7 +496,7 @@ data class ListSectionRepresentation(
 }
 
 @JsonTypeName("text")
-data class TextSectionRepresentation(
+data class LiteratureListTextSectionRepresentation(
     override val id: ThingId,
     val heading: String,
     @get:JsonProperty("heading_size")

@@ -9,64 +9,46 @@ NOTE: The following endpoints use content negotiation, meaning that the contents
 [[papers-fetch]]
 == Fetching Papers
 
-A `GET` request provides information about a paper.
+include::{snippets}/papers_find-by-id/description.adoc[]
 
-operation::papers_get-single[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::papers_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[papers-contributors]]
 == Fetching Contributors of Papers
 
 A `GET` request returns a <<sorting-and-pagination,paged>> list of <<contributors,contributor>> ids.
 
-operation::papers_get-contributors[snippets='path-parameters,curl-request']
+operation::papers_find-all-contributors-by-paper-id[snippets='path-parameters,curl-request']
 
 [[papers-list]]
 == Listing Papers
 
-A `GET` request returns a <<sorting-and-pagination,paged>> list of <<papers-fetch,papers>>.
-If no paging request parameters are provided, the default values will be used.
+include::{snippets}/papers_find-all/description.adoc[]
 
 operation::papers_get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::papers_get-paged-with-parameters[snippets='query-parameters,curl-request']
+operation::papers_find-all[snippets='query-parameters,curl-request']
 
 [[papers-create]]
 == Creating Papers
 
-A `POST` request creates a new paper with all the given parameters.
-The response will be `201 Created` when successful.
-The paper (object) can be retrieved by following the URI in the `Location` header field.
+include::{snippets}/papers_create/description.adoc[]
 
 operation::papers_create[snippets='request-fields,curl-request,response-headers,http-response']
 
 [[papers-edit]]
 == Updating Papers
 
-A `PUT` request updates an existing paper with all the given parameters.
-The response will be `204 No Content` when successful.
-The updated paper (object) can be retrieved by following the URI in the `Location` header field.
-
-[NOTE]
-====
-1. All fields at the top level in the request can be omitted or `null`, meaning that the corresponding fields should not be updated.
-2. The same rules as for <<resources-edit,updating resources>> apply when updating the visibility of a paper.
-3. If the verified status is being modified and the performing user is not a curator, the return status will be `403 FORBIDDEN`.
-====
-
-WARNING: Author names will not be updated if a resource id is specified for a given author.
+include::{snippets}/papers_update/description.adoc[]
 
 operation::papers_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[papers-publish]]
 == Publishing Papers
 
-A `POST` request publishes an existing paper with the given parameters.
-In the process, a new paper version resource is created and linked to the original paper resource.
-All contribution statements of the original paper are archived in a separate database.
-The response will be `201 Created` when successful.
-The paper resource can be retrieved by following the URI in the `Location` header field.
+include::{snippets}/papers_publish/description.adoc[]
 
 operation::papers_publish[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 

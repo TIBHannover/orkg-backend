@@ -9,66 +9,48 @@ NOTE: The following endpoints use content negotiation, meaning that the contents
 [[smart-reviews-fetch]]
 == Fetching Smart Reviews
 
-A `GET` request provides information about a smart review.
+include::{snippets}/smart-reviews_find-by-id/description.adoc[]
 
-operation::smart-reviews_get-single[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::smart-reviews_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[smart-reviews-list]]
 == Listing Smart Reviews
 
-A `GET` request returns a <<sorting-and-pagination,paged>> list of <<smart-reviews-fetch,smart reviews>>.
-If no paging request parameters are provided, the default values will be used.
+include::{snippets}/smart-reviews_find-all/description.adoc[]
 
 operation::smart-reviews_get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::smart-reviews_get-paged-with-parameters[snippets='query-parameters,curl-request']
+operation::smart-reviews_find-all[snippets='query-parameters,curl-request']
 
 [[smart-reviews-create]]
 == Creating Smart Reviews
 
-A `POST` request creates a new smart review with all the given parameters.
-The response will be `201 Created` when successful.
-The smart review (object) can be retrieved by following the URI in the `Location` header field.
+include::{snippets}/smart-reviews_create/description.adoc[]
 
 operation::smart-reviews_create[snippets='request-fields,curl-request,response-headers,http-response']
 
 [[smart-reviews-edit]]
 == Updating Smart Reviews
 
-A `PUT` request updates an existing smart review with all the given parameters.
-The response will be `204 No Content` when successful.
-The updated smart review (object) can be retrieved by following the URI in the `Location` header field.
-
-[NOTE]
-====
-1. All fields at the top level in the request can be omitted or `null`, meaning that the corresponding fields should not be updated.
-2. The same rules as for <<resources-edit,updating resources>> apply when updating the visibility of a smart review.
-====
-
-WARNING: Author names will not be updated if a resource id is specified for a given author.
+include::{snippets}/smart-reviews_update/description.adoc[]
 
 operation::smart-reviews_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[smart-reviews-publish]]
 == Publishing Smart Reviews
 
-A `POST` request publishes an existing smart review with the given parameters.
-In the process, a new smart review published resource is created and linked to the original smart review resource.
-All statements containing the sections of the original smart review are archived in a separate database.
-Optionally, a DOI can be assigned to the published smart review resource.
-The response will be `201 Created` when successful.
-The published smart review (object) can be retrieved by following the URI in the `Location` header field.
+include::{snippets}/smart-reviews_publish/description.adoc[]
 
 operation::smart-reviews_publish[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[smart-reviews-published-contents]]
 == Fetching Published Smart Review Contents
 
-A `GET` request returns contents of an already published smart review, at the state of publishing.
+include::{snippets}/smart-reviews_find-published-content-by-id_statements/description.adoc[]
 
-operation::smart-reviews_find-published-content-by-id[snippets='path-parameters,curl-request']
+operation::smart-reviews_find-published-content-by-id_statements[snippets='path-parameters,curl-request']
 
 Depending on the type of the requested content, the following representations are returned:
 
@@ -80,4 +62,4 @@ Depending on the type of the requested content, the following representations ar
 | Other          | A wrapped list of <<statements-fetch,statements>>. See response fields below for more information.
 |===
 
-operation::smart-reviews_find-published-content-by-id[snippets='response-fields']
+operation::smart-reviews_find-published-content-by-id_statements[snippets='response-fields']

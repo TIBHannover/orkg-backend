@@ -7,46 +7,39 @@ NOTE: The following endpoints use content negotiation, meaning that the contents
 [[rosetta-stone-statements-fetch]]
 == Fetching Rosetta Stone Statements
 
-A `GET` request provides information about a rosetta stone statement or a specific rosetta stone statement version.
+include::{snippets}/rosetta-stone-statements_find-by-id/description.adoc[]
 
-operation::rosetta-stone-statements_get-single[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::rosetta-stone-statements_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[rosetta-stone-statements-list]]
 == Listing Rosetta Stone Statements
 
-A `GET` request returns a <<sorting-and-pagination,paged>> list of <<rosetta-stone-statements-fetch,rosetta stone statements>>.
-If no paging request parameters are provided, the default values will be used.
-
-NOTE: Only the most recent versions of rosetta stone statements will be returned.
+include::{snippets}/rosetta-stone-statements_find-all/description.adoc[]
 
 operation::rosetta-stone-statements_get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::rosetta-stone-statements_get-paged-with-parameters[snippets='query-parameters,curl-request']
+operation::rosetta-stone-statements_find-all[snippets='query-parameters,curl-request']
 
 [[rosetta-stone-statements-list-versions]]
 == Listing Rosetta Stone Statement Versions
 
-A `GET` request returns a list of <<rosetta-stone-statements-fetch,rosetta stone statement>> versions.
+include::{snippets}/rosetta-stone-statements_find-all-versions-by-id/description.adoc[]
 
-operation::rosetta-stone-statements_get-all-versions[snippets='path-parameters,curl-request']
+operation::rosetta-stone-statements_find-all-versions-by-id[snippets='path-parameters,curl-request']
 
 [[rosetta-stone-statements-create]]
 == Creating Rosetta Stone Statements
 
-A `POST` request creates a new rosetta stone statement with all the given parameters.
-The response will be `201 Created` when successful.
-The rosetta stone statement can be retrieved by following the URI in the `Location` header field.
+include::{snippets}/rosetta-stone-statements_create/description.adoc[]
 
 operation::rosetta-stone-statements_create[snippets='request-fields,curl-request,response-headers,http-response']
 
 [[rosetta-stone-statements-edit]]
 == Updating Rosetta Stone Statements
 
-A `POST` request creates a new version of an existing rosetta stone statement with all the given parameters.
-The response will be `201 Created` when successful.
-The revised rosetta stone statement (object) can be retrieved by following the URI in the `Location` header field.
+include::{snippets}/rosetta-stone-statements_update/description.adoc[]
 
 operation::rosetta-stone-statements_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
@@ -55,16 +48,12 @@ operation::rosetta-stone-statements_update[snippets='path-parameters,request-fie
 
 === Soft-Deleting Rosetta Stone Statements
 
-A `DELETE` request soft-deletes a rosetta stone statement with all its versions.
-The response will be `204 No Content` when successful.
+include::{snippets}/rosetta-stone-statements_soft-delete/description.adoc[]
 
 operation::rosetta-stone-statements_soft-delete[snippets='path-parameters,curl-request,http-response']
 
 === Fully Deleting Rosetta Stone Statements
 
-A `DELETE` request fully deletes a rosetta stone statement with all its versions.
-The response will be `204 No Content` when successful.
-
-NOTE: The user performing the action needs to be a curator.
+include::{snippets}/rosetta-stone-statements_delete/description.adoc[]
 
 operation::rosetta-stone-statements_delete[snippets='path-parameters,curl-request,http-response']

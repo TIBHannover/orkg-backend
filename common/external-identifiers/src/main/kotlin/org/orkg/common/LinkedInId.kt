@@ -1,7 +1,7 @@
 package org.orkg.common
 
-private val VALID_LINKED_IN_ID_REGEX = Regex("""^[\p{L}0-9\-&_'’.]+$""")
-private val VALID_LINKED_IN_ID_URI_REGEX = Regex("""^https?://\w+\.linkedin\.com/in/([\p{L}0-9\-&_'’.]+)/?""")
+internal val VALID_LINKED_IN_ID_REGEX = Regex("""^[\p{L}0-9\-&_'’.]+$""")
+internal val VALID_LINKED_IN_ID_URI_REGEX = Regex("""^https?://\w+\.linkedin\.com/in/([\p{L}0-9\-&_'’.]+)/?""")
 
 @JvmInline
 value class LinkedInId private constructor(override val value: String) : IdentifierValue {

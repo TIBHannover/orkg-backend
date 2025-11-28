@@ -13,7 +13,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -30,13 +29,12 @@ internal class AuthorExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Not Found")
             .andExpectDetail("""Author "R123" not found.""")
             .andExpect(jsonPath("$.author_id").value("R123"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("author_id").description("The id of the author."),
-                    )
+            .andDocument {
+                responseFields<AuthorNotFound>(
+                    fieldWithPath("author_id").description("The id of the author."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -56,13 +54,12 @@ internal class AuthorExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectDetail("""Ambiguous author definition with identifiers {orcid=[0000-0002-1825-0097]}.""")
             .andExpect(jsonPath("$.author_id").value("R147"))
             .andExpect(jsonPath("$.author_identifiers.orcid[0]").value("0000-0002-1825-0097"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("author_id").type("String").description("The id of the author. (optional)").optional(),
-                        subsectionWithPath("author_identifiers").description("A map of associated author identifiers."),
-                    )
+            .andDocument {
+                responseFields<AmbiguousAuthor>(
+                    fieldWithPath("author_id").type("String").description("The id of the author. (optional)").optional(),
+                    subsectionWithPath("author_identifiers").description("A map of associated author identifiers."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 }

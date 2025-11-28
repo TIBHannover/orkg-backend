@@ -1,9 +1,12 @@
 plugins {
-    id("org.orkg.gradle.kotlin-library")
+    id("org.orkg.gradle.kotlin-library-with-test-fixtures")
 }
 
 dependencies {
     api("dev.forkhandles:values4k")
+
+    testFixturesApi("org.springframework.restdocs:spring-restdocs-core")
+    testFixturesImplementation("jakarta.validation:jakarta.validation-api")
 }
 
 testing {

@@ -9,42 +9,31 @@ NOTE: The following endpoints use content negotiation, meaning that the contents
 [[tables-fetch]]
 == Fetching Tables
 
-A `GET` request provides information about a table.
+include::{snippets}/tables_find-by-id/description.adoc[]
 
-operation::tables_get-single[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::tables_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[tables-list]]
 == Listing Tables
 
-A `GET` request returns a <<sorting-and-pagination,paged>> list of <<tables-fetch,tables>>.
-If no paging request parameters are provided, the default values will be used.
+include::{snippets}/tables_find-all/description.adoc[]
 
 operation::tables_get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::tables_get-paged-with-parameters[snippets='query-parameters,curl-request']
+operation::tables_find-all[snippets='query-parameters,curl-request']
 
 [[tables-create]]
 == Creating Tables
 
-A `POST` request creates a new table with all the given parameters.
-The response will be `201 Created` when successful.
-The table (object) can be retrieved by following the URI in the `Location` header field.
+include::{snippets}/tables_create/description.adoc[]
 
 operation::tables_create[snippets='request-fields,curl-request,response-headers,http-response']
 
 [[tables-edit]]
 == Updating Tables
 
-A `PUT` request updates an existing table with all the given parameters.
-The response will be `204 No Content` when successful.
-The updated table (object) can be retrieved by following the URI in the `Location` header field.
-
-[NOTE]
-====
-1. All fields at the top level in the request can be omitted or `null`, meaning that the corresponding fields should not be updated.
-2. The same rules as for <<resources-edit,updating resources>> apply when updating the visibility of a table.
-====
+include::{snippets}/tables_update/description.adoc[]
 
 operation::tables_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']

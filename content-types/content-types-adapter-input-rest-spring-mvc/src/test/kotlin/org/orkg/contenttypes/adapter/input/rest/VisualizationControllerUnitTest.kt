@@ -14,44 +14,41 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.UnknownSortingProperty
-import org.orkg.common.json.CommonJacksonModule
 import org.orkg.common.testing.fixtures.fixedClock
-import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
+import org.orkg.community.domain.ObservatoryNotFound
+import org.orkg.community.domain.OrganizationNotFound
+import org.orkg.contenttypes.adapter.input.rest.VisualizationController.CreateVisualizationRequest
 import org.orkg.contenttypes.domain.AmbiguousAuthor
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.AuthorNotFound
 import org.orkg.contenttypes.domain.OnlyOneObservatoryAllowed
 import org.orkg.contenttypes.domain.OnlyOneOrganizationAllowed
+import org.orkg.contenttypes.domain.VisualizationNotFound
 import org.orkg.contenttypes.domain.testing.fixtures.createVisualization
 import org.orkg.contenttypes.input.VisualizationUseCases
 import org.orkg.contenttypes.input.testing.fixtures.authorListFields
+import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerUnitTestConfiguration
+import org.orkg.contenttypes.input.testing.fixtures.visualizationResponseFields
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
+import org.orkg.graph.domain.InvalidDescription
+import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
 import org.orkg.graph.testing.asciidoc.allowedVisibilityFilterValues
-import org.orkg.graph.testing.asciidoc.allowedVisibilityValues
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectVisualization
 import org.orkg.testing.annotations.TestWithMockUser
-import org.orkg.testing.configuration.ExceptionTestConfiguration
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
-import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
-import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.pathParameters
-import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -59,15 +56,7 @@ import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Optional
 
-@ContextConfiguration(
-    classes = [
-        VisualizationController::class,
-        ExceptionTestConfiguration::class,
-        CommonJacksonModule::class,
-        ContentTypeJacksonModule::class,
-        FixedClockConfig::class
-    ]
-)
+@ContextConfiguration(classes = [VisualizationController::class, ContentTypeControllerUnitTestConfiguration::class])
 @WebMvcTest(controllers = [VisualizationController::class])
 internal class VisualizationControllerUnitTest : MockMvcBaseTest("visualizations") {
     @MockkBean
@@ -75,7 +64,7 @@ internal class VisualizationControllerUnitTest : MockMvcBaseTest("visualizations
 
     @Test
     @DisplayName("Given a visualization, when it is fetched by id and service succeeds, then status is 200 OK and visualization is returned")
-    fun getSingle() {
+    fun findById() {
         val visualization = createVisualization()
         every { visualizationService.findById(visualization.id) } returns Optional.of(visualization)
 
@@ -85,29 +74,19 @@ internal class VisualizationControllerUnitTest : MockMvcBaseTest("visualizations
             .perform()
             .andExpect(status().isOk)
             .andExpectVisualization()
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the visualization to retrieve.")
-                    ),
-                    responseFields(
-                        // The order here determines the order in the generated table. More relevant items should be up.
-                        fieldWithPath("id").description("The identifier of the visualization."),
-                        fieldWithPath("title").description("The title of the visualization."),
-                        fieldWithPath("description").description("The description of the visualization."),
-                        fieldWithPath("organizations[]").description("The list of IDs of the organizations the visualization belongs to."),
-                        fieldWithPath("observatories[]").description("The list of IDs of the observatories the visualization belongs to."),
-                        fieldWithPath("extraction_method").description("""The method used to extract the visualization resource. Can be one of $allowedExtractionMethodValues."""),
-                        timestampFieldWithPath("created_at", "the visualization resource was created"),
-                        // TODO: Add links to documentation of special user UUIDs.
-                        fieldWithPath("created_by").description("The UUID of the user or service who created this visualization."),
-                        fieldWithPath("visibility").description("""Visibility of the visualization. Can be one of $allowedVisibilityValues."""),
-                        fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this visualization.").optional(),
-                        fieldWithPath("_class").description("Indicates which type of entity was returned. Always has the value `visualization`."),
-                    ).and(authorListFields("visualization"))
+            .andDocument {
+                summary("Fetching visualizations")
+                description(
+                    """
+                    A `GET` request provides information about a visualization.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the visualization to retrieve."),
+                )
+                responseFields<VisualizationRepresentation>(visualizationResponseFields())
+                throws(VisualizationNotFound::class)
+            }
 
         verify(exactly = 1) { visualizationService.findById(visualization.id) }
     }
@@ -149,7 +128,7 @@ internal class VisualizationControllerUnitTest : MockMvcBaseTest("visualizations
 
     @Test
     @DisplayName("Given several visualizations, when filtering by several parameters, then status is 200 OK and visualizations are returned")
-    fun getPagedWithParameters() {
+    fun findAll() {
         val visualization = createVisualization()
         every { visualizationService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns pageOf(visualization)
 
@@ -183,24 +162,30 @@ internal class VisualizationControllerUnitTest : MockMvcBaseTest("visualizations
             .andExpect(status().isOk)
             .andExpectPage()
             .andExpectVisualization("$.content[*]")
-            .andDo(
-                documentationHandler.document(
-                    queryParameters(
-                        parameterWithName("title").description("A search term that must be contained in the title of the visualization. (optional)."),
-                        parameterWithName("exact").description("Whether label matching is exact or fuzzy (optional, default: false)"),
-                        parameterWithName("visibility").description("""Filter for visibility. Either of $allowedVisibilityFilterValues. (optional)"""),
-                        parameterWithName("created_by").description("Filter for the UUID of the user or service who created the visualization. (optional)"),
-                        parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned visualization can have. (optional)"),
-                        parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned visualization can have. (optional)"),
-                        parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the visualization belongs to. (optional)"),
-                        parameterWithName("organization_id").description("Filter for the UUID of the organization that the visualization belongs to. (optional)"),
-                        parameterWithName("research_field").description("Filter for research field id. The research field of a visualization is determined by the research field of a linking comparison. (optional)"),
-                        parameterWithName("include_subfields").description("Flag for whether subfields are included in the search or not. (optional, default: false)"),
-                        parameterWithName("research_problem").description("Filter for research problem id. (optional)").optional(),
-                    )
+            .andDocument {
+                summary("Listing visualizations")
+                description(
+                    """
+                    A `GET` request returns a <<sorting-and-pagination,paged>> list of <<visualizations-fetch,visualizations>>.
+                    If no paging request parameters are provided, the default values will be used.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pagedQueryParameters(
+                    parameterWithName("title").description("A search term that must be contained in the title of the visualization. (optional).").optional(),
+                    parameterWithName("exact").description("Whether label matching is exact or fuzzy (optional, default: false)").optional(),
+                    parameterWithName("visibility").description("""Filter for visibility. Either of $allowedVisibilityFilterValues. (optional)""").optional(),
+                    parameterWithName("created_by").description("Filter for the UUID of the user or service who created the visualization. (optional)").optional(),
+                    parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned visualization can have. (optional)").optional(),
+                    parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned visualization can have. (optional)").optional(),
+                    parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the visualization belongs to. (optional)").optional(),
+                    parameterWithName("organization_id").description("Filter for the UUID of the organization that the visualization belongs to. (optional)").optional(),
+                    parameterWithName("research_field").description("Filter for research field id. The research field of a visualization is determined by the research field of a linking comparison. (optional)").optional(),
+                    parameterWithName("include_subfields").description("Flag for whether subfields are included in the search or not. (optional, default: false)").optional(),
+                    parameterWithName("research_problem").description("Filter for research problem id. (optional)").optional(),
+                )
+                pagedResponseFields<VisualizationRepresentation>(visualizationResponseFields())
+                throws(UnknownSortingProperty::class)
+            }
 
         verify(exactly = 1) {
             visualizationService.findAll(
@@ -254,21 +239,37 @@ internal class VisualizationControllerUnitTest : MockMvcBaseTest("visualizations
             .perform()
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("/api/visualizations/$id")))
-            .andDo(
-                documentationHandler.document(
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the newly created visualization can be fetched from.")
-                    ),
-                    requestFields(
-                        fieldWithPath("title").description("The title of the visualization."),
-                        fieldWithPath("description").description("The description of the visualization."),
-                        fieldWithPath("organizations[]").description("The list of IDs of the organizations the visualization belongs to."),
-                        fieldWithPath("observatories[]").description("The list of IDs of the observatories the visualization belongs to."),
-                        fieldWithPath("extraction_method").description("""The method used to extract the visualization resource. Can be one of $allowedExtractionMethodValues.""")
-                    ).and(authorListFields("visualization"))
+            .andDocument {
+                summary("Creating visualizations")
+                description(
+                    """
+                    A `POST` request creates a new visualization with all the given parameters.
+                    The response will be `201 Created` when successful.
+                    The visualization (object) can be retrieved by following the URI in the `Location` header field.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the newly created visualization can be fetched from."),
+                )
+                requestFields<CreateVisualizationRequest>(
+                    fieldWithPath("title").description("The title of the visualization."),
+                    fieldWithPath("description").description("The description of the visualization."),
+                    fieldWithPath("organizations[]").description("The list of IDs of the organizations the visualization belongs to."),
+                    fieldWithPath("observatories[]").description("The list of IDs of the observatories the visualization belongs to."),
+                    fieldWithPath("extraction_method").description("""The method used to extract the visualization resource. Can be one of $allowedExtractionMethodValues. (optional)""").optional(),
+                    *authorListFields("visualization").toTypedArray(),
+                )
+                throws(
+                    InvalidLabel::class,
+                    InvalidDescription::class,
+                    OnlyOneObservatoryAllowed::class,
+                    ObservatoryNotFound::class,
+                    OnlyOneOrganizationAllowed::class,
+                    OrganizationNotFound::class,
+                    AuthorNotFound::class,
+                    AmbiguousAuthor::class,
+                )
+            }
 
         verify(exactly = 1) { visualizationService.create(any()) }
     }
@@ -348,7 +349,7 @@ internal class VisualizationControllerUnitTest : MockMvcBaseTest("visualizations
     }
 
     private fun createVisualizationRequest() =
-        VisualizationController.CreateVisualizationRequest(
+        CreateVisualizationRequest(
             title = "test",
             description = "visualization description",
             authors = listOf(

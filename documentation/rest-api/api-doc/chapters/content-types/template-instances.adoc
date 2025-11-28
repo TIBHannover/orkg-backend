@@ -7,27 +7,24 @@ NOTE: The following endpoints use content negotiation, meaning that the contents
 [[template-instances-fetch]]
 == Fetching Template Instances
 
-A `GET` request provides information about a template instance.
+include::{snippets}/template-instances_find-by-template-id-and-resource-id/description.adoc[]
 
-operation::template-instances_get-single[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::template-instances_find-by-template-id-and-resource-id[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[template-instances-list]]
 == Listing Template Instances
 
-A `GET` request returns a <<sorting-and-pagination,paged>> list of <<template-instances-fetch,template instances>>.
-If no paging request parameters are provided, the default values will be used.
+include::{snippets}/template-instances_find-all-by-template-id/description.adoc[]
 
 operation::template-instances_get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::template-instances_get-paged-with-parameters[snippets='query-parameters,curl-request']
+operation::template-instances_find-all-by-template-id[snippets='query-parameters,curl-request']
 
 [[template-instances-edit]]
 == Updating Template Instances
 
-A `PUT` request updates an existing template instance with all the given parameters.
-The response will be `204 No Content` when successful.
-The updated template instance (object) can be retrieved by following the URI in the `Location` header field.
+include::{snippets}/template-instances_update/description.adoc[]
 
 operation::template-instances_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']

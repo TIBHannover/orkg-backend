@@ -7,14 +7,15 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
-import org.orkg.common.configuration.WebMvcConfiguration
-import org.orkg.common.json.CommonJacksonModule
 import org.orkg.community.input.RetrieveContributorUseCase
 import org.orkg.community.testing.fixtures.createContributor
 import org.orkg.contenttypes.domain.PaperAuthor
 import org.orkg.contenttypes.domain.SimpleAuthor
 import org.orkg.contenttypes.input.AuthorUseCases
 import org.orkg.contenttypes.input.ResearchProblemUseCases
+import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerUnitTestConfiguration
+import org.orkg.graph.adapter.input.rest.PaperAuthorRepresentation
+import org.orkg.graph.adapter.input.rest.testing.fixtures.resourceResponseFields
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ContributorPerProblem
 import org.orkg.graph.input.FormattedLabelUseCases
@@ -22,31 +23,18 @@ import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.MockUserId
-import org.orkg.testing.configuration.ExceptionTestConfiguration
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
-import org.orkg.testing.spring.restdocs.pagedResponseFields
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.restdocs.payload.PayloadDocumentation.applyPathPrefix
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
-import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.pathParameters
-import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import orkg.orkg.community.testing.fixtures.contributorResponseFields
 import java.util.Optional
 
-@ContextConfiguration(
-    classes = [
-        ProblemController::class,
-        ExceptionTestConfiguration::class,
-        CommonJacksonModule::class,
-        FixedClockConfig::class,
-        WebMvcConfiguration::class
-    ]
-)
+@ContextConfiguration(classes = [ProblemController::class, ContentTypeControllerUnitTestConfiguration::class])
 @WebMvcTest(controllers = [ProblemController::class])
 internal class ProblemControllerUnitTest : MockMvcBaseTest("research-problems") {
     @MockkBean
@@ -69,7 +57,7 @@ internal class ProblemControllerUnitTest : MockMvcBaseTest("research-problems") 
 
     @Test
     @DisplayName("Given a research problem, when fetching its related users, then status is 200 OK and users are returned")
-    fun getUsersPerProblem() {
+    fun findAllContributorsByResearchProblemId() {
         val id = ThingId("R123")
         val contributorId = ContributorId(MockUserId.USER)
 
@@ -79,22 +67,23 @@ internal class ProblemControllerUnitTest : MockMvcBaseTest("research-problems") 
         documentedGetRequestTo("/api/problems/{id}/users", id)
             .perform()
             .andExpect(status().isOk)
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the research problem.")
-                    ),
-                    queryParameters(
-                        parameterWithName("page").description("The page number to fetch. (optional, default: 0)").optional(),
-                        parameterWithName("size").description("The number of items to fetch per page. (optional, default: 10)").optional()
-                    ),
-                    responseFields(
-                        subsectionWithPath("[].user").description("The <<contributor-fetch_response_fields,contributor>> object."),
-                        fieldWithPath("[].contributions").description("The number of contributions the user contributed."),
-                    )
+            .andDocument {
+                summary("Listing contributors of research problems")
+                description(
+                    """
+                    A `GET` request to get a <<sorting-and-pagination,paged>> list of <<contributor-fetch,contributors>> that contributed to contributions where a problem is being addressed.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the research problem."),
+                )
+                pagedQueryParameters()
+                listResponseFields<ContributorWithContributionCountRepresentation>(
+                    fieldWithPath("user").description("The <<contributor-fetch_response_fields,contributor>> object."),
+                    *applyPathPrefix("user.", contributorResponseFields()).toTypedArray(),
+                    fieldWithPath("contributions").description("The number of contributions the user contributed."),
+                )
+            }
 
         verify(exactly = 1) { researchProblemService.findAllContributorsPerProblem(id, any()) }
         verify(exactly = 1) { contributorService.findById(contributorId) }
@@ -102,7 +91,7 @@ internal class ProblemControllerUnitTest : MockMvcBaseTest("research-problems") 
 
     @Test
     @DisplayName("Given a research problem, when fetching its related authors, then status is 200 OK and authors are returned")
-    fun getAuthorsPerProblem() {
+    fun findAllAuthorsByResearchProblemId() {
         val id = ThingId("R123")
 
         every { authorService.findAllByProblemId(id, any()) } returns pageOf(
@@ -122,20 +111,24 @@ internal class ProblemControllerUnitTest : MockMvcBaseTest("research-problems") 
         documentedGetRequestTo("/api/problems/{id}/authors", id)
             .perform()
             .andExpect(status().isOk)
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the research problem.")
-                    ),
-                    pagedResponseFields(
-                        fieldWithPath("author").description("The author which is using the research problem"),
-                        fieldWithPath("author.value").type("String").description("The name of the author."),
-                        subsectionWithPath("author.value").type("Resource").description("The author <<resources-fetch,resource>>."),
-                        fieldWithPath("papers").description("The number of papers composed by the author.")
-                    )
+            .andDocument {
+                summary("Listing paper authors of research problems")
+                description(
+                    """
+                    A `GET` request provides a <<sorting-and-pagination,paged>> list of authors that have papers addressing a certain research problem.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the research problem."),
+                )
+                pagedQueryParameters()
+                pagedResponseFields<PaperAuthorRepresentation>(
+                    fieldWithPath("author").description("The author which is using the research problem"),
+                    fieldWithPath("author.value").type("String").description("The name of the author."),
+                    *applyPathPrefix("author.value.", resourceResponseFields()).toTypedArray(),
+                    fieldWithPath("papers").description("The number of papers composed by the author.")
+                )
+            }
 
         verify(exactly = 1) { authorService.findAllByProblemId(id, any()) }
         verify(exactly = 1) { statementService.countAllIncomingStatementsById(any()) }

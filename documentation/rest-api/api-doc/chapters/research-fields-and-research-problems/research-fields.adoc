@@ -10,10 +10,9 @@ NOTE: In the following sections, the response fields of the page object are omit
 [[research-fields-list-research-problems]]
 === Listing Research Problems of Research Fields
 
-A `GET` request returns a <<sorting-and-pagination,paged>> list of all research problem <<resources,resources>> belonging to a given research field.
-The endpoint supports <<visibility-filtering-legacy>>.
+include::{snippets}/research-fields_find-all-research-problems-by-research-field-id/description.adoc[]
 
-operation::research-fields_get-problems-per-field[snippets='path-parameters,curl-request']
+operation::research-fields_find-all-research-problems-by-research-field-id[snippets='path-parameters,curl-request']
 
 [[research-fields-list-research-problems-with-subfields]]
 === Listing Research Problems of Research Fields and their Subfields
@@ -28,12 +27,9 @@ All path and request parameters are exactly the same as on the <<research-fields
 [[research-fields-list-contributors]]
 === Listing Contributors of Research Fields
 
-A `GET` request returns a <<sorting-and-pagination,paged>> list of <<contributors,contributors>> that contributed to a given research field.
+include::{snippets}/research-fields_find-all-contributors-by-research-field-id/description.adoc[]
 
-WARNING: This endpoint does *not* support <<visibility-filter,visibility filtering>>!
-         The only supported path parameter is `featured`.
-
-operation::research-fields_get-contributors-per-field[snippets='path-parameters,curl-request']
+operation::research-fields_find-all-contributors-by-research-field-id[snippets='path-parameters,curl-request']
 
 [[research-fields-list-contributors-with-subfields]]
 === Listing Contributors of Research Fields and their Subfields
@@ -45,36 +41,34 @@ All path and request parameters are exactly the same as on the <<research-fields
 [[research-fields-list-children]]
 == Listing Subfields
 
-A `GET` request returns a <<sorting-and-pagination,paged>> list of all sub research field <<resources,resources>> for a given research field.
+include::{snippets}/research-fields_find-all-children-by-parent-id/description.adoc[]
 
-operation::research-fields_find-children[snippets='path-parameters,curl-request']
-operation::research-fields_research-field-with-child-count[snippets='response-fields']
+operation::research-fields_find-all-children-by-parent-id[snippets='path-parameters,curl-request,response-fields']
 
 [[research-fields-list-parents]]
 == Listing Parent Research Fields
 
-A `GET` request returns a <<sorting-and-pagination,paged>> list of all parent research field <<resources,resources>> for a given research field.
+include::{snippets}/research-fields_find-all-parents-by-child-id/description.adoc[]
 
-operation::research-fields_find-parents[snippets='path-parameters,curl-request']
+operation::research-fields_find-all-parents-by-child-id[snippets='path-parameters,curl-request']
 
 [[research-fields-list-roots]]
 == Listing Root Research Fields of Subfields
 
-A `GET` request returns a <<sorting-and-pagination,paged>> list of all root research field <<resources,resources>> for a given research field.
+include::{snippets}/research-fields_find-all-roots-by-descendant-id/description.adoc[]
 
-operation::research-fields_find-roots[snippets='path-parameters,curl-request']
+operation::research-fields_find-all-roots-by-descendant-id[snippets='path-parameters,curl-request']
 
 [[research-fields-list-all-roots]]
 == Listing all Root Research Fields
 
-A `GET` request returns a <<sorting-and-pagination,paged>> list of all root research field <<resources,resources>>.
+include::{snippets}/research-fields_find-all-roots/description.adoc[]
 
 operation::research-fields_find-all-roots[snippets='curl-request']
 
 [[research-fields-list-hierarchy]]
 == Listing Research Fields Hierarchy
 
-A `GET` request returns a <<sorting-and-pagination,paged>> list of all paths from each root research field <<resources,resource>> to the given research field.
+include::{snippets}/research-fields_find-research-field-hierarchy-by-research-field-id/description.adoc[]
 
-operation::research-fields_find-hierarchy[snippets='path-parameters,curl-request,http-response']
-operation::research-fields_research-field-hierarchy-entry[snippets='response-fields']
+operation::research-fields_find-research-field-hierarchy-by-research-field-id[snippets='path-parameters,curl-request,http-response,response-fields']

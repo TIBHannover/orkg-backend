@@ -7,6 +7,7 @@ dependencies {
     testFixturesApi("org.springframework.boot:spring-boot-test")
     testFixturesApi(testFixtures(project(":testing:spring")))
     testFixturesImplementation("jakarta.validation:jakarta.validation-api")
+    testFixturesImplementation(project(":common:serialization"))
 }
 
 testing {

@@ -56,7 +56,7 @@ class ContentTypeService(
             authorName = authorName,
         ).pmap { it.toContentType() }
 
-    override fun findAllAsResource(
+    override fun findAllAsResources(
         pageable: Pageable,
         classes: Set<ContentTypeClass>,
         visibility: VisibilityFilter?,

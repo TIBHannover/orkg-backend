@@ -10,45 +10,35 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
-import org.orkg.common.json.CommonJacksonModule
-import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
+import org.orkg.contenttypes.adapter.input.rest.ComparisonRelatedFigureController.CreateComparisonRelatedFigureRequest
+import org.orkg.contenttypes.adapter.input.rest.ComparisonRelatedFigureController.UpdateComparisonRelatedFigureRequest
 import org.orkg.contenttypes.domain.ComparisonNotFound
+import org.orkg.contenttypes.domain.ComparisonRelatedFigureNotFound
+import org.orkg.contenttypes.domain.ComparisonRelatedFigureNotModifiable
 import org.orkg.contenttypes.domain.testing.fixtures.createComparisonRelatedFigure
 import org.orkg.contenttypes.input.ComparisonRelatedFigureUseCases
+import org.orkg.contenttypes.input.testing.fixtures.comparisonRelatedFigureResponseFields
+import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerUnitTestConfiguration
+import org.orkg.graph.domain.InvalidLabel
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectComparisonRelatedFigure
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.annotations.TestWithMockUser
-import org.orkg.testing.configuration.ExceptionTestConfiguration
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
-import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
-import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.Optional
 
-@ContextConfiguration(
-    classes = [
-        ComparisonRelatedFigureController::class,
-        ExceptionTestConfiguration::class,
-        CommonJacksonModule::class,
-        ContentTypeJacksonModule::class,
-        FixedClockConfig::class
-    ]
-)
+@ContextConfiguration(classes = [ComparisonRelatedFigureController::class, ContentTypeControllerUnitTestConfiguration::class])
 @WebMvcTest(controllers = [ComparisonRelatedFigureController::class])
 internal class ComparisonRelatedFigureControllerUnitTest : MockMvcBaseTest("comparison-related-figures") {
     @MockkBean
@@ -56,7 +46,7 @@ internal class ComparisonRelatedFigureControllerUnitTest : MockMvcBaseTest("comp
 
     @Test
     @DisplayName("Given a comparison related figure, when fetched by id, then status is 200 OK and comparison related figure is returned")
-    fun getSingle() {
+    fun findByIdAndComparisonId() {
         val comparisonId = ThingId("R123")
         val comparisonRelatedFigure = createComparisonRelatedFigure()
 
@@ -69,25 +59,19 @@ internal class ComparisonRelatedFigureControllerUnitTest : MockMvcBaseTest("comp
             .perform()
             .andExpect(status().isOk)
             .andExpectComparisonRelatedFigure()
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the comparison."),
-                        parameterWithName("comparisonRelatedFigureId").description("The identifier of the comparison related figure to retrieve.")
-                    ),
-                    responseFields(
-                        // The order here determines the order in the generated table. More relevant items should be up.
-                        fieldWithPath("id").description("The identifier of the comparison related figure."),
-                        fieldWithPath("label").description("The title of label comparison related figure."),
-                        fieldWithPath("image").description("The url for the image of the comparison related figure."),
-                        fieldWithPath("description").description("The description of the comparison related figure."),
-                        timestampFieldWithPath("created_at", "the comparison related figure was created"),
-                        // TODO: Add links to documentation of special user UUIDs.
-                        fieldWithPath("created_by").description("The UUID of the user or service who created this comparison related figure.")
-                    )
+            .andDocument {
+                summary("Fetching comparison related figures")
+                description(
+                    """
+                    A `GET` request provides information about a comparison related figure.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the comparison."),
+                    parameterWithName("comparisonRelatedFigureId").description("The identifier of the comparison related figure to retrieve."),
+                )
+                responseFields<ComparisonRelatedFigureRepresentation>(comparisonRelatedFigureResponseFields())
+            }
 
         verify(exactly = 1) { comparisonRelatedFigureService.findByIdAndComparisonId(comparisonId, comparisonRelatedFigure.id) }
     }
@@ -112,7 +96,7 @@ internal class ComparisonRelatedFigureControllerUnitTest : MockMvcBaseTest("comp
 
     @Test
     @DisplayName("Given several comparison related figures, when fetched, then status is 200 OK and comparison related figures are returned")
-    fun getPaged() {
+    fun findAllByComparisonId() {
         val comparisonId = ThingId("R123")
         val comparisonRelatedFigure = listOf(createComparisonRelatedFigure())
 
@@ -124,14 +108,19 @@ internal class ComparisonRelatedFigureControllerUnitTest : MockMvcBaseTest("comp
             .andExpect(status().isOk)
             .andExpectPage()
             .andExpectComparisonRelatedFigure("$.content[*]")
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the comparison."),
-                    )
+            .andDocument {
+                summary("Listing comparison related figures")
+                description(
+                    """
+                    A `GET` request returns a <<sorting-and-pagination,paged>> list of <<comparisons-related-figure-fetch,comparison related figures>>.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the comparison."),
+                )
+                pagedQueryParameters()
+                pagedResponseFields<ComparisonRelatedFigureRepresentation>(comparisonRelatedFigureResponseFields())
+            }
 
         verify(exactly = 1) { comparisonRelatedFigureService.findAllByComparisonId(comparisonId, any()) }
     }
@@ -151,22 +140,28 @@ internal class ComparisonRelatedFigureControllerUnitTest : MockMvcBaseTest("comp
             .perform()
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("/api/comparisons/$comparisonId/related-figures/$id")))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The comparison to attach the comparison related figure to.")
-                    ),
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the newly created comparison related figure can be fetched from.")
-                    ),
-                    requestFields(
-                        fieldWithPath("label").description("The label of the comparison related figure."),
-                        fieldWithPath("image").description("The url to the image of the comparison related figure. (optional)"),
-                        fieldWithPath("description").description("The description of the comparison related figure. (optional)")
-                    )
+            .andDocument {
+                summary("Creating comparison related figures")
+                description(
+                    """
+                    A `POST` request creates a new comparison related figure with all the given parameters.
+                    The response will be `201 Created` when successful.
+                    The comparison related figure (object) can be retrieved by following the URI in the `Location` header field.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The comparison to attach the comparison related figure to."),
+                )
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the newly created comparison related figure can be fetched from."),
+                )
+                requestFields<CreateComparisonRelatedFigureRequest>(
+                    fieldWithPath("label").description("The label of the comparison related figure."),
+                    fieldWithPath("image").description("The url to the image of the comparison related figure. (optional)").optional(),
+                    fieldWithPath("description").description("The description of the comparison related figure. (optional)").optional(),
+                )
+                throws(InvalidLabel::class, ComparisonNotFound::class)
+            }
 
         verify(exactly = 1) { comparisonRelatedFigureService.create(any()) }
     }
@@ -204,23 +199,36 @@ internal class ComparisonRelatedFigureControllerUnitTest : MockMvcBaseTest("comp
             .perform()
             .andExpect(status().isNoContent)
             .andExpect(header().string("Location", endsWith("/api/comparisons/$comparisonId/related-figures/$id")))
-            .andDo(
-                documentationHandler.document(
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the updated comparison related figure can be fetched from.")
-                    ),
-                    pathParameters(
-                        parameterWithName("id").description("The id of the comparison the comparison related figure belongs to."),
-                        parameterWithName("comparisonRelatedFigureId").description("The identifier of the comparison related figure to update.")
-                    ),
-                    requestFields(
-                        fieldWithPath("label").description("The label of the comparison related figure. (optional)"),
-                        fieldWithPath("image").description("The url to the image of the comparison related figure."),
-                        fieldWithPath("description").description("The description of the comparison related figure.")
-                    )
+            .andDocument {
+                summary("Updating comparison related figures")
+                description(
+                    """
+                    A `PUT` request updates an existing comparison related figure with all the given parameters.
+                    The response will be `204 No Content` when successful.
+                    The updated comparison related figure (object) can be retrieved by following the URI in the `Location` header field.
+                    
+                    NOTE: Top level fields that were mandatory when creating the comparison related figure can be omitted or `null`, meaning that the corresponding fields should not be updated.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the updated comparison related figure can be fetched from."),
+                )
+                pathParameters(
+                    parameterWithName("id").description("The id of the comparison the comparison related figure belongs to."),
+                    parameterWithName("comparisonRelatedFigureId").description("The identifier of the comparison related figure to update."),
+                )
+                requestFields<UpdateComparisonRelatedFigureRequest>(
+                    fieldWithPath("label").description("The label of the comparison related figure. (optional)").optional(),
+                    fieldWithPath("image").description("The url to the image of the comparison related figure. (optional)").optional(),
+                    fieldWithPath("description").description("The description of the comparison related figure. (optional)").optional(),
+                )
+                throws(
+                    ComparisonRelatedFigureNotModifiable::class,
+                    ComparisonNotFound::class,
+                    ComparisonRelatedFigureNotFound::class,
+                    InvalidLabel::class,
+                )
+            }
 
         verify(exactly = 1) { comparisonRelatedFigureService.update(any()) }
     }
@@ -245,18 +253,24 @@ internal class ComparisonRelatedFigureControllerUnitTest : MockMvcBaseTest("comp
             .perform()
             .andExpect(status().isNoContent)
             .andExpect(header().string("Location", endsWith("/api/comparisons/$comparisonId")))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the comparison."),
-                        parameterWithName("comparisonRelatedFigureId").description("The identifier of the comparison related figure to delete.")
-                    ),
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the updated comparison can be fetched from.")
-                    )
+            .andDocument {
+                summary("Deleting comparison related figures")
+                description(
+                    """
+                    A `DELETE` request deletes a comparison related figure by ID.
+                    The response will be `204 No Content` when successful.
+                    The updated comparison (object) can be retrieved by following the URI in the `Location` header field.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the comparison."),
+                    parameterWithName("comparisonRelatedFigureId").description("The identifier of the comparison related figure to delete."),
+                )
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the updated comparison can be fetched from."),
+                )
+                throws(ComparisonRelatedFigureNotFound::class, ComparisonRelatedFigureNotModifiable::class)
+            }
 
         verify(exactly = 1) {
             comparisonRelatedFigureService.delete(
@@ -268,14 +282,14 @@ internal class ComparisonRelatedFigureControllerUnitTest : MockMvcBaseTest("comp
     }
 
     private fun createComparisonRelatedFigureRequest() =
-        ComparisonRelatedFigureController.CreateComparisonRelatedFigureRequest(
+        CreateComparisonRelatedFigureRequest(
             label = "related resource",
             image = "https://example.org/test.png",
             description = "comparison related resource description"
         )
 
     private fun updateComparisonRelatedFigureRequest() =
-        ComparisonRelatedFigureController.UpdateComparisonRelatedFigureRequest(
+        UpdateComparisonRelatedFigureRequest(
             label = "related resource",
             image = "https://example.org/test.png",
             description = "comparison related resource description"

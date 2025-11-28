@@ -5,10 +5,10 @@ import org.orkg.contenttypes.domain.ComparisonType
 import org.orkg.contenttypes.domain.ContentTypeClass
 
 val allowedContentTypeClassValues =
-    ContentTypeClass.entries.sorted().joinToString(separator = ", ", prefix = "`", postfix = "`")
+    ContentTypeClass.entries.sorted().joinToString(separator = "`, `", prefix = "`", postfix = "`")
 
 val allowedComparisonTypeValues =
-    ComparisonType.entries.sorted().joinToString(separator = ", ", prefix = "`", postfix = "`")
+    ComparisonType.entries.sorted().joinToString(separator = "`, `", prefix = "`", postfix = "`")
 
 val allowedCertaintyValues =
-    Certainty.entries.sorted().joinToString(separator = ", ", prefix = "`", postfix = "`")
+    Certainty.entries.sorted().joinToString(separator = "`, `", prefix = "`", postfix = "`")

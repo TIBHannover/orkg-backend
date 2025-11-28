@@ -13,13 +13,42 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.common.configuration.WebMvcConfiguration
-import org.orkg.common.json.CommonJacksonModule
+import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.testing.fixtures.fixedClock
+import org.orkg.contenttypes.adapter.input.rest.TemplateInstanceController.UpdateTemplateInstanceRequest
+import org.orkg.contenttypes.domain.DuplicateTempIds
+import org.orkg.contenttypes.domain.InvalidLiteral
+import org.orkg.contenttypes.domain.InvalidTempId
+import org.orkg.contenttypes.domain.LabelDoesNotMatchPattern
+import org.orkg.contenttypes.domain.MismatchedDataType
+import org.orkg.contenttypes.domain.MissingPropertyValues
+import org.orkg.contenttypes.domain.NumberTooHigh
+import org.orkg.contenttypes.domain.NumberTooLow
+import org.orkg.contenttypes.domain.ObjectIsNotAClass
+import org.orkg.contenttypes.domain.ObjectIsNotAList
+import org.orkg.contenttypes.domain.ObjectIsNotALiteral
+import org.orkg.contenttypes.domain.ObjectIsNotAPredicate
+import org.orkg.contenttypes.domain.ObjectMustNotBeALiteral
+import org.orkg.contenttypes.domain.ResourceIsNotAnInstanceOfTargetClass
+import org.orkg.contenttypes.domain.TemplateNotApplicable
+import org.orkg.contenttypes.domain.TemplateNotFound
+import org.orkg.contenttypes.domain.ThingIsNotAClass
+import org.orkg.contenttypes.domain.ThingNotDefined
+import org.orkg.contenttypes.domain.TooManyPropertyValues
+import org.orkg.contenttypes.domain.UnknownTemplateProperties
 import org.orkg.contenttypes.domain.testing.fixtures.createTemplateInstance
 import org.orkg.contenttypes.input.TemplateInstanceUseCases
+import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerUnitTestConfiguration
+import org.orkg.contenttypes.input.testing.fixtures.templateInstanceResponseFields
 import org.orkg.graph.domain.ExtractionMethod
+import org.orkg.graph.domain.InvalidLiteralDatatype
+import org.orkg.graph.domain.InvalidLiteralLabel
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.domain.ReservedClass
+import org.orkg.graph.domain.ResourceNotFound
+import org.orkg.graph.domain.ThingNotFound
+import org.orkg.graph.domain.URIAlreadyInUse
+import org.orkg.graph.domain.URINotAbsolute
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
@@ -28,24 +57,15 @@ import org.orkg.graph.testing.asciidoc.allowedVisibilityFilterValues
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectTemplateInstance
 import org.orkg.testing.annotations.TestWithMockUser
-import org.orkg.testing.configuration.ExceptionTestConfiguration
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
-import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
-import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
-import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.pathParameters
-import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -54,15 +74,7 @@ import java.time.format.DateTimeFormatter
 import java.util.Optional
 import java.util.UUID
 
-@ContextConfiguration(
-    classes = [
-        TemplateInstanceController::class,
-        ExceptionTestConfiguration::class,
-        CommonJacksonModule::class,
-        FixedClockConfig::class,
-        WebMvcConfiguration::class
-    ]
-)
+@ContextConfiguration(classes = [TemplateInstanceController::class, ContentTypeControllerUnitTestConfiguration::class])
 @WebMvcTest(controllers = [TemplateInstanceController::class])
 internal class TemplateInstanceControllerUnitTest : MockMvcBaseTest("template-instances") {
     @MockkBean
@@ -76,7 +88,7 @@ internal class TemplateInstanceControllerUnitTest : MockMvcBaseTest("template-in
 
     @Test
     @DisplayName("Given a template instance, when it is fetched by id and service succeeds, then status is 200 OK and template instance is returned")
-    fun getSingle() {
+    fun findByTemplateIdAndResourceId() {
         val id = ThingId("R132")
         val templateInstance = createTemplateInstance()
 
@@ -90,26 +102,24 @@ internal class TemplateInstanceControllerUnitTest : MockMvcBaseTest("template-in
             .perform()
             .andExpect(status().isOk)
             .andExpectTemplateInstance()
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the template to fetch the statements for."),
-                        parameterWithName("instanceId").description("The identifier of the templated resource to retrieve.")
-                    ),
-                    responseFields(
-                        // The order here determines the order in the generated table. More relevant items should be up.
-                        subsectionWithPath("root").description("The resource representation of the root resource."),
-                        subsectionWithPath("predicates").description("Map of predicate id to predicate representation."),
-                        subsectionWithPath("statements").description("Map of predicate id to list of embedded statement representations, where `root` is the subject."),
-                        subsectionWithPath("statements.*[].thing").description("The thing representation of the object of the statement. Acts as the subject for statements defined in the `statements` object."),
-                        timestampFieldWithPath("statements.*[].created_at", "the statement was created"),
-                        // TODO: Add links to documentation of special user UUIDs.
-                        fieldWithPath("statements.*[].created_by").description("The UUID of the user or service who created this statement."),
-                        subsectionWithPath("statements.*[].statements").description("Map of predicate id to list of embedded statement representations, where `thing` is the subject.")
-                    )
+            .andDocument {
+                summary("Fetching template isntances")
+                description(
+                    """
+                    A `GET` request provides information about a template instance.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the template to fetch the statements for."),
+                    parameterWithName("instanceId").description("The identifier of the templated resource to retrieve."),
+                )
+                responseFields<TemplateInstanceRepresentation>(templateInstanceResponseFields())
+                throws(
+                    TemplateNotFound::class,
+                    TemplateNotApplicable::class,
+                    ResourceNotFound::class,
+                )
+            }
 
         verify(exactly = 1) { service.findById(id, templateInstance.root.id) }
         verify(exactly = 1) { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) }
@@ -149,13 +159,6 @@ internal class TemplateInstanceControllerUnitTest : MockMvcBaseTest("template-in
             .andExpect(status().isOk)
             .andExpectPage()
             .andExpectTemplateInstance("$.content[*]")
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the template to fetch the statements for."),
-                    )
-                )
-            )
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { service.findAll(id, pageable = any()) }
@@ -165,7 +168,7 @@ internal class TemplateInstanceControllerUnitTest : MockMvcBaseTest("template-in
 
     @Test
     @DisplayName("Given several template instances, when they are fetched with all possible filtering parameters, then status is 200 OK and template instances are returned")
-    fun getPagedWithParameters() {
+    fun findAllByTemplateId() {
         val id = ThingId("R132")
         val templateInstance = createTemplateInstance()
 
@@ -197,24 +200,30 @@ internal class TemplateInstanceControllerUnitTest : MockMvcBaseTest("template-in
             .andExpect(status().isOk)
             .andExpectPage()
             .andExpectTemplateInstance("$.content[*]")
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the template to fetch the statements for."),
-                    ),
-                    queryParameters(
-                        parameterWithName("q").description("A search term that must be contained in the label. (optional)"),
-                        parameterWithName("exact").description("Whether label matching is exact or fuzzy (optional, default: false)"),
-                        parameterWithName("visibility").description("""Filter for visibility. Either of $allowedVisibilityFilterValues. (optional)"""),
-                        parameterWithName("created_by").description("Filter for the UUID of the user or service who created this template instance. (optional)"),
-                        parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned template instance can have. (optional)"),
-                        parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned template instance can have. (optional)"),
-                        parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the template instance belongs to. (optional)"),
-                        parameterWithName("organization_id").description("Filter for the UUID of the organization that the template instance belongs to. (optional)")
-                    )
+            .andDocument {
+                summary("Listing template instances")
+                description(
+                    """
+                    A `GET` request returns a <<sorting-and-pagination,paged>> list of <<template-instances-fetch,template instances>>.
+                    If no paging request parameters are provided, the default values will be used.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the template to fetch the statements for."),
+                )
+                pagedQueryParameters(
+                    parameterWithName("q").description("A search term that must be contained in the label. (optional)").optional(),
+                    parameterWithName("exact").description("Whether label matching is exact or fuzzy (optional, default: false)").optional(),
+                    parameterWithName("visibility").description("""Filter for visibility. Either of $allowedVisibilityFilterValues. (optional)""").optional(),
+                    parameterWithName("created_by").description("Filter for the UUID of the user or service who created this template instance. (optional)").optional(),
+                    parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned template instance can have. (optional)").optional(),
+                    parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned template instance can have. (optional)").optional(),
+                    parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the template instance belongs to. (optional)").optional(),
+                    parameterWithName("organization_id").description("Filter for the UUID of the organization that the template instance belongs to. (optional)").optional(),
+                )
+                pagedResponseFields<TemplateInstanceRepresentation>(templateInstanceResponseFields())
+                throws(TemplateNotFound::class, UnknownSortingProperty::class)
+            }
 
         verify(exactly = 1) { service.findAll(id, any(), any(), any(), any(), any(), any(), any(), any(), any()) }
         verify(exactly = 1) { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) }
@@ -237,42 +246,81 @@ internal class TemplateInstanceControllerUnitTest : MockMvcBaseTest("template-in
             .perform()
             .andExpect(status().isNoContent)
             .andExpect(header().string("Location", endsWith("/api/templates/$id/instances/$instanceId")))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the template."),
-                        parameterWithName("instanceId").description("The identifier of the template instance."),
-                    ),
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the updated template instance can be fetched from.")
-                    ),
-                    requestFields(
-                        subsectionWithPath("statements").description("Map of predicate ids to list of object ids that represent the statements of the template instance."),
-                        fieldWithPath("resources").description("Definition of resources that need to be created."),
-                        fieldWithPath("resources.*.label").description("The label of the resource."),
-                        fieldWithPath("resources.*.classes").description("The list of classes of the resource."),
-                        fieldWithPath("literals").description("Definition of literals that need to be created."),
-                        fieldWithPath("literals.*").description("Key value pairs of literal temp ids to literal values. The type will be automatically assigned based on the template."),
-                        fieldWithPath("predicates").description("Definition of predicates that need to be created."),
-                        fieldWithPath("predicates.*.label").description("The label of the predicate."),
-                        fieldWithPath("predicates.*.description").description("The description of the predicate."),
-                        fieldWithPath("lists").description("Definition of lists that need to be created."),
-                        fieldWithPath("lists.*.label").description("The label of the list."),
-                        fieldWithPath("lists.*.elements").description("The IDs of the elements of the list."),
-                        fieldWithPath("classes").description("Definition of classes that need to be created."),
-                        fieldWithPath("classes.*.label").description("The label of the class."),
-                        fieldWithPath("classes.*.uri").description("The uri of the class."),
-                        fieldWithPath("extraction_method").description("""The method used to extract the template instance. Can be one of $allowedExtractionMethodValues.""")
-                    )
+            .andDocument {
+                summary("Updating template instances")
+                description(
+                    """
+                    A `PUT` request updates an existing template instance with all the given parameters.
+                    The response will be `204 No Content` when successful.
+                    The updated template instance (object) can be retrieved by following the URI in the `Location` header field.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the template."),
+                    parameterWithName("instanceId").description("The identifier of the template instance."),
+                )
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the updated template instance can be fetched from."),
+                )
+                requestFields<UpdateTemplateInstanceRequest>(
+                    fieldWithPath("statements").description("Map of predicate ids to list of object ids that represent the statements of the template instance."),
+                    fieldWithPath("statements.*").description("A predicate id"),
+                    fieldWithPath("statements.*[]").description("A list of thing ids or temp ids representing the objects of a statement."),
+                    fieldWithPath("resources").description("A map of temporary ids to resource definitions for resources that need to be created. (optional)").optional(),
+                    fieldWithPath("resources.*").type("Object").description("Defines a single resource that needs to be created in the process."),
+                    fieldWithPath("resources.*.label").description("The label of the resource."),
+                    fieldWithPath("resources.*.classes").description("The list of classes of the resource."),
+                    fieldWithPath("literals").description("A map of temporary ids to literal definitions for literals that need to be created. (optional)").optional(),
+                    fieldWithPath("literals.*").description("Key value pairs of literal temp ids to literal values. The type will be automatically assigned based on the template."),
+                    fieldWithPath("predicates").description("A map of temporary ids to predicate definitions for predicates that need to be created. (optional)").optional(),
+                    fieldWithPath("predicates.*").type("Object").description("Defines a single predicate that needs to be created in the process."),
+                    fieldWithPath("predicates.*.label").description("The label of the predicate."),
+                    fieldWithPath("predicates.*.description").description("The description of the predicate."),
+                    fieldWithPath("lists").description("A map of temporary ids to list definitions for lists that need to be created. (optional)").optional(),
+                    fieldWithPath("lists.*").type("Object").description("Defines a single list that needs to be created in the process."),
+                    fieldWithPath("lists.*.label").description("The label of the list."),
+                    fieldWithPath("lists.*.elements").description("The IDs of the elements of the list."),
+                    fieldWithPath("classes").description("A map of temporary ids to class definitions for classes that need to be created. (optional)").optional(),
+                    fieldWithPath("classes.*").type("Object").description("Defines a single class that needs to be created in the process."),
+                    fieldWithPath("classes.*.label").description("The label of the class."),
+                    fieldWithPath("classes.*.uri").description("The uri of the class."),
+                    fieldWithPath("extraction_method").description("""The method used to extract the template instance. Can be one of $allowedExtractionMethodValues. (optional)""").optional()
+                )
+                throws(
+                    InvalidTempId::class,
+                    DuplicateTempIds::class,
+                    TemplateNotFound::class,
+                    ResourceNotFound::class,
+                    ThingNotDefined::class,
+                    ThingNotFound::class,
+                    ReservedClass::class,
+                    ThingIsNotAClass::class,
+                    InvalidLiteralLabel::class,
+                    InvalidLiteralDatatype::class,
+                    URINotAbsolute::class,
+                    URIAlreadyInUse::class,
+                    UnknownTemplateProperties::class,
+                    MissingPropertyValues::class,
+                    TooManyPropertyValues::class,
+                    ObjectIsNotAClass::class,
+                    ObjectIsNotAPredicate::class,
+                    ObjectIsNotAList::class,
+                    ObjectMustNotBeALiteral::class,
+                    ResourceIsNotAnInstanceOfTargetClass::class,
+                    ObjectIsNotALiteral::class,
+                    InvalidLiteral::class,
+                    MismatchedDataType::class,
+                    LabelDoesNotMatchPattern::class,
+                    NumberTooLow::class,
+                    NumberTooHigh::class,
+                )
+            }
 
         verify(exactly = 1) { service.update(any()) }
     }
 
     private fun updateTemplateInstanceRequest() =
-        TemplateInstanceController.UpdateTemplateInstanceRequest(
+        UpdateTemplateInstanceRequest(
             statements = mapOf(
                 Predicates.hasAuthor to listOf("#temp1", "#temp2", "#temp3"),
                 Predicates.field to listOf("#temp4", "#temp5", "R123")

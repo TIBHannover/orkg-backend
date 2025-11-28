@@ -15,7 +15,6 @@ import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
@@ -31,13 +30,12 @@ internal class PaperExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Paper "R123" is not modifiable.""")
             .andExpect(jsonPath("$.paper_id").value("R123"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("paper_id").description("The id of the paper."),
-                    )
+            .andDocument {
+                responseFields<PaperNotModifiable>(
+                    fieldWithPath("paper_id").description("The id of the paper."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -49,15 +47,14 @@ internal class PaperExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Not Found")
             .andExpectDetail("""Paper "R123" not found.""")
             .andExpect(jsonPath("$.paper_id").value("R123"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("paper_id").description("The id of the paper. (optional, either `paper_id`, `paper_title` or `paper_doi` is present)"),
-                        fieldWithPath("paper_paper_title").type("String").description("The title of the paper. (optional, either `paper_id`, `paper_title` or `doi` is present)").optional(),
-                        fieldWithPath("paper_doi").type("String").description("The doi of the paper. (optional, either `paper_id`, `paper_title` or `paper_doi` is present)").optional(),
-                    )
+            .andDocument {
+                responseFields<PaperNotFound>(
+                    fieldWithPath("paper_id").description("The id of the paper. (optional, either `paper_id`, `paper_title` or `paper_doi` is present)"),
+                    fieldWithPath("paper_paper_title").type("String").description("The title of the paper. (optional, either `paper_id`, `paper_title` or `doi` is present)").optional(),
+                    fieldWithPath("paper_doi").type("String").description("The doi of the paper. (optional, either `paper_id`, `paper_title` or `paper_doi` is present)").optional(),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -89,14 +86,13 @@ internal class PaperExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Paper with title "Paper title" already exists.""")
             .andExpect(jsonPath("$.paper_title", `is`("Paper title")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("paper_title").description("The title of the paper. (optional, either `paper_title` or `paper_identifier` is present)"),
-                        fieldWithPath("paper_identifier").type("String").description("The identifier of the paper. (optional, either `paper_title` or `paper_identifier` is present)").optional(),
-                    )
+            .andDocument {
+                responseFields<PaperAlreadyExists>(
+                    fieldWithPath("paper_title").description("The title of the paper. (optional, either `paper_title` or `paper_identifier` is present)"),
+                    fieldWithPath("paper_identifier").type("String").description("The identifier of the paper. (optional, either `paper_title` or `paper_identifier` is present)").optional(),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test

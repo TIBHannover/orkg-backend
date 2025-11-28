@@ -20,7 +20,6 @@ import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
@@ -37,14 +36,13 @@ internal class SmartReviewExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectDetail("""Smart review content "R456" not found for smart review "R123".""")
             .andExpect(jsonPath("$.smart_review_id").value("R123"))
             .andExpect(jsonPath("$.smart_review_content_id").value("R456"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("smart_review_id").description("The id of the smart review."),
-                        fieldWithPath("smart_review_content_id").description("The id of the requested content."),
-                    )
+            .andDocument {
+                responseFields<PublishedSmartReviewContentNotFound>(
+                    fieldWithPath("smart_review_id").description("The id of the smart review."),
+                    fieldWithPath("smart_review_content_id").description("The id of the requested content."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -58,13 +56,12 @@ internal class SmartReviewExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.ontology_entities.length()").value(2))
             .andExpect(jsonPath("$.ontology_entities[0]").value("not"))
             .andExpect(jsonPath("$.ontology_entities[1]").value("found"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("ontology_entities").description("The list of provided ontology entities."),
-                    )
+            .andDocument {
+                responseFields<OntologyEntityNotFound>(
+                    fieldWithPath("ontology_entities").description("The list of provided ontology entities."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -76,13 +73,12 @@ internal class SmartReviewExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Invalid smart review text section type "comparison".""")
             .andExpect(jsonPath("$.smart_review_section_type").value("comparison"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("smart_review_section_type").description("The provided smart review section type."),
-                    )
+            .andDocument {
+                responseFields<InvalidSmartReviewTextSectionType>(
+                    fieldWithPath("smart_review_section_type").description("The provided smart review section type."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -95,14 +91,13 @@ internal class SmartReviewExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectDetail("""Smart review section "R456" does not belong to smart review "R123".""")
             .andExpect(jsonPath("$.smart_review_id").value("R123"))
             .andExpect(jsonPath("$.smart_review_section_id").value("R456"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("smart_review_id").description("The id of the smart review."),
-                        fieldWithPath("smart_review_section_id").description("The id of the smart review section."),
-                    )
+            .andDocument {
+                responseFields<UnrelatedSmartReviewSection>(
+                    fieldWithPath("smart_review_id").description("The id of the smart review."),
+                    fieldWithPath("smart_review_section_id").description("The id of the smart review section."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -114,13 +109,12 @@ internal class SmartReviewExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Invalid smart review section type. Must be a comparison section.""")
             .andExpect(jsonPath("$.expected_smart_review_section_type").value(Classes.comparisonSection.value))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("expected_smart_review_section_type").description("The expected type of the smart review section."),
-                    )
+            .andDocument {
+                responseFields<SmartReviewSectionTypeMismatch>(
+                    fieldWithPath("expected_smart_review_section_type").description("The expected type of the smart review section."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -182,13 +176,12 @@ internal class SmartReviewExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Smart review "R123" is already published.""")
             .andExpect(jsonPath("$.smart_review_id").value("R123"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("smart_review_id").description("The id of the smart review."),
-                    )
+            .andDocument {
+                responseFields<SmartReviewAlreadyPublished>(
+                    fieldWithPath("smart_review_id").description("The id of the smart review."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -200,13 +193,12 @@ internal class SmartReviewExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Smart review "R123" is not modifiable.""")
             .andExpect(jsonPath("$.smart_review_id").value("R123"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("smart_review_id").description("The id of the smart review."),
-                    )
+            .andDocument {
+                responseFields<SmartReviewNotModifiable>(
+                    fieldWithPath("smart_review_id").description("The id of the smart review."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -218,12 +210,11 @@ internal class SmartReviewExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Not Found")
             .andExpectDetail("""Smart review "R123" not found.""")
             .andExpect(jsonPath("$.smart_review_id").value("R123"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("smart_review_id").description("The id of the smart review."),
-                    )
+            .andDocument {
+                responseFields<SmartReviewNotFound>(
+                    fieldWithPath("smart_review_id").description("The id of the smart review."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 }

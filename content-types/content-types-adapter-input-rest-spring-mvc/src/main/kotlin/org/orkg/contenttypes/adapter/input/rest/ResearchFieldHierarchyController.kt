@@ -27,7 +27,7 @@ class ResearchFieldHierarchyController(
 ) : ResearchFieldHierarchyEntryRepresentationAdapter,
     ResearchFieldWithChildCountRepresentationAdapter {
     @GetMapping("/{id}/children")
-    fun findAllChildrenByAncestorId(
+    fun findAllChildrenByParentId(
         @PathVariable id: ThingId,
         pageable: Pageable,
         capabilities: MediaTypeCapabilities,

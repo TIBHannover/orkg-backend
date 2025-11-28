@@ -25,6 +25,7 @@ import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.restdocs.pageableDetailedFieldParameters
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.restdocs.payload.PayloadDocumentation.applyPathPrefix
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
@@ -156,7 +157,7 @@ internal class LegacyComparisonControllerIntegrationTest : MockMvcBaseTest("comp
                 listOf(
                     fieldWithPath("author").description("author"),
                     fieldWithPath("author.value").type("string").description("The author name"),
-                    fieldWithPath("author.value").type("resource").description("The author as a resource object"),
+                    *applyPathPrefix("author.value.", resourceResponseFields()).toTypedArray(),
                     fieldWithPath("info[]").description("Information about the compared papers of each author"),
                     fieldWithPath("info[].paper_id").description("The paper resource ID"),
                     fieldWithPath("info[].paper_year").description("The year in which the paper was published (optional)").optional(),

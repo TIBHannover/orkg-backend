@@ -346,6 +346,13 @@ openapi3 {
     description = "" // TODO
     version = "${project.version}"
     format = "yaml"
+    hiddenEndpointPaths = listOf(
+        "/open-api-doc-test"
+    )
+    excludedOperationIds = listOf(
+        "papers_exists-by-doi",
+        "papers_exists-by-title",
+    )
     setServers(openApiServerUrls.map { serverClosure { url = it } })
     setOauth2SecuritySchemeDefinition(
         oauthConfigClosure {

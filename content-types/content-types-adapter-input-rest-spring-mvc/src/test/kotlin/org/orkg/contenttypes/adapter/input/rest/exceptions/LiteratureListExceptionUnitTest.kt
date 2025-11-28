@@ -20,7 +20,6 @@ import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
@@ -37,14 +36,13 @@ internal class LiteratureListExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectDetail("""Literature list content "R456" not found for literature list "R123".""")
             .andExpect(jsonPath("$.literature_list_id").value("R123"))
             .andExpect(jsonPath("$.literature_list_content_id").value("R456"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("literature_list_id").description("The id of the literature list."),
-                        fieldWithPath("literature_list_content_id").description("The id of the requested content."),
-                    )
+            .andDocument {
+                responseFields<PublishedLiteratureListContentNotFound>(
+                    fieldWithPath("literature_list_id").description("The id of the literature list."),
+                    fieldWithPath("literature_list_content_id").description("The id of the requested content."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -56,13 +54,12 @@ internal class LiteratureListExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Literature list "R123" is already published.""")
             .andExpect(jsonPath("$.literature_list_id").value("R123"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("literature_list_id").description("The id of the literature list."),
-                    )
+            .andDocument {
+                responseFields<LiteratureListAlreadyPublished>(
+                    fieldWithPath("literature_list_id").description("The id of the literature list."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -74,13 +71,12 @@ internal class LiteratureListExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Not Found")
             .andExpectDetail("""Literature list "R123" not found.""")
             .andExpect(jsonPath("$.literature_list_id").value("R123"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("literature_list_id").description("The id of the literature list."),
-                    )
+            .andDocument {
+                responseFields<LiteratureListNotFound>(
+                    fieldWithPath("literature_list_id").description("The id of the literature list."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -92,14 +88,13 @@ internal class LiteratureListExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Invalid list section entry "R123". Must be an instance of either "C1", "C2".""")
             .andExpect(jsonPath("$.literature_list_section_id").value("R123"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("literature_list_section_id").description("The id of the literature list section."),
-                        fieldWithPath("expected_classes[]").description("A list of expected class ids."),
-                    )
+            .andDocument {
+                responseFields<InvalidListSectionEntry>(
+                    fieldWithPath("literature_list_section_id").description("The id of the literature list section."),
+                    fieldWithPath("expected_classes[]").description("A list of expected class ids."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -111,13 +106,12 @@ internal class LiteratureListExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Invalid heading size "5". Must be at least 1.""")
             .andExpect(jsonPath("$.heading_size").value("5"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("heading_size").description("The provided heading size."),
-                    )
+            .andDocument {
+                responseFields<InvalidHeadingSize>(
+                    fieldWithPath("heading_size").description("The provided heading size."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -130,14 +124,13 @@ internal class LiteratureListExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectDetail("""Literature list section "R456" does not belong to literature list "R123".""")
             .andExpect(jsonPath("$.literature_list_id").value("R123"))
             .andExpect(jsonPath("$.literature_list_section_id").value("R456"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("literature_list_id").description("The id of the literature list."),
-                        fieldWithPath("literature_list_section_id").description("The id of the literature list section."),
-                    )
+            .andDocument {
+                responseFields<UnrelatedLiteratureListSection>(
+                    fieldWithPath("literature_list_id").description("The id of the literature list."),
+                    fieldWithPath("literature_list_section_id").description("The id of the literature list section."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -149,13 +142,12 @@ internal class LiteratureListExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Invalid literature list section type. Must be a text section.""")
             .andExpect(jsonPath("$.expected_literature_list_section_type").value(Classes.textSection.value))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("expected_literature_list_section_type").description("The expected type of the literature list section."),
-                    )
+            .andDocument {
+                responseFields<LiteratureListSectionTypeMismatch>(
+                    fieldWithPath("expected_literature_list_section_type").description("The expected type of the literature list section."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -177,12 +169,11 @@ internal class LiteratureListExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Literature list "R123" is not modifiable.""")
             .andExpect(jsonPath("$.literature_list_id").value("R123"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("literature_list_id").description("The id of the literature list."),
-                    )
+            .andDocument {
+                responseFields<LiteratureListNotModifiable>(
+                    fieldWithPath("literature_list_id").description("The id of the literature list."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 }

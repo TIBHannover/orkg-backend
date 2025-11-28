@@ -12,15 +12,15 @@ A `GET` request get all research fields relating to a problem
 ////
 
 [[problems-users]]
-== Listing Users of Research Problems
+== Listing Contributors of Research Problems
 
-A `GET` request to get a paginated list of ORKG users that contributed to contributions where a problem is being addressed.
+include::{snippets}/research-problems_find-all-contributors-by-research-problem-id/description.adoc[]
 
-operation::research-problems_get-users-per-problem[snippets='path-parameters,query-parameters,curl-request,http-response,response-fields']
+operation::research-problems_find-all-contributors-by-research-problem-id[snippets='path-parameters,query-parameters,curl-request,http-response,response-fields']
 
 [[problems-authors]]
-== Listing Paper-Authors of Research Problems
+== Listing Paper Authors of Research Problems
 
-A `GET` request provides a paginated list of authors that have papers addressing a certain research problem
+include::{snippets}/research-problems_find-all-authors-by-research-problem-id/description.adoc[]
 
-operation::research-problems_get-authors-per-problem[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::research-problems_find-all-authors-by-research-problem-id[snippets='path-parameters,curl-request,http-response,response-fields']

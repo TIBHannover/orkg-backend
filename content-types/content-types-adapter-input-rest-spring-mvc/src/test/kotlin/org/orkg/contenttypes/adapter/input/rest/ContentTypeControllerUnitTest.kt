@@ -9,9 +9,8 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.common.configuration.WebMvcConfiguration
+import org.orkg.common.exceptions.TooManyParameters
 import org.orkg.common.exceptions.UnknownSortingProperty
-import org.orkg.common.json.CommonJacksonModule
 import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.contenttypes.domain.ContentTypeClass
 import org.orkg.contenttypes.domain.testing.asciidoc.allowedContentTypeClassValues
@@ -22,6 +21,10 @@ import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
 import org.orkg.contenttypes.domain.testing.fixtures.createTemplate
 import org.orkg.contenttypes.domain.testing.fixtures.createVisualization
 import org.orkg.contenttypes.input.ContentTypeUseCases
+import org.orkg.contenttypes.input.testing.fixtures.commonContentTypeResponseFields
+import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerUnitTestConfiguration
+import org.orkg.graph.adapter.input.rest.ResourceRepresentation
+import org.orkg.graph.adapter.input.rest.testing.fixtures.resourceResponseFields
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.FormattedLabelUseCases
@@ -36,31 +39,21 @@ import org.orkg.testing.andExpectResource
 import org.orkg.testing.andExpectSmartReview
 import org.orkg.testing.andExpectTemplate
 import org.orkg.testing.andExpectVisualization
-import org.orkg.testing.configuration.ExceptionTestConfiguration
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.restdocs.request.ParameterDescriptor
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.util.UUID
 
-@ContextConfiguration(
-    classes = [
-        ContentTypeController::class,
-        ExceptionTestConfiguration::class,
-        CommonJacksonModule::class,
-        FixedClockConfig::class,
-        WebMvcConfiguration::class,
-    ]
-)
+@ContextConfiguration(classes = [ContentTypeController::class, ContentTypeControllerUnitTestConfiguration::class])
 @WebMvcTest(controllers = [ContentTypeController::class])
 internal class ContentTypeControllerUnitTest : MockMvcBaseTest("content-types") {
     @MockkBean
@@ -105,7 +98,7 @@ internal class ContentTypeControllerUnitTest : MockMvcBaseTest("content-types") 
 
     @Test
     @DisplayName("Given several content types, when filtering by several parameters, then status is 200 OK and content types are returned")
-    fun getPagedWithParameters() {
+    fun findAll() {
         every {
             contentTypeService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         } returns pageOf(
@@ -150,12 +143,20 @@ internal class ContentTypeControllerUnitTest : MockMvcBaseTest("content-types") 
             .andExpectTemplate("$.content[3]")
             .andExpectLiteratureList("$.content[4]")
             .andExpectSmartReview("$.content[5]")
-            .andDo(
-                documentationHandler.document(
-                    queryParametersFindAll()
+            .andDocument {
+                summary("Listing content-types")
+                description(
+                    """
+                    A `GET` request returns a <<sorting-and-pagination,paged>> list of content-types.
+                    If no paging request parameters are provided, the default values will be used.
+                    
+                    NOTE: Whenever possible, individual content-type endpoints should be used, to optimize performance.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pagedQueryParameters(*queryParametersFindAll().toTypedArray())
+                pagedResponseFields<ContentTypeRepresentation>(commonContentTypeResponseFields())
+                throws(TooManyParameters::class, UnknownSortingProperty::class)
+            }
 
         verify(exactly = 1) {
             contentTypeService.findAll(
@@ -208,7 +209,7 @@ internal class ContentTypeControllerUnitTest : MockMvcBaseTest("content-types") 
     @DisplayName("Given several content types, when they are fetched as resources, then status is 200 OK and content type resources are returned")
     fun getPagedAsResource() {
         every {
-            contentTypeService.findAllAsResource(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+            contentTypeService.findAllAsResources(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         } returns pageOf(
             createResource(ThingId("R1"), classes = setOf(Classes.paper)),
             createResource(ThingId("R2"), classes = setOf(Classes.comparison)),
@@ -228,16 +229,16 @@ internal class ContentTypeControllerUnitTest : MockMvcBaseTest("content-types") 
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) {
-            contentTypeService.findAllAsResource(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+            contentTypeService.findAllAsResources(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         }
         verify(exactly = 1) { statementService.countAllIncomingStatementsById(any()) }
     }
 
     @Test
     @DisplayName("Given several content types, when filtering by several parameters as resources, then status is 200 OK and content type resources are returned")
-    fun getPagedAsResourceWithParameters() {
+    fun findAllAsResources() {
         every {
-            contentTypeService.findAllAsResource(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+            contentTypeService.findAllAsResources(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         } returns pageOf(
             createResource(ThingId("R1"), classes = setOf(Classes.paper)),
             createResource(ThingId("R2"), classes = setOf(Classes.comparison)),
@@ -277,15 +278,23 @@ internal class ContentTypeControllerUnitTest : MockMvcBaseTest("content-types") 
             .andExpect(status().isOk)
             .andExpectPage()
             .andExpectResource("$.content[0]") // only test first element, because jsonPath().value() aggregates fields to lists
-            .andDo(
-                documentationHandler.document(
-                    queryParametersFindAll()
+            .andDocument {
+                summary("Listing content-types as resources")
+                description(
+                    """
+                    A `GET` request returns a <<sorting-and-pagination,paged>> list of content-type <<resources-fetch,resources>>.
+                    If no paging request parameters are provided, the default values will be used.
+                    
+                    NOTE: Whenever possible, individual content-type endpoints should be used, to optimize performance.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pagedQueryParameters(*queryParametersFindAll().toTypedArray())
+                pagedResponseFields<ResourceRepresentation>(resourceResponseFields())
+                throws(TooManyParameters::class, UnknownSortingProperty::class)
+            }
 
         verify(exactly = 1) {
-            contentTypeService.findAllAsResource(
+            contentTypeService.findAllAsResources(
                 pageable = any(),
                 classes = classes,
                 visibility = visibility,
@@ -315,19 +324,18 @@ internal class ContentTypeControllerUnitTest : MockMvcBaseTest("content-types") 
             .andExpectType("orkg:problem:too_many_parameters")
     }
 
-    private fun queryParametersFindAll() =
-        queryParameters(
-            parameterWithName("classes").description("Filter for the content type classes. Available classes are $allowedContentTypeClassValues (optional)"),
-            parameterWithName("visibility").description("Filter for visibility. Either of $allowedVisibilityFilterValues. (optional)"),
-            parameterWithName("created_by").description("Filter for the UUID of the user or service who created this content type. (optional)"),
-            parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned content type can have. (optional)"),
-            parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned content type can have. (optional)"),
-            parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the content type belongs to. (optional)"),
-            parameterWithName("organization_id").description("Filter for the UUID of the organization that the content type belongs to. (optional)"),
-            parameterWithName("research_field").description("Filter for research field id that the content type belongs to. (optional)"),
-            parameterWithName("include_subfields").description("Flag for whether subfields are included in the search or not. (optional, default: false)"),
-            parameterWithName("sdg").description("Filter for the sustainable development goal that the content type belongs to. (optional)"),
-            parameterWithName("author_id").description("Filter for the author of the content type. Cannot be used in combination with `author_name`. (optional)"),
-            parameterWithName("author_name").description("Filter for the name of the author of the content type. Cannot be used in combination with `author_id`. (optional)").optional(),
-        )
+    private fun queryParametersFindAll(): List<ParameterDescriptor> = listOf(
+        parameterWithName("classes").description("Filter for the content type classes. Available classes are $allowedContentTypeClassValues (optional)").optional(),
+        parameterWithName("visibility").description("Filter for visibility. Either of $allowedVisibilityFilterValues. (optional)").optional(),
+        parameterWithName("created_by").description("Filter for the UUID of the user or service who created this content type. (optional)").optional(),
+        parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned content type can have. (optional)").optional(),
+        parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned content type can have. (optional)").optional(),
+        parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the content type belongs to. (optional)").optional(),
+        parameterWithName("organization_id").description("Filter for the UUID of the organization that the content type belongs to. (optional)").optional(),
+        parameterWithName("research_field").description("Filter for research field id that the content type belongs to. (optional)").optional(),
+        parameterWithName("include_subfields").description("Flag for whether subfields are included in the search or not. (optional, default: false)").optional(),
+        parameterWithName("sdg").description("Filter for the sustainable development goal that the content type belongs to. (optional)").optional(),
+        parameterWithName("author_id").description("Filter for the author of the content type. Cannot be used in combination with `author_name`. (optional)").optional(),
+        parameterWithName("author_name").description("Filter for the name of the author of the content type. Cannot be used in combination with `author_id`. (optional)").optional(),
+    )
 }

@@ -6,20 +6,20 @@ Some datasets are imported into the ORKG.
 [[dataset-summaries-fetch]]
 == Listing Dataset Summaries
 
-A `GET` request returns a <<sorting-and-pagination,paged>> list of dataset summaries.
+include::{snippets}/datasets_find-all-dataset-summaries-by-id-and-research-problem-id/description.adoc[]
 
-operation::datasets_fetch-dataset-summary[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::datasets_find-all-dataset-summaries-by-id-and-research-problem-id[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[datasets-by-research-problem]]
 == Listing Datasets by Research Problem
 
-A `GET` request returns a <<sorting-and-pagination,paged>> list of datasets for a research problem.
+include::{snippets}/datasets_find-all-datasets-by-research-problem-id/description.adoc[]
 
-operation::datasets_fetch-dataset-for-research-problem[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::datasets_find-all-datasets-by-research-problem-id[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[research-problems-by-dataset]]
 == Listing Research Problems by Dataset
 
-A `GET` request returns a <<sorting-and-pagination,paged>> list of research fields associated with a given dataset.
+include::{snippets}/datasets_find-all-research-problems-by-dataset-id/description.adoc[]
 
-operation::datasets_fetch-research-problems-for-a-dataset[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::datasets_find-all-research-problems-by-dataset-id[snippets='path-parameters,curl-request,http-response,response-fields']

@@ -6,34 +6,23 @@ import io.mockk.verify
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.common.json.CommonJacksonModule
-import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
 import org.orkg.contenttypes.domain.Dataset
 import org.orkg.contenttypes.domain.DatasetSummary
 import org.orkg.contenttypes.domain.ResearchProblem
 import org.orkg.contenttypes.input.DatasetUseCases
 import org.orkg.contenttypes.input.ResearchProblemUseCases
-import org.orkg.testing.configuration.ExceptionTestConfiguration
-import org.orkg.testing.configuration.FixedClockConfig
+import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerUnitTestConfiguration
+import org.orkg.contenttypes.input.testing.fixtures.datasetResponseFields
+import org.orkg.contenttypes.input.testing.fixtures.datasetSummaryResponseFields
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
-import org.orkg.testing.spring.restdocs.pagedResponseFields
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@ContextConfiguration(
-    classes = [
-        DatasetController::class,
-        ExceptionTestConfiguration::class,
-        CommonJacksonModule::class,
-        ContentTypeJacksonModule::class,
-        FixedClockConfig::class
-    ]
-)
+@ContextConfiguration(classes = [DatasetController::class, ContentTypeControllerUnitTestConfiguration::class])
 @WebMvcTest(controllers = [DatasetController::class])
 internal class DatasetControllerUnitTest : MockMvcBaseTest("datasets") {
     @MockkBean
@@ -44,7 +33,7 @@ internal class DatasetControllerUnitTest : MockMvcBaseTest("datasets") {
 
     @Test
     @DisplayName("Given a set of datasets, when fetching by research problem, then status is 200 OK and datasets are returned")
-    fun fetchDatasetForResearchProblem() {
+    fun findAllDatasetsByResearchProblemId() {
         val researchProblemId = ThingId("R1655")
 
         every { retrieveDatasets.findAllDatasetsByResearchProblemId(researchProblemId, any()) } returns pageOf(
@@ -60,28 +49,25 @@ internal class DatasetControllerUnitTest : MockMvcBaseTest("datasets") {
         documentedGetRequestTo("/api/datasets/research-problem/{id}", researchProblemId)
             .perform()
             .andExpect(status().isOk)
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the research problem.")
-                    ),
-                    pagedResponseFields(
-                        fieldWithPath("id").description("The identifier of the dataset."),
-                        fieldWithPath("label").description("The label of the dataset."),
-                        fieldWithPath("total_papers").description("The total number of papers."),
-                        fieldWithPath("total_models").description("The total number of models."),
-                        fieldWithPath("total_codes").description("The total number of code urls."),
-                    )
+            .andDocument {
+                summary("Listing datasets by research problem")
+                description(
+                    """
+                    A `GET` request returns a <<sorting-and-pagination,paged>> list of datasets for a research problem.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the research problem."),
+                )
+                pagedResponseFields<DatasetRepresentation>(datasetResponseFields())
+            }
 
         verify(exactly = 1) { retrieveDatasets.findAllDatasetsByResearchProblemId(researchProblemId, any()) }
     }
 
     @Test
     @DisplayName("Given a dataset, when fetching all associated research problems, then status is 200 OK and research problems are returned")
-    fun fetchResearchProblemsForADataset() {
+    fun findAllResearchProblemsByDatasetId() {
         val datasetId = ThingId("R123")
 
         every { retrieveProblems.findAllByDatasetId(datasetId, any()) } returns pageOf(
@@ -92,25 +78,28 @@ internal class DatasetControllerUnitTest : MockMvcBaseTest("datasets") {
         documentedGetRequestTo("/api/datasets/{id}/problems", datasetId)
             .perform()
             .andExpect(status().isOk)
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the dataset.")
-                    ),
-                    pagedResponseFields(
-                        fieldWithPath("id").description("The identifier of the research problem."),
-                        fieldWithPath("label").description("The label of the research problem."),
-                    )
+            .andDocument {
+                summary("Listing research problems by dataset id")
+                description(
+                    """
+                    A `GET` request returns a <<sorting-and-pagination,paged>> list of research fields associated with a given dataset.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the dataset."),
+                )
+                pagedResponseFields<ResearchProblem>(
+                    fieldWithPath("id").description("The identifier of the research problem."),
+                    fieldWithPath("label").description("The label of the research problem."),
+                )
+            }
 
         verify(exactly = 1) { retrieveProblems.findAllByDatasetId(datasetId, any()) }
     }
 
     @Test
     @DisplayName("Given a dataset, when fetching its summaries by id and research problem, then status is 200 OK and dataset summaries is returned")
-    fun fetchDatasetSummary() {
+    fun findAllDatasetSummariesByIdAndResearchProblemId() {
         val datasetId = ThingId("R123")
         val researchProblemId = ThingId("R1655")
 
@@ -134,26 +123,19 @@ internal class DatasetControllerUnitTest : MockMvcBaseTest("datasets") {
         documentedGetRequestTo("/api/datasets/{id}/problem/{researchProblemId}/summary", datasetId, researchProblemId)
             .perform()
             .andExpect(status().isOk)
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the dataset."),
-                        parameterWithName("researchProblemId").description("The identifier of the research problem.")
-                    ),
-                    pagedResponseFields(
-                        fieldWithPath("model_name").description("The model name used on the dataset. (optional)").optional(),
-                        fieldWithPath("model_id").description("The model id used on the dataset. (optional)").optional(),
-                        fieldWithPath("metric").description("The metric used in the evaluation."),
-                        fieldWithPath("score").description("the score of the evaluation with the corresponding metric."),
-                        fieldWithPath("paper_id").description("The paper id is where the evaluation is published."),
-                        fieldWithPath("paper_title").description("The paper title is where the evaluation is published."),
-                        fieldWithPath("paper_month").description("The month when the paper was published. (optional)").optional(),
-                        fieldWithPath("paper_year").description("The year when the paper was published. (optional)").optional(),
-                        fieldWithPath("code_urls").description("A list of urls for the codes specified in the papers."),
-                    )
+            .andDocument {
+                summary("Listing dataset summaries by dataset id and research problem")
+                description(
+                    """
+                    A `GET` request returns a <<sorting-and-pagination,paged>> list of dataset summaries.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the dataset."),
+                    parameterWithName("researchProblemId").description("The identifier of the research problem."),
+                )
+                pagedResponseFields<DatasetSummaryRepresentation>(datasetSummaryResponseFields())
+            }
 
         verify(exactly = 1) { retrieveDatasets.findAllDatasetSummariesByIdAndResearchProblemId(datasetId, researchProblemId, any()) }
     }

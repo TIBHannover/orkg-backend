@@ -1,7 +1,7 @@
 package org.orkg.common
 
-private val VALID_ISBN_REGEX = Regex("""^(97[89]-?(?:\d-?){9}\d|(?:\d-?){9}(?:\d|X))$""")
-private val VALID_ISBN_URI_REGEX = Regex("""^urn:ISBN:(97[89]-?(?:\d-?){9}\d|(?:\d-?){9}(?:\d|X))$""")
+internal val VALID_ISBN_REGEX = Regex("""^(97[89]-?(?:\d-?){9}\d|(?:\d-?){9}(?:\d|X))$""")
+internal val VALID_ISBN_URI_REGEX = Regex("""^urn:ISBN:(97[89]-?(?:\d-?){9}\d|(?:\d-?){9}(?:\d|X))$""")
 
 @JvmInline
 value class ISBN private constructor(override val value: String) : IdentifierValue {

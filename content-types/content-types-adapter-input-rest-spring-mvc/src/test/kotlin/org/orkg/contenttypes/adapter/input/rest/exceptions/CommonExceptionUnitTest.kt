@@ -26,7 +26,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -43,13 +42,12 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Invalid month "0". Must be in range [1..12].""")
             .andExpect(jsonPath("$.month").value("0"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("month").description("The month value."),
-                    )
+            .andDocument {
+                responseFields<InvalidMonth>(
+                    fieldWithPath("month").description("The month value."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -61,13 +59,12 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Not Found")
             .andExpectDetail("""Sustainable Development Goal "SDG1" not found.""")
             .andExpect(jsonPath("$.sustainable_development_goal_id").value("SDG1"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("sustainable_development_goal_id").description("The id of the sustainable development goal."),
-                    )
+            .andDocument {
+                responseFields<SustainableDevelopmentGoalNotFound>(
+                    fieldWithPath("sustainable_development_goal_id").description("The id of the sustainable development goal."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -79,13 +76,12 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Invalid BibTeX reference "not bibtex".""")
             .andExpect(jsonPath("$.bibtex_reference").value("not bibtex"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("bibtex_reference").description("The provided bibtex reference."),
-                    )
+            .andDocument {
+                responseFields<InvalidBibTeXReference>(
+                    fieldWithPath("bibtex_reference").description("The provided bibtex reference."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -96,7 +92,7 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Ony one research field is allowed.""")
-            .andDocumentWithDefaultExceptionResponseFields(type)
+            .andDocumentWithDefaultExceptionResponseFields(OnlyOneResearchFieldAllowed::class, type)
     }
 
     @Test
@@ -107,7 +103,7 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Ony one organization is allowed.""")
-            .andDocumentWithDefaultExceptionResponseFields(type)
+            .andDocumentWithDefaultExceptionResponseFields(OnlyOneOrganizationAllowed::class, type)
     }
 
     @Test
@@ -118,7 +114,7 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Ony one observatory is allowed.""")
-            .andDocumentWithDefaultExceptionResponseFields(type)
+            .andDocumentWithDefaultExceptionResponseFields(OnlyOneObservatoryAllowed::class, type)
     }
 
     @Test
@@ -129,7 +125,7 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""At least two contributions are required.""")
-            .andDocumentWithDefaultExceptionResponseFields(type)
+            .andDocumentWithDefaultExceptionResponseFields(RequiresAtLeastTwoContributions::class, type)
     }
 
     @Test
@@ -141,13 +137,12 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Thing "#temp1" not defined.""")
             .andExpect(jsonPath("$.thing_id").value("#temp1"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("thing_id").description("The id of the thing."),
-                    )
+            .andDocument {
+                responseFields<ThingNotDefined>(
+                    fieldWithPath("thing_id").description("The id of the thing."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -159,13 +154,12 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Duplicate temp ids: #temp1=5.""")
             .andExpect(jsonPath("$.duplicate_temp_ids['#temp1']").value("5"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        subsectionWithPath("duplicate_temp_ids").description("A map of temp ids to their occurrence count."),
-                    )
+            .andDocument {
+                responseFields<DuplicateTempIds>(
+                    subsectionWithPath("duplicate_temp_ids").description("A map of temp ids to their occurrence count."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -177,13 +171,12 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Invalid temp id ":temp1". Requires "#" as prefix.""")
             .andExpect(jsonPath("$.temp_id").value(":temp1"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("temp_id").description("The temp id."),
-                    )
+            .andDocument {
+                responseFields<InvalidTempId>(
+                    fieldWithPath("temp_id").description("The temp id."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -195,13 +188,12 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Thing "R123" is not a class.""")
             .andExpect(jsonPath("$.thing_id").value("R123"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("thing_id").description("The id of the thing."),
-                    )
+            .andDocument {
+                responseFields<ThingIsNotAClass>(
+                    fieldWithPath("thing_id").description("The id of the thing."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -213,13 +205,12 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Thing "R123" is not a predicate.""")
             .andExpect(jsonPath("$.thing_id").value("R123"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("thing_id").description("The id of the thing."),
-                    )
+            .andDocument {
+                responseFields<ThingIsNotAPredicate>(
+                    fieldWithPath("thing_id").description("The id of the thing."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -231,13 +222,12 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Invalid statement subject "L123".""")
             .andExpect(jsonPath("$.subject_id").value("L123"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("subject_id").description("The id of the subject."),
-                    )
+            .andDocument {
+                responseFields<InvalidStatementSubject>(
+                    fieldWithPath("subject_id").description("The id of the subject."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -248,13 +238,12 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Contribution at index "5" does not contain any statements.""")
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("index").description("Index of the contribution. (optional)")
-                    )
+            .andDocument {
+                responseFields<EmptyContribution>(
+                    fieldWithPath("index").description("Index of the contribution. (optional)"),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -275,13 +264,12 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Not Found")
             .andExpectDetail("""Research problem "R123" not found.""")
             .andExpect(jsonPath("$.research_problem_id").value("R123"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("research_problem_id").description("The id of the research problem."),
-                    )
+            .andDocument {
+                responseFields<ResearchProblemNotFound>(
+                    fieldWithPath("research_problem_id").description("The id of the research problem."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -293,12 +281,11 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Not Found")
             .andExpectDetail("""Research field "R123" not found.""")
             .andExpect(jsonPath("$.research_field_id").value("R123"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("research_field_id").description("The id of the research field."),
-                    )
+            .andDocument {
+                responseFields<ResearchFieldNotFound>(
+                    fieldWithPath("research_field_id").description("The id of the research field."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 }

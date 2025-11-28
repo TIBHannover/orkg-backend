@@ -10,7 +10,6 @@ import org.orkg.testing.spring.restdocs.exceptionResponseFields
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
@@ -26,12 +25,11 @@ internal class TemplateBasedResourceSnapshotExceptionUnitTest : MockMvcException
             .andExpectTitle("Not Found")
             .andExpectDetail("""Template based resource snapshot "R123" not found.""")
             .andExpect(jsonPath("$.template_based_resource_snapshot_id").value("R123"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("template_based_resource_snapshot_id").description("The id of the template based resource snapshot."),
-                    )
+            .andDocument {
+                responseFields<TemplateBasedResourceSnapshotNotFound>(
+                    fieldWithPath("template_based_resource_snapshot_id").description("The id of the template based resource snapshot."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 }

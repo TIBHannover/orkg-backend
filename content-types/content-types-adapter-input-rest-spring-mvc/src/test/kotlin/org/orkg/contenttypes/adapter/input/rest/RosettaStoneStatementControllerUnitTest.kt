@@ -13,42 +13,72 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.common.json.CommonJacksonModule
+import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.testing.fixtures.fixedClock
-import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
+import org.orkg.community.domain.ContributorNotFound
+import org.orkg.community.domain.ObservatoryNotFound
+import org.orkg.community.domain.OrganizationNotFound
+import org.orkg.contenttypes.adapter.input.rest.RosettaStoneStatementController.CreateRosettaStoneStatementRequest
+import org.orkg.contenttypes.adapter.input.rest.RosettaStoneStatementController.UpdateRosettaStoneStatementRequest
+import org.orkg.contenttypes.domain.CannotDeleteIndividualRosettaStoneStatementVersion
 import org.orkg.contenttypes.domain.Certainty
+import org.orkg.contenttypes.domain.DuplicateTempIds
+import org.orkg.contenttypes.domain.InvalidTempId
+import org.orkg.contenttypes.domain.LabelDoesNotMatchPattern
+import org.orkg.contenttypes.domain.MissingInputPositions
+import org.orkg.contenttypes.domain.MissingObjectPositionValue
+import org.orkg.contenttypes.domain.MissingSubjectPositionValue
+import org.orkg.contenttypes.domain.NestedRosettaStoneStatement
+import org.orkg.contenttypes.domain.NumberTooHigh
+import org.orkg.contenttypes.domain.NumberTooLow
+import org.orkg.contenttypes.domain.ObjectPositionValueDoesNotMatchPattern
+import org.orkg.contenttypes.domain.ObjectPositionValueTooHigh
+import org.orkg.contenttypes.domain.ObjectPositionValueTooLow
+import org.orkg.contenttypes.domain.OnlyOneObservatoryAllowed
+import org.orkg.contenttypes.domain.OnlyOneOrganizationAllowed
+import org.orkg.contenttypes.domain.RosettaStoneStatementInUse
+import org.orkg.contenttypes.domain.RosettaStoneStatementNotFound
+import org.orkg.contenttypes.domain.RosettaStoneStatementNotModifiable
+import org.orkg.contenttypes.domain.RosettaStoneStatementVersionNotFound
+import org.orkg.contenttypes.domain.RosettaStoneTemplateNotFound
+import org.orkg.contenttypes.domain.ThingIsNotAClass
+import org.orkg.contenttypes.domain.ThingNotDefined
+import org.orkg.contenttypes.domain.TooManyInputPositions
+import org.orkg.contenttypes.domain.TooManyObjectPositionValues
+import org.orkg.contenttypes.domain.TooManySubjectPositionValues
 import org.orkg.contenttypes.domain.testing.asciidoc.allowedCertaintyValues
 import org.orkg.contenttypes.domain.testing.fixtures.createRosettaStoneStatement
 import org.orkg.contenttypes.input.RosettaStoneStatementUseCases
+import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerUnitTestConfiguration
+import org.orkg.contenttypes.input.testing.fixtures.rosettaStoneStatementResponseFields
 import org.orkg.graph.domain.ExtractionMethod
+import org.orkg.graph.domain.InvalidLabel
+import org.orkg.graph.domain.InvalidLiteralDatatype
+import org.orkg.graph.domain.InvalidLiteralLabel
 import org.orkg.graph.domain.Literals
+import org.orkg.graph.domain.NotACurator
+import org.orkg.graph.domain.ReservedClass
+import org.orkg.graph.domain.ResourceNotFound
+import org.orkg.graph.domain.ThingNotFound
+import org.orkg.graph.domain.URIAlreadyInUse
+import org.orkg.graph.domain.URINotAbsolute
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
 import org.orkg.graph.testing.asciidoc.allowedVisibilityFilterValues
-import org.orkg.graph.testing.asciidoc.allowedVisibilityValues
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectRosettaStoneStatement
 import org.orkg.testing.annotations.TestWithMockCurator
 import org.orkg.testing.annotations.TestWithMockUser
-import org.orkg.testing.configuration.ExceptionTestConfiguration
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
-import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
-import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
-import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.pathParameters
-import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -56,15 +86,7 @@ import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Optional
 
-@ContextConfiguration(
-    classes = [
-        RosettaStoneStatementController::class,
-        ExceptionTestConfiguration::class,
-        CommonJacksonModule::class,
-        ContentTypeJacksonModule::class,
-        FixedClockConfig::class
-    ]
-)
+@ContextConfiguration(classes = [RosettaStoneStatementController::class, ContentTypeControllerUnitTestConfiguration::class])
 @WebMvcTest(controllers = [RosettaStoneStatementController::class])
 internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosetta-stone-statements") {
     @MockkBean
@@ -72,7 +94,7 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
 
     @Test
     @DisplayName("Given a statement, when it is fetched by id and service succeeds, then status is 200 OK and statement is returned")
-    fun getSingle() {
+    fun findById() {
         val statement = createRosettaStoneStatement()
         every { statementService.findByIdOrVersionId(statement.id) } returns Optional.of(statement)
 
@@ -82,42 +104,19 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
             .perform()
             .andExpect(status().isOk)
             .andExpectRosettaStoneStatement()
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the rosetta stone statement to retrieve.")
-                    ),
-                    responseFields(
-                        // The order here determines the order in the generated table. More relevant items should be up.
-                        fieldWithPath("id").description("The identifier of the rosetta stone statement."),
-                        fieldWithPath("context").description("The ID of the context resource of the rosetta stone statement, possibly indicating the origin of a statement. (optional)"),
-                        fieldWithPath("template_id").description("The identifier of the template that was used to instantiate the rosetta stone statement."),
-                        fieldWithPath("class_id").description("The identifier of the class of the rosetta stone statement. This class is equivalent to the target class of the template used to instantiate the rosetta stone statement."),
-                        fieldWithPath("version_id").description("The ID of the backing version of the rosetta stone statement contents."),
-                        fieldWithPath("latest_version_id").description("The ID of the rosetta stone statement that always points to the latest version of this statement."),
-                        fieldWithPath("label").description("The rendered label of the rosetta stone statement at the time of instantiation."),
-                        fieldWithPath("formatted_label").description("The formatted label at the time of creation of the template used to instantiate the rosetta stone statement."),
-                        subsectionWithPath("subjects[]").description("The ordered list of subject instance references used in the rosetta stone statement."),
-                        fieldWithPath("objects[]").description("The ordered list of object position instances used in the rosetta stone statement."),
-                        subsectionWithPath("objects[][]").description("The ordered list of object instance references used for the object position index defined by the outer array."),
-                        timestampFieldWithPath("created_at", "the rosetta stone statement was created"),
-                        // TODO: Add links to documentation of special user UUIDs.
-                        fieldWithPath("created_by").description("The UUID of the user or service who created this rosetta stone statement."),
-                        fieldWithPath("certainty").description("""The certainty of the rosetta stone statement. Either of $allowedCertaintyValues."""),
-                        fieldWithPath("negated").description("Whether the statement represented by the rosetta stone statement instance is semantically negated."),
-                        fieldWithPath("organizations[]").description("The list of IDs of the organizations the rosetta stone statement belongs to."),
-                        fieldWithPath("observatories[]").description("The list of IDs of the observatories the rosetta stone statement belongs to."),
-                        fieldWithPath("extraction_method").description("""The method used to extract the rosetta stone statement. Either of $allowedExtractionMethodValues."""),
-                        fieldWithPath("visibility").description("""Visibility of the rosetta stone statement. Can be one of $allowedVisibilityValues."""),
-                        fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this rosetta stone statement.").optional(),
-                        fieldWithPath("modifiable").description("Whether this rosetta stone statement can be modified."),
-                        timestampFieldWithPath("deleted_at", "the rosetta stone statement was deleted").optional(),
-                        // TODO: Add links to documentation of special user UUIDs.
-                        fieldWithPath("deleted_by").type("String").description("The UUID of the user or service who deleted this rosetta stone statement.").optional(),
-                    )
+            .andDocument {
+                summary("Fetching rosetta stone statements")
+                description(
+                    """
+                    A `GET` request provides information about a rosetta stone statement or a specific rosetta stone statement version.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the rosetta stone statement to retrieve.")
+                )
+                responseFields<RosettaStoneStatementRepresentation>(rosettaStoneStatementResponseFields())
+                throws(RosettaStoneStatementNotFound::class, RosettaStoneStatementVersionNotFound::class)
+            }
 
         verify(exactly = 1) { statementService.findByIdOrVersionId(statement.id) }
     }
@@ -156,7 +155,7 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
 
     @Test
     @DisplayName("Given several rosetta stone statements, when filtering by several parameters, then status is 200 OK and rosetta stone statements are returned")
-    fun getPagedWithParameters() {
+    fun findAll() {
         val statement = createRosettaStoneStatement()
         every { statementService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns pageOf(statement)
 
@@ -186,22 +185,30 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
             .andExpect(status().isOk)
             .andExpectPage()
             .andExpectRosettaStoneStatement("$.content[*]")
-            .andDo(
-                documentationHandler.document(
-                    queryParameters(
-                        parameterWithName("context").description("Filter for the id of the context that the rosetta stone statement was created with. (optional)"),
-                        parameterWithName("template_id").description("Filter for the template id that was used to instantiate the rosetta stone statement. (optional)"),
-                        parameterWithName("class_id").description("Filter for the class id of the rosetta stone statement. (optional)"),
-                        parameterWithName("visibility").description("""Optional filter for visibility. Either of $allowedVisibilityFilterValues."""),
-                        parameterWithName("created_by").description("Filter for the UUID of the user or service who created the first version of the rosetta stone statement. (optional)"),
-                        parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned rosetta stone statement can have. (optional)"),
-                        parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned rosetta stone statement can have. (optional)"),
-                        parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the rosetta stone statement belongs to. (optional)"),
-                        parameterWithName("organization_id").description("Filter for the UUID of the organization that the rosetta stone statement belongs to. (optional)"),
-                    )
+            .andDocument {
+                summary("Listing rosetta stone statements")
+                description(
+                    """
+                    A `GET` request returns a <<sorting-and-pagination,paged>> list of <<rosetta-stone-statements-fetch,rosetta stone statements>>.
+                    If no paging request parameters are provided, the default values will be used.
+                    
+                    NOTE: Only the most recent versions of rosetta stone statements will be returned.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pagedQueryParameters(
+                    parameterWithName("context").description("Filter for the id of the context that the rosetta stone statement was created with. (optional)").optional(),
+                    parameterWithName("template_id").description("Filter for the template id that was used to instantiate the rosetta stone statement. (optional)").optional(),
+                    parameterWithName("class_id").description("Filter for the class id of the rosetta stone statement. (optional)").optional(),
+                    parameterWithName("visibility").description("""Optional filter for visibility. Either of $allowedVisibilityFilterValues.""").optional(),
+                    parameterWithName("created_by").description("Filter for the UUID of the user or service who created the first version of the rosetta stone statement. (optional)").optional(),
+                    parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned rosetta stone statement can have. (optional)").optional(),
+                    parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned rosetta stone statement can have. (optional)").optional(),
+                    parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the rosetta stone statement belongs to. (optional)").optional(),
+                    parameterWithName("organization_id").description("Filter for the UUID of the organization that the rosetta stone statement belongs to. (optional)").optional(),
+                )
+                pagedResponseFields<RosettaStoneStatementRepresentation>(rosettaStoneStatementResponseFields())
+                throws(UnknownSortingProperty::class)
+            }
 
         verify(exactly = 1) {
             statementService.findAll(
@@ -221,7 +228,7 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
 
     @Test
     @DisplayName("Given a rosetta stone statement, when fetching all of its versions, then status is 200 OK and rosetta stone statements are returned")
-    fun getAllVersions() {
+    fun findAllVersionsById() {
         val statement = createRosettaStoneStatement()
         every { statementService.findByIdOrVersionId(statement.id) } returns Optional.of(statement)
 
@@ -231,14 +238,19 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
             .perform()
             .andExpect(status().isOk)
             .andExpectRosettaStoneStatement("$[*]")
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the rosetta stone statement version.")
-                    )
+            .andDocument {
+                summary("Listing rosetta stone statement versions")
+                description(
+                    """
+                    A `GET` request returns a list of <<rosetta-stone-statements-fetch,rosetta stone statement>> versions.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the rosetta stone statement version.")
+                )
+                listResponseFields<RosettaStoneStatementRepresentation>(rosettaStoneStatementResponseFields())
+                throws(RosettaStoneStatementNotFound::class)
+            }
 
         verify(exactly = 1) { statementService.findByIdOrVersionId(statement.id) }
     }
@@ -271,41 +283,85 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
             .perform()
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("/api/rosetta-stone/statements/$id")))
-            .andDo(
-                documentationHandler.document(
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the newly created rosetta stone statement can be fetched from.")
-                    ),
-                    requestFields(
-                        fieldWithPath("template_id").description("The identifier of the templates that was used to instantiate the rosetta stone statement."),
-                        fieldWithPath("context").description("The ID of the context resource of the rosetta stone statement, possibly indicating the origin of a statement. (optional)").optional(),
-                        fieldWithPath("subjects[]").description("The ordered list of subject instance IDs used in the rosetta stone statement."),
-                        fieldWithPath("objects[]").description("The ordered list of object position instances used in the rosetta stone statement. The order of the objects corresponds to the order of the properties of the rosetta stone template."),
-                        fieldWithPath("objects[][]").description("The ordered list of object instance IDs used for the object position index defined by the outer array."),
-                        fieldWithPath("certainty").description("""The certainty of the rosetta stone statement. Either of $allowedCertaintyValues."""),
-                        fieldWithPath("resources").description("Definition of resources that need to be created."),
-                        fieldWithPath("resources.*.label").description("The label of the resource."),
-                        fieldWithPath("resources.*.classes").description("The list of classes of the resource."),
-                        fieldWithPath("literals").description("Definition of literals that need to be created."),
-                        fieldWithPath("literals.*.label").description("The value of the literal."),
-                        fieldWithPath("literals.*.data_type").description("The data type of the literal."),
-                        fieldWithPath("predicates").description("Definition of predicates that need to be created."),
-                        fieldWithPath("predicates.*.label").description("The label of the predicate."),
-                        fieldWithPath("predicates.*.description").description("The description of the predicate."),
-                        fieldWithPath("lists").description("Definition of lists that need to be created."),
-                        fieldWithPath("lists.*.label").description("The label of the list."),
-                        fieldWithPath("lists.*.elements").description("The IDs of the elements of the list."),
-                        fieldWithPath("classes").description("Definition of classes that need to be created."),
-                        fieldWithPath("classes.*.label").description("The label of the class."),
-                        fieldWithPath("classes.*.uri").description("The uri of the class."),
-                        fieldWithPath("negated").description("Whether the statement represented by the rosetta stone statement instance is semantically negated. (optional, default: false)").optional(),
-                        fieldWithPath("organizations[]").description("The list of IDs of the organizations the rosetta stone statement belongs to."),
-                        fieldWithPath("observatories[]").description("The list of IDs of the observatories the rosetta stone statement belongs to."),
-                        fieldWithPath("extraction_method").description("""The method used to extract the rosetta stone statement. Either of $allowedExtractionMethodValues."""),
-                    )
+            .andDocument {
+                summary("Creating rosetta stone statements")
+                description(
+                    """
+                    A `POST` request creates a new rosetta stone statement with all the given parameters.
+                    The response will be `201 Created` when successful.
+                    The rosetta stone statement can be retrieved by following the URI in the `Location` header field.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the newly created rosetta stone statement can be fetched from."),
+                )
+                requestFields<CreateRosettaStoneStatementRequest>(
+                    fieldWithPath("template_id").description("The identifier of the templates that was used to instantiate the rosetta stone statement."),
+                    fieldWithPath("context").description("The ID of the context resource of the rosetta stone statement, possibly indicating the origin of a statement. (optional)").optional(),
+                    fieldWithPath("subjects[]").description("The ordered list of subject instance IDs used in the rosetta stone statement."),
+                    fieldWithPath("objects[]").description("The ordered list of object position instances used in the rosetta stone statement. The order of the objects corresponds to the order of the properties of the rosetta stone template."),
+                    fieldWithPath("objects[][]").description("The ordered list of object instance IDs used for the object position index defined by the outer array."),
+                    fieldWithPath("certainty").description("""The certainty of the rosetta stone statement. Either of $allowedCertaintyValues."""),
+                    fieldWithPath("resources").description("A map of temporary ids to resource definitions for resources that need to be created. (optional)").optional(),
+                    fieldWithPath("resources.*").type("Object").description("Defines a single resource that needs to be created in the process."),
+                    fieldWithPath("resources.*.label").description("The label of the resource."),
+                    fieldWithPath("resources.*.classes").description("The list of classes of the resource."),
+                    fieldWithPath("literals").description("A map of temporary ids to literal definitions for literals that need to be created. (optional)").optional(),
+                    fieldWithPath("literals.*").type("Object").description("Defines a single literal that needs to be created in the process."),
+                    fieldWithPath("literals.*.label").description("The value of the literal."),
+                    fieldWithPath("literals.*.data_type").description("The data type of the literal."),
+                    fieldWithPath("predicates").description("A map of temporary ids to predicate definitions for predicates that need to be created. (optional)").optional(),
+                    fieldWithPath("predicates.*").type("Object").description("Defines a single predicate that needs to be created in the process."),
+                    fieldWithPath("predicates.*.label").description("The label of the predicate."),
+                    fieldWithPath("predicates.*.description").description("The description of the predicate."),
+                    fieldWithPath("lists").description("A map of temporary ids to list definitions for lists that need to be created. (optional)").optional(),
+                    fieldWithPath("lists.*").type("Object").description("Defines a single list that needs to be created in the process."),
+                    fieldWithPath("lists.*.label").description("The label of the list."),
+                    fieldWithPath("lists.*.elements").description("The IDs of the elements of the list."),
+                    fieldWithPath("classes").description("A map of temporary ids to class definitions for classes that need to be created. (optional)").optional(),
+                    fieldWithPath("classes.*").type("Object").description("Defines a single class that needs to be created in the process."),
+                    fieldWithPath("classes.*.label").description("The label of the class."),
+                    fieldWithPath("classes.*.uri").description("The uri of the class."),
+                    fieldWithPath("negated").description("Whether the statement represented by the rosetta stone statement instance is semantically negated. (optional, default: false)").optional(),
+                    fieldWithPath("organizations[]").description("The list of IDs of the organizations the rosetta stone statement belongs to."),
+                    fieldWithPath("observatories[]").description("The list of IDs of the observatories the rosetta stone statement belongs to."),
+                    fieldWithPath("extraction_method").description("""The method used to extract the rosetta stone statement. Either of $allowedExtractionMethodValues."""),
+                )
+                throws(
+                    InvalidTempId::class,
+                    DuplicateTempIds::class,
+                    RosettaStoneTemplateNotFound::class,
+                    ResourceNotFound::class,
+                    OnlyOneObservatoryAllowed::class,
+                    ObservatoryNotFound::class,
+                    OnlyOneOrganizationAllowed::class,
+                    OrganizationNotFound::class,
+                    ThingNotDefined::class,
+                    ThingNotFound::class,
+                    ReservedClass::class,
+                    ThingIsNotAClass::class,
+                    InvalidLabel::class,
+                    InvalidLiteralLabel::class,
+                    InvalidLiteralDatatype::class,
+                    URINotAbsolute::class,
+                    URIAlreadyInUse::class,
+                    MissingInputPositions::class,
+                    TooManyInputPositions::class,
+                    MissingSubjectPositionValue::class,
+                    MissingObjectPositionValue::class,
+                    TooManySubjectPositionValues::class,
+                    TooManyObjectPositionValues::class,
+                    LabelDoesNotMatchPattern::class,
+                    NumberTooHigh::class,
+                    NumberTooLow::class,
+                    ObjectPositionValueDoesNotMatchPattern::class,
+                    ObjectPositionValueTooLow::class,
+                    ObjectPositionValueTooHigh::class,
+                    RosettaStoneStatementNotFound::class,
+                    RosettaStoneStatementVersionNotFound::class,
+                    NestedRosettaStoneStatement::class,
+                )
+            }
 
         verify(exactly = 1) { statementService.create(any()) }
     }
@@ -325,42 +381,86 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
             .perform()
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("/api/rosetta-stone/statements/$newId")))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the rosetta stone statement version.")
-                    ),
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the newly created rosetta stone statement can be fetched from.")
-                    ),
-                    requestFields(
-                        fieldWithPath("subjects[]").description("The ordered list of subject instance IDs used in the updated rosetta stone statement."),
-                        fieldWithPath("objects[]").description("The ordered list of object position instances used in the updated rosetta stone statement. The order of the objects corresponds to the order of the properties of the rosetta stone template."),
-                        fieldWithPath("objects[][]").description("The ordered list of object instance IDs used for the object position index defined by the outer array."),
-                        fieldWithPath("certainty").description("""The certainty of the updated rosetta stone statement. Either of $allowedCertaintyValues."""),
-                        fieldWithPath("resources").description("Definition of resources that need to be created."),
-                        fieldWithPath("resources.*.label").description("The label of the resource."),
-                        fieldWithPath("resources.*.classes").description("The list of classes of the resource."),
-                        fieldWithPath("literals").description("Definition of literals that need to be created."),
-                        fieldWithPath("literals.*.label").description("The value of the literal."),
-                        fieldWithPath("literals.*.data_type").description("The data type of the literal."),
-                        fieldWithPath("predicates").description("Definition of predicates that need to be created."),
-                        fieldWithPath("predicates.*.label").description("The label of the predicate."),
-                        fieldWithPath("predicates.*.description").description("The description of the predicate."),
-                        fieldWithPath("lists").description("Definition of lists that need to be created."),
-                        fieldWithPath("lists.*.label").description("The label of the list."),
-                        fieldWithPath("lists.*.elements").description("The IDs of the elements of the list."),
-                        fieldWithPath("classes").description("Definition of classes that need to be created."),
-                        fieldWithPath("classes.*.label").description("The label of the class."),
-                        fieldWithPath("classes.*.uri").description("The uri of the class."),
-                        fieldWithPath("negated").description("Whether the statement represented by the updated rosetta stone statement instance is semantically negated. (optional, default: false)").optional(),
-                        fieldWithPath("organizations[]").description("The list of IDs of the organizations the rosetta stone statement belongs to."),
-                        fieldWithPath("observatories[]").description("The list of IDs of the observatories the rosetta stone statement belongs to."),
-                        fieldWithPath("extraction_method").description("""The method used to extract the updated rosetta stone statement. Either of $allowedExtractionMethodValues."""),
-                    )
+            .andDocument {
+                summary("Updataing rosetta stone statements")
+                description(
+                    """
+                    A `POST` request creates a new version of an existing rosetta stone statement with all the given parameters.
+                    The response will be `201 Created` when successful.
+                    The revised rosetta stone statement (object) can be retrieved by following the URI in the `Location` header field.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the rosetta stone statement version.")
+                )
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the newly created rosetta stone statement can be fetched from.")
+                )
+                requestFields<UpdateRosettaStoneStatementRequest>(
+                    fieldWithPath("subjects[]").description("The ordered list of subject instance IDs used in the updated rosetta stone statement."),
+                    fieldWithPath("objects[]").description("The ordered list of object position instances used in the updated rosetta stone statement. The order of the objects corresponds to the order of the properties of the rosetta stone template."),
+                    fieldWithPath("objects[][]").description("The ordered list of object instance IDs used for the object position index defined by the outer array."),
+                    fieldWithPath("certainty").description("""The certainty of the updated rosetta stone statement. Either of $allowedCertaintyValues."""),
+                    fieldWithPath("resources").description("A map of temporary ids to resource definitions for resources that need to be created. (optional)").optional(),
+                    fieldWithPath("resources.*").type("Object").description("Defines a single resource that needs to be created in the process."),
+                    fieldWithPath("resources.*.label").description("The label of the resource."),
+                    fieldWithPath("resources.*.classes").description("The list of classes of the resource."),
+                    fieldWithPath("literals").description("A map of temporary ids to literal definitions for literals that need to be created. (optional)").optional(),
+                    fieldWithPath("literals.*").type("Object").description("Defines a single literal that needs to be created in the process."),
+                    fieldWithPath("literals.*.label").description("The value of the literal."),
+                    fieldWithPath("literals.*.data_type").description("The data type of the literal."),
+                    fieldWithPath("predicates").description("A map of temporary ids to predicate definitions for predicates that need to be created. (optional)").optional(),
+                    fieldWithPath("predicates.*").type("Object").description("Defines a single predicate that needs to be created in the process."),
+                    fieldWithPath("predicates.*.label").description("The label of the predicate."),
+                    fieldWithPath("predicates.*.description").description("The description of the predicate."),
+                    fieldWithPath("lists").description("A map of temporary ids to list definitions for lists that need to be created. (optional)").optional(),
+                    fieldWithPath("lists.*").type("Object").description("Defines a single list that needs to be created in the process."),
+                    fieldWithPath("lists.*.label").description("The label of the list."),
+                    fieldWithPath("lists.*.elements").description("The IDs of the elements of the list."),
+                    fieldWithPath("classes").description("A map of temporary ids to class definitions for classes that need to be created. (optional)").optional(),
+                    fieldWithPath("classes.*").type("Object").description("Defines a single class that needs to be created in the process."),
+                    fieldWithPath("classes.*.label").description("The label of the class."),
+                    fieldWithPath("classes.*.uri").description("The uri of the class."),
+                    fieldWithPath("negated").description("Whether the statement represented by the updated rosetta stone statement instance is semantically negated. (optional, default: false)").optional(),
+                    fieldWithPath("organizations[]").description("The list of IDs of the organizations the rosetta stone statement belongs to."),
+                    fieldWithPath("observatories[]").description("The list of IDs of the observatories the rosetta stone statement belongs to."),
+                    fieldWithPath("extraction_method").description("""The method used to extract the updated rosetta stone statement. Either of $allowedExtractionMethodValues."""),
+                )
+                throws(
+                    InvalidTempId::class,
+                    DuplicateTempIds::class,
+                    RosettaStoneStatementNotModifiable::class,
+                    RosettaStoneTemplateNotFound::class,
+                    OnlyOneObservatoryAllowed::class,
+                    ObservatoryNotFound::class,
+                    OnlyOneOrganizationAllowed::class,
+                    OrganizationNotFound::class,
+                    ThingNotDefined::class,
+                    ThingNotFound::class,
+                    ReservedClass::class,
+                    ThingIsNotAClass::class,
+                    InvalidLabel::class,
+                    InvalidLiteralLabel::class,
+                    InvalidLiteralDatatype::class,
+                    URINotAbsolute::class,
+                    URIAlreadyInUse::class,
+                    MissingInputPositions::class,
+                    TooManyInputPositions::class,
+                    MissingSubjectPositionValue::class,
+                    MissingObjectPositionValue::class,
+                    TooManySubjectPositionValues::class,
+                    TooManyObjectPositionValues::class,
+                    LabelDoesNotMatchPattern::class,
+                    NumberTooHigh::class,
+                    NumberTooLow::class,
+                    ObjectPositionValueDoesNotMatchPattern::class,
+                    ObjectPositionValueTooLow::class,
+                    ObjectPositionValueTooHigh::class,
+                    RosettaStoneStatementNotFound::class,
+                    RosettaStoneStatementVersionNotFound::class,
+                    NestedRosettaStoneStatement::class,
+                )
+            }
 
         verify(exactly = 1) { statementService.update(any()) }
     }
@@ -376,14 +476,22 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
             .accept(ROSETTA_STONE_STATEMENT_JSON_V1)
             .perform()
             .andExpect(status().isNoContent)
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The id of the rosetta stone statement to soft-delete.")
-                    )
+            .andDocument {
+                summary("Soft-deleting rosetta stone statements")
+                description(
+                    """
+                    A `DELETE` request soft-deletes a rosetta stone statement with all its versions.
+                    The response will be `204 No Content` when successful.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The id of the rosetta stone statement to soft-delete.")
+                )
+                throws(
+                    RosettaStoneStatementNotModifiable::class,
+                    CannotDeleteIndividualRosettaStoneStatementVersion::class,
+                )
+            }
 
         verify(exactly = 1) { statementService.softDelete(id, ContributorId(MockUserId.USER)) }
     }
@@ -399,20 +507,33 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
             .accept(ROSETTA_STONE_STATEMENT_JSON_V1)
             .perform()
             .andExpect(status().isNoContent)
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The id of the rosetta stone statement to delete.")
-                    )
+            .andDocument {
+                summary("Fully deleting rosetta stone statements")
+                description(
+                    """
+                    A `DELETE` request fully deletes a rosetta stone statement with all its versions.
+                    The response will be `204 No Content` when successful.
+                    
+                    NOTE: The user performing the action needs to be a curator.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The id of the rosetta stone statement to delete.")
+                )
+                throws(
+                    RosettaStoneStatementNotModifiable::class,
+                    CannotDeleteIndividualRosettaStoneStatementVersion::class,
+                    ContributorNotFound::class,
+                    NotACurator::class,
+                    RosettaStoneStatementInUse::class,
+                )
+            }
 
         verify(exactly = 1) { statementService.delete(id, ContributorId(MockUserId.CURATOR)) }
     }
 
     private fun createRosettaStoneStatementRequest() =
-        RosettaStoneStatementController.CreateRosettaStoneStatementRequest(
+        CreateRosettaStoneStatementRequest(
             templateId = ThingId("R456"),
             context = ThingId("R789"),
             subjects = listOf("R258", "R369", "#temp1"),
@@ -459,7 +580,7 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
         )
 
     private fun updateRosettaStoneStatementRequest() =
-        RosettaStoneStatementController.UpdateRosettaStoneStatementRequest(
+        UpdateRosettaStoneStatementRequest(
             subjects = listOf("R258", "R369", "#temp1"),
             objects = listOf(
                 listOf("R987", "R654", "#temp2", "#temp3"),

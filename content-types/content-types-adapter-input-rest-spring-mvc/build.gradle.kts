@@ -35,19 +35,30 @@ dependencies {
     implementation(project(":common:functional"))
     implementation(project(":common:serialization"))
     implementation(project(":graph:graph-core-constants"))
+
+    testFixturesApi("org.springframework:spring-context")
+    testFixturesApi("org.springframework.boot:spring-boot-test")
     testFixturesApi("org.springframework.restdocs:spring-restdocs-core")
+    testFixturesApi(project(":common:serialization"))
+    testFixturesApi(project(":common:spring-webmvc"))
     testFixturesApi(project(":content-types:content-types-adapter-input-representations"))
+    testFixturesApi(project(":graph:graph-adapter-input-rest-spring-mvc"))
+    testFixturesApi(testFixtures(project(":common:core-identifiers")))
+    testFixturesApi(testFixtures(project(":graph:graph-adapter-input-rest-spring-mvc")))
+    testFixturesApi(testFixtures(project(":testing:spring")))
     testFixturesImplementation(project(":common:datatypes"))
     testFixturesImplementation(project(":common:core-identifiers"))
     testFixturesImplementation(project(":graph:graph-core-constants"))
+    testFixturesImplementation(testFixtures(project(":common:external-identifiers")))
     testFixturesImplementation(testFixtures(project(":graph:graph-core-model")))
-    testFixturesImplementation(testFixtures(project(":testing:spring")))
+    testFixturesImplementation(testFixtures(project(":content-types:content-types-core-model")))
 }
 
 testing {
     suites {
         val test by getting(JvmTestSuite::class) {
             dependencies {
+                implementation("com.epages:restdocs-api-spec")
                 implementation("io.kotest:kotest-assertions-core")
                 implementation("io.kotest:kotest-assertions-shared")
                 implementation("io.mockk:mockk-dsl")
@@ -70,6 +81,7 @@ testing {
                 implementation("org.springframework.restdocs:spring-restdocs-mockmvc")
                 implementation(project(":content-types:content-types-adapter-input-rest-spring-mvc"))
                 implementation(testFixtures(project(":common:testing")))
+                implementation(testFixtures(project(":community:community-adapter-input-rest-spring-mvc")))
                 implementation(testFixtures(project(":community:community-core-model")))
                 implementation(testFixtures(project(":content-types:content-types-core-model")))
                 implementation(testFixtures(project(":graph:graph-core-model")))

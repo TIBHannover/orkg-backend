@@ -432,7 +432,7 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
                     fieldWithPath("id").description("The id for the resource. (optional)").optional(),
                     fieldWithPath("label").description("The resource label."),
                     fieldWithPath("classes[]").type("Array").description("The classes of the resource. (optional)").optional(),
-                    fieldWithPath("extraction_method").type("Enum").description("""The method used to extract the resource. Can be one of $allowedExtractionMethodValues. (optional, default: "UNKNOWN")""").optional()
+                    fieldWithPath("extraction_method").type("Enum").description("""The method used to extract the resource. Can be one of $allowedExtractionMethodValues. (optional, default: `UNKNOWN`)""").optional()
                 )
                 throws(InvalidLabel::class, ReservedClass::class, InvalidClassCollection::class, ResourceAlreadyExists::class)
             }

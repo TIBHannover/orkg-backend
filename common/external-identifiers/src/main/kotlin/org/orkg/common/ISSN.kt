@@ -1,7 +1,7 @@
 package org.orkg.common
 
-private val VALID_ISSN_REGEX = Regex("""^(\d{4}-\d{3}(?:\d|X))$""")
-private val VALID_ISSN_URI_REGEX = Regex("""^https?://(?:portal\.)?issn\.org/resource/(?:issn|ISSN)/(\d{4}-\d{3}(?:\d|X))$""")
+internal val VALID_ISSN_REGEX = Regex("""^(\d{4}-\d{3}(?:\d|X))$""")
+internal val VALID_ISSN_URI_REGEX = Regex("""^https?://(?:portal\.)?issn\.org/resource/(?:issn|ISSN)/(\d{4}-\d{3}(?:\d|X))$""")
 
 @JvmInline
 value class ISSN private constructor(override val value: String) : IdentifierValue {

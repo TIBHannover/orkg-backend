@@ -7,14 +7,22 @@ import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.restdocs.payload.ResponseFieldsSnippet
 import org.springframework.restdocs.snippet.AbstractDescriptor
+import org.springframework.restdocs.snippet.Attributes
 import java.time.OffsetDateTime
 import kotlin.reflect.KClass
 
-fun pageableDetailedFieldParameters(schemaClass: KClass<*>? = null): List<FieldDescriptor> = listOf(
+fun pageableDetailedFieldParameters(
+    schemaClass: KClass<*>? = null,
+    additionalContentArrayAttributes: Map<String, Any?>? = null,
+): List<FieldDescriptor> = listOf(
     if (schemaClass != null) {
         subsectionWithPath("content[]").references(schemaClass)
     } else {
         fieldWithPath("content[]")
+    }.also {
+        if (additionalContentArrayAttributes != null) {
+            it.attributes += additionalContentArrayAttributes
+        }
     }.description("The result of the request as a (sorted) array."),
     subsectionWithPath("page").description("Paging information."),
     fieldWithPath("page.number").description("The number of the current page."),
@@ -31,11 +39,14 @@ fun pagedResponseFields(
     schemaClass: KClass<*>? = null,
     ignorePageFields: Boolean = true,
 ): List<FieldDescriptor> {
-    val pageResponseFields = pageableDetailedFieldParameters(schemaClass)
+    val pageResponseFields = pageableDetailedFieldParameters(
+        schemaClass = schemaClass,
+        additionalContentArrayAttributes = fieldDescriptors.singleOrNull { it.path == "content[]" }?.attributes,
+    )
     if (ignorePageFields) {
         pageResponseFields.forEach { it.ignored() }
     }
-    return pageResponseFields + applyPathPrefix("content[].", fieldDescriptors)
+    return pageResponseFields + applyPathPrefix("content[].", fieldDescriptors.filter { it.path != "content[]" })
 }
 
 /**
@@ -56,9 +67,11 @@ fun timestampFieldWithPath(path: String, suffix: String): FieldDescriptor = fiel
 
 fun <T : AbstractDescriptor<T>> AbstractDescriptor<T>.deprecated(): T =
     description(listOfNotNull("*Deprecated*", description).joinToString(" "))
+        .attributes(Attributes.Attribute("deprecated", true))
 
 fun <T : AbstractDescriptor<T>> AbstractDescriptor<T>.deprecated(replaceWith: String): T =
     description(listOfNotNull("*Deprecated*. See `$replaceWith` for replacement.", description).joinToString(" "))
+        .attributes(Attributes.Attribute("deprecated", true))
 
 fun exceptionResponseFields(type: String) = listOf(
     fieldWithPath("type").description("A URI reference that identifies the problem type. Always `$type` for this error."),

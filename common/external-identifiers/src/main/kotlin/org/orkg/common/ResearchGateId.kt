@@ -1,7 +1,7 @@
 package org.orkg.common
 
-private val VALID_RESEARCH_GATE_ID_REGEX = Regex("""^[0-9A-Za-z_-]+$""")
-private val VALID_RESEARCH_GATE_ID_URI_REGEX = Regex("""^https?://(?:www\.)?researchgate\.net/profile/([0-9A-Za-z_-]+)$""")
+internal val VALID_RESEARCH_GATE_ID_REGEX = Regex("""^[0-9A-Za-z_-]+$""")
+internal val VALID_RESEARCH_GATE_ID_URI_REGEX = Regex("""^https?://(?:www\.)?researchgate\.net/profile/([0-9A-Za-z_-]+)$""")
 
 @JvmInline
 value class ResearchGateId private constructor(override val value: String) : IdentifierValue {

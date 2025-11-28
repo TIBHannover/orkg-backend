@@ -16,18 +16,50 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.UnknownSortingProperty
-import org.orkg.common.json.CommonJacksonModule
 import org.orkg.common.testing.fixtures.fixedClock
+import org.orkg.community.domain.ObservatoryNotFound
+import org.orkg.community.domain.OrganizationNotFound
 import org.orkg.contenttypes.adapter.input.rest.TableController.CreateTableRequest
 import org.orkg.contenttypes.adapter.input.rest.TableController.TableColumnRequest
 import org.orkg.contenttypes.adapter.input.rest.TableController.TableRowRequest
+import org.orkg.contenttypes.adapter.input.rest.TableController.UpdateTableCellRequest
 import org.orkg.contenttypes.adapter.input.rest.TableController.UpdateTableRequest
-import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
+import org.orkg.contenttypes.domain.CannotDeleteTableHeader
+import org.orkg.contenttypes.domain.DuplicateTempIds
+import org.orkg.contenttypes.domain.InvalidTableColumnIndex
+import org.orkg.contenttypes.domain.InvalidTableRowIndex
+import org.orkg.contenttypes.domain.InvalidTempId
+import org.orkg.contenttypes.domain.MissingTableColumnValues
+import org.orkg.contenttypes.domain.MissingTableHeaderValue
+import org.orkg.contenttypes.domain.MissingTableRowValues
+import org.orkg.contenttypes.domain.MissingTableRows
+import org.orkg.contenttypes.domain.OnlyOneObservatoryAllowed
+import org.orkg.contenttypes.domain.OnlyOneOrganizationAllowed
+import org.orkg.contenttypes.domain.TableColumnNotFound
+import org.orkg.contenttypes.domain.TableHeaderValueMustBeLiteral
+import org.orkg.contenttypes.domain.TableNotFound
+import org.orkg.contenttypes.domain.TableNotModifiable
+import org.orkg.contenttypes.domain.TableRowNotFound
+import org.orkg.contenttypes.domain.ThingIsNotAClass
+import org.orkg.contenttypes.domain.ThingNotDefined
+import org.orkg.contenttypes.domain.TooFewTableColumns
+import org.orkg.contenttypes.domain.TooFewTableRows
+import org.orkg.contenttypes.domain.TooManyTableColumnValues
+import org.orkg.contenttypes.domain.TooManyTableRowValues
 import org.orkg.contenttypes.domain.testing.fixtures.createTable
 import org.orkg.contenttypes.input.TableUseCases
+import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerUnitTestConfiguration
+import org.orkg.contenttypes.input.testing.fixtures.tableResponseFields
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
+import org.orkg.graph.domain.InvalidLabel
+import org.orkg.graph.domain.InvalidLiteralDatatype
+import org.orkg.graph.domain.InvalidLiteralLabel
 import org.orkg.graph.domain.Literals
+import org.orkg.graph.domain.ReservedClass
+import org.orkg.graph.domain.ThingNotFound
+import org.orkg.graph.domain.URIAlreadyInUse
+import org.orkg.graph.domain.URINotAbsolute
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
@@ -36,25 +68,17 @@ import org.orkg.graph.testing.asciidoc.allowedVisibilityValues
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectTable
 import org.orkg.testing.annotations.TestWithMockUser
-import org.orkg.testing.configuration.ExceptionTestConfiguration
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
-import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
-import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.pathParameters
-import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -62,15 +86,7 @@ import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Optional
 
-@ContextConfiguration(
-    classes = [
-        TableController::class,
-        ExceptionTestConfiguration::class,
-        CommonJacksonModule::class,
-        ContentTypeJacksonModule::class,
-        FixedClockConfig::class
-    ]
-)
+@ContextConfiguration(classes = [TableController::class, ContentTypeControllerUnitTestConfiguration::class])
 @WebMvcTest(controllers = [TableController::class])
 internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
     @MockkBean
@@ -78,7 +94,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
 
     @Test
     @DisplayName("Given a table, when it is fetched by id and service succeeds, then status is 200 OK and table is returned")
-    fun getSingle() {
+    fun findById() {
         val table = createTable()
         every { tableService.findById(table.id) } returns Optional.of(table)
 
@@ -88,31 +104,19 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
             .perform()
             .andExpect(status().isOk)
             .andExpectTable()
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the table to retrieve.")
-                    ),
-                    responseFields(
-                        // The order here determines the order in the generated table. More relevant items should be up.
-                        fieldWithPath("id").description("The identifier of the table."),
-                        fieldWithPath("label").description("The label of the table."),
-                        fieldWithPath("rows[]").description("The ordered list of rows of the table. The first row always represents the header of the table."),
-                        fieldWithPath("rows[].label").description("The label of the row. (optional)").optional(),
-                        subsectionWithPath("rows[].data[]").description("The ordered list of values (thing representations) of the row.").optional(),
-                        fieldWithPath("organizations[]").description("The list of IDs of the organizations or conference series the table belongs to."),
-                        fieldWithPath("observatories[]").description("The list of IDs of the observatories the table belongs to."),
-                        fieldWithPath("extraction_method").description("""The method used to extract the table resource. Can be one of $allowedExtractionMethodValues."""),
-                        timestampFieldWithPath("created_at", "the table resource was created"),
-                        // TODO: Add links to documentation of special user UUIDs.
-                        fieldWithPath("created_by").description("The UUID of the user or service who created this table."),
-                        fieldWithPath("visibility").description("""Visibility of the table. Can be one of $allowedVisibilityValues."""),
-                        fieldWithPath("modifiable").description("Whether the table can be modified."),
-                        fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this table.").optional(),
-                    )
+            .andDocument {
+                summary("Fetching tables")
+                description(
+                    """
+                    A `GET` request provides information about a table.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the table to retrieve."),
+                )
+                responseFields<TableRepresentation>(tableResponseFields())
+                throws(TableNotFound::class)
+            }
 
         verify(exactly = 1) { tableService.findById(table.id) }
     }
@@ -154,7 +158,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
 
     @Test
     @DisplayName("Given several tables, when filtering by several parameters, then status is 200 OK and tables are returned")
-    fun getPagedWithParameters() {
+    fun findAll() {
         every {
             tableService.findAll(any(), any(), any(), any(), any(), any(), any(), any())
         } returns pageOf(createTable())
@@ -183,21 +187,27 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
             .andExpect(status().isOk)
             .andExpectPage()
             .andExpectTable("$.content[*]")
-            .andDo(
-                documentationHandler.document(
-                    queryParameters(
-                        parameterWithName("q").description("A search term that must be contained in the label of the table. (optional)"),
-                        parameterWithName("exact").description("Whether title matching is exact or fuzzy (optional, default: false)"),
-                        parameterWithName("visibility").description("""Optional filter for visibility. Either of $allowedVisibilityFilterValues."""),
-                        parameterWithName("created_by").description("Filter for the UUID of the user or service who created this table. (optional)"),
-                        parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned resource can have. (optional)"),
-                        parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned resource can have. (optional)"),
-                        parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the resource belongs to. (optional)"),
-                        parameterWithName("organization_id").description("Filter for the UUID of the organization that the resource belongs to. (optional)"),
-                    )
+            .andDocument {
+                summary("Listing tables")
+                description(
+                    """
+                    A `GET` request returns a <<sorting-and-pagination,paged>> list of <<tables-fetch,tables>>.
+                    If no paging request parameters are provided, the default values will be used.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pagedQueryParameters(
+                    parameterWithName("q").description("A search term that must be contained in the label of the table. (optional)").optional(),
+                    parameterWithName("exact").description("Whether title matching is exact or fuzzy (optional, default: false)").optional(),
+                    parameterWithName("visibility").description("""Optional filter for visibility. Either of $allowedVisibilityFilterValues.""").optional(),
+                    parameterWithName("created_by").description("Filter for the UUID of the user or service who created this table. (optional)").optional(),
+                    parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned resource can have. (optional)").optional(),
+                    parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned resource can have. (optional)").optional(),
+                    parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the resource belongs to. (optional)").optional(),
+                    parameterWithName("organization_id").description("Filter for the UUID of the organization that the resource belongs to. (optional)").optional(),
+                )
+                pagedResponseFields<TableRepresentation>(tableResponseFields())
+                throws(UnknownSortingProperty::class)
+            }
 
         verify(exactly = 1) {
             tableService.findAll(
@@ -248,38 +258,70 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
             .perform()
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("/api/tables/$id")))
-            .andDo(
-                documentationHandler.document(
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the newly created table can be fetched from.")
-                    ),
-                    requestFields(
-                        fieldWithPath("label").description("The label of the table."),
-                        fieldWithPath("resources").description("Definition of resources that need to be created. (optional)"),
-                        fieldWithPath("resources.*.label").description("The label of the resource."),
-                        fieldWithPath("resources.*.classes").description("The list of classes of the resource."),
-                        fieldWithPath("literals").description("Definition of literals that need to be created. (optional)"),
-                        fieldWithPath("literals.*.label").description("The value of the literal."),
-                        fieldWithPath("literals.*.data_type").description("The data type of the literal."),
-                        fieldWithPath("predicates").description("Definition of predicates that need to be created. (optional)"),
-                        fieldWithPath("predicates.*.label").description("The label of the predicate."),
-                        fieldWithPath("predicates.*.description").description("The description of the predicate."),
-                        fieldWithPath("lists").description("Definition of lists that need to be created (optional)."),
-                        fieldWithPath("lists.*.label").description("The label of the list."),
-                        fieldWithPath("lists.*.elements").description("The IDs of the elements of the list."),
-                        fieldWithPath("classes").description("Definition of classes that need to be created. (optional)"),
-                        fieldWithPath("classes.*.label").description("The label of the class."),
-                        fieldWithPath("classes.*.uri").description("The uri of the class."),
-                        fieldWithPath("rows[]").description("The ordered list of rows of the table. The first row always represents the header of the table and must only consist of string literals. Additionally, one data row is required. Every row must have the same length."),
-                        fieldWithPath("rows[].label").description("The label of the row. (optional)").optional(),
-                        subsectionWithPath("rows[].data[]").description("The ordered list of values (thing ids, temporary ids or `null`) of the row.").optional(),
-                        fieldWithPath("organizations[]").description("The list of IDs of the organizations or conference series the table belongs to."),
-                        fieldWithPath("observatories[]").description("The list of IDs of the observatories the table belongs to."),
-                        fieldWithPath("extraction_method").description("""The method used to extract the table resource. Can be one of $allowedExtractionMethodValues."""),
-                    )
+            .andDocument {
+                summary("Creating tables")
+                description(
+                    """
+                    A `POST` request creates a new table with all the given parameters.
+                    The response will be `201 Created` when successful.
+                    The table (object) can be retrieved by following the URI in the `Location` header field.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the newly created table can be fetched from."),
+                )
+                requestFields<CreateTableRequest>(
+                    fieldWithPath("label").description("The label of the table."),
+                    fieldWithPath("resources").description("A map of temporary ids to resource definitions for resources that need to be created. (optional)").optional(),
+                    fieldWithPath("resources.*").type("Object").description("Defines a single resource that needs to be created in the process."),
+                    fieldWithPath("resources.*.label").description("The label of the resource."),
+                    fieldWithPath("resources.*.classes").description("The list of classes of the resource."),
+                    fieldWithPath("literals").description("A map of temporary ids to literal definitions for literals that need to be created. (optional)").optional(),
+                    fieldWithPath("literals.*").type("Object").description("Defines a single literal that needs to be created in the process."),
+                    fieldWithPath("literals.*.label").description("The value of the literal."),
+                    fieldWithPath("literals.*.data_type").description("The data type of the literal."),
+                    fieldWithPath("predicates").description("A map of temporary ids to predicate definitions for predicates that need to be created. (optional)").optional(),
+                    fieldWithPath("predicates.*").type("Object").description("Defines a single predicate that needs to be created in the process."),
+                    fieldWithPath("predicates.*.label").description("The label of the predicate."),
+                    fieldWithPath("predicates.*.description").description("The description of the predicate."),
+                    fieldWithPath("lists").description("A map of temporary ids to list definitions for lists that need to be created (optional).").optional(),
+                    fieldWithPath("lists.*").type("Object").description("Defines a single list that needs to be created in the process."),
+                    fieldWithPath("lists.*.label").description("The label of the list."),
+                    fieldWithPath("lists.*.elements").description("The IDs of the elements of the list."),
+                    fieldWithPath("classes").description("A map of temporary ids to class definitions for classes that need to be created. (optional)").optional(),
+                    fieldWithPath("classes.*").type("Object").description("Defines a single class that needs to be created in the process."),
+                    fieldWithPath("classes.*.label").description("The label of the class."),
+                    fieldWithPath("classes.*.uri").description("The uri of the class."),
+                    fieldWithPath("rows[]").description("The ordered list of rows of the table. The first row always represents the header of the table and must only consist of string literals. Additionally, one data row is required. Every row must have the same length."),
+                    fieldWithPath("rows[].label").description("The label of the row. (optional)").optional(),
+                    subsectionWithPath("rows[].data[]").description("The ordered list of values (thing ids, temporary ids or `null`) of the row.").optional(),
+                    fieldWithPath("organizations[]").description("The list of IDs of the organizations or conference series the table belongs to."),
+                    fieldWithPath("observatories[]").description("The list of IDs of the observatories the table belongs to."),
+                    fieldWithPath("extraction_method").description("""The method used to extract the table resource. Can be one of $allowedExtractionMethodValues."""),
+                )
+                throws(
+                    InvalidLabel::class,
+                    InvalidTempId::class,
+                    DuplicateTempIds::class,
+                    MissingTableRows::class,
+                    MissingTableHeaderValue::class,
+                    TooManyTableRowValues::class,
+                    MissingTableRowValues::class,
+                    OnlyOneObservatoryAllowed::class,
+                    ObservatoryNotFound::class,
+                    OnlyOneOrganizationAllowed::class,
+                    OrganizationNotFound::class,
+                    ThingNotDefined::class,
+                    ThingNotFound::class,
+                    ReservedClass::class,
+                    ThingIsNotAClass::class,
+                    InvalidLiteralLabel::class,
+                    InvalidLiteralDatatype::class,
+                    URINotAbsolute::class,
+                    URIAlreadyInUse::class,
+                    TableHeaderValueMustBeLiteral::class,
+                )
+            }
 
         verify(exactly = 1) { tableService.create(any()) }
     }
@@ -298,42 +340,82 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
             .perform()
             .andExpect(status().isNoContent)
             .andExpect(header().string("Location", endsWith("/api/tables/$id")))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the table.")
-                    ),
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the updated table can be fetched from.")
-                    ),
-                    requestFields(
-                        fieldWithPath("label").description("The label of the table. (optional)"),
-                        fieldWithPath("resources").description("Definition of resources that need to be created. (optional)"),
-                        fieldWithPath("resources.*.label").description("The label of the resource."),
-                        fieldWithPath("resources.*.classes").description("The list of classes of the resource."),
-                        fieldWithPath("literals").description("Definition of literals that need to be created. (optional)"),
-                        fieldWithPath("literals.*.label").description("The value of the literal."),
-                        fieldWithPath("literals.*.data_type").description("The data type of the literal."),
-                        fieldWithPath("predicates").description("Definition of predicates that need to be created. (optional)"),
-                        fieldWithPath("predicates.*.label").description("The label of the predicate."),
-                        fieldWithPath("predicates.*.description").description("The description of the predicate."),
-                        fieldWithPath("lists").description("Definition of lists that need to be created (optional)."),
-                        fieldWithPath("lists.*.label").description("The label of the list."),
-                        fieldWithPath("lists.*.elements").description("The IDs of the elements of the list."),
-                        fieldWithPath("classes").description("Definition of classes that need to be created. (optional)"),
-                        fieldWithPath("classes.*.label").description("The label of the class."),
-                        fieldWithPath("classes.*.uri").description("The uri of the class."),
-                        fieldWithPath("rows[]").description("The ordered list of rows of the table. The first row always represents the header of the table and must only consist of string literals. Additionally, one data row is required. Every row must have the same length. (optional)"),
-                        fieldWithPath("rows[].label").description("The label of the row. (optional)").optional(),
-                        subsectionWithPath("rows[].data[]").description("The ordered list of values (thing ids, temporary ids or `null`) of the row.").optional(),
-                        fieldWithPath("organizations[]").description("The list of IDs of the organizations or conference series the table belongs to. (optional)"),
-                        fieldWithPath("observatories[]").description("The list of IDs of the observatories the table belongs to. (optional)"),
-                        fieldWithPath("extraction_method").description("""The method used to extract the table resource. Can be one of $allowedExtractionMethodValues. (optional)"""),
-                        fieldWithPath("visibility").description("""The method used to extract the table resource. Can be one of $allowedVisibilityValues. (optional)"""),
-                    )
+            .andDocument {
+                summary("Updating tables")
+                description(
+                    """
+                    A `PUT` request updates an existing table with all the given parameters.
+                    The response will be `204 No Content` when successful.
+                    The updated table (object) can be retrieved by following the URI in the `Location` header field.
+                    
+                    [NOTE]
+                    ====
+                    1. All fields at the top level in the request can be omitted or `null`, meaning that the corresponding fields should not be updated.
+                    2. The same rules as for <<resources-edit,updating resources>> apply when updating the visibility of a table.
+                    ====
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the table."),
+                )
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the updated table can be fetched from."),
+                )
+                requestFields<UpdateTableRequest>(
+                    fieldWithPath("label").description("The label of the table. (optional)").optional(),
+                    fieldWithPath("resources").description("A map of temporary ids to resource definitions for resources that need to be created. (optional)").optional(),
+                    fieldWithPath("resources.*").type("Object").description("Defines a single resource that needs to be created in the process."),
+                    fieldWithPath("resources.*.label").description("The label of the resource."),
+                    fieldWithPath("resources.*.classes").description("The list of classes of the resource."),
+                    fieldWithPath("literals").description("A map of temporary ids to literal definitions for literals that need to be created. (optional)").optional(),
+                    fieldWithPath("literals.*").type("Object").description("Defines a single literal that needs to be created in the process."),
+                    fieldWithPath("literals.*.label").description("The value of the literal."),
+                    fieldWithPath("literals.*.data_type").description("The data type of the literal."),
+                    fieldWithPath("predicates").description("A map of temporary ids to predicate definitions for predicates that need to be created. (optional)").optional(),
+                    fieldWithPath("predicates.*").type("Object").description("Defines a single predicate that needs to be created in the process."),
+                    fieldWithPath("predicates.*.label").description("The label of the predicate."),
+                    fieldWithPath("predicates.*.description").description("The description of the predicate."),
+                    fieldWithPath("lists").description("A map of temporary ids to list definitions for lists that need to be created (optional).").optional(),
+                    fieldWithPath("lists.*").type("Object").description("Defines a single list that needs to be created in the process."),
+                    fieldWithPath("lists.*.label").description("The label of the list."),
+                    fieldWithPath("lists.*.elements").description("The IDs of the elements of the list."),
+                    fieldWithPath("classes").description("A map of temporary ids to class definitions for classes that need to be created. (optional)").optional(),
+                    fieldWithPath("classes.*").type("Object").description("Defines a single class that needs to be created in the process."),
+                    fieldWithPath("classes.*.label").description("The label of the class."),
+                    fieldWithPath("classes.*.uri").description("The uri of the class."),
+                    fieldWithPath("rows[]").description("The ordered list of rows of the table. The first row always represents the header of the table and must only consist of string literals. Additionally, one data row is required. Every row must have the same length. (optional)").optional(),
+                    fieldWithPath("rows[].label").description("The label of the row. (optional)").optional(),
+                    fieldWithPath("rows[].data[]").description("The ordered list of values (thing ids, temporary ids or `null`) of the row.").optional(),
+                    fieldWithPath("organizations[]").description("The list of IDs of the organizations or conference series the table belongs to. (optional)").optional(),
+                    fieldWithPath("observatories[]").description("The list of IDs of the observatories the table belongs to. (optional)").optional(),
+                    fieldWithPath("extraction_method").description("""The method used to extract the table resource. Can be one of $allowedExtractionMethodValues. (optional)""").optional(),
+                    fieldWithPath("visibility").description("""The method used to extract the table resource. Can be one of $allowedVisibilityValues. (optional)""").optional(),
+                )
+                throws(
+                    TableNotFound::class,
+                    TableNotModifiable::class,
+                    InvalidLabel::class,
+                    InvalidTempId::class,
+                    DuplicateTempIds::class,
+                    MissingTableRows::class,
+                    MissingTableHeaderValue::class,
+                    TooManyTableRowValues::class,
+                    MissingTableRowValues::class,
+                    OnlyOneObservatoryAllowed::class,
+                    ObservatoryNotFound::class,
+                    OnlyOneOrganizationAllowed::class,
+                    OrganizationNotFound::class,
+                    ThingNotDefined::class,
+                    ThingNotFound::class,
+                    ReservedClass::class,
+                    ThingIsNotAClass::class,
+                    InvalidLiteralLabel::class,
+                    InvalidLiteralDatatype::class,
+                    URINotAbsolute::class,
+                    URIAlreadyInUse::class,
+                    TableHeaderValueMustBeLiteral::class,
+                )
+            }
 
         verify(exactly = 1) { tableService.update(any()) }
     }
@@ -341,7 +423,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
     @Test
     @TestWithMockUser
     @DisplayName("Given a table row create request, when service succeeds, it creates the table row")
-    fun createTableRow() {
+    fun createRow() {
         val id = ThingId("R123")
         every { tableService.createTableRow(any()) } returns ThingId("R456")
 
@@ -359,7 +441,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
     @Test
     @TestWithMockUser
     @DisplayName("Given a table row create request, when service succeeds, it creates the table row at the specified index")
-    fun createTableRowAtIndex() {
+    fun createRowAtIndex() {
         val id = ThingId("R123")
         val index = 5
         every { tableService.createTableRow(any()) } returns ThingId("R456")
@@ -371,38 +453,69 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
             .perform()
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("/api/tables/$id")))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the table."),
-                        parameterWithName("index").description("The insertion index the of the row. If not specified, the row will be appended at the end of the table. (optional)"),
-                    ),
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the updated table can be fetched from.")
-                    ),
-                    requestFields(
-                        fieldWithPath("resources").description("Definition of resources that need to be created. (optional)"),
-                        fieldWithPath("resources.*.label").type("String").description("The label of the resource."),
-                        fieldWithPath("resources.*.classes").type("Array").description("The list of classes of the resource."),
-                        fieldWithPath("literals").description("Definition of literals that need to be created. (optional)"),
-                        fieldWithPath("literals.*.label").type("String").description("The value of the literal.").optional(),
-                        fieldWithPath("literals.*.data_type").type("String").description("The data type of the literal.").optional(),
-                        fieldWithPath("predicates").description("Definition of predicates that need to be created. (optional)"),
-                        fieldWithPath("predicates.*.label").type("String").description("The label of the predicate.").optional(),
-                        fieldWithPath("predicates.*.description").type("String").description("The description of the predicate.").optional(),
-                        fieldWithPath("lists").description("Definition of lists that need to be created (optional)."),
-                        fieldWithPath("lists.*.label").type("String").description("The label of the list.").optional(),
-                        fieldWithPath("lists.*.elements").type("Array").description("The IDs of the elements of the list.").optional(),
-                        fieldWithPath("classes").description("Definition of classes that need to be created. (optional)"),
-                        fieldWithPath("classes.*.label").type("String").description("The label of the class.").optional(),
-                        fieldWithPath("classes.*.uri").type("String").description("The uri of the class.").optional(),
-                        fieldWithPath("row").description("The table row. It must have the same length as the table header"),
-                        fieldWithPath("row.label").description("The label of the row. (optional)").optional(),
-                        subsectionWithPath("row.data[]").description("The ordered list of values (thing ids, temporary ids or `null`) of the row.").optional(),
-                    )
+            .andDocument {
+                summary("Creating table rows")
+                description(
+                    """
+                    A `POST` request creates a new table row with the given parameters.
+                    The response will be `201 Created` when successful.
+                    The updated table (object) can be retrieved by following the URI in the `Location` header field.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the table."),
+                    parameterWithName("index").description("The insertion index the of the row. If not specified, the row will be appended at the end of the table. (optional)").optional(),
+                )
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the updated table can be fetched from."),
+                )
+                requestFields<TableRowRequest>(
+                    fieldWithPath("resources").description("A map of temporary ids to resource definitions for resources that need to be created. (optional)").optional(),
+                    fieldWithPath("resources.*").type("Object").description("Defines a single resource that needs to be created in the process.").optional(),
+                    fieldWithPath("resources.*.label").type("String").description("The label of the resource.").optional(),
+                    fieldWithPath("resources.*.classes").type("Array").description("The list of classes of the resource.").optional(),
+                    fieldWithPath("literals").description("A map of temporary ids to literal definitions for literals that need to be created. (optional)").optional(),
+                    fieldWithPath("literals.*").type("Object").description("Defines a single literal that needs to be created in the process.").optional(),
+                    fieldWithPath("literals.*.label").type("String").description("The value of the literal.").optional(),
+                    fieldWithPath("literals.*.data_type").type("String").description("The data type of the literal.").optional(),
+                    fieldWithPath("predicates").description("A map of temporary ids to predicate definitions for predicates that need to be created. (optional)").optional(),
+                    fieldWithPath("predicates.*").type("Object").description("Defines a single predicate that needs to be created in the process.").optional(),
+                    fieldWithPath("predicates.*.label").type("String").description("The label of the predicate.").optional(),
+                    fieldWithPath("predicates.*.description").type("String").description("The description of the predicate.").optional(),
+                    fieldWithPath("lists").description("A map of temporary ids to list definitions for lists that need to be created (optional).").optional(),
+                    fieldWithPath("lists.*").type("Object").description("Defines a single list that needs to be created in the process.").optional(),
+                    fieldWithPath("lists.*.label").type("String").description("The label of the list.").optional(),
+                    fieldWithPath("lists.*.elements").type("Array").description("The IDs of the elements of the list.").optional(),
+                    fieldWithPath("classes").description("A map of temporary ids to class definitions for classes that need to be created. (optional)").optional(),
+                    fieldWithPath("classes.*").type("Object").description("Defines a single class that needs to be created in the process.").optional(),
+                    fieldWithPath("classes.*.label").type("String").description("The label of the class.").optional(),
+                    fieldWithPath("classes.*.uri").type("String").description("The uri of the class.").optional(),
+                    fieldWithPath("row").description("The table row. It must have the same length as the table header"),
+                    fieldWithPath("row.label").description("The label of the row. (optional)").optional(),
+                    fieldWithPath("row.data[]").description("The ordered list of values (thing ids, temporary ids or `null`) of the row.").optional(),
+                )
+                throws(
+                    TableNotFound::class,
+                    TableNotModifiable::class,
+                    InvalidTableRowIndex::class,
+                    InvalidTempId::class,
+                    DuplicateTempIds::class,
+                    MissingTableRows::class,
+                    MissingTableHeaderValue::class,
+                    TooManyTableRowValues::class,
+                    MissingTableRowValues::class,
+                    InvalidLabel::class,
+                    ThingNotDefined::class,
+                    ThingNotFound::class,
+                    ReservedClass::class,
+                    ThingIsNotAClass::class,
+                    InvalidLiteralLabel::class,
+                    InvalidLiteralDatatype::class,
+                    URINotAbsolute::class,
+                    URIAlreadyInUse::class,
+                    TableHeaderValueMustBeLiteral::class,
+                )
+            }
 
         verify(exactly = 1) { tableService.createTableRow(withArg { it.rowIndex shouldBe index }) }
     }
@@ -410,7 +523,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
     @Test
     @TestWithMockUser
     @DisplayName("Given a table row update request, when service succeeds, it updates the table row")
-    fun updateTableRow() {
+    fun updateRow() {
         val id = ThingId("R123")
         val index = 5
         every { tableService.updateTableRow(any()) } just runs
@@ -422,38 +535,69 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
             .perform()
             .andExpect(status().isNoContent)
             .andExpect(header().string("Location", endsWith("/api/tables/$id")))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the table."),
-                        parameterWithName("index").description("The index of the row."),
-                    ),
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the updated table can be fetched from.")
-                    ),
-                    requestFields(
-                        fieldWithPath("resources").description("Definition of resources that need to be created. (optional)"),
-                        fieldWithPath("resources.*.label").type("String").description("The label of the resource."),
-                        fieldWithPath("resources.*.classes").type("Array").description("The list of classes of the resource."),
-                        fieldWithPath("literals").description("Definition of literals that need to be created. (optional)"),
-                        fieldWithPath("literals.*.label").type("String").description("The value of the literal.").optional(),
-                        fieldWithPath("literals.*.data_type").type("String").description("The data type of the literal.").optional(),
-                        fieldWithPath("predicates").description("Definition of predicates that need to be created. (optional)"),
-                        fieldWithPath("predicates.*.label").type("String").description("The label of the predicate.").optional(),
-                        fieldWithPath("predicates.*.description").type("String").description("The description of the predicate.").optional(),
-                        fieldWithPath("lists").description("Definition of lists that need to be created (optional)."),
-                        fieldWithPath("lists.*.label").type("String").description("The label of the list.").optional(),
-                        fieldWithPath("lists.*.elements").type("Array").description("The IDs of the elements of the list.").optional(),
-                        fieldWithPath("classes").description("Definition of classes that need to be created. (optional)"),
-                        fieldWithPath("classes.*.label").type("String").description("The label of the class.").optional(),
-                        fieldWithPath("classes.*.uri").type("String").description("The uri of the class.").optional(),
-                        fieldWithPath("row").description("The table row. It must have the same length as the table header."),
-                        fieldWithPath("row.label").description("The label of the row. (optional)").optional(),
-                        subsectionWithPath("row.data[]").description("The ordered list of values (thing ids, temporary ids or `null`) of the row.").optional(),
-                    )
+            .andDocument {
+                summary("Updating table rows")
+                description(
+                    """
+                    A `PUT` request updates an existing row of a table with the given parameters.
+                    The response will be `204 No Content` when successful.
+                    The updated table (object) can be retrieved by following the URI in the `Location` header field.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the table."),
+                    parameterWithName("index").description("The index of the row."),
+                )
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the updated table can be fetched from."),
+                )
+                requestFields<TableRowRequest>(
+                    fieldWithPath("resources").description("A map of temporary ids to resource definitions for resources that need to be created. (optional)").optional(),
+                    fieldWithPath("resources.*").type("Object").description("Defines a single resource that needs to be created in the process.").optional(),
+                    fieldWithPath("resources.*.label").type("String").description("The label of the resource.").optional(),
+                    fieldWithPath("resources.*.classes").type("Array").description("The list of classes of the resource.").optional(),
+                    fieldWithPath("literals").description("A map of temporary ids to literal definitions for literals that need to be created. (optional)").optional(),
+                    fieldWithPath("literals.*").type("Object").description("Defines a single literal that needs to be created in the process.").optional(),
+                    fieldWithPath("literals.*.label").type("String").description("The value of the literal.").optional(),
+                    fieldWithPath("literals.*.data_type").type("String").description("The data type of the literal.").optional(),
+                    fieldWithPath("predicates").description("A map of temporary ids to predicate definitions for predicates that need to be created. (optional)").optional(),
+                    fieldWithPath("predicates.*").type("Object").description("Defines a single predicate that needs to be created in the process.").optional(),
+                    fieldWithPath("predicates.*.label").type("String").description("The label of the predicate.").optional(),
+                    fieldWithPath("predicates.*.description").type("String").description("The description of the predicate.").optional(),
+                    fieldWithPath("lists").description("A map of temporary ids to list definitions for lists that need to be created (optional).").optional(),
+                    fieldWithPath("lists.*").type("Object").description("Defines a single list that needs to be created in the process.").optional(),
+                    fieldWithPath("lists.*.label").type("String").description("The label of the list.").optional(),
+                    fieldWithPath("lists.*.elements").type("Array").description("The IDs of the elements of the list.").optional(),
+                    fieldWithPath("classes").description("A map of temporary ids to class definitions for classes that need to be created. (optional)").optional(),
+                    fieldWithPath("classes.*").type("Object").description("Defines a single class that needs to be created in the process.").optional(),
+                    fieldWithPath("classes.*.label").type("String").description("The label of the class.").optional(),
+                    fieldWithPath("classes.*.uri").type("String").description("The uri of the class.").optional(),
+                    fieldWithPath("row").description("The table row. It must have the same length as the table header"),
+                    fieldWithPath("row.label").description("The label of the row. (optional)").optional(),
+                    fieldWithPath("row.data[]").description("The ordered list of values (thing ids, temporary ids or `null`) of the row.").optional(),
+                )
+                throws(
+                    TableNotFound::class,
+                    TableNotModifiable::class,
+                    TableRowNotFound::class,
+                    InvalidTempId::class,
+                    DuplicateTempIds::class,
+                    MissingTableRows::class,
+                    MissingTableHeaderValue::class,
+                    TooManyTableRowValues::class,
+                    MissingTableRowValues::class,
+                    InvalidLabel::class,
+                    ThingNotDefined::class,
+                    ThingNotFound::class,
+                    ReservedClass::class,
+                    ThingIsNotAClass::class,
+                    InvalidLiteralLabel::class,
+                    InvalidLiteralDatatype::class,
+                    URINotAbsolute::class,
+                    URIAlreadyInUse::class,
+                    TableHeaderValueMustBeLiteral::class,
+                )
+            }
 
         verify(exactly = 1) { tableService.updateTableRow(withArg { it.rowIndex shouldBe index }) }
     }
@@ -461,7 +605,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
     @Test
     @TestWithMockUser
     @DisplayName("Given a table row delete request, when service succeeds, it deletes the table row")
-    fun deleteTableRow() {
+    fun deleteRow() {
         val id = ThingId("R123")
         val index = 5
         every { tableService.deleteTableRow(any()) } just runs
@@ -472,18 +616,36 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
             .perform()
             .andExpect(status().isNoContent)
             .andExpect(header().string("Location", endsWith("/api/tables/$id")))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the table."),
-                        parameterWithName("index").description("The index of the row."),
-                    ),
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the updated table can be fetched from.")
-                    ),
+            .andDocument {
+                summary("Deleting table rows")
+                description(
+                    """
+                    A `DELETE` request deletes an existing row of a table.
+                    The response will be `204 No Content` when successful.
+                    The updated table (object) can be retrieved by following the URI in the `Location` header field.
+                    
+                    [NOTE]
+                    ====
+                    1. The table header (first row) cannot be deleted.
+                    2. There must at least be two rows left (including header) after deletion.
+                    ====
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the table."),
+                    parameterWithName("index").description("The index of the row."),
+                )
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the updated table can be fetched from."),
+                )
+                throws(
+                    TableNotFound::class,
+                    TableNotModifiable::class,
+                    TooFewTableRows::class,
+                    CannotDeleteTableHeader::class,
+                    TableRowNotFound::class,
+                )
+            }
 
         verify(exactly = 1) { tableService.deleteTableRow(withArg { it.rowIndex shouldBe index }) }
     }
@@ -491,7 +653,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
     @Test
     @TestWithMockUser
     @DisplayName("Given a table column create request, when service succeeds, it creates the table column")
-    fun createTableColumn() {
+    fun createColumn() {
         val id = ThingId("R123")
         every { tableService.createTableColumn(any()) } returns ThingId("R456")
 
@@ -509,7 +671,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
     @Test
     @TestWithMockUser
     @DisplayName("Given a table column create request, when service succeeds, it creates the table column at the specified index")
-    fun createTableColumnAtIndex() {
+    fun createColumnAtIndex() {
         val id = ThingId("R123")
         val index = 5
         every { tableService.createTableColumn(any()) } returns ThingId("R456")
@@ -521,36 +683,69 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
             .perform()
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("/api/tables/$id")))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the table."),
-                        parameterWithName("index").description("The insertion index the of the column. If not specified, the column will be appended at the end of the table. (optional)"),
-                    ),
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the updated table can be fetched from.")
-                    ),
-                    requestFields(
-                        fieldWithPath("resources").description("Definition of resources that need to be created. (optional)"),
-                        fieldWithPath("resources.*.label").type("String").description("The label of the resource.").optional(),
-                        fieldWithPath("resources.*.classes").type("Array").description("The list of classes of the resource.").optional(),
-                        fieldWithPath("literals").description("Definition of literals that need to be created. (optional)"),
-                        fieldWithPath("literals.*.label").type("String").description("The value of the literal.").optional(),
-                        fieldWithPath("literals.*.data_type").type("String").description("The data type of the literal.").optional(),
-                        fieldWithPath("predicates").description("Definition of predicates that need to be created. (optional)"),
-                        fieldWithPath("predicates.*.label").type("String").description("The label of the predicate.").optional(),
-                        fieldWithPath("predicates.*.description").type("String").description("The description of the predicate.").optional(),
-                        fieldWithPath("lists").description("Definition of lists that need to be created (optional)."),
-                        fieldWithPath("lists.*.label").type("String").description("The label of the list.").optional(),
-                        fieldWithPath("lists.*.elements").type("Array").description("The IDs of the elements of the list.").optional(),
-                        fieldWithPath("classes").description("Definition of classes that need to be created. (optional)"),
-                        fieldWithPath("classes.*.label").type("String").description("The label of the class.").optional(),
-                        fieldWithPath("classes.*.uri").type("String").description("The uri of the class.").optional(),
-                        fieldWithPath("column[]").description("The ordered list of column values (thing ids, temporary ids or `null`). The first values always represents the header of the table and must be a string literal."),
-                    )
+            .andDocument {
+                summary("Creating table columns")
+                description(
+                    """
+                    A `POST` request creates a new table column with the given parameters.
+                    The response will be `201 Created` when successful.
+                    The updated table (object) can be retrieved by following the URI in the `Location` header field.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the table."),
+                    parameterWithName("index").description("The insertion index the of the column. If not specified, the column will be appended at the end of the table. (optional)").optional(),
+                )
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the updated table can be fetched from."),
+                )
+                requestFields<TableColumnRequest>(
+                    fieldWithPath("resources").description("A map of temporary ids to resource definitions for resources that need to be created. (optional)").optional(),
+                    fieldWithPath("resources.*").type("Object").description("Defines a single resource that needs to be created in the process.").optional(),
+                    fieldWithPath("resources.*.label").type("String").description("The label of the resource.").optional(),
+                    fieldWithPath("resources.*.classes").type("Array").description("The list of classes of the resource.").optional(),
+                    fieldWithPath("literals").description("A map of temporary ids to literal definitions for literals that need to be created. (optional)").optional(),
+                    fieldWithPath("literals.*").type("Object").description("Defines a single literal that needs to be created in the process.").optional(),
+                    fieldWithPath("literals.*.label").type("String").description("The value of the literal.").optional(),
+                    fieldWithPath("literals.*.data_type").type("String").description("The data type of the literal.").optional(),
+                    fieldWithPath("predicates").description("A map of temporary ids to predicate definitions for predicates that need to be created. (optional)").optional(),
+                    fieldWithPath("predicates.*").type("Object").description("Defines a single predicate that needs to be created in the process.").optional(),
+                    fieldWithPath("predicates.*.label").type("String").description("The label of the predicate.").optional(),
+                    fieldWithPath("predicates.*.description").type("String").description("The description of the predicate.").optional(),
+                    fieldWithPath("lists").description("A map of temporary ids to list definitions for lists that need to be created (optional).").optional(),
+                    fieldWithPath("lists.*").type("Object").description("Defines a single list that needs to be created in the process.").optional(),
+                    fieldWithPath("lists.*.label").type("String").description("The label of the list.").optional(),
+                    fieldWithPath("lists.*.elements").type("Array").description("The IDs of the elements of the list.").optional(),
+                    fieldWithPath("classes").description("A map of temporary ids to class definitions for classes that need to be created. (optional)").optional(),
+                    fieldWithPath("classes.*").type("Object").description("Defines a single class that needs to be created in the process.").optional(),
+                    fieldWithPath("classes.*.label").type("String").description("The label of the class.").optional(),
+                    fieldWithPath("classes.*.uri").type("String").description("The uri of the class.").optional(),
+                    fieldWithPath("column[]").description("The ordered list of column values (thing ids, temporary ids or `null`). The first value always represents the header of the table and must be a string literal."),
+                )
+                throws(
+                    TableNotFound::class,
+                    TableNotModifiable::class,
+                    InvalidTableColumnIndex::class,
+                    MissingTableColumnValues::class,
+                    TooManyTableColumnValues::class,
+                    InvalidTempId::class,
+                    DuplicateTempIds::class,
+                    MissingTableRows::class,
+                    MissingTableHeaderValue::class,
+                    TooManyTableRowValues::class,
+                    MissingTableRowValues::class,
+                    InvalidLabel::class,
+                    ThingNotDefined::class,
+                    ThingNotFound::class,
+                    ReservedClass::class,
+                    ThingIsNotAClass::class,
+                    InvalidLiteralLabel::class,
+                    InvalidLiteralDatatype::class,
+                    URINotAbsolute::class,
+                    URIAlreadyInUse::class,
+                    TableHeaderValueMustBeLiteral::class,
+                )
+            }
 
         verify(exactly = 1) { tableService.createTableColumn(withArg { it.columnIndex shouldBe index }) }
     }
@@ -558,7 +753,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
     @Test
     @TestWithMockUser
     @DisplayName("Given a table column update request, when service succeeds, it updates the table column")
-    fun updateTableColumn() {
+    fun updateColumn() {
         val id = ThingId("R123")
         val index = 5
         every { tableService.updateTableColumn(any()) } just runs
@@ -570,36 +765,67 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
             .perform()
             .andExpect(status().isNoContent)
             .andExpect(header().string("Location", endsWith("/api/tables/$id")))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the table."),
-                        parameterWithName("index").description("The index of the column."),
-                    ),
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the updated table can be fetched from.")
-                    ),
-                    requestFields(
-                        fieldWithPath("resources").description("Definition of resources that need to be created. (optional)"),
-                        fieldWithPath("resources.*.label").type("String").description("The label of the resource.").optional(),
-                        fieldWithPath("resources.*.classes").type("Array").description("The list of classes of the resource.").optional(),
-                        fieldWithPath("literals").description("Definition of literals that need to be created. (optional)"),
-                        fieldWithPath("literals.*.label").type("String").description("The value of the literal.").optional(),
-                        fieldWithPath("literals.*.data_type").type("String").description("The data type of the literal.").optional(),
-                        fieldWithPath("predicates").description("Definition of predicates that need to be created. (optional)"),
-                        fieldWithPath("predicates.*.label").type("String").description("The label of the predicate.").optional(),
-                        fieldWithPath("predicates.*.description").type("String").description("The description of the predicate.").optional(),
-                        fieldWithPath("lists").description("Definition of lists that need to be created (optional)."),
-                        fieldWithPath("lists.*.label").type("String").description("The label of the list.").optional(),
-                        fieldWithPath("lists.*.elements").type("Array").description("The IDs of the elements of the list.").optional(),
-                        fieldWithPath("classes").description("Definition of classes that need to be created. (optional)"),
-                        fieldWithPath("classes.*.label").type("String").description("The label of the class.").optional(),
-                        fieldWithPath("classes.*.uri").type("String").description("The uri of the class.").optional(),
-                        fieldWithPath("column[]").description("The ordered list of column values (thing ids, temporary ids or `null`). The first values always represents the header of the table and must be a string literal."),
-                    )
+            .andDocument {
+                summary("Updating table columns")
+                description(
+                    """
+                    A `PUT` request updates an existing column of a table with the given parameters.
+                    The response will be `204 No Content` when successful.
+                    The updated table (object) can be retrieved by following the URI in the `Location` header field.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the table."),
+                    parameterWithName("index").description("The index of the column."),
+                )
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the updated table can be fetched from."),
+                )
+                requestFields<TableColumnRequest>(
+                    fieldWithPath("resources").description("A map of temporary ids to resource definitions for resources that need to be created. (optional)").optional(),
+                    fieldWithPath("resources.*").type("Object").description("Defines a single resource that needs to be created in the process.").optional(),
+                    fieldWithPath("resources.*.label").type("String").description("The label of the resource.").optional(),
+                    fieldWithPath("resources.*.classes").type("Array").description("The list of classes of the resource.").optional(),
+                    fieldWithPath("literals").description("A map of temporary ids to literal definitions for literals that need to be created. (optional)").optional(),
+                    fieldWithPath("literals.*").type("Object").description("Defines a single literal that needs to be created in the process.").optional(),
+                    fieldWithPath("literals.*.label").type("String").description("The value of the literal.").optional(),
+                    fieldWithPath("literals.*.data_type").type("String").description("The data type of the literal.").optional(),
+                    fieldWithPath("predicates").description("A map of temporary ids to predicate definitions for predicates that need to be created. (optional)").optional(),
+                    fieldWithPath("predicates.*").type("Object").description("Defines a single predicate that needs to be created in the process.").optional(),
+                    fieldWithPath("predicates.*.label").type("String").description("The label of the predicate.").optional(),
+                    fieldWithPath("predicates.*.description").type("String").description("The description of the predicate.").optional(),
+                    fieldWithPath("lists").description("A map of temporary ids to list definitions for lists that need to be created (optional).").optional(),
+                    fieldWithPath("lists.*").type("Object").description("Defines a single list that needs to be created in the process.").optional(),
+                    fieldWithPath("lists.*.label").type("String").description("The label of the list.").optional(),
+                    fieldWithPath("lists.*.elements").type("Array").description("The IDs of the elements of the list.").optional(),
+                    fieldWithPath("classes").description("A map of temporary ids to class definitions for classes that need to be created. (optional)").optional(),
+                    fieldWithPath("classes.*").type("Object").description("Defines a single class that needs to be created in the process.").optional(),
+                    fieldWithPath("classes.*.label").type("String").description("The label of the class.").optional(),
+                    fieldWithPath("classes.*.uri").type("String").description("The uri of the class.").optional(),
+                    fieldWithPath("column[]").description("The ordered list of column values (thing ids, temporary ids or `null`). The first value always represents the header of the table and must be a string literal."),
+                )
+                throws(
+                    TableNotFound::class,
+                    TableNotModifiable::class,
+                    TableColumnNotFound::class,
+                    InvalidTempId::class,
+                    DuplicateTempIds::class,
+                    MissingTableRows::class,
+                    MissingTableHeaderValue::class,
+                    TooManyTableRowValues::class,
+                    MissingTableRowValues::class,
+                    InvalidLabel::class,
+                    ThingNotDefined::class,
+                    ThingNotFound::class,
+                    ReservedClass::class,
+                    ThingIsNotAClass::class,
+                    InvalidLiteralLabel::class,
+                    InvalidLiteralDatatype::class,
+                    URINotAbsolute::class,
+                    URIAlreadyInUse::class,
+                    TableHeaderValueMustBeLiteral::class,
+                )
+            }
 
         verify(exactly = 1) { tableService.updateTableColumn(withArg { it.columnIndex shouldBe index }) }
     }
@@ -607,7 +833,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
     @Test
     @TestWithMockUser
     @DisplayName("Given a table column delete request, when service succeeds, it deletes the table column")
-    fun deleteTableColumn() {
+    fun deleteColumn() {
         val id = ThingId("R123")
         val index = 5
         every { tableService.deleteTableColumn(any()) } just runs
@@ -618,18 +844,29 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
             .perform()
             .andExpect(status().isNoContent)
             .andExpect(header().string("Location", endsWith("/api/tables/$id")))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the table."),
-                        parameterWithName("index").description("The index of the column."),
-                    ),
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the updated table can be fetched from.")
-                    ),
+            .andDocument {
+                summary("Deleting table columns")
+                description(
+                    """
+                    A `DELETE` request deletes an existing column of a table.
+                    The response will be `204 No Content` when successful.
+                    The updated table (object) can be retrieved by following the URI in the `Location` header field.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the table."),
+                    parameterWithName("index").description("The index of the column."),
+                )
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the updated table can be fetched from."),
+                )
+                throws(
+                    TableNotFound::class,
+                    TableNotModifiable::class,
+                    TooFewTableColumns::class,
+                    TableColumnNotFound::class,
+                )
+            }
 
         verify(exactly = 1) { tableService.deleteTableColumn(withArg { it.columnIndex shouldBe index }) }
     }
@@ -637,7 +874,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
     @Test
     @TestWithMockUser
     @DisplayName("Given a table cell update request, when service succeeds, it updates the table column")
-    fun updateTableCell() {
+    fun updateCell() {
         val id = ThingId("R123")
         val rowIndex = 5
         val columnIndex = 4
@@ -650,22 +887,36 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
             .perform()
             .andExpect(status().isNoContent)
             .andExpect(header().string("Location", endsWith("/api/tables/$id")))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the table."),
-                        parameterWithName("row").description("The index of the row."),
-                        parameterWithName("column").description("The index of the column."),
-                    ),
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the updated table can be fetched from.")
-                    ),
-                    requestFields(
-                        fieldWithPath("id").description("The id of the thing that should replace the current value of the cell. If `null`, the current value will be removed."),
-                    )
+            .andDocument {
+                summary("Updating table cells")
+                description(
+                    """
+                    A `PUT` request updates an existing cell of a table with the given parameters.
+                    The response will be `204 No Content` when successful.
+                    The updated table (object) can be retrieved by following the URI in the `Location` header field.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the table."),
+                    parameterWithName("row").description("The index of the row."),
+                    parameterWithName("column").description("The index of the column."),
+                )
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the updated table can be fetched from."),
+                )
+                requestFields<UpdateTableCellRequest>(
+                    fieldWithPath("id").description("The id of the thing that should replace the current value of the cell. If `null`, the current value will be removed."),
+                )
+                throws(
+                    TableNotFound::class,
+                    TableNotModifiable::class,
+                    TableColumnNotFound::class,
+                    TableRowNotFound::class,
+                    ThingNotFound::class,
+                    TableHeaderValueMustBeLiteral::class,
+                    CannotDeleteTableHeader::class,
+                )
+            }
 
         verify(exactly = 1) {
             tableService.updateTableCell(
@@ -820,5 +1071,5 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
         )
 
     private fun updateTableCellRequest() =
-        TableController.UpdateTableCellRequest(ThingId("R5646"))
+        UpdateTableCellRequest(ThingId("R5646"))
 }

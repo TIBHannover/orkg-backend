@@ -18,19 +18,25 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ServiceUnavailable
 import org.orkg.common.exceptions.UnknownSortingProperty
-import org.orkg.common.json.CommonJacksonModule
 import org.orkg.common.testing.fixtures.fixedClock
+import org.orkg.common.thingIdConstraint
+import org.orkg.common.uuidConstraint
+import org.orkg.community.domain.ContributorNotFound
+import org.orkg.community.domain.ObservatoryNotFound
+import org.orkg.community.domain.OrganizationNotFound
 import org.orkg.contenttypes.adapter.input.rest.PaperController.CreatePaperRequest
 import org.orkg.contenttypes.adapter.input.rest.PaperController.CreatePaperRequest.ContributionRequestPart
 import org.orkg.contenttypes.adapter.input.rest.PaperController.CreatePaperRequest.ContributionRequestPart.StatementObjectRequest
 import org.orkg.contenttypes.adapter.input.rest.PaperController.CreatePaperRequest.PaperContentsRequest
+import org.orkg.contenttypes.adapter.input.rest.PaperController.PublishPaperRequest
 import org.orkg.contenttypes.adapter.input.rest.PaperController.UpdatePaperRequest
-import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
 import org.orkg.contenttypes.domain.AmbiguousAuthor
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.AuthorNotFound
 import org.orkg.contenttypes.domain.DuplicateTempIds
 import org.orkg.contenttypes.domain.EmptyContribution
+import org.orkg.contenttypes.domain.InvalidDOI
+import org.orkg.contenttypes.domain.InvalidMonth
 import org.orkg.contenttypes.domain.InvalidStatementSubject
 import org.orkg.contenttypes.domain.InvalidTempId
 import org.orkg.contenttypes.domain.OnlyOneObservatoryAllowed
@@ -38,6 +44,9 @@ import org.orkg.contenttypes.domain.OnlyOneOrganizationAllowed
 import org.orkg.contenttypes.domain.OnlyOneResearchFieldAllowed
 import org.orkg.contenttypes.domain.PaperAlreadyExists
 import org.orkg.contenttypes.domain.PaperNotFound
+import org.orkg.contenttypes.domain.PaperNotModifiable
+import org.orkg.contenttypes.domain.ResearchFieldNotFound
+import org.orkg.contenttypes.domain.SustainableDevelopmentGoalNotFound
 import org.orkg.contenttypes.domain.ThingIsNotAClass
 import org.orkg.contenttypes.domain.ThingIsNotAPredicate
 import org.orkg.contenttypes.domain.ThingNotDefined
@@ -45,12 +54,21 @@ import org.orkg.contenttypes.domain.testing.fixtures.createPaper
 import org.orkg.contenttypes.input.CreatePaperUseCase
 import org.orkg.contenttypes.input.PaperUseCases
 import org.orkg.contenttypes.input.testing.fixtures.authorListFields
+import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerUnitTestConfiguration
 import org.orkg.contenttypes.input.testing.fixtures.paperIdentifierFields
-import org.orkg.contenttypes.input.testing.fixtures.publicationInfoFields
-import org.orkg.contenttypes.input.testing.fixtures.sustainableDevelopmentGoalsFields
+import org.orkg.contenttypes.input.testing.fixtures.paperResponseFields
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
+import org.orkg.graph.domain.InvalidLabel
+import org.orkg.graph.domain.InvalidLiteralDatatype
+import org.orkg.graph.domain.InvalidLiteralLabel
+import org.orkg.graph.domain.NeitherOwnerNorCurator
+import org.orkg.graph.domain.NotACurator
+import org.orkg.graph.domain.ReservedClass
+import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.domain.ThingNotFound
+import org.orkg.graph.domain.URIAlreadyInUse
+import org.orkg.graph.domain.URINotAbsolute
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
@@ -60,28 +78,21 @@ import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectPaper
 import org.orkg.testing.annotations.TestWithMockUser
-import org.orkg.testing.configuration.ExceptionTestConfiguration
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
-import org.orkg.testing.spring.restdocs.timestampFieldWithPath
+import org.orkg.testing.spring.restdocs.arrayItemsType
+import org.orkg.testing.spring.restdocs.constraints
+import org.orkg.testing.spring.restdocs.references
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.data.domain.PageImpl
-import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
-import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.pathParameters
-import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
@@ -89,16 +100,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Optional
+import java.util.UUID
 
-@ContextConfiguration(
-    classes = [
-        PaperController::class,
-        ExceptionTestConfiguration::class,
-        CommonJacksonModule::class,
-        ContentTypeJacksonModule::class,
-        FixedClockConfig::class
-    ]
-)
+@ContextConfiguration(classes = [PaperController::class, ContentTypeControllerUnitTestConfiguration::class])
 @WebMvcTest(controllers = [PaperController::class])
 internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
     @MockkBean
@@ -106,7 +110,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
 
     @Test
     @DisplayName("Given a paper, when it is fetched by id and service succeeds, then status is 200 OK and paper is returned")
-    fun getSingle() {
+    fun findById() {
         val paper = createPaper()
         every { paperService.findById(paper.id) } returns Optional.of(paper)
 
@@ -116,44 +120,19 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .perform()
             .andExpect(status().isOk)
             .andExpectPaper()
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the paper to retrieve.")
-                    ),
-                    responseFields(
-                        // The order here determines the order in the generated table. More relevant items should be up.
-                        fieldWithPath("id").description("The identifier of the paper."),
-                        fieldWithPath("title").description("The title of the paper."),
-                        fieldWithPath("research_fields").description("The list of research fields the paper is assigned to."),
-                        fieldWithPath("research_fields[].id").description("The id of the research field."),
-                        fieldWithPath("research_fields[].label").description("The label of the research field."),
-                        fieldWithPath("contributions").description("The list of contributions of the paper."),
-                        fieldWithPath("contributions[].id").description("The ID of the contribution."),
-                        fieldWithPath("contributions[].label").description("The label of the contribution."),
-                        fieldWithPath("organizations[]").description("The list of IDs of the organizations the paper belongs to."),
-                        fieldWithPath("observatories[]").description("The list of IDs of the observatories the paper belongs to."),
-                        fieldWithPath("mentionings[]").description("Set of important resources in the paper."),
-                        fieldWithPath("mentionings[].id").description("The ID of the mentioned resource."),
-                        fieldWithPath("mentionings[].label").description("The label of the mentioned resource."),
-                        fieldWithPath("mentionings[].classes").description("The class ids of the mentioned resource."),
-                        fieldWithPath("mentionings[]._class").description("Indicates which type of entity was returned. Always has the value `resource_ref`."),
-                        fieldWithPath("extraction_method").description("""The method used to extract the paper resource. Can be one of $allowedExtractionMethodValues."""),
-                        timestampFieldWithPath("created_at", "the paper resource was created"),
-                        // TODO: Add links to documentation of special user UUIDs.
-                        fieldWithPath("created_by").description("The UUID of the user or service who created this paper."),
-                        fieldWithPath("verified").description("Determines if the paper was verified by a curator."),
-                        fieldWithPath("visibility").description("""Visibility of the paper. Can be one of $allowedVisibilityValues."""),
-                        fieldWithPath("modifiable").description("Whether this paper can be modified."),
-                        fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this paper.").optional(),
-                        fieldWithPath("_class").description("Indicates which type of entity was returned. Always has the value `paper`."),
-                    ).and(authorListFields("paper"))
-                        .and(publicationInfoFields("paper"))
-                        .and(sustainableDevelopmentGoalsFields("paper"))
-                        .and(paperIdentifierFields())
+            .andDocument {
+                summary("Fetching papers")
+                description(
+                    """
+                    A `GET` request provides information about a paper.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the paper to retrieve.")
+                )
+                responseFields<PaperRepresentation>(paperResponseFields())
+                throws(PaperNotFound::class)
+            }
 
         verify(exactly = 1) { paperService.findById(paper.id) }
     }
@@ -196,7 +175,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
 
     @Test
     @DisplayName("Given several papers, when filtering by several parameters, then status is 200 OK and papers are returned")
-    fun getPagedWithParameters() {
+    fun findAll() {
         every {
             paperService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         } returns pageOf(createPaper())
@@ -243,30 +222,36 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .andExpect(status().isOk)
             .andExpectPage()
             .andExpectPaper("$.content[*]")
-            .andDo(
-                documentationHandler.document(
-                    queryParameters(
-                        parameterWithName("title").description("A search term that must be contained in the title of the paper. (optional)"),
-                        parameterWithName("exact").description("Whether title matching is exact or fuzzy (optional, default: false)"),
-                        parameterWithName("doi").description("Filter for the DOI of the paper. (optional)"),
-                        parameterWithName("doi_prefix").description("Filter for the DOI prefix of the DOI of the paper. (optional)"),
-                        parameterWithName("visibility").description("""Optional filter for visibility. Either of $allowedVisibilityFilterValues."""),
-                        parameterWithName("verified").description("Filter for the verified flag of the paper. (optional)"),
-                        parameterWithName("created_by").description("Filter for the UUID of the user or service who created this paper. (optional)"),
-                        parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned paper can have. (optional)"),
-                        parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned paper can have. (optional)"),
-                        parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the paper belongs to. (optional)"),
-                        parameterWithName("organization_id").description("Filter for the UUID of the organization that the paper belongs to. (optional)"),
-                        parameterWithName("research_field").description("Filter for research field id. (optional)"),
-                        parameterWithName("include_subfields").description("Flag for whether subfields are included in the search or not. (optional, default: false)"),
-                        parameterWithName("sdg").description("Filter for the sustainable development goal that the paper belongs to. (optional)"),
-                        parameterWithName("mentionings").description("Filter for resources that are linked to the paper via a mentions statement. (optional)"),
-                        parameterWithName("research_problem").description("Filter for research problem id. (optional)").optional(),
-                        parameterWithName("venue").description("Filter for venue id. (optional)").optional(),
-                    )
+            .andDocument {
+                summary("Listing papers")
+                description(
+                    """
+                    A `GET` request returns a <<sorting-and-pagination,paged>> list of <<papers-fetch,papers>>.
+                    If no paging request parameters are provided, the default values will be used.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                queryParameters(
+                    parameterWithName("title").description("A search term that must be contained in the title of the paper. (optional)").optional(),
+                    parameterWithName("exact").description("Whether title matching is exact or fuzzy (optional, default: false)").optional(),
+                    parameterWithName("doi").description("Filter for the DOI of the paper. (optional)").optional(),
+                    parameterWithName("doi_prefix").description("Filter for the DOI prefix of the DOI of the paper. (optional)").optional(),
+                    parameterWithName("visibility").description("""Optional filter for visibility. Either of $allowedVisibilityFilterValues.""").optional(),
+                    parameterWithName("verified").description("Filter for the verified flag of the paper. (optional)").optional(),
+                    parameterWithName("created_by").description("Filter for the UUID of the user or service who created this paper. (optional)").optional(),
+                    parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned paper can have. (optional)").optional(),
+                    parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned paper can have. (optional)").optional(),
+                    parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the paper belongs to. (optional)").optional(),
+                    parameterWithName("organization_id").description("Filter for the UUID of the organization that the paper belongs to. (optional)").optional(),
+                    parameterWithName("research_field").description("Filter for research field id. (optional)").optional(),
+                    parameterWithName("include_subfields").description("Flag for whether subfields are included in the search or not. (optional, default: false)").optional(),
+                    parameterWithName("sdg").description("Filter for the sustainable development goal that the paper belongs to. (optional)").optional(),
+                    parameterWithName("mentionings").description("Filter for resources that are linked to the paper via a mentions statement. (optional)").optional(),
+                    parameterWithName("research_problem").description("Filter for research problem id. (optional)").optional(),
+                    parameterWithName("venue").description("Filter for venue id. (optional)").optional(),
+                )
+                pagedResponseFields<PaperRepresentation>(paperResponseFields())
+                throws(UnknownSortingProperty::class)
+            }
 
         verify(exactly = 1) {
             paperService.findAll(
@@ -314,23 +299,33 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
 
     @Test
     @DisplayName("Given a paper, when contributors are fetched, then status 200 OK and contributors are returned")
-    fun getContributors() {
+    fun findAllContributorsByPaperId() {
         val id = ThingId("R8186")
         val contributors = listOf(ContributorId("0a56acb7-cd97-4277-9c9b-9b3089bde45f"))
-        every { paperService.findAllContributorsByPaperId(id, any()) } returns PageImpl(contributors, PageRequest.of(0, 5), 1)
+        every { paperService.findAllContributorsByPaperId(id, any()) } returns pageOf(contributors)
 
         documentedGetRequestTo("/api/papers/{id}/contributors", id)
             .perform()
             .andExpect(status().isOk)
             .andExpectPage()
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the paper.")
-                    )
+            .andDocument {
+                summary("Fetching contributors of papers")
+                description(
+                    """
+                    A `GET` request returns a <<sorting-and-pagination,paged>> list of <<contributors,contributor>> ids.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the paper."),
+                )
+                pagedResponseFields<UUID>(
+                    fieldWithPath("content[]")
+                        .references<UUID>()
+                        .constraints(uuidConstraint)
+                        .arrayItemsType("string")
+                )
+                throws(PaperNotFound::class)
+            }
 
         verify(exactly = 1) { paperService.findAllContributorsByPaperId(id, any()) }
     }
@@ -371,21 +366,36 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .perform()
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("api/resources/$paperVersionId")))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the paper to publish.")
-                    ),
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the published paper can be fetched from.")
-                    ),
-                    requestFields(
-                        fieldWithPath("subject").description("The subject of the paper."),
-                        fieldWithPath("description").description("The description of the paper."),
-                    ).and(authorListFields("paper"))
+            .andDocument {
+                summary("Publishing papers")
+                description(
+                    """
+                    A `POST` request publishes an existing paper with the given parameters.
+                    In the process, a new paper version resource is created and linked to the original paper resource.
+                    All contribution statements of the original paper are archived in a separate database.
+                    The response will be `201 Created` when successful.
+                    The paper resource can be retrieved by following the URI in the `Location` header field.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the paper to publish."),
+                )
+                requestFields<PublishPaperRequest>(
+                    fieldWithPath("subject").description("A short title or subject for the paper version."),
+                    fieldWithPath("description").description("A description or abstract of the paper."),
+                    *authorListFields("paper").toTypedArray(),
+                )
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the published paper can be fetched from."),
+                )
+                throws(
+                    PaperNotFound::class,
+                    AuthorNotFound::class,
+                    AmbiguousAuthor::class,
+                    InvalidLabel::class,
+                    ServiceUnavailable::class,
+                )
+            }
 
         verify(exactly = 1) {
             paperService.publish(
@@ -484,47 +494,81 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .perform()
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("/api/papers/$id")))
-            .andDo(
-                documentationHandler.document(
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the newly created paper can be fetched from.")
-                    ),
-                    requestFields(
-                        fieldWithPath("title").description("The title of the paper."),
-                        fieldWithPath("research_fields").description("The list of research fields the paper will be assigned to. Must be exactly one research field."),
-                        fieldWithPath("publication_info").description("The publication info of the paper. (optional)").optional(),
-                        fieldWithPath("publication_info.published_month").description("The month in which the paper was published. (optional)").optional(),
-                        fieldWithPath("publication_info.published_year").description("The year in which the paper was published. (optional)").optional(),
-                        fieldWithPath("publication_info.published_in").description("The venue where the paper was published. (optional)").optional(),
-                        fieldWithPath("publication_info.url").description("The URL to the original paper. (optional)").optional(),
-                        fieldWithPath("sdgs").description("The set of ids of sustainable development goals the paper will be assigned to. (optional)").optional(),
-                        fieldWithPath("mentionings").description("The set of ids of resources that are mentioned in the paper and should be used for extended search. (optional)").optional(),
-                        fieldWithPath("contents").description("Definition of the contents of the paper. (optional)"),
-                        fieldWithPath("contents.resources").description("Definition of resources that need to be created."),
-                        fieldWithPath("contents.resources.*.label").description("The label of the resource."),
-                        fieldWithPath("contents.resources.*.classes").description("The list of classes of the resource."),
-                        fieldWithPath("contents.literals").description("Definition of literals that need to be created."),
-                        fieldWithPath("contents.literals.*.label").description("The value of the literal."),
-                        fieldWithPath("contents.literals.*.data_type").description("The data type of the literal."),
-                        fieldWithPath("contents.predicates").description("Definition of predicates that need to be created."),
-                        fieldWithPath("contents.predicates.*.label").description("The label of the predicate."),
-                        fieldWithPath("contents.predicates.*.description").description("The description of the predicate."),
-                        fieldWithPath("contents.lists").description("Definition of lists that need to be created."),
-                        fieldWithPath("contents.lists.*.label").description("The label of the list."),
-                        fieldWithPath("contents.lists.*.elements").description("The IDs of the elements of the list."),
-                        fieldWithPath("contents.contributions").description("List of definitions of contribution that need to be created."),
-                        fieldWithPath("contents.contributions[].label").description("Label of the contribution."),
-                        fieldWithPath("contents.contributions[].classes").description("The classes of the contribution resource."),
-                        subsectionWithPath("contents.contributions[].statements").description("Recursive map of statements contained within the contribution."),
-                        fieldWithPath("contents.contributions[].statements.*[].id").description("The ID of the object of the statement."),
-                        fieldWithPath("organizations[]").description("The list of IDs of the organizations the paper belongs to. Can be at most one organization id."),
-                        fieldWithPath("observatories[]").description("The list of IDs of the observatories the paper belongs to. Can be at most one observatory id."),
-                        fieldWithPath("extraction_method").description("""The method used to extract the paper resource. Can be one of $allowedExtractionMethodValues.""")
-                    ).and(authorListFields("paper"))
-                        .and(paperIdentifierFields())
+            .andDocument {
+                summary("Creating papers")
+                description(
+                    """
+                    A `POST` request creates a new paper with the provided details.
+                    Upon successful creation, returns `201 Created` with the `Location` header pointing to the newly created paper.
+                    The response body contains the created paper for convenience.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                requestFields<CreatePaperRequest>(
+                    fieldWithPath("title").description("The title of the paper."),
+                    fieldWithPath("research_fields").description("The list of research fields the paper will be assigned to. Must be exactly one research field."),
+                    fieldWithPath("publication_info").description("The publication info of the paper. (optional)").optional(),
+                    fieldWithPath("publication_info.published_month").description("The month in which the paper was published. (optional)").optional(),
+                    fieldWithPath("publication_info.published_year").description("The year in which the paper was published. (optional)").optional(),
+                    fieldWithPath("publication_info.published_in").description("The venue where the paper was published. (optional)").optional(),
+                    fieldWithPath("publication_info.url").description("The URL to the original paper. (optional)").optional(),
+                    fieldWithPath("sdgs").description("The set of ids of sustainable development goals the paper will be assigned to. (optional)").arrayItemsType("String").constraints(thingIdConstraint).optional(),
+                    fieldWithPath("mentionings").description("The set of ids of resources that are mentioned in the paper and should be used for extended search. (optional)").optional(),
+                    fieldWithPath("contents").description("Definition of the contents of the paper. (optional)").optional(),
+                    fieldWithPath("contents.resources").description("A map of temporary ids to resource definitions for resources that need to be created. (optional)").optional(),
+                    fieldWithPath("contents.resources.*.label").description("The label of the resource."),
+                    fieldWithPath("contents.resources.*.classes").description("The list of classes of the resource."),
+                    fieldWithPath("contents.literals").description("A map of temporary ids to literal definitions for literals that need to be created. (optional)").optional(),
+                    fieldWithPath("contents.literals.*.label").description("The value of the literal."),
+                    fieldWithPath("contents.literals.*.data_type").description("The data type of the literal."),
+                    fieldWithPath("contents.predicates").description("A map of temporary ids to predicate definitions for predicates that need to be created. (optional)").optional(),
+                    fieldWithPath("contents.predicates.*.label").description("The label of the predicate."),
+                    fieldWithPath("contents.predicates.*.description").description("The description of the predicate."),
+                    fieldWithPath("contents.lists").description("A map of temporary ids to list definitions for lists that need to be created. (optional)").optional(),
+                    fieldWithPath("contents.lists.*.label").description("The label of the list."),
+                    fieldWithPath("contents.lists.*.elements").description("The IDs of the elements of the list."),
+                    fieldWithPath("contents.contributions").description("List of definitions of contribution that need to be created."),
+                    fieldWithPath("contents.contributions[].label").description("Label of the contribution."),
+                    fieldWithPath("contents.contributions[].classes").description("The classes of the contribution resource."),
+                    fieldWithPath("contents.contributions[].statements").description("A recursive map of predicate id to list of statements contained within the contribution."),
+                    fieldWithPath("contents.contributions[].statements.*").description("A predicate id."),
+                    subsectionWithPath("contents.contributions[].statements.*[]").description("A list of statement object requests."),
+                    fieldWithPath("organizations[]").description("The list of IDs of the organizations the paper belongs to. Can be at most one organization id."),
+                    fieldWithPath("observatories[]").description("The list of IDs of the observatories the paper belongs to. Can be at most one observatory id."),
+                    fieldWithPath("extraction_method").description("""The method used to extract the paper resource. Can be one of $allowedExtractionMethodValues."""),
+                    *authorListFields("paper").toTypedArray(),
+                    *paperIdentifierFields().toTypedArray(),
+                )
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the newly created paper can be fetched from."),
+                )
+                throws(
+                    InvalidTempId::class,
+                    DuplicateTempIds::class,
+                    InvalidMonth::class,
+                    InvalidLabel::class,
+                    PaperAlreadyExists::class,
+                    OnlyOneResearchFieldAllowed::class,
+                    ResearchFieldNotFound::class,
+                    OnlyOneObservatoryAllowed::class,
+                    ObservatoryNotFound::class,
+                    OnlyOneOrganizationAllowed::class,
+                    OrganizationNotFound::class,
+                    SustainableDevelopmentGoalNotFound::class,
+                    ResourceNotFound::class,
+                    ThingNotDefined::class,
+                    ThingNotFound::class,
+                    ReservedClass::class,
+                    ThingIsNotAClass::class,
+                    InvalidLabel::class,
+                    InvalidLiteralLabel::class,
+                    InvalidLiteralDatatype::class,
+                    URINotAbsolute::class,
+                    URIAlreadyInUse::class,
+                    EmptyContribution::class,
+                    ThingIsNotAPredicate::class,
+                    InvalidStatementSubject::class,
+                )
+            }
 
         verify(exactly = 1) { paperService.create(any<CreatePaperUseCase.CreateCommand>()) }
     }
@@ -804,34 +848,70 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .perform()
             .andExpect(status().isNoContent)
             .andExpect(header().string("Location", endsWith("/api/papers/$id")))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the paper.")
-                    ),
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the updated paper can be fetched from.")
-                    ),
-                    requestFields(
-                        fieldWithPath("title").description("The title of the paper. (optional)"),
-                        fieldWithPath("research_fields").description("The list of research fields the paper will be assigned to. (optional)"),
-                        fieldWithPath("publication_info").description("The publication info of the paper. (optional)").optional(),
-                        fieldWithPath("publication_info.published_month").description("The month in which the paper was published. (optional)").optional(),
-                        fieldWithPath("publication_info.published_year").description("The year in which the paper was published. (optional)").optional(),
-                        fieldWithPath("publication_info.published_in").description("The venue where the paper was published. (optional)").optional(),
-                        fieldWithPath("publication_info.url").description("The URL to the original paper. (optional)").optional(),
-                        fieldWithPath("sdgs").description("The set of ids of sustainable development goals the paper will be assigned to. (optional)"),
-                        fieldWithPath("mentionings").description("The updated set of ids of resources that are mentioned in the paper and should be used for extended search. (optional)"),
-                        fieldWithPath("organizations[]").description("The list of IDs of the organizations the paper belongs to. (optional)").optional(),
-                        fieldWithPath("observatories[]").description("The list of IDs of the observatories the paper belongs to. (optional)").optional(),
-                        fieldWithPath("extraction_method").description("""The´updated method used to extract the paper resource. Can be one of $allowedExtractionMethodValues. (optional)"""),
-                        fieldWithPath("visibility").description("The updated visibility of the paper. Can be one of $allowedVisibilityValues. (optional)").optional(),
-                        fieldWithPath("verified").description("The updated verification status of the paper. (optional)").optional()
-                    ).and(authorListFields("paper"))
-                        .and(paperIdentifierFields())
+            .andDocument {
+                summary("Updating papers")
+                description(
+                    """
+                    A `PUT` request updates an existing paper with all the given parameters.
+                    The response will be `204 No Content` when successful.
+                    The updated paper (object) can be retrieved by following the URI in the `Location` header field.
+                    
+                    [NOTE]
+                    ====
+                    1. All fields at the top level in the request can be omitted or `null`, meaning that the corresponding fields should not be updated.
+                    2. The same rules as for <<resources-edit,updating resources>> apply when updating the visibility of a paper.
+                    3. If the verified status is being modified and the performing user is not a curator, the return status will be `403 FORBIDDEN`.
+                    ====
+                    
+                    WARNING: Author names will not be updated if a resource id is specified for a given author.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the paper to update.")
+                )
+                requestFields<UpdatePaperRequest>(
+                    fieldWithPath("title").description("The title of the paper. (optional)").optional(),
+                    fieldWithPath("research_fields").description("The list of research fields the paper will be assigned to. (optional)").optional(),
+                    fieldWithPath("publication_info").description("The publication info of the paper. (optional)").optional(),
+                    fieldWithPath("publication_info.published_month").description("The month in which the paper was published. (optional)").optional(),
+                    fieldWithPath("publication_info.published_year").description("The year in which the paper was published. (optional)").optional(),
+                    fieldWithPath("publication_info.published_in").description("The venue where the paper was published. (optional)").optional(),
+                    fieldWithPath("publication_info.url").description("The URL to the original paper. (optional)").optional(),
+                    fieldWithPath("sdgs").description("The set of ids of sustainable development goals the paper will be assigned to. (optional)").arrayItemsType("String").constraints(thingIdConstraint).optional(),
+                    fieldWithPath("mentionings").description("The updated set of ids of resources that are mentioned in the paper and should be used for extended search. (optional)").optional(),
+                    fieldWithPath("organizations[]").description("The list of IDs of the organizations the paper belongs to. (optional)").optional(),
+                    fieldWithPath("observatories[]").description("The list of IDs of the observatories the paper belongs to. (optional)").optional(),
+                    fieldWithPath("extraction_method").description("""The´updated method used to extract the paper resource. Can be one of $allowedExtractionMethodValues. (optional)""").optional(),
+                    fieldWithPath("visibility").description("The updated visibility of the paper. Can be one of $allowedVisibilityValues. (optional)").optional(),
+                    fieldWithPath("verified").description("The updated verification status of the paper. (optional)").optional(),
+                    *authorListFields("paper", optional = true).toTypedArray(),
+                    *paperIdentifierFields().toTypedArray(),
+                )
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the updated paper can be fetched from."),
+                )
+                throws(
+                    PaperNotFound::class,
+                    PaperNotModifiable::class,
+                    InvalidMonth::class,
+                    InvalidLabel::class,
+                    ContributorNotFound::class,
+                    NeitherOwnerNorCurator::class,
+                    NotACurator::class,
+                    OnlyOneResearchFieldAllowed::class,
+                    ResearchFieldNotFound::class,
+                    OnlyOneObservatoryAllowed::class,
+                    ObservatoryNotFound::class,
+                    OnlyOneOrganizationAllowed::class,
+                    OrganizationNotFound::class,
+                    SustainableDevelopmentGoalNotFound::class,
+                    ResourceNotFound::class,
+                    PaperAlreadyExists::class,
+                    AuthorNotFound::class,
+                    AmbiguousAuthor::class,
+                    AmbiguousAuthor::class,
+                )
+            }
 
         verify(exactly = 1) { paperService.update(any()) }
     }
@@ -1001,17 +1081,23 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .andExpect(status().isOk)
             .andExpect(content().string(""))
             .andExpect(header().string("Location", endsWith("/api/papers/$id")))
-            .andDo(
-                documentationHandler.document(
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the found paper can be fetched from.")
-                    ),
-                    queryParameters(
-                        parameterWithName("doi").description("The DOI of the paper."),
-                    )
+            .andDocument {
+                summary("Checking for existing papers by DOI")
+                description(
+                    """
+                    A `HEAD` request checks if a paper with the specified DOI exists.
+                    The response will be `200 OK` when found, otherwise status will be `404 NOT FOUND`.
+                    If found, the paper resource can be retrieved by following the URI in the `Location` header field.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                queryParameters(
+                    parameterWithName("doi").description("The DOI of the paper."),
+                )
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the found paper can be fetched from."),
+                )
+                throws(InvalidDOI::class)
+            }
 
         verify(exactly = 1) { paperService.existsByDOI(doi) }
     }
@@ -1057,19 +1143,65 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .andExpect(status().isOk)
             .andExpect(content().string(""))
             .andExpect(header().string("Location", endsWith("/api/papers/$id")))
-            .andDo(
-                documentationHandler.document(
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the found paper can be fetched from.")
-                    ),
-                    queryParameters(
-                        parameterWithName("title").description("An exact search term that must match the title of the paper."),
-                    )
+            .andDocument {
+                summary("Checking for existing papers by title")
+                description(
+                    """
+                    A `HEAD` request checks if a paper with the specified title exists.
+                    The response will be `200 OK` when found, otherwise status will be `404 NOT FOUND`.
+                    If found, the paper resource can be retrieved by following the URI in the `Location` header field.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                queryParameters(
+                    parameterWithName("title").description("An exact search term that must match the title of the paper."),
+                )
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the found paper can be fetched from."),
+                )
+            }
 
         verify(exactly = 1) { paperService.existsByTitle(withArg { it.input shouldBe title.input }) }
+    }
+
+    /**
+     * Exists only for openapi spec generation.
+     */
+    @Test
+    @DisplayName("Given a paper, when checking existence by doi or title and paper is found, then status is 200 OK")
+    fun existsBy() {
+        val doi = DOI.of("10.456/8764")
+        val id = ThingId("R123")
+        every { paperService.existsByDOI(doi) } returns Optional.of(id)
+
+        // TODO: For unknown reasons, head requests do not work with param builders.
+        // Tested on spring rest docs 3.0.3.
+        documentedHeadRequestTo("/api/papers?doi=${doi.value}")
+            .accept(PAPER_JSON_V2)
+            .perform()
+            .andExpect(status().isOk)
+            .andExpect(content().string(""))
+            .andExpect(header().string("Location", endsWith("/api/papers/$id")))
+            .andDocument {
+                summary("Checking for existing papers")
+                description(
+                    """
+                    A `HEAD` request checks if a paper with the specified DOI ot title exists.
+                    The response will be `200 OK` when found, otherwise status will be `404 NOT FOUND`.
+                    If found, the paper resource can be retrieved by following the URI in the `Location` header field.
+                    The query parameters are mutually exclusive.
+                    """
+                )
+                queryParameters(
+                    parameterWithName("doi").description("The DOI of the paper.").optional(),
+                    parameterWithName("title").description("An exact search term that must match the title of the paper.").optional(),
+                )
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the found paper can be fetched from."),
+                )
+                throws(InvalidDOI::class)
+            }
+
+        verify(exactly = 1) { paperService.existsByDOI(doi) }
     }
 
     @Test

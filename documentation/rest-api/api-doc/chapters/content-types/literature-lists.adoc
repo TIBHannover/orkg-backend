@@ -9,65 +9,48 @@ NOTE: The following endpoints use content negotiation, meaning that the contents
 [[literature-lists-fetch]]
 == Fetching Literature Lists
 
-A `GET` request provides information about a literature list.
+include::{snippets}/literature-lists_find-by-id/description.adoc[]
 
-operation::literature-lists_get-single[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::literature-lists_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[literature-lists-list]]
 == Listing Literature Lists
 
-A `GET` request returns a <<sorting-and-pagination,paged>> list of <<literature-lists-fetch,literature lists>>.
-If no paging request parameters are provided, the default values will be used.
+include::{snippets}/literature-lists_find-all/description.adoc[]
 
 operation::literature-lists_get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::literature-lists_get-paged-with-parameters[snippets='query-parameters,curl-request']
+operation::literature-lists_find-all[snippets='query-parameters,curl-request']
 
 [[literature-lists-create]]
 == Creating Literature Lists
 
-A `POST` request creates a new literature list with all the given parameters.
-The response will be `201 Created` when successful.
-The literature list (object) can be retrieved by following the URI in the `Location` header field.
+include::{snippets}/literature-lists_create/description.adoc[]
 
 operation::literature-lists_create[snippets='request-fields,curl-request,response-headers,http-response']
 
 [[literature-lists-edit]]
 == Updating Literature Lists
 
-A `PUT` request updates an existing literature list with all the given parameters.
-The response will be `204 No Content` when successful.
-The updated literature list (object) can be retrieved by following the URI in the `Location` header field.
-
-[NOTE]
-====
-1. All fields at the top level in the request can be omitted or `null`, meaning that the corresponding fields should not be updated.
-2. The same rules as for <<resources-edit,updating resources>> apply when updating the visibility of a literature list.
-====
-
-WARNING: Author names will not be updated if a resource id is specified for a given author.
+include::{snippets}/literature-lists_update/description.adoc[]
 
 operation::literature-lists_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[literature-lists-publish]]
 == Publishing Literature Lists
 
-A `POST` request publishes an existing literature list with the given parameters.
-In the process, a new literature list published resource is created and linked to the original literature list resource.
-All statements containing the sections of the original literature list are archived in a separate database.
-The response will be `201 Created` when successful.
-The published literature list (object) can be retrieved by following the URI in the `Location` header field.
+include::{snippets}/literature-lists_publish/description.adoc[]
 
 operation::literature-lists_publish[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[literature-lists-published-contents]]
 == Fetching Published Literature List Contents
 
-A `GET` request returns contents of an already published literature list, at the state of publishing.
+include::{snippets}/literature-lists_find-published-content-by-id_paper/description.adoc[]
 
-operation::literature-lists_find-published-content-by-id[snippets='path-parameters,curl-request']
+operation::literature-lists_find-published-content-by-id_paper[snippets='path-parameters,curl-request']
 
 Depending on the type of the requested content, the following representations are returned:
 

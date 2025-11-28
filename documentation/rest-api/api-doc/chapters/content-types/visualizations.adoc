@@ -9,27 +9,24 @@ NOTE: The following endpoints use content negotiation, meaning that the contents
 [[visualizations-fetch]]
 == Fetching Visualizations
 
-A `GET` request provides information about a visualization.
+include::{snippets}/visualizations_find-by-id/description.adoc[]
 
-operation::visualizations_get-single[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::visualizations_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[visualizations-list]]
 == Listing Visualizations
 
-A `GET` request returns a <<sorting-and-pagination,paged>> list of <<visualizations-fetch,visualizations>>.
-If no paging request parameters are provided, the default values will be used.
+include::{snippets}/visualizations_find-all/description.adoc[]
 
 operation::visualizations_get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::visualizations_get-paged-with-parameters[snippets='query-parameters']
+operation::visualizations_find-all[snippets='query-parameters']
 
 [[visualizations-create]]
 == Creating Visualizations
 
-A `POST` request creates a new visualization with all the given parameters.
-The response will be `201 Created` when successful.
-The visualization (object) can be retrieved by following the URI in the `Location` header field.
+include::{snippets}/visualizations_create/description.adoc[]
 
 operation::visualizations_create[snippets='request-fields,curl-request,response-headers,http-response']

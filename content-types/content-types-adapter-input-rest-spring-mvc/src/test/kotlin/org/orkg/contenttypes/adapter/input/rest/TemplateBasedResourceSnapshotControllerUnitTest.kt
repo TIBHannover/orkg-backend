@@ -7,53 +7,40 @@ import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.common.configuration.WebMvcConfiguration
-import org.orkg.common.json.CommonJacksonModule
+import org.orkg.common.exceptions.ServiceUnavailable
 import org.orkg.contenttypes.adapter.input.rest.TemplateBasedResourceSnapshotController.CreateTemplateBasedResourceSnapshotRequest
-import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
 import org.orkg.contenttypes.domain.SnapshotId
+import org.orkg.contenttypes.domain.TemplateBasedResourceSnapshotNotFound
+import org.orkg.contenttypes.domain.TemplateInstanceNotFound
+import org.orkg.contenttypes.domain.TemplateNotApplicable
+import org.orkg.contenttypes.domain.TemplateNotFound
 import org.orkg.contenttypes.domain.testing.fixtures.createTemplateBasedResourceSnapshotV1
 import org.orkg.contenttypes.input.TemplateBasedResourceSnapshotUseCases
+import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerUnitTestConfiguration
+import org.orkg.contenttypes.input.testing.fixtures.templateBasedResourceSnapshotResponseFields
+import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectTemplateBasedResourceSnapshot
 import org.orkg.testing.annotations.TestWithMockUser
-import org.orkg.testing.configuration.ExceptionTestConfiguration
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
-import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.MediaType.TEXT_HTML_VALUE
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
-import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
-import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.pathParameters
-import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.Optional
 
-@ContextConfiguration(
-    classes = [
-        TemplateBasedResourceSnapshotController::class,
-        ExceptionTestConfiguration::class,
-        CommonJacksonModule::class,
-        ContentTypeJacksonModule::class,
-        WebMvcConfiguration::class,
-        FixedClockConfig::class
-    ]
-)
+@ContextConfiguration(classes = [TemplateBasedResourceSnapshotController::class, ContentTypeControllerUnitTestConfiguration::class])
 @TestPropertySource(
     properties = ["orkg.snapshots.resources.url-templates.frontend=https://orkg.org/resource/{id}/snapshots/{snapshotId}"]
 )
@@ -70,7 +57,7 @@ internal class TemplateBasedResourceSnapshotControllerUnitTest : MockMvcBaseTest
 
     @Test
     @DisplayName("Given a template based resource snapshot, when it is fetched by id and service succeeds, then status is 200 OK and template based resource snapshot is returned")
-    fun getSingle() {
+    fun findById() {
         val templateBasedResourceSnapshot = createTemplateBasedResourceSnapshotV1()
         every { templateBasedResourceSnapshotService.findById(templateBasedResourceSnapshot.id) } returns Optional.of(templateBasedResourceSnapshot)
         every { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) } returns emptyMap()
@@ -80,25 +67,20 @@ internal class TemplateBasedResourceSnapshotControllerUnitTest : MockMvcBaseTest
             .perform()
             .andExpect(status().isOk)
             .andExpectTemplateBasedResourceSnapshot()
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier the resource the snapshot was created of."),
-                        parameterWithName("snapshotId").description("The identifier of the snapshot.")
-                    ),
-                    responseFields(
-                        fieldWithPath("id").description("The identifier of the template based resource snapshot."),
-                        timestampFieldWithPath("created_at", "the template based resource snapshot was created"),
-                        // TODO: Add links to documentation of special user UUIDs.
-                        fieldWithPath("created_by").description("The UUID of the user or service who created this template based resource snapshot."),
-                        subsectionWithPath("data").description("The snapshot of the template instance.").optional(),
-                        subsectionWithPath("resource_id").description("The id of the root resource of the template instance.").optional(),
-                        subsectionWithPath("template_id").description("The id of the template that was used to create the snapshot.").optional(),
-                        subsectionWithPath("handle").description("The persistent handle identifier of the snapshot. (optional)").optional(),
-                    )
+            .andDocument {
+                summary("Fetching template based resource snapshots")
+                description(
+                    """
+                    A `GET` request returns a template based resource snapshot.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier the resource the snapshot was created of."),
+                    parameterWithName("snapshotId").description("The identifier of the snapshot."),
+                )
+                responseFields<TemplateBasedResourceSnapshotRepresentation>(templateBasedResourceSnapshotResponseFields())
+                throws(TemplateBasedResourceSnapshotNotFound::class)
+            }
 
         verify(exactly = 1) { templateBasedResourceSnapshotService.findById(templateBasedResourceSnapshot.id) }
         verify(exactly = 1) { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) }
@@ -157,7 +139,7 @@ internal class TemplateBasedResourceSnapshotControllerUnitTest : MockMvcBaseTest
 
     @Test
     @DisplayName("Given several template based resource snapshots, when filtering by several parameters, then status is 200 OK and template based resource snapshots are returned")
-    fun getPagedWithParameters() {
+    fun findAll() {
         every {
             templateBasedResourceSnapshotService.findAllByResourceIdAndTemplateId(any(), any(), any())
         } returns pageOf(createTemplateBasedResourceSnapshotV1())
@@ -173,17 +155,22 @@ internal class TemplateBasedResourceSnapshotControllerUnitTest : MockMvcBaseTest
             .andExpect(status().isOk)
             .andExpectPage()
             .andExpectTemplateBasedResourceSnapshot("$.content[*]")
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier the resource the snapshot was created for."),
-                    ),
-                    queryParameters(
-                        parameterWithName("template_id").description("The id of the template that was used to create the resource snapshot. (optional)"),
-                    )
+            .andDocument {
+                summary("Fetching template based resource snapshots")
+                description(
+                    """
+                    A `GET` request returns a <<sorting-and-pagination,paged>> list of <<template-based-resource-snapshots-fetch,template based resource snapshots>>.
+                    If no paging request parameters are provided, the default values will be used.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier the resource the snapshot was created for."),
+                )
+                pagedQueryParameters(
+                    parameterWithName("template_id").description("The id of the template that was used to create the resource snapshot. (optional)").optional(),
+                )
+                pagedResponseFields<TemplateBasedResourceSnapshotRepresentation>(templateBasedResourceSnapshotResponseFields())
+            }
 
         verify(exactly = 1) {
             templateBasedResourceSnapshotService.findAllByResourceIdAndTemplateId(
@@ -209,21 +196,33 @@ internal class TemplateBasedResourceSnapshotControllerUnitTest : MockMvcBaseTest
             .perform()
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("/api/resources/$resourceId/snapshots/$id")))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier the resource the snapshot was created of."),
-                    ),
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the newly created TemplateBasedResourceSnapshot can be fetched from.")
-                    ),
-                    requestFields(
-                        fieldWithPath("template_id").description("The id of the template that will be used for subgraph exploration when creating the snapshot."),
-                        fieldWithPath("register_handle").description("Whether to register a persistent https://handle.net/[Handle] identifier. (optional, default: true)"),
-                    )
+            .andDocument {
+                summary("Creating template based resource snapshots")
+                description(
+                    """
+                    A `POST` request creates a new template based resource snapshot.
+                    The response will be `201 Created` when successful.
+                    The template based resource snapshot (object) can be retrieved by following the URI in the `Location` header field.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier the resource the snapshot was created of."),
+                )
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the newly created TemplateBasedResourceSnapshot can be fetched from."),
+                )
+                requestFields<CreateTemplateBasedResourceSnapshotRequest>(
+                    fieldWithPath("template_id").description("The id of the template that will be used for subgraph exploration when creating the snapshot."),
+                    fieldWithPath("register_handle").description("Whether to register a persistent https://handle.net/[Handle] identifier. (optional, default: true)").optional(),
+                )
+                throws(
+                    ResourceNotFound::class,
+                    TemplateNotFound::class,
+                    TemplateNotApplicable::class,
+                    TemplateInstanceNotFound::class,
+                    ServiceUnavailable::class,
+                )
+            }
 
         verify(exactly = 1) { templateBasedResourceSnapshotService.create(any()) }
     }

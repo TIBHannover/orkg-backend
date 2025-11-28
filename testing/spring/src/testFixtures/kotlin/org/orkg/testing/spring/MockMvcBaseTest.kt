@@ -12,7 +12,10 @@ import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.testing.configuration.SecurityTestConfiguration
 import org.orkg.testing.configuration.UnsecureJwtDecoder
 import org.orkg.testing.spring.restdocs.DocumentationBuilder
+import org.orkg.testing.spring.restdocs.DocumentationContext
+import org.orkg.testing.spring.restdocs.DocumentationParameters
 import org.orkg.testing.spring.restdocs.snippets.DescriptionSnippet.Companion.description
+import org.orkg.testing.spring.restdocs.snippets.ExceptionSnippet.Companion.exceptions
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
 import org.springframework.http.HttpMethod.PATCH
@@ -55,7 +58,7 @@ import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 
-@Import(SecurityTestConfiguration::class, SpringJacksonConfiguration::class, UnsecureJwtDecoder::class)
+@Import(SecurityTestConfiguration::class, SpringJacksonConfiguration::class, UnsecureJwtDecoder::class, DocumentationContext::class)
 @ExtendWith(RestDocumentationExtension::class)
 @TestPropertySource(properties = ["spring.jackson.mapper.sort-properties-alphabetically=true"])
 abstract class MockMvcBaseTest(val prefix: String) : MockkBaseTest {
@@ -64,6 +67,9 @@ abstract class MockMvcBaseTest(val prefix: String) : MockkBaseTest {
 
     @Autowired
     private lateinit var webApplicationContext: WebApplicationContext
+
+    @Autowired
+    private lateinit var documentationContext: DocumentationContext
 
     @Deprecated(
         message = "This variable will be changed to private in the future, when migration to the documentation dsl is complete."
@@ -114,35 +120,38 @@ abstract class MockMvcBaseTest(val prefix: String) : MockkBaseTest {
         file(MockMultipartFile(name, originalFileName, MediaType.APPLICATION_JSON_VALUE, data.toContent().toByteArray()))
 
     protected fun ResultActions.andDocument(builder: DocumentationBuilder.() -> Unit): ResultActions {
-        val resourceSnippetParameters = DocumentationBuilder()
-            .also { it.tag(prefix.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }) }
+        val documentationParameters = DocumentationBuilder(documentationContext)
             .apply(builder)
+            .also { if (it.tags.isEmpty()) it.tag(convertPrefixToTag(prefix)) }
             .build()
-        val snippets = mutableListOf<Snippet>(resource(resourceSnippetParameters.withoutAsciidocFormatting()))
+        val snippets = mutableListOf<Snippet>(resource(documentationParameters.toResourceSnippetParameters()))
         // We need to manually register custom documentation snippets to the documentation handler.
-        if (resourceSnippetParameters.requestFields.isNotEmpty()) {
-            snippets += requestFields(resourceSnippetParameters.requestFields)
+        if (documentationParameters.requestFields.isNotEmpty()) {
+            snippets += requestFields(documentationParameters.requestFields)
         }
-        if (resourceSnippetParameters.responseFields.isNotEmpty()) {
-            snippets += responseFields(resourceSnippetParameters.responseFields)
+        if (documentationParameters.responseFields.isNotEmpty()) {
+            snippets += responseFields(documentationParameters.responseFields)
         }
-        if (resourceSnippetParameters.pathParameters.isNotEmpty()) {
-            snippets += pathParameters(toParameterDescriptors(resourceSnippetParameters.pathParameters))
+        if (documentationParameters.pathParameters.isNotEmpty()) {
+            snippets += pathParameters(toParameterDescriptors(documentationParameters.pathParameters))
         }
-        if (resourceSnippetParameters.queryParameters.isNotEmpty()) {
-            snippets += queryParameters(toParameterDescriptors(resourceSnippetParameters.queryParameters))
+        if (documentationParameters.queryParameters.isNotEmpty()) {
+            snippets += queryParameters(toParameterDescriptors(documentationParameters.queryParameters))
         }
-        if (resourceSnippetParameters.formParameters.isNotEmpty()) {
-            snippets += formParameters(toParameterDescriptors(resourceSnippetParameters.formParameters))
+        if (documentationParameters.formParameters.isNotEmpty()) {
+            snippets += formParameters(toParameterDescriptors(documentationParameters.formParameters))
         }
-        if (resourceSnippetParameters.requestHeaders.isNotEmpty()) {
-            snippets += requestHeaders(toHeaderDescriptors(resourceSnippetParameters.requestHeaders))
+        if (documentationParameters.requestHeaders.isNotEmpty()) {
+            snippets += requestHeaders(toHeaderDescriptors(documentationParameters.requestHeaders))
         }
-        if (resourceSnippetParameters.responseHeaders.isNotEmpty()) {
-            snippets += responseHeaders(toHeaderDescriptors(resourceSnippetParameters.responseHeaders))
+        if (documentationParameters.responseHeaders.isNotEmpty()) {
+            snippets += responseHeaders(toHeaderDescriptors(documentationParameters.responseHeaders))
         }
-        if (resourceSnippetParameters.description != null) {
-            snippets += description(resourceSnippetParameters.description!!)
+        if (documentationParameters.description != null) {
+            snippets += description(documentationParameters.description)
+        }
+        if (documentationParameters.throws.isNotEmpty()) {
+            snippets += exceptions(documentationParameters.throws)
         }
         return andDo(documentationHandler.document(*snippets.toTypedArray())).andDo(documentationHandler)
     }
@@ -260,10 +269,10 @@ abstract class MockMvcBaseTest(val prefix: String) : MockkBaseTest {
             }
 
         private val ASCIIDOC_URL_MACRO_REGEX = Regex("""(https?://[^\[\s]+)\[(.*)\]""")
-        private val ASCIIDOC_INTERNAL_CROSS_REFERENCE_WITH_EXPLICIT_LINK_TEXT_REGEX = Regex("""<<[A-Za-z0-9-]+,([^>]+)>>""")
+        private val ASCIIDOC_INTERNAL_CROSS_REFERENCE_REGEX = Regex("""<<(?:[A-Za-z0-9-]+,)?([^>]+)>>""")
         private val ASCIIDOC_ADMONITION_BLOCK_REGEX = Regex("""\[(NOTE|TIP|IMPORTANT|CAUTION|WARNING)\]\s*\n(?:\..*?\n)?(={4,})\s*\n([\s\S]*?)\n\2""")
 
-        private fun ResourceSnippetParameters.withoutAsciidocFormatting(): ResourceSnippetParameters =
+        private fun DocumentationParameters.toResourceSnippetParameters(): ResourceSnippetParameters =
             ResourceSnippetParameters(
                 summary = summary,
                 description = description?.stripAsciidocFormatting(),
@@ -283,14 +292,24 @@ abstract class MockMvcBaseTest(val prefix: String) : MockkBaseTest {
             )
 
         private fun String.stripAsciidocFormatting(): String =
-            replace(ASCIIDOC_INTERNAL_CROSS_REFERENCE_WITH_EXPLICIT_LINK_TEXT_REGEX, "$1")
+            replace(ASCIIDOC_INTERNAL_CROSS_REFERENCE_REGEX, "$1")
                 .replace(ASCIIDOC_URL_MACRO_REGEX, "[$2]($1)") // convert to markdown
-                .replace(ASCIIDOC_ADMONITION_BLOCK_REGEX, "$1:\n$1")
+                .replace(ASCIIDOC_ADMONITION_BLOCK_REGEX, "$1:\n$3")
 
         private fun Any?.stripAsciidocFormatting(): Any? =
             if (this is String) stripAsciidocFormatting() else this
 
         private fun <T : AbstractDescriptor<T>> List<T>.stripAsciidocFormatting(): List<T> =
             map { it.description(it.description.stripAsciidocFormatting()) }
+
+        private fun convertPrefixToTag(prefix: String): String =
+            prefix.foldIndexed(StringBuilder()) { index, acc, c ->
+                when {
+                    index == 0 -> acc.append(c.titlecase())
+                    c == '-' -> acc.append(" ")
+                    acc.last() == ' ' -> acc.append(c.titlecase())
+                    else -> acc.append(c)
+                }
+            }.toString()
     }
 }

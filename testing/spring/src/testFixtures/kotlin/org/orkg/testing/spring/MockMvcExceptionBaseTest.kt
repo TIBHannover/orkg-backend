@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
+import kotlin.reflect.KClass
 
 private const val ERROR_ENDPOINT_PATH = "/error"
 
@@ -63,14 +64,37 @@ abstract class MockMvcExceptionBaseTest : MockMvcBaseTest("errors") {
         return result
     }
 
-    protected fun ResultActions.andDocumentWithDefaultExceptionResponseFields(type: String) =
+    @Deprecated("To be removed", ReplaceWith("andDocumentWithDefaultExceptionResponseFields<SchemaClass>(type)"))
+    protected final fun ResultActions.andDocumentWithDefaultExceptionResponseFields(type: String) =
         andDo(documentationHandler.document(responseFields(exceptionResponseFields(type))))
 
-    protected final fun ResultActions.andDocumentWithoutDetailExceptionResponseFields(type: String): ResultActions =
+    @Deprecated("To be removed", ReplaceWith("andDocumentWithoutDetailExceptionResponseFields<SchemaClass>(type)"))
+    protected final fun ResultActions.andDocumentWithoutDetailExceptionResponseFields(type: String) =
         andDo(documentationHandler.document(responseFields(exceptionResponseFieldsWithoutDetail(type))))
 
-    protected fun ResultActions.andDocumentWithValidationExceptionResponseFields(type: String) =
+    @Deprecated("To be removed", ReplaceWith("andDocumentWithValidationExceptionResponseFields<SchemaClass>(type)"))
+    protected final fun ResultActions.andDocumentWithValidationExceptionResponseFields(type: String) =
         andDo(documentationHandler.document(responseFields(validationExceptionResponseFields(type))))
+
+    protected final fun ResultActions.andDocumentWithDefaultExceptionResponseFields(schemaClass: KClass<*>, type: String) =
+        andDocument { responseFields(schemaClass, exceptionResponseFields(type)) }
+
+    protected final fun ResultActions.andDocumentWithoutDetailExceptionResponseFields(schemaClass: KClass<*>, type: String) =
+        andDocument { responseFields(schemaClass, exceptionResponseFieldsWithoutDetail(type)) }
+
+    protected final fun ResultActions.andDocumentWithValidationExceptionResponseFields(schemaClass: KClass<*>, type: String) =
+        andDocument { responseFields(schemaClass, validationExceptionResponseFields(type)) }
+
+//  TODO: Migrate to functions below once deprecated functions with the same name above are removed (signature clash)
+//
+//    protected final inline fun <reified T> ResultActions.andDocumentWithDefaultExceptionResponseFields(type: String) =
+//        andDocumentWithDefaultExceptionResponseFields(T::class, type)
+//
+//    protected final inline fun <reified T> ResultActions.andDocumentWithoutDetailExceptionResponseFields(type: String) =
+//        andDocumentWithoutDetailExceptionResponseFields(T::class, type)
+//
+//    protected final inline fun <reified T> ResultActions.andDocumentWithValidationExceptionResponseFields(type: String) =
+//        andDocumentWithValidationExceptionResponseFields(T::class, type)
 
     @TestComponent
     @RestController

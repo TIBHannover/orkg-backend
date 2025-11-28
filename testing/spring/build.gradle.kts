@@ -43,12 +43,25 @@ dependencies {
     testFixturesImplementation("io.kotest:kotest-extensions-spring")
     testFixturesImplementation("io.mockk:mockk-dsl")
     testFixturesImplementation("io.mockk:mockk-jvm")
+    testFixturesImplementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     testFixturesImplementation("org.hamcrest:hamcrest")
     testFixturesImplementation("org.springframework.security:spring-security-crypto")
     testFixturesImplementation("org.springframework.security:spring-security-oauth2-core")
     testFixturesImplementation("org.springframework.security:spring-security-oauth2-resource-server")
     testFixturesImplementation("org.springframework:spring-orm")
     testFixturesImplementation("io.jsonwebtoken:jjwt-api")
+    testFixturesImplementation(project(":common:string-utils"))
     testFixturesRuntimeOnly("io.jsonwebtoken:jjwt-impl")
     testFixturesRuntimeOnly("io.jsonwebtoken:jjwt-jackson")
+}
+
+testing {
+    suites {
+        val test by getting(JvmTestSuite::class) {
+            dependencies {
+                implementation("io.kotest:kotest-assertions-core")
+                implementation("org.junit.jupiter:junit-jupiter-params")
+            }
+        }
+    }
 }

@@ -16,6 +16,7 @@ tasks {
         from(tasks.named("test").get().outputs) {
             include("**/*.adoc")
             include("**/resource.json") // for OpenAPI documentation
+            include("**/exceptions.json") // for OpenAPI documentation
         }
         includeEmptyDirs = false
     }

@@ -3,20 +3,24 @@ package org.orkg.testing.spring.restdocs
 import com.epages.restdocs.apispec.FieldDescriptors
 import com.epages.restdocs.apispec.HeaderDescriptorWithType
 import com.epages.restdocs.apispec.ParameterDescriptorWithType
-import com.epages.restdocs.apispec.ResourceSnippetParameters
 import com.epages.restdocs.apispec.Schema
 import com.epages.restdocs.apispec.Schema.Companion.schema
+import com.epages.restdocs.apispec.SimpleType
+import org.springframework.restdocs.constraints.ValidatorConstraintResolver
 import org.springframework.restdocs.headers.HeaderDescriptor
 import org.springframework.restdocs.hypermedia.LinkDescriptor
 import org.springframework.restdocs.payload.FieldDescriptor
+import org.springframework.restdocs.payload.PayloadDocumentation.applyPathPrefix
+import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.request.ParameterDescriptor
+import org.springframework.restdocs.snippet.Attributes
 import kotlin.reflect.KClass
 import org.orkg.testing.spring.restdocs.pagedResponseFields as pagedResponseFieldsWrapper
 
 /**
  * Based on [com.epages.restdocs.apispec.ResourceSnippetParametersBuilder]
  */
-class DocumentationBuilder {
+class DocumentationBuilder(private val documentationContext: DocumentationContext) {
     var summary: String? = null
         protected set
     var description: String? = null
@@ -47,6 +51,10 @@ class DocumentationBuilder {
         private set
     var responseHeaders: List<HeaderDescriptorWithType> = emptyList()
         private set
+    var throws: List<KClass<out Throwable>> = emptyList()
+        private set
+
+    private val validatorConstraintResolver = ValidatorConstraintResolver()
 
     fun summary(summary: String?) {
         this.summary = summary
@@ -56,11 +64,11 @@ class DocumentationBuilder {
         this.description = description?.trimIndent()
     }
 
-    fun privateResource(privateResource: Boolean) {
+    fun privateResource(privateResource: Boolean = true) {
         this.privateResource = privateResource
     }
 
-    fun deprecated(deprecated: Boolean) {
+    fun deprecated(deprecated: Boolean = true) {
         this.deprecated = deprecated
     }
 
@@ -69,7 +77,7 @@ class DocumentationBuilder {
 
     fun requestFields(schemaClass: KClass<*>, requestFields: List<FieldDescriptor>) {
         this.requestSchema = schema(schemaClass.simpleName!!)
-        this.requestFields = requestFields
+        this.requestFields = requestFields.map { it.enhance(schemaClass) }
     }
 
     fun requestFields(schemaClass: KClass<*>, fieldDescriptors: FieldDescriptors) =
@@ -89,7 +97,7 @@ class DocumentationBuilder {
 
     fun responseFields(schemaClass: KClass<*>, responseFields: List<FieldDescriptor>) {
         this.responseSchema = schema(schemaClass.simpleName!!)
-        this.responseFields = responseFields
+        this.responseFields = responseFields.map { it.enhance(schemaClass) }
     }
 
     fun responseFields(schemaClass: KClass<*>, fieldDescriptors: FieldDescriptors) =
@@ -104,12 +112,21 @@ class DocumentationBuilder {
     inline fun <reified T : Any> responseFields(fieldDescriptors: FieldDescriptors) =
         responseFields(T::class, fieldDescriptors.fieldDescriptors)
 
+// TODO: re-enable once rest-docs-api allows defining reference schemas
+//
+//    fun responseFields(schemaClass: KClass<*>, references: References) {
+//        this.responseSchema = schema(schemaClass.simpleName!!, references)
+//    }
+//
+//    inline fun <reified T : Any> responseFields(references: References) =
+//        responseFields(T::class, references)
+
     fun pagedResponseFields(schemaClass: KClass<*>, vararg responseFields: FieldDescriptor) =
         pagedResponseFields(schemaClass, responseFields.toList())
 
     fun pagedResponseFields(schemaClass: KClass<*>, responseFields: List<FieldDescriptor>) {
         this.responseSchema = schema("PageOf${schemaClass.simpleName!!}s")
-        this.responseFields = pagedResponseFieldsWrapper(responseFields, false)
+        this.responseFields = pagedResponseFieldsWrapper(responseFields.map { it.enhance(schemaClass) }, schemaClass, false)
     }
 
     fun pagedResponseFields(schemaClass: KClass<*>, fieldDescriptors: FieldDescriptors) =
@@ -123,6 +140,27 @@ class DocumentationBuilder {
 
     inline fun <reified T : Any> pagedResponseFields(fieldDescriptors: FieldDescriptors) =
         pagedResponseFields(T::class, fieldDescriptors.fieldDescriptors)
+
+    fun listResponseFields(schemaClass: KClass<*>, vararg responseFields: FieldDescriptor) =
+        listResponseFields(schemaClass, responseFields.toList())
+
+    fun listResponseFields(schemaClass: KClass<*>, responseFields: List<FieldDescriptor>) {
+        this.responseSchema = schema("ListOf${schemaClass.simpleName!!}s")
+        this.responseFields = applyPathPrefix("[].", responseFields.map { it.enhance(schemaClass) }) +
+            fieldWithPath("[]").description("The list of values.").references(schemaClass)
+    }
+
+    fun listResponseFields(schemaClass: KClass<*>, fieldDescriptors: FieldDescriptors) =
+        listResponseFields(schemaClass, fieldDescriptors.fieldDescriptors)
+
+    inline fun <reified T : Any> listResponseFields(vararg responseFields: FieldDescriptor) =
+        listResponseFields(T::class, responseFields.toList())
+
+    inline fun <reified T : Any> listResponseFields(responseFields: List<FieldDescriptor>) =
+        listResponseFields(T::class, responseFields)
+
+    inline fun <reified T : Any> listResponseFields(fieldDescriptors: FieldDescriptors) =
+        listResponseFields(T::class, fieldDescriptors.fieldDescriptors)
 
     fun links(vararg links: LinkDescriptor) =
         links(links.toList())
@@ -150,6 +188,33 @@ class DocumentationBuilder {
 
     fun queryParameters(vararg requestParameters: ParameterDescriptor) =
         queryParameters(requestParameters.map { ParameterDescriptorWithType.fromParameterDescriptor(it) })
+
+    fun pagedQueryParameters() =
+        pagedQueryParameters(emptyList())
+
+    fun pagedQueryParameters(vararg requestParameters: ParameterDescriptorWithType) =
+        pagedQueryParameters(requestParameters.toList())
+
+    fun pagedQueryParameters(requestParameters: List<ParameterDescriptorWithType>) {
+        queryParameters(
+            listOf<ParameterDescriptorWithType>(
+                *requestParameters.toTypedArray(),
+                ParameterDescriptorWithType("page").type(SimpleType.INTEGER).description("The page number requested, 0-indexed.").optional(),
+                ParameterDescriptorWithType("size").type(SimpleType.INTEGER).description("The number of elements per page. May be lowered if it exceeds the limit.").optional(),
+                ParameterDescriptorWithType("sort").description(
+                    """
+                    A string in the form "\{property},\{direction}".
+                    Sortable properties are dependent on the endpoint.
+                    Direction can be "asc" or "desc". Parameter can be repeated multiple times.
+                    The sorting is order-dependent.
+                    """.trimIndent()
+                ).optional(),
+            )
+        )
+    }
+
+    fun pagedQueryParameters(vararg requestParameters: ParameterDescriptor) =
+        pagedQueryParameters(requestParameters.map { ParameterDescriptorWithType.fromParameterDescriptor(it) })
 
     fun formParameters(vararg formParameters: ParameterDescriptorWithType) =
         formParameters(formParameters.toList())
@@ -188,7 +253,51 @@ class DocumentationBuilder {
         this.tags += tags
     }
 
-    internal fun build() = ResourceSnippetParameters(
+    fun throws(vararg throws: KClass<out Throwable>) {
+        this.throws += throws
+    }
+
+    private fun FieldDescriptor.enhance(enclosingClass: KClass<*>): FieldDescriptor {
+        val propertyPath = PropertyPathResolver.resolve(path, enclosingClass) ?: return this
+        val jType = propertyPath.type
+        val kType = jType.kotlin
+        val constraints = validatorConstraintResolver.resolveForProperty(jType.name, propertyPath.enclosingClass)
+        documentationContext.applyConstraints(constraints, kType)
+        if (!attributes.contains("schemaName") && !jType.isJvmType() && !documentationContext.hasTypeMapping(kType)) {
+            references(kType)
+        }
+        if (!attributes.contains("itemsType") && jType.isArray && propertyPath.typeArgument != null) {
+            val jItemsType = propertyPath.typeArgument
+            val kItemsType = jItemsType.kotlin
+            val itemsTypeName = documentationContext.resolveTypeName(kItemsType)
+            if (jItemsType.isJvmType() || isPrimitiveType(itemsTypeName)) {
+                arrayItemsType(itemsTypeName)
+            } else {
+                arrayItemsType("object")
+                references(kItemsType)
+                documentationContext.applyConstraints(constraints, kItemsType)
+            }
+        }
+        if (!attributes.contains("enumValues") && jType.isEnum) {
+            @Suppress("UNCHECKED_CAST")
+            enum(kType as KClass<out Enum<*>>)
+        }
+        if (constraints.isNotEmpty()) {
+            attributes(Attributes.Attribute("validationConstraints", constraints))
+        }
+        return this
+    }
+
+    private fun Class<*>.isJvmType(): Boolean =
+        isPrimitive || isArray || packageName.startsWith("java.")
+
+    private fun isPrimitiveType(type: String): Boolean =
+        when (type.lowercase()) {
+            "string", "number", "integer", "boolean", "array" -> true
+            else -> false
+        }
+
+    internal fun build() = DocumentationParameters(
         summary = summary,
         description = description,
         privateResource = privateResource,
@@ -203,6 +312,7 @@ class DocumentationBuilder {
         formParameters = formParameters,
         requestHeaders = requestHeaders,
         responseHeaders = responseHeaders,
-        tags = tags
+        tags = tags,
+        throws = throws,
     )
 }

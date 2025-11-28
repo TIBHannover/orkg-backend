@@ -1,5 +1,13 @@
 import com.epages.restdocs.apispec.gradle.OpenApi3Task
 import com.epages.restdocs.apispec.gradle.PluginOauth2Configuration
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.databind.node.ObjectNode
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
+import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import groovy.lang.Closure
 import io.swagger.v3.oas.models.servers.Server
 import org.asciidoctor.gradle.jvm.AsciidoctorTask
@@ -50,6 +58,7 @@ val aggregateRestDocsSnippets by tasks.registering(Sync::class) {
             // TODO: extract to copyspec, use "with" from gradle
             include("**/*.adoc")
             include("**/resource.json") // for OpenAPI documentation
+            include("**/exceptions.json") // for OpenAPI documentation
         }
     }
     into(aggregatedSnippetsDir)
@@ -104,8 +113,130 @@ abstract class GenerateErrorListingTask : DefaultTask() {
     }
 }
 
+abstract class GenerateOpenApiExceptionSnippetsTask : DefaultTask() {
+    @get:InputDirectory
+    abstract val snippetsDir: DirectoryProperty
+
+    @get:OutputDirectory
+    abstract val outputDir: DirectoryProperty
+
+    init {
+        group = "documentation"
+        snippetsDir.convention(project.layout.buildDirectory.dir("generated-snippets"))
+        outputDir.convention(project.layout.buildDirectory.dir("generated-exception-snippets"))
+    }
+
+    @TaskAction
+    fun action() {
+        outputDir.asFile.get().deleteRecursively()
+        val objectMapper = jacksonObjectMapper().enable(SerializationFeature.INDENT_OUTPUT)
+        val errorSnippetFiles = snippetsDir.asFileTree.matching({ include("errors_*/resource.json") }).files
+        val exceptionNameToSnippet = errorSnippetFiles.associate {
+            val json = objectMapper.readTree(it)
+            val exceptionName = json.path("response").path("schema").path("name").textValue()
+            exceptionName to json
+        }
+        val exceptionFiles = snippetsDir.asFileTree.matching({ include("**/resource.json", "**/exceptions.json") }).files
+            .groupBy { it.parentFile.name }
+            .filter { it.value.size == 2 }
+            .mapValues { (_, value) -> value.sortedBy { it.name } }
+        val exceptionSnippets = mutableListOf<JsonNode>()
+        exceptionFiles.forEach { (operationId, value) ->
+            val exceptions = objectMapper.readValue<List<String>>(value[0])
+            val resource = objectMapper.readTree(value[1])
+            exceptions.mapNotNull { exceptionNameToSnippet[it] }.forEach { exceptionSnippet ->
+                exceptionSnippets.add(
+                    resource.deepCopy<ObjectNode>().apply {
+                        put("operationId", createErrorSnippetOperationId(operationId, exceptionSnippet))
+                        replace("response", exceptionSnippet["response"])
+                        val request = get("request") as ObjectNode
+                        request.replace("requestFields", arrayNode())
+                        request.replace("example", null)
+                    }
+                )
+            }
+        }
+        exceptionSnippets.forEach { snippet ->
+            val outputSnippetFolder = File(outputDir.asFile.get(), snippet["operationId"].textValue())
+            val outputSnippetFile = File(outputSnippetFolder, "resource.json")
+            if (!outputSnippetFolder.exists()) {
+                outputSnippetFolder.mkdirs()
+            }
+            objectMapper.writeValue(outputSnippetFile, snippet)
+        }
+    }
+
+    private fun createErrorSnippetOperationId(operationId: String, exceptionSnippet: JsonNode): String =
+        operationId + "-" + exceptionSnippet["operationId"].textValue().replaceFirst("errors_", "error-").substringBefore('_')
+}
+
+abstract class GenerateOpenApiSpecPythonTask : DefaultTask() {
+    @get:InputFile
+    abstract val inputFile: RegularFileProperty
+
+    @get:OutputFile
+    abstract val outputFile: RegularFileProperty
+
+    init {
+        group = "documentation"
+        outputFile.convention(project.layout.buildDirectory.file("api-spec-python/openapi3.yaml"))
+    }
+
+    @TaskAction
+    fun action() {
+        val objectMapper = ObjectMapper(YAMLFactory())
+            .registerKotlinModule()
+            .enable(SerializationFeature.INDENT_OUTPUT)
+        val openApiSpec = objectMapper.readTree(inputFile.get().asFile)
+        val statusCodesWithoutResponseBody = listOf("201", "204")
+        val emptySchema = objectMapper.nodeFactory.objectNode().apply {
+            val response = objectMapper.nodeFactory.objectNode().apply {
+                set<ObjectNode>("schema", objectMapper.nodeFactory.objectNode())
+            }
+            set<ObjectNode>("application/json", response)
+        }
+        openApiSpec.path("paths").forEach { path ->
+            path.forEach { method ->
+                val responses = method.path("responses")
+                statusCodesWithoutResponseBody.forEach { statusCodeWithoutResponseBody ->
+                    val status = responses.path(statusCodeWithoutResponseBody)
+                    if (responses.size() > 1 && !status.isMissingNode) {
+                        status as ObjectNode
+                        val content = status.path("content")
+                        if (content.isMissingNode) {
+                            status.set<ObjectNode>("content", emptySchema)
+                        }
+                    }
+                }
+            }
+        }
+        objectMapper.writeValue(outputFile.asFile.get(), openApiSpec)
+    }
+}
+
 val generateErrorListing by tasks.registering(GenerateErrorListingTask::class) {
     inputs.files(aggregateRestDocsSnippets.get().outputs)
+}
+
+val generateOpenApiExceptionSnippets by tasks.registering(GenerateOpenApiExceptionSnippetsTask::class) {
+    inputs.files(aggregateRestDocsSnippets.get().outputs)
+}
+
+val generateOpenApiSpecPython by tasks.registering(GenerateOpenApiSpecPythonTask::class) {
+    inputFile.set(File(openapi3.outputDirectory, "openapi3.${openapi3.format}"))
+    dependsOn("openapi3")
+}
+
+val aggregatedOpenApiSnippetsDir = layout.buildDirectory.dir("generated-openapi-snippets")
+
+val aggregateOpenApiSnippets by tasks.registering(Sync::class) {
+    from(generateOpenApiExceptionSnippets.get().outputs)
+    from(aggregateRestDocsSnippets.get().outputs) {
+        includeEmptyDirs = false
+        include("**/resource.json")
+        exclude("errors_*/resource.json") // TODO: creates a lot of empty directories
+    }
+    into(aggregatedOpenApiSnippetsDir)
 }
 
 val subfolders = listOf("api-doc", "architecture", "references")
@@ -213,9 +344,10 @@ val openApiServerUrls = listOf("http://localhost:8080")
 val openApiAuthServerUrl = "http://localhost:8888/realms/orkg"
 
 openapi3 {
-    snippetsDirectory = layout.buildDirectory.dir("generated-snippets").get().asFile.path
+    snippetsDirectory = aggregatedOpenApiSnippetsDir.get().asFile.path
 
     title = "Open Research Knowledge Graph (ORKG) REST API"
+    description = "" // TODO
     version = "${project.version}"
     format = "yaml"
     setServers(openApiServerUrls.map { serverClosure { url = it } })
@@ -237,31 +369,56 @@ tasks {
     // For some unknown reason, it is not possible to configure the task directly.
     // TODO: Try again with new version of the restdocs-api-spec Gradle plugin.
     withType(OpenApi3Task::class).configureEach {
-        dependsOn(asciidoctor)
+        dependsOn(aggregateOpenApiSnippets)
+    }
+
+    withType<GenerateTask>().configureEach {
+        setGroup("openapi client generation")
+        inputSpec.set(layout.buildDirectory.file("api-spec/openapi3.yaml").get().asFile.path)
+        cleanupOutput = true
+        removeOperationIdPrefix = true
+        gitHost = "gitlab.com"
+        gitUserId = "TIBHannover/orkg"
+        gitRepoId = "orkg-backend" // TODO: configure for each client?
+        dependsOn("openapi3")
     }
 
     register<GenerateTask>("generateTypescriptClient") {
-        setGroup("openapi client generation")
         generatorName.set("typescript-fetch")
-        inputSpec.set(layout.buildDirectory.file("api-spec/openapi3.yaml").get().asFile.path)
         outputDir.set(layout.buildDirectory.dir("generated-clients/typescript-client").get().asFile.path)
-        dependsOn("openapi3")
+        httpUserAgent = "ORKG-TypeScript-Client/${project.version}"
+        // See https://github.com/OpenAPITools/openapi-generator/blob/master/docs/generators/typescript-fetch.md
+        configOptions = mapOf(
+            "npmName" to "orkg-typescript-client",
+            "npmVersion" to project.version.toString(),
+            "licenseName" to "MIT",
+            "prefixParameterInterfaces" to "true",
+        )
     }
 
     register<GenerateTask>("generatePythonClient") {
-        setGroup("openapi client generation")
         generatorName.set("python")
-        inputSpec.set(layout.buildDirectory.file("api-spec/openapi3.yaml").get().asFile.path)
+        inputSpec.set(layout.buildDirectory.file("api-spec-python/openapi3.yaml").get().asFile.path)
         outputDir.set(layout.buildDirectory.dir("generated-clients/python-client").get().asFile.path)
-        dependsOn("openapi3")
+        httpUserAgent = "ORKG-Python-Client/${project.version}"
+        // See https://github.com/OpenAPITools/openapi-generator/blob/master/docs/generators/python.md
+        configOptions = mapOf(
+            "packageName" to "orkg_python_client",
+            "packageVersion" to project.version.toString(),
+            "useOneOfDiscriminatorLookup" to "true",
+        )
+        dependsOn(generateOpenApiSpecPython)
     }
 
     register<GenerateTask>("generateRClient") {
-        setGroup("openapi client generation")
         generatorName.set("r")
-        inputSpec.set(layout.buildDirectory.file("api-spec/openapi3.yaml").get().asFile.path)
         outputDir.set(layout.buildDirectory.dir("generated-clients/r-client").get().asFile.path)
-        dependsOn("openapi3")
+        httpUserAgent = "ORKG-R-Client/${project.version}"
+        // See https://github.com/OpenAPITools/openapi-generator/blob/master/docs/generators/r.md
+        configOptions = mapOf(
+            "packageName" to "orkg_r_client",
+            "packageVersion" to project.version.toString(),
+        )
     }
 
     register("generateAllClients") {

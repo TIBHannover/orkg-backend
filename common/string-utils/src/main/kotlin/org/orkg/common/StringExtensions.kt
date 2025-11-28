@@ -22,6 +22,25 @@ fun String.toSnakeCase(): String =
         }
     }
 
+fun String.toCamelCase(): String =
+    if (isEmpty()) {
+        this
+    } else {
+        buildString {
+            var nextUpper = false
+            this@toCamelCase.forEach { c ->
+                when {
+                    c == '_' -> nextUpper = true
+                    nextUpper -> {
+                        append(c.uppercase())
+                        nextUpper = false
+                    }
+                    else -> append(c)
+                }
+            }
+        }
+    }
+
 /**
  * Calculate the MD5 of a string.
  *

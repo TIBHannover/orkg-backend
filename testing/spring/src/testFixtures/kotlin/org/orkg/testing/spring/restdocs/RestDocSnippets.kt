@@ -8,9 +8,14 @@ import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithP
 import org.springframework.restdocs.payload.ResponseFieldsSnippet
 import org.springframework.restdocs.snippet.AbstractDescriptor
 import java.time.OffsetDateTime
+import kotlin.reflect.KClass
 
-fun pageableDetailedFieldParameters(): List<FieldDescriptor> = listOf(
-    fieldWithPath("content[]").description("The result of the request as a (sorted) array."),
+fun pageableDetailedFieldParameters(schemaClass: KClass<*>? = null): List<FieldDescriptor> = listOf(
+    if (schemaClass != null) {
+        subsectionWithPath("content[]").references(schemaClass)
+    } else {
+        fieldWithPath("content[]")
+    }.description("The result of the request as a (sorted) array."),
     subsectionWithPath("page").description("Paging information."),
     fieldWithPath("page.number").description("The number of the current page."),
     fieldWithPath("page.size").description("The size of the current page."),
@@ -21,8 +26,12 @@ fun pageableDetailedFieldParameters(): List<FieldDescriptor> = listOf(
 fun pagedResponseFields(vararg fieldDescriptor: FieldDescriptor): ResponseFieldsSnippet =
     responseFields(pagedResponseFields(fieldDescriptor.asList()))
 
-fun pagedResponseFields(fieldDescriptors: List<FieldDescriptor>, ignorePageFields: Boolean = true): List<FieldDescriptor> {
-    val pageResponseFields = pageableDetailedFieldParameters()
+fun pagedResponseFields(
+    fieldDescriptors: List<FieldDescriptor>,
+    schemaClass: KClass<*>? = null,
+    ignorePageFields: Boolean = true,
+): List<FieldDescriptor> {
+    val pageResponseFields = pageableDetailedFieldParameters(schemaClass)
     if (ignorePageFields) {
         pageResponseFields.forEach { it.ignored() }
     }

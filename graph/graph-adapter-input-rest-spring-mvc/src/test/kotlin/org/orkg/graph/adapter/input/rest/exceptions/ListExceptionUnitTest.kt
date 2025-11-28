@@ -16,7 +16,6 @@ import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
@@ -32,13 +31,12 @@ internal class ListExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Unable to delete list "R123" because it is used in at least one statement.""")
             .andExpect(jsonPath("$.list_id", `is`("R123")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("list_id").description("The id of the list."),
-                    )
+            .andDocument {
+                responseFields<ListInUse>(
+                    fieldWithPath("list_id").description("The id of the list."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -50,13 +48,12 @@ internal class ListExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Not Found")
             .andExpectDetail("""List "R123" not found.""")
             .andExpect(jsonPath("$.list_id", `is`("R123")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("list_id").description("The id of the list."),
-                    )
+            .andDocument {
+                responseFields<ListNotFound>(
+                    fieldWithPath("list_id").description("The id of the list."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -68,13 +65,12 @@ internal class ListExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Forbidden")
             .andExpectDetail("""List "R123" is not modifiable.""")
             .andExpect(jsonPath("$.list_id", `is`("R123")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("list_id").description("The id of the list."),
-                    )
+            .andDocument {
+                responseFields<ListNotModifiable>(
+                    fieldWithPath("list_id").description("The id of the list."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -86,6 +82,6 @@ internal class ListExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpect(jsonPath("$.errors[0].detail", `is`("""All elements inside the list have to exist.""")))
             .andExpect(jsonPath("$.errors[0].pointer", `is`("#/elements")))
-            .andDocumentWithValidationExceptionResponseFields(type)
+            .andDocumentWithValidationExceptionResponseFields(ListElementNotFound::class, type)
     }
 }

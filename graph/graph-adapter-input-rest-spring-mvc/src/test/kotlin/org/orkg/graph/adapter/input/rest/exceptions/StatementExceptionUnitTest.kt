@@ -22,7 +22,6 @@ import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
@@ -38,13 +37,12 @@ internal class StatementExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Statement "S123" is not modifiable.""")
             .andExpect(jsonPath("$.statement_id", `is`("S123")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("statement_id").description("The id of the statement."),
-                    )
+            .andDocument {
+                responseFields<StatementNotModifiable>(
+                    fieldWithPath("statement_id").description("The id of the statement."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -55,7 +53,7 @@ internal class StatementExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""A list element statement cannot be managed using the statements endpoint. Please see the documentation on how to manage lists.""")
-            .andDocumentWithDefaultExceptionResponseFields(type)
+            .andDocumentWithDefaultExceptionResponseFields(InvalidStatement::class, type)
     }
 
     @Test
@@ -85,13 +83,12 @@ internal class StatementExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Statement already exists with id "S123".""")
             .andExpect(jsonPath("$.statement_id", `is`("S123")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("statement_id").description("The id of the statement."),
-                    )
+            .andDocument {
+                responseFields<StatementAlreadyExists>(
+                    fieldWithPath("statement_id").description("The id of the statement."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -103,13 +100,12 @@ internal class StatementExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Not Found")
             .andExpectDetail("""Statement "S123" not found.""")
             .andExpect(jsonPath("$.statement_id", `is`("S123")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("statement_id").description("The id of the statement."),
-                    )
+            .andDocument {
+                responseFields<StatementNotFound>(
+                    fieldWithPath("statement_id").description("The id of the statement."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -121,13 +117,12 @@ internal class StatementExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Subject "R123" not found.""")
             .andExpect(jsonPath("$.subject_id", `is`("R123")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("subject_id").description("The id of the subject."),
-                    )
+            .andDocument {
+                responseFields<StatementSubjectNotFound>(
+                    fieldWithPath("subject_id").description("The id of the subject."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -139,13 +134,12 @@ internal class StatementExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Predicate "P123" not found.""")
             .andExpect(jsonPath("$.predicate_id", `is`("P123")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("predicate_id").description("The id of the predicate."),
-                    )
+            .andDocument {
+                responseFields<StatementPredicateNotFound>(
+                    fieldWithPath("predicate_id").description("The id of the predicate."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -157,13 +151,12 @@ internal class StatementExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Object "R123" not found.""")
             .andExpect(jsonPath("$.object_id", `is`("R123")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("object_id").description("The id of the object."),
-                    )
+            .andDocument {
+                responseFields<StatementObjectNotFound>(
+                    fieldWithPath("object_id").description("The id of the object."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -174,6 +167,6 @@ internal class StatementExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""A statement cannot be deleted when it is used in a list. Please see the documentation on how to manage lists.""")
-            .andDocumentWithDefaultExceptionResponseFields(type)
+            .andDocumentWithDefaultExceptionResponseFields(StatementInUse::class, type)
     }
 }

@@ -1,4 +1,5 @@
 = ORKG Widget
 :icons: font
 
-operation::widget_success[snippets='description,query-parameters,curl-request,http-response,response-fields']
+include::{snippets}/widget_success/description.adoc[]
+operation::widget_success[snippets='query-parameters,curl-request,http-response,response-fields']

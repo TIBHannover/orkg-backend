@@ -6,9 +6,9 @@ They can either be a <<classes,class>>, <<resources,resource>>, <<predicates,pre
 [[things-fetch]]
 == Fetching Things
 
-A `GET` request provides information about a thing.
+include::{snippets}/things_find-by-id/description.adoc[]
 
-operation::things_get-single[snippets='path-parameters,curl-request,http-response']
+operation::things_find-by-id[snippets='path-parameters,curl-request,http-response']
 
 [[things-fetch_response_fields]]
 === Response fields
@@ -17,12 +17,10 @@ The response object can either be a <<classes-fetch,class>>, <<resources-fetch,r
 [[things-list]]
 == Listing Things
 
-A `GET` request lists all things.
-
-TIP: {pagination_note}
+include::{snippets}/things_find-all/description.adoc[]
 
 operation::things_get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::things_get-paged-with-parameters[snippets='query-parameters,curl-request']
+operation::things_find-all[snippets='query-parameters,curl-request']

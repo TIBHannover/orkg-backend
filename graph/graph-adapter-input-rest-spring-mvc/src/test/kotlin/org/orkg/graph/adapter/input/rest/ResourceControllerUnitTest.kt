@@ -15,18 +15,29 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.common.configuration.WebMvcConfiguration
 import org.orkg.common.exceptions.UnknownSortingProperty
-import org.orkg.common.json.CommonJacksonModule
+import org.orkg.community.domain.ContributorNotFound
+import org.orkg.community.domain.ObservatoryNotFound
+import org.orkg.community.domain.OrganizationNotFound
 import org.orkg.community.input.RetrieveContributorUseCase
 import org.orkg.community.testing.fixtures.createContributor
+import org.orkg.graph.adapter.input.rest.ResourceController.CreateResourceRequest
+import org.orkg.graph.adapter.input.rest.ResourceController.UpdateResourceRequest
+import org.orkg.graph.adapter.input.rest.testing.fixtures.configuration.GraphControllerUnitTestConfiguration
 import org.orkg.graph.adapter.input.rest.testing.fixtures.resourceResponseFields
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.InvalidClassCollection
+import org.orkg.graph.domain.InvalidLabel
+import org.orkg.graph.domain.NeitherOwnerNorCurator
+import org.orkg.graph.domain.NotACurator
+import org.orkg.graph.domain.ReservedClass
+import org.orkg.graph.domain.ResourceAlreadyExists
 import org.orkg.graph.domain.ResourceContributor
+import org.orkg.graph.domain.ResourceInUse
 import org.orkg.graph.domain.ResourceNotFound
+import org.orkg.graph.domain.ResourceNotModifiable
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.CreateResourceUseCase.CreateCommand
 import org.orkg.graph.input.FormattedLabelUseCases
@@ -41,8 +52,6 @@ import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectResource
 import org.orkg.testing.annotations.TestWithMockUser
-import org.orkg.testing.configuration.ExceptionTestConfiguration
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
@@ -54,13 +63,8 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
-import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.pathParameters
-import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -70,15 +74,7 @@ import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import java.util.Optional
 
-@ContextConfiguration(
-    classes = [
-        ResourceController::class,
-        ExceptionTestConfiguration::class,
-        CommonJacksonModule::class,
-        FixedClockConfig::class,
-        WebMvcConfiguration::class
-    ]
-)
+@ContextConfiguration(classes = [ResourceController::class, GraphControllerUnitTestConfiguration::class])
 @WebMvcTest(controllers = [ResourceController::class])
 internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
     @MockkBean
@@ -97,7 +93,7 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
     private lateinit var clock: Clock
 
     @Test
-    fun getSingle() {
+    fun findById() {
         val resource = createResource()
         every { resourceService.findById(any()) } returns Optional.of(resource)
         every { statementService.countIncomingStatementsById(resource.id) } returns 23
@@ -106,15 +102,19 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
             .perform()
             .andExpect(status().isOk)
             .andExpectResource()
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the resource to retrieve."),
-                    ),
-                    responseFields(resourceResponseFields())
+            .andDocument {
+                summary("Fetching resources")
+                description(
+                    """
+                    A `GET` request provides information about a resource.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the resource to retrieve."),
+                )
+                responseFields<ResourceRepresentation>(resourceResponseFields())
+                throws(ResourceNotFound::class)
+            }
 
         verify(exactly = 1) { resourceService.findById(any()) }
         verify(exactly = 1) { statementService.countIncomingStatementsById(resource.id) }
@@ -160,7 +160,7 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
     @Test
     @TestWithMockUser
     fun `When creating a resource, and service reports invalid class collection, then status is 400 BAD REQUEST`() {
-        val command = ResourceController.CreateResourceRequest(
+        val command = CreateResourceRequest(
             id = null,
             label = "irrelevant",
             classes = setOf(Classes.list)
@@ -201,7 +201,7 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
 
     @Test
     @DisplayName("Given several resources, when they are fetched with all possible filtering parameters, then status is 200 OK and resources are returned")
-    fun getPagedWithParameters() {
+    fun findAll() {
         every { resourceService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns pageOf(createResource())
         every { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) } returns emptyMap()
 
@@ -233,24 +233,30 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
             .andExpect(status().isOk)
             .andExpectPage()
             .andExpectResource("$.content[*]")
-            .andDo(
-                documentationHandler.document(
-                    queryParameters(
-                        parameterWithName("q").description("A search term that must be contained in the label. (optional)"),
-                        parameterWithName("exact").description("Whether label matching is exact or fuzzy (optional, default: false)"),
-                        parameterWithName("visibility").description("""Filter for visibility. Either of $allowedVisibilityFilterValues. (optional)"""),
-                        parameterWithName("created_by").description("Filter for the UUID of the user or service who created this resource. (optional)"),
-                        parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned resource can have. (optional)"),
-                        parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned resource can have. (optional)"),
-                        parameterWithName("include").description("A comma-separated set of classes that the resource must have. (optional)"),
-                        parameterWithName("exclude").description("A comma-separated set of classes that the resource must not have. (optional)"),
-                        parameterWithName("base_class").description("The id of the base class that the resource has to be an instance of. (optional)"),
-                        parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the resource belongs to. (optional)"),
-                        parameterWithName("organization_id").description("Filter for the UUID of the organization that the resource belongs to. (optional)")
-                    )
+            .andDocument {
+                summary("Listing resources")
+                description(
+                    """
+                    A `GET` request returns a <<sorting-and-pagination,paged>> list of <<resources-fetch,resources>>.
+                    If no paging request parameters are provided, the default values will be used.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pagedQueryParameters(
+                    parameterWithName("q").description("A search term that must be contained in the label. (optional)").optional(),
+                    parameterWithName("exact").description("Whether label matching is exact or fuzzy (optional, default: false)").optional(),
+                    parameterWithName("visibility").description("""Filter for visibility. Either of $allowedVisibilityFilterValues. (optional)""").optional(),
+                    parameterWithName("created_by").description("Filter for the UUID of the user or service who created this resource. (optional)").optional(),
+                    parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned resource can have. (optional)").optional(),
+                    parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned resource can have. (optional)").optional(),
+                    parameterWithName("include").description("A comma-separated set of classes that the resource must have. (optional)").optional(),
+                    parameterWithName("exclude").description("A comma-separated set of classes that the resource must not have. (optional)").optional(),
+                    parameterWithName("base_class").description("The id of the base class that the resource has to be an instance of. (optional)").optional(),
+                    parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the resource belongs to. (optional)").optional(),
+                    parameterWithName("organization_id").description("Filter for the UUID of the organization that the resource belongs to. (optional)").optional(),
+                )
+                pagedResponseFields<ResourceRepresentation>(resourceResponseFields())
+                throws(UnknownSortingProperty::class)
+            }
 
         verify(exactly = 1) {
             resourceService.findAll(
@@ -317,25 +323,51 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
             .perform()
             .andExpect(status().isNoContent)
             .andExpect(header().string("Location", endsWith("/api/resources/${resource.id}")))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the resource.")
-                    ),
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the updated resource can be fetched from.")
-                    ),
-                    requestFields(
-                        fieldWithPath("label").description("The updated resource label. (optional)").optional(),
-                        fieldWithPath("classes").description("The classes to which the resource belongs to. (optional)").optional(),
-                        fieldWithPath("extraction_method").description("""The method used to extract the resource. Can be one of $allowedExtractionMethodValues. (optional)""").optional(),
-                        fieldWithPath("visibility").description("""Visibility of the resource. Can be one of $allowedVisibilityValues. (optional)""").optional(),
-                        fieldWithPath("organization_id").description("The updated ID of the organization the resource belongs to. (optional)").optional(),
-                        fieldWithPath("observatory_id").description("The updated ID of the observatory the resource belongs to. (optional)").optional(),
-                    )
+            .andDocument {
+                summary("Updating resources")
+                description(
+                    """
+                    A `PUT` request updates a resource with the given parameters.
+                    The response will be `204 NO CONTENT` when successful.
+                    The updated resource can be retrieved by following the URI in the `Location` header field.
+                    
+                    [NOTE]
+                    ====
+                    1. If the resource doesn't exist, the return status will be `404 NOT FOUND`.
+                    2. If the resource is not modifiable, the return status will be `403 FORBIDDEN`.
+                    3. If the target visibility is `FEATURED` or `UNLISTED` and the performing user is not a curator, the return status will be `403 FORBIDDEN`.
+                    4. If the target visibility is `DELETED` the performing user is not the owner of the resource and not a curator, the return status will be `403 FORBIDDEN`.
+                    5. If the target visibility is `DEFAULT` and the original visibility is `DELETED` and the performing user is not the owner of the resource and not a curator, the return status will be `403 FORBIDDEN`.
+                    ====
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the resource.")
+                )
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the updated resource can be fetched from.")
+                )
+                requestFields<UpdateResourceRequest>(
+                    fieldWithPath("label").description("The updated resource label. (optional)").optional(),
+                    fieldWithPath("classes[]").description("The classes to which the resource belongs to. (optional)").optional(),
+                    fieldWithPath("extraction_method").description("""The method used to extract the resource. Can be one of $allowedExtractionMethodValues. (optional)""").optional(),
+                    fieldWithPath("visibility").description("""Visibility of the resource. Can be one of $allowedVisibilityValues. (optional)""").optional(),
+                    fieldWithPath("organization_id").description("The updated ID of the organization the resource belongs to. (optional)").optional(),
+                    fieldWithPath("observatory_id").description("The updated ID of the observatory the resource belongs to. (optional)").optional(),
+                )
+                throws(
+                    ResourceNotFound::class,
+                    ResourceNotModifiable::class,
+                    InvalidLabel::class,
+                    ReservedClass::class,
+                    InvalidClassCollection::class,
+                    ObservatoryNotFound::class,
+                    OrganizationNotFound::class,
+                    ContributorNotFound::class,
+                    NeitherOwnerNorCurator::class,
+                    NotACurator::class,
+                )
+            }
 
         verify(exactly = 1) { resourceService.update(command) }
     }
@@ -368,7 +400,7 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
     fun create() {
         val id = ThingId("R213")
         val contributorId = ContributorId(MockUserId.USER)
-        val command = ResourceController.CreateResourceRequest(
+        val command = CreateResourceRequest(
             id = id,
             label = "foo",
             classes = setOf(Classes.dataset),
@@ -383,20 +415,27 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
             .perform()
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("api/resources/$id")))
-            .andDo(
-                documentationHandler.document(
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the created resource can be fetched from.")
-                    ),
-                    requestFields(
-                        fieldWithPath("id").description("The id for the resource. (optional)"),
-                        fieldWithPath("label").description("The resource label."),
-                        fieldWithPath("classes").type("Array").description("The classes of the resource. (optional)").optional(),
-                        fieldWithPath("extraction_method").type("String").description("""The method used to extract the resource. Can be one of $allowedExtractionMethodValues. (optional, default: "UNKNOWN")""").optional()
-                    )
+            .andDocument {
+                summary("Creating resources")
+                description(
+                    """
+                    A `POST` request creates a new resource with a given label.
+                    An optional set of classes can be provided.
+                    The response will be `201 Created` when successful.
+                    The resource can be retrieved by following the URI in the `Location` header field.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the created resource can be fetched from."),
+                )
+                requestFields<CreateResourceRequest>(
+                    fieldWithPath("id").description("The id for the resource. (optional)").optional(),
+                    fieldWithPath("label").description("The resource label."),
+                    fieldWithPath("classes[]").type("Array").description("The classes of the resource. (optional)").optional(),
+                    fieldWithPath("extraction_method").type("Enum").description("""The method used to extract the resource. Can be one of $allowedExtractionMethodValues. (optional, default: "UNKNOWN")""").optional()
+                )
+                throws(InvalidLabel::class, ReservedClass::class, InvalidClassCollection::class, ResourceAlreadyExists::class)
+            }
 
         verify(exactly = 1) {
             resourceService.create(
@@ -415,7 +454,7 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
     @Test
     @TestWithMockUser
     @DisplayName("When deleting a resource, and service succeeds, then status is 204 NO CONTENT")
-    fun delete() {
+    fun deleteById() {
         val id = ThingId("R213")
 
         every { resourceService.delete(id, any()) } just runs
@@ -423,14 +462,33 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
         documentedDeleteRequestTo("/api/resources/{id}", id)
             .perform()
             .andExpect(status().isNoContent)
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the resource.")
-                    )
+            .andDocument {
+                summary("Deleting resources")
+                description(
+                    """
+                    A `DELETE` request with the id of the resource to delete.
+                    The response will be `204 NO CONTENT` when successful.
+                    
+                    [NOTE]
+                    ====
+                    1. If the resource doesn't exist, the return status will be `404 NOT FOUND`.
+                    2. If the resource is not modifiable, the return status will be `403 FORBIDDEN`.
+                    3. If the resource is used as an object in a statement, the return status will be `403 FORBIDDEN`.
+                    4. If the performing user is not the creator of the resource and does not have the curator role, the return status will be `403 FORBIDDEN`.
+                    ====
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the resource.")
+                )
+                throws(
+                    ResourceNotFound::class,
+                    ResourceNotModifiable::class,
+                    ResourceInUse::class,
+                    ContributorNotFound::class,
+                    NeitherOwnerNorCurator::class
+                )
+            }
 
         verify(exactly = 1) { resourceService.delete(id, ContributorId(MockUserId.USER)) }
     }

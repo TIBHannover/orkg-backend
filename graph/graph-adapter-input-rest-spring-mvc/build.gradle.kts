@@ -25,8 +25,13 @@ dependencies {
     implementation(project(":common:pagination"))
     implementation(project(":community:community-core-model"))
 
+    testFixturesApi("org.springframework:spring-context")
+    testFixturesApi("org.springframework.boot:spring-boot-test")
     testFixturesApi("org.springframework.restdocs:spring-restdocs-core")
-    testFixturesImplementation(testFixtures(project(":testing:spring")))
+    testFixturesApi(project(":common:serialization"))
+    testFixturesApi(project(":common:spring-webmvc"))
+    testFixturesApi(testFixtures(project(":common:core-identifiers")))
+    testFixturesApi(testFixtures(project(":testing:spring")))
     testFixturesImplementation(testFixtures(project(":graph:graph-core-model")))
 }
 
@@ -53,8 +58,8 @@ testing {
                 implementation("org.springframework.restdocs:spring-restdocs-core")
                 implementation("org.springframework:spring-beans")
                 implementation("org.springframework:spring-test")
+                implementation("com.epages:restdocs-api-spec")
                 implementation("com.ninja-squad:springmockk")
-                implementation("org.springframework.restdocs:spring-restdocs-mockmvc")
                 runtimeOnly("com.jayway.jsonpath:json-path")
                 runtimeOnly("org.springframework.boot:spring-boot-starter-validation")
                 runtimeOnly("org.springframework.boot:spring-boot-starter-test")

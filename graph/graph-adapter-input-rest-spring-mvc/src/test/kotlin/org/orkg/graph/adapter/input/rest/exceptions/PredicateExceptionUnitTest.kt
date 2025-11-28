@@ -17,7 +17,6 @@ import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
@@ -33,13 +32,12 @@ internal class PredicateExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Predicate "P123" is not modifiable.""")
             .andExpect(jsonPath("$.predicate_id", `is`("P123")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("predicate_id").description("The id of the predicate."),
-                    )
+            .andDocument {
+                responseFields<PredicateNotModifiable>(
+                    fieldWithPath("predicate_id").description("The id of the predicate."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -51,13 +49,12 @@ internal class PredicateExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Not Found")
             .andExpectDetail("""Predicate "P123" not found.""")
             .andExpect(jsonPath("$.predicate_id", `is`("P123")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("predicate_id").description("The id of the predicate."),
-                    )
+            .andDocument {
+                responseFields<PredicateNotFound>(
+                    fieldWithPath("predicate_id").description("The id of the predicate."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -70,15 +67,14 @@ internal class PredicateExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectDetail("""External predicate "P123" for ontology "skos" not found.""")
             .andExpect(jsonPath("$.predicate_id").value("P123"))
             .andExpect(jsonPath("$.ontology_id").value("skos"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("predicate_id").description("The id of the predicate. (optional, either `predicate_id` or `predicate_uri` is present)"),
-                        fieldWithPath("predicate_uri").type("URI").description("The uri of the predicate. (optional, either `predicate_id` or `predicate_uri` is present)").optional(),
-                        fieldWithPath("ontology_id").description("The id of the predicate ontology."),
-                    )
+            .andDocument {
+                responseFields<ExternalPredicateNotFound>(
+                    fieldWithPath("predicate_id").description("The id of the predicate. (optional, either `predicate_id` or `predicate_uri` is present)").optional(),
+                    fieldWithPath("predicate_uri").type("String").description("The uri of the predicate. (optional, either `predicate_id` or `predicate_uri` is present)").optional(),
+                    fieldWithPath("ontology_id").description("The id of the predicate ontology."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -90,13 +86,12 @@ internal class PredicateExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Unable to delete predicate "P123" because it is used in at least one statement.""")
             .andExpect(jsonPath("$.predicate_id", `is`("P123")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("predicate_id").description("The id of the predicate."),
-                    )
+            .andDocument {
+                responseFields<PredicateInUse>(
+                    fieldWithPath("predicate_id").description("The id of the predicate."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -108,12 +103,11 @@ internal class PredicateExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Predicate "P123" already exists.""")
             .andExpect(jsonPath("$.predicate_id", `is`("P123")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("predicate_id").description("The id of the predicate."),
-                    )
+            .andDocument {
+                responseFields<PredicateAlreadyExists>(
+                    fieldWithPath("predicate_id").description("The id of the predicate."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 }

@@ -18,7 +18,6 @@ import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
@@ -34,13 +33,12 @@ internal class LiteralExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Literal "L123" is not modifiable.""")
             .andExpect(jsonPath("$.literal_id", `is`("L123")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("literal_id").description("The id of the literal."),
-                    )
+            .andDocument {
+                responseFields<LiteralNotModifiable>(
+                    fieldWithPath("literal_id").description("The id of the literal."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -52,13 +50,12 @@ internal class LiteralExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Not Found")
             .andExpectDetail("""Literal "L123" not found.""")
             .andExpect(jsonPath("$.literal_id", `is`("L123")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("literal_id").description("The id of the literal."),
-                    )
+            .andDocument {
+                responseFields<LiteralNotFound>(
+                    fieldWithPath("literal_id").description("The id of the literal."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -70,7 +67,7 @@ internal class LiteralExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpect(jsonPath("$.errors[0].detail", `is`("""A literal must be at most $MAX_LABEL_LENGTH characters long.""")))
             .andExpect(jsonPath("$.errors[0].pointer", `is`("""#/label""")))
-            .andDocumentWithValidationExceptionResponseFields(type)
+            .andDocumentWithValidationExceptionResponseFields(InvalidLiteralLabel::class, type)
     }
 
     @Test
@@ -93,7 +90,7 @@ internal class LiteralExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpect(jsonPath("$.errors[0].detail", `is`("""A literal datatype must be a URI or a "xsd:"-prefixed type.""")))
             .andExpect(jsonPath("$.errors[0].pointer", `is`("""#/datatype""")))
-            .andDocumentWithValidationExceptionResponseFields(type)
+            .andDocumentWithValidationExceptionResponseFields(InvalidLiteralDatatype::class, type)
     }
 
     @Test
@@ -105,12 +102,11 @@ internal class LiteralExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Literal "L123" already exists.""")
             .andExpect(jsonPath("$.literal_id", `is`("L123")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("literal_id").description("The id of the literal."),
-                    )
+            .andDocument {
+                responseFields<LiteralAlreadyExists>(
+                    fieldWithPath("literal_id").description("The id of the literal."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 }

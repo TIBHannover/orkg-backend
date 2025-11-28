@@ -1,5 +1,12 @@
 plugins {
-    id("org.orkg.gradle.kotlin-library")
+    id("org.orkg.gradle.kotlin-library-with-test-fixtures")
+}
+
+dependencies {
+    testFixturesApi("org.springframework.restdocs:spring-restdocs-core")
+    testFixturesApi("org.springframework.boot:spring-boot-test")
+    testFixturesApi(testFixtures(project(":testing:spring")))
+    testFixturesImplementation("jakarta.validation:jakarta.validation-api")
 }
 
 testing {

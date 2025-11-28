@@ -15,13 +15,13 @@ import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.domain.ResourceNotModifiable
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
+import org.orkg.testing.spring.restdocs.arrayItemsType
 import org.orkg.testing.spring.restdocs.exceptionResponseFields
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
@@ -37,13 +37,12 @@ internal class ResourceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Resource "R123" is not modifiable.""")
             .andExpect(jsonPath("$.resource_id", `is`("R123")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("resource_id").description("The id of the resource."),
-                    )
+            .andDocument {
+                responseFields<ResourceNotModifiable>(
+                    fieldWithPath("resource_id").description("The id of the resource."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -55,13 +54,12 @@ internal class ResourceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Not Found")
             .andExpectDetail("""Resource "R123" not found.""")
             .andExpect(jsonPath("$.resource_id", `is`("R123")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("resource_id").description("The id of the resource."),
-                    )
+            .andDocument {
+                responseFields<ResourceNotFound>(
+                    fieldWithPath("resource_id").description("The id of the resource."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -74,15 +72,14 @@ internal class ResourceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectDetail("""External resource "R123" for ontology "skos" not found.""")
             .andExpect(jsonPath("$.resource_id").value("R123"))
             .andExpect(jsonPath("$.ontology_id").value("skos"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("resource_id").description("The id of the resource. (optional, either `resource_id` or `resource_uri` is present)"),
-                        fieldWithPath("resource_uri").type("URI").description("The uri of the resource. (optional, either `resource_id` or `resource_uri` is present)").optional(),
-                        fieldWithPath("ontology_id").description("The id of the resource ontology."),
-                    )
+            .andDocument {
+                responseFields<ExternalResourceNotFound>(
+                    fieldWithPath("resource_id").description("The id of the resource. (optional, either `resource_id` or `resource_uri` is present)").optional(),
+                    fieldWithPath("resource_uri").type("String").description("The uri of the resource. (optional, either `resource_id` or `resource_uri` is present)").optional(),
+                    fieldWithPath("ontology_id").description("The id of the resource ontology."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -95,15 +92,14 @@ internal class ResourceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectDetail("""Entity "Q124138857" for ontology "wikidata" is not a resource.""")
             .andExpect(jsonPath("$.entity_id").value("Q124138857"))
             .andExpect(jsonPath("$.ontology_id").value("wikidata"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("entity_id").description("The id of the entity. (optional, either `entity_id` or `entity_uri` is present)"),
-                        fieldWithPath("entity_uri").type("URI").description("The uri of the entity. (optional, either `entity_id` or `entity_uri` is present)").optional(),
-                        fieldWithPath("ontology_id").description("The id of the entity ontology."),
-                    )
+            .andDocument {
+                responseFields<ExternalEntityIsNotAResource>(
+                    fieldWithPath("entity_id").description("The id of the entity. (optional, either `entity_id` or `entity_uri` is present)").optional(),
+                    fieldWithPath("entity_uri").type("String").description("The uri of the entity. (optional, either `entity_id` or `entity_uri` is present)").optional(),
+                    fieldWithPath("ontology_id").description("The id of the entity ontology."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -115,13 +111,12 @@ internal class ResourceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Unable to delete resource "R123" because it is used in at least one statement.""")
             .andExpect(jsonPath("$.resource_id", `is`("R123")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("resource_id").description("The id of the resource."),
-                    )
+            .andDocument {
+                responseFields<ResourceInUse>(
+                    fieldWithPath("resource_id").description("The id of the resource."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -133,13 +128,12 @@ internal class ResourceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Resource "R123" already exists.""")
             .andExpect(jsonPath("$.resource_id", `is`("R123")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("resource_id").description("The id of the resource."),
-                    )
+            .andDocument {
+                responseFields<ResourceAlreadyExists>(
+                    fieldWithPath("resource_id").description("The id of the resource."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -152,13 +146,12 @@ internal class ResourceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectDetail("""The collection of classes "[C123]" contains one or more invalid classes.""")
             .andExpect(jsonPath("$.class_ids.length()", `is`(1)))
             .andExpect(jsonPath("$.class_ids[0]", `is`("C123")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("class_ids").description("The list of invalid classes."),
-                    )
+            .andDocument {
+                responseFields<InvalidClassCollection>(
+                    fieldWithPath("class_ids").description("The list of invalid classes.").arrayItemsType("String"),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -170,12 +163,11 @@ internal class ResourceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Class "${Classes.list}" is reserved and therefor cannot be set.""")
             .andExpect(jsonPath("$.class_id", `is`(Classes.list.value)))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("class_id").description("The id of the class."),
-                    )
+            .andDocument {
+                responseFields<ReservedClass>(
+                    fieldWithPath("class_id").description("The id of the class."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 }

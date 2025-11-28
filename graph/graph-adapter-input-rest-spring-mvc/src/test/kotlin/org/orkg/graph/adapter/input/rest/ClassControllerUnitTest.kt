@@ -16,12 +16,23 @@ import org.orkg.common.ContributorId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.UnknownSortingProperty
-import org.orkg.common.json.CommonJacksonModule
+import org.orkg.graph.adapter.input.rest.ClassController.CreateClassRequest
+import org.orkg.graph.adapter.input.rest.ClassController.ReplaceClassRequest
+import org.orkg.graph.adapter.input.rest.ClassController.UpdateClassRequest
 import org.orkg.graph.adapter.input.rest.testing.fixtures.classResponseFields
+import org.orkg.graph.adapter.input.rest.testing.fixtures.configuration.GraphControllerUnitTestConfiguration
+import org.orkg.graph.domain.CannotResetURI
 import org.orkg.graph.domain.Class
+import org.orkg.graph.domain.ClassAlreadyExists
+import org.orkg.graph.domain.ClassNotFound
+import org.orkg.graph.domain.ClassNotModifiable
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
+import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.domain.ReservedClassId
+import org.orkg.graph.domain.URIAlreadyInUse
+import org.orkg.graph.domain.URINotAbsolute
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.fixtures.createClass
@@ -29,8 +40,6 @@ import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectClass
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.annotations.TestWithMockUser
-import org.orkg.testing.configuration.ExceptionTestConfiguration
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
@@ -40,13 +49,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
-import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.pathParameters
-import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -56,9 +60,7 @@ import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import java.util.Optional
 
-@ContextConfiguration(
-    classes = [ClassController::class, ExceptionTestConfiguration::class, CommonJacksonModule::class, FixedClockConfig::class]
-)
+@ContextConfiguration(classes = [ClassController::class, GraphControllerUnitTestConfiguration::class])
 @WebMvcTest(controllers = [ClassController::class])
 internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
     @MockkBean
@@ -71,7 +73,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
     private lateinit var clock: Clock
 
     @Test
-    fun getSingle() {
+    fun findById() {
         val `class` = createClass()
         every { classService.findById(any()) } returns Optional.of(`class`)
         every {
@@ -87,15 +89,19 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
             .perform()
             .andExpect(status().isOk)
             .andExpectClass()
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the class to retrieve."),
-                    ),
-                    responseFields(classResponseFields())
+            .andDocument {
+                summary("Fetching classes by ID")
+                description(
+                    """
+                    A `GET` request provides information about a class by ID.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the class to retrieve."),
+                )
+                responseFields<ClassRepresentation>(classResponseFields())
+                throws(ClassNotFound::class)
+            }
 
         verify(exactly = 1) { classService.findById(any()) }
         verify(exactly = 1) {
@@ -109,7 +115,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
     }
 
     @Test
-    fun getSingleByUri() {
+    fun findByURI() {
         val `class` = createClass()
         every { classService.findByURI(any()) } returns Optional.of(`class`)
         every {
@@ -126,15 +132,19 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
             .perform()
             .andExpect(status().isOk)
             .andExpectClass()
-            .andDo(
-                documentationHandler.document(
-                    queryParameters(
-                        parameterWithName("uri").description("The URI of the class to retrieve")
-                    ),
-                    responseFields(classResponseFields())
+            .andDocument {
+                summary("Fetching classes by URI")
+                description(
+                    """
+                    A `GET` request provides information about a class by URI.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                queryParameters(
+                    parameterWithName("uri").description("The URI of the class to retrieve")
+                )
+                responseFields<ClassRepresentation>(classResponseFields())
+                throws(ClassNotFound::class)
+            }
 
         verify(exactly = 1) { classService.findByURI(any()) }
         verify(exactly = 1) {
@@ -166,7 +176,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
 
     @Test
     @DisplayName("Given several classes, when they are fetched with all possible filtering parameters, then status is 200 OK and classes are returned")
-    fun getPagedWithParameters() {
+    fun findAll() {
         every { classService.findAll(any(), any(), any(), any(), any()) } returns pageOf(createClass())
         every { statementService.findAllDescriptionsById(any<Set<ThingId>>()) } returns emptyMap()
 
@@ -186,18 +196,24 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
             .andExpect(status().isOk)
             .andExpectPage()
             .andExpectClass("$.content[*]")
-            .andDo(
-                documentationHandler.document(
-                    queryParameters(
-                        parameterWithName("q").description("A search term that must be contained in the label. (optional)"),
-                        parameterWithName("exact").description("Whether label matching is exact or fuzzy (optional, default: false)"),
-                        parameterWithName("created_by").description("Filter for the UUID of the user or service who created the class. (optional)"),
-                        parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned class can have. (optional)"),
-                        parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned class can have. (optional)")
-                    )
+            .andDocument {
+                summary("Listing classes")
+                description(
+                    """
+                    A `GET` request returns a <<sorting-and-pagination,paged>> list of <<classes-fetch,classes>>.
+                    If no paging request parameters are provided, the default values will be used.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pagedQueryParameters(
+                    parameterWithName("q").description("A search term that must be contained in the label. (optional)").optional(),
+                    parameterWithName("exact").description("Whether label matching is exact or fuzzy (optional, default: false)").optional(),
+                    parameterWithName("created_by").description("Filter for the UUID of the user or service who created the class. (optional)").optional(),
+                    parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned class can have. (optional)").optional(),
+                    parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned class can have. (optional)").optional(),
+                )
+                pagedResponseFields<ClassRepresentation>(classResponseFields())
+                throws(UnknownSortingProperty::class)
+            }
 
         verify(exactly = 1) {
             classService.findAll(
@@ -295,19 +311,26 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
             .perform()
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("/api/classes/$id")))
-            .andDo(
-                documentationHandler.document(
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the newly created class can be fetched from.")
-                    ),
-                    requestFields(
-                        fieldWithPath("id").description("The class id (optional)"),
-                        fieldWithPath("label").description("The class label"),
-                        fieldWithPath("uri").description("The class URI")
-                    )
+            .andDocument {
+                summary("Creating classes")
+                description(
+                    """
+                    A `POST` request creates a new class with a given label.
+                    An optional URI can be given to link to the class in an external ontology (RDF).
+                    The response will be `201 Created` when successful.
+                    The class can be retrieved by following the URI in the `Location` header field.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the newly created class can be fetched from.")
+                )
+                requestFields<CreateClassRequest>(
+                    fieldWithPath("id").description("The class id (optional)").optional(),
+                    fieldWithPath("label").description("The class label"),
+                    fieldWithPath("uri").description("The class URI")
+                )
+                throws(InvalidLabel::class, URINotAbsolute::class, URIAlreadyInUse::class, ReservedClassId::class, ClassAlreadyExists::class)
+            }
 
         verify(exactly = 1) {
             classService.create(
@@ -337,21 +360,27 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
             .perform()
             .andExpect(status().isNoContent)
             .andExpect(header().string("Location", endsWith("/api/classes/$id")))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the class.")
-                    ),
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the updated class can be fetched from.")
-                    ),
-                    requestFields(
-                        fieldWithPath("label").description("The updated class label"),
-                        fieldWithPath("uri").description("The updated class label")
-                    )
+            .andDocument {
+                summary("Replacing classes")
+                description(
+                    """
+                    A `PUT` request updates a class with a new given label and URI.
+                    All fields will be updated in the process.
+                    The response will be `204 NO CONTENT` when successful.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the class.")
+                )
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the updated class can be fetched from.")
+                )
+                requestFields<ReplaceClassRequest>(
+                    fieldWithPath("label").description("The updated class label"),
+                    fieldWithPath("uri").description("The updated class label")
+                )
+                throws(InvalidLabel::class, ClassNotFound::class, ClassNotModifiable::class, CannotResetURI::class, URIAlreadyInUse::class)
+            }
 
         verify(exactly = 1) {
             classService.replace(
@@ -377,21 +406,27 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
             .perform()
             .andExpect(status().isNoContent)
             .andExpect(header().string("Location", endsWith("/api/classes/$id")))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the class.")
-                    ),
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the updated class can be fetched from.")
-                    ),
-                    requestFields(
-                        fieldWithPath("label").description("The updated class label (optional)"),
-                        fieldWithPath("uri").description("The updated class label (optional)")
-                    )
+            .andDocument {
+                summary("Updating classes")
+                description(
+                    """
+                    A `PATCH` request updates a class with a new given label and URI.
+                    Only fields provided in the request, and therefore non-null, will be updated.
+                    The response will be `204 NO CONTENT` when successful.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the class.")
+                )
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the updated class can be fetched from.")
+                )
+                requestFields<UpdateClassRequest>(
+                    fieldWithPath("label").description("The updated class label (optional)").optional(),
+                    fieldWithPath("uri").description("The updated class label (optional)").optional(),
+                )
+                throws(InvalidLabel::class, ClassNotFound::class, ClassNotModifiable::class, CannotResetURI::class, URIAlreadyInUse::class)
+            }
 
         verify(exactly = 1) {
             classService.update(

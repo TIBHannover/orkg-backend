@@ -70,7 +70,7 @@ class ListController(
     @PatchMapping("/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun update(
         @PathVariable id: ThingId,
-        @RequestBody request: UpdateRequest,
+        @RequestBody request: UpdateListRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         currentUser: Authentication?,
     ): ResponseEntity<Any> {
@@ -89,7 +89,7 @@ class ListController(
             CreateCommand(contributorId, label, elements)
     }
 
-    data class UpdateRequest(
+    data class UpdateListRequest(
         val label: String? = null,
         val elements: List<ThingId>? = null,
     ) {

@@ -45,14 +45,6 @@ operation::observatories_update[snippets='path-parameters,request-fields,curl-re
 [[observatories-list-papers]]
 == Listing Papers of Observatories
 
-A `GET` request returns a <<sorting-and-pagination,paged>> list of paper <<resources-fetch,resources>>.
+include::{snippets}/observatory-resources_find-all-papers/description.adoc[]
 
-TIP: This call features filter configs, check the chapter <<filter-config>> for more information on filter configs.
-
-operation::observatory-resources_get-paged-with-filter-config[snippets='path-parameters,curl-request,query-parameters']
-
-NOTE: Sorting is supported for the following fields: `id`, `created_by`, `created_at`.
-It is also possible to sort by the matched value of each search filter.
-To sort by the first search filter, the parameter `value0` can be used.
-If a second search filter is defined, the parameter `value1` can be used.
-By default, elements are sorted by `created_at` (descending).
+operation::observatory-resources_find-all-papers[snippets='path-parameters,curl-request,query-parameters']

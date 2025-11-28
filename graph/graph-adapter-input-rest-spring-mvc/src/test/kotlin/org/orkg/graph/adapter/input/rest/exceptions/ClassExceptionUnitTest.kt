@@ -23,7 +23,6 @@ import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
@@ -39,13 +38,12 @@ internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Class "C123" is not modifiable.""")
             .andExpect(jsonPath("$.class_id").value("C123"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("class_id").description("The id of the class."),
-                    )
+            .andDocument {
+                responseFields<ClassNotModifiable>(
+                    fieldWithPath("class_id").description("The id of the class."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -57,7 +55,7 @@ internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpect(jsonPath("$.errors[0].detail", `is`("""The URI <https://example.org/C123> is already assigned to class with ID "C123".""")))
             .andExpect(jsonPath("$.errors[0].pointer", `is`("#/uri")))
-            .andDocumentWithValidationExceptionResponseFields(type)
+            .andDocumentWithValidationExceptionResponseFields(URIAlreadyInUse::class, type)
     }
 
     @Test
@@ -69,7 +67,7 @@ internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpect(jsonPath("$.errors[0].detail", `is`("""The URI <invalid> is not absolute.""")))
             .andExpect(jsonPath("$.errors[0].pointer", `is`("#/uri")))
-            .andDocumentWithValidationExceptionResponseFields(type)
+            .andDocumentWithValidationExceptionResponseFields(URINotAbsolute::class, type)
     }
 
     @Test
@@ -81,13 +79,12 @@ internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Class id "${Classes.list}" is reserved.""")
             .andExpect(jsonPath("$.class_id").value(Classes.list.value))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("class_id").description("The id of the class."),
-                    )
+            .andDocument {
+                responseFields<ReservedClassId>(
+                    fieldWithPath("class_id").description("The id of the class."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -99,13 +96,12 @@ internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Class "${Classes.list}" already exists.""")
             .andExpect(jsonPath("$.class_id").value(Classes.list.value))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("class_id").description("The id of the class."),
-                    )
+            .andDocument {
+                responseFields<CannotResetURI>(
+                    fieldWithPath("class_id").description("The id of the class."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -117,7 +113,7 @@ internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Forbidden")
             .andExpect(jsonPath("$.errors[0].detail", `is`("""The class "${Classes.list}" already has a URI. It is not allowed to change URIs.""")))
             .andExpect(jsonPath("$.errors[0].pointer", `is`("#/uri")))
-            .andDocumentWithValidationExceptionResponseFields(type)
+            .andDocumentWithValidationExceptionResponseFields(CannotResetURI::class, type)
     }
 
     @Test
@@ -129,14 +125,13 @@ internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Not Found")
             .andExpectDetail("""Class "C123" not found.""")
             .andExpect(jsonPath("$.class_id", `is`("C123")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("class_id").description("The id of the class. (optional, either `class_id` or `class_uri` is present)"),
-                        fieldWithPath("class_uri").type("URI").description("The uri of the class. (optional, either `class_id` or `class_uri` is present)").optional(),
-                    )
+            .andDocument {
+                responseFields<ClassNotFound>(
+                    fieldWithPath("class_id").description("The id of the class. (optional, either `class_id` or `class_uri` is present)").optional(),
+                    fieldWithPath("class_uri").type("String").description("The uri of the class. (optional, either `class_id` or `class_uri` is present)").optional(),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -159,15 +154,14 @@ internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectDetail("""External class "R123" for ontology "skos" not found.""")
             .andExpect(jsonPath("$.class_id").value("R123"))
             .andExpect(jsonPath("$.ontology_id").value("skos"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("class_id").description("The id of the class. (optional, either `class_id` or `class_uri` is present)"),
-                        fieldWithPath("class_uri").type("URI").description("The uri of the class. (optional, either `class_id` or `class_uri` is present)").optional(),
-                        fieldWithPath("ontology_id").description("The id of the class ontology."),
-                    )
+            .andDocument {
+                responseFields<ExternalClassNotFound>(
+                    fieldWithPath("class_id").description("The id of the class. (optional, either `class_id` or `class_uri` is present)").optional(),
+                    fieldWithPath("class_uri").type("String").description("The uri of the class. (optional, either `class_id` or `class_uri` is present)").optional(),
+                    fieldWithPath("ontology_id").description("The id of the class ontology."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -180,15 +174,14 @@ internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectDetail("""Entity "Q42" for ontology "wikidata" is not a class.""")
             .andExpect(jsonPath("$.entity_id").value("Q42"))
             .andExpect(jsonPath("$.ontology_id").value("wikidata"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("entity_id").description("The id of the entity. (optional, either `entity_id` or `entity_uri` is present)"),
-                        fieldWithPath("entity_uri").type("URI").description("The uri of the entity. (optional, either `entity_id` or `entity_uri` is present)").optional(),
-                        fieldWithPath("ontology_id").description("The id of the entity ontology."),
-                    )
+            .andDocument {
+                responseFields<ExternalEntityIsNotAClass>(
+                    fieldWithPath("entity_id").description("The id of the entity. (optional, either `entity_id` or `entity_uri` is present)").optional(),
+                    fieldWithPath("entity_uri").type("String").description("The uri of the entity. (optional, either `entity_id` or `entity_uri` is present)").optional(),
+                    fieldWithPath("ontology_id").description("The id of the entity ontology."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -200,12 +193,11 @@ internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Class id "C123" is reserved.""")
             .andExpect(jsonPath("$.class_id", `is`("C123")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("class_id").description("The id of the class."),
-                    )
+            .andDocument {
+                responseFields<ReservedClassId>(
+                    fieldWithPath("class_id").description("The id of the class."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 }

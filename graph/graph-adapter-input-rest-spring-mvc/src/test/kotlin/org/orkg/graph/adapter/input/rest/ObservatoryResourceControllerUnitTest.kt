@@ -7,8 +7,10 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ObservatoryId
 import org.orkg.common.ThingId
-import org.orkg.common.configuration.WebMvcConfiguration
+import org.orkg.community.domain.InvalidFilterConfig
 import org.orkg.community.input.RetrieveContributorUseCase
+import org.orkg.graph.adapter.input.rest.testing.fixtures.configuration.GraphControllerUnitTestConfiguration
+import org.orkg.graph.adapter.input.rest.testing.fixtures.resourceResponseFields
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.SearchFilter
@@ -23,8 +25,6 @@ import org.orkg.graph.testing.asciidoc.allowedVisibilityFilterValues
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectResource
-import org.orkg.testing.configuration.ExceptionTestConfiguration
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
@@ -32,15 +32,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageImpl
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.pathParameters
-import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import java.util.UUID
 
-@ContextConfiguration(
-    classes = [ObservatoryResourceController::class, ExceptionTestConfiguration::class, FixedClockConfig::class, WebMvcConfiguration::class]
-)
+@ContextConfiguration(classes = [ObservatoryResourceController::class, GraphControllerUnitTestConfiguration::class])
 @WebMvcTest(controllers = [ObservatoryResourceController::class])
 internal class ObservatoryResourceControllerUnitTest : MockMvcBaseTest("observatory-resources") {
     @MockkBean
@@ -57,7 +52,7 @@ internal class ObservatoryResourceControllerUnitTest : MockMvcBaseTest("observat
 
     @Test
     fun `Given an observatory id, when no parameters are specified and service succeeds, then status is 200 OK and papers are returned`() {
-        val id = ObservatoryId(UUID.randomUUID())
+        val id = ObservatoryId("95565e51-2b80-4c28-918c-6fbc5e2a9b33")
         val paperResource = createResource(
             observatoryId = id,
             classes = setOf(Classes.paper)
@@ -81,7 +76,7 @@ internal class ObservatoryResourceControllerUnitTest : MockMvcBaseTest("observat
 
     @Test
     fun `Given an observatory id, when visibility is specified and service succeeds, then status is 200 OK and papers are returned`() {
-        val id = ObservatoryId(UUID.randomUUID())
+        val id = ObservatoryId("95565e51-2b80-4c28-918c-6fbc5e2a9b33")
         val paperResource = createResource(
             observatoryId = id,
             classes = setOf(Classes.paper),
@@ -106,7 +101,7 @@ internal class ObservatoryResourceControllerUnitTest : MockMvcBaseTest("observat
 
     @Test
     fun `Given an observatory id, when filters are specified and service succeeds, then status is 200 OK and papers are returned`() {
-        val id = ObservatoryId(UUID.randomUUID())
+        val id = ObservatoryId("95565e51-2b80-4c28-918c-6fbc5e2a9b33")
         val paperResource = createResource(
             observatoryId = id,
             classes = setOf(Classes.paper),
@@ -148,8 +143,8 @@ internal class ObservatoryResourceControllerUnitTest : MockMvcBaseTest("observat
 
     @Test
     @DisplayName("Given an observatory id, when filters and visibility are specified and service succeeds, then status is 200 OK and papers are returned")
-    fun getPagedWithFilterConfig() {
-        val id = ObservatoryId(UUID.randomUUID())
+    fun findAllPapers() {
+        val id = ObservatoryId("95565e51-2b80-4c28-918c-6fbc5e2a9b33")
         val paperResource = createResource(
             observatoryId = id,
             classes = setOf(Classes.paper),
@@ -183,18 +178,32 @@ internal class ObservatoryResourceControllerUnitTest : MockMvcBaseTest("observat
             .andExpect(status().isOk)
             .andExpectPage()
             .andExpectResource("$.content[*]")
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the observatory.")
-                    ),
-                    queryParameters(
-                        parameterWithName("filter_config").description("The filter config to use. (optional)"),
-                        parameterWithName("visibility").description("Visibility of this resource. Can be one of $allowedVisibilityFilterValues. (optional)")
-                    )
+            .andDocument {
+                tag("Observatories")
+                summary("Listing papers of observatories")
+                description(
+                    """
+                    A `GET` request returns a <<sorting-and-pagination,paged>> list of paper <<resources-fetch,resources>>.
+
+                    TIP: This call features filter configs, check the chapter <<filter-config>> for more information on filter configs.
+
+                    NOTE: Sorting is supported for the following fields: `id`, `created_by`, `created_at`.
+                    It is also possible to sort by the matched value of each search filter.
+                    To sort by the first search filter, the parameter `value0` can be used.
+                    If a second search filter is defined, the parameter `value1` can be used.
+                    By default, elements are sorted by `created_at` (descending).
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the observatory.")
+                )
+                pagedQueryParameters(
+                    parameterWithName("filter_config").description("The filter config to use. (optional)").optional(),
+                    parameterWithName("visibility").description("Visibility of this resource. Can be one of $allowedVisibilityFilterValues. (optional)").optional(),
+                )
+                pagedResponseFields<ResourceRepresentation>(resourceResponseFields())
+                throws(InvalidFilterConfig::class)
+            }
 
         verify(exactly = 1) {
             resourceService.findAllPapersByObservatoryIdAndFilters(id, filterConfig, VisibilityFilter.FEATURED, any())
@@ -204,7 +213,7 @@ internal class ObservatoryResourceControllerUnitTest : MockMvcBaseTest("observat
 
     @Test
     fun `Given an observatory id, when filter config is invalid, then status is 400 BAD REQUEST`() {
-        val id = ObservatoryId(UUID.randomUUID())
+        val id = ObservatoryId("95565e51-2b80-4c28-918c-6fbc5e2a9b33")
         val encodedFilterConfig = "invalid"
 
         get("/api/observatories/{id}/papers", id)

@@ -6,66 +6,41 @@ They can appear in the subject or object position in <<Statements,statements>>.
 [[resources-fetch]]
 == Fetching Resources
 
-A `GET` request provides information about a resource.
+include::{snippets}/resources_find-by-id/description.adoc[]
 
-operation::resources_get-single[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::resources_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[resources-list]]
 == Listing Resources
 
-A `GET` request lists all resources.
-
-TIP: {pagination_note}
+include::{snippets}/resources_find-all/description.adoc[]
 
 operation::resources_get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::resources_get-paged-with-parameters[snippets='query-parameters,curl-request']
+operation::resources_find-all[snippets='query-parameters,curl-request']
 
 [[resources-create]]
 == Creating Resources
 
-A `POST` request creates a new resource with a given label.
-An optional set of classes can be provided.
-The response will be `201 Created` when successful.
-The resource can be retrieved by following the URI in the `Location` header field.
+include::{snippets}/resources_create/description.adoc[]
 
 operation::resources_create[snippets='request-fields,curl-request,response-headers,http-response']
 
 [[resources-edit]]
 == Updating Resources
 
-A `PUT` request updates a resource with the given parameters.
-The response will be `204 NO CONTENT` when successful.
-The updated resource can be retrieved by following the URI in the `Location` header field.
-
-[NOTE]
-====
-1. If the resource doesn't exist, the return status will be `404 NOT FOUND`.
-2. If the resource is not modifiable, the return status will be `403 FORBIDDEN`.
-3. If the target visibility is `FEATURED` or `UNLISTED` and the performing user is not a curator, the return status will be `403 FORBIDDEN`.
-4. If the target visibility is `DELETED` the performing user is not the owner of the resource and not a curator, the return status will be `403 FORBIDDEN`.
-5. If the target visibility is `DEFAULT` and the original visibility is `DELETED` and the performing user is not the owner of the resource and not a curator, the return status will be `403 FORBIDDEN`.
-====
+include::{snippets}/resources_update/description.adoc[]
 
 operation::resources_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[resources-delete]]
 == Deleting Resources
 
-A `DELETE` request with the id of the resource to delete.
-The response will be `204 NO CONTENT` when successful.
+include::{snippets}/resources_delete-by-id/description.adoc[]
 
-[NOTE]
-====
-1. If the resource doesn't exist, the return status will be `404 NOT FOUND`.
-2. If the resource is not modifiable, the return status will be `403 FORBIDDEN`.
-3. If the resource is used as an object in a statement, the return status will be `403 FORBIDDEN`.
-4. If the performing user is not the creator of the resource and does not have the curator role, the return status will be `403 FORBIDDEN`.
-====
-
-operation::resources_delete[snippets='path-parameters,curl-request,http-response']
+operation::resources_delete-by-id[snippets='path-parameters,curl-request,http-response']
 
 [[resources-import]]
 == Importing Resources
@@ -75,15 +50,13 @@ The {orkg} REST API provides two endpoints for importing resources from external
 [[resources-import-by-uri]]
 === Importing Resources by URI
 
-A `POST` request imports a resource from an external ontology by a given URI.
-The response will be `201 Created` when successful, even when the resource was already imported previously.
+include::{snippets}/import_import-resource-by-uri/description.adoc[]
 
 operation::import_import-resource-by-uri[snippets='request-fields,curl-request,response-headers,http-response']
 
 [[resources-import-by-short-form]]
 === Importing Resources by Short Form
 
-A `POST` request imports a resource from an external ontology by a given short form id.
-The response will be `201 Created` when successful, even when the resource was already imported.
+include::{snippets}/import_import-resource-by-short-form/description.adoc[]
 
 operation::import_import-resource-by-short-form[snippets='request-fields,curl-request,response-headers,http-response']

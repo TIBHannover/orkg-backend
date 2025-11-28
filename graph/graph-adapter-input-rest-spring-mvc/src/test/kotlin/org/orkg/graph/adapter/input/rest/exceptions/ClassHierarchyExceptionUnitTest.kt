@@ -12,7 +12,6 @@ import org.orkg.testing.spring.restdocs.exceptionResponseFields
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
@@ -29,14 +28,13 @@ internal class ClassHierarchyExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectDetail("""The class "C123" cannot be a subclass of "C456".""")
             .andExpect(jsonPath("$.class_id", `is`("C123")))
             .andExpect(jsonPath("$.parent_class_id", `is`("C456")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("class_id").description("The id of the class."),
-                        fieldWithPath("parent_class_id").description("The id of the parent class."),
-                    )
+            .andDocument {
+                responseFields<InvalidSubclassRelation>(
+                    fieldWithPath("class_id").description("The id of the class."),
+                    fieldWithPath("parent_class_id").description("The id of the parent class."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -49,13 +47,12 @@ internal class ClassHierarchyExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectDetail("""The class "C123" already has a parent class (C456).""")
             .andExpect(jsonPath("$.class_id", `is`("C123")))
             .andExpect(jsonPath("$.parent_class_id", `is`("C456")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("class_id").description("The id of the class."),
-                        fieldWithPath("parent_class_id").description("The id of the parent class."),
-                    )
+            .andDocument {
+                responseFields<ParentClassAlreadyExists>(
+                    fieldWithPath("class_id").description("The id of the class."),
+                    fieldWithPath("parent_class_id").description("The id of the parent class."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 }

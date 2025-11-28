@@ -1,5 +1,8 @@
 package org.orkg.testing.spring.restdocs
 
+import com.epages.restdocs.apispec.Criterion
+import com.epages.restdocs.apispec.Discriminator
+import com.epages.restdocs.apispec.References
 import org.springframework.restdocs.payload.FieldDescriptor
 import org.springframework.restdocs.snippet.Attributes
 import kotlin.reflect.KClass
@@ -25,20 +28,18 @@ fun FieldDescriptor.enum(enum: KClass<out Enum<*>>): FieldDescriptor =
 inline fun <reified T : Enum<*>> FieldDescriptor.enum(): FieldDescriptor =
     enum(T::class)
 
-// TODO: re-enable once rest-docs-api allows defining reference schemas
-//
-//  fun allOf(discriminator: String, mapping: Map<String, KClass<*>>): References =
-//      references(Criterion.ALL_OF, discriminator, mapping)
-//
-//  fun anyOf(discriminator: String, mapping: Map<String, KClass<*>>): References =
-//      references(Criterion.ANY_OF, discriminator, mapping)
-//
-//  fun oneOf(discriminator: String, mapping: Map<String, KClass<*>>): References =
-//      references(Criterion.ONE_OF, discriminator, mapping)
-//
-//  private fun references(criterion: Criterion, discriminator: String, mapping: Map<String, KClass<*>>): References =
-//      References(
-//          criterion = criterion,
-//          schemaNames = mapping.values.map { it.simpleName!! },
-//          discriminator = Discriminator(discriminator, mapping.mapValues { (_, value) -> value.simpleName!! }),
-//      )
+fun allOf(discriminator: String, mapping: Map<String, KClass<*>>): References =
+    references(Criterion.ALL_OF, discriminator, mapping)
+
+fun anyOf(discriminator: String, mapping: Map<String, KClass<*>>): References =
+    references(Criterion.ANY_OF, discriminator, mapping)
+
+fun oneOf(discriminator: String, mapping: Map<String, KClass<*>>): References =
+    references(Criterion.ONE_OF, discriminator, mapping)
+
+private fun references(criterion: Criterion, discriminator: String, mapping: Map<String, KClass<*>>): References =
+    References(
+        criterion = criterion,
+        schemaNames = mapping.values.map { it.simpleName!! },
+        discriminator = Discriminator(discriminator, mapping.mapValues { (_, value) -> value.simpleName!! }),
+    )

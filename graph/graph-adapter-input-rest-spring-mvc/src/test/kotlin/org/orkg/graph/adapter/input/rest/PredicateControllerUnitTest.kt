@@ -15,11 +15,19 @@ import org.orkg.common.ContributorId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.UnknownSortingProperty
-import org.orkg.common.json.CommonJacksonModule
-import org.orkg.graph.adapter.input.rest.json.GraphJacksonModule
+import org.orkg.community.domain.ContributorNotFound
+import org.orkg.graph.adapter.input.rest.PredicateController.CreatePredicateRequest
+import org.orkg.graph.adapter.input.rest.PredicateController.UpdatePredicateRequest
+import org.orkg.graph.adapter.input.rest.testing.fixtures.configuration.GraphControllerUnitTestConfiguration
 import org.orkg.graph.adapter.input.rest.testing.fixtures.predicateResponseFields
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
+import org.orkg.graph.domain.InvalidLabel
+import org.orkg.graph.domain.NeitherOwnerNorCurator
+import org.orkg.graph.domain.PredicateAlreadyExists
+import org.orkg.graph.domain.PredicateInUse
+import org.orkg.graph.domain.PredicateNotFound
+import org.orkg.graph.domain.PredicateNotModifiable
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.StatementUseCases
@@ -30,8 +38,6 @@ import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectPredicate
 import org.orkg.testing.annotations.TestWithMockCurator
 import org.orkg.testing.annotations.TestWithMockUser
-import org.orkg.testing.configuration.ExceptionTestConfiguration
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
@@ -41,13 +47,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
-import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.pathParameters
-import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -56,15 +57,7 @@ import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import java.util.Optional
 
-@ContextConfiguration(
-    classes = [
-        PredicateController::class,
-        ExceptionTestConfiguration::class,
-        CommonJacksonModule::class,
-        GraphJacksonModule::class,
-        FixedClockConfig::class
-    ]
-)
+@ContextConfiguration(classes = [PredicateController::class, GraphControllerUnitTestConfiguration::class])
 @WebMvcTest(controllers = [PredicateController::class])
 internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
     @MockkBean
@@ -77,7 +70,7 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
     private lateinit var clock: Clock
 
     @Test
-    fun getSingle() {
+    fun findById() {
         val predicate = createPredicate()
 
         every { predicateService.findById(any()) } returns Optional.of(predicate)
@@ -94,15 +87,19 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
             .perform()
             .andExpect(status().isOk)
             .andExpectPredicate()
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the predicate to retrieve."),
-                    ),
-                    responseFields(predicateResponseFields())
+            .andDocument {
+                summary("Fetching predicates")
+                description(
+                    """
+                    A `GET` request provides information about a predicate.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the predicate to retrieve."),
+                )
+                responseFields<PredicateRepresentation>(predicateResponseFields())
+                throws(PredicateNotFound::class)
+            }
 
         verify(exactly = 1) { predicateService.findById(any()) }
         verify(exactly = 1) {
@@ -119,7 +116,7 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
     @TestWithMockUser
     @DisplayName("Given a predicate create request, when service succeeds, then status is 201 CREATED")
     fun create() {
-        val request = PredicateController.CreatePredicateRequest(
+        val request = CreatePredicateRequest(
             id = null,
             label = "predicate label"
         )
@@ -133,18 +130,24 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
             .perform()
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("api/predicates/$id")))
-            .andDo(
-                documentationHandler.document(
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the newly created predicate can be fetched from.")
-                    ),
-                    requestFields(
-                        fieldWithPath("id").type("String").description("The id of the predicate. (optional)").optional(),
-                        fieldWithPath("label").description("The label of the predicate.")
-                    )
+            .andDocument {
+                summary("Creating predicates")
+                description(
+                    """ 
+                    A `POST` request creates a new predicate with a given label.
+                    The response will be `201 Created` when successful.
+                    The predicate can be retrieved by following the URI in the `Location` header field.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                requestFields<CreatePredicateRequest>(
+                    fieldWithPath("label").description("The label of the predicate."),
+                    fieldWithPath("id").type("String").description("The id of the predicate. (optional)").optional()
+                )
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the newly created predicate can be fetched from.")
+                )
+                throws(InvalidLabel::class, PredicateAlreadyExists::class)
+            }
 
         verify(exactly = 1) {
             predicateService.create(
@@ -161,7 +164,7 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
     @TestWithMockUser
     fun `Given a predicate create request, when id is specified and service succeeds, then status is 201 CREATED`() {
         val id = ThingId("R123")
-        val request = PredicateController.CreatePredicateRequest(
+        val request = CreatePredicateRequest(
             id = id,
             label = "predicate label"
         )
@@ -206,7 +209,7 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
 
     @Test
     @DisplayName("Given several predicates, when they are fetched with all possible filtering parameters, then status is 200 OK and predicates are returned")
-    fun getPagedWithParameters() {
+    fun findAll() {
         every { predicateService.findAll(any(), any(), any(), any(), any()) } returns pageOf(createPredicate())
         every { statementService.findAllDescriptionsById(any<Set<ThingId>>()) } returns emptyMap()
 
@@ -227,18 +230,24 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
             .andExpect(status().isOk)
             .andExpectPage()
             .andExpectPredicate("$.content[*]")
-            .andDo(
-                documentationHandler.document(
-                    queryParameters(
-                        parameterWithName("q").description("A search term that must be contained in the label. (optional)"),
-                        parameterWithName("exact").description("Whether label matching is exact or fuzzy (optional, default: false)"),
-                        parameterWithName("created_by").description("Filter for the UUID of the user or service who created the predicate. (optional)"),
-                        parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned predicate can have. (optional)"),
-                        parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned predicate can have. (optional)")
-                    )
+            .andDocument {
+                summary("Listing predicates")
+                description(
+                    """
+                    A `GET` request returns a <<sorting-and-pagination,paged>> list of <<predicates-fetch,predicates>>.
+                    If no paging request parameters are provided, the default values will be used.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pagedQueryParameters(
+                    parameterWithName("q").description("A search term that must be contained in the label. (optional)").optional(),
+                    parameterWithName("exact").description("Whether label matching is exact or fuzzy (optional, default: false)").optional(),
+                    parameterWithName("created_by").description("Filter for the UUID of the user or service who created the predicate. (optional)").optional(),
+                    parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned predicate can have. (optional)").optional(),
+                    parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned predicate can have. (optional)").optional(),
+                )
+                pagedResponseFields<PredicateRepresentation>(predicateResponseFields())
+                throws(UnknownSortingProperty::class)
+            }
 
         verify(exactly = 1) {
             predicateService.findAll(
@@ -289,27 +298,33 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
             .perform()
             .andExpect(status().isNoContent)
             .andExpect(header().string("Location", CoreMatchers.endsWith("/api/predicates/${predicate.id}")))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the predicate.")
-                    ),
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the updated predicate can be fetched from.")
-                    ),
-                    requestFields(
-                        fieldWithPath("label").description("The updated predicate label. (optional)").optional(),
-                    )
+            .andDocument {
+                summary("Updating predicates")
+                description(
+                    """
+                    A `PUT` request updates a predicate with the given parameters.
+                    The response will be `204 NO CONTENT` when successful.
+                    The updated predicate can be retrieved by following the URI in the `Location` header field.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the predicate.")
+                )
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the updated predicate can be fetched from.")
+                )
+                requestFields<UpdatePredicateRequest>(
+                    fieldWithPath("label").description("The updated predicate label. (optional)").optional(),
+                )
+                throws(PredicateNotFound::class, PredicateNotModifiable::class, InvalidLabel::class)
+            }
 
         verify(exactly = 1) { predicateService.update(command) }
     }
 
     @Test
     @TestWithMockCurator
-    fun delete() {
+    fun deleteById() {
         val predicate = createPredicate()
         val contributorId = ContributorId(MockUserId.CURATOR)
 
@@ -318,14 +333,27 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
         documentedDeleteRequestTo("/api/predicates/{id}", predicate.id)
             .perform()
             .andExpect(status().isNoContent)
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the predicate.")
-                    )
+            .andDocument {
+                summary("Deleting predicates")
+                description(
+                    """
+                    A `DELETE` request with the id of the predicate to delete.
+                    The response will be `204 NO CONTENT` when successful.
+
+                    [NOTE]
+                    ====
+                    1. If the predicate doesn't exist, the return status will be `404 NOT FOUND`.
+                    2. If the predicate is not modifiable, the return status will be `403 FORBIDDEN`.
+                    3. If the predicate is used in a statement (excluding subject position), the return status will be `403 FORBIDDEN`.
+                    4. If the performing user is not the creator of the predicate and does not have the curator role, the return status will be `403 FORBIDDEN`.
+                    ====
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the predicate.")
+                )
+                throws(PredicateNotFound::class, PredicateNotModifiable::class, PredicateInUse::class, ContributorNotFound::class, NeitherOwnerNorCurator::class)
+            }
 
         verify(exactly = 1) { predicateService.delete(predicate.id, contributorId) }
     }

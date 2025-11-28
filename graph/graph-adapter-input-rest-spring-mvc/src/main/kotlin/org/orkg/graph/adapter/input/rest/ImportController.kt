@@ -28,7 +28,7 @@ class ImportController(
         @RequestBody request: ImportRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         currentUser: Authentication?,
-    ): ResponseEntity<ListRepresentation> {
+    ): ResponseEntity<Any> {
         val id = when (request) {
             is ImportByURIRequest -> service.importResourceByURI(
                 contributorId = currentUser.contributorId(),
@@ -53,7 +53,7 @@ class ImportController(
         @RequestBody request: ImportRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         currentUser: Authentication?,
-    ): ResponseEntity<ListRepresentation> {
+    ): ResponseEntity<Any> {
         val id = when (request) {
             is ImportByURIRequest -> service.importPredicateByURI(
                 contributorId = currentUser.contributorId(),
@@ -78,7 +78,7 @@ class ImportController(
         @RequestBody request: ImportRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         currentUser: Authentication?,
-    ): ResponseEntity<ListRepresentation> {
+    ): ResponseEntity<Any> {
         val id = when (request) {
             is ImportByURIRequest -> service.importClassByURI(
                 contributorId = currentUser.contributorId(),

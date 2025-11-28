@@ -8,10 +8,15 @@ import io.mockk.verify
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.common.configuration.WebMvcConfiguration
-import org.orkg.common.json.CommonJacksonModule
-import org.orkg.graph.adapter.input.rest.json.GraphJacksonModule
+import org.orkg.common.exceptions.UnknownSortingProperty
+import org.orkg.graph.adapter.input.rest.BulkStatementController.BulkStatementUpdateRequest
+import org.orkg.graph.adapter.input.rest.testing.fixtures.configuration.GraphControllerUnitTestConfiguration
+import org.orkg.graph.adapter.input.rest.testing.fixtures.statementResponseFields
+import org.orkg.graph.domain.InvalidStatement
 import org.orkg.graph.domain.StatementId
+import org.orkg.graph.domain.StatementInUse
+import org.orkg.graph.domain.StatementNotFound
+import org.orkg.graph.domain.StatementNotModifiable
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.fixtures.createPredicate
@@ -20,32 +25,22 @@ import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectStatement
 import org.orkg.testing.annotations.TestWithMockUser
-import org.orkg.testing.configuration.ExceptionTestConfiguration
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
+import org.orkg.testing.spring.restdocs.pagedResponseFields
+import org.orkg.testing.spring.restdocs.referencesPageOf
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageRequest
+import org.springframework.restdocs.payload.PayloadDocumentation.applyPathPrefix
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.Optional
 
-@ContextConfiguration(
-    classes = [
-        BulkStatementController::class,
-        ExceptionTestConfiguration::class,
-        CommonJacksonModule::class,
-        GraphJacksonModule::class,
-        FixedClockConfig::class,
-        WebMvcConfiguration::class
-    ]
-)
+@ContextConfiguration(classes = [BulkStatementController::class, GraphControllerUnitTestConfiguration::class])
 @WebMvcTest(controllers = [BulkStatementController::class])
 internal class BulkStatementControllerUnitTest : MockMvcBaseTest("bulk-statements") {
     @MockkBean
@@ -55,7 +50,7 @@ internal class BulkStatementControllerUnitTest : MockMvcBaseTest("bulk-statement
     private lateinit var formattedLabelService: FormattedLabelUseCases
 
     @Test
-    fun lookupBySubjects() {
+    fun findAllBySubjectIds() {
         val r1 = ThingId("R1")
         val r2 = ThingId("R2")
         val r3 = ThingId("R3")
@@ -89,16 +84,22 @@ internal class BulkStatementControllerUnitTest : MockMvcBaseTest("bulk-statement
             .andExpect(jsonPath("$", hasSize<Int>(2)))
             .andExpect(jsonPath("$[*].id").isNotEmpty)
             .andExpectPage("$[*].statements")
-            .andDo(
-                documentationHandler.document(
-                    queryParameters(parameterWithName("ids").description("The list of resource ids to fetch.")),
-                    responseFields(
-                        fieldWithPath("[].id").description("The subject id that was used to fetch the following statements."),
-                        subsectionWithPath("[].statements").description("Page of statements whose subject id matches the id from the search parameter."),
-                    )
+            .andDocument {
+                deprecated()
+                summary("Fetching statements by subjects (bulk)")
+                description(
+                    """
+                    A `GET` request to get statements of multiple resources in the subject position.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pagedQueryParameters(parameterWithName("ids").description("The list of resource ids to fetch."))
+                listResponseFields<BulkStatementRepresentation>(
+                    fieldWithPath("id").description("The subject id that was used to fetch the following statements."),
+                    fieldWithPath("statements").description("The page of statements.").referencesPageOf<StatementRepresentation>(),
+                    *applyPathPrefix("statements.", pagedResponseFields(statementResponseFields(), StatementRepresentation::class, false)).toTypedArray(),
+                )
+                throws(UnknownSortingProperty::class)
+            }
 
         verify(exactly = 1) {
             statementService.findAll(subjectId = r1, pageable = any())
@@ -113,7 +114,7 @@ internal class BulkStatementControllerUnitTest : MockMvcBaseTest("bulk-statement
     }
 
     @Test
-    fun lookupByObjects() {
+    fun findAllByObjectIds() {
         val r1 = ThingId("R1")
         val r2 = ThingId("R2")
         val r3 = ThingId("R3")
@@ -147,16 +148,22 @@ internal class BulkStatementControllerUnitTest : MockMvcBaseTest("bulk-statement
             .andExpect(jsonPath("$", hasSize<Int>(2)))
             .andExpect(jsonPath("$[*].id").isNotEmpty)
             .andExpectPage("$[*].statements")
-            .andDo(
-                documentationHandler.document(
-                    queryParameters(parameterWithName("ids").description("The list of object ids to fetch.")),
-                    responseFields(
-                        fieldWithPath("[].id").description("The object id that was used to fetch the following statements."),
-                        subsectionWithPath("[].statements").description("Page of statements whose object id matches the id from the search parameter."),
-                    )
+            .andDocument {
+                deprecated()
+                summary("Fetching statements by objects (bulk)")
+                description(
+                    """
+                    A `GET` request to get statements of multiple resources/literals in the object position.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pagedQueryParameters(parameterWithName("ids").description("The list of object ids to fetch."))
+                listResponseFields<BulkStatementRepresentation>(
+                    fieldWithPath("id").description("The object id that was used to fetch the following statements."),
+                    fieldWithPath("statements").description("The page of statements.").referencesPageOf<StatementRepresentation>(),
+                    *applyPathPrefix("statements.", pagedResponseFields(statementResponseFields(), StatementRepresentation::class, false)).toTypedArray(),
+                )
+                throws(UnknownSortingProperty::class)
+            }
 
         verify(exactly = 1) {
             statementService.findAll(objectId = r2, pageable = any())
@@ -170,7 +177,7 @@ internal class BulkStatementControllerUnitTest : MockMvcBaseTest("bulk-statement
 
     @Test
     @TestWithMockUser
-    fun editResourceStatements() {
+    fun updateAllByIds() {
         val r1 = ThingId("R1")
         val r2 = ThingId("R2")
         val r3 = ThingId("R3")
@@ -206,11 +213,9 @@ internal class BulkStatementControllerUnitTest : MockMvcBaseTest("bulk-statement
             `object` = newO
         )
 
-        val payload = objectMapper.writeValueAsString(
-            mapOf(
-                "predicate_id" to newP.id,
-                "object_id" to newO.id,
-            )
+        val payload = BulkStatementUpdateRequest(
+            predicateId = newP.id,
+            objectId = newO.id,
         )
 
         every { statementService.update(match { it.statementId == s1.id || it.statementId == s2.id }) } just runs
@@ -228,16 +233,26 @@ internal class BulkStatementControllerUnitTest : MockMvcBaseTest("bulk-statement
             .andExpect(jsonPath("$", hasSize<Int>(2)))
             .andExpect(jsonPath("$[*].id").isNotEmpty)
             .andExpectStatement("$[*].statement")
-            .andDo(
-                documentationHandler.document(
-                    queryParameters(parameterWithName("ids").description("The list of statements to update")),
-                    responseFields(
-                        fieldWithPath("[].id").description("The statement id"),
-                        subsectionWithPath("[].statement").description("The statement representation of the updated statement"),
-                    )
+            .andDocument {
+                deprecated()
+                summary("Updating statements (bulk)")
+                description(
+                    """
+                    A `PUT` request to edit multiple statements, with the same update body.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                queryParameters(parameterWithName("ids").description("The list of statements to update"))
+                requestFields<BulkStatementUpdateRequest>(
+                    fieldWithPath("subject_id").description("The updated id of the subject.").optional(),
+                    fieldWithPath("predicate_id").description("The updated id of the predicate.").optional(),
+                    fieldWithPath("object_id").description("The updated id of the object.").optional(),
+                )
+                listResponseFields<BulkPutStatementResponse>(
+                    fieldWithPath("id").description("The statement id"),
+                    subsectionWithPath("statement").description("The statement representation of the updated statement"),
+                )
+                throws(StatementNotFound::class, StatementNotModifiable::class, InvalidStatement::class)
+            }
 
         verify(exactly = 1) {
             statementService.update(match { it.statementId == s1.id })
@@ -251,7 +266,7 @@ internal class BulkStatementControllerUnitTest : MockMvcBaseTest("bulk-statement
 
     @Test
     @TestWithMockUser
-    fun delete() {
+    fun deleteAllByIds() {
         val s1 = StatementId("S1")
         val s2 = StatementId("S2")
 
@@ -262,12 +277,17 @@ internal class BulkStatementControllerUnitTest : MockMvcBaseTest("bulk-statement
         documentedDeleteRequestTo("/api/statements?ids=$s1,$s2")
             .perform()
             .andExpect(status().isNoContent)
-            .andDo(
-                documentationHandler.document(
-                    queryParameters(parameterWithName("ids").description("The list of ids of statements to delete")),
+            .andDocument {
+                deprecated()
+                summary("Deleting statements (bulk)")
+                description(
+                    """
+                    A `DELETE` request to delete multiple statements simultaneously.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                queryParameters(parameterWithName("ids").description("The list of ids of statements to delete"))
+                throws(StatementNotModifiable::class, StatementInUse::class)
+            }
 
         verify(exactly = 1) { statementService.deleteAllById(setOf(s1, s2)) }
     }

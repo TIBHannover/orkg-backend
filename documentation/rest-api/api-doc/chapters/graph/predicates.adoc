@@ -8,55 +8,41 @@ IDs always start with "P", followed by a number.
 [[predicates-fetch]]
 == Fetching Predicates
 
-A `GET` request provides information about a predicate.
+include::{snippets}/predicates_find-by-id/description.adoc[]
 
-operation::predicates_get-single[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::predicates_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[predicates-list]]
 == Listing Predicates
 
-A `GET` request returns a <<sorting-and-pagination,paged>> list of <<predicates-fetch,predicates>>.
-If no paging request parameters are provided, the default values will be used.
+include::{snippets}/predicates_find-all/description.adoc[]
 
 operation::predicates_get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::predicates_get-paged-with-parameters[snippets='query-parameters,curl-request']
+operation::predicates_find-all[snippets='query-parameters,curl-request']
 
 [[predicates-create]]
 == Creating Predicates
 
-A `POST` request creates a new predicate with a given label.
-The response will be `201 Created` when successful.
-The predicate can be retrieved by following the URI in the `Location` header field.
+include::{snippets}/predicates_create/description.adoc[]
 
 operation::predicates_create[snippets='request-fields,curl-request,response-headers,http-response']
 
 [[predicates-edit]]
 == Updating Predicates
 
-A `PUT` request updates a predicate with the given parameters.
-The response will be `204 NO CONTENT` when successful.
-The updated predicate can be retrieved by following the URI in the `Location` header field.
+include::{snippets}/predicates_update/description.adoc[]
 
 operation::predicates_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[predicates-delete]]
 == Deleting Predicates
 
-A `DELETE` request with the id of the predicate to delete.
-The response will be `204 NO CONTENT` when successful.
+include::{snippets}/predicates_delete-by-id/description.adoc[]
 
-[NOTE]
-====
-1. If the predicate doesn't exist, the return status will be `404 NOT FOUND`.
-2. If the predicate is not modifiable, the return status will be `403 FORBIDDEN`.
-3. If the predicate is used in a statement (excluding subject position), the return status will be `403 FORBIDDEN`.
-4. If the performing user is not the creator of the predicate and does not have the curator role, the return status will be `403 FORBIDDEN`.
-====
-
-operation::predicates_delete[snippets='path-parameters,curl-request,http-response']
+operation::predicates_delete-by-id[snippets='path-parameters,curl-request,http-response']
 
 [[predicates-import]]
 == Importing Predicates
@@ -66,15 +52,13 @@ The {orkg} REST API provides two endpoints for importing predicates from externa
 [[predicates-import-by-uri]]
 === Importing Predicates by URI
 
-A `POST` request imports a predicate from an external ontology by a given URI.
+include::{snippets}/import_import-predicate-by-uri/description.adoc[]
 
 operation::import_import-predicate-by-uri[snippets='request-fields,curl-request,response-headers,http-response']
-The response will be `201 Created` when successful, even when the predicate was already imported previously.
 
 [[predicates-import-by-short-form]]
 === Importing Predicates by Short Form
 
-A `POST` request imports a predicate from an external ontology by a given short form id.
-The response will be `201 Created` when successful, even when the predicate was already imported previously.
+include::{snippets}/import_import-predicate-by-short-form/description.adoc[]
 
 operation::import_import-predicate-by-short-form[snippets='request-fields,curl-request,response-headers,http-response']

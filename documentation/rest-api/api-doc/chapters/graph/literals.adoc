@@ -6,35 +6,31 @@ They can appear in the object position in <<Statements,statements>>.
 [[literals-fetch]]
 == Fetching Literals
 
-A `GET` request provides information about a literal.
+include::{snippets}/literals_find-by-id/description.adoc[]
 
-operation::literals_get-single[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::literals_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[literals-list]]
 == Listing Literals
 
-A `GET` request returns a <<sorting-and-pagination,paged>> list of <<literals-fetch,literals>>.
-If no paging request parameters are provided, the default values will be used.
+include::{snippets}/literals_find-all/description.adoc[]
 
 operation::literals_get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::literals_get-paged-with-parameters[snippets='query-parameters,curl-request']
+operation::literals_find-all[snippets='query-parameters,curl-request']
 
 [[literals-create]]
 == Creating Literals
 
-A `POST` request creates a new literal with a given label (its value).
-The response will be `201 Created` when successful.
-The literal can be retrieved by following the URI in the `Location` header field.
+include::{snippets}/literals_create/description.adoc[]
 
 operation::literals_create[snippets='request-fields,curl-request,response-headers,http-response']
 
 [[literals-edit]]
 == Updating Literals
 
-A `PUT` request updates a literal with the given parameters.
-The response will be `204 NO CONTENT` when successful.
+include::{snippets}/literals_update/description.adoc[]
 
 operation::literals_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']

@@ -18,7 +18,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
@@ -34,7 +33,7 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpect(jsonPath("$.errors[0].detail", `is`("""A label must not be blank or contain newlines or NULL characters and must be at most $MAX_LABEL_LENGTH characters long.""")))
             .andExpect(jsonPath("$.errors[0].pointer", `is`("""#/label""")))
-            .andDocumentWithValidationExceptionResponseFields(type)
+            .andDocumentWithValidationExceptionResponseFields(InvalidLabel::class, type)
     }
 
     @Test
@@ -56,7 +55,7 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpect(jsonPath("$.errors[0].detail", `is`("""A description must not be blank or contain NULL characters and must be at most $MAX_LABEL_LENGTH characters long.""")))
             .andExpect(jsonPath("$.errors[0].pointer", `is`("""#/description""")))
-            .andDocumentWithValidationExceptionResponseFields(type)
+            .andDocumentWithValidationExceptionResponseFields(InvalidDescription::class, type)
     }
 
     @Test
@@ -80,15 +79,14 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.owner_id").value("c4e9e7c2-cd5f-4385-af09-071674304e37"))
             .andExpect(jsonPath("$.contributor_id").value("b7c81eed-52e1-4f7a-93bf-e6d331b8df7b"))
             .andExpect(jsonPath("$.thing_id").value("R123"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("owner_id").description("The id of the owner."),
-                        fieldWithPath("contributor_id").description("The id of the contributor."),
-                        fieldWithPath("thing_id").description("The id of thing."),
-                    )
+            .andDocument {
+                responseFields<NeitherOwnerNorCurator>(
+                    fieldWithPath("owner_id").description("The id of the owner."),
+                    fieldWithPath("contributor_id").description("The id of the contributor."),
+                    fieldWithPath("thing_id").description("The id of thing."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -112,13 +110,12 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Contributor <b7c81eed-52e1-4f7a-93bf-e6d331b8df7b> is not a curator.""")
             .andExpect(jsonPath("$.contributor_id").value("b7c81eed-52e1-4f7a-93bf-e6d331b8df7b"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("contributor_id").description("The id of the contributor."),
-                    )
+            .andDocument {
+                responseFields<NotACurator>(
+                    fieldWithPath("contributor_id").description("The id of the contributor."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test

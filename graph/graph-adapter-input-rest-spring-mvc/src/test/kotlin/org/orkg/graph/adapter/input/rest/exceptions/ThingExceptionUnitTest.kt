@@ -13,7 +13,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
@@ -29,13 +28,12 @@ internal class ThingExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""A thing with id "R123" already exists.""")
             .andExpect(jsonPath("$.thing_id", `is`("R123")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("thing_id").description("The id of the thing."),
-                    )
+            .andDocument {
+                responseFields<ThingAlreadyExists>(
+                    fieldWithPath("thing_id").description("The id of the thing."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -47,12 +45,11 @@ internal class ThingExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Not Found")
             .andExpectDetail("""Thing "R123" not found.""")
             .andExpect(jsonPath("$.thing_id", `is`("R123")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("thing_id").description("The id of the thing."),
-                    )
+            .andDocument {
+                responseFields<ThingNotFound>(
+                    fieldWithPath("thing_id").description("The id of the thing."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 }

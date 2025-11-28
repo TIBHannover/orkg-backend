@@ -3,6 +3,7 @@ package org.orkg.testing.spring.restdocs
 import com.epages.restdocs.apispec.FieldDescriptors
 import com.epages.restdocs.apispec.HeaderDescriptorWithType
 import com.epages.restdocs.apispec.ParameterDescriptorWithType
+import com.epages.restdocs.apispec.References
 import com.epages.restdocs.apispec.Schema
 import com.epages.restdocs.apispec.Schema.Companion.schema
 import com.epages.restdocs.apispec.SimpleType
@@ -112,14 +113,12 @@ class DocumentationBuilder(private val documentationContext: DocumentationContex
     inline fun <reified T : Any> responseFields(fieldDescriptors: FieldDescriptors) =
         responseFields(T::class, fieldDescriptors.fieldDescriptors)
 
-// TODO: re-enable once rest-docs-api allows defining reference schemas
-//
-//    fun responseFields(schemaClass: KClass<*>, references: References) {
-//        this.responseSchema = schema(schemaClass.simpleName!!, references)
-//    }
-//
-//    inline fun <reified T : Any> responseFields(references: References) =
-//        responseFields(T::class, references)
+    fun responseFields(schemaClass: KClass<*>, references: References) {
+        this.responseSchema = schema(schemaClass.simpleName!!, references)
+    }
+
+    inline fun <reified T : Any> responseFields(references: References) =
+        responseFields(T::class, references)
 
     fun pagedResponseFields(schemaClass: KClass<*>, vararg responseFields: FieldDescriptor) =
         pagedResponseFields(schemaClass, responseFields.toList())
@@ -266,16 +265,16 @@ class DocumentationBuilder(private val documentationContext: DocumentationContex
         if (!attributes.contains("schemaName") && !jType.isJvmType() && !documentationContext.hasTypeMapping(kType)) {
             references(kType)
         }
-        if (!attributes.contains("itemsType") && jType.isArray && propertyPath.typeArgument != null) {
+        if (!attributes.contains("itemsType") && jType.isArrayOrIterable() && propertyPath.typeArgument != null) {
             val jItemsType = propertyPath.typeArgument
             val kItemsType = jItemsType.kotlin
             val itemsTypeName = documentationContext.resolveTypeName(kItemsType)
+            documentationContext.applyConstraints(constraints, kItemsType)
             if (jItemsType.isJvmType() || isPrimitiveType(itemsTypeName)) {
                 arrayItemsType(itemsTypeName)
             } else {
                 arrayItemsType("object")
                 references(kItemsType)
-                documentationContext.applyConstraints(constraints, kItemsType)
             }
         }
         if (!attributes.contains("enumValues") && jType.isEnum) {
@@ -287,6 +286,9 @@ class DocumentationBuilder(private val documentationContext: DocumentationContex
         }
         return this
     }
+
+    private fun Class<*>.isArrayOrIterable(): Boolean =
+        isArray || Iterable::class.java.isAssignableFrom(this)
 
     private fun Class<*>.isJvmType(): Boolean =
         isPrimitive || isArray || packageName.startsWith("java.")

@@ -13,17 +13,21 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
-import org.orkg.common.configuration.WebMvcConfiguration
 import org.orkg.common.exceptions.UnknownSortingProperty
-import org.orkg.common.json.CommonJacksonModule
 import org.orkg.graph.adapter.input.rest.StatementController.CreateStatementRequest
-import org.orkg.graph.adapter.input.rest.json.GraphJacksonModule
+import org.orkg.graph.adapter.input.rest.StatementController.UpdateStatementRequest
+import org.orkg.graph.adapter.input.rest.testing.fixtures.configuration.GraphControllerUnitTestConfiguration
 import org.orkg.graph.adapter.input.rest.testing.fixtures.statementResponseFields
 import org.orkg.graph.domain.Bundle
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.InvalidStatement
 import org.orkg.graph.domain.Resource
+import org.orkg.graph.domain.StatementAlreadyExists
 import org.orkg.graph.domain.StatementId
+import org.orkg.graph.domain.StatementInUse
+import org.orkg.graph.domain.StatementNotFound
+import org.orkg.graph.domain.StatementNotModifiable
 import org.orkg.graph.domain.StatementObjectNotFound
 import org.orkg.graph.domain.StatementPredicateNotFound
 import org.orkg.graph.domain.StatementSubjectNotFound
@@ -39,8 +43,6 @@ import org.orkg.testing.andExpectBundle
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectStatement
 import org.orkg.testing.annotations.TestWithMockUser
-import org.orkg.testing.configuration.ExceptionTestConfiguration
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
@@ -52,14 +54,9 @@ import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
-import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.pathParameters
-import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -68,16 +65,7 @@ import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Optional
 
-@ContextConfiguration(
-    classes = [
-        StatementController::class,
-        ExceptionTestConfiguration::class,
-        CommonJacksonModule::class,
-        GraphJacksonModule::class,
-        FixedClockConfig::class,
-        WebMvcConfiguration::class
-    ]
-)
+@ContextConfiguration(classes = [StatementController::class, GraphControllerUnitTestConfiguration::class])
 @WebMvcTest(controllers = [StatementController::class])
 internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
     @MockkBean
@@ -91,7 +79,7 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
 
     @Test
     @DisplayName("Given a statement, when it is fetched by id and service succeeds, then status is 200 OK and statement is returned")
-    fun getSingle() {
+    fun findById() {
         val statement = createStatement()
         every { statementService.findById(statement.id) } returns Optional.of(statement)
         every { statementService.findAllDescriptionsById(any()) } returns emptyMap()
@@ -100,15 +88,19 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
             .perform()
             .andExpect(status().isOk)
             .andExpectStatement()
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the statement to retrieve.")
-                    ),
-                    responseFields(statementResponseFields())
+            .andDocument {
+                summary("Fetching statements")
+                description(
+                    """
+                    A `GET` request provides information about a statement.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the statement to retrieve.")
+                )
+                responseFields<StatementRepresentation>(statementResponseFields())
+                throws(StatementNotFound::class)
+            }
 
         verify(exactly = 1) { statementService.findById(statement.id) }
         verify(exactly = 1) { statementService.findAllDescriptionsById(any()) }
@@ -135,7 +127,7 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
 
     @Test
     @DisplayName("Given several statements, when they are fetched with all possible filtering parameters, then status is 200 OK and statements are returned")
-    fun getPagedWithParameters() {
+    fun findAll() {
         val statement = createStatement().copy(
             subject = createResource(classes = setOf(Classes.contribution, ThingId("C123"))),
             `object` = createLiteral()
@@ -170,23 +162,29 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
             .andExpect(status().isOk)
             .andExpectPage()
             .andExpectStatement("$.content[*]")
-            .andDo(
-                documentationHandler.document(
-                    queryParameters(
-                        parameterWithName("subject_classes").description("A comma-separated set of classes that the subject of the statement must have. The ids `Resource`, `Class` and `Predicate` can be used to filter for a general type of subject. (optional)"),
-                        parameterWithName("subject_id").description("Filter for the subject id. (optional)"),
-                        parameterWithName("subject_label").description("Filter for the label of the subject. The label has to match exactly. (optional)"),
-                        parameterWithName("predicate_id").description("""Filter for the predicate id of the statement. (optional)"""),
-                        parameterWithName("created_by").description("Filter for the UUID of the user or service who created this statement. (optional)"),
-                        parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned statement can have. (optional)"),
-                        parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned statement can have. (optional)"),
-                        parameterWithName("object_classes").description("A comma-separated set of classes that the object of the statement must have. The ids `Resource`, `Class`, `Predicate` and `Literal` can be used to filter for a general type of object. (optional)"),
-                        parameterWithName("object_id").description("Filter for the object id. (optional)"),
-                        parameterWithName("object_label").description("Filter for the label of the object. The label has to match exactly. (optional)")
-                    )
+            .andDocument {
+                summary("Listing statements")
+                description(
+                    """
+                    A `GET` request returns a <<sorting-and-pagination,paged>> list of <<statements-fetch,statements>>.
+                    If no paging request parameters are provided, the default values will be used.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pagedQueryParameters(
+                    parameterWithName("subject_classes").description("A comma-separated set of classes that the subject of the statement must have. The ids `Resource`, `Class` and `Predicate` can be used to filter for a general type of subject. (optional)").optional(),
+                    parameterWithName("subject_id").description("Filter for the subject id. (optional)").optional(),
+                    parameterWithName("subject_label").description("Filter for the label of the subject. The label has to match exactly. (optional)").optional(),
+                    parameterWithName("predicate_id").description("""Filter for the predicate id of the statement. (optional)""").optional(),
+                    parameterWithName("created_by").description("Filter for the UUID of the user or service who created this statement. (optional)").optional(),
+                    parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned statement can have. (optional)").optional(),
+                    parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned statement can have. (optional)").optional(),
+                    parameterWithName("object_classes").description("A comma-separated set of classes that the object of the statement must have. The ids `Resource`, `Class`, `Predicate` and `Literal` can be used to filter for a general type of object. (optional)").optional(),
+                    parameterWithName("object_id").description("Filter for the object id. (optional)").optional(),
+                    parameterWithName("object_label").description("Filter for the label of the object. The label has to match exactly. (optional)").optional(),
+                )
+                pagedResponseFields<StatementRepresentation>(statementResponseFields())
+                throws(UnknownSortingProperty::class)
+            }
 
         verify(exactly = 1) {
             statementService.findAll(
@@ -247,20 +245,42 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
             .perform()
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("/api/statements/$id")))
-            .andDo(
-                documentationHandler.document(
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the newly created statement can be fetched from.")
-                    ),
-                    requestFields(
-                        fieldWithPath("id").description("The statement id. (optional)"),
-                        fieldWithPath("subject_id").description("The id of the subject of the statement."),
-                        fieldWithPath("predicate_id").description("The id of the predicate of the statement."),
-                        fieldWithPath("object_id").description("The id of the object of the statement.")
-                    )
+            .andDocument {
+                summary("Creating statements")
+                description(
+                    """
+                    A `POST` request creates a new statement.
+                    The response will be `201 Created` when successful.
+                    The statement can be retrieved by following the URI in the `Location` header field.
+                    
+                    [NOTE]
+                    ====
+                    1. If the subject, predicate or object cannot be found, the return status will be `400 BAD REQUEST`.
+                    2. If the subject is a rosetta stone statement, the return status will be `400 BAD REQUEST`.
+                    3. If the statement represents a list element statement, the return status will be `400 BAD REQUEST`.
+                    4. If the subject is a literal, the return status will be `400 BAD REQUEST`.
+                    5. If a statement id is provided and a statement with that id already exists, the return status will be `400 BAD REQUEST`.
+                    6. If a statement with the specified subject, predicate and object already exists, the id of the existing statement will be returned and the status will be `201 CREATED`.
+                    ====
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the newly created statement can be fetched from.")
+                )
+                requestFields<CreateStatementRequest>(
+                    fieldWithPath("id").description("The statement id. (optional)").optional(),
+                    fieldWithPath("subject_id").description("The id of the subject of the statement."),
+                    fieldWithPath("predicate_id").description("The id of the predicate of the statement."),
+                    fieldWithPath("object_id").description("The id of the object of the statement.")
+                )
+                throws(
+                    StatementSubjectNotFound::class,
+                    InvalidStatement::class,
+                    StatementPredicateNotFound::class,
+                    StatementObjectNotFound::class,
+                    StatementAlreadyExists::class,
+                )
+            }
 
         verify(exactly = 1) { statementService.create(command) }
     }
@@ -360,7 +380,7 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
         val subjectId = ThingId("R123")
         val predicateId = ThingId("P123")
         val objectId = ThingId("C123")
-        val request = StatementController.UpdateStatementRequest(
+        val request = UpdateStatementRequest(
             subjectId = subjectId,
             predicateId = predicateId,
             objectId = objectId,
@@ -372,22 +392,35 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
             .perform()
             .andExpect(status().isNoContent)
             .andExpect(header().string("Location", endsWith("/api/statements/$id")))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of statement.")
-                    ),
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the updated statement can be fetched from.")
-                    ),
-                    requestFields(
-                        fieldWithPath("subject_id").description("The updated id of the subject entity of the statement. (optional)"),
-                        fieldWithPath("predicate_id").description("The updated id of the predicate of the statement. (optional)"),
-                        fieldWithPath("object_id").description("The updated id of the object entity of the statement. (optional)")
-                    )
+            .andDocument {
+                summary("Updating statements")
+                description(
+                    """
+                    A `PUT` request updates an existing statement with the given parameters.
+                    The response will be `204 NO CONTENT` when successful.
+                    The updated statement can be retrieved by following the URI in the `Location` header field.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of statement.")
+                )
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the updated statement can be fetched from.")
+                )
+                requestFields<UpdateStatementRequest>(
+                    fieldWithPath("subject_id").description("The updated id of the subject entity of the statement. (optional)").optional(),
+                    fieldWithPath("predicate_id").description("The updated id of the predicate of the statement. (optional)").optional(),
+                    fieldWithPath("object_id").description("The updated id of the object entity of the statement. (optional)").optional(),
+                )
+                throws(
+                    StatementNotFound::class,
+                    StatementNotModifiable::class,
+                    InvalidStatement::class,
+                    StatementSubjectNotFound::class,
+                    StatementPredicateNotFound::class,
+                    StatementObjectNotFound::class,
+                )
+            }
 
         verify(exactly = 1) {
             statementService.update(
@@ -403,7 +436,7 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
 
     @Test
     @DisplayName("Given a statement, when it is fetched by id and service succeeds, then status is 200 OK and statement is returned")
-    fun getBundle() {
+    fun fetchAsBundle() {
         val id = ThingId("R1")
         val bundleConfiguration = BundleConfiguration(
             minLevel = 1,
@@ -432,25 +465,30 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
             .perform()
             .andExpect(status().isOk)
             .andExpectBundle()
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the root of the bundle.")
-                    ),
-                    queryParameters(
-                        parameterWithName("min_level").description("The minimum hops a statement must be away from the root entity, in order to be included in the bundle. (optional)"),
-                        parameterWithName("max_level").description("The maximum hops a statement can be away from the root entity, in order to be included in the bundle. (optional)"),
-                        parameterWithName("blacklist").description("A set of class ids that will prevent subgraph expansion. No resource in the resulting bundle will be an instance of the provided classes. (optional)"),
-                        parameterWithName("whitelist").description("A set of class ids that are exclusively used for subgraph expansion. All resources in the resulting bundle are an instance of one of the provided classes. If not provided, all resources will be considered for subgraph expansion. (optional)"),
-                        parameterWithName("include_first").description("Whether to additionally include first level statements, regardless of other filters. (optional, default: true)"),
-                    ),
-                    responseFields(
-                        fieldWithPath("root").description("The root ID of the object."),
-                        subsectionWithPath("statements[]").description("The list of statements.")
-                    )
+            .andDocument {
+                summary("Fetching statements as bundles")
+                description(
+                    """
+                    A `Bundle` is a collection of statements that represent the subgraph starting from a specified entity in the graph.
+                    A `GET` request fetches a subgraph of a certain entity and returns all the statements as a bundle.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the root of the bundle.")
+                )
+                queryParameters(
+                    parameterWithName("min_level").description("The minimum hops a statement must be away from the root entity, in order to be included in the bundle. (optional)").optional(),
+                    parameterWithName("max_level").description("The maximum hops a statement can be away from the root entity, in order to be included in the bundle. (optional)").optional(),
+                    parameterWithName("blacklist").description("A set of class ids that will prevent subgraph expansion. No resource in the resulting bundle will be an instance of the provided classes. (optional)").optional(),
+                    parameterWithName("whitelist").description("A set of class ids that are exclusively used for subgraph expansion. All resources in the resulting bundle are an instance of one of the provided classes. If not provided, all resources will be considered for subgraph expansion. (optional)").optional(),
+                    parameterWithName("include_first").description("Whether to additionally include first level statements, regardless of other filters. (optional, default: true)").optional(),
+                )
+                responseFields<BundleRepresentation>(
+                    fieldWithPath("root").description("The root ID of the object."),
+                    subsectionWithPath("statements[]").description("The list of statements.")
+                )
+                throws(ThingNotFound::class)
+            }
 
         verify(exactly = 1) { statementService.fetchAsBundle(id, bundleConfiguration, any(), any()) }
         verify(exactly = 1) { statementService.findAllDescriptionsById(any()) }
@@ -462,7 +500,7 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
         @Test
         @TestWithMockUser
         @DisplayName("when deleting a statement by id and service reports success, then status is 204 NO CONTENT")
-        fun deleteById_isNoContent() {
+        fun deleteById() {
             val id = StatementId("S1")
 
             every { statementService.deleteById(id) } just Runs
@@ -470,14 +508,26 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
             documentedDeleteRequestTo("/api/statements/{id}", id)
                 .perform()
                 .andExpect(status().isNoContent)
-                .andDo(
-                    documentationHandler.document(
-                        pathParameters(
-                            parameterWithName("id").description("The identifier of the statement to delete.")
-                        )
+                .andDocument {
+                    summary("Deleting statements")
+                    description(
+                        """
+                        A `DELETE` request deletes a statement from the graph.
+                        It does not delete its subject or object, except for literal objects.
+                        The response will be `204 No Content` when successful.
+                        
+                        [NOTE]
+                        ====
+                        1. If the statement is not modifiable, the return status will be `403 FORBIDDEN`.
+                        2. If the statement is a <<lists,list>> element statement, the return status will be `403 FORBIDDEN`.
+                        ====
+                        """
                     )
-                )
-                .andDo(generateDefaultDocSnippets())
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the statement to delete.")
+                    )
+                    throws(StatementNotModifiable::class, StatementInUse::class)
+                }
 
             verify(exactly = 1) { statementService.deleteById(id) }
         }

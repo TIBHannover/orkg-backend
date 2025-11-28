@@ -15,6 +15,9 @@ val allowedVisibilityValues =
 val allowedVisibilityFilterValues =
     VisibilityFilter.entries.sorted().joinToString(separator = ", ", prefix = "`", postfix = "`")
 
+val allowedThingClassValues =
+    listOf("class", "resource", "predicate", "literal").sorted().joinToString(separator = ", ", prefix = "`", postfix = "`")
+
 fun visibilityFilterRequestParameter(): ParameterDescriptor =
     parameterWithName("visibility")
         .description("The visibility modifier. Must be one of $allowedVisibilityFilterValues. If it is not provided, it will be determined from the `featured` and `unlisted` request parameters (where available).")

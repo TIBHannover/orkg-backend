@@ -20,68 +20,45 @@ This allows storing and retrieving provenance information about them.
 [[statements-fetch]]
 == Fetching Statements
 
-A `GET` request provides information about a statement.
+include::{snippets}/statements_find-by-id/description.adoc[]
 
-operation::statements_get-single[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::statements_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[statements-list]]
 == Listing Statements
 
-A `GET` request lists all the statements:
-
-TIP: {pagination_note}
+include::{snippets}/statements_find-all/description.adoc[]
 
 operation::statements_get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::statements_get-paged-with-parameters[snippets='query-parameters,curl-request']
+operation::statements_find-all[snippets='query-parameters,curl-request']
 
 [[statements-create]]
 == Creating Statements
-A `POST` request creates a new statement.
-The response will be `201 Created` when successful.
-The statement can be retrieved by following the URI in the `Location` header field.
 
-[NOTE]
-====
-1. If the subject, predicate or object cannot be found, the return status will be `400 BAD REQUEST`.
-2. If the subject is a rosetta stone statement, the return status will be `400 BAD REQUEST`.
-3. If the statement represents a list element statement, the return status will be `400 BAD REQUEST`.
-4. If the subject is a literal, the return status will be `400 BAD REQUEST`.
-5. If a statement id is provided and a statement with that id already exists, the return status will be `400 BAD REQUEST`.
-6. If a statement with the specified subject, predicate and object already exists, the id of the existing statement will be returned and the status will be `201 CREATED`.
-====
+include::{snippets}/statements_create/description.adoc[]
 
 operation::statements_create[snippets='request-fields,curl-request,http-response']
 
 [[statements-edit]]
 == Updating Statements
 
-A `PUT` request updates an existing statement with the given parameters.
-The response will be `204 NO CONTENT` when successful.
-The updated statement can be retrieved by following the URI in the `Location` header field.
+include::{snippets}/statements_update/description.adoc[]
 
 operation::statements_update[snippets='path-parameters,request-fields,curl-request,http-response']
 
 [[statements-delete]]
 == Deleting Statement
-A `DELETE` request deletes a statement from the graph.
-It does not delete its subject or object, except for literal objects.
-The response will be `204 No Content` when successful.
 
-[NOTE]
-====
-1. If the statement is not modifiable, the return status will be `403 FORBIDDEN`.
-2. If the statement is a <<lists,list>> element statement, the return status will be `403 FORBIDDEN`.
-====
+include::{snippets}/statements_delete-by-id/description.adoc[]
 
-operation::statements_delete-by-id_is-no-content[snippets='path-parameters,curl-request,http-response']
+operation::statements_delete-by-id[snippets='path-parameters,curl-request,http-response']
 
 [[statements-fetch-as-bundle]]
 == Fetching Statements as Bundles
 
-A `Bundle` is a collection of statements that represent the subgraph starting from a specified entity in the graph.
-A `GET` request fetches a subgraph of a certain entity and returns all the statements as a bundle.
+include::{snippets}/statements_fetch-as-bundle/description.adoc[]
 
-operation::statements_get-bundle[snippets='path-parameters,query-parameters,curl-request,http-response,response-fields']
+operation::statements_fetch-as-bundle[snippets='path-parameters,query-parameters,curl-request,http-response,response-fields']

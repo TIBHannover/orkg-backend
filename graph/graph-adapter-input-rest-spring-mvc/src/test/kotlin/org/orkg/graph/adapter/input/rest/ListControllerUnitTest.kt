@@ -10,11 +10,16 @@ import org.hamcrest.Matchers
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.common.configuration.WebMvcConfiguration
-import org.orkg.common.json.CommonJacksonModule
+import org.orkg.graph.adapter.input.rest.ListController.CreateListRequest
+import org.orkg.graph.adapter.input.rest.ListController.UpdateListRequest
+import org.orkg.graph.adapter.input.rest.testing.fixtures.configuration.GraphControllerUnitTestConfiguration
+import org.orkg.graph.adapter.input.rest.testing.fixtures.thingResponseFields
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.ListElementNotFound
+import org.orkg.graph.domain.ListInUse
 import org.orkg.graph.domain.ListNotFound
+import org.orkg.graph.domain.ListNotModifiable
+import org.orkg.graph.domain.ThingAlreadyExists
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.StatementUseCases
@@ -25,8 +30,6 @@ import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.annotations.TestWithMockUser
-import org.orkg.testing.configuration.ExceptionTestConfiguration
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
@@ -37,12 +40,8 @@ import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
-import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -50,15 +49,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.OffsetDateTime
 import java.util.Optional
 
-@ContextConfiguration(
-    classes = [
-        ListController::class,
-        ExceptionTestConfiguration::class,
-        CommonJacksonModule::class,
-        FixedClockConfig::class,
-        WebMvcConfiguration::class
-    ]
-)
+@ContextConfiguration(classes = [ListController::class, GraphControllerUnitTestConfiguration::class])
 @WebMvcTest(controllers = [ListController::class])
 internal class ListControllerUnitTest : MockMvcBaseTest("lists") {
     @MockkBean
@@ -72,7 +63,7 @@ internal class ListControllerUnitTest : MockMvcBaseTest("lists") {
 
     @Test
     @DisplayName("Given a list, when fetched by id and service succeeds, then status is 200 OK and list is returned")
-    fun getSingle() {
+    fun findById() {
         val id = ThingId("R123")
         val list = createList(id = id, createdAt = OffsetDateTime.parse("2023-06-01T15:19:04.778631092+02:00"))
 
@@ -90,25 +81,29 @@ internal class ListControllerUnitTest : MockMvcBaseTest("lists") {
             .andExpect(jsonPath("$.modifiable").value(list.modifiable.toString()))
             .andExpect(jsonPath("$._class").value("list"))
             // Document the representation for later reference.
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the list.")
-                    ),
-                    responseFields(
-                        // The order here determines the order in the generated table. More relevant items should be up.
-                        fieldWithPath("id").description("The identifier of the list."),
-                        fieldWithPath("label").description("The label of the list."),
-                        fieldWithPath("elements").description("The ids of the elements of the list."),
-                        timestampFieldWithPath("created_at", "the list was created"),
-                        // TODO: Add links to documentation of special user UUIDs.
-                        fieldWithPath("created_by").description("The UUID of the user or service who created this list."),
-                        fieldWithPath("modifiable").description("Whether this list can be modified."),
-                        fieldWithPath("_class").description("The type of object this json contains. Always has the value \"list\".")
-                    )
+            .andDocument {
+                summary("Fetching lists")
+                description(
+                    """
+                    A `GET` request provides information about a list.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the list.")
+                )
+                responseFields<ListRepresentation>(
+                    // The order here determines the order in the generated table. More relevant items should be up.
+                    fieldWithPath("id").description("The identifier of the list."),
+                    fieldWithPath("label").description("The label of the list."),
+                    fieldWithPath("elements[]").description("The ids of the elements of the list."),
+                    timestampFieldWithPath("created_at", "the list was created"),
+                    // TODO: Add links to documentation of special user UUIDs.
+                    fieldWithPath("created_by").description("The UUID of the user or service who created this list."),
+                    fieldWithPath("modifiable").description("Whether this list can be modified."),
+                    fieldWithPath("_class").description("The type of object this json contains. Always has the value \"list\"."),
+                )
+                throws(ListNotFound::class)
+            }
 
         verify(exactly = 1) { listService.findById(id) }
     }
@@ -149,18 +144,24 @@ internal class ListControllerUnitTest : MockMvcBaseTest("lists") {
             .perform()
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("/api/lists/$id")))
-            .andDo(
-                documentationHandler.document(
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the newly created list can be fetched from.")
-                    ),
-                    requestFields(
-                        fieldWithPath("label").description("The label of the list."),
-                        fieldWithPath("elements").description("The ids of the elements of the list.")
-                    )
+            .andDocument {
+                summary("Creating lists")
+                description(
+                    """
+                    A `POST` request creates a new list with all the given parameters.
+                    The response will be `201 Created` when successful.
+                    The list resource (object) can be retrieved by following the URI in the `Location` header field.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the newly created list can be fetched from.")
+                )
+                requestFields<CreateListRequest>(
+                    fieldWithPath("label").description("The label of the list."),
+                    fieldWithPath("elements[]").description("The ids of the elements of the list.")
+                )
+                throws(InvalidLabel::class, ThingAlreadyExists::class, ListElementNotFound::class)
+            }
 
         verify(exactly = 1) { listService.create(any()) }
     }
@@ -231,21 +232,26 @@ internal class ListControllerUnitTest : MockMvcBaseTest("lists") {
             .perform()
             .andExpect(status().isNoContent)
             .andExpect(header().string("Location", endsWith("/api/lists/$id")))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the list.")
-                    ),
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the updated list can be fetched from.")
-                    ),
-                    requestFields(
-                        fieldWithPath("label").description("The new label of the list. (optional)").optional(),
-                        fieldWithPath("elements").description("The new ids of the elements of the list. (optional)").optional()
-                    )
+            .andDocument {
+                summary("Updating lists")
+                description(
+                    """
+                    A `PATCH` request updates a list with all the given parameters.
+                    The response will be `204 No Content` when successful.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the list.")
+                )
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the updated list can be fetched from.")
+                )
+                requestFields<UpdateListRequest>(
+                    fieldWithPath("label").description("The new label of the list. (optional)").optional(),
+                    fieldWithPath("elements[]").description("The new ids of the elements of the list. (optional)").optional()
+                )
+                throws(ListNotFound::class, ListNotModifiable::class, InvalidLabel::class, ListElementNotFound::class)
+            }
 
         verify(exactly = 1) { listService.update(any()) }
     }
@@ -296,7 +302,7 @@ internal class ListControllerUnitTest : MockMvcBaseTest("lists") {
 
     @Test
     @DisplayName("Given a list, when fetching its elements and service succeeds, then status is 200 OK and elements are returned")
-    fun getElements() {
+    fun findAllElementsById() {
         val id = ThingId("R123")
         val elements = listOf(
             createResource(),
@@ -320,14 +326,21 @@ internal class ListControllerUnitTest : MockMvcBaseTest("lists") {
             .andExpect(jsonPath("content[3].id").value(elements[3].id.value))
             .andExpect(jsonPath("page.total_elements").value(elements.size))
             // Document the representation for later reference.
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the list.")
-                    )
+            .andDocument {
+                summary("Fetching list elements")
+                description(
+                    """
+                    A `GET` request returns a <<sorting-and-pagination,paged>> list of elements, in order, with their full representations (see <<resources,resources>>, <<classes,classes>>, <<predicates,predicates>>, <<literals,literals>>), that are part of the list.
+                    If no paging request parameters are provided, the default values will be used.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the list.")
+                )
+                pagedQueryParameters()
+                pagedResponseFields<ThingRepresentation>(thingResponseFields())
+                throws(ListNotModifiable::class, ListInUse::class)
+            }
 
         verify(exactly = 1) {
             listService.findAllElementsById(id, any())

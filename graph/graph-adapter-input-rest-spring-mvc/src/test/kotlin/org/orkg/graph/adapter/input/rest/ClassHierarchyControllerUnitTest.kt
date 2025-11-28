@@ -11,7 +11,10 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
-import org.orkg.common.json.CommonJacksonModule
+import org.orkg.graph.adapter.input.rest.ClassHierarchyController.CreateChildRelationsRequest
+import org.orkg.graph.adapter.input.rest.ClassHierarchyController.CreateParentRelationRequest
+import org.orkg.graph.adapter.input.rest.testing.fixtures.classResponseFields
+import org.orkg.graph.adapter.input.rest.testing.fixtures.configuration.GraphControllerUnitTestConfiguration
 import org.orkg.graph.domain.ChildClass
 import org.orkg.graph.domain.ClassHierarchyEntry
 import org.orkg.graph.domain.ClassNotFound
@@ -28,26 +31,18 @@ import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectClass
 import org.orkg.testing.annotations.TestWithMockCurator
-import org.orkg.testing.configuration.ExceptionTestConfiguration
-import org.orkg.testing.configuration.FixedClockConfig
-import org.orkg.testing.configuration.SecurityTestConfiguration
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
-import org.orkg.testing.spring.restdocs.pagedResponseFields
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageImpl
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
-import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
@@ -55,15 +50,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.Optional
 
-@ContextConfiguration(
-    classes = [
-        ClassHierarchyController::class,
-        ExceptionTestConfiguration::class,
-        CommonJacksonModule::class,
-        FixedClockConfig::class,
-        SecurityTestConfiguration::class
-    ]
-)
+@ContextConfiguration(classes = [ClassHierarchyController::class, GraphControllerUnitTestConfiguration::class])
 @WebMvcTest(controllers = [ClassHierarchyController::class])
 internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarchies") {
     @MockkBean
@@ -80,7 +67,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
 
     @Test
     @DisplayName("Given a parent class id, when searching for its children, then status is 200 OK and children class ids are returned")
-    fun findChildren() {
+    fun findAllChildrenByAncestorId() {
         val parentId = ThingId("parentId")
         val childId = ThingId("childId")
         val response = ChildClass(createClass(id = childId), 1)
@@ -95,18 +82,28 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
             .andExpect(jsonPath("$.content[0].class.id").value(response.`class`.id.value))
             .andExpect(jsonPath("$.content[0].child_count").value(response.childCount))
             .andExpect(jsonPath("$.page.total_elements").value(1))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the parent class.")
-                    ),
-                    pagedResponseFields(
-                        subsectionWithPath("class").description("The child <<classes,class>>."),
-                        fieldWithPath("child_count").description("The count of child classes of the child class."),
-                    )
+            .andDocument {
+                summary("Listing child classes")
+                description(
+                    """
+                    A `GET` request returns a <<sorting-and-pagination,paged>> list of all child <<classes,classes>> for a given parent <<classes,class>>.
+                    
+                    [NOTE]
+                    ====
+                    1. If the class does not exist, the return status will be `404 NOT FOUND`.
+                    ====
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the parent class.")
+                )
+                pagedQueryParameters()
+                pagedResponseFields<ChildClassRepresentation>(
+                    subsectionWithPath("class").description("The child <<classes,class>>."),
+                    fieldWithPath("child_count").description("The count of child classes of the child class."),
+                )
+                throws(ClassNotFound::class)
+            }
 
         verify(exactly = 1) { classHierarchyService.findAllChildrenByParentId(parentId, any()) }
         verify(exactly = 1) { statementService.findAllDescriptionsById(any()) }
@@ -128,7 +125,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
 
     @Test
     @DisplayName("Given a child class id, when searched for its parent, then status is 200 OK and parent class is returned")
-    fun findParentRelation() {
+    fun findParentByChildId() {
         val parentId = ThingId("parentId")
         val childId = ThingId("childId")
 
@@ -147,14 +144,25 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
             .andExpect(status().isOk)
             .andExpectClass()
             .andExpect(jsonPath("$.id").value(parentId.value))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the child class.")
-                    )
+            .andDocument {
+                summary("Fetching parent classes")
+                description(
+                    """
+                    A `GET` request returns the parent <<classes,class>> for a given <<classes,class>>.
+
+                    [NOTE]
+                    ====
+                    1. If the class does not exist, the return status will be `404 NOT FOUND`.
+                    2. If the class does not have a parent class, the return status will be `204 NO CONTENT`.
+                    ====
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the child class.")
+                )
+                responseFields<ClassRepresentation>(classResponseFields())
+                throws(ClassNotFound::class)
+            }
 
         verify(exactly = 1) { classHierarchyService.findParentByChildId(childId) }
         verify(exactly = 1) {
@@ -195,7 +203,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
 
     @Test
     @DisplayName("Given a child class id, when searched for its root, then status is 200 OK and root class is returned")
-    fun findRoot() {
+    fun findRootByDescendantId() {
         val rootId = ThingId("root")
         val childId = ThingId("childId")
 
@@ -214,14 +222,25 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
             .andExpect(status().isOk)
             .andExpectClass()
             .andExpect(jsonPath("$.id").value(rootId.value))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the class.")
-                    )
+            .andDocument {
+                summary("Listing root classes")
+                description(
+                    """
+                    A `GET` request returns <<sorting-and-pagination,paged>> list of root <<classes,classes>> for a given <<classes,class>>.
+
+                    [NOTE]
+                    ====
+                    1. If the class does not exist, the return status will be `404 NOT FOUND`.
+                    2. If the class does not have a root class, the return status will be `204 NO CONTENT`.
+                    ====
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the class.")
+                )
+                responseFields<ClassRepresentation>(classResponseFields())
+                throws(ClassNotFound::class)
+            }
 
         verify(exactly = 1) { classHierarchyService.findRootByDescendantId(childId) }
         verify(exactly = 1) {
@@ -281,20 +300,32 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
             .perform()
             .andExpect(status().isCreated)
             .andExpect(header().string("location", endsWith("/api/classes/$parentId/children")))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the parent class.")
-                    ),
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the updated list of child classes can be fetched from.")
-                    ),
-                    requestFields(
-                        fieldWithPath("child_ids").description("The list of child class ids.")
-                    )
+            .andDocument {
+                summary("Creating child class relations")
+                description(
+                    """
+                    A `POST` request creates child <<classes,class>> relations for a given parent <<classes,class>>.
+                    
+                    [NOTE]
+                    ====
+                    1. If the performing user is not a curator, the return status will be `403 FORBIDDEN`.
+                    2. If the class does not exist, the return status will be `404 NOT FOUND`.
+                    3. If one child class is the same as the parent class, the return status will be `400 BAD REQUEST`.
+                    4. If one child class already has a parent class, the return status will be `400 BAD REQUEST`.
+                    ====
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the parent class.")
+                )
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the updated list of child classes can be fetched from.")
+                )
+                requestFields<CreateChildRelationsRequest>(
+                    fieldWithPath("child_ids[]").description("The list of child class ids.")
+                )
+                throws(ClassNotFound::class, InvalidSubclassRelation::class, ParentClassAlreadyExists::class, InvalidSubclassRelation::class)
+            }
 
         verify(exactly = 1) { classHierarchyService.create(command) }
     }
@@ -388,20 +419,32 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
             .perform()
             .andExpect(status().isNoContent)
             .andExpect(header().string("location", endsWith("/api/classes/$parentId/children")))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the parent class.")
-                    ),
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the updated list of child classes can be fetched from.")
-                    ),
-                    requestFields(
-                        fieldWithPath("child_ids").description("The updated list of child class ids.")
-                    )
+            .andDocument {
+                summary("Updating child class relations")
+                description(
+                    """
+                    A `PATCH` request updates child <<classes,class>> relations for a given parent <<classes,class>>.
+                    
+                    [NOTE]
+                    ====
+                    1. If the performing user is not a curator, the return status will be `403 FORBIDDEN`.
+                    2. If the class does not exist, the return status will be `404 NOT FOUND`.
+                    3. If one child class is the same as the parent class, the return status will be `400 BAD REQUEST`.
+                    4. If one child class already has a parent class, the return status will be `400 BAD REQUEST`.
+                    ====
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the parent class.")
+                )
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the updated list of child classes can be fetched from.")
+                )
+                requestFields<CreateChildRelationsRequest>(
+                    fieldWithPath("child_ids[]").description("The updated list of child class ids.")
+                )
+                throws(ClassNotFound::class, InvalidSubclassRelation::class, ParentClassAlreadyExists::class, InvalidSubclassRelation::class)
+            }
 
         verify(exactly = 1) { classHierarchyService.create(command) }
     }
@@ -478,7 +521,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
     @Test
     @TestWithMockCurator
     @DisplayName("Given a child class id, when deleting its subclass relation, then status is 204 NO CONTENT")
-    fun deleteParentRelation() {
+    fun deleteByChildId() {
         val childId = ThingId("childId")
 
         every { classHierarchyService.deleteByChildId(childId) } returns Unit
@@ -487,14 +530,24 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
             .perform()
             .andExpect(status().isNoContent)
             .andExpect(content().string(""))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the child class.")
-                    )
+            .andDocument {
+                summary("Deleting parent class relations")
+                description(
+                    """
+                    A `DELETE` removes a parent <<classes,class>> relation for a given child <<classes,class>>.
+
+                    [NOTE]
+                    ====
+                    1. If the performing user is not a curator, the return status will be `403 FORBIDDEN`.
+                    2. If the class does not exist, the return status will be `404 NOT FOUND`.
+                    ====
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the child class.")
+                )
+                throws(ClassNotFound::class)
+            }
 
         verify(exactly = 1) { classHierarchyService.deleteByChildId(childId) }
     }
@@ -534,20 +587,32 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
             .perform()
             .andExpect(status().isCreated)
             .andExpect(header().string("location", endsWith("/api/classes/$childId/parent")))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the child class.")
-                    ),
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the updated list of child classes can be fetched from.")
-                    ),
-                    requestFields(
-                        fieldWithPath("parent_id").description("The id of the parent class.")
-                    )
+            .andDocument {
+                summary("Creating parent class relations")
+                description(
+                    """
+                    A `POST` request creates a parent <<classes,class>> relation for a given child <<classes,class>>.
+
+                    [NOTE]
+                    ====
+                    1. If the performing user is not a curator, the return status will be `403 FORBIDDEN`.
+                    2. If the class does not exist, the return status will be `404 NOT FOUND`.
+                    3. If the child class and the parent class are the same, the return status will be `400 BAD REQUEST`.
+                    4. If the child class already has a parent class, the return status will be `400 BAD REQUEST`.
+                    ====
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the child class.")
+                )
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the updated list of child classes can be fetched from.")
+                )
+                requestFields<CreateParentRelationRequest>(
+                    fieldWithPath("parent_id").description("The id of the parent class.")
+                )
+                throws(ClassNotFound::class, InvalidSubclassRelation::class, ParentClassAlreadyExists::class, InvalidSubclassRelation::class)
+            }
 
         verify(exactly = 1) { classHierarchyService.create(command) }
     }
@@ -632,17 +697,26 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
             .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.count").value(5))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the class.")
-                    ),
-                    responseFields(
-                        fieldWithPath("count").description("The count of class instances including subclass instances.")
-                    )
+            .andDocument {
+                summary("Counting class instances")
+                description(
+                    """
+                    A `GET` request returns the count of all instances the <<classes,class>> and its child <<classes,classes>> have in the graph.
+                    
+                    [NOTE]
+                    ====
+                    1. If the class does not exist, the return status will be `404 NOT FOUND`.
+                    ====
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the class.")
+                )
+                responseFields<CountResponse>(
+                    fieldWithPath("count").description("The count of class instances including subclass instances.")
+                )
+                throws(ClassNotFound::class)
+            }
 
         verify(exactly = 1) { classHierarchyService.countClassInstances(id) }
     }
@@ -663,7 +737,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
 
     @Test
     @DisplayName("Given a class id, when the class hierarchy is fetched, then status is 200 OK")
-    fun findHierarchy() {
+    fun findClassHierarchy() {
         val childId = ThingId("childId")
         val parentId = ThingId("parentId")
         val childClass = createClass(id = childId)
@@ -682,18 +756,28 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
             .andExpect(jsonPath("$.content[0].class.id").value(childId.value))
             .andExpect(jsonPath("$.content[0].parent_id").value(parentId.value))
             .andExpect(jsonPath("$.page.total_elements").value(1))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the class.")
-                    ),
-                    pagedResponseFields(
-                        subsectionWithPath("class").description("The <<classes,class>> in the hierarchy."),
-                        fieldWithPath("parent_id").description("The parent id of the class."),
-                    )
+            .andDocument {
+                summary("Listing class hierarchies")
+                description(
+                    """
+                    A `GET` request returns a <<sorting-and-pagination,paged>> list of all paths from each root <<classes,class>> to the given <<classes,class>>.
+
+                    [NOTE]
+                    ====
+                    1. If the class does not exist, the return status will be `404 NOT FOUND`.
+                    ====
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the class.")
+                )
+                pagedQueryParameters()
+                pagedResponseFields<ClassHierarchyEntryRepresentation>(
+                    subsectionWithPath("class").description("The <<classes,class>> in the hierarchy."),
+                    fieldWithPath("parent_id").description("The parent id of the class."),
+                )
+                throws(ClassNotFound::class)
+            }
 
         verify(exactly = 1) { classHierarchyService.findClassHierarchy(childId, any()) }
         verify(exactly = 1) { statementService.findAllDescriptionsById(any()) }
@@ -725,7 +809,21 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
             .perform()
             .andExpect(status().isOk)
             .andExpectClass("$.content[*]")
-            .andDo(generateDefaultDocSnippets())
+            .andDocument {
+                summary("Listing all root classes")
+                description(
+                    """
+                    A `GET` request returns a <<sorting-and-pagination,paged>> list of all root <<classes,classes>>.
+
+                    [NOTE]
+                    ====
+                    1. If the class does not exist, the return status will be `404 NOT FOUND`.
+                    ====
+                    """.trimIndent()
+                )
+                pagedQueryParameters()
+                pagedResponseFields<ClassRepresentation>(classResponseFields())
+            }
 
         verify(exactly = 1) { classHierarchyService.findAllRoots(any()) }
         verify(exactly = 1) { statementService.findAllDescriptionsById(setOf(rootId)) }

@@ -3,7 +3,7 @@
 Most content types support visibility filtering.
 The filtering is supported in `GET` requests via the "visibility" request parameter:
 
-operation::visibility-request-params[snippets='query-parameters']
+operation::visibility_request-params[snippets='query-parameters']
 
 [[visibility-filtering-legacy]]
 == Visibility filtering (obsolete)
@@ -15,4 +15,4 @@ If it is absent, it will be set according to the values of the two parameters.
 WARNING: The use of these request parameters is deprecated and may be removed at some point.
          Clients are encouraged to transition to using the mechanism described in <<visibility-filter>>.
 
-operation::visibility-legacy-request-params[snippets='query-parameters']
+operation::visibility_legacy-request-params[snippets='query-parameters']

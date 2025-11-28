@@ -8,7 +8,7 @@ They can become a member of an <<organizations,organization>> or join an <<obser
 
 Information about a specific contributor can be obtained by sending a `GET` request to the contributor endpoint:
 
-operation::contributors-get-single[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::contributors_get-single[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[contributor-list]]
 == Listing Contributors
@@ -17,8 +17,8 @@ A `GET` request returns a <<sorting-and-pagination,paged>> list of <<contributor
 
 NOTE: This endpoint requires authentication.
 
-operation::contributors-get-paged[snippets='curl-request']
+operation::contributors_get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::contributors-get-paged-with-parameters[snippets='query-parameters,curl-request']
+operation::contributors_get-paged-with-parameters[snippets='query-parameters,curl-request']

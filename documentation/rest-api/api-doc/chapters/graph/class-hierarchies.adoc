@@ -13,7 +13,7 @@ A `GET` request returns a <<sorting-and-pagination,paged>> list of all child <<c
 1. If the class does not exist, the return status will be `404 NOT FOUND`.
 ====
 
-operation::class-hierarchies-find-children[snippets='path-parameters,curl-request,response-fields,http-response']
+operation::class-hierarchies_find-children[snippets='path-parameters,curl-request,response-fields,http-response']
 
 [[class-hierarchies-fetch-parents]]
 == Fetching Parent Classes
@@ -26,7 +26,7 @@ A `GET` request returns the parent <<classes,class>> for a given <<classes,class
 2. If the class does not have a parent class, the return status will be `204 NO CONTENT`.
 ====
 
-operation::class-hierarchies-find-parent-relation[snippets='path-parameters,curl-request']
+operation::class-hierarchies_find-parent-relation[snippets='path-parameters,curl-request']
 
 [[class-hierarchies-list-roots]]
 == Listing Root Classes
@@ -39,7 +39,7 @@ A `GET` request returns <<sorting-and-pagination,paged>> list of root <<classes,
 2. If the class does not have a root class, the return status will be `204 NO CONTENT`.
 ====
 
-operation::class-hierarchies-find-root[snippets='path-parameters,curl-request']
+operation::class-hierarchies_find-root[snippets='path-parameters,curl-request']
 
 [[class-hierarchies-list-all-roots]]
 == Listing all Root Classes
@@ -51,7 +51,7 @@ A `GET` request returns a <<sorting-and-pagination,paged>> list of all root <<cl
 1. If the class does not exist, the return status will be `404 NOT FOUND`.
 ====
 
-operation::class-hierarchies-find-all-roots[snippets='curl-request']
+operation::class-hierarchies_find-all-roots[snippets='curl-request']
 
 [[class-hierarchies-list-hierarchies]]
 == Listing Class Hierarchies
@@ -63,7 +63,7 @@ A `GET` request returns a <<sorting-and-pagination,paged>> list of all paths fro
 1. If the class does not exist, the return status will be `404 NOT FOUND`.
 ====
 
-operation::class-hierarchies-find-hierarchy[snippets='path-parameters,curl-request,response-fields,http-response']
+operation::class-hierarchies_find-hierarchy[snippets='path-parameters,curl-request,response-fields,http-response']
 
 [[class-hierarchies-create-child-relations]]
 == Creating Child Class Relations
@@ -78,7 +78,7 @@ A `POST` request creates child <<classes,class>> relations for a given parent <<
 4. If one child class already has a parent class, the return status will be `400 BAD REQUEST`.
 ====
 
-operation::class-hierarchies-create-child-relations[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::class-hierarchies_create-child-relations[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[class-hierarchies-edit-child-relations]]
 == Updating Child Class Relations
@@ -93,7 +93,7 @@ A `PATCH` request updates child <<classes,class>> relations for a given parent <
 4. If one child class already has a parent class, the return status will be `400 BAD REQUEST`.
 ====
 
-operation::class-hierarchies-update-child-relations[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::class-hierarchies_update-child-relations[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[class-hierarchies-create-parent-relations]]
 == Creating Parent Class Relations
@@ -108,7 +108,7 @@ A `POST` request creates a parent <<classes,class>> relation for a given child <
 4. If the child class already has a parent class, the return status will be `400 BAD REQUEST`.
 ====
 
-operation::class-hierarchies-create-parent-relation[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::class-hierarchies_create-parent-relation[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[class-hierarchies-delete-child-relations]]
 == Deleting Parent Class Relations
@@ -121,7 +121,7 @@ A `DELETE` removes a parent <<classes,class>> relation for a given child <<class
 2. If the class does not exist, the return status will be `404 NOT FOUND`.
 ====
 
-operation::class-hierarchies-delete-parent-relation[snippets='path-parameters,curl-request,http-response']
+operation::class-hierarchies_delete-parent-relation[snippets='path-parameters,curl-request,http-response']
 
 [[class-hierarchies-count-instances]]
 == Counting Class Instances
@@ -133,4 +133,4 @@ A `GET` request returns the count of all instances the <<classes,class>> and its
 1. If the class does not exist, the return status will be `404 NOT FOUND`.
 ====
 
-operation::class-hierarchies-count-class-instances[snippets='path-parameters,curl-request,response-fields,http-response']
+operation::class-hierarchies_count-class-instances[snippets='path-parameters,curl-request,response-fields,http-response']

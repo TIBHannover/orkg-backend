@@ -13,14 +13,14 @@ The Open Research Knowledge Graph REST API provides two methods for fetching ind
 
 A `GET` request provides information about a class by ID.
 
-operation::classes-get-single[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::classes_get-single[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[classes-fetch-by-uri]]
 === Fetching Classes by URI
 
 A `GET` request provides information about a class by URI.
 
-operation::classes-get-single-by-uri[snippets='query-parameters,curl-request,http-response,response-fields']
+operation::classes_get-single-by-uri[snippets='query-parameters,curl-request,http-response,response-fields']
 
 [[classes-list]]
 == Listing Classes
@@ -28,11 +28,11 @@ operation::classes-get-single-by-uri[snippets='query-parameters,curl-request,htt
 A `GET` request returns a <<sorting-and-pagination,paged>> list of <<classes-fetch,classes>>.
 If no paging request parameters are provided, the default values will be used.
 
-operation::classes-get-paged[snippets='curl-request']
+operation::classes_get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::classes-get-paged-with-parameters[snippets='query-parameters,curl-request']
+operation::classes_get-paged-with-parameters[snippets='query-parameters,curl-request']
 
 [[classes-create]]
 == Creating Classes
@@ -42,7 +42,7 @@ An optional URI can be given to link to the class in an external ontology (RDF).
 The response will be `201 Created` when successful.
 The class can be retrieved by following the URI in the `Location` header field.
 
-operation::classes-create[snippets='request-fields,curl-request,response-headers,http-response']
+operation::classes_create[snippets='request-fields,curl-request,response-headers,http-response']
 
 [[classes-edit]]
 == Updating Classes
@@ -56,7 +56,7 @@ A `PATCH` request updates a class with a new given label and URI.
 Only fields provided in the request, and therefore non-null, will be updated.
 The response will be `204 NO CONTENT` when successful.
 
-operation::classes-update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::classes_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[classes-replace]]
 === Updating Classes (PUT)
@@ -65,7 +65,7 @@ A `PUT` request updates a class with a new given label and URI.
 All fields will be updated in the process.
 The response will be `204 NO CONTENT` when successful.
 
-operation::classes-replace[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::classes_replace[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[class-hierarchies]]
 include::class-hierarchies.adoc[leveloffset=+1]
@@ -81,7 +81,7 @@ The {orkg} REST API provides two endpoints for importing classes from external o
 A `POST` request imports a class from an external ontology by a given URI.
 The response will be `201 Created` when successful, even when the class was already imported.
 
-operation::import-import-class-by-uri[snippets='request-fields,curl-request,response-headers,http-response']
+operation::import_import-class-by-uri[snippets='request-fields,curl-request,response-headers,http-response']
 
 [[classes-import-by-short-form]]
 === Importing Classes by Short Form
@@ -89,4 +89,4 @@ operation::import-import-class-by-uri[snippets='request-fields,curl-request,resp
 A `POST` request imports a class from an external ontology by a given short form id.
 The response will be `201 Created` when successful, even when the class was already imported.
 
-operation::import-import-class-by-short-form[snippets='request-fields,curl-request,response-headers,http-response']
+operation::import_import-class-by-short-form[snippets='request-fields,curl-request,response-headers,http-response']

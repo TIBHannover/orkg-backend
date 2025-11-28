@@ -83,7 +83,7 @@ abstract class GenerateErrorListingTask : DefaultTask() {
 
     @TaskAction
     fun action() {
-        val errorFiles = snippetsDir.asFileTree.matching({ include("errors-*/response-fields.adoc") }).files.sorted()
+        val errorFiles = snippetsDir.asFileTree.matching({ include("errors_*/response-fields.adoc") }).files.sorted()
         val listingFile = errorListing.asFile.get()
         val snippetsDir = snippetsDir.asFile.get()
         listingFile.writer(Charsets.UTF_8).use { writer ->

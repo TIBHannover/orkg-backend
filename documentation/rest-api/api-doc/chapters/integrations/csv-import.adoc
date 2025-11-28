@@ -48,14 +48,14 @@ A `GET` request provides information about a CSV.
 3. Contents of a CSV need to be fetched separately. See <<csvs-data,Fetching CSV data>>.
 ====
 
-operation::csvs-get-single[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::csvs_get-single[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[csvs-fetch-data]]
 == Fetching CSV data
 
 A `GET` request provides information about the contents of a CSV.
 
-operation::csvs-get-single-data[snippets='path-parameters,curl-request,http-response']
+operation::csvs_get-single-data[snippets='path-parameters,curl-request,http-response']
 
 [[csvs-list]]
 == Listing CSVs
@@ -70,7 +70,7 @@ If no paging request parameters are provided, the default values will be used.
 3. Contents of each CSV need to be fetched separately. See <<csvs-data,Fetching CSV data>>.
 ====
 
-operation::csvs-get-paged[snippets='curl-request']
+operation::csvs_get-paged[snippets='curl-request']
 
 [[csvs-create]]
 == Creating CSVs
@@ -79,7 +79,7 @@ A `POST` request creates a new CSV.
 The response status will be `201 Created` when successful.
 The CSV can be retrieved by following the URI in the `Location` header field.
 
-operation::csvs-create[snippets='request-parts,curl-request,response-headers,http-response']
+operation::csvs_create[snippets='request-parts,curl-request,response-headers,http-response']
 
 [[csvs-update]]
 == Updating CSVs
@@ -93,7 +93,7 @@ The response status will be `204 No Content` when successful.
 2. Updating a CSV will reset the state of the CSV to `UPLOADED`.
 ====
 
-operation::csvs-update[snippets='path-parameters,request-parts,curl-request,http-response']
+operation::csvs_update[snippets='path-parameters,request-parts,curl-request,http-response']
 
 [[csvs-validate]]
 == Validating CSVs
@@ -107,7 +107,7 @@ The following endpoints describe the workflow of validating a CSV.
 A `POST` request queues a new job to validate a CSV.
 The response status will be `202 Accepted` when successful.
 
-operation::csvs-start-validation[snippets='path-parameters,curl-request,http-response']
+operation::csvs_start-validation[snippets='path-parameters,curl-request,http-response']
 
 [[csvs-validate-fetch-status]]
 === Fetching CSV Validation Status
@@ -120,7 +120,7 @@ A `GET` request provides information about the validation job status.
 2. Only jobs started by the active user can be fetched.
 ====
 
-operation::csvs-get-validation-status[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::csvs_get-validation-status[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[csvs-validate-fetch-results]]
 === Fetching CSV Validation Results
@@ -135,7 +135,7 @@ A `GET` request provides information about the validation results.
 4. The response status will be `400 BAD REQUEST` with response body contents of type orkg:problem:job_execution_exception, if the validation ran into an error.
 ====
 
-operation::csvs-get-validation-results[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::csvs_get-validation-results[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[csvs-validate-stop]]
 === Stopping CSV Validation
@@ -149,7 +149,7 @@ The response status will be `204 No Content` when successful.
 2. Only jobs started by the active user can be stopped.
 ====
 
-operation::csvs-stop-validation[snippets='path-parameters,curl-request,http-response']
+operation::csvs_stop-validation[snippets='path-parameters,curl-request,http-response']
 
 [[csvs-import]]
 == Importing CSVs
@@ -163,7 +163,7 @@ The following endpoints describe the workflow of importing a CSV.
 A `POST` request queues a new job to import a CSV.
 The response status will be `202 Accepted` when successful.
 
-operation::csvs-start-import[snippets='path-parameters,curl-request,http-response']
+operation::csvs_start-import[snippets='path-parameters,curl-request,http-response']
 
 [[csvs-import-fetch-status]]
 === Fetching CSV Import Status
@@ -176,7 +176,7 @@ A `GET` request provides information about the import job status.
 2. Only jobs started by the active user can be fetched.
 ====
 
-operation::csvs-get-import-status[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::csvs_get-import-status[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[csvs-import-fetch-results]]
 === Fetching CSV Import Results
@@ -191,7 +191,7 @@ A `GET` request provides information about the import results.
 4. The response status will be `400 BAD REQUEST` with response body contents of type orkg:problem:job_execution_exception, if the import ran into an error.
 ====
 
-operation::csvs-get-import-results[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::csvs_get-import-results[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[csvs-import-stop]]
 === Stopping a CSV Import
@@ -205,7 +205,7 @@ The response status will be `204 No Content` when successful.
 2. Only jobs started by the active user can be stopped.
 ====
 
-operation::csvs-stop-import[snippets='path-parameters,curl-request,http-response']
+operation::csvs_stop-import[snippets='path-parameters,curl-request,http-response']
 
 [[csvs-delete]]
 == Deleting CSVs
@@ -213,4 +213,4 @@ operation::csvs-stop-import[snippets='path-parameters,curl-request,http-response
 A `DELETE` request deletes a CSV associated with the given id.
 The response status will be `204 NO CONTENT` when successful.
 
-operation::csvs-delete[snippets='path-parameters,curl-request,http-response']
+operation::csvs_delete[snippets='path-parameters,curl-request,http-response']

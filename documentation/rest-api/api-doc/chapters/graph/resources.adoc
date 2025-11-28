@@ -8,7 +8,7 @@ They can appear in the subject or object position in <<Statements,statements>>.
 
 A `GET` request provides information about a resource.
 
-operation::resources-get-single[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::resources_get-single[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[resources-list]]
 == Listing Resources
@@ -17,11 +17,11 @@ A `GET` request lists all resources.
 
 TIP: {pagination_note}
 
-operation::resources-get-paged[snippets='curl-request']
+operation::resources_get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::resources-get-paged-with-parameters[snippets='query-parameters,curl-request']
+operation::resources_get-paged-with-parameters[snippets='query-parameters,curl-request']
 
 [[resources-create]]
 == Creating Resources
@@ -31,7 +31,7 @@ An optional set of classes can be provided.
 The response will be `201 Created` when successful.
 The resource can be retrieved by following the URI in the `Location` header field.
 
-operation::resources-create[snippets='request-fields,curl-request,response-headers,http-response,response-fields']
+operation::resources_create[snippets='request-fields,curl-request,response-headers,http-response']
 
 [[resources-edit]]
 == Updating Resources
@@ -49,7 +49,7 @@ The updated resource can be retrieved by following the URI in the `Location` hea
 5. If the target visibility is `DEFAULT` and the original visibility is `DELETED` and the performing user is not the owner of the resource and not a curator, the return status will be `403 FORBIDDEN`.
 ====
 
-operation::resources-update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::resources_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[resources-delete]]
 == Deleting Resources
@@ -65,7 +65,7 @@ The response will be `204 NO CONTENT` when successful.
 4. If the performing user is not the creator of the resource and does not have the curator role, the return status will be `403 FORBIDDEN`.
 ====
 
-operation::resources-delete[snippets='path-parameters,curl-request,http-response']
+operation::resources_delete[snippets='path-parameters,curl-request,http-response']
 
 [[resources-import]]
 == Importing Resources
@@ -78,7 +78,7 @@ The {orkg} REST API provides two endpoints for importing resources from external
 A `POST` request imports a resource from an external ontology by a given URI.
 The response will be `201 Created` when successful, even when the resource was already imported previously.
 
-operation::import-import-resource-by-uri[snippets='request-fields,curl-request,response-headers,http-response']
+operation::import_import-resource-by-uri[snippets='request-fields,curl-request,response-headers,http-response']
 
 [[resources-import-by-short-form]]
 === Importing Resources by Short Form
@@ -86,4 +86,4 @@ operation::import-import-resource-by-uri[snippets='request-fields,curl-request,r
 A `POST` request imports a resource from an external ontology by a given short form id.
 The response will be `201 Created` when successful, even when the resource was already imported.
 
-operation::import-import-resource-by-short-form[snippets='request-fields,curl-request,response-headers,http-response']
+operation::import_import-resource-by-short-form[snippets='request-fields,curl-request,response-headers,http-response']

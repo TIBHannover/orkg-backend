@@ -5,4 +5,4 @@
 
 A `POST` request sends a test email to the user who performed the request.
 
-operation::emails-send-test-email[snippets='curl-request,http-response']
+operation::emails_send-test-email[snippets='curl-request,http-response']

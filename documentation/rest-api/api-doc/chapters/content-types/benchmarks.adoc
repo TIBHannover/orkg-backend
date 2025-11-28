@@ -8,14 +8,14 @@ Some benchmarks are imported into the ORKG.
 
 A `GET` request returns a <<sorting-and-pagination,paged>> list of benchmark summaries.
 
-operation::benchmarks-fetch-benchmark-summaries[snippets='curl-request,http-response,response-fields']
+operation::benchmarks_fetch-benchmark-summaries[snippets='curl-request,http-response,response-fields']
 
 [[benchmarks-by-field-list]]
 == Listing Benchmarks Summaries by Research Field
 
 A `GET` request returns a <<sorting-and-pagination,paged>> list of benchmark summaries under a certain research field.
 
-operation::benchmarks-fetch-benchmark-summary-for-research-field[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::benchmarks_fetch-benchmark-summary-for-research-field[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[research-fields-with-bechmark-list]]
 == Listing Research Fields with Benchmarks
@@ -23,4 +23,4 @@ operation::benchmarks-fetch-benchmark-summary-for-research-field[snippets='path-
 A `GET` request returns a <<sorting-and-pagination,paged>> list of all the research fields associated with benchmarks.
 This includes all research fields that have papers containing benchmarks in their contributions.
 
-operation::benchmarks-fetch-research-fields-with-benchmarks[snippets='curl-request,http-response,response-fields']
+operation::benchmarks_fetch-research-fields-with-benchmarks[snippets='curl-request,http-response,response-fields']

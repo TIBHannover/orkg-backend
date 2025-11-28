@@ -13,7 +13,7 @@ WARNING: This endpoint is deprecated. Clients are advised to update, because thi
 Dumps cannot be created on-the-fly anymore, but can be downloaded from `/files/rdf-dumps`.
 The response will be `301 Moved Permanently`, pointing to the latest version of the dump.
 
-operation::rdf-hints-legacy-redirect-to-dump[snippets='curl-request,http-response']
+operation::rdf-hints_legacy-redirect-to-dump[snippets='curl-request,http-response']
 
 [[rdf-dump-create]]
 === Creating Dumps
@@ -22,7 +22,7 @@ Dumps are created automatically by the system, but can also be triggered manuall
 
 NOTE: This endpoint requires the admin role.
 
-operation::rdf-hints-create-rdf-dump[snippets='curl-request,http-response']
+operation::rdf-hints_create-rdf-dump[snippets='curl-request,http-response']
 
 [[resolvable-vocab]]
 == Resolvable Vocabulary
@@ -38,21 +38,21 @@ For a list of supported media types, see <<vocab-accept>> below.
 
 A `GET` request to get the description of an ORKG resource.
 
-operation::rdf-vocab-resolve-resource[snippets='path-parameters,curl-request,http-response']
+operation::rdf-vocab_resolve-resource[snippets='path-parameters,curl-request,http-response']
 
 [[vocab-predicate]]
 === Resolve a predicate
 
 A `GET` request to get the description of an ORKG predicate.
 
-operation::rdf-vocab-resolve-predicate[snippets='path-parameters,curl-request,http-response']
+operation::rdf-vocab_resolve-predicate[snippets='path-parameters,curl-request,http-response']
 
 [[vocab-class]]
 === Resolve a class
 
 A `GET` request to get the description of an ORKG class.
 
-operation::rdf-vocab-resolve-class[snippets='path-parameters,curl-request,http-response']
+operation::rdf-vocab_resolve-class[snippets='path-parameters,curl-request,http-response']
 
 [[vocab-accept]]
 === Supported media types

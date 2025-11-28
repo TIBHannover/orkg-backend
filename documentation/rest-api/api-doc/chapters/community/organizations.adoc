@@ -8,14 +8,14 @@ These can handle further smaller groups named <<observatories>>.
 
 A `GET` request provides information about a resource.
 
-operation::organizations-fetch[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::organizations_fetch[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[organizations-list]]
 == Listing Organizations
 
 A `GET` request lists all organizations:
 
-operation::organizations-index[snippets='curl-request']
+operation::organizations_index[snippets='curl-request']
 
 ////
 [[organization-create]]
@@ -26,12 +26,12 @@ The response will be `200 Created` when successful.
 The organization can be retrieved by following the URI in the `Location` header field.
 
 // FIXME: implement missing test
-operation::organization-controller-test-add[snippets='request-fields,curl-request,http-response']
+operation::organization_controller-test-add[snippets='request-fields,curl-request,http-response']
 
 The response body consists of the following fields:
 
 // FIXME: implement missing test
-operation::organization-controller-test-add[snippets='response-fields']
+operation::organization_controller-test-add[snippets='response-fields']
 ////
 
 [[organizations-edit]]
@@ -45,4 +45,4 @@ The updated organization (object) can be retrieved by following the URI in the `
 
 NOTE: This endpoint can only be accessed by curators.
 
-operation::organizations-update[snippets='path-parameters,request-parts,request-part-properties-fields,curl-request,response-headers,http-response']
+operation::organizations_update[snippets='path-parameters,request-parts,request-part-properties-fields,curl-request,response-headers,http-response']

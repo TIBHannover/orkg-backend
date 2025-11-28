@@ -78,7 +78,7 @@ abstract class MockMvcBaseTest(val prefix: String) : MockkBaseTest {
 
     protected lateinit var mockMvc: MockMvc
 
-    val identifier = "$prefix-{method-name}"
+    val identifier = "${prefix}_{method-name}"
 
     @BeforeEach
     fun setup(restDocumentation: RestDocumentationContextProvider) {

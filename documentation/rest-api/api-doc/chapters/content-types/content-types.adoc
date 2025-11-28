@@ -10,11 +10,11 @@ If no paging request parameters are provided, the default values will be used.
 
 NOTE: Whenever possible, individual content-type endpoints should be used, to optimize performance.
 
-operation::content-types-get-paged[snippets='curl-request']
+operation::content-types_get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::content-types-get-paged-with-parameters[snippets='query-parameters']
+operation::content-types_get-paged-with-parameters[snippets='query-parameters']
 
 [[content-types-list-as-resource]]
 == Listing Content-Types as Resources
@@ -24,8 +24,8 @@ If no paging request parameters are provided, the default values will be used.
 
 NOTE: Whenever possible, individual content-type endpoints should be used, to optimize performance.
 
-operation::content-types-get-paged-as-resource[snippets='curl-request']
+operation::content-types_get-paged-as-resource[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::content-types-get-paged-as-resource-with-parameters[snippets='query-parameters']
+operation::content-types_get-paged-as-resource-with-parameters[snippets='query-parameters']

@@ -8,7 +8,7 @@ They can either be a <<classes,class>>, <<resources,resource>>, <<predicates,pre
 
 A `GET` request provides information about a thing.
 
-operation::things-get-single[snippets='path-parameters,curl-request,http-response']
+operation::things_get-single[snippets='path-parameters,curl-request,http-response']
 
 [[things-fetch_response_fields]]
 === Response fields
@@ -21,8 +21,8 @@ A `GET` request lists all things.
 
 TIP: {pagination_note}
 
-operation::things-get-paged[snippets='curl-request']
+operation::things_get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::things-get-paged-with-parameters[snippets='query-parameters,curl-request']
+operation::things_get-paged-with-parameters[snippets='query-parameters,curl-request']

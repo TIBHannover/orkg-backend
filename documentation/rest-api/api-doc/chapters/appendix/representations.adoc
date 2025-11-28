@@ -25,4 +25,4 @@ include::{snippets}/../error-snippets/all-errors.adoc[leveloffset=+1]
 == Pages
 
 [cols="1,1,3"]
-include::{snippets}/paged-page/response-fields.adoc[]
+include::{snippets}/paged_page/response-fields.adoc[]

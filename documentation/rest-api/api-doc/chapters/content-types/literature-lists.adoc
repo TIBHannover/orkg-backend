@@ -11,7 +11,7 @@ NOTE: The following endpoints use content negotiation, meaning that the contents
 
 A `GET` request provides information about a literature list.
 
-operation::literature-lists-get-single[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::literature-lists_get-single[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[literature-lists-list]]
 == Listing Literature Lists
@@ -19,11 +19,11 @@ operation::literature-lists-get-single[snippets='path-parameters,curl-request,ht
 A `GET` request returns a <<sorting-and-pagination,paged>> list of <<literature-lists-fetch,literature lists>>.
 If no paging request parameters are provided, the default values will be used.
 
-operation::literature-lists-get-paged[snippets='curl-request']
+operation::literature-lists_get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::literature-lists-get-paged-with-parameters[snippets='query-parameters,curl-request']
+operation::literature-lists_get-paged-with-parameters[snippets='query-parameters,curl-request']
 
 [[literature-lists-create]]
 == Creating Literature Lists
@@ -32,7 +32,7 @@ A `POST` request creates a new literature list with all the given parameters.
 The response will be `201 Created` when successful.
 The literature list (object) can be retrieved by following the URI in the `Location` header field.
 
-operation::literature-lists-create[snippets='request-fields,curl-request,response-headers,http-response']
+operation::literature-lists_create[snippets='request-fields,curl-request,response-headers,http-response']
 
 [[literature-lists-edit]]
 == Updating Literature Lists
@@ -49,7 +49,7 @@ The updated literature list (object) can be retrieved by following the URI in th
 
 WARNING: Author names will not be updated if a resource id is specified for a given author.
 
-operation::literature-lists-update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::literature-lists_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[literature-lists-publish]]
 == Publishing Literature Lists
@@ -60,14 +60,14 @@ All statements containing the sections of the original literature list are archi
 The response will be `201 Created` when successful.
 The published literature list (object) can be retrieved by following the URI in the `Location` header field.
 
-operation::literature-lists-publish[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::literature-lists_publish[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[literature-lists-published-contents]]
 == Fetching Published Literature List Contents
 
 A `GET` request returns contents of an already published literature list, at the state of publishing.
 
-operation::literature-lists-find-published-content-by-id[snippets='path-parameters,curl-request']
+operation::literature-lists_find-published-content-by-id[snippets='path-parameters,curl-request']
 
 Depending on the type of the requested content, the following representations are returned:
 

@@ -4,8 +4,8 @@ A filter config is an url-encoded json-list of search filters.
 They can be used to make advanced search queries on papers, providing a way for users to find the papers they are actually interested in.
 Each search filter is of the following structure:
 
-include::{snippets}/filter-configs-get-single/response-body.adoc[]
-include::{snippets}/filter-configs-get-single/response-fields.adoc[]
+include::{snippets}/filter-configs_get-single/response-body.adoc[]
+include::{snippets}/filter-configs_get-single/response-fields.adoc[]
 
 [options="header"]
 |===============================

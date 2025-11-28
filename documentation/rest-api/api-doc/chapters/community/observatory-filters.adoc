@@ -7,7 +7,7 @@ Observatory filters are persistent filter configurations (presets) for observato
 
 A `GET` request provides information about an observatory filter, which always belongs to a specific <<observatories,observatory>>.
 
-operation::observatory-filters-get-single[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::observatory-filters_get-single[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[observatory-filters-list]]
 == Listing Observatory Filters
@@ -15,7 +15,7 @@ operation::observatory-filters-get-single[snippets='path-parameters,curl-request
 A `GET` request returns a <<sorting-and-pagination,paged>> list of <<observatory-filters-fetch,observatory filters>> that belong to the specified <<observatories,observatory>>.
 If no paging request parameters are provided, the default values will be used.
 
-operation::observatory-filters-get-paged[snippets='path-parameters,curl-request']
+operation::observatory-filters_get-paged[snippets='path-parameters,curl-request']
 
 [[observatory-filters-create]]
 == Creating Observatory Filters
@@ -26,7 +26,7 @@ The observatory filter can be retrieved by following the URI in the `Location` h
 
 NOTE: The user performing the action needs to be a curator or a member of the observatory.
 
-operation::observatory-filters-create[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::observatory-filters_create[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[observatory-filters-update]]
 == Updating Observatory Filters
@@ -36,7 +36,7 @@ The response will be `204 No Content` when successful.
 
 NOTE: The user performing the action needs to be a curator or a member of the observatory.
 
-operation::observatory-filters-update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::observatory-filters_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[observatory-filters-delete]]
 == Deleting Observatory Filters
@@ -46,4 +46,4 @@ The response will be `204 No Content` when successful.
 
 NOTE: The user performing the action needs to be a curator or a member of the observatory.
 
-operation::observatory-filters-delete[snippets='path-parameters,curl-request,http-response']
+operation::observatory-filters_delete[snippets='path-parameters,curl-request,http-response']

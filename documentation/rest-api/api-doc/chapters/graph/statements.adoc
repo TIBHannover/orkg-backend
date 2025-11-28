@@ -22,7 +22,7 @@ This allows storing and retrieving provenance information about them.
 
 A `GET` request provides information about a statement.
 
-operation::statements-get-single[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::statements_get-single[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[statements-list]]
 == Listing Statements
@@ -31,11 +31,11 @@ A `GET` request lists all the statements:
 
 TIP: {pagination_note}
 
-operation::statements-get-paged[snippets='curl-request']
+operation::statements_get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::statements-get-paged-with-parameters[snippets='query-parameters,curl-request']
+operation::statements_get-paged-with-parameters[snippets='query-parameters,curl-request']
 
 [[statements-create]]
 == Creating Statements
@@ -53,7 +53,7 @@ The statement can be retrieved by following the URI in the `Location` header fie
 6. If a statement with the specified subject, predicate and object already exists, the id of the existing statement will be returned and the status will be `201 CREATED`.
 ====
 
-operation::statements-create[snippets='request-fields,curl-request,http-response']
+operation::statements_create[snippets='request-fields,curl-request,http-response']
 
 [[statements-edit]]
 == Updating Statements
@@ -62,7 +62,7 @@ A `PUT` request updates an existing statement with the given parameters.
 The response will be `204 NO CONTENT` when successful.
 The updated statement can be retrieved by following the URI in the `Location` header field.
 
-operation::statements-update[snippets='path-parameters,request-fields,curl-request,http-response']
+operation::statements_update[snippets='path-parameters,request-fields,curl-request,http-response']
 
 [[statements-delete]]
 == Deleting Statement
@@ -76,7 +76,7 @@ The response will be `204 No Content` when successful.
 2. If the statement is a <<lists,list>> element statement, the return status will be `403 FORBIDDEN`.
 ====
 
-operation::statements-delete-by-id_is-no-content[snippets='path-parameters,curl-request,http-response']
+operation::statements_delete-by-id_is-no-content[snippets='path-parameters,curl-request,http-response']
 
 [[statements-fetch-as-bundle]]
 == Fetching Statements as Bundles
@@ -84,4 +84,4 @@ operation::statements-delete-by-id_is-no-content[snippets='path-parameters,curl-
 A `Bundle` is a collection of statements that represent the subgraph starting from a specified entity in the graph.
 A `GET` request fetches a subgraph of a certain entity and returns all the statements as a bundle.
 
-operation::statements-get-bundle[snippets='path-parameters,query-parameters,curl-request,http-response,response-fields']
+operation::statements_get-bundle[snippets='path-parameters,query-parameters,curl-request,http-response,response-fields']

@@ -9,7 +9,7 @@ NOTE: The following endpoints use content negotiation, meaning that the contents
 
 A `GET` request provides information about a rosetta stone statement or a specific rosetta stone statement version.
 
-operation::rosetta-stone-statements-get-single[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::rosetta-stone-statements_get-single[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[rosetta-stone-statements-list]]
 == Listing Rosetta Stone Statements
@@ -19,18 +19,18 @@ If no paging request parameters are provided, the default values will be used.
 
 NOTE: Only the most recent versions of rosetta stone statements will be returned.
 
-operation::rosetta-stone-statements-get-paged[snippets='curl-request']
+operation::rosetta-stone-statements_get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::rosetta-stone-statements-get-paged-with-parameters[snippets='query-parameters,curl-request']
+operation::rosetta-stone-statements_get-paged-with-parameters[snippets='query-parameters,curl-request']
 
 [[rosetta-stone-statements-list-versions]]
 == Listing Rosetta Stone Statement Versions
 
 A `GET` request returns a list of <<rosetta-stone-statements-fetch,rosetta stone statement>> versions.
 
-operation::rosetta-stone-statements-get-all-versions[snippets='path-parameters,curl-request']
+operation::rosetta-stone-statements_get-all-versions[snippets='path-parameters,curl-request']
 
 [[rosetta-stone-statements-create]]
 == Creating Rosetta Stone Statements
@@ -39,7 +39,7 @@ A `POST` request creates a new rosetta stone statement with all the given parame
 The response will be `201 Created` when successful.
 The rosetta stone statement can be retrieved by following the URI in the `Location` header field.
 
-operation::rosetta-stone-statements-create[snippets='request-fields,curl-request,response-headers,http-response']
+operation::rosetta-stone-statements_create[snippets='request-fields,curl-request,response-headers,http-response']
 
 [[rosetta-stone-statements-edit]]
 == Updating Rosetta Stone Statements
@@ -48,7 +48,7 @@ A `POST` request creates a new version of an existing rosetta stone statement wi
 The response will be `201 Created` when successful.
 The revised rosetta stone statement (object) can be retrieved by following the URI in the `Location` header field.
 
-operation::rosetta-stone-statements-update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::rosetta-stone-statements_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[rosetta-stone-statements-delete]]
 == Deleting Rosetta Stone Statements
@@ -58,7 +58,7 @@ operation::rosetta-stone-statements-update[snippets='path-parameters,request-fie
 A `DELETE` request soft-deletes a rosetta stone statement with all its versions.
 The response will be `204 No Content` when successful.
 
-operation::rosetta-stone-statements-soft-delete[snippets='path-parameters,curl-request,http-response']
+operation::rosetta-stone-statements_soft-delete[snippets='path-parameters,curl-request,http-response']
 
 === Fully Deleting Rosetta Stone Statements
 
@@ -67,4 +67,4 @@ The response will be `204 No Content` when successful.
 
 NOTE: The user performing the action needs to be a curator.
 
-operation::rosetta-stone-statements-delete[snippets='path-parameters,curl-request,http-response']
+operation::rosetta-stone-statements_delete[snippets='path-parameters,curl-request,http-response']

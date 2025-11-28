@@ -11,7 +11,7 @@ NOTE: The following endpoints use content negotiation, meaning that the contents
 
 A `GET` request provides information about a table.
 
-operation::tables-get-single[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::tables_get-single[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[tables-list]]
 == Listing Tables
@@ -19,11 +19,11 @@ operation::tables-get-single[snippets='path-parameters,curl-request,http-respons
 A `GET` request returns a <<sorting-and-pagination,paged>> list of <<tables-fetch,tables>>.
 If no paging request parameters are provided, the default values will be used.
 
-operation::tables-get-paged[snippets='curl-request']
+operation::tables_get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::tables-get-paged-with-parameters[snippets='query-parameters,curl-request']
+operation::tables_get-paged-with-parameters[snippets='query-parameters,curl-request']
 
 [[tables-create]]
 == Creating Tables
@@ -32,7 +32,7 @@ A `POST` request creates a new table with all the given parameters.
 The response will be `201 Created` when successful.
 The table (object) can be retrieved by following the URI in the `Location` header field.
 
-operation::tables-create[snippets='request-fields,curl-request,response-headers,http-response']
+operation::tables_create[snippets='request-fields,curl-request,response-headers,http-response']
 
 [[tables-edit]]
 == Updating Tables
@@ -47,4 +47,4 @@ The updated table (object) can be retrieved by following the URI in the `Locatio
 2. The same rules as for <<resources-edit,updating resources>> apply when updating the visibility of a table.
 ====
 
-operation::tables-update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::tables_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']

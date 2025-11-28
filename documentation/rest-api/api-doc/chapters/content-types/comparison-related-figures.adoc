@@ -11,14 +11,14 @@ NOTE: The following endpoints use content negotiation, meaning that the contents
 
 A `GET` request provides information about a comparison related figure.
 
-operation::comparison-related-figures-get-single[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::comparison-related-figures_get-single[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[comparisons-related-figure-list]]
 == Listing Comparison Related Figures
 
 A `GET` request returns a <<sorting-and-pagination,paged>> list of <<comparisons-related-figure-fetch,comparison related figures>>.
 
-operation::comparison-related-figures-get-paged[snippets='path-parameters,curl-request']
+operation::comparison-related-figures_get-paged[snippets='path-parameters,curl-request']
 
 [[comparisons-related-figure-create]]
 == Creating Comparison Related Figures
@@ -27,7 +27,7 @@ A `POST` request creates a new comparison related figure with all the given para
 The response will be `201 Created` when successful.
 The comparison related figure (object) can be retrieved by following the URI in the `Location` header field.
 
-operation::comparison-related-figures-create[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::comparison-related-figures_create[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[comparisons-related-figure-edit]]
 == Updating Comparison Related Figures
@@ -38,7 +38,7 @@ The updated comparison related figure (object) can be retrieved by following the
 
 NOTE: Top level fields that were mandatory when creating the comparison related figure can be omitted or `null`, meaning that the corresponding fields should not be updated.
 
-operation::comparison-related-figures-update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::comparison-related-figures_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[comparisons-related-figure-delete]]
 == Deleting Comparison Related Figures
@@ -47,4 +47,4 @@ A `DELETE` request deletes a comparison related figure by ID.
 The response will be `204 No Content` when successful.
 The updated comparison (object) can be retrieved by following the URI in the `Location` header field.
 
-operation::comparison-related-figures-delete[snippets='path-parameters,curl-request,response-headers,http-response']
+operation::comparison-related-figures_delete[snippets='path-parameters,curl-request,response-headers,http-response']

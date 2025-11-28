@@ -2,6 +2,7 @@
 @file:Suppress("UnstableApiUsage")
 
 plugins {
+    id("java-test-fixtures")
     id("org.orkg.gradle.input-adapter-spring-web")
 }
 
@@ -17,7 +18,7 @@ testing {
                 implementation("org.springframework:spring-test")
                 implementation("com.ninja-squad:springmockk")
                 implementation(project(":common:core-identifiers"))
-                implementation(project(":common:serialization"))
+                implementation(testFixtures(project(":graph:graph-adapter-input-rest-spring-mvc")))
                 implementation(testFixtures(project(":graph:graph-core-model")))
                 implementation(testFixtures(project(":testing:spring")))
                 runtimeOnly("com.jayway.jsonpath:json-path")
@@ -33,4 +34,11 @@ dependencies {
     api(project(":graph:graph-adapter-input-representations"))
     api(project(":graph:graph-core-model"))
     api(project(":graph:graph-ports-input"))
+
+    testFixturesApi("org.springframework:spring-context")
+    testFixturesApi("org.springframework.boot:spring-boot-test")
+    testFixturesApi(project(":common:serialization"))
+    testFixturesApi(project(":common:spring-webmvc"))
+    testFixturesApi(testFixtures(project(":common:core-identifiers")))
+    testFixturesApi(testFixtures(project(":testing:spring")))
 }

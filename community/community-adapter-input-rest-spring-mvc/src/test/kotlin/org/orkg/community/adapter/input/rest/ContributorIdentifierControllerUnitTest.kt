@@ -9,46 +9,38 @@ import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
-import org.orkg.common.json.CommonJacksonModule
+import org.orkg.community.adapter.input.rest.ContributorIdentifierController.CreateContributorIdentifierRequest
+import org.orkg.community.adapter.input.rest.ContributorIdentifierController.DeleteContributorIdentifierRequest
 import org.orkg.community.adapter.input.rest.ContributorIdentifierControllerUnitTest.TestController
-import org.orkg.community.adapter.input.rest.json.CommunityJacksonModule
 import org.orkg.community.adapter.input.rest.mapping.ContributorIdentifierRepresentationAdapter
 import org.orkg.community.domain.ContributorIdentifier
+import org.orkg.community.domain.ContributorIdentifierAlreadyExists
+import org.orkg.community.domain.ContributorNotFound
 import org.orkg.community.input.ContributorIdentifierUseCases
 import org.orkg.community.testing.asciidoc.allowedContributorIdentifierValues
 import org.orkg.community.testing.fixtures.createContributorIdentifier
+import org.orkg.contenttypes.domain.InvalidIdentifier
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectContributorIdentifier
 import org.orkg.testing.annotations.TestWithMockUser
-import org.orkg.testing.configuration.ExceptionTestConfiguration
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
-import org.orkg.testing.spring.restdocs.timestampFieldWithPath
+import org.orkg.testing.spring.restdocs.enumValues
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestComponent
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
-import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
+import orkg.orkg.community.testing.fixtures.configuration.CommunityControllerUnitTestConfiguration
+import orkg.orkg.community.testing.fixtures.contributorIdentifierResponseFields
 
 @ContextConfiguration(
-    classes = [
-        ContributorIdentifierController::class,
-        TestController::class,
-        ExceptionTestConfiguration::class,
-        CommonJacksonModule::class,
-        CommunityJacksonModule::class,
-        FixedClockConfig::class
-    ]
+    classes = [ContributorIdentifierController::class, TestController::class, CommunityControllerUnitTestConfiguration::class]
 )
 @WebMvcTest(controllers = [ContributorIdentifierController::class, TestController::class])
 internal class ContributorIdentifierControllerUnitTest : MockMvcBaseTest("contributor-identifiers") {
@@ -57,26 +49,19 @@ internal class ContributorIdentifierControllerUnitTest : MockMvcBaseTest("contri
 
     @Test
     @DisplayName("Given a contributor identifier, when serialized, it returns the correct result")
-    fun getSingle() {
-        documentedGetRequestTo("/contributor-identifier")
+    fun findById() {
+        documentedGetRequestTo("/open-api-doc-test")
             .perform()
             .andExpect(status().isOk)
             .andExpectContributorIdentifier()
-            .andDo(
-                documentationHandler.document(
-                    responseFields(
-                        fieldWithPath("type").description("The type of the identifier. Either of $allowedContributorIdentifierValues."),
-                        fieldWithPath("value").description("The value of the identifier."),
-                        timestampFieldWithPath("created_at", "the identifier was added"),
-                    )
-                )
-            )
-            .andDo(generateDefaultDocSnippets())
+            .andDocument {
+                responseFields<ContributorIdentifierRepresentation>(contributorIdentifierResponseFields())
+            }
     }
 
     @Test
     @DisplayName("Given several contributor identifiers, when fetched by contributor id, then status is 200 OK and contributor identifiers are returned")
-    fun getPaged() {
+    fun findAllByContributorId() {
         val contributorId = ContributorId(MockUserId.USER)
 
         every { contributorIdentifierUseCases.findAllByContributorId(contributorId, any()) } returns pageOf(createContributorIdentifier())
@@ -85,14 +70,19 @@ internal class ContributorIdentifierControllerUnitTest : MockMvcBaseTest("contri
             .perform()
             .andExpect(status().isOk)
             .andExpectContributorIdentifier("$.content[*]")
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the contributor.")
-                    )
+            .andDocument {
+                summary("Listing contributor identifiers")
+                description(
+                    """
+                    A `GET` request returns a <<sorting-and-pagination,paged>> list of <<contributor-identifiers,contributor identifiers>>.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the contributor."),
+                )
+                pagedQueryParameters()
+                pagedResponseFields<ContributorIdentifierRepresentation>(contributorIdentifierResponseFields())
+            }
 
         verify(exactly = 1) { contributorIdentifierUseCases.findAllByContributorId(contributorId, any()) }
     }
@@ -110,21 +100,27 @@ internal class ContributorIdentifierControllerUnitTest : MockMvcBaseTest("contri
             .perform()
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("/api/contributors/$contributorId/identifiers")))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the contributor.")
-                    ),
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the updated set of identifiers can be fetched from.")
-                    ),
-                    requestFields(
-                        fieldWithPath("type").description("The type of the identifier. Either of $allowedContributorIdentifierValues."),
-                        fieldWithPath("value").description("The value of the identifier."),
-                    )
+            .andDocument {
+                summary("Creating contributor identifiers")
+                description(
+                    """
+                    A `POST` request assigns a new identifier to the currently logged in contributor.
+                    The response will be `201 Created` when successful.
+                    The updated set of contributor identifiers can be retrieved by following the URI in the `Location` header field.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the contributor."),
+                )
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the updated set of identifiers can be fetched from."),
+                )
+                requestFields<CreateContributorIdentifierRequest>(
+                    fieldWithPath("type").description("The type of the identifier. Either of $allowedContributorIdentifierValues.").type("enum").enumValues(ContributorIdentifier.Type.entries.map { it.id }),
+                    fieldWithPath("value").description("The value of the identifier."),
+                )
+                throws(ContributorNotFound::class, ContributorIdentifierAlreadyExists::class, InvalidIdentifier::class)
+            }
 
         verify(exactly = 1) { contributorIdentifierUseCases.create(any()) }
     }
@@ -142,17 +138,21 @@ internal class ContributorIdentifierControllerUnitTest : MockMvcBaseTest("contri
             .content(request)
             .perform()
             .andExpect(status().isNoContent)
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the contributor.")
-                    ),
-                    requestFields(
-                        fieldWithPath("value").description("The value of the identifier."),
-                    )
+            .andDocument {
+                summary("Deleting contributor identifiers")
+                description(
+                    """
+                    A `DELETE` request removes an existing identifier of the currently logged in contributor.
+                    The response will be `204 No Content` when successful.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the contributor."),
+                )
+                requestFields<DeleteContributorIdentifierRequest>(
+                    fieldWithPath("value").description("The value of the identifier."),
+                )
+            }
 
         verify(exactly = 1) { contributorIdentifierUseCases.delete(contributorId, request.value) }
     }
@@ -160,17 +160,17 @@ internal class ContributorIdentifierControllerUnitTest : MockMvcBaseTest("contri
     @TestComponent
     @RestController
     internal class TestController : ContributorIdentifierRepresentationAdapter {
-        @GetMapping("/contributor-identifier")
-        fun getSingle(): ContributorIdentifierRepresentation =
+        @GetMapping("/open-api-doc-test")
+        fun findById(): ContributorIdentifierRepresentation =
             createContributorIdentifier().toContributorIdentifierRepresentation()
     }
 
     private fun createContributorIdentifierRequest() =
-        ContributorIdentifierController.CreateContributorIdentifierRequest(
+        CreateContributorIdentifierRequest(
             type = ContributorIdentifier.Type.ORCID,
             value = "0000-0001-5109-3700"
         )
 
     private fun deleteContributorIdentifierRequest() =
-        ContributorIdentifierController.DeleteContributorIdentifierRequest("0000-0001-5109-3700")
+        DeleteContributorIdentifierRequest("0000-0001-5109-3700")
 }

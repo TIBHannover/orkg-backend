@@ -128,7 +128,7 @@ class OrganizationController(
     @RequireCuratorRole
     fun updateOrganization(
         @PathVariable id: OrganizationId,
-        @RequestPart("properties", required = false) @Valid request: UpdateOrganizationRequest?,
+        @RequestPart("properties", required = false) @Valid request: UpdateOrganizationPropertiesRequest?,
         @RequestPart("logo", required = false) logo: MultipartFile?,
         currentUser: Authentication?,
         uriComponentsBuilder: UriComponentsBuilder,
@@ -197,7 +197,7 @@ class OrganizationController(
         val type: String,
     )
 
-    data class UpdateOrganizationRequest(
+    data class UpdateOrganizationPropertiesRequest(
         @field:Size(min = 1)
         val name: String?,
         @field:Size(min = 1)

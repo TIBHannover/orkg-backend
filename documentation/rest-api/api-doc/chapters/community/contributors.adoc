@@ -6,19 +6,17 @@ They can become a member of an <<organizations,organization>> or join an <<obser
 [[contributor-fetch]]
 == Fetching Contributors
 
-Information about a specific contributor can be obtained by sending a `GET` request to the contributor endpoint:
+include::{snippets}/contributors_find-by-id/description.adoc[]
 
-operation::contributors_get-single[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::contributors_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[contributor-list]]
 == Listing Contributors
 
-A `GET` request returns a <<sorting-and-pagination,paged>> list of <<contributor-fetch,contributors>>.
-
-NOTE: This endpoint requires authentication.
+include::{snippets}/contributors_find-all/description.adoc[]
 
 operation::contributors_get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::contributors_get-paged-with-parameters[snippets='query-parameters,curl-request']
+operation::contributors_find-all[snippets='query-parameters,curl-request']

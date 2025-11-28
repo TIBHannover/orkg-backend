@@ -15,6 +15,7 @@ import org.springframework.restdocs.payload.FieldDescriptor
 import org.springframework.restdocs.payload.PayloadDocumentation.applyPathPrefix
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.request.ParameterDescriptor
+import org.springframework.restdocs.request.RequestPartDescriptor
 import kotlin.reflect.KClass
 import org.orkg.testing.spring.restdocs.pagedResponseFields as pagedResponseFieldsWrapper
 
@@ -51,6 +52,10 @@ class DocumentationBuilder(private val documentationContext: DocumentationContex
     var requestHeaders: List<HeaderDescriptorWithType> = emptyList()
         private set
     var responseHeaders: List<HeaderDescriptorWithType> = emptyList()
+        private set
+    var requestParts: List<RequestPartDescriptor> = emptyList()
+        private set
+    var requestPartFields: Map<String, List<FieldDescriptor>> = emptyMap()
         private set
     var throws: List<KClass<out Throwable>> = emptyList()
         private set
@@ -249,6 +254,25 @@ class DocumentationBuilder(private val documentationContext: DocumentationContex
     fun responseHeaders(vararg responseHeaders: HeaderDescriptor) =
         responseHeaders(responseHeaders.map { HeaderDescriptorWithType.fromHeaderDescriptor(it) })
 
+    fun requestParts(schemaName: String, vararg requestParts: RequestPartDescriptor) {
+        this.requestSchema = Schema(schemaName)
+        this.requestParts = requestParts.toList()
+    }
+
+    fun requestPartFields(part: String, descriptors: List<FieldDescriptor>) {
+        requestPartFields += part to descriptors.toList()
+    }
+
+    fun requestPartFields(part: String, vararg descriptors: FieldDescriptor) {
+        requestPartFields(part, descriptors.toList())
+    }
+
+    fun requestPartFields(schemaClass: KClass<*>, part: String, descriptors: List<FieldDescriptor>) =
+        requestPartFields(part, descriptors.map { it.enhance(schemaClass) })
+
+    fun requestPartFields(schemaClass: KClass<*>, part: String, vararg descriptors: FieldDescriptor) =
+        requestPartFields(schemaClass, part, descriptors.toList())
+
     fun tag(tag: String) =
         tags(tag)
 
@@ -340,6 +364,8 @@ class DocumentationBuilder(private val documentationContext: DocumentationContex
         formParameters = formParameters,
         requestHeaders = requestHeaders,
         responseHeaders = responseHeaders,
+        requestParts = requestParts,
+        requestPartFields = requestPartFields,
         tags = tags,
         throws = throws,
     )

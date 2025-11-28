@@ -37,11 +37,13 @@ import org.springframework.restdocs.operation.preprocess.Preprocessors.preproces
 import org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse
 import org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
+import org.springframework.restdocs.payload.PayloadDocumentation.requestPartFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.formParameters
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.queryParameters
+import org.springframework.restdocs.request.RequestDocumentation.requestParts
 import org.springframework.restdocs.snippet.AbstractDescriptor
 import org.springframework.restdocs.snippet.Snippet
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity
@@ -149,6 +151,12 @@ abstract class MockMvcBaseTest(val prefix: String) : MockkBaseTest {
         }
         if (documentationParameters.description != null) {
             snippets += description(documentationParameters.description)
+        }
+        if (documentationParameters.requestParts.isNotEmpty()) {
+            snippets += requestParts(documentationParameters.requestParts)
+        }
+        if (documentationParameters.requestPartFields.isNotEmpty()) {
+            snippets += documentationParameters.requestPartFields.map { requestPartFields(it.key, it.value) }
         }
         if (documentationParameters.throws.isNotEmpty()) {
             snippets += exceptions(documentationParameters.throws)
@@ -289,6 +297,8 @@ abstract class MockMvcBaseTest(val prefix: String) : MockkBaseTest {
                 requestHeaders = requestHeaders.stripAsciidocFormatting(),
                 responseHeaders = responseHeaders.stripAsciidocFormatting(),
                 tags = tags,
+                requestParts = requestParts.stripAsciidocFormatting(),
+                requestPartFields = requestPartFields.mapValues { it.value.stripAsciidocFormatting() },
             )
 
         private fun String.stripAsciidocFormatting(): String =

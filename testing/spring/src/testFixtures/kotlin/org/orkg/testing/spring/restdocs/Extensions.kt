@@ -23,8 +23,11 @@ inline fun <reified T> FieldDescriptor.referencesPageOf(): FieldDescriptor =
 fun FieldDescriptor.arrayItemsType(type: String): FieldDescriptor =
     attributes(Attributes.Attribute("itemsType", type))
 
+fun FieldDescriptor.enumValues(values: List<String>): FieldDescriptor =
+    attributes(Attributes.Attribute("enumValues", values))
+
 fun FieldDescriptor.enumValues(enum: Class<out Enum<*>>): FieldDescriptor =
-    attributes(Attributes.Attribute("enumValues", enum.enumConstants.map { it.name }))
+    enumValues(enum.enumConstants.map { it.name })
 
 fun FieldDescriptor.enumValues(enum: KClass<out Enum<*>>): FieldDescriptor =
     enumValues(enum.java)

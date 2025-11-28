@@ -7,7 +7,7 @@ import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.OrganizationId
-import org.orkg.common.json.CommonJacksonModule
+import org.orkg.community.adapter.input.rest.OrganizationController.UpdateOrganizationPropertiesRequest
 import org.orkg.community.domain.LogoNotFound
 import org.orkg.community.domain.OrganizationNotFound
 import org.orkg.community.domain.OrganizationType
@@ -26,8 +26,6 @@ import org.orkg.mediastorage.testing.fixtures.loadRawImage
 import org.orkg.mediastorage.testing.fixtures.testImage
 import org.orkg.testing.annotations.TestWithMockCurator
 import org.orkg.testing.annotations.TestWithMockUser
-import org.orkg.testing.configuration.ExceptionTestConfiguration
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
@@ -36,24 +34,19 @@ import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
-import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.requestPartFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.partWithName
-import org.springframework.restdocs.request.RequestDocumentation.pathParameters
-import org.springframework.restdocs.request.RequestDocumentation.requestParts
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import orkg.orkg.community.testing.fixtures.configuration.CommunityControllerUnitTestConfiguration
 import java.util.Optional
 import java.util.UUID
 
-@ContextConfiguration(
-    classes = [OrganizationController::class, ExceptionTestConfiguration::class, CommonJacksonModule::class, FixedClockConfig::class]
-)
+@ContextConfiguration(classes = [OrganizationController::class, CommunityControllerUnitTestConfiguration::class])
 @WebMvcTest(controllers = [OrganizationController::class])
 internal class OrganizationControllerUnitTest : MockMvcBaseTest("organizations") {
     @MockkBean
@@ -267,27 +260,38 @@ internal class OrganizationControllerUnitTest : MockMvcBaseTest("organizations")
             .perform()
             .andExpect(status().isNoContent)
             .andExpect(header().string("Location", endsWith("/api/organizations/$id")))
-            .andDo(
-                documentationHandler.document(
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the updated organization can be fetched from.")
-                    ),
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the organization.")
-                    ),
-                    requestParts(
-                        partWithName("properties").description("The updated properties of the organization. (optional)"),
-                        partWithName("logo").description("The updated logo of the organization. (optional)")
-                    ),
-                    requestPartFields(
-                        "properties",
-                        fieldWithPath("name").description("The updated name of the organization. (optional)"),
-                        fieldWithPath("url").description("The updated URL of the organization. (optional)"),
-                        fieldWithPath("type").description("The updated type of the organization. One of $allowedOrganizationTypeValues. (optional)"),
-                    )
+            .andDocument {
+                summary("Updating organizations")
+                description(
+                    """
+                    A `PATCH` request updates an existing organization with the given parameters.
+                    Only fields provided in the request, and therefore non-null, will be updated.
+                    The response will be `204 No Content` when successful.
+                    The updated organization (object) can be retrieved by following the URI in the `Location` header field.
+                    
+                    NOTE: This endpoint can only be accessed by curators.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the updated organization can be fetched from."),
+                )
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the organization."),
+                )
+                requestParts(
+                    "UpdateOrganizationRequest",
+                    partWithName("properties").description("The updated properties of the organization. (optional)").optional(),
+                    partWithName("logo").description("The updated logo of the organization. (optional)").optional(),
+                )
+                requestPartFields(
+                    UpdateOrganizationPropertiesRequest::class,
+                    "properties",
+                    fieldWithPath("name").description("The updated name of the organization. (optional)").type("string").optional(),
+                    fieldWithPath("url").description("The updated URL of the organization. (optional)").type("string").optional(),
+                    fieldWithPath("type").description("The updated type of the organization. One of $allowedOrganizationTypeValues. (optional)").type("string").optional(),
+                )
+                throws(InvalidMimeType::class, OrganizationNotFound::class)
+            }
 
         verify(exactly = 1) { organizationService.update(any(), any()) }
     }

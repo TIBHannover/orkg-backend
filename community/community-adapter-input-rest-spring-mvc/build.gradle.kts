@@ -17,6 +17,7 @@ testing {
                 implementation(testFixtures(project(":media-storage:media-storage-core-model")))
                 implementation(project(":common:external-identifiers"))
                 implementation(project(":common:serialization"))
+                implementation(project(":content-types:content-types-core-model"))
                 implementation(project(":graph:graph-core-constants"))
                 implementation("io.kotest:kotest-assertions-core")
                 implementation("io.kotest:kotest-assertions-shared")
@@ -34,7 +35,6 @@ testing {
                 implementation("org.springframework:spring-test")
                 implementation("org.assertj:assertj-core")
                 implementation("com.ninja-squad:springmockk")
-                implementation("org.springframework.restdocs:spring-restdocs-mockmvc")
                 runtimeOnly("org.springframework.boot:spring-boot-starter-test")
             }
         }
@@ -62,5 +62,13 @@ dependencies {
     api(project(":media-storage:media-storage-core-model"))
     api(project(":media-storage:media-storage-ports-input"))
     implementation("org.springframework:spring-core")
+    testFixturesApi("org.springframework:spring-context")
+    testFixturesApi("org.springframework.boot:spring-boot-test")
     testFixturesApi("org.springframework.restdocs:spring-restdocs-core")
+    testFixturesApi(project(":community:community-adapter-input-rest-spring-mvc"))
+    testFixturesApi(project(":common:serialization"))
+    testFixturesApi(project(":common:spring-webmvc"))
+    testFixturesApi(testFixtures(project(":common:core-identifiers")))
+    testFixturesApi(testFixtures(project(":testing:spring")))
+    testFixturesImplementation(testFixtures(project(":community:community-core-model")))
 }

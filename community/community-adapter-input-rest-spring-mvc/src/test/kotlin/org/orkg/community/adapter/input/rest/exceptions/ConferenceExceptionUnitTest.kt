@@ -12,7 +12,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
@@ -28,14 +27,13 @@ internal class ConferenceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Conference series with name "Cool name" already exists.""")
             .andExpect(jsonPath("$.conference_series_name", `is`("Cool name")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("conference_series_name").type("String").description("The name of the conference series. (optional, either `conference_series_name` or `conference_series_display_id` is present)").optional(),
-                        fieldWithPath("conference_series_display_id").type("String").description("The display_id of the conference series. (optional, either `conference_series_name` or `conference_series_display_id` is present)").optional(),
-                    )
+            .andDocument {
+                responseFields<ConferenceSeriesAlreadyExists>(
+                    fieldWithPath("conference_series_name").type("String").description("The name of the conference series. (optional, either `conference_series_name` or `conference_series_display_id` is present)").optional(),
+                    fieldWithPath("conference_series_display_id").type("String").description("The display_id of the conference series. (optional, either `conference_series_name` or `conference_series_display_id` is present)").optional(),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -57,12 +55,11 @@ internal class ConferenceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Not Found")
             .andExpectDetail("""Conference series "eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174" not found.""")
             .andExpect(jsonPath("$.conference_series_id", `is`("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("conference_series_id").description("The id of the conference series.")
-                    )
+            .andDocument {
+                responseFields<ConferenceSeriesNotFound>(
+                    fieldWithPath("conference_series_id").description("The id of the conference series."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 }

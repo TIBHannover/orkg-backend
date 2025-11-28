@@ -4,6 +4,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.community.input.ContributorUseCases
@@ -14,21 +15,14 @@ import org.orkg.createContributor
 import org.orkg.createObservatory
 import org.orkg.createOrganization
 import org.orkg.createResource
-import org.orkg.graph.adapter.input.rest.ResourceControllerIntegrationTest.RestDoc.pageOfDetailedResourcesResponseFields
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
 import org.orkg.testing.spring.MockMvcBaseTest
-import org.orkg.testing.spring.restdocs.pageableDetailedFieldParameters
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
-import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
-import org.springframework.restdocs.payload.ResponseFieldsSnippet
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.pathParameters
-import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import orkg.orkg.community.testing.fixtures.observatoryResponseFields
@@ -76,7 +70,8 @@ internal class ObservatoryControllerIntegrationTest : MockMvcBaseTest("observato
     }
 
     @Test
-    fun index() {
+    @DisplayName("Given several observatories, when they are fetched, then status is 200 OK and observatories are returned")
+    fun findAll() {
         val contributorId = contributorService.createContributor()
         val organizationId = service.createOrganization(createdBy = contributorId)
         val researchField = resourceService.createResource(
@@ -90,20 +85,27 @@ internal class ObservatoryControllerIntegrationTest : MockMvcBaseTest("observato
         documentedGetRequestTo("/api/observatories")
             .perform()
             .andExpect(status().isOk)
-            .andDo(
-                documentationHandler.document(
-                    queryParameters(
-                        parameterWithName("q").description("A search term that must be contained in the label. (optional)").optional(),
-                        parameterWithName("research_field").description("Filter for research field id. (optional)").optional(),
-                    ),
-                    pageOfObservatoryResponseFields()
+            .andDocument {
+                summary("Listing observatories")
+                description(
+                    """
+                    A `GET` request returns a <<sorting-and-pagination,paged>> list of <<observatories-fetch,observatories>>.
+                    If no paging request parameters are provided, the default values will be used.
+                    
+                    NOTE: Query parameters cannot be combined for this endpoint.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pagedQueryParameters(
+                    parameterWithName("q").description("A search term that must be contained in the label. (optional)").optional(),
+                    parameterWithName("research_field").description("Filter for research field id. (optional)").optional(),
+                )
+                pagedResponseFields<ObservatoryRepresentation>(observatoryResponseFields())
+            }
     }
 
     @Test
-    fun fetch() {
+    @DisplayName("Given an observatory, when fetched by id, and observatory exists, then status is 200 OK and observatory is returned")
+    fun findById() {
         val contributorId = contributorService.createContributor()
         val organizationId = service.createOrganization(createdBy = contributorId)
         val researchField = resourceService.createResource(
@@ -117,15 +119,18 @@ internal class ObservatoryControllerIntegrationTest : MockMvcBaseTest("observato
         documentedGetRequestTo("/api/observatories/{id}", observatoryId)
             .perform()
             .andExpect(status().isOk)
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the observatory.")
-                    ),
-                    responseFields(observatoryResponseFields())
+            .andDocument {
+                summary("Fetching observatories")
+                description(
+                    """
+                    A `GET` request provides information about an observatory.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the observatory.")
+                )
+                responseFields<ObservatoryRepresentation>(observatoryResponseFields())
+            }
     }
 
     @Test
@@ -145,29 +150,9 @@ internal class ObservatoryControllerIntegrationTest : MockMvcBaseTest("observato
             observatoryId = observatoryId
         )
 
-        documentedGetRequestTo("/api/observatories/{id}/papers", observatoryId)
+        get("/api/observatories/{id}/papers", observatoryId)
             .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(1)))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the observatory.")
-                    ),
-                    pageOfDetailedResourcesResponseFields()
-                )
-            )
-            .andDo(generateDefaultDocSnippets())
-    }
-
-    companion object RestDoc {
-        fun listOfObservatoriesResponseFields(): ResponseFieldsSnippet =
-            responseFields(fieldWithPath("[]").description("A list of observatories"))
-                .andWithPrefix("[].", observatoryResponseFields())
-
-        fun pageOfObservatoryResponseFields(): ResponseFieldsSnippet =
-            responseFields(pageableDetailedFieldParameters())
-                .andWithPrefix("content[].", observatoryResponseFields())
-                .andWithPrefix("")
     }
 }

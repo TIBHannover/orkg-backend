@@ -13,7 +13,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
@@ -29,13 +28,12 @@ internal class ContributorExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Contributor "f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc" already exists.""")
             .andExpect(jsonPath("$.contributor_id", `is`("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("contributor_id").description("The id of the contributor."),
-                    )
+            .andDocument {
+                responseFields<ContributorAlreadyExists>(
+                    fieldWithPath("contributor_id").description("The id of the contributor."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -47,12 +45,11 @@ internal class ContributorExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Not Found")
             .andExpectDetail("""Contributor "f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc" not found.""")
             .andExpect(jsonPath("$.contributor_id", `is`("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("contributor_id").description("The id of the contributor."),
-                    )
+            .andDocument {
+                responseFields<ContributorNotFound>(
+                    fieldWithPath("contributor_id").description("The id of the contributor."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 }

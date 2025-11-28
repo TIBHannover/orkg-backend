@@ -14,7 +14,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
@@ -30,13 +29,12 @@ internal class ObservatoryFilterExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Not Found")
             .andExpectDetail("""Observatory filter "f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc" not found.""")
             .andExpect(jsonPath("$.observatory_filter_id", `is`("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("observatory_filter_id").description("The id of the observatory filter."),
-                    )
+            .andDocument {
+                responseFields<ObservatoryFilterNotFound>(
+                    fieldWithPath("observatory_filter_id").description("The id of the observatory filter."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -47,7 +45,7 @@ internal class ObservatoryFilterExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Invalid filter config.""")
-            .andDocumentWithDefaultExceptionResponseFields(type)
+            .andDocumentWithDefaultExceptionResponseFields(InvalidFilterConfig::class, type)
     }
 
     @Test
@@ -59,12 +57,11 @@ internal class ObservatoryFilterExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Observatory filter "f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc" already exists.""")
             .andExpect(jsonPath("$.observatory_filter_id", `is`("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("observatory_filter_id").description("The id of the observatory filter."),
-                    )
+            .andDocument {
+                responseFields<ObservatoryFilterAlreadyExists>(
+                    fieldWithPath("observatory_filter_id").description("The id of the observatory filter."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 }

@@ -16,7 +16,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
@@ -32,14 +31,13 @@ internal class OrganizationExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Organization with name "Cool name" already exists.""")
             .andExpect(jsonPath("$.organization_name", `is`("Cool name")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("organization_name").description("The name of the organization. (optional, either `organization_name` or `organization_display_id` is present)"),
-                        fieldWithPath("organization_display_id").type("String").description("The display_id of the organization. (optional, either `organization_name` or `organization_display_id` is present)").optional(),
-                    )
+            .andDocument {
+                responseFields<OrganizationAlreadyExists>(
+                    fieldWithPath("organization_name").description("The name of the organization. (optional, either `organization_name` or `organization_display_id` is present)"),
+                    fieldWithPath("organization_display_id").type("String").description("The display_id of the organization. (optional, either `organization_name` or `organization_display_id` is present)").optional(),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -61,14 +59,13 @@ internal class OrganizationExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Not Found")
             .andExpectDetail("""Organization "f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc" not found.""")
             .andExpect(jsonPath("$.organization_id", `is`("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("organization_id").description("The id of the organization. (optional, either `organization_id` or `organization_display_id` is present)"),
-                        fieldWithPath("organization_display_id").type("String").description("The display_id of the organization. (optional, either `organization_id` or `organization_display_id` is present)").optional(),
-                    )
+            .andDocument {
+                responseFields<OrganizationNotFound>(
+                    fieldWithPath("organization_id").description("The id of the organization. (optional, either `organization_id` or `organization_display_id` is present)"),
+                    fieldWithPath("organization_display_id").type("String").description("The display_id of the organization. (optional, either `organization_id` or `organization_display_id` is present)").optional(),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -90,13 +87,12 @@ internal class OrganizationExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Not Found")
             .andExpectDetail("""Logo for organization "f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc" not found.""")
             .andExpect(jsonPath("$.organization_id", `is`("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("organization_id").description("The id of the organization. (optional, either `organization_id` or `organization_display_id` is present)"),
-                    )
+            .andDocument {
+                responseFields<LogoNotFound>(
+                    fieldWithPath("organization_id").description("The id of the organization. (optional, either `organization_id` or `organization_display_id` is present)"),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -107,7 +103,7 @@ internal class OrganizationExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Invalid image encoding.""")
-            .andDocumentWithDefaultExceptionResponseFields(type)
+            .andDocumentWithDefaultExceptionResponseFields(InvalidImageEncoding::class, type)
     }
 
     @Test
@@ -119,12 +115,11 @@ internal class OrganizationExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""The value "not a peer review type" is not a valid peer review type.""")
             .andExpect(jsonPath("$.peer_review_type", `is`("not a peer review type")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("peer_review_type").description("The provided peer review type."),
-                    )
+            .andDocument {
+                responseFields<InvalidPeerReviewType>(
+                    fieldWithPath("peer_review_type").description("The provided peer review type."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 }

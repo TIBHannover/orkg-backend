@@ -5,45 +5,34 @@ Observatory filters are persistent filter configurations (presets) for observato
 [[observatory-filters-fetch]]
 == Fetching Observatory Filters
 
-A `GET` request provides information about an observatory filter, which always belongs to a specific <<observatories,observatory>>.
+include::{snippets}/observatory-filters_find-by-id/description.adoc[]
 
-operation::observatory-filters_get-single[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::observatory-filters_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[observatory-filters-list]]
 == Listing Observatory Filters
 
-A `GET` request returns a <<sorting-and-pagination,paged>> list of <<observatory-filters-fetch,observatory filters>> that belong to the specified <<observatories,observatory>>.
-If no paging request parameters are provided, the default values will be used.
+include::{snippets}/observatory-filters_find-all/description.adoc[]
 
-operation::observatory-filters_get-paged[snippets='path-parameters,curl-request']
+operation::observatory-filters_find-all[snippets='path-parameters,curl-request']
 
 [[observatory-filters-create]]
 == Creating Observatory Filters
 
-A `POST` request creates a new observatory filter with the given parameters.
-The response will be `201 Created` when successful.
-The observatory filter can be retrieved by following the URI in the `Location` header field.
-
-NOTE: The user performing the action needs to be a curator or a member of the observatory.
+include::{snippets}/observatory-filters_create/description.adoc[]
 
 operation::observatory-filters_create[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[observatory-filters-update]]
 == Updating Observatory Filters
 
-A `PATCH` request updates an existing observatory filter with the given parameters.
-The response will be `204 No Content` when successful.
-
-NOTE: The user performing the action needs to be a curator or a member of the observatory.
+include::{snippets}/observatory-filters_update/description.adoc[]
 
 operation::observatory-filters_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[observatory-filters-delete]]
 == Deleting Observatory Filters
 
-A `DELETE` request deletes an observatory filter.
-The response will be `204 No Content` when successful.
+include::{snippets}/observatory-filters_delete-by-id/description.adoc[]
 
-NOTE: The user performing the action needs to be a curator or a member of the observatory.
-
-operation::observatory-filters_delete[snippets='path-parameters,curl-request,http-response']
+operation::observatory-filters_delete-by-id[snippets='path-parameters,curl-request,http-response']

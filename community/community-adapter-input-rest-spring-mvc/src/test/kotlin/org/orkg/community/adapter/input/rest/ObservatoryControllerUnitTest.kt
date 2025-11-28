@@ -12,22 +12,28 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.common.json.CommonJacksonModule
+import org.orkg.common.thingIdConstraint
+import org.orkg.community.adapter.input.rest.ObservatoryController.CreateObservatoryRequest
+import org.orkg.community.adapter.input.rest.ObservatoryController.UpdateObservatoryRequest
 import org.orkg.community.domain.Observatory
+import org.orkg.community.domain.ObservatoryAlreadyExists
+import org.orkg.community.domain.ObservatoryNotFound
 import org.orkg.community.domain.OrganizationNotFound
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.testing.fixtures.createObservatory
+import org.orkg.contenttypes.domain.ResearchFieldNotFound
+import org.orkg.contenttypes.domain.SustainableDevelopmentGoalNotFound
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.annotations.TestWithMockCurator
-import org.orkg.testing.configuration.ExceptionTestConfiguration
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
+import org.orkg.testing.spring.restdocs.arrayItemsType
+import org.orkg.testing.spring.restdocs.constraints
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
@@ -35,21 +41,17 @@ import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
-import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import orkg.orkg.community.testing.fixtures.configuration.CommunityControllerUnitTestConfiguration
 import java.util.Optional
 import java.util.UUID
 
-@ContextConfiguration(
-    classes = [ObservatoryController::class, ExceptionTestConfiguration::class, CommonJacksonModule::class, FixedClockConfig::class]
-)
+@ContextConfiguration(classes = [ObservatoryController::class, CommunityControllerUnitTestConfiguration::class])
 @WebMvcTest(controllers = [ObservatoryController::class])
 internal class ObservatoryControllerUnitTest : MockMvcBaseTest("observatories") {
     @MockkBean
@@ -98,7 +100,7 @@ internal class ObservatoryControllerUnitTest : MockMvcBaseTest("observatories") 
 
         every { observatoryUseCases.create(any()) } throws OrganizationNotFound(organizationId)
 
-        val body = ObservatoryController.CreateObservatoryRequest(
+        val body = CreateObservatoryRequest(
             name = "test",
             organizationId = organizationId,
             description = "test observatory",
@@ -248,7 +250,7 @@ internal class ObservatoryControllerUnitTest : MockMvcBaseTest("observatories") 
             organizationIds = setOf(OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f")),
             sustainableDevelopmentGoals = setOf(sdg)
         )
-        val request = ObservatoryController.CreateObservatoryRequest(
+        val request = CreateObservatoryRequest(
             name = observatory.name,
             organizationId = observatory.organizationIds.first(),
             description = observatory.description!!,
@@ -264,22 +266,33 @@ internal class ObservatoryControllerUnitTest : MockMvcBaseTest("observatories") 
             .perform()
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("/api/observatories/$id")))
-            .andDo(
-                documentationHandler.document(
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the newly created observatory can be fetched from.")
-                    ),
-                    requestFields(
-                        fieldWithPath("name").description("The name of the observatory. Alternatively, the legacy field `observatory_name` can be used for equivalent behavior."),
-                        fieldWithPath("organization_id").description("The id of the organization that the observatory belongs to."),
-                        fieldWithPath("description").description("The description of the observatory."),
-                        fieldWithPath("research_field").description("The id of the research field of the observatory."),
-                        fieldWithPath("display_id").description("The URI slug of the observatory."),
-                        fieldWithPath("sdgs").description("The set of ids of https://sdgs.un.org[sustainable development goals,window=_blank] the observatory belongs to."),
-                    )
+            .andDocument {
+                summary("Creating observatories")
+                description(
+                    """
+                    A `POST` request creates a new observatory with the given parameters.
+                    The response will be `201 Created` when successful.
+                    The observatory can be retrieved by following the URI in the `Location` header field.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the newly created observatory can be fetched from."),
+                )
+                requestFields<CreateObservatoryRequest>(
+                    fieldWithPath("name").description("The name of the observatory. Alternatively, the legacy field `observatory_name` can be used for equivalent behavior."),
+                    fieldWithPath("organization_id").description("The id of the organization that the observatory belongs to."),
+                    fieldWithPath("description").description("The description of the observatory."),
+                    fieldWithPath("research_field").description("The id of the research field of the observatory."),
+                    fieldWithPath("display_id").description("The URI slug of the observatory."),
+                    fieldWithPath("sdgs").description("The set of ids of sustainable development goals the observatory will be assigned to. (optional)").arrayItemsType("String").constraints(thingIdConstraint).optional(),
+                )
+                throws(
+                    ObservatoryAlreadyExists::class,
+                    OrganizationNotFound::class,
+                    ResearchFieldNotFound::class,
+                    SustainableDevelopmentGoalNotFound::class,
+                )
+            }
 
         verify(exactly = 1) {
             observatoryUseCases.create(
@@ -301,7 +314,7 @@ internal class ObservatoryControllerUnitTest : MockMvcBaseTest("observatories") 
     @DisplayName("Given an observatory, when updated, then status is 204 NO CONTENT")
     fun update() {
         val id = ObservatoryId("73b2e081-9b50-4d55-b464-22d94e8a25f6")
-        val request = ObservatoryController.UpdateObservatoryRequest(
+        val request = UpdateObservatoryRequest(
             name = "updated",
             organizations = setOf(OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f")),
             description = "new observatory description",
@@ -316,24 +329,38 @@ internal class ObservatoryControllerUnitTest : MockMvcBaseTest("observatories") 
             .perform()
             .andExpect(status().isNoContent)
             .andExpect(header().string("Location", endsWith("/api/observatories/$id")))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the observatory.")
-                    ),
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the newly created observatory can be fetched from.")
-                    ),
-                    requestFields(
-                        fieldWithPath("name").description("The new name of the observatory. (optional)"),
-                        fieldWithPath("organizations").description("The new set of organizations that the observatory belongs to. (optional)"),
-                        fieldWithPath("description").description("The new description of the observatory. (optional)"),
-                        fieldWithPath("research_field").description("The id of the new research field of the observatory. (optional)"),
-                        fieldWithPath("sdgs").description("The new set of ids of https://sdgs.un.org/[sustainable development goals,window=_blank] that the observatory belongs to. (optional)"),
-                    )
+            .andDocument {
+                summary("Updating observatories")
+                description(
+                    """
+                    A `PATCH` request updates an existing observatory with the given parameters.
+                    Only fields provided in the request, and therefore non-null, will be updated.
+                    The response will be `204 No Content` when successful.
+                    The updated observatory (object) can be retrieved by following the URI in the `Location` header field.
+                    
+                    NOTE: This endpoint can only be accessed by curators.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the observatory."),
+                )
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the newly created observatory can be fetched from."),
+                )
+                requestFields<UpdateObservatoryRequest>(
+                    fieldWithPath("name").description("The new name of the observatory. (optional)").optional(),
+                    fieldWithPath("organizations").description("The new set of organizations that the observatory belongs to. (optional)").optional(),
+                    fieldWithPath("description").description("The new description of the observatory. (optional)").optional(),
+                    fieldWithPath("research_field").description("The id of the new research field of the observatory. (optional)").optional(),
+                    fieldWithPath("sdgs").description("The set of ids of sustainable development goals the observatory will be assigned to. (optional)").arrayItemsType("String").constraints(thingIdConstraint).optional(),
+                )
+                throws(
+                    ObservatoryNotFound::class,
+                    OrganizationNotFound::class,
+                    ResearchFieldNotFound::class,
+                    SustainableDevelopmentGoalNotFound::class,
+                )
+            }
 
         verify(exactly = 1) {
             observatoryUseCases.update(

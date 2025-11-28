@@ -235,6 +235,7 @@ val aggregateOpenApiSnippets by tasks.registering(Sync::class) {
         includeEmptyDirs = false
         include("**/resource.json")
         exclude("errors_*/resource.json") // TODO: creates a lot of empty directories
+        exclude("contributor-identifiers_delete")
     }
     into(aggregatedOpenApiSnippetsDir)
 }

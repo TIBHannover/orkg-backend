@@ -12,7 +12,6 @@ import org.orkg.testing.spring.restdocs.exceptionResponseFields
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
@@ -28,13 +27,12 @@ internal class ContributorIdentifierExceptionUnitTest : MockMvcExceptionBaseTest
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Unknown identifier type "doi".""")
             .andExpect(jsonPath("$.identifier_type", `is`("doi")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("identifier_type").description("The provided identifier type."),
-                    )
+            .andDocument {
+                responseFields<UnknownIdentifierType>(
+                    fieldWithPath("identifier_type").description("The provided identifier type."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -47,13 +45,12 @@ internal class ContributorIdentifierExceptionUnitTest : MockMvcExceptionBaseTest
             .andExpectDetail("""Identifier "identifier" for contributor "9d791767-245b-46e1-b260-2c00fb34efda" already exists.""")
             .andExpect(jsonPath("$.contributor_id", `is`("9d791767-245b-46e1-b260-2c00fb34efda")))
             .andExpect(jsonPath("$.identifier_value", `is`("identifier")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("contributor_id").description("The id of the contributor."),
-                        fieldWithPath("identifier_value").description("The value of the identifier."),
-                    )
+            .andDocument {
+                responseFields<ContributorIdentifierAlreadyExists>(
+                    fieldWithPath("contributor_id").description("The id of the contributor."),
+                    fieldWithPath("identifier_value").description("The value of the identifier."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 }

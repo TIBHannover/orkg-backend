@@ -7,38 +7,28 @@ One Observatory can be managed by many organizations.
 [[observatories-fetch]]
 == Fetching Observatories
 
-A `GET` request provides information about an observatory.
+include::{snippets}/observatories_find-by-id/description.adoc[]
 
-operation::observatories_fetch[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::observatories_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[observatories-list]]
 == Listing Observatories
 
-A `GET` request returns a <<sorting-and-pagination,paged>> list of <<observatories-fetch,observatories>>.
-If no paging request parameters are provided, the default values will be used.
+include::{snippets}/observatories_find-all/description.adoc[]
 
-NOTE: Request parameters cannot be combined for this endpoint.
-
-operation::observatories_index[snippets='query-parameters,curl-request']
+operation::observatories_find-all[snippets='query-parameters,curl-request']
 
 [[observatories-create]]
 == Creating Observatories
 
-A `POST` request creates a new observatory with the given parameters.
-The response will be `201 Created` when successful.
-The observatory can be retrieved by following the URI in the `Location` header field.
+include::{snippets}/observatories_create/description.adoc[]
 
 operation::observatories_create[snippets='request-fields,curl-request,response-headers,http-response']
 
 [[observatories-edit]]
 == Updating Observatories
 
-A `PATCH` request updates an existing observatory with the given parameters.
-Only fields provided in the request, and therefore non-null, will be updated.
-The response will be `204 No Content` when successful.
-The updated observatory (object) can be retrieved by following the URI in the `Location` header field.
-
-NOTE: This endpoint can only be accessed by curators.
+include::{snippets}/observatories_update/description.adoc[]
 
 operation::observatories_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 

@@ -6,16 +6,16 @@ These can handle further smaller groups named <<observatories>>.
 [[organizations-fetch]]
 == Fetching Organizations
 
-A `GET` request provides information about a resource.
+include::{snippets}/organizations_find-by-id/description.adoc[]
 
-operation::organizations_fetch[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::organizations_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[organizations-list]]
 == Listing Organizations
 
-A `GET` request lists all organizations:
+include::{snippets}/organizations_find-all/description.adoc[]
 
-operation::organizations_index[snippets='curl-request']
+operation::organizations_find-all[snippets='curl-request']
 
 ////
 [[organization-create]]
@@ -38,11 +38,6 @@ operation::organization_controller-test-add[snippets='response-fields']
 == Updating Organizations
 :operation-request-part-properties-fields-title: Request fields for properties part
 
-A `PATCH` request updates an existing organization with the given parameters.
-Only fields provided in the request, and therefore non-null, will be updated.
-The response will be `204 No Content` when successful.
-The updated organization (object) can be retrieved by following the URI in the `Location` header field.
-
-NOTE: This endpoint can only be accessed by curators.
+include::{snippets}/organizations_update/description.adoc[]
 
 operation::organizations_update[snippets='path-parameters,request-parts,request-part-properties-fields,curl-request,response-headers,http-response']

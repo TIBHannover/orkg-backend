@@ -11,9 +11,13 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.ThingId
-import org.orkg.common.json.CommonJacksonModule
-import org.orkg.community.adapter.input.rest.json.CommunityJacksonModule
+import org.orkg.common.exceptions.Forbidden
+import org.orkg.community.adapter.input.rest.ObservatoryFilterController.CreateObservatoryFilterRequest
+import org.orkg.community.adapter.input.rest.ObservatoryFilterController.UpdateObservatoryFilterRequest
+import org.orkg.community.domain.ContributorNotFound
+import org.orkg.community.domain.ObservatoryFilterAlreadyExists
 import org.orkg.community.domain.ObservatoryFilterId
+import org.orkg.community.domain.ObservatoryFilterNotFound
 import org.orkg.community.domain.ObservatoryNotFound
 import org.orkg.community.input.ObservatoryFilterUseCases
 import org.orkg.community.input.ObservatoryUseCases
@@ -28,38 +32,28 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectObservatoryFilter
 import org.orkg.testing.annotations.TestWithMockUser
-import org.orkg.testing.configuration.ExceptionTestConfiguration
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
-import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
-import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import orkg.orkg.community.testing.fixtures.OBSERVATORY_FILTER_EXACT_MATCH_DESCRIPTION
+import orkg.orkg.community.testing.fixtures.OBSERVATORY_FILTER_PATH_DESCRIPTION
+import orkg.orkg.community.testing.fixtures.OBSERVATORY_FILTER_RANGE_DESCRIPTION
+import orkg.orkg.community.testing.fixtures.configuration.CommunityControllerUnitTestConfiguration
+import orkg.orkg.community.testing.fixtures.observatoryFilterResponseFields
 import java.util.Optional
 import java.util.UUID
 
-@ContextConfiguration(
-    classes = [
-        ObservatoryFilterController::class,
-        ExceptionTestConfiguration::class,
-        CommonJacksonModule::class,
-        CommunityJacksonModule::class,
-        FixedClockConfig::class
-    ]
-)
+@ContextConfiguration(classes = [ObservatoryFilterController::class, CommunityControllerUnitTestConfiguration::class])
 @WebMvcTest(controllers = [ObservatoryFilterController::class])
 internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observatory-filters") {
     @MockkBean
@@ -73,7 +67,7 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
 
     @Test
     @DisplayName("Given an observatory filter, when fetched by id, then status is 200 OK and filter is returned")
-    fun getSingle() {
+    fun findById() {
         val filter = createObservatoryFilter()
         val observatory = createObservatory()
 
@@ -84,28 +78,23 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
             .perform()
             .andExpect(status().isOk)
             .andExpectObservatoryFilter()
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the observatory that the filter belongs to."),
-                        parameterWithName("filterId").description("The identifier of the filter to retrieve.")
-                    ),
-                    responseFields(
-                        // The order here determines the order in the generated table. More relevant items should be up.
-                        fieldWithPath("id").description("The identifier of the filter."),
-                        fieldWithPath("observatory_id").description("The id of the observatory that the filter belongs to."),
-                        fieldWithPath("label").description("The label of the filter."),
-                        fieldWithPath("path[]").description(PATH_DESCRIPTION),
-                        fieldWithPath("range").description(RANGE_DESCRIPTION),
-                        fieldWithPath("exact").description(EXACT_MATCH_DESCRIPTION),
-                        timestampFieldWithPath("created_at", "the filter was created"),
-                        // TODO: Add links to documentation of special user UUIDs.
-                        fieldWithPath("created_by").description("The UUID of the user or service who created this filter."),
-                        fieldWithPath("featured").description("Whether the filter is featured or not.")
-                    )
+            .andDocument {
+                summary("Fetching observatory filters")
+                description(
+                    """
+                    A `GET` request provides information about an observatory filter, which always belongs to a specific <<observatories,observatory>>.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the observatory that the filter belongs to."),
+                    parameterWithName("filterId").description("The identifier of the filter to retrieve."),
+                )
+                responseFields<ObservatoryFilterRepresentation>(observatoryFilterResponseFields())
+                throws(
+                    ObservatoryNotFound::class,
+                    ObservatoryFilterNotFound::class
+                )
+            }
 
         verify(exactly = 1) { observatoryUseCases.findById(observatory.id) }
         verify(exactly = 1) { observatoryFilterUseCases.findById(filter.id) }
@@ -145,7 +134,7 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
 
     @Test
     @DisplayName("Given several observatory filters, when fetched, then status is 200 OK and filters are returned")
-    fun getPaged() {
+    fun findAll() {
         val filters = pageOf(createObservatoryFilter(), createObservatoryFilter())
         val observatory = createObservatory()
 
@@ -156,14 +145,21 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
             .perform()
             .andExpect(status().isOk)
             .andExpectObservatoryFilter("$.content[*]")
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the observatory that the filters belongs to.")
-                    )
+            .andDocument {
+                summary("Listing observatory filters")
+                description(
+                    """
+                    A `GET` request returns a <<sorting-and-pagination,paged>> list of <<observatory-filters-fetch,observatory filters>> that belong to the specified <<observatories,observatory>>.
+                    If no paging request parameters are provided, the default values will be used.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the observatory that the filters belongs to."),
+                )
+                pagedQueryParameters()
+                pagedResponseFields<ObservatoryFilterRepresentation>(observatoryFilterResponseFields())
+                throws(ObservatoryNotFound::class)
+            }
 
         verify(exactly = 1) { observatoryUseCases.findById(observatory.id) }
         verify(exactly = 1) { observatoryFilterUseCases.findAllByObservatoryId(observatory.id, any()) }
@@ -172,7 +168,7 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
     @Test
     @TestWithMockUser
     @DisplayName("Given an observatory filter, when deleted by id, then status is 204 NO CONTENT")
-    fun delete() {
+    fun deleteById() {
         val id = createObservatoryFilter().id // keep the ID stable during different test runs
         val observatory = createObservatory()
         val user = createContributor(
@@ -187,15 +183,22 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
         documentedDeleteRequestTo("/api/observatories/{id}/filters/{filterId}", observatory.id, id)
             .perform()
             .andExpect(status().isNoContent)
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the observatory that the filters belongs to."),
-                        parameterWithName("filterId").description("The identifier of the filter to delete.")
-                    )
+            .andDocument {
+                summary("Deleting observatory filters")
+                description(
+                    """
+                    A `DELETE` request deletes an observatory filter.
+                    The response will be `204 No Content` when successful.
+                    
+                    NOTE: The user performing the action needs to be a curator or a member of the observatory.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the observatory that the filters belongs to."),
+                    parameterWithName("filterId").description("The identifier of the filter to delete."),
+                )
+                throws(ObservatoryNotFound::class, ContributorNotFound::class, Forbidden::class)
+            }
 
         verify(exactly = 1) { contributorService.findById(any()) }
         verify(exactly = 1) { observatoryUseCases.findById(observatory.id) }
@@ -270,25 +273,39 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
             .perform()
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("/api/observatories/${observatory.id}/filters/${filter.id}")))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the observatory that the filters belongs to.")
-                    ),
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the newly created filter can be fetched from.")
-                    ),
-                    requestFields(
-                        fieldWithPath("label").description("The label of the filter."),
-                        fieldWithPath("path[]").description(PATH_DESCRIPTION),
-                        fieldWithPath("range").description(RANGE_DESCRIPTION),
-                        fieldWithPath("exact").description(EXACT_MATCH_DESCRIPTION),
-                        fieldWithPath("featured").description("Whether or not the filter is featured. (optional)")
-                            .optional(),
-                    )
+            .andDocument {
+                summary("Creating observatory filters")
+                description(
+                    """
+                    A `POST` request creates a new observatory filter with the given parameters.
+                    The response will be `201 Created` when successful.
+                    The observatory filter can be retrieved by following the URI in the `Location` header field.
+                    
+                    NOTE: The user performing the action needs to be a curator or a member of the observatory.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the observatory that the filters belongs to."),
+                )
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the newly created filter can be fetched from."),
+                )
+                requestFields<CreateObservatoryFilterRequest>(
+                    fieldWithPath("label").description("The label of the filter."),
+                    fieldWithPath("path[]").description(OBSERVATORY_FILTER_PATH_DESCRIPTION),
+                    fieldWithPath("range").description(OBSERVATORY_FILTER_RANGE_DESCRIPTION),
+                    fieldWithPath("exact").description(OBSERVATORY_FILTER_EXACT_MATCH_DESCRIPTION),
+                    fieldWithPath("featured").description("Whether or not the filter is featured. (optional)").optional(),
+                )
+                throws(
+                    ObservatoryNotFound::class,
+                    ContributorNotFound::class,
+                    Forbidden::class,
+                    ClassNotFound::class,
+                    PredicateNotFound::class,
+                    ObservatoryFilterAlreadyExists::class,
+                )
+            }
 
         verify(exactly = 1) { contributorService.findById(any()) }
         verify(exactly = 1) { observatoryFilterUseCases.create(any()) }
@@ -438,26 +455,39 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
             .perform()
             .andExpect(status().isNoContent)
             .andExpect(header().string("Location", endsWith("/api/observatories/${observatory.id}/filters/$id")))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the observatory that the filters belongs to."),
-                        parameterWithName("filterId").description("The identifier of the filter to update.")
-                    ),
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the updated filter can be fetched from.")
-                    ),
-                    requestFields(
-                        fieldWithPath("label").description("The new label of the filter. (optional)").optional(),
-                        fieldWithPath("path[]").description("$PATH_DESCRIPTION (optional)").optional(),
-                        fieldWithPath("range").description("$RANGE_DESCRIPTION (optional)").optional(),
-                        fieldWithPath("exact").description("$EXACT_MATCH_DESCRIPTION(optional)").optional(),
-                        fieldWithPath("featured").description("Whether or not the filter is featured. (optional)")
-                            .optional(),
-                    )
+            .andDocument {
+                summary("Updating observatory filters")
+                description(
+                    """
+                    A `PATCH` request updates an existing observatory filter with the given parameters.
+                    The response will be `204 No Content` when successful.
+                    
+                    NOTE: The user performing the action needs to be a curator or a member of the observatory.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the observatory that the filters belongs to."),
+                    parameterWithName("filterId").description("The identifier of the filter to update."),
+                )
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the updated filter can be fetched from."),
+                )
+                requestFields<UpdateObservatoryFilterRequest>(
+                    fieldWithPath("label").description("The new label of the filter. (optional)").optional(),
+                    fieldWithPath("path[]").description("$OBSERVATORY_FILTER_PATH_DESCRIPTION (optional)").optional(),
+                    fieldWithPath("range").description("$OBSERVATORY_FILTER_RANGE_DESCRIPTION (optional)").optional(),
+                    fieldWithPath("exact").description("$OBSERVATORY_FILTER_EXACT_MATCH_DESCRIPTION (optional)").optional(),
+                    fieldWithPath("featured").description("Whether or not the filter is featured. (optional)").optional(),
+                )
+                throws(
+                    ObservatoryNotFound::class,
+                    ContributorNotFound::class,
+                    Forbidden::class,
+                    ObservatoryFilterNotFound::class,
+                    ClassNotFound::class,
+                    PredicateNotFound::class,
+                )
+            }
 
         verify(exactly = 1) { observatoryUseCases.findById(observatory.id) }
         verify(exactly = 1) { contributorService.findById(any()) }
@@ -617,10 +647,3 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
         verify(exactly = 1) { observatoryUseCases.findById(observatoryId) }
     }
 }
-
-private const val PATH_DESCRIPTION =
-    "Describes the path from the contribution node of a paper to the node that should be matched, where every entry stands for the predicate id of a statement."
-private const val RANGE_DESCRIPTION =
-    "The class id that represents the range of the value that should be matched. Subclasses will also be considered when matching."
-private const val EXACT_MATCH_DESCRIPTION =
-    "Whether to exactly match the given path. If `true`, the given path needs to exactly match, starting from the contribution resource. If `false`, the given path needs to exactly match, starting at any node in the subgraph of the contribution or the contribution node itself. The total path length limited to 10, including the length of the specified path, starting from the contribution node."

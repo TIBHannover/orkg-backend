@@ -5,6 +5,7 @@ import com.epages.restdocs.apispec.ParameterDescriptorWithType
 import com.epages.restdocs.apispec.Schema
 import org.springframework.restdocs.hypermedia.LinkDescriptor
 import org.springframework.restdocs.payload.FieldDescriptor
+import org.springframework.restdocs.request.RequestPartDescriptor
 import kotlin.reflect.KClass
 
 data class DocumentationParameters(
@@ -22,6 +23,8 @@ data class DocumentationParameters(
     val formParameters: List<ParameterDescriptorWithType> = emptyList(),
     val requestHeaders: List<HeaderDescriptorWithType> = emptyList(),
     val responseHeaders: List<HeaderDescriptorWithType> = emptyList(),
+    val requestParts: List<RequestPartDescriptor> = emptyList(),
+    val requestPartFields: Map<String, List<FieldDescriptor>> = emptyMap(),
     val tags: Set<String> = emptySet(),
     val throws: List<KClass<out Throwable>> = emptyList(),
 )

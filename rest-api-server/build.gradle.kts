@@ -65,6 +65,7 @@ testing {
                 runtimeOnly("org.springframework.boot:spring-boot")
                 runtimeOnly(project(":keycloak"))
                 implementation("org.springframework:spring-core")
+                implementation(project(":community:community-adapter-input-representations"))
                 implementation(project(":media-storage:media-storage-ports-input"))
             }
             targets {

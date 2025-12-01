@@ -2,6 +2,7 @@ package org.orkg.auth.adapter.input.rest.exceptions
 
 import org.junit.jupiter.api.Test
 import org.orkg.auth.adapter.input.rest.LegacyAuthController.OAuth2Exception
+import org.orkg.common.CommonDocumentationContextProvider
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
 import org.orkg.testing.spring.restdocs.exceptionResponseFields
@@ -11,7 +12,7 @@ import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.test.context.ContextConfiguration
 
 @WebMvcTest
-@ContextConfiguration(classes = [FixedClockConfig::class])
+@ContextConfiguration(classes = [CommonDocumentationContextProvider::class, FixedClockConfig::class])
 internal class ExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun oAuth2Exception_invalidRequest() {

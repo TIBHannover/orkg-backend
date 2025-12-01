@@ -2,7 +2,7 @@ package org.orkg.contenttypes.adapter.input.rest.exceptions
 
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.common.json.CommonJacksonModule
+import org.orkg.common.thingIdConstraint
 import org.orkg.contenttypes.domain.InvalidSmartReviewTextSectionType
 import org.orkg.contenttypes.domain.OntologyEntityNotFound
 import org.orkg.contenttypes.domain.PublishedSmartReviewContentNotFound
@@ -11,10 +11,13 @@ import org.orkg.contenttypes.domain.SmartReviewNotFound
 import org.orkg.contenttypes.domain.SmartReviewNotModifiable
 import org.orkg.contenttypes.domain.SmartReviewSectionTypeMismatch
 import org.orkg.contenttypes.domain.UnrelatedSmartReviewSection
+import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerExceptionUnitTestConfiguration
 import org.orkg.graph.domain.Classes
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
+import org.orkg.testing.spring.restdocs.arrayItemsType
+import org.orkg.testing.spring.restdocs.constraints
 import org.orkg.testing.spring.restdocs.exceptionResponseFields
+import org.orkg.testing.spring.restdocs.type
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.FORBIDDEN
@@ -24,7 +27,7 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
 @WebMvcTest
-@ContextConfiguration(classes = [CommonJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [ContentTypeControllerExceptionUnitTestConfiguration::class])
 internal class SmartReviewExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun publishedSmartReviewContentNotFound() {
@@ -38,8 +41,8 @@ internal class SmartReviewExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.smart_review_content_id").value("R456"))
             .andDocument {
                 responseFields<PublishedSmartReviewContentNotFound>(
-                    fieldWithPath("smart_review_id").description("The id of the smart review."),
-                    fieldWithPath("smart_review_content_id").description("The id of the requested content."),
+                    fieldWithPath("smart_review_id").description("The id of the smart review.").type<ThingId>(),
+                    fieldWithPath("smart_review_content_id").description("The id of the requested content.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -58,7 +61,7 @@ internal class SmartReviewExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.ontology_entities[1]").value("found"))
             .andDocument {
                 responseFields<OntologyEntityNotFound>(
-                    fieldWithPath("ontology_entities").description("The list of provided ontology entities."),
+                    fieldWithPath("ontology_entities[]").description("The list of provided ontology entities.").arrayItemsType("string").constraints(thingIdConstraint),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -75,7 +78,7 @@ internal class SmartReviewExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.smart_review_section_type").value("comparison"))
             .andDocument {
                 responseFields<InvalidSmartReviewTextSectionType>(
-                    fieldWithPath("smart_review_section_type").description("The provided smart review section type."),
+                    fieldWithPath("smart_review_section_type").description("The provided smart review section type.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -93,8 +96,8 @@ internal class SmartReviewExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.smart_review_section_id").value("R456"))
             .andDocument {
                 responseFields<UnrelatedSmartReviewSection>(
-                    fieldWithPath("smart_review_id").description("The id of the smart review."),
-                    fieldWithPath("smart_review_section_id").description("The id of the smart review section."),
+                    fieldWithPath("smart_review_id").description("The id of the smart review.").type<ThingId>(),
+                    fieldWithPath("smart_review_section_id").description("The id of the smart review section.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -111,7 +114,7 @@ internal class SmartReviewExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.expected_smart_review_section_type").value(Classes.comparisonSection.value))
             .andDocument {
                 responseFields<SmartReviewSectionTypeMismatch>(
-                    fieldWithPath("expected_smart_review_section_type").description("The expected type of the smart review section."),
+                    fieldWithPath("expected_smart_review_section_type").description("The expected type of the smart review section.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -178,7 +181,7 @@ internal class SmartReviewExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.smart_review_id").value("R123"))
             .andDocument {
                 responseFields<SmartReviewAlreadyPublished>(
-                    fieldWithPath("smart_review_id").description("The id of the smart review."),
+                    fieldWithPath("smart_review_id").description("The id of the smart review.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -195,7 +198,7 @@ internal class SmartReviewExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.smart_review_id").value("R123"))
             .andDocument {
                 responseFields<SmartReviewNotModifiable>(
-                    fieldWithPath("smart_review_id").description("The id of the smart review."),
+                    fieldWithPath("smart_review_id").description("The id of the smart review.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -212,7 +215,7 @@ internal class SmartReviewExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.smart_review_id").value("R123"))
             .andDocument {
                 responseFields<SmartReviewNotFound>(
-                    fieldWithPath("smart_review_id").description("The id of the smart review."),
+                    fieldWithPath("smart_review_id").description("The id of the smart review.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }

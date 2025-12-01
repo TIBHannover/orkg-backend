@@ -2,14 +2,15 @@ package org.orkg.contenttypes.adapter.input.rest.exceptions
 
 import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Test
+import org.orkg.common.DOI
 import org.orkg.common.ThingId
-import org.orkg.common.json.CommonJacksonModule
 import org.orkg.contenttypes.domain.PaperAlreadyExists
 import org.orkg.contenttypes.domain.PaperNotFound
 import org.orkg.contenttypes.domain.PaperNotModifiable
-import org.orkg.testing.configuration.FixedClockConfig
+import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerExceptionUnitTestConfiguration
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
 import org.orkg.testing.spring.restdocs.exceptionResponseFields
+import org.orkg.testing.spring.restdocs.type
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.FORBIDDEN
@@ -19,7 +20,7 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
 @WebMvcTest
-@ContextConfiguration(classes = [CommonJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [ContentTypeControllerExceptionUnitTestConfiguration::class])
 internal class PaperExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun paperNotModifiable() {
@@ -32,7 +33,7 @@ internal class PaperExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.paper_id").value("R123"))
             .andDocument {
                 responseFields<PaperNotModifiable>(
-                    fieldWithPath("paper_id").description("The id of the paper."),
+                    fieldWithPath("paper_id").description("The id of the paper.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -49,9 +50,9 @@ internal class PaperExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.paper_id").value("R123"))
             .andDocument {
                 responseFields<PaperNotFound>(
-                    fieldWithPath("paper_id").description("The id of the paper. (optional, either `paper_id`, `paper_title` or `paper_doi` is present)"),
+                    fieldWithPath("paper_id").description("The id of the paper. (optional, either `paper_id`, `paper_title` or `paper_doi` is present)").type<ThingId>(),
                     fieldWithPath("paper_paper_title").type("String").description("The title of the paper. (optional, either `paper_id`, `paper_title` or `doi` is present)").optional(),
-                    fieldWithPath("paper_doi").type("String").description("The doi of the paper. (optional, either `paper_id`, `paper_title` or `paper_doi` is present)").optional(),
+                    fieldWithPath("paper_doi").type("String").description("The doi of the paper. (optional, either `paper_id`, `paper_title` or `paper_doi` is present)").type<DOI>().optional(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }

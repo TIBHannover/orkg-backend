@@ -3,24 +3,24 @@ package org.orkg.community.adapter.input.rest.exceptions
 import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Test
 import org.orkg.common.OrganizationId
-import org.orkg.common.json.CommonJacksonModule
 import org.orkg.community.domain.InvalidImageEncoding
 import org.orkg.community.domain.InvalidPeerReviewType
 import org.orkg.community.domain.LogoNotFound
 import org.orkg.community.domain.OrganizationAlreadyExists
 import org.orkg.community.domain.OrganizationNotFound
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
 import org.orkg.testing.spring.restdocs.exceptionResponseFields
+import org.orkg.testing.spring.restdocs.type
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
+import orkg.orkg.community.testing.fixtures.configuration.CommunityControllerExceptionUnitTestConfiguration
 
 @WebMvcTest
-@ContextConfiguration(classes = [CommonJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [CommunityControllerExceptionUnitTestConfiguration::class])
 internal class OrganizationExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun organizationAlreadyExists_withName() {
@@ -61,7 +61,7 @@ internal class OrganizationExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.organization_id", `is`("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")))
             .andDocument {
                 responseFields<OrganizationNotFound>(
-                    fieldWithPath("organization_id").description("The id of the organization. (optional, either `organization_id` or `organization_display_id` is present)"),
+                    fieldWithPath("organization_id").description("The id of the organization. (optional, either `organization_id` or `organization_display_id` is present)").type<OrganizationId>(),
                     fieldWithPath("organization_display_id").type("String").description("The display_id of the organization. (optional, either `organization_id` or `organization_display_id` is present)").optional(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
@@ -89,7 +89,7 @@ internal class OrganizationExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.organization_id", `is`("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")))
             .andDocument {
                 responseFields<LogoNotFound>(
-                    fieldWithPath("organization_id").description("The id of the organization. (optional, either `organization_id` or `organization_display_id` is present)"),
+                    fieldWithPath("organization_id").description("The id of the organization. (optional, either `organization_id` or `organization_display_id` is present)").type<OrganizationId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }

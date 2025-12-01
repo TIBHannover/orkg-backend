@@ -3,16 +3,16 @@ package org.orkg.graph.adapter.input.rest.exceptions
 import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.common.json.CommonJacksonModule
+import org.orkg.graph.adapter.input.rest.testing.fixtures.configuration.GraphControllerExceptionUnitTestConfiguration
 import org.orkg.graph.domain.InvalidLiteralDatatype
 import org.orkg.graph.domain.InvalidLiteralLabel
 import org.orkg.graph.domain.LiteralAlreadyExists
 import org.orkg.graph.domain.LiteralNotFound
 import org.orkg.graph.domain.LiteralNotModifiable
 import org.orkg.graph.domain.MAX_LABEL_LENGTH
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
 import org.orkg.testing.spring.restdocs.exceptionResponseFields
+import org.orkg.testing.spring.restdocs.type
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.FORBIDDEN
@@ -22,7 +22,7 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
 @WebMvcTest
-@ContextConfiguration(classes = [CommonJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [GraphControllerExceptionUnitTestConfiguration::class])
 internal class LiteralExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun literalNotModifiable() {
@@ -35,7 +35,7 @@ internal class LiteralExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.literal_id", `is`("L123")))
             .andDocument {
                 responseFields<LiteralNotModifiable>(
-                    fieldWithPath("literal_id").description("The id of the literal."),
+                    fieldWithPath("literal_id").description("The id of the literal.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -52,7 +52,7 @@ internal class LiteralExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.literal_id", `is`("L123")))
             .andDocument {
                 responseFields<LiteralNotFound>(
-                    fieldWithPath("literal_id").description("The id of the literal."),
+                    fieldWithPath("literal_id").description("The id of the literal.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -104,7 +104,7 @@ internal class LiteralExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.literal_id", `is`("L123")))
             .andDocument {
                 responseFields<LiteralAlreadyExists>(
-                    fieldWithPath("literal_id").description("The id of the literal."),
+                    fieldWithPath("literal_id").description("The id of the literal.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }

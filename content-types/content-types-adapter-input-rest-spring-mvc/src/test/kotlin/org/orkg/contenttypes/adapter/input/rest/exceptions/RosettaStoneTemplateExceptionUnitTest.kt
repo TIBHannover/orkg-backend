@@ -2,7 +2,6 @@ package org.orkg.contenttypes.adapter.input.rest.exceptions
 
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.common.json.CommonJacksonModule
 import org.orkg.contenttypes.domain.InvalidObjectPositionPath
 import org.orkg.contenttypes.domain.InvalidSubjectPositionCardinality
 import org.orkg.contenttypes.domain.InvalidSubjectPositionPath
@@ -21,10 +20,11 @@ import org.orkg.contenttypes.domain.RosettaStoneTemplateNotFound
 import org.orkg.contenttypes.domain.RosettaStoneTemplateNotModifiable
 import org.orkg.contenttypes.domain.RosettaStoneTemplatePropertyNotModifiable
 import org.orkg.contenttypes.domain.TooManyNewRosettaStoneTemplateLabelSections
+import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerExceptionUnitTestConfiguration
 import org.orkg.graph.domain.Predicates
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
 import org.orkg.testing.spring.restdocs.exceptionResponseFields
+import org.orkg.testing.spring.restdocs.type
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.FORBIDDEN
@@ -34,7 +34,7 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
 @WebMvcTest
-@ContextConfiguration(classes = [CommonJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [ContentTypeControllerExceptionUnitTestConfiguration::class])
 internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun rosettaStoneTemplateNotFound() {
@@ -47,7 +47,7 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
             .andExpect(jsonPath("$.rosetta_stone_template_id").value("R123"))
             .andDocument {
                 responseFields<RosettaStoneTemplateNotFound>(
-                    fieldWithPath("rosetta_stone_template_id").description("The id of the rosetta stone template."),
+                    fieldWithPath("rosetta_stone_template_id").description("The id of the rosetta stone template.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -64,7 +64,7 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
             .andExpect(jsonPath("$.input_position_index").value("0"))
             .andDocument {
                 responseFields<InvalidSubjectPositionPath>(
-                    fieldWithPath("input_position_index").description("The index of the subject position."),
+                    fieldWithPath("input_position_index").description("The index of the subject position.").type<Int>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -81,7 +81,7 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
             .andExpect(jsonPath("$.input_position_index").value("5"))
             .andDocument {
                 responseFields<InvalidObjectPositionPath>(
-                    fieldWithPath("input_position_index").description("The index of the subject position."),
+                    fieldWithPath("input_position_index").description("The index of the subject position.").type<Int>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -98,7 +98,7 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
             .andExpect(jsonPath("$.rosetta_stone_template_id").value("R123"))
             .andDocument {
                 responseFields<RosettaStoneTemplateNotModifiable>(
-                    fieldWithPath("rosetta_stone_template_id").description("The id of the rosetta stone template."),
+                    fieldWithPath("rosetta_stone_template_id").description("The id of the rosetta stone template.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -115,7 +115,7 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
             .andExpect(jsonPath("$.rosetta_stone_template_property_id").value("R123"))
             .andDocument {
                 responseFields<RosettaStoneTemplatePropertyNotModifiable>(
-                    fieldWithPath("rosetta_stone_template_property_id").description("The id of the rosetta stone template property."),
+                    fieldWithPath("rosetta_stone_template_property_id").description("The id of the rosetta stone template property.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -132,7 +132,7 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
             .andExpect(jsonPath("$.rosetta_stone_template_id").value("R123"))
             .andDocument {
                 responseFields<RosettaStoneTemplateInUse>(
-                    fieldWithPath("rosetta_stone_template_id").description("The id of the rosetta stone template."),
+                    fieldWithPath("rosetta_stone_template_id").description("The id of the rosetta stone template.").type<ThingId>(),
                     fieldWithPath("property").type("String").description("The property of the template. (optional)").optional(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
@@ -161,7 +161,7 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
             .andExpect(jsonPath("$.input_position_index").value("4"))
             .andDocument {
                 responseFields<MissingDynamicLabelPlaceholder>(
-                    fieldWithPath("input_position_index").description("The index of the rosetta stone template property."),
+                    fieldWithPath("input_position_index").description("The index of the rosetta stone template property.").type<Int>(),
                     fieldWithPath("input_position_placeholder").type("String").description("The placeholder of the rosetta stone template property. (optional)").optional(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
@@ -257,7 +257,7 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
             .andExpect(jsonPath("$.input_position_placeholder").value("4"))
             .andDocument {
                 responseFields<NewRosettaStoneTemplatePropertyMustBeOptional>(
-                    fieldWithPath("input_position_index").description("The index of the rosetta stone template property."),
+                    fieldWithPath("input_position_index").description("The index of the rosetta stone template property.").type<Int>(),
                     fieldWithPath("input_position_placeholder").description("The placeholder of the rosetta stone template property."),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
@@ -308,7 +308,7 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
             .andExpect(jsonPath("$.input_position_index").value("4"))
             .andDocument {
                 responseFields<MissingPropertyPlaceholder>(
-                    fieldWithPath("input_position_index").description("The index of the rosetta stone template property."),
+                    fieldWithPath("input_position_index").description("The index of the rosetta stone template property.").type<Int>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }

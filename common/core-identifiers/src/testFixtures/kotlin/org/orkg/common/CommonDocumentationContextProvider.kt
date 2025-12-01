@@ -15,6 +15,11 @@ class CommonDocumentationContextProvider : DocumentationContextProvider {
     override val typeMappings: Map<KClass<*>, String> get() = mapOf(
         ThingId::class to "string",
         UUID::class to "string",
+        Integer::class to "integer",
+        Long::class to "integer",
+        URI::class to "string",
+        ParsedIRI::class to "string",
+        OffsetDateTime::class to "string",
         ContributorId::class to "string",
         ObservatoryId::class to "string",
         OrganizationId::class to "string",

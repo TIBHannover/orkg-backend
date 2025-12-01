@@ -2,11 +2,11 @@ package org.orkg.contenttypes.adapter.input.rest.exceptions
 
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.common.json.CommonJacksonModule
 import org.orkg.contenttypes.domain.VisualizationNotFound
-import org.orkg.testing.configuration.FixedClockConfig
+import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerExceptionUnitTestConfiguration
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
 import org.orkg.testing.spring.restdocs.exceptionResponseFields
+import org.orkg.testing.spring.restdocs.type
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
@@ -14,7 +14,7 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
 @WebMvcTest
-@ContextConfiguration(classes = [CommonJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [ContentTypeControllerExceptionUnitTestConfiguration::class])
 internal class VisualizationExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun visualizationNotFound() {
@@ -27,7 +27,7 @@ internal class VisualizationExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.visualization_id").value("R123"))
             .andDocument {
                 responseFields<VisualizationNotFound>(
-                    fieldWithPath("visualization_id").description("The id of the visualization."),
+                    fieldWithPath("visualization_id").description("The id of the visualization.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }

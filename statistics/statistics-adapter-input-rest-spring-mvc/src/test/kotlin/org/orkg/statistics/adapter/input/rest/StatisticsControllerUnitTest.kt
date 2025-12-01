@@ -8,7 +8,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.statistics.adapter.input.rest.mapping.MetricRepresentationAdapter.MetricResponseFormat
 import org.orkg.statistics.adapter.input.rest.testing.asciidoc.allowedMetricResponseFormatValues
-import org.orkg.statistics.adapter.input.rest.testing.fixtures.StatisticsControllerUnitTestConfiguration
+import org.orkg.statistics.adapter.input.rest.testing.fixtures.configuration.StatisticsControllerUnitTestConfiguration
 import org.orkg.statistics.domain.GroupNotFound
 import org.orkg.statistics.domain.MetricNotFound
 import org.orkg.statistics.domain.TooManyParameterValues

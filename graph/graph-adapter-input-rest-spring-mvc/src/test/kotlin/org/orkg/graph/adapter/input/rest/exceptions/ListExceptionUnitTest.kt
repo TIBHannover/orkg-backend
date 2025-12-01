@@ -3,14 +3,14 @@ package org.orkg.graph.adapter.input.rest.exceptions
 import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.common.json.CommonJacksonModule
+import org.orkg.graph.adapter.input.rest.testing.fixtures.configuration.GraphControllerExceptionUnitTestConfiguration
 import org.orkg.graph.domain.ListElementNotFound
 import org.orkg.graph.domain.ListInUse
 import org.orkg.graph.domain.ListNotFound
 import org.orkg.graph.domain.ListNotModifiable
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
 import org.orkg.testing.spring.restdocs.exceptionResponseFields
+import org.orkg.testing.spring.restdocs.type
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.FORBIDDEN
@@ -20,7 +20,7 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
 @WebMvcTest
-@ContextConfiguration(classes = [CommonJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [GraphControllerExceptionUnitTestConfiguration::class])
 internal class ListExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun listInUse() {
@@ -33,7 +33,7 @@ internal class ListExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.list_id", `is`("R123")))
             .andDocument {
                 responseFields<ListInUse>(
-                    fieldWithPath("list_id").description("The id of the list."),
+                    fieldWithPath("list_id").description("The id of the list.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -50,7 +50,7 @@ internal class ListExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.list_id", `is`("R123")))
             .andDocument {
                 responseFields<ListNotFound>(
-                    fieldWithPath("list_id").description("The id of the list."),
+                    fieldWithPath("list_id").description("The id of the list.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -67,7 +67,7 @@ internal class ListExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.list_id", `is`("R123")))
             .andDocument {
                 responseFields<ListNotModifiable>(
-                    fieldWithPath("list_id").description("The id of the list."),
+                    fieldWithPath("list_id").description("The id of the list.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }

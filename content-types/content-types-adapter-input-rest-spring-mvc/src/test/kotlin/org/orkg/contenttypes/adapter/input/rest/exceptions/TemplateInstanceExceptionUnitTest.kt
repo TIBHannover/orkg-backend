@@ -2,7 +2,7 @@ package org.orkg.contenttypes.adapter.input.rest.exceptions
 
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.common.json.CommonJacksonModule
+import org.orkg.common.thingIdConstraint
 import org.orkg.contenttypes.domain.InvalidLiteral
 import org.orkg.contenttypes.domain.LabelDoesNotMatchPattern
 import org.orkg.contenttypes.domain.MismatchedDataType
@@ -20,10 +20,13 @@ import org.orkg.contenttypes.domain.TemplateNotApplicable
 import org.orkg.contenttypes.domain.TooManyPropertyValues
 import org.orkg.contenttypes.domain.UnknownTemplateProperties
 import org.orkg.contenttypes.domain.UnrelatedTemplateProperty
+import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerExceptionUnitTestConfiguration
 import org.orkg.graph.domain.Classes
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
+import org.orkg.testing.spring.restdocs.arrayItemsType
+import org.orkg.testing.spring.restdocs.constraints
 import org.orkg.testing.spring.restdocs.exceptionResponseFields
+import org.orkg.testing.spring.restdocs.type
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
@@ -32,7 +35,7 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
 @WebMvcTest
-@ContextConfiguration(classes = [CommonJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [ContentTypeControllerExceptionUnitTestConfiguration::class])
 internal class TemplateInstanceExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun templateNotApplicable() {
@@ -46,8 +49,8 @@ internal class TemplateInstanceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.resource_id").value("R456"))
             .andDocument {
                 responseFields<TemplateNotApplicable>(
-                    fieldWithPath("template_id").description("The id of the template."),
-                    fieldWithPath("resource_id").description("The id of the resource."),
+                    fieldWithPath("template_id").description("The id of the template.").type<ThingId>(),
+                    fieldWithPath("resource_id").description("The id of the resource.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -66,8 +69,8 @@ internal class TemplateInstanceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.object_id").value("#temp1"))
             .andDocument {
                 responseFields<ObjectIsNotAClass>(
-                    fieldWithPath("template_property_id").description("The id of the template property."),
-                    fieldWithPath("predicate_id").description("The id of the predicate path of the template property."),
+                    fieldWithPath("template_property_id").description("The id of the template property.").type<ThingId>(),
+                    fieldWithPath("predicate_id").description("The id of the predicate path of the template property.").type<ThingId>(),
                     fieldWithPath("object_id").description("The id of the object."),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
@@ -87,8 +90,8 @@ internal class TemplateInstanceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.object_id").value("#temp1"))
             .andDocument {
                 responseFields<ObjectIsNotAPredicate>(
-                    fieldWithPath("template_property_id").description("The id of the template property."),
-                    fieldWithPath("predicate_id").description("The id of the predicate path of the template property."),
+                    fieldWithPath("template_property_id").description("The id of the template property.").type<ThingId>(),
+                    fieldWithPath("predicate_id").description("The id of the predicate path of the template property.").type<ThingId>(),
                     fieldWithPath("object_id").description("The id of the object."),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
@@ -108,8 +111,8 @@ internal class TemplateInstanceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.object_id").value("#temp1"))
             .andDocument {
                 responseFields<ObjectIsNotAList>(
-                    fieldWithPath("template_property_id").description("The id of the template property."),
-                    fieldWithPath("predicate_id").description("The id of the predicate path of the template property."),
+                    fieldWithPath("template_property_id").description("The id of the template property.").type<ThingId>(),
+                    fieldWithPath("predicate_id").description("The id of the predicate path of the template property.").type<ThingId>(),
                     fieldWithPath("object_id").description("The id of the object."),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
@@ -129,8 +132,8 @@ internal class TemplateInstanceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.object_id").value("#temp1"))
             .andDocument {
                 responseFields<ObjectIsNotALiteral>(
-                    fieldWithPath("template_property_id").description("The id of the template property."),
-                    fieldWithPath("predicate_id").description("The id of the predicate path of the template property."),
+                    fieldWithPath("template_property_id").description("The id of the template property.").type<ThingId>(),
+                    fieldWithPath("predicate_id").description("The id of the predicate path of the template property.").type<ThingId>(),
                     fieldWithPath("object_id").description("The id of the object."),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
@@ -150,8 +153,8 @@ internal class TemplateInstanceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.object_id").value("#temp1"))
             .andDocument {
                 responseFields<ObjectMustNotBeALiteral>(
-                    fieldWithPath("template_property_id").description("The id of the template property."),
-                    fieldWithPath("predicate_id").description("The id of the predicate path of the template property."),
+                    fieldWithPath("template_property_id").description("The id of the template property.").type<ThingId>(),
+                    fieldWithPath("predicate_id").description("The id of the predicate path of the template property.").type<ThingId>(),
                     fieldWithPath("object_id").description("The id of the object."),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
@@ -172,10 +175,10 @@ internal class TemplateInstanceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.template_property_target_class").value("C123"))
             .andDocument {
                 responseFields<ResourceIsNotAnInstanceOfTargetClass>(
-                    fieldWithPath("template_property_id").description("The id of the template property."),
-                    fieldWithPath("predicate_id").description("The id of the predicate path of the template property."),
+                    fieldWithPath("template_property_id").description("The id of the template property.").type<ThingId>(),
+                    fieldWithPath("predicate_id").description("The id of the predicate path of the template property.").type<ThingId>(),
                     fieldWithPath("object_id").description("The id of the object."),
-                    fieldWithPath("template_property_target_class").description("The target class of the template property."),
+                    fieldWithPath("template_property_target_class").description("The target class of the template property.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -196,8 +199,8 @@ internal class TemplateInstanceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.regex_pattern").value("\\d+"))
             .andDocument {
                 responseFields<LabelDoesNotMatchPattern>(
-                    fieldWithPath("template_property_id").description("The id of the template property."),
-                    fieldWithPath("predicate_id").description("The id of the predicate path of the template property."),
+                    fieldWithPath("template_property_id").description("The id of the template property.").type<ThingId>(),
+                    fieldWithPath("predicate_id").description("The id of the predicate path of the template property.").type<ThingId>(),
                     fieldWithPath("object_id").description("The id of the object."),
                     fieldWithPath("object_label").description("The provided label of the object."),
                     fieldWithPath("regex_pattern").description("The regex pattern the object label has to match."),
@@ -220,8 +223,8 @@ internal class TemplateInstanceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.template_property_ids[1]").value("R2"))
             .andDocument {
                 responseFields<UnknownTemplateProperties>(
-                    fieldWithPath("template_id").description("The id of the template property."),
-                    fieldWithPath("template_property_ids").description("A list of unknown template property ids."),
+                    fieldWithPath("template_id").description("The id of the template property.").type<ThingId>(),
+                    fieldWithPath("template_property_ids[]").description("A list of unknown template property ids.").arrayItemsType("string").constraints(thingIdConstraint),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -241,10 +244,10 @@ internal class TemplateInstanceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.actual_value_count").value(2))
             .andDocument {
                 responseFields<MissingPropertyValues>(
-                    fieldWithPath("template_property_id").description("The id of the template property."),
-                    fieldWithPath("predicate_id").description("The id of the predicate path of the template property."),
-                    fieldWithPath("min_value_count").description("The minimum number of template property values."),
-                    fieldWithPath("actual_value_count").description("The provided number of template property values."),
+                    fieldWithPath("template_property_id").description("The id of the template property.").type<ThingId>(),
+                    fieldWithPath("predicate_id").description("The id of the predicate path of the template property.").type<ThingId>(),
+                    fieldWithPath("min_value_count").description("The minimum number of template property values.").type<Int>(),
+                    fieldWithPath("actual_value_count").description("The provided number of template property values.").type<Int>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -264,10 +267,10 @@ internal class TemplateInstanceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.actual_value_count").value(5))
             .andDocument {
                 responseFields<TooManyPropertyValues>(
-                    fieldWithPath("template_property_id").description("The id of the template property."),
-                    fieldWithPath("predicate_id").description("The id of the predicate path of the template property."),
-                    fieldWithPath("max_value_count").description("The maximum number of template property values."),
-                    fieldWithPath("actual_value_count").description("The provided number of template property values."),
+                    fieldWithPath("template_property_id").description("The id of the template property.").type<ThingId>(),
+                    fieldWithPath("predicate_id").description("The id of the predicate path of the template property.").type<ThingId>(),
+                    fieldWithPath("max_value_count").description("The maximum number of template property values.").type<Int>(),
+                    fieldWithPath("actual_value_count").description("The provided number of template property values.").type<Int>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -288,11 +291,11 @@ internal class TemplateInstanceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.expected_datatype").value(Classes.boolean.value))
             .andDocument {
                 responseFields<InvalidLiteral>(
-                    fieldWithPath("template_property_id").description("The id of the template property."),
-                    fieldWithPath("predicate_id").description("The id of the predicate path of the template property."),
+                    fieldWithPath("template_property_id").description("The id of the template property.").type<ThingId>(),
+                    fieldWithPath("predicate_id").description("The id of the predicate path of the template property.").type<ThingId>(),
                     fieldWithPath("object_id").description("The id of the object."),
                     fieldWithPath("object_label").description("The provided label of the object."),
-                    fieldWithPath("expected_datatype").description("The enforced data type of the object."),
+                    fieldWithPath("expected_datatype").description("The enforced data type of the object.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -313,8 +316,8 @@ internal class TemplateInstanceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.expected_datatype").value("xsd:boolean"))
             .andDocument {
                 responseFields<MismatchedDataType>(
-                    fieldWithPath("template_property_id").description("The id of the template property."),
-                    fieldWithPath("predicate_id").description("The id of the predicate path of the template property."),
+                    fieldWithPath("template_property_id").description("The id of the template property.").type<ThingId>(),
+                    fieldWithPath("predicate_id").description("The id of the predicate path of the template property.").type<ThingId>(),
                     fieldWithPath("object_id").description("The id of the object."),
                     fieldWithPath("actual_datatype").description("The provided data type of the object."),
                     fieldWithPath("expected_datatype").description("The expected data type of the object."),
@@ -335,8 +338,8 @@ internal class TemplateInstanceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.template_property_id").value("R456"))
             .andDocument {
                 responseFields<UnrelatedTemplateProperty>(
-                    fieldWithPath("template_id").description("The id of the template."),
-                    fieldWithPath("template_property_id").description("The id of the template property."),
+                    fieldWithPath("template_id").description("The id of the template.").type<ThingId>(),
+                    fieldWithPath("template_property_id").description("The id of the template property.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -357,8 +360,8 @@ internal class TemplateInstanceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.min_inclusive").value(10))
             .andDocument {
                 responseFields<NumberTooLow>(
-                    fieldWithPath("template_property_id").description("The id of the template property."),
-                    fieldWithPath("predicate_id").description("The id of the predicate path of the template property."),
+                    fieldWithPath("template_property_id").description("The id of the template property.").type<ThingId>(),
+                    fieldWithPath("predicate_id").description("The id of the predicate path of the template property.").type<ThingId>(),
                     fieldWithPath("object_id").description("The id of the object."),
                     fieldWithPath("object_label").description("The provided label of the object."),
                     fieldWithPath("min_inclusive").description("The minimum value the object can have."),
@@ -382,8 +385,8 @@ internal class TemplateInstanceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.max_inclusive").value(5))
             .andDocument {
                 responseFields<NumberTooHigh>(
-                    fieldWithPath("template_property_id").description("The id of the template property."),
-                    fieldWithPath("predicate_id").description("The id of the predicate path of the template property."),
+                    fieldWithPath("template_property_id").description("The id of the template property.").type<ThingId>(),
+                    fieldWithPath("predicate_id").description("The id of the predicate path of the template property.").type<ThingId>(),
                     fieldWithPath("object_id").description("The id of the object."),
                     fieldWithPath("object_label").description("The provided label of the object."),
                     fieldWithPath("max_inclusive").description("The maximum value the object can have."),
@@ -404,8 +407,8 @@ internal class TemplateInstanceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.resource_id").value("R456"))
             .andDocument {
                 responseFields<TemplateInstanceNotFound>(
-                    fieldWithPath("template_id").description("The id of the template."),
-                    fieldWithPath("resource_id").description("The id of the resource."),
+                    fieldWithPath("template_id").description("The id of the template.").type<ThingId>(),
+                    fieldWithPath("resource_id").description("The id of the resource.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }

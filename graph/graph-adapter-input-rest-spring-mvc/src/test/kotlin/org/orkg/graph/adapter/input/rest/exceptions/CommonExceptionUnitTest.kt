@@ -4,16 +4,16 @@ import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
-import org.orkg.common.json.CommonJacksonModule
+import org.orkg.graph.adapter.input.rest.testing.fixtures.configuration.GraphControllerExceptionUnitTestConfiguration
 import org.orkg.graph.domain.InvalidDescription
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.MAX_LABEL_LENGTH
 import org.orkg.graph.domain.NeitherOwnerNorCurator
 import org.orkg.graph.domain.NotACurator
 import org.orkg.testing.MockUserId
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
 import org.orkg.testing.spring.restdocs.exceptionResponseFields
+import org.orkg.testing.spring.restdocs.type
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.FORBIDDEN
@@ -22,7 +22,7 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
 @WebMvcTest
-@ContextConfiguration(classes = [CommonJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [GraphControllerExceptionUnitTestConfiguration::class])
 internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun invalidLabel_withDefaultProperty() {
@@ -81,9 +81,9 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.thing_id").value("R123"))
             .andDocument {
                 responseFields<NeitherOwnerNorCurator>(
-                    fieldWithPath("owner_id").description("The id of the owner."),
-                    fieldWithPath("contributor_id").description("The id of the contributor."),
-                    fieldWithPath("thing_id").description("The id of thing."),
+                    fieldWithPath("owner_id").description("The id of the owner.").type<ContributorId>(),
+                    fieldWithPath("contributor_id").description("The id of the contributor.").type<ContributorId>(),
+                    fieldWithPath("thing_id").description("The id of thing.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -112,7 +112,7 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.contributor_id").value("b7c81eed-52e1-4f7a-93bf-e6d331b8df7b"))
             .andDocument {
                 responseFields<NotACurator>(
-                    fieldWithPath("contributor_id").description("The id of the contributor."),
+                    fieldWithPath("contributor_id").description("The id of the contributor.").type<ContributorId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }

@@ -2,7 +2,6 @@ package org.orkg.contenttypes.adapter.input.rest.exceptions
 
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.common.json.CommonJacksonModule
 import org.orkg.contenttypes.domain.ComparisonAlreadyPublished
 import org.orkg.contenttypes.domain.ComparisonNotFound
 import org.orkg.contenttypes.domain.ComparisonNotModifiable
@@ -10,9 +9,10 @@ import org.orkg.contenttypes.domain.ComparisonRelatedFigureNotFound
 import org.orkg.contenttypes.domain.ComparisonRelatedFigureNotModifiable
 import org.orkg.contenttypes.domain.ComparisonRelatedResourceNotFound
 import org.orkg.contenttypes.domain.ComparisonRelatedResourceNotModifiable
-import org.orkg.testing.configuration.FixedClockConfig
+import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerExceptionUnitTestConfiguration
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
 import org.orkg.testing.spring.restdocs.exceptionResponseFields
+import org.orkg.testing.spring.restdocs.type
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.FORBIDDEN
@@ -21,7 +21,7 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
 @WebMvcTest
-@ContextConfiguration(classes = [CommonJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [ContentTypeControllerExceptionUnitTestConfiguration::class])
 internal class ComparisonExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun comparisonAlreadyPublished() {
@@ -34,7 +34,7 @@ internal class ComparisonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.comparison_id").value("R123"))
             .andDocument {
                 responseFields<ComparisonAlreadyPublished>(
-                    fieldWithPath("comparison_id").description("The id of the comparison."),
+                    fieldWithPath("comparison_id").description("The id of the comparison.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -51,7 +51,7 @@ internal class ComparisonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.comparison_id").value("R123"))
             .andDocument {
                 responseFields<ComparisonNotModifiable>(
-                    fieldWithPath("comparison_id").description("The id of the comparison."),
+                    fieldWithPath("comparison_id").description("The id of the comparison.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -68,7 +68,7 @@ internal class ComparisonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.comparison_related_resource_id").value("R123"))
             .andDocument {
                 responseFields<ComparisonRelatedResourceNotModifiable>(
-                    fieldWithPath("comparison_related_resource_id").description("The id of the comparison related resurce."),
+                    fieldWithPath("comparison_related_resource_id").description("The id of the comparison related resurce.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -85,7 +85,7 @@ internal class ComparisonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.comparison_related_figure_id").value("R123"))
             .andDocument {
                 responseFields<ComparisonRelatedFigureNotModifiable>(
-                    fieldWithPath("comparison_related_figure_id").description("The id of the comparison related figure."),
+                    fieldWithPath("comparison_related_figure_id").description("The id of the comparison related figure.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -102,7 +102,7 @@ internal class ComparisonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.comparison_id").value("R123"))
             .andDocument {
                 responseFields<ComparisonNotFound>(
-                    fieldWithPath("comparison_id").description("The id of the comparison."),
+                    fieldWithPath("comparison_id").description("The id of the comparison.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -119,7 +119,7 @@ internal class ComparisonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.comparison_related_resource_id").value("R123"))
             .andDocument {
                 responseFields<ComparisonRelatedResourceNotFound>(
-                    fieldWithPath("comparison_related_resource_id").description("The id of the comparison related resurce."),
+                    fieldWithPath("comparison_related_resource_id").description("The id of the comparison related resurce.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -136,7 +136,7 @@ internal class ComparisonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.comparison_related_figure_id").value("R123"))
             .andDocument {
                 responseFields<ComparisonRelatedFigureNotFound>(
-                    fieldWithPath("comparison_related_figure_id").description("The id of the comparison related figure."),
+                    fieldWithPath("comparison_related_figure_id").description("The id of the comparison related figure.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }

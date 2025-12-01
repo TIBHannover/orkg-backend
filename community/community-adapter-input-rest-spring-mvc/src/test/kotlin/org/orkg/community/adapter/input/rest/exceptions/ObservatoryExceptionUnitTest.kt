@@ -2,24 +2,25 @@ package org.orkg.community.adapter.input.rest.exceptions
 
 import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Test
+import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
-import org.orkg.common.json.CommonJacksonModule
 import org.orkg.community.domain.ObservatoryAlreadyExists
 import org.orkg.community.domain.ObservatoryMemberNotFound
 import org.orkg.community.domain.ObservatoryNotFound
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
 import org.orkg.testing.spring.restdocs.exceptionResponseFields
+import org.orkg.testing.spring.restdocs.type
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
+import orkg.orkg.community.testing.fixtures.configuration.CommunityControllerExceptionUnitTestConfiguration
 import java.util.UUID
 
 @WebMvcTest
-@ContextConfiguration(classes = [CommonJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [CommunityControllerExceptionUnitTestConfiguration::class])
 internal class ObservatoryExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun observatoryAlreadyExists_withId() {
@@ -32,7 +33,7 @@ internal class ObservatoryExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.observatory_id", `is`("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")))
             .andDocument {
                 responseFields<ObservatoryAlreadyExists>(
-                    fieldWithPath("observatory_id").description("The id of the observatory that already exists. (optional, either `observatory_id`, `observatory_name` or `observatory_display_id` is present)"),
+                    fieldWithPath("observatory_id").description("The id of the observatory that already exists. (optional, either `observatory_id`, `observatory_name` or `observatory_display_id` is present)").type<ObservatoryId>(),
                     fieldWithPath("observatory_name").type("String").description("The name of the observatory that already exists. (optional, either `observatory_id `observatory_name` or `observatory_display_id` is present)").optional(),
                     fieldWithPath("observatory_display_id").type("String").description("The display_id of the observatory that already exists. (optional, either `observatory_id`, `observatory_name` or `observatory_display_id` is present)").optional(),
                     *exceptionResponseFields(type).toTypedArray(),
@@ -71,7 +72,7 @@ internal class ObservatoryExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.observatory_id", `is`("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")))
             .andDocument {
                 responseFields<ObservatoryNotFound>(
-                    fieldWithPath("observatory_id").description("The id of the observatory. (optional, either `observatory_id` or `observatory_display_id` is present)"),
+                    fieldWithPath("observatory_id").description("The id of the observatory. (optional, either `observatory_id` or `observatory_display_id` is present)").type<ObservatoryId>(),
                     fieldWithPath("observatory_display_id").type("String").description("The display_id of the observatory. (optional, either `observatory_id` or `observatory_display_id` is present)").optional(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
@@ -99,7 +100,7 @@ internal class ObservatoryExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.contributor_id", `is`("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")))
             .andDocument {
                 responseFields<ObservatoryMemberNotFound>(
-                    fieldWithPath("contributor_id").description("The id of the contributor."),
+                    fieldWithPath("contributor_id").description("The id of the contributor.").type<ContributorId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }

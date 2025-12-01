@@ -2,7 +2,7 @@ package org.orkg.contenttypes.adapter.input.rest.exceptions
 
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.common.json.CommonJacksonModule
+import org.orkg.common.thingIdConstraint
 import org.orkg.contenttypes.domain.InvalidHeadingSize
 import org.orkg.contenttypes.domain.InvalidListSectionEntry
 import org.orkg.contenttypes.domain.LiteratureListAlreadyPublished
@@ -11,10 +11,13 @@ import org.orkg.contenttypes.domain.LiteratureListNotModifiable
 import org.orkg.contenttypes.domain.LiteratureListSectionTypeMismatch
 import org.orkg.contenttypes.domain.PublishedLiteratureListContentNotFound
 import org.orkg.contenttypes.domain.UnrelatedLiteratureListSection
+import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerExceptionUnitTestConfiguration
 import org.orkg.graph.domain.Classes
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
+import org.orkg.testing.spring.restdocs.arrayItemsType
+import org.orkg.testing.spring.restdocs.constraints
 import org.orkg.testing.spring.restdocs.exceptionResponseFields
+import org.orkg.testing.spring.restdocs.type
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.FORBIDDEN
@@ -24,7 +27,7 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
 @WebMvcTest
-@ContextConfiguration(classes = [CommonJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [ContentTypeControllerExceptionUnitTestConfiguration::class])
 internal class LiteratureListExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun publishedLiteratureListContentNotFound() {
@@ -38,8 +41,8 @@ internal class LiteratureListExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.literature_list_content_id").value("R456"))
             .andDocument {
                 responseFields<PublishedLiteratureListContentNotFound>(
-                    fieldWithPath("literature_list_id").description("The id of the literature list."),
-                    fieldWithPath("literature_list_content_id").description("The id of the requested content."),
+                    fieldWithPath("literature_list_id").description("The id of the literature list.").type<ThingId>(),
+                    fieldWithPath("literature_list_content_id").description("The id of the requested content.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -56,7 +59,7 @@ internal class LiteratureListExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.literature_list_id").value("R123"))
             .andDocument {
                 responseFields<LiteratureListAlreadyPublished>(
-                    fieldWithPath("literature_list_id").description("The id of the literature list."),
+                    fieldWithPath("literature_list_id").description("The id of the literature list.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -73,7 +76,7 @@ internal class LiteratureListExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.literature_list_id").value("R123"))
             .andDocument {
                 responseFields<LiteratureListNotFound>(
-                    fieldWithPath("literature_list_id").description("The id of the literature list."),
+                    fieldWithPath("literature_list_id").description("The id of the literature list.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -90,8 +93,8 @@ internal class LiteratureListExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.literature_list_section_id").value("R123"))
             .andDocument {
                 responseFields<InvalidListSectionEntry>(
-                    fieldWithPath("literature_list_section_id").description("The id of the literature list section."),
-                    fieldWithPath("expected_classes[]").description("A list of expected class ids."),
+                    fieldWithPath("literature_list_section_id").description("The id of the literature list section.").type<ThingId>(),
+                    fieldWithPath("expected_classes[]").description("A list of expected class ids.").arrayItemsType("string").constraints(thingIdConstraint),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -108,7 +111,7 @@ internal class LiteratureListExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.heading_size").value("5"))
             .andDocument {
                 responseFields<InvalidHeadingSize>(
-                    fieldWithPath("heading_size").description("The provided heading size."),
+                    fieldWithPath("heading_size").description("The provided heading size.").type<Int>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -126,8 +129,8 @@ internal class LiteratureListExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.literature_list_section_id").value("R456"))
             .andDocument {
                 responseFields<UnrelatedLiteratureListSection>(
-                    fieldWithPath("literature_list_id").description("The id of the literature list."),
-                    fieldWithPath("literature_list_section_id").description("The id of the literature list section."),
+                    fieldWithPath("literature_list_id").description("The id of the literature list.").type<ThingId>(),
+                    fieldWithPath("literature_list_section_id").description("The id of the literature list section.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -144,7 +147,7 @@ internal class LiteratureListExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.expected_literature_list_section_type").value(Classes.textSection.value))
             .andDocument {
                 responseFields<LiteratureListSectionTypeMismatch>(
-                    fieldWithPath("expected_literature_list_section_type").description("The expected type of the literature list section."),
+                    fieldWithPath("expected_literature_list_section_type").description("The expected type of the literature list section.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -171,7 +174,7 @@ internal class LiteratureListExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.literature_list_id").value("R123"))
             .andDocument {
                 responseFields<LiteratureListNotModifiable>(
-                    fieldWithPath("literature_list_id").description("The id of the literature list."),
+                    fieldWithPath("literature_list_id").description("The id of the literature list.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }

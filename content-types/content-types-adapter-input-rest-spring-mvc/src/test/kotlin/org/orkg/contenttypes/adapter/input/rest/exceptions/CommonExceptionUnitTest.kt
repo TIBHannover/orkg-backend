@@ -2,7 +2,6 @@ package org.orkg.contenttypes.adapter.input.rest.exceptions
 
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.common.json.CommonJacksonModule
 import org.orkg.contenttypes.domain.DuplicateTempIds
 import org.orkg.contenttypes.domain.EmptyContribution
 import org.orkg.contenttypes.domain.InvalidBibTeXReference
@@ -19,19 +18,19 @@ import org.orkg.contenttypes.domain.SustainableDevelopmentGoalNotFound
 import org.orkg.contenttypes.domain.ThingIsNotAClass
 import org.orkg.contenttypes.domain.ThingIsNotAPredicate
 import org.orkg.contenttypes.domain.ThingNotDefined
-import org.orkg.testing.configuration.FixedClockConfig
+import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerExceptionUnitTestConfiguration
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
 import org.orkg.testing.spring.restdocs.exceptionResponseFields
+import org.orkg.testing.spring.restdocs.type
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
 @WebMvcTest
-@ContextConfiguration(classes = [CommonJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [ContentTypeControllerExceptionUnitTestConfiguration::class])
 internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun invalidMonth() {
@@ -44,7 +43,7 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.month").value("0"))
             .andDocument {
                 responseFields<InvalidMonth>(
-                    fieldWithPath("month").description("The month value."),
+                    fieldWithPath("month").description("The month value.").type<Integer>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -61,7 +60,7 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.sustainable_development_goal_id").value("SDG1"))
             .andDocument {
                 responseFields<SustainableDevelopmentGoalNotFound>(
-                    fieldWithPath("sustainable_development_goal_id").description("The id of the sustainable development goal."),
+                    fieldWithPath("sustainable_development_goal_id").description("The id of the sustainable development goal.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -139,7 +138,7 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.thing_id").value("#temp1"))
             .andDocument {
                 responseFields<ThingNotDefined>(
-                    fieldWithPath("thing_id").description("The id of the thing."),
+                    fieldWithPath("thing_id").description("The id of the thing.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -156,7 +155,8 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.duplicate_temp_ids['#temp1']").value("5"))
             .andDocument {
                 responseFields<DuplicateTempIds>(
-                    subsectionWithPath("duplicate_temp_ids").description("A map of temp ids to their occurrence count."),
+                    fieldWithPath("duplicate_temp_ids").description("A key-value map of temp ids to their occurrence count."),
+                    fieldWithPath("duplicate_temp_ids.*").description("The occurrence count of the temp id.").type<Int>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -190,7 +190,7 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.thing_id").value("R123"))
             .andDocument {
                 responseFields<ThingIsNotAClass>(
-                    fieldWithPath("thing_id").description("The id of the thing."),
+                    fieldWithPath("thing_id").description("The id of the thing.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -207,7 +207,7 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.thing_id").value("R123"))
             .andDocument {
                 responseFields<ThingIsNotAPredicate>(
-                    fieldWithPath("thing_id").description("The id of the thing."),
+                    fieldWithPath("thing_id").description("The id of the thing.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -224,7 +224,7 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.subject_id").value("L123"))
             .andDocument {
                 responseFields<InvalidStatementSubject>(
-                    fieldWithPath("subject_id").description("The id of the subject."),
+                    fieldWithPath("subject_id").description("The id of the subject.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -240,7 +240,7 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectDetail("""Contribution at index "5" does not contain any statements.""")
             .andDocument {
                 responseFields<EmptyContribution>(
-                    fieldWithPath("index").description("Index of the contribution. (optional)"),
+                    fieldWithPath("index").description("Index of the contribution. (optional)").type<Int>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -266,7 +266,7 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.research_problem_id").value("R123"))
             .andDocument {
                 responseFields<ResearchProblemNotFound>(
-                    fieldWithPath("research_problem_id").description("The id of the research problem."),
+                    fieldWithPath("research_problem_id").description("The id of the research problem.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -283,7 +283,7 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.research_field_id").value("R123"))
             .andDocument {
                 responseFields<ResearchFieldNotFound>(
-                    fieldWithPath("research_field_id").description("The id of the research field."),
+                    fieldWithPath("research_field_id").description("The id of the research field.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }

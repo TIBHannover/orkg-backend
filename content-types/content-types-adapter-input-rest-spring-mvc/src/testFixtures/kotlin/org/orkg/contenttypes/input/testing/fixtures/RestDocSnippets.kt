@@ -37,15 +37,19 @@ fun authorListFields(type: String, path: String = "authors", optional: Boolean =
     fieldWithPath(path).description("The list of authors that originally contributed to the $type.").also { if (optional) it.optional() },
     fieldWithPath("$path[].id").type("String").description("The ID of the author. (optional)").optional(),
     fieldWithPath("$path[].name").description("The name of the author."),
-    fieldWithPath("$path[].identifiers").type("Object").description("The unique identifiers of the author."),
-    fieldWithPath("$path[].identifiers.open_alex").type("Array").description("The list of Open Alex IDs of the author. (optional)").arrayItemsType("String").constraints(openAlexIdConstraint).optional(),
-    fieldWithPath("$path[].identifiers.orcid").type("Array").description("The list of ORCIDs of the author. (optional)").arrayItemsType("String").constraints(orcidConstraint).optional(),
-    fieldWithPath("$path[].identifiers.google_scholar").type("Array").description("The list of Google Scholar IDs of the author. (optional)").arrayItemsType("String").constraints(googleScholarIdConstraint).optional(),
-    fieldWithPath("$path[].identifiers.research_gate").type("Array").description("The list of ResearchGate IDs of the author. (optional)").arrayItemsType("String").constraints(researchGateIdConstraint).optional(),
-    fieldWithPath("$path[].identifiers.linked_in").type("Array").description("The list of LinkedIn IDs of the author. (optional)").arrayItemsType("String").constraints(linkedInIdConstraint).optional(),
-    fieldWithPath("$path[].identifiers.wikidata").type("Array").description("The list of Wikidata IDs of the author. (optional)").arrayItemsType("String").constraints(wikidataIdConstraint).optional(),
-    fieldWithPath("$path[].identifiers.web_of_science").type("Array").description("The list of Web of Science IDs of the author. (optional)").arrayItemsType("String").constraints(researcherIdConstraint).optional(),
+    *applyPathPrefix("$path[].", authorIdentifierFields()).toTypedArray(),
     fieldWithPath("$path[].homepage").type("String").description("The homepage of the author. (optional)").optional(),
+)
+
+fun authorIdentifierFields(path: String = "identifiers") = listOf(
+    fieldWithPath(path).type("Object").description("A key-map of associated author identifiers."),
+    fieldWithPath("$path.open_alex").type("Array").description("The list of Open Alex IDs of the author. (optional)").arrayItemsType("String").constraints(openAlexIdConstraint).optional(),
+    fieldWithPath("$path.orcid").type("Array").description("The list of ORCIDs of the author. (optional)").arrayItemsType("String").constraints(orcidConstraint).optional(),
+    fieldWithPath("$path.google_scholar").type("Array").description("The list of Google Scholar IDs of the author. (optional)").arrayItemsType("String").constraints(googleScholarIdConstraint).optional(),
+    fieldWithPath("$path.research_gate").type("Array").description("The list of ResearchGate IDs of the author. (optional)").arrayItemsType("String").constraints(researchGateIdConstraint).optional(),
+    fieldWithPath("$path.linked_in").type("Array").description("The list of LinkedIn IDs of the author. (optional)").arrayItemsType("String").constraints(linkedInIdConstraint).optional(),
+    fieldWithPath("$path.wikidata").type("Array").description("The list of Wikidata IDs of the author. (optional)").arrayItemsType("String").constraints(wikidataIdConstraint).optional(),
+    fieldWithPath("$path.web_of_science").type("Array").description("The list of Web of Science IDs of the author. (optional)").arrayItemsType("String").constraints(researcherIdConstraint).optional(),
 )
 
 fun paperIdentifierFields(path: String = "identifiers") = listOf(

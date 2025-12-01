@@ -1,17 +1,18 @@
 package org.orkg.graph.adapter.input.rest.exceptions
 
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.common.json.CommonJacksonModule
+import org.orkg.graph.adapter.input.rest.testing.fixtures.configuration.GraphControllerExceptionUnitTestConfiguration
 import org.orkg.graph.domain.ExternalPredicateNotFound
 import org.orkg.graph.domain.PredicateAlreadyExists
 import org.orkg.graph.domain.PredicateInUse
 import org.orkg.graph.domain.PredicateNotFound
 import org.orkg.graph.domain.PredicateNotModifiable
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
 import org.orkg.testing.spring.restdocs.exceptionResponseFields
+import org.orkg.testing.spring.restdocs.type
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.FORBIDDEN
@@ -21,7 +22,7 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
 @WebMvcTest
-@ContextConfiguration(classes = [CommonJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [GraphControllerExceptionUnitTestConfiguration::class])
 internal class PredicateExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun predicateNotModifiable() {
@@ -34,7 +35,7 @@ internal class PredicateExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.predicate_id", `is`("P123")))
             .andDocument {
                 responseFields<PredicateNotModifiable>(
-                    fieldWithPath("predicate_id").description("The id of the predicate."),
+                    fieldWithPath("predicate_id").description("The id of the predicate.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -51,7 +52,7 @@ internal class PredicateExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.predicate_id", `is`("P123")))
             .andDocument {
                 responseFields<PredicateNotFound>(
-                    fieldWithPath("predicate_id").description("The id of the predicate."),
+                    fieldWithPath("predicate_id").description("The id of the predicate.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -70,7 +71,7 @@ internal class PredicateExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andDocument {
                 responseFields<ExternalPredicateNotFound>(
                     fieldWithPath("predicate_id").description("The id of the predicate. (optional, either `predicate_id` or `predicate_uri` is present)").optional(),
-                    fieldWithPath("predicate_uri").type("String").description("The uri of the predicate. (optional, either `predicate_id` or `predicate_uri` is present)").optional(),
+                    fieldWithPath("predicate_uri").type("String").description("The uri of the predicate. (optional, either `predicate_id` or `predicate_uri` is present)").type<ParsedIRI>().optional(),
                     fieldWithPath("ontology_id").description("The id of the predicate ontology."),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
@@ -88,7 +89,7 @@ internal class PredicateExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.predicate_id", `is`("P123")))
             .andDocument {
                 responseFields<PredicateInUse>(
-                    fieldWithPath("predicate_id").description("The id of the predicate."),
+                    fieldWithPath("predicate_id").description("The id of the predicate.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -105,7 +106,7 @@ internal class PredicateExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.predicate_id", `is`("P123")))
             .andDocument {
                 responseFields<PredicateAlreadyExists>(
-                    fieldWithPath("predicate_id").description("The id of the predicate."),
+                    fieldWithPath("predicate_id").description("The id of the predicate.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }

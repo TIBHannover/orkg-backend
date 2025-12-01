@@ -2,23 +2,23 @@ package org.orkg.contenttypes.adapter.input.rest.exceptions
 
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.common.json.CommonJacksonModule
 import org.orkg.contenttypes.domain.AmbiguousAuthor
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.AuthorNotFound
-import org.orkg.testing.configuration.FixedClockConfig
+import org.orkg.contenttypes.input.testing.fixtures.authorIdentifierFields
+import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerExceptionUnitTestConfiguration
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
 import org.orkg.testing.spring.restdocs.exceptionResponseFields
+import org.orkg.testing.spring.restdocs.type
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
 @WebMvcTest
-@ContextConfiguration(classes = [CommonJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [ContentTypeControllerExceptionUnitTestConfiguration::class])
 internal class AuthorExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun authorNotFound() {
@@ -31,7 +31,7 @@ internal class AuthorExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.author_id").value("R123"))
             .andDocument {
                 responseFields<AuthorNotFound>(
-                    fieldWithPath("author_id").description("The id of the author."),
+                    fieldWithPath("author_id").description("The id of the author.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -56,8 +56,8 @@ internal class AuthorExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.author_identifiers.orcid[0]").value("0000-0002-1825-0097"))
             .andDocument {
                 responseFields<AmbiguousAuthor>(
-                    fieldWithPath("author_id").type("String").description("The id of the author. (optional)").optional(),
-                    subsectionWithPath("author_identifiers").description("A map of associated author identifiers."),
+                    fieldWithPath("author_id").description("The id of the author. (optional)").type<ThingId>().optional(),
+                    *authorIdentifierFields("author_identifiers").toTypedArray(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }

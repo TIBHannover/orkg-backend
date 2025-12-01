@@ -94,6 +94,9 @@ fun <T : AbstractDescriptor<T>> T.size(min: Int = 0, max: Int = Integer.MAX_VALU
         )
     )
 
+inline fun <reified T> FieldDescriptor.type() =
+    type(T::class.java)
+
 fun ParameterDescriptor.type(type: ParameterType) =
     attributes(Attributes.Attribute("type", type))
 

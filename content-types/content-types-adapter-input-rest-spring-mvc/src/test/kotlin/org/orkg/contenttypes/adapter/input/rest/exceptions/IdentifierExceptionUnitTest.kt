@@ -4,7 +4,7 @@ import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Test
 import org.orkg.contenttypes.domain.InvalidDOI
 import org.orkg.contenttypes.domain.InvalidIdentifier
-import org.orkg.testing.configuration.FixedClockConfig
+import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerExceptionUnitTestConfiguration
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
@@ -12,7 +12,7 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
 @WebMvcTest
-@ContextConfiguration(classes = [FixedClockConfig::class])
+@ContextConfiguration(classes = [ContentTypeControllerExceptionUnitTestConfiguration::class])
 internal class IdentifierExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun invalidDOI() {

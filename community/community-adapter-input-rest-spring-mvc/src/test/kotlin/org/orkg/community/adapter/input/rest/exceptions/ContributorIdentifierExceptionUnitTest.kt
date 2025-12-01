@@ -3,20 +3,20 @@ package org.orkg.community.adapter.input.rest.exceptions
 import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
-import org.orkg.common.json.CommonJacksonModule
 import org.orkg.community.domain.ContributorIdentifierAlreadyExists
 import org.orkg.community.domain.UnknownIdentifierType
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
 import org.orkg.testing.spring.restdocs.exceptionResponseFields
+import org.orkg.testing.spring.restdocs.type
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
+import orkg.orkg.community.testing.fixtures.configuration.CommunityControllerExceptionUnitTestConfiguration
 
 @WebMvcTest
-@ContextConfiguration(classes = [CommonJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [CommunityControllerExceptionUnitTestConfiguration::class])
 internal class ContributorIdentifierExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun unknownIdentifierType() {
@@ -47,7 +47,7 @@ internal class ContributorIdentifierExceptionUnitTest : MockMvcExceptionBaseTest
             .andExpect(jsonPath("$.identifier_value", `is`("identifier")))
             .andDocument {
                 responseFields<ContributorIdentifierAlreadyExists>(
-                    fieldWithPath("contributor_id").description("The id of the contributor."),
+                    fieldWithPath("contributor_id").description("The id of the contributor.").type<ContributorId>(),
                     fieldWithPath("identifier_value").description("The value of the identifier."),
                     *exceptionResponseFields(type).toTypedArray(),
                 )

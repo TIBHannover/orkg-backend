@@ -2,7 +2,7 @@ package org.orkg.contenttypes.adapter.input.rest.exceptions
 
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.common.json.CommonJacksonModule
+import org.orkg.common.thingIdConstraint
 import org.orkg.contenttypes.domain.InvalidBounds
 import org.orkg.contenttypes.domain.InvalidCardinality
 import org.orkg.contenttypes.domain.InvalidDataType
@@ -12,10 +12,13 @@ import org.orkg.contenttypes.domain.InvalidRegexPattern
 import org.orkg.contenttypes.domain.TemplateAlreadyExistsForClass
 import org.orkg.contenttypes.domain.TemplateClosed
 import org.orkg.contenttypes.domain.TemplateNotFound
+import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerExceptionUnitTestConfiguration
 import org.orkg.graph.domain.Classes
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
+import org.orkg.testing.spring.restdocs.arrayItemsType
+import org.orkg.testing.spring.restdocs.constraints
 import org.orkg.testing.spring.restdocs.exceptionResponseFields
+import org.orkg.testing.spring.restdocs.type
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
@@ -24,7 +27,7 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
 @WebMvcTest
-@ContextConfiguration(classes = [CommonJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [ContentTypeControllerExceptionUnitTestConfiguration::class])
 internal class TemplateExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun templateNotFound() {
@@ -37,7 +40,7 @@ internal class TemplateExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.template_id").value("R123"))
             .andDocument {
                 responseFields<TemplateNotFound>(
-                    fieldWithPath("template_id").description("The id of the template."),
+                    fieldWithPath("template_id").description("The id of the template.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -55,8 +58,8 @@ internal class TemplateExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.template_target_class_id").value("C123"))
             .andDocument {
                 responseFields<TemplateAlreadyExistsForClass>(
-                    fieldWithPath("template_id").description("The id of the template."),
-                    fieldWithPath("template_target_class_id").description("The id of target class of the template."),
+                    fieldWithPath("template_id").description("The id of the template.").type<ThingId>(),
+                    fieldWithPath("template_target_class_id").description("The id of target class of the template.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -73,7 +76,7 @@ internal class TemplateExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.min_count").value("-1"))
             .andDocument {
                 responseFields<InvalidMinCount>(
-                    fieldWithPath("min_count").description("The provided min count."),
+                    fieldWithPath("min_count").description("The provided min count.").type<Int>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -90,7 +93,7 @@ internal class TemplateExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.max_count").value("-1"))
             .andDocument {
                 responseFields<InvalidMaxCount>(
-                    fieldWithPath("max_count").description("The provided max count."),
+                    fieldWithPath("max_count").description("The provided max count.").type<Int>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -108,8 +111,8 @@ internal class TemplateExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.max_cardinality").value("2"))
             .andDocument {
                 responseFields<InvalidCardinality>(
-                    fieldWithPath("min_cardinality").description("The provided min cardinality."),
-                    fieldWithPath("max_cardinality").description("The provided max cardinality."),
+                    fieldWithPath("min_cardinality").description("The provided min cardinality.").type<Int>(),
+                    fieldWithPath("max_cardinality").description("The provided max cardinality.").type<Int>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -127,8 +130,8 @@ internal class TemplateExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.max_count").value("2"))
             .andDocument {
                 responseFields<InvalidBounds>(
-                    fieldWithPath("min_count").description("The provided min count."),
-                    fieldWithPath("max_count").description("The provided max count."),
+                    fieldWithPath("min_count").description("The provided min count.").type<Int>(),
+                    fieldWithPath("max_count").description("The provided max count.").type<Int>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -146,8 +149,8 @@ internal class TemplateExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.expected_data_types[0]").value(Classes.boolean.value))
             .andDocument {
                 responseFields<InvalidDataType>(
-                    fieldWithPath("actual_data_type").description("The provided data type."),
-                    fieldWithPath("expected_data_types").description("A list of expected data types."),
+                    fieldWithPath("actual_data_type").description("The provided data type.").type<ThingId>(),
+                    fieldWithPath("expected_data_types[]").description("A list of expected data types.").arrayItemsType("string").constraints(thingIdConstraint),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -181,7 +184,7 @@ internal class TemplateExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.template_id").value("R123"))
             .andDocument {
                 responseFields<TemplateClosed>(
-                    fieldWithPath("template_id").description("The id of the template."),
+                    fieldWithPath("template_id").description("The id of the template.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }

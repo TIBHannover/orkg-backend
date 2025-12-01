@@ -1,10 +1,10 @@
 package org.orkg.statistics.adapter.input.rest.exceptions
 
 import org.junit.jupiter.api.Test
+import org.orkg.statistics.adapter.input.rest.testing.fixtures.configuration.StatisticsControllerExceptionUnitTestConfiguration
 import org.orkg.statistics.domain.GroupNotFound
 import org.orkg.statistics.domain.MetricNotFound
 import org.orkg.statistics.domain.TooManyParameterValues
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
 import org.orkg.testing.spring.restdocs.exceptionResponseFields
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -15,7 +15,7 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
 @WebMvcTest
-@ContextConfiguration(classes = [FixedClockConfig::class])
+@ContextConfiguration(classes = [StatisticsControllerExceptionUnitTestConfiguration::class])
 internal class StatisticsExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun groupNotFound() {

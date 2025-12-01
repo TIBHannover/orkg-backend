@@ -2,21 +2,22 @@ package org.orkg.community.adapter.input.rest.exceptions
 
 import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Test
-import org.orkg.common.json.CommonJacksonModule
 import org.orkg.community.domain.ConferenceSeriesAlreadyExists
+import org.orkg.community.domain.ConferenceSeriesId
 import org.orkg.community.domain.ConferenceSeriesNotFound
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
 import org.orkg.testing.spring.restdocs.exceptionResponseFields
+import org.orkg.testing.spring.restdocs.type
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
+import orkg.orkg.community.testing.fixtures.configuration.CommunityControllerExceptionUnitTestConfiguration
 
 @WebMvcTest
-@ContextConfiguration(classes = [CommonJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [CommunityControllerExceptionUnitTestConfiguration::class])
 internal class ConferenceExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun conferenceSeriesAlreadyExists_withName() {
@@ -57,7 +58,7 @@ internal class ConferenceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.conference_series_id", `is`("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")))
             .andDocument {
                 responseFields<ConferenceSeriesNotFound>(
-                    fieldWithPath("conference_series_id").description("The id of the conference series."),
+                    fieldWithPath("conference_series_id").description("The id of the conference series.").type<ConferenceSeriesId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }

@@ -3,12 +3,12 @@ package org.orkg.graph.adapter.input.rest.exceptions
 import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.common.json.CommonJacksonModule
+import org.orkg.graph.adapter.input.rest.testing.fixtures.configuration.GraphControllerExceptionUnitTestConfiguration
 import org.orkg.graph.domain.ThingAlreadyExists
 import org.orkg.graph.domain.ThingNotFound
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
 import org.orkg.testing.spring.restdocs.exceptionResponseFields
+import org.orkg.testing.spring.restdocs.type
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
@@ -17,7 +17,7 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
 @WebMvcTest
-@ContextConfiguration(classes = [CommonJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [GraphControllerExceptionUnitTestConfiguration::class])
 internal class ThingExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun thingAlreadyExists() {
@@ -30,7 +30,7 @@ internal class ThingExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.thing_id", `is`("R123")))
             .andDocument {
                 responseFields<ThingAlreadyExists>(
-                    fieldWithPath("thing_id").description("The id of the thing."),
+                    fieldWithPath("thing_id").description("The id of the thing.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -47,7 +47,7 @@ internal class ThingExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.thing_id", `is`("R123")))
             .andDocument {
                 responseFields<ThingNotFound>(
-                    fieldWithPath("thing_id").description("The id of the thing."),
+                    fieldWithPath("thing_id").description("The id of the thing.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }

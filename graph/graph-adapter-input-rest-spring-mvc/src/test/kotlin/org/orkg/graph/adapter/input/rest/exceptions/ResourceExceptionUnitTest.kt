@@ -1,9 +1,11 @@
 package org.orkg.graph.adapter.input.rest.exceptions
 
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.common.json.CommonJacksonModule
+import org.orkg.common.thingIdConstraint
+import org.orkg.graph.adapter.input.rest.testing.fixtures.configuration.GraphControllerExceptionUnitTestConfiguration
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExternalEntityIsNotAResource
 import org.orkg.graph.domain.ExternalResourceNotFound
@@ -13,10 +15,11 @@ import org.orkg.graph.domain.ResourceAlreadyExists
 import org.orkg.graph.domain.ResourceInUse
 import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.domain.ResourceNotModifiable
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
 import org.orkg.testing.spring.restdocs.arrayItemsType
+import org.orkg.testing.spring.restdocs.constraints
 import org.orkg.testing.spring.restdocs.exceptionResponseFields
+import org.orkg.testing.spring.restdocs.type
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.FORBIDDEN
@@ -26,7 +29,7 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
 @WebMvcTest
-@ContextConfiguration(classes = [CommonJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [GraphControllerExceptionUnitTestConfiguration::class])
 internal class ResourceExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun resourceNotModifiable() {
@@ -39,7 +42,7 @@ internal class ResourceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.resource_id", `is`("R123")))
             .andDocument {
                 responseFields<ResourceNotModifiable>(
-                    fieldWithPath("resource_id").description("The id of the resource."),
+                    fieldWithPath("resource_id").description("The id of the resource.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -56,7 +59,7 @@ internal class ResourceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.resource_id", `is`("R123")))
             .andDocument {
                 responseFields<ResourceNotFound>(
-                    fieldWithPath("resource_id").description("The id of the resource."),
+                    fieldWithPath("resource_id").description("The id of the resource.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -75,7 +78,7 @@ internal class ResourceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andDocument {
                 responseFields<ExternalResourceNotFound>(
                     fieldWithPath("resource_id").description("The id of the resource. (optional, either `resource_id` or `resource_uri` is present)").optional(),
-                    fieldWithPath("resource_uri").type("String").description("The uri of the resource. (optional, either `resource_id` or `resource_uri` is present)").optional(),
+                    fieldWithPath("resource_uri").type("String").description("The uri of the resource. (optional, either `resource_id` or `resource_uri` is present)").type<ParsedIRI>().optional(),
                     fieldWithPath("ontology_id").description("The id of the resource ontology."),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
@@ -95,7 +98,7 @@ internal class ResourceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andDocument {
                 responseFields<ExternalEntityIsNotAResource>(
                     fieldWithPath("entity_id").description("The id of the entity. (optional, either `entity_id` or `entity_uri` is present)").optional(),
-                    fieldWithPath("entity_uri").type("String").description("The uri of the entity. (optional, either `entity_id` or `entity_uri` is present)").optional(),
+                    fieldWithPath("entity_uri").type("String").description("The uri of the entity. (optional, either `entity_id` or `entity_uri` is present)").type<ParsedIRI>().optional(),
                     fieldWithPath("ontology_id").description("The id of the entity ontology."),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
@@ -113,7 +116,7 @@ internal class ResourceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.resource_id", `is`("R123")))
             .andDocument {
                 responseFields<ResourceInUse>(
-                    fieldWithPath("resource_id").description("The id of the resource."),
+                    fieldWithPath("resource_id").description("The id of the resource.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -130,7 +133,7 @@ internal class ResourceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.resource_id", `is`("R123")))
             .andDocument {
                 responseFields<ResourceAlreadyExists>(
-                    fieldWithPath("resource_id").description("The id of the resource."),
+                    fieldWithPath("resource_id").description("The id of the resource.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -148,7 +151,7 @@ internal class ResourceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.class_ids[0]", `is`("C123")))
             .andDocument {
                 responseFields<InvalidClassCollection>(
-                    fieldWithPath("class_ids").description("The list of invalid classes.").arrayItemsType("String"),
+                    fieldWithPath("class_ids[]").description("The list of invalid classes.").arrayItemsType("String").constraints(thingIdConstraint),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -165,7 +168,7 @@ internal class ResourceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.class_id", `is`(Classes.list.value)))
             .andDocument {
                 responseFields<ReservedClass>(
-                    fieldWithPath("class_id").description("The id of the class."),
+                    fieldWithPath("class_id").description("The id of the class.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }

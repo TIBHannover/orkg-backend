@@ -52,7 +52,6 @@ testing {
                 implementation("org.springframework:spring-test")
                 implementation("org.springframework.boot:spring-boot-test-autoconfigure")
                 implementation("org.springframework.restdocs:spring-restdocs-core")
-                implementation(project(":common:serialization"))
                 implementation(project(":graph:graph-core-constants"))
                 implementation(testFixtures(project(":common:testing")))
                 implementation(testFixtures(project(":data-import:data-import-core-model")))

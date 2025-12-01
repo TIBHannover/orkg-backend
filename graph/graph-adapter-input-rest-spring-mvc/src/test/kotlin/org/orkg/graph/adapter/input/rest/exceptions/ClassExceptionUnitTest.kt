@@ -4,7 +4,7 @@ import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.common.json.CommonJacksonModule
+import org.orkg.graph.adapter.input.rest.testing.fixtures.configuration.GraphControllerExceptionUnitTestConfiguration
 import org.orkg.graph.domain.CannotResetURI
 import org.orkg.graph.domain.ClassAlreadyExists
 import org.orkg.graph.domain.ClassNotFound
@@ -15,9 +15,9 @@ import org.orkg.graph.domain.ExternalEntityIsNotAClass
 import org.orkg.graph.domain.ReservedClassId
 import org.orkg.graph.domain.URIAlreadyInUse
 import org.orkg.graph.domain.URINotAbsolute
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
 import org.orkg.testing.spring.restdocs.exceptionResponseFields
+import org.orkg.testing.spring.restdocs.type
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.FORBIDDEN
@@ -27,7 +27,7 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
 @WebMvcTest
-@ContextConfiguration(classes = [CommonJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [GraphControllerExceptionUnitTestConfiguration::class])
 internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun classNotModifiable() {
@@ -40,7 +40,7 @@ internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.class_id").value("C123"))
             .andDocument {
                 responseFields<ClassNotModifiable>(
-                    fieldWithPath("class_id").description("The id of the class."),
+                    fieldWithPath("class_id").description("The id of the class.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -81,7 +81,7 @@ internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.class_id").value(Classes.list.value))
             .andDocument {
                 responseFields<ReservedClassId>(
-                    fieldWithPath("class_id").description("The id of the class."),
+                    fieldWithPath("class_id").description("The id of the class.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -98,7 +98,7 @@ internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.class_id").value(Classes.list.value))
             .andDocument {
                 responseFields<CannotResetURI>(
-                    fieldWithPath("class_id").description("The id of the class."),
+                    fieldWithPath("class_id").description("The id of the class.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -127,8 +127,8 @@ internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.class_id", `is`("C123")))
             .andDocument {
                 responseFields<ClassNotFound>(
-                    fieldWithPath("class_id").description("The id of the class. (optional, either `class_id` or `class_uri` is present)").optional(),
-                    fieldWithPath("class_uri").type("String").description("The uri of the class. (optional, either `class_id` or `class_uri` is present)").optional(),
+                    fieldWithPath("class_id").description("The id of the class. (optional, either `class_id` or `class_uri` is present)").type<ThingId>().optional(),
+                    fieldWithPath("class_uri").type("String").description("The uri of the class. (optional, either `class_id` or `class_uri` is present)").type<ParsedIRI>().optional(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -157,7 +157,7 @@ internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andDocument {
                 responseFields<ExternalClassNotFound>(
                     fieldWithPath("class_id").description("The id of the class. (optional, either `class_id` or `class_uri` is present)").optional(),
-                    fieldWithPath("class_uri").type("String").description("The uri of the class. (optional, either `class_id` or `class_uri` is present)").optional(),
+                    fieldWithPath("class_uri").type("String").description("The uri of the class. (optional, either `class_id` or `class_uri` is present)").type<ParsedIRI>().optional(),
                     fieldWithPath("ontology_id").description("The id of the class ontology."),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
@@ -177,7 +177,7 @@ internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andDocument {
                 responseFields<ExternalEntityIsNotAClass>(
                     fieldWithPath("entity_id").description("The id of the entity. (optional, either `entity_id` or `entity_uri` is present)").optional(),
-                    fieldWithPath("entity_uri").type("String").description("The uri of the entity. (optional, either `entity_id` or `entity_uri` is present)").optional(),
+                    fieldWithPath("entity_uri").type("String").description("The uri of the entity. (optional, either `entity_id` or `entity_uri` is present)").type<ParsedIRI>().optional(),
                     fieldWithPath("ontology_id").description("The id of the entity ontology."),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
@@ -195,7 +195,7 @@ internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.class_id", `is`("C123")))
             .andDocument {
                 responseFields<ReservedClassId>(
-                    fieldWithPath("class_id").description("The id of the class."),
+                    fieldWithPath("class_id").description("The id of the class.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }

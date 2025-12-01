@@ -2,7 +2,6 @@ package org.orkg.contenttypes.adapter.input.rest.exceptions
 
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.common.json.CommonJacksonModule
 import org.orkg.contenttypes.domain.CannotDeleteIndividualRosettaStoneStatementVersion
 import org.orkg.contenttypes.domain.MissingInputPositions
 import org.orkg.contenttypes.domain.MissingObjectPositionValue
@@ -18,9 +17,10 @@ import org.orkg.contenttypes.domain.RosettaStoneStatementVersionNotFound
 import org.orkg.contenttypes.domain.TooManyInputPositions
 import org.orkg.contenttypes.domain.TooManyObjectPositionValues
 import org.orkg.contenttypes.domain.TooManySubjectPositionValues
-import org.orkg.testing.configuration.FixedClockConfig
+import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerExceptionUnitTestConfiguration
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
 import org.orkg.testing.spring.restdocs.exceptionResponseFields
+import org.orkg.testing.spring.restdocs.type
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.FORBIDDEN
@@ -30,7 +30,7 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
 @WebMvcTest
-@ContextConfiguration(classes = [CommonJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [ContentTypeControllerExceptionUnitTestConfiguration::class])
 internal class RosettaStoneStatementExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun tooManyInputPositions() {
@@ -45,9 +45,9 @@ internal class RosettaStoneStatementExceptionUnitTest : MockMvcExceptionBaseTest
             .andExpect(jsonPath("$.actual_input_position_count").value("10"))
             .andDocument {
                 responseFields<TooManyInputPositions>(
-                    fieldWithPath("rosetta_stone_template_id").description("The id of the rosetta stone template."),
-                    fieldWithPath("expected_input_position_count").description("The expected number of input positions."),
-                    fieldWithPath("actual_input_position_count").description("The actual number of input positions."),
+                    fieldWithPath("rosetta_stone_template_id").description("The id of the rosetta stone template.").type<ThingId>(),
+                    fieldWithPath("expected_input_position_count").description("The expected number of input positions.").type<Int>(),
+                    fieldWithPath("actual_input_position_count").description("The actual number of input positions.").type<Int>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -66,9 +66,9 @@ internal class RosettaStoneStatementExceptionUnitTest : MockMvcExceptionBaseTest
             .andExpect(jsonPath("$.actual_input_position_count").value("2"))
             .andDocument {
                 responseFields<MissingInputPositions>(
-                    fieldWithPath("rosetta_stone_template_id").description("The id of the rosetta stone template."),
-                    fieldWithPath("expected_input_position_count").description("The expected number of input positions."),
-                    fieldWithPath("actual_input_position_count").description("The actual number of input positions."),
+                    fieldWithPath("rosetta_stone_template_id").description("The id of the rosetta stone template.").type<ThingId>(),
+                    fieldWithPath("expected_input_position_count").description("The expected number of input positions.").type<Int>(),
+                    fieldWithPath("actual_input_position_count").description("The actual number of input positions.").type<Int>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -85,7 +85,7 @@ internal class RosettaStoneStatementExceptionUnitTest : MockMvcExceptionBaseTest
             .andExpect(jsonPath("$.rosetta_stone_statement_id").value("R123"))
             .andDocument {
                 responseFields<RosettaStoneStatementNotModifiable>(
-                    fieldWithPath("rosetta_stone_statement_id").description("The id of the rosetta stone statement."),
+                    fieldWithPath("rosetta_stone_statement_id").description("The id of the rosetta stone statement.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -102,7 +102,7 @@ internal class RosettaStoneStatementExceptionUnitTest : MockMvcExceptionBaseTest
             .andExpect(jsonPath("$.rosetta_stone_statement_id").value("R123"))
             .andDocument {
                 responseFields<RosettaStoneStatementNotFound>(
-                    fieldWithPath("rosetta_stone_statement_id").description("The id of the rosetta stone statement."),
+                    fieldWithPath("rosetta_stone_statement_id").description("The id of the rosetta stone statement.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -119,7 +119,7 @@ internal class RosettaStoneStatementExceptionUnitTest : MockMvcExceptionBaseTest
             .andExpect(jsonPath("$.rosetta_stone_statement_version_id").value("R123"))
             .andDocument {
                 responseFields<RosettaStoneStatementVersionNotFound>(
-                    fieldWithPath("rosetta_stone_statement_version_id").description("The id of the rosetta stone statement version."),
+                    fieldWithPath("rosetta_stone_statement_version_id").description("The id of the rosetta stone statement version.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -136,7 +136,7 @@ internal class RosettaStoneStatementExceptionUnitTest : MockMvcExceptionBaseTest
             .andExpect(jsonPath("$.rosetta_stone_statement_version_id").value("R123"))
             .andDocument {
                 responseFields<CannotDeleteIndividualRosettaStoneStatementVersion>(
-                    fieldWithPath("rosetta_stone_statement_version_id").description("The id of the rosetta stone statement version."),
+                    fieldWithPath("rosetta_stone_statement_version_id").description("The id of the rosetta stone statement version.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -153,7 +153,7 @@ internal class RosettaStoneStatementExceptionUnitTest : MockMvcExceptionBaseTest
             .andExpect(jsonPath("$.rosetta_stone_statement_id").value("R123"))
             .andDocument {
                 responseFields<RosettaStoneStatementInUse>(
-                    fieldWithPath("rosetta_stone_statement_id").description("The id of the rosetta stone statement."),
+                    fieldWithPath("rosetta_stone_statement_id").description("The id of the rosetta stone statement.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -170,8 +170,8 @@ internal class RosettaStoneStatementExceptionUnitTest : MockMvcExceptionBaseTest
             .andExpect(jsonPath("$.rosetta_stone_statement_id").value("R123"))
             .andDocument {
                 responseFields<NestedRosettaStoneStatement>(
-                    fieldWithPath("rosetta_stone_statement_id").description("The id of the nested rosetta stone statement."),
-                    fieldWithPath("input_position_index").description("The index of the input position."),
+                    fieldWithPath("rosetta_stone_statement_id").description("The id of the nested rosetta stone statement.").type<ThingId>(),
+                    fieldWithPath("input_position_index").description("The index of the input position.").type<Int>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -191,8 +191,8 @@ internal class RosettaStoneStatementExceptionUnitTest : MockMvcExceptionBaseTest
             .andDocument {
                 responseFields<MissingSubjectPositionValue>(
                     fieldWithPath("input_position_placeholder").description("The placeholder of the subject position."),
-                    fieldWithPath("input_position_index").description("The index of the input position. Always `0`."),
-                    fieldWithPath("min_count").description("The minimum count of subject position values."),
+                    fieldWithPath("input_position_index").description("The index of the input position. Always `0`.").type<Int>(),
+                    fieldWithPath("min_count").description("The minimum count of subject position values.").type<Int>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -212,8 +212,8 @@ internal class RosettaStoneStatementExceptionUnitTest : MockMvcExceptionBaseTest
             .andDocument {
                 responseFields<MissingObjectPositionValue>(
                     fieldWithPath("input_position_placeholder").description("The placeholder of the object position."),
-                    fieldWithPath("input_position_index").description("The index of the input position."),
-                    fieldWithPath("min_count").description("The minimum count of object position values."),
+                    fieldWithPath("input_position_index").description("The index of the input position.").type<Int>(),
+                    fieldWithPath("min_count").description("The minimum count of object position values.").type<Int>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -233,8 +233,8 @@ internal class RosettaStoneStatementExceptionUnitTest : MockMvcExceptionBaseTest
             .andDocument {
                 responseFields<TooManySubjectPositionValues>(
                     fieldWithPath("input_position_placeholder").description("The placeholder of the subject position."),
-                    fieldWithPath("input_position_index").description("The index of the input position. Always `0`."),
-                    fieldWithPath("max_count").description("The maximum count of subject position values."),
+                    fieldWithPath("input_position_index").description("The index of the input position. Always `0`.").type<Int>(),
+                    fieldWithPath("max_count").description("The maximum count of subject position values.").type<Int>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -254,8 +254,8 @@ internal class RosettaStoneStatementExceptionUnitTest : MockMvcExceptionBaseTest
             .andDocument {
                 responseFields<TooManyObjectPositionValues>(
                     fieldWithPath("input_position_placeholder").description("The placeholder of the object position."),
-                    fieldWithPath("input_position_index").description("The index of the input position."),
-                    fieldWithPath("max_count").description("The maximum count of object position values."),
+                    fieldWithPath("input_position_index").description("The index of the input position.").type<Int>(),
+                    fieldWithPath("max_count").description("The maximum count of object position values.").type<Int>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -277,9 +277,9 @@ internal class RosettaStoneStatementExceptionUnitTest : MockMvcExceptionBaseTest
             .andDocument {
                 responseFields<ObjectPositionValueDoesNotMatchPattern>(
                     fieldWithPath("input_position_placeholder").description("The placeholder of the object position."),
-                    fieldWithPath("input_position_index").description("The index of the object position."),
+                    fieldWithPath("input_position_index").description("The index of the object position.").type<Int>(),
                     fieldWithPath("input").description("The input provided for the object position."),
-                    fieldWithPath("input_index").description("The index of the input within the input position."),
+                    fieldWithPath("input_index").description("The index of the input within the input position.").type<Int>(),
                     fieldWithPath("regex_pattern").description("The pattern of the regular expression the input has to match."),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
@@ -302,9 +302,9 @@ internal class RosettaStoneStatementExceptionUnitTest : MockMvcExceptionBaseTest
             .andDocument {
                 responseFields<ObjectPositionValueTooLow>(
                     fieldWithPath("input_position_placeholder").description("The placeholder of the object position."),
-                    fieldWithPath("input_position_index").description("The index of the object position."),
+                    fieldWithPath("input_position_index").description("The index of the object position.").type<Int>(),
                     fieldWithPath("input").description("The input provided for the object position."),
-                    fieldWithPath("input_index").description("The index of the input within the input position."),
+                    fieldWithPath("input_index").description("The index of the input within the input position.").type<Int>(),
                     fieldWithPath("min_inclusive").description("The minimum value the input can have."),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
@@ -327,9 +327,9 @@ internal class RosettaStoneStatementExceptionUnitTest : MockMvcExceptionBaseTest
             .andDocument {
                 responseFields<ObjectPositionValueTooHigh>(
                     fieldWithPath("input_position_placeholder").description("The placeholder of the object position."),
-                    fieldWithPath("input_position_index").description("The index of the object position."),
+                    fieldWithPath("input_position_index").description("The index of the object position.").type<Int>(),
                     fieldWithPath("input").description("The input provided for the object position."),
-                    fieldWithPath("input_index").description("The index of the input within the input position."),
+                    fieldWithPath("input_index").description("The index of the input within the input position.").type<Int>(),
                     fieldWithPath("max_inclusive").description("The maximum value the input can have."),
                     *exceptionResponseFields(type).toTypedArray(),
                 )

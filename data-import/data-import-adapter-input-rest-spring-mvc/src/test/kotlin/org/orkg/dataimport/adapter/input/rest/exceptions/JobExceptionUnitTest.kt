@@ -1,7 +1,6 @@
 package org.orkg.dataimport.adapter.input.rest.exceptions
 
 import org.junit.jupiter.api.Test
-import org.orkg.dataimport.adapter.input.rest.json.DataImportJacksonModule
 import org.orkg.dataimport.domain.JobAlreadyComplete
 import org.orkg.dataimport.domain.JobAlreadyRunning
 import org.orkg.dataimport.domain.JobException
@@ -11,10 +10,12 @@ import org.orkg.dataimport.domain.JobNotRunning
 import org.orkg.dataimport.domain.JobRestartFailed
 import org.orkg.dataimport.domain.JobResultNotFound
 import org.orkg.dataimport.domain.jobs.JobId
-import org.orkg.testing.configuration.FixedClockConfig
+import org.orkg.dataimport.testing.fixtures.configuration.DataImportControllerExceptionUnitTestConfiguration
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
+import org.orkg.testing.spring.restdocs.arrayItemsType
 import org.orkg.testing.spring.restdocs.exceptionResponseFields
 import org.orkg.testing.spring.restdocs.exceptionResponseFieldsWithoutDetail
+import org.orkg.testing.spring.restdocs.type
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
@@ -25,7 +26,7 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
 @WebMvcTest
-@ContextConfiguration(classes = [DataImportJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [DataImportControllerExceptionUnitTestConfiguration::class])
 internal class JobExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun jobException() {
@@ -37,7 +38,7 @@ internal class JobExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.errors").isArray)
             .andDocument {
                 responseFields<JobException>(
-                    subsectionWithPath("errors[]").description("A list of RFC 9457 problem details."),
+                    subsectionWithPath("errors[]").description("A list of RFC 9457 problem details.").arrayItemsType("object"),
                     *exceptionResponseFieldsWithoutDetail(type).toTypedArray(),
                 )
             }
@@ -54,7 +55,7 @@ internal class JobExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.job_id").value("1"))
             .andDocument {
                 responseFields<JobNotFound>(
-                    fieldWithPath("job_id").description("The id of the job."),
+                    fieldWithPath("job_id").description("The id of the job.").type<JobId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -71,7 +72,7 @@ internal class JobExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.job_id").value("1"))
             .andDocument {
                 responseFields<JobResultNotFound>(
-                    fieldWithPath("job_id").description("The id of the job."),
+                    fieldWithPath("job_id").description("The id of the job.").type<JobId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -88,7 +89,7 @@ internal class JobExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.job_id").value("1"))
             .andDocument {
                 responseFields<JobNotComplete>(
-                    fieldWithPath("job_id").description("The id of the job."),
+                    fieldWithPath("job_id").description("The id of the job.").type<JobId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -105,7 +106,7 @@ internal class JobExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.job_id").value("1"))
             .andDocument {
                 responseFields<JobNotRunning>(
-                    fieldWithPath("job_id").description("The id of the job."),
+                    fieldWithPath("job_id").description("The id of the job.").type<JobId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -122,7 +123,7 @@ internal class JobExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.job_id").value("1"))
             .andDocument {
                 responseFields<JobAlreadyRunning>(
-                    fieldWithPath("job_id").description("The id of the job."),
+                    fieldWithPath("job_id").description("The id of the job.").type<JobId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -139,7 +140,7 @@ internal class JobExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.job_id").value("1"))
             .andDocument {
                 responseFields<JobAlreadyComplete>(
-                    fieldWithPath("job_id").description("The id of the job."),
+                    fieldWithPath("job_id").description("The id of the job.").type<JobId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -156,7 +157,7 @@ internal class JobExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.job_id").value("1"))
             .andDocument {
                 responseFields<JobRestartFailed>(
-                    fieldWithPath("job_id").description("The id of the job."),
+                    fieldWithPath("job_id").description("The id of the job.").type<JobId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }

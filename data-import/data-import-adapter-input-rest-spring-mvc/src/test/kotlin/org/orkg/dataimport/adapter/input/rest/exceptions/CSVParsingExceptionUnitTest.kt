@@ -2,7 +2,6 @@ package org.orkg.dataimport.adapter.input.rest.exceptions
 
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.common.json.CommonJacksonModule
 import org.orkg.dataimport.domain.BlankCSVHeaderValue
 import org.orkg.dataimport.domain.DuplicateCSVHeaders
 import org.orkg.dataimport.domain.EmptyCSVHeader
@@ -12,18 +11,20 @@ import org.orkg.dataimport.domain.UnexpectedCSVValueType
 import org.orkg.dataimport.domain.UnknownCSVNamespace
 import org.orkg.dataimport.domain.UnknownCSVNamespaceValue
 import org.orkg.dataimport.domain.UnknownCSVValueType
-import org.orkg.testing.configuration.FixedClockConfig
+import org.orkg.dataimport.testing.fixtures.configuration.DataImportControllerExceptionUnitTestConfiguration
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
+import org.orkg.testing.spring.restdocs.arrayItemsType
 import org.orkg.testing.spring.restdocs.exceptionResponseFields
+import org.orkg.testing.spring.restdocs.format
+import org.orkg.testing.spring.restdocs.type
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
 @WebMvcTest
-@ContextConfiguration(classes = [CommonJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [DataImportControllerExceptionUnitTestConfiguration::class])
 internal class CSVParsingExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun duplicateCSVHeaders() {
@@ -39,7 +40,9 @@ internal class CSVParsingExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.csv_headers.duplicate_header_name[1]").value(2))
             .andDocument {
                 responseFields<DuplicateCSVHeaders>(
-                    subsectionWithPath("csv_headers").description("A mapping of header names to column indexes."),
+                    fieldWithPath("csv_headers").description("A key-value map of header names to column indexes."),
+                    fieldWithPath("csv_headers.*").description("The list of column indexes."),
+                    fieldWithPath("csv_headers.*[]").description("The list of column indexes.").arrayItemsType("integer").format("int64"),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -56,7 +59,7 @@ internal class CSVParsingExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.csv_column").value("2"))
             .andDocument {
                 responseFields<BlankCSVHeaderValue>(
-                    fieldWithPath("csv_column").description("The column of the CSV."),
+                    fieldWithPath("csv_column").description("The column index of the CSV.").type<Long>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -89,8 +92,8 @@ internal class CSVParsingExceptionUnitTest : MockMvcExceptionBaseTest() {
                 responseFields<UnknownCSVNamespace>(
                     fieldWithPath("csv_namespace").description("The namespace of the value."),
                     fieldWithPath("csv_value").description("The value of the cell."),
-                    fieldWithPath("csv_row").description("The row of the CSV."),
-                    fieldWithPath("csv_column").description("The column of the CSV."),
+                    fieldWithPath("csv_row").description("The row of the CSV.").type<Long>(),
+                    fieldWithPath("csv_column").description("The column of the CSV.").type<Long>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -112,8 +115,8 @@ internal class CSVParsingExceptionUnitTest : MockMvcExceptionBaseTest() {
                 responseFields<UnknownCSVNamespaceValue>(
                     fieldWithPath("csv_namespace").description("The namespace of the value."),
                     fieldWithPath("csv_value").description("The value of the cell."),
-                    fieldWithPath("csv_row").description("The row of the CSV."),
-                    fieldWithPath("csv_column").description("The column of the CSV."),
+                    fieldWithPath("csv_row").description("The row of the CSV.").type<Long>(),
+                    fieldWithPath("csv_column").description("The column of the CSV.").type<Long>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -133,10 +136,10 @@ internal class CSVParsingExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.csv_column").value("2"))
             .andDocument {
                 responseFields<UnexpectedCSVValueType>(
-                    fieldWithPath("actual_csv_cell_value_type").description("The actual data type of the value."),
-                    fieldWithPath("expected_csv_cell_value_type").description("The expected data type of the value."),
-                    fieldWithPath("csv_row").description("The row of the CSV."),
-                    fieldWithPath("csv_column").description("The column of the CSV."),
+                    fieldWithPath("actual_csv_cell_value_type").description("The actual data type of the value.").type<ThingId>(),
+                    fieldWithPath("expected_csv_cell_value_type").description("The expected data type of the value.").type<ThingId>(),
+                    fieldWithPath("csv_row").description("The row of the CSV.").type<Long>(),
+                    fieldWithPath("csv_column").description("The column of the CSV.").type<Long>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -156,8 +159,8 @@ internal class CSVParsingExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andDocument {
                 responseFields<UnknownCSVValueType>(
                     fieldWithPath("csv_cell_value_type").description("The data type of the value."),
-                    fieldWithPath("csv_row").description("The row of the CSV."),
-                    fieldWithPath("csv_column").description("The column of the CSV."),
+                    fieldWithPath("csv_row").description("The row of the CSV.").type<Long>(),
+                    fieldWithPath("csv_column").description("The column of the CSV.").type<Long>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -176,9 +179,9 @@ internal class CSVParsingExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.csv_row").value("4"))
             .andDocument {
                 responseFields<InconsistentCSVColumnCount>(
-                    fieldWithPath("actual_csv_column_count").description("The actual count of column values in the row."),
-                    fieldWithPath("expected_csv_column_count").description("The expected count of column values in the row."),
-                    fieldWithPath("csv_row").description("The row of the CSV."),
+                    fieldWithPath("actual_csv_column_count").description("The actual count of column values in the row.").type<Int>(),
+                    fieldWithPath("expected_csv_column_count").description("The expected count of column values in the row.").type<Int>(),
+                    fieldWithPath("csv_row").description("The row of the CSV.").type<Long>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -199,8 +202,8 @@ internal class CSVParsingExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andDocument {
                 responseFields<InvalidCSVValue>(
                     fieldWithPath("csv_cell_value").description("The value of the cell."),
-                    fieldWithPath("csv_row").description("The row of the CSV."),
-                    fieldWithPath("csv_column").description("The column of the CSV."),
+                    fieldWithPath("csv_row").description("The row of the CSV.").type<Long>(),
+                    fieldWithPath("csv_column").description("The column of the CSV.").type<Long>(),
                     fieldWithPath("reason").description("The reason why the value is invalid."),
                     *exceptionResponseFields(type).toTypedArray(),
                 )

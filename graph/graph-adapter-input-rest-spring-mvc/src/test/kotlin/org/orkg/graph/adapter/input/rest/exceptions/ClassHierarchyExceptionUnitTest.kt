@@ -3,12 +3,12 @@ package org.orkg.graph.adapter.input.rest.exceptions
 import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.common.json.CommonJacksonModule
+import org.orkg.graph.adapter.input.rest.testing.fixtures.configuration.GraphControllerExceptionUnitTestConfiguration
 import org.orkg.graph.domain.InvalidSubclassRelation
 import org.orkg.graph.domain.ParentClassAlreadyExists
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
 import org.orkg.testing.spring.restdocs.exceptionResponseFields
+import org.orkg.testing.spring.restdocs.type
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
@@ -16,7 +16,7 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
 @WebMvcTest
-@ContextConfiguration(classes = [CommonJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [GraphControllerExceptionUnitTestConfiguration::class])
 internal class ClassHierarchyExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun classNotModifiable() {
@@ -30,8 +30,8 @@ internal class ClassHierarchyExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.parent_class_id", `is`("C456")))
             .andDocument {
                 responseFields<InvalidSubclassRelation>(
-                    fieldWithPath("class_id").description("The id of the class."),
-                    fieldWithPath("parent_class_id").description("The id of the parent class."),
+                    fieldWithPath("class_id").description("The id of the class.").type<ThingId>(),
+                    fieldWithPath("parent_class_id").description("The id of the parent class.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -49,8 +49,8 @@ internal class ClassHierarchyExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.parent_class_id", `is`("C456")))
             .andDocument {
                 responseFields<ParentClassAlreadyExists>(
-                    fieldWithPath("class_id").description("The id of the class."),
-                    fieldWithPath("parent_class_id").description("The id of the parent class."),
+                    fieldWithPath("class_id").description("The id of the class.").type<ThingId>(),
+                    fieldWithPath("parent_class_id").description("The id of the parent class.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }

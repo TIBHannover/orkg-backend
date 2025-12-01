@@ -1,7 +1,6 @@
 package org.orkg.dataimport.adapter.input.rest.exceptions
 
 import org.junit.jupiter.api.Test
-import org.orkg.dataimport.adapter.input.rest.json.DataImportJacksonModule
 import org.orkg.dataimport.domain.CSVAlreadyExists
 import org.orkg.dataimport.domain.CSVAlreadyImported
 import org.orkg.dataimport.domain.CSVAlreadyValidated
@@ -16,9 +15,10 @@ import org.orkg.dataimport.domain.CSVValidationJobNotFound
 import org.orkg.dataimport.domain.CSVValidationRestartFailed
 import org.orkg.dataimport.domain.csv.CSVID
 import org.orkg.dataimport.domain.jobs.JobId
-import org.orkg.testing.configuration.FixedClockConfig
+import org.orkg.dataimport.testing.fixtures.configuration.DataImportControllerExceptionUnitTestConfiguration
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
 import org.orkg.testing.spring.restdocs.exceptionResponseFields
+import org.orkg.testing.spring.restdocs.type
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
@@ -27,7 +27,7 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
 @WebMvcTest
-@ContextConfiguration(classes = [DataImportJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [DataImportControllerExceptionUnitTestConfiguration::class])
 internal class CSVExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun csvAlreadyExists() {
@@ -62,7 +62,7 @@ internal class CSVExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.csv_id").value("6d57f7fd-5f34-4f1a-985d-affc3e22194b"))
             .andDocument {
                 responseFields<CSVNotFound>(
-                    fieldWithPath("csv_id").description("The id of the CSV."),
+                    fieldWithPath("csv_id").description("The id of the CSV.").type<CSVID>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -80,8 +80,8 @@ internal class CSVExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.job_id").value("1"))
             .andDocument {
                 responseFields<CSVValidationJobNotFound>(
-                    fieldWithPath("csv_id").description("The id of the CSV."),
-                    fieldWithPath("job_id").description("The id of the job."),
+                    fieldWithPath("csv_id").description("The id of the CSV.").type<CSVID>(),
+                    fieldWithPath("job_id").description("The id of the job.").type<JobId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -99,8 +99,8 @@ internal class CSVExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.job_id").value("1"))
             .andDocument {
                 responseFields<CSVImportJobNotFound>(
-                    fieldWithPath("csv_id").description("The id of the CSV."),
-                    fieldWithPath("job_id").description("The id of the job."),
+                    fieldWithPath("csv_id").description("The id of the CSV.").type<CSVID>(),
+                    fieldWithPath("job_id").description("The id of the job.").type<JobId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -117,7 +117,7 @@ internal class CSVExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.csv_id").value("6d57f7fd-5f34-4f1a-985d-affc3e22194b"))
             .andDocument {
                 responseFields<CSVAlreadyValidated>(
-                    fieldWithPath("csv_id").description("The id of the CSV."),
+                    fieldWithPath("csv_id").description("The id of the CSV.").type<CSVID>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -134,7 +134,7 @@ internal class CSVExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.csv_id").value("6d57f7fd-5f34-4f1a-985d-affc3e22194b"))
             .andDocument {
                 responseFields<CSVValidationAlreadyRunning>(
-                    fieldWithPath("csv_id").description("The id of the CSV."),
+                    fieldWithPath("csv_id").description("The id of the CSV.").type<CSVID>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }

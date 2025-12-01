@@ -3,8 +3,7 @@ package org.orkg.graph.adapter.input.rest.exceptions
 import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.common.json.CommonJacksonModule
-import org.orkg.graph.adapter.input.rest.json.GraphJacksonModule
+import org.orkg.graph.adapter.input.rest.testing.fixtures.configuration.GraphControllerExceptionUnitTestConfiguration
 import org.orkg.graph.domain.InvalidStatement
 import org.orkg.graph.domain.StatementAlreadyExists
 import org.orkg.graph.domain.StatementId
@@ -14,9 +13,9 @@ import org.orkg.graph.domain.StatementNotModifiable
 import org.orkg.graph.domain.StatementObjectNotFound
 import org.orkg.graph.domain.StatementPredicateNotFound
 import org.orkg.graph.domain.StatementSubjectNotFound
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
 import org.orkg.testing.spring.restdocs.exceptionResponseFields
+import org.orkg.testing.spring.restdocs.type
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.FORBIDDEN
@@ -26,7 +25,7 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
 @WebMvcTest
-@ContextConfiguration(classes = [CommonJacksonModule::class, GraphJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [GraphControllerExceptionUnitTestConfiguration::class])
 internal class StatementExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun statementNotModifiable() {
@@ -39,7 +38,7 @@ internal class StatementExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.statement_id", `is`("S123")))
             .andDocument {
                 responseFields<StatementNotModifiable>(
-                    fieldWithPath("statement_id").description("The id of the statement."),
+                    fieldWithPath("statement_id").description("The id of the statement.").type<StatementId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -85,7 +84,7 @@ internal class StatementExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.statement_id", `is`("S123")))
             .andDocument {
                 responseFields<StatementAlreadyExists>(
-                    fieldWithPath("statement_id").description("The id of the statement."),
+                    fieldWithPath("statement_id").description("The id of the statement.").type<StatementId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -102,7 +101,7 @@ internal class StatementExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.statement_id", `is`("S123")))
             .andDocument {
                 responseFields<StatementNotFound>(
-                    fieldWithPath("statement_id").description("The id of the statement."),
+                    fieldWithPath("statement_id").description("The id of the statement.").type<StatementId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -119,7 +118,7 @@ internal class StatementExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.subject_id", `is`("R123")))
             .andDocument {
                 responseFields<StatementSubjectNotFound>(
-                    fieldWithPath("subject_id").description("The id of the subject."),
+                    fieldWithPath("subject_id").description("The id of the subject.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -136,7 +135,7 @@ internal class StatementExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.predicate_id", `is`("P123")))
             .andDocument {
                 responseFields<StatementPredicateNotFound>(
-                    fieldWithPath("predicate_id").description("The id of the predicate."),
+                    fieldWithPath("predicate_id").description("The id of the predicate.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -153,7 +152,7 @@ internal class StatementExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.object_id", `is`("R123")))
             .andDocument {
                 responseFields<StatementObjectNotFound>(
-                    fieldWithPath("object_id").description("The id of the object."),
+                    fieldWithPath("object_id").description("The id of the object.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }

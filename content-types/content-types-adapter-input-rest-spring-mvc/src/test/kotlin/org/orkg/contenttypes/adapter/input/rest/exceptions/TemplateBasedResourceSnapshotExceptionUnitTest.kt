@@ -1,12 +1,12 @@
 package org.orkg.contenttypes.adapter.input.rest.exceptions
 
 import org.junit.jupiter.api.Test
-import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
 import org.orkg.contenttypes.domain.SnapshotId
 import org.orkg.contenttypes.domain.TemplateBasedResourceSnapshotNotFound
-import org.orkg.testing.configuration.FixedClockConfig
+import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerExceptionUnitTestConfiguration
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
 import org.orkg.testing.spring.restdocs.exceptionResponseFields
+import org.orkg.testing.spring.restdocs.type
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
@@ -14,7 +14,7 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
 @WebMvcTest
-@ContextConfiguration(classes = [ContentTypeJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [ContentTypeControllerExceptionUnitTestConfiguration::class])
 internal class TemplateBasedResourceSnapshotExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun templateBasedResourceSnapshotNotFound() {
@@ -27,7 +27,7 @@ internal class TemplateBasedResourceSnapshotExceptionUnitTest : MockMvcException
             .andExpect(jsonPath("$.template_based_resource_snapshot_id").value("R123"))
             .andDocument {
                 responseFields<TemplateBasedResourceSnapshotNotFound>(
-                    fieldWithPath("template_based_resource_snapshot_id").description("The id of the template based resource snapshot."),
+                    fieldWithPath("template_based_resource_snapshot_id").description("The id of the template based resource snapshot.").type<SnapshotId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }

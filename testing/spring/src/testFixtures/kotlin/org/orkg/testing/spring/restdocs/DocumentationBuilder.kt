@@ -288,11 +288,13 @@ class DocumentationBuilder(private val documentationContext: DocumentationContex
     }
 
     private fun FieldDescriptor.enhance(enclosingClass: KClass<*>): FieldDescriptor {
-        val propertyPath = PropertyPathResolver.resolve(path, enclosingClass) ?: return this
-        val jType = propertyPath.fieldType
+        val propertyPath = PropertyPathResolver.resolve(path, enclosingClass)
+        val jType = propertyPath?.fieldType
+            ?: type as? Class<*>
+            ?: return this
         val kType = jType.kotlin
         val constraints = mutableListOf<Constraint>()
-        if (propertyPath.fieldName != null) {
+        if (propertyPath?.fieldName != null) {
             constraints += validatorConstraintResolver.resolveForProperty(propertyPath.fieldName, propertyPath.enclosingClass)
         }
         documentationContext.applyConstraints(constraints, kType)
@@ -300,11 +302,11 @@ class DocumentationBuilder(private val documentationContext: DocumentationContex
         if (!attributes.contains("schemaName")) {
             if (isExternalType(jType)) {
                 references(kType)
-            } else if (path.isWildCard(jType) && propertyPath.typeArgument != null && isExternalType(propertyPath.typeArgument)) {
+            } else if (path.isWildCard(jType) && propertyPath?.typeArgument != null && isExternalType(propertyPath.typeArgument)) {
                 references(propertyPath.typeArgument.kotlin)
             }
         }
-        if (!attributes.contains("itemsType") && jType.isArrayOrIterable() && propertyPath.typeArgument != null) {
+        if (!attributes.contains("itemsType") && jType.isArrayOrIterable() && propertyPath?.typeArgument != null) {
             val jItemsType = propertyPath.typeArgument
             if (jItemsType.isArrayOrIterable()) {
                 arrayItemsType("array")
@@ -333,7 +335,9 @@ class DocumentationBuilder(private val documentationContext: DocumentationContex
         if (constraints.isNotEmpty()) {
             constraints(constraints)
         }
-        if (type == null && (kType == Long::class || kType == Int::class)) {
+        if (type is Class<*>) {
+            type(documentationContext.resolveTypeName(kType))
+        } else if (type == null && (kType == Long::class || kType == Int::class)) {
             type("integer")
         }
         return this

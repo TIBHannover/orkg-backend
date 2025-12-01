@@ -2,15 +2,14 @@ package org.orkg.dataimport.adapter.input.rest.exceptions
 
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.common.json.CommonJacksonModule
-import org.orkg.dataimport.adapter.input.rest.json.DataImportJacksonModule
 import org.orkg.dataimport.domain.PaperCSVMissingResearchField
 import org.orkg.dataimport.domain.PaperCSVMissingTitle
 import org.orkg.dataimport.domain.PaperCSVResourceNotFound
 import org.orkg.dataimport.domain.PaperCSVThingNotFound
-import org.orkg.testing.configuration.FixedClockConfig
+import org.orkg.dataimport.testing.fixtures.configuration.DataImportControllerExceptionUnitTestConfiguration
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
 import org.orkg.testing.spring.restdocs.exceptionResponseFields
+import org.orkg.testing.spring.restdocs.type
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
@@ -18,7 +17,7 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
 @WebMvcTest
-@ContextConfiguration(classes = [DataImportJacksonModule::class, CommonJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [DataImportControllerExceptionUnitTestConfiguration::class])
 internal class PaperCSVExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun paperCSVMissingTitle() {
@@ -32,8 +31,8 @@ internal class PaperCSVExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.line_number").value("2"))
             .andDocument {
                 responseFields<PaperCSVMissingTitle>(
-                    fieldWithPath("item_number").description("The number of the paper within the CSV."),
-                    fieldWithPath("line_number").description("The line within the CSV."),
+                    fieldWithPath("item_number").description("The number of the paper within the CSV.").type<Long>(),
+                    fieldWithPath("line_number").description("The line within the CSV.").type<Long>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -51,8 +50,8 @@ internal class PaperCSVExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.line_number").value("2"))
             .andDocument {
                 responseFields<PaperCSVMissingResearchField>(
-                    fieldWithPath("item_number").description("The number of the paper within the CSV."),
-                    fieldWithPath("line_number").description("The line within the CSV."),
+                    fieldWithPath("item_number").description("The number of the paper within the CSV.").type<Long>(),
+                    fieldWithPath("line_number").description("The line within the CSV.").type<Long>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -72,10 +71,10 @@ internal class PaperCSVExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.csv_column").value("4"))
             .andDocument {
                 responseFields<PaperCSVResourceNotFound>(
-                    fieldWithPath("resource_id").description("The id of the resource."),
-                    fieldWithPath("item_number").description("The number of the paper within the CSV."),
-                    fieldWithPath("line_number").description("The line within the CSV."),
-                    fieldWithPath("csv_column").description("The column of the CSV."),
+                    fieldWithPath("resource_id").description("The id of the resource.").type<ThingId>(),
+                    fieldWithPath("item_number").description("The number of the paper within the CSV.").type<Long>(),
+                    fieldWithPath("line_number").description("The line within the CSV.").type<Long>(),
+                    fieldWithPath("csv_column").description("The column of the CSV.").type<Long>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -95,10 +94,10 @@ internal class PaperCSVExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.csv_column").value("4"))
             .andDocument {
                 responseFields<PaperCSVThingNotFound>(
-                    fieldWithPath("thing_id").description("The id of the thing."),
-                    fieldWithPath("item_number").description("The number of the paper within the CSV."),
-                    fieldWithPath("line_number").description("The line within the CSV."),
-                    fieldWithPath("csv_column").description("The column of the CSV."),
+                    fieldWithPath("thing_id").description("The id of the thing.").type<ThingId>(),
+                    fieldWithPath("item_number").description("The number of the paper within the CSV.").type<Long>(),
+                    fieldWithPath("line_number").description("The line within the CSV.").type<Long>(),
+                    fieldWithPath("csv_column").description("The column of the CSV.").type<Long>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }

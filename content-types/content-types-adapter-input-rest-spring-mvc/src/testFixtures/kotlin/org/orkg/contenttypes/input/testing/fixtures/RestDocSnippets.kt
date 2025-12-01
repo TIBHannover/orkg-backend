@@ -33,7 +33,7 @@ import org.springframework.restdocs.payload.PayloadDocumentation.applyPathPrefix
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 
-fun authorListFields(type: String, path: String = "authors", optional: Boolean = false): List<FieldDescriptor> = listOf(
+fun authorListFields(type: String, path: String = "authors", optional: Boolean = false) = listOf(
     fieldWithPath(path).description("The list of authors that originally contributed to the $type.").also { if (optional) it.optional() },
     fieldWithPath("$path[].id").type("String").description("The ID of the author. (optional)").optional(),
     fieldWithPath("$path[].name").description("The name of the author."),
@@ -48,7 +48,7 @@ fun authorListFields(type: String, path: String = "authors", optional: Boolean =
     fieldWithPath("$path[].homepage").type("String").description("The homepage of the author. (optional)").optional(),
 )
 
-fun paperIdentifierFields(path: String = "identifiers"): List<FieldDescriptor> = listOf(
+fun paperIdentifierFields(path: String = "identifiers") = listOf(
     fieldWithPath(path).description("The unique identifiers of the paper. (optional)").optional(),
     fieldWithPath("$path.doi").type("Array").description("The list of DOIs of the paper. (optional)").arrayItemsType("String").constraints(doiConstraint).optional(),
     fieldWithPath("$path.isbn").type("Array").description("The list of ISBNs of the paper. (optional)").arrayItemsType("String").constraints(isbnConstraint).optional(),
@@ -56,48 +56,54 @@ fun paperIdentifierFields(path: String = "identifiers"): List<FieldDescriptor> =
     fieldWithPath("$path.open_alex").type("Array").description("The list of OpenAlex IDs of the paper. (optional)").arrayItemsType("String").constraints(openAlexIdConstraint).optional(),
 )
 
-fun smartReviewIdentifierFields(path: String = "identifiers"): List<FieldDescriptor> = listOf(
+fun smartReviewIdentifierResponseFields(path: String = "identifiers") = listOf(
     fieldWithPath(path).description("The unique identifiers of the smart review."),
     fieldWithPath("$path.doi").type("Array").description("The list of DOIs of the smart review. (optional)").arrayItemsType("String").constraints(doiConstraint).optional(),
 )
 
-fun comparisonIdentifierFields(path: String = "identifiers"): List<FieldDescriptor> = listOf(
+fun comparisonIdentifierResponseFields(path: String = "identifiers") = listOf(
     fieldWithPath(path).description("The unique identifiers of the comparison."),
     fieldWithPath("$path.doi").description("The list of DOIs of the comparison. (optional)").arrayItemsType("String").constraints(doiConstraint).optional(),
 )
 
-fun publicationInfoFields(type: String, path: String = "publication_info"): List<FieldDescriptor> = listOf(
-    fieldWithPath(path).description("The publication info of the paper."),
-    fieldWithPath("$path.published_month").description("The month in which the $type was published. (optional)").optional(),
-    fieldWithPath("$path.published_year").description("The year in which the $type was published. (optional)").optional(),
-    fieldWithPath("$path.published_in").description("The venue where the $type was published. (optional)").optional(),
-    fieldWithPath("$path.published_in.id").description("The ID of the venue."),
-    fieldWithPath("$path.published_in.label").description("The label of the venue."),
-    fieldWithPath("$path.url").description("The URL to the original $type. (optional)").optional(),
+fun publicationInfoResponseFields(path: String = "publication_info"): List<FieldDescriptor> = listOf(
+    fieldWithPath(path).description("The publication info of the entity."),
+    fieldWithPath("$path.published_month").description("The month in which the entity was published. (optional)").optional(),
+    fieldWithPath("$path.published_year").description("The year in which the entity was published. (optional)").optional(),
+    fieldWithPath("$path.published_in").description("The venue where the entity was published. (optional)").optional(),
+    *applyPathPrefix("$path.published_in.", labeledObjectResponseFields()).toTypedArray(),
+    fieldWithPath("$path.url").description("The URL to the original entity. (optional)").optional(),
 )
 
-fun sustainableDevelopmentGoalsFields(type: String, path: String = "sdgs"): List<FieldDescriptor> = listOf(
+fun publicationInfoRequestFields(path: String = "publication_info"): List<FieldDescriptor> = listOf(
+    fieldWithPath(path).description("The publication info of the entity. (optional)").optional(),
+    fieldWithPath("$path.published_month").description("The month in which the entity was published. (optional)").optional(),
+    fieldWithPath("$path.published_year").description("The year in which the entity was published. (optional)").optional(),
+    fieldWithPath("$path.published_in").description("The venue where the entity was published. (optional)").optional(),
+    fieldWithPath("$path.url").description("The URL to the original entity. (optional)").optional(),
+)
+
+fun labeledObjectResponseFields() = listOf(
+    fieldWithPath("id").description("The id of the thing."),
+    fieldWithPath("label").description("The label of the thing."),
+)
+
+fun sustainableDevelopmentGoalsResponseFields(type: String, path: String = "sdgs") = listOf(
     fieldWithPath(path).description("The list of sustainable development goals that the $type belongs to.").references<LabeledObjectRepresentation>(),
-    fieldWithPath("$path[].id").description("The ID of the sustainable development goal."),
-    fieldWithPath("$path[].label").description("The label of the sustainable development goal."),
+    *applyPathPrefix("$path[].", labeledObjectResponseFields()).toTypedArray(),
 )
 
-fun paperResponseFields(): List<FieldDescriptor> = listOf(
+fun paperResponseFields() = listOf(
     fieldWithPath("id").description("The identifier of the paper."),
     fieldWithPath("title").description("The title of the paper."),
     fieldWithPath("research_fields").description("The list of research fields the paper is assigned to."),
-    fieldWithPath("research_fields[].id").description("The id of the research field."),
-    fieldWithPath("research_fields[].label").description("The label of the research field."),
+    *applyPathPrefix("research_fields[].", labeledObjectResponseFields()).toTypedArray(),
     fieldWithPath("contributions").description("The list of contributions of the paper."),
-    fieldWithPath("contributions[].id").description("The ID of the contribution."),
-    fieldWithPath("contributions[].label").description("The label of the contribution."),
+    *applyPathPrefix("contributions[].", labeledObjectResponseFields()).toTypedArray(),
     fieldWithPath("organizations[]").description("The list of IDs of the organizations the paper belongs to."),
     fieldWithPath("observatories[]").description("The list of IDs of the observatories the paper belongs to."),
     fieldWithPath("mentionings[]").description("Set of important resources in the paper."),
-    fieldWithPath("mentionings[].id").description("The ID of the mentioned resource."),
-    fieldWithPath("mentionings[].label").description("The label of the mentioned resource."),
-    fieldWithPath("mentionings[].classes").description("The class ids of the mentioned resource."),
-    fieldWithPath("mentionings[]._class").description("Indicates which type of entity was returned. Always has the value `resource_ref`."),
+    *applyPathPrefix("mentionings[].", resourceReferenceResponseFields()).toTypedArray(),
     fieldWithPath("extraction_method").description("""The method used to extract the paper resource. Can be one of $allowedExtractionMethodValues."""),
     timestampFieldWithPath("created_at", "the paper resource was created"),
     // TODO: Add links to documentation of special user UUIDs.
@@ -108,12 +114,12 @@ fun paperResponseFields(): List<FieldDescriptor> = listOf(
     fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this paper.").optional(),
     fieldWithPath("_class").description("Indicates which type of entity was returned. Always has the value `paper`."),
     *authorListFields("paper").toTypedArray(),
-    *publicationInfoFields("paper").toTypedArray(),
-    *sustainableDevelopmentGoalsFields("paper").toTypedArray(),
+    *publicationInfoResponseFields().toTypedArray(),
+    *sustainableDevelopmentGoalsResponseFields("paper").toTypedArray(),
     *paperIdentifierFields().toTypedArray()
 )
 
-fun benchmarkSummaryResponseFields(): List<FieldDescriptor> = listOf(
+fun benchmarkSummaryResponseFields() = listOf(
     fieldWithPath("total_papers").description("The total number of papers."),
     fieldWithPath("total_datasets").description("The total number of datasets related."),
     fieldWithPath("total_codes").description("The total number of code urls."),
@@ -125,17 +131,15 @@ fun benchmarkSummaryResponseFields(): List<FieldDescriptor> = listOf(
     fieldWithPath("research_fields[].label").description("The label of the research field.").optional(),
 )
 
-fun comparisonResponseFields(): List<FieldDescriptor> = listOf(
+fun comparisonResponseFields() = listOf(
     fieldWithPath("id").description("The identifier of the comparison."),
     fieldWithPath("title").description("The title of the comparison."),
     fieldWithPath("description").description("The description of the comparison."),
     fieldWithPath("research_fields").description("The list of research fields the comparison is assigned to."),
-    fieldWithPath("research_fields[].id").description("The id of the research field."),
-    fieldWithPath("research_fields[].label").description("The label of the research field."),
-    *comparisonIdentifierFields().toTypedArray(),
+    *applyPathPrefix("research_fields[].", labeledObjectResponseFields()).toTypedArray(),
+    *comparisonIdentifierResponseFields().toTypedArray(),
     fieldWithPath("contributions").description("The list of contributions of the comparison."),
-    fieldWithPath("contributions[].id").description("The ID of the contribution."),
-    fieldWithPath("contributions[].label").description("The label of the contribution."),
+    *applyPathPrefix("contributions[].", labeledObjectResponseFields()).toTypedArray(),
     fieldWithPath("config").description("The configuration of the comparison."),
     fieldWithPath("config.predicates").description("The list of labels of the predicates used in the comparison."),
     fieldWithPath("config.contributions").description("The list of ids of contributions that are being compared in the comparison."),
@@ -163,14 +167,11 @@ fun comparisonResponseFields(): List<FieldDescriptor> = listOf(
     fieldWithPath("data.data.*[][]").description("All values for the predicate and a single contribution. Every value corresponds to a single cell of the comparison.").arrayItemsType("object").references<ComparisonTargetCell>(),
     *applyPathPrefix("data.data.*[][].", configuredComparisonTargetCellResponseFields()).toTypedArray(),
     fieldWithPath("visualizations").description("The list of visualizations of the comparison."),
-    fieldWithPath("visualizations[].id").description("The ID of the visualization."),
-    fieldWithPath("visualizations[].label").description("The label of the visualization."),
+    *applyPathPrefix("visualizations[].", labeledObjectResponseFields()).toTypedArray(),
     fieldWithPath("related_figures").description("The list of related figures of the comparison."),
-    fieldWithPath("related_figures[].id").description("The ID of the related figure."),
-    fieldWithPath("related_figures[].label").description("The label of the related figure."),
+    *applyPathPrefix("related_figures[].", labeledObjectResponseFields()).toTypedArray(),
     fieldWithPath("related_resources").description("The list of related resources of the comparison."),
-    fieldWithPath("related_resources[].id").description("The ID of the related resource."),
-    fieldWithPath("related_resources[].label").description("The label of the related resource."),
+    *applyPathPrefix("related_resources[].", labeledObjectResponseFields()).toTypedArray(),
     fieldWithPath("references[]").description("The list of references of the comparison."),
     fieldWithPath("organizations[]").description("The list of IDs of the organizations or conference series the comparison belongs to."),
     fieldWithPath("observatories[]").description("The list of IDs of the observatories the comparison belongs to."),
@@ -178,28 +179,18 @@ fun comparisonResponseFields(): List<FieldDescriptor> = listOf(
     timestampFieldWithPath("created_at", "the comparison resource was created"),
     // TODO: Add links to documentation of special user UUIDs.
     fieldWithPath("created_by").description("The UUID of the user or service who created this comparison."),
-    fieldWithPath("versions.head").description("The head version of the comparison."),
-    fieldWithPath("versions.head.id").description("The id of the head version."),
-    fieldWithPath("versions.head.label").description("The label of the head version."),
-    timestampFieldWithPath("versions.head.created_at", "the head version was created"),
-    fieldWithPath("versions.head.created_by").type("String").description("The UUID of the user or service who created the version."),
-    fieldWithPath("versions.published").description("The list of published versions of the comparison."),
-    fieldWithPath("versions.published[].id").description("The id of the published version."),
-    fieldWithPath("versions.published[].label").description("The label of the published version."),
-    timestampFieldWithPath("versions.published[].created_at", "the published version was created"),
-    fieldWithPath("versions.published[].created_by").type("String").description("The UUID of the user or service who created the version."),
-    fieldWithPath("versions.published[].changelog").description("The changelog of the comparison version. (currently unsupported)"),
+    *versionInfoResponseFields().toTypedArray(),
     fieldWithPath("is_anonymized").description("Whether or not the comparison is anonymized."),
     fieldWithPath("visibility").description("""Visibility of the comparison. Can be one of $allowedVisibilityValues."""),
     fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this comparison.").optional(),
     fieldWithPath("published").description("Whether the comparison is published or not."),
     fieldWithPath("_class").description("Indicates which type of entity was returned. Always has the value `comparison`."),
     *authorListFields("comparison").toTypedArray(),
-    *publicationInfoFields("comparison").toTypedArray(),
-    *sustainableDevelopmentGoalsFields("comparison").toTypedArray(),
+    *publicationInfoResponseFields().toTypedArray(),
+    *sustainableDevelopmentGoalsResponseFields("comparison").toTypedArray(),
 )
 
-fun comparisonRelatedFigureResponseFields(): List<FieldDescriptor> = listOf(
+fun comparisonRelatedFigureResponseFields() = listOf(
     fieldWithPath("id").description("The identifier of the comparison related figure."),
     fieldWithPath("label").description("The title of label comparison related figure."),
     fieldWithPath("image").description("The url for the image of the comparison related figure. (optional)").optional(),
@@ -209,7 +200,7 @@ fun comparisonRelatedFigureResponseFields(): List<FieldDescriptor> = listOf(
     fieldWithPath("created_by").description("The UUID of the user or service who created this comparison related figure.")
 )
 
-fun comparisonRelatedResourceResponseFields(): List<FieldDescriptor> = listOf(
+fun comparisonRelatedResourceResponseFields() = listOf(
     fieldWithPath("id").description("The identifier of the comparison related resource."),
     fieldWithPath("label").description("The title of label comparison related resource."),
     fieldWithPath("image").description("The url for the image of the comparison related resource. (optional)").optional(),
@@ -220,7 +211,7 @@ fun comparisonRelatedResourceResponseFields(): List<FieldDescriptor> = listOf(
     fieldWithPath("created_by").description("The UUID of the user or service who created this comparison related resource.")
 )
 
-fun contributionResponseFields(): List<FieldDescriptor> = listOf(
+fun contributionResponseFields() = listOf(
     fieldWithPath("id").description("The identifier of the contribution."),
     fieldWithPath("label").description("The label of the contribution."),
     fieldWithPath("classes").description("The classes of the contribution resource."),
@@ -235,7 +226,7 @@ fun contributionResponseFields(): List<FieldDescriptor> = listOf(
     fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this contribution.").optional()
 )
 
-fun datasetResponseFields(): List<FieldDescriptor> = listOf(
+fun datasetResponseFields() = listOf(
     fieldWithPath("id").description("The identifier of the dataset."),
     fieldWithPath("label").description("The label of the dataset."),
     fieldWithPath("total_papers").description("The total number of papers."),
@@ -243,7 +234,7 @@ fun datasetResponseFields(): List<FieldDescriptor> = listOf(
     fieldWithPath("total_codes").description("The total number of code urls."),
 )
 
-fun datasetSummaryResponseFields(): List<FieldDescriptor> = listOf(
+fun datasetSummaryResponseFields() = listOf(
     fieldWithPath("model_name").description("The model name used on the dataset. (optional)").optional(),
     fieldWithPath("model_id").description("The model id used on the dataset. (optional)").optional(),
     fieldWithPath("metric").description("The metric used in the evaluation."),
@@ -255,23 +246,12 @@ fun datasetSummaryResponseFields(): List<FieldDescriptor> = listOf(
     fieldWithPath("code_urls").description("A list of urls for the codes specified in the papers.").arrayItemsType("String"),
 )
 
-fun literatureListResponseFields(): List<FieldDescriptor> = listOf(
+fun literatureListResponseFields() = listOf(
     fieldWithPath("id").description("The identifier of the literature list."),
     fieldWithPath("title").description("The title of the literature list."),
     fieldWithPath("research_fields").description("The list of research fields the literature list is assigned to."),
-    fieldWithPath("research_fields[].id").description("The id of the research field."),
-    fieldWithPath("research_fields[].label").description("The label of the research field."),
-    fieldWithPath("versions.head").description("The head version of the literature list."),
-    fieldWithPath("versions.head.id").description("The id of the head version."),
-    fieldWithPath("versions.head.label").description("The label of the head version."),
-    timestampFieldWithPath("versions.head.created_at", "the head version was created"),
-    fieldWithPath("versions.head.created_by").type("String").description("The UUID of the user or service who created the version."),
-    fieldWithPath("versions.published").description("The list of published versions of the literature list."),
-    fieldWithPath("versions.published[].id").description("The id of the published version."),
-    fieldWithPath("versions.published[].label").description("The label of the published version."),
-    timestampFieldWithPath("versions.published[].created_at", "the published version was created"),
-    fieldWithPath("versions.published[].created_by").type("String").description("The UUID of the user or service who created the version."),
-    fieldWithPath("versions.published[].changelog").description("The changelog of the published version."),
+    *applyPathPrefix("research_fields[].", labeledObjectResponseFields()).toTypedArray(),
+    *versionInfoResponseFields().toTypedArray(),
     fieldWithPath("organizations[]").description("The list of IDs of the organizations the literature list belongs to."),
     fieldWithPath("observatories[]").description("The list of IDs of the observatories the literature list belongs to."),
     fieldWithPath("extraction_method").description("""The method used to extract the literature list resource. Can be one of $allowedExtractionMethodValues."""),
@@ -294,7 +274,7 @@ fun literatureListResponseFields(): List<FieldDescriptor> = listOf(
     fieldWithPath("acknowledgements.*").description("The estimated contribution percentage."),
     fieldWithPath("_class").description("Indicates which type of entity was returned. Always has the value `literature-list`."),
     *authorListFields("literature list").toTypedArray(),
-    *sustainableDevelopmentGoalsFields("literature list").toTypedArray(),
+    *sustainableDevelopmentGoalsResponseFields("literature list").toTypedArray(),
 )
 
 fun literatureListListSectionResponseFields() = listOf(
@@ -302,10 +282,7 @@ fun literatureListListSectionResponseFields() = listOf(
     fieldWithPath("type").description("""The type of the section. Either of `text` or `list`."""),
     fieldWithPath("entries").description("The linked resources of a list section."),
     fieldWithPath("entries[].value").description("The linked resource of the entry."),
-    fieldWithPath("entries[].value.id").description("The id of the linked resource."),
-    fieldWithPath("entries[].value.label").description("The label of the linked resource."),
-    fieldWithPath("entries[].value.classes").description("The classes of the linked resource."),
-    fieldWithPath("entries[].value._class").description("Indicates which type of entity was returned. Always has the value `resource_ref`."),
+    *applyPathPrefix("entries[].value.", resourceReferenceResponseFields()).toTypedArray(),
     fieldWithPath("entries[].description").description("The description of the entry.").optional(),
 )
 
@@ -379,19 +356,8 @@ fun smartReviewResponseFields() = listOf(
     fieldWithPath("id").description("The identifier of the smart review."),
     fieldWithPath("title").description("The title of the smart review."),
     fieldWithPath("research_fields").description("The list of research fields the smart review is assigned to."),
-    fieldWithPath("research_fields[].id").description("The id of the research field."),
-    fieldWithPath("research_fields[].label").description("The label of the research field."),
-    fieldWithPath("versions.head").description("The head version of the smart review."),
-    fieldWithPath("versions.head.id").description("The id of the head version."),
-    fieldWithPath("versions.head.label").description("The label of the head version."),
-    timestampFieldWithPath("versions.head.created_at", "the head version was created"),
-    fieldWithPath("versions.head.created_by").type("String").description("The UUID of the user or service who created the version."),
-    fieldWithPath("versions.published").description("The list of published versions of the smart review."),
-    fieldWithPath("versions.published[].id").description("The id of the published version."),
-    fieldWithPath("versions.published[].label").description("The label of the published version."),
-    timestampFieldWithPath("versions.published[].created_at", "the published version was created"),
-    fieldWithPath("versions.published[].created_by").type("String").description("The UUID of the user or service who created the version."),
-    fieldWithPath("versions.published[].changelog").description("The changelog of the published version."),
+    *applyPathPrefix("research_fields[].", labeledObjectResponseFields()).toTypedArray(),
+    *versionInfoResponseFields().toTypedArray(),
     fieldWithPath("organizations[]").description("The list of IDs of the organizations the smart review belongs to."),
     fieldWithPath("observatories[]").description("The list of IDs of the observatories the smart review belongs to."),
     fieldWithPath("extraction_method").description("""The method used to extract the smart review resource. Can be one of $allowedExtractionMethodValues."""),
@@ -419,8 +385,8 @@ fun smartReviewResponseFields() = listOf(
     fieldWithPath("acknowledgements.*").description("The estimated contribution percentage."),
     fieldWithPath("_class").description("Indicates which type of entity was returned. Always has the value `smart-review`."),
     *authorListFields("smart review").toTypedArray(),
-    *sustainableDevelopmentGoalsFields("smart review").toTypedArray(),
-    *smartReviewIdentifierFields().toTypedArray(),
+    *sustainableDevelopmentGoalsResponseFields("smart review").toTypedArray(),
+    *smartReviewIdentifierResponseFields().toTypedArray(),
 )
 
 fun smartReviewComparisonSectionResponseFields() = listOf(
@@ -459,9 +425,9 @@ fun smartReviewOntologySectionResponseFields() = listOf(
     fieldWithPath("id").description("The id of the section."),
     fieldWithPath("heading").description("The heading of the section."),
     fieldWithPath("type").description("""The type of the section. Always has the value `ontology`."""),
-    fieldWithPath("entities").description("The entities that should be shown in the ontology section. They can either be a resource or a predicate.").optional(),
+    fieldWithPath("entities").description("The entities that should be shown in the ontology section. They can either be a resource or a predicate."),
     *applyPathPrefix("entities[].", thingReferenceResponseFields()).toTypedArray(),
-    fieldWithPath("predicates").description("The predicates that should be shown in the ontology section.").optional(),
+    fieldWithPath("predicates").description("The predicates that should be shown in the ontology section."),
     *applyPathPrefix("predicates[].", predicateReferenceResponseFields()).toTypedArray(),
 )
 
@@ -509,20 +475,14 @@ fun templateResponseFields() = listOf(
     fieldWithPath("description").description("The description of the template."),
     fieldWithPath("formatted_label").description("The formatted label pattern of the template."),
     fieldWithPath("target_class").description("The id of target class of the template."),
-    fieldWithPath("target_class.id").description("The id of the class."),
-    fieldWithPath("target_class.label").description("The label of the class."),
-    fieldWithPath("target_class.uri").description("The uri of the class. (optional)").optional(),
-    fieldWithPath("target_class._class").description("Indicates which type of entity was returned. Always has the value `class_ref`."),
+    *applyPathPrefix("target_class.", classReferenceResponseFields()).toTypedArray(),
     fieldWithPath("relations").description("The relations class of the template. Used for suggestions."),
     fieldWithPath("relations.research_fields[]").description("The research fields that this template relates to."),
-    fieldWithPath("relations.research_fields[].id").description("The id of the thing."),
-    fieldWithPath("relations.research_fields[].label").description("The label of the thing."),
+    *applyPathPrefix("relations.research_fields[].", labeledObjectResponseFields()).toTypedArray(),
     fieldWithPath("relations.research_problems[]").description("The research problems that this template relates to."),
-    fieldWithPath("relations.research_problems[].id").description("The id of the thing."),
-    fieldWithPath("relations.research_problems[].label").description("The label of the thing."),
+    *applyPathPrefix("relations.research_problems[].", labeledObjectResponseFields()).toTypedArray(),
     fieldWithPath("relations.predicate").description("A predicate that this template relates to. (optional)").optional(),
-    fieldWithPath("relations.predicate.id").description("The id of the thing."),
-    fieldWithPath("relations.predicate.label").description("The label of the thing."),
+    *applyPathPrefix("relations.predicate.", labeledObjectResponseFields()).toTypedArray(),
     subsectionWithPath("properties").description("The list of properties of the template. See <<template-properties,template properties>> for more information."),
     fieldWithPath("is_closed").description("Whether the template is closed or not. When a template is closed, its properties cannot be modified."),
     fieldWithPath("organizations[]").description("The list of IDs of the organizations the template belongs to."),
@@ -543,7 +503,7 @@ fun templateInstanceResponseFields() = listOf(
     fieldWithPath("predicates.*").description("The id of the predicate."),
     *applyPathPrefix("predicates.*.", predicateResponseFields()).toTypedArray(),
     fieldWithPath("statements").description("A map of predicate id to embedded statement representation for statements that are part of the snapshot."),
-    fieldWithPath("statements.*").description("The id of the predicate.").optional(),
+    fieldWithPath("statements.*").description("The id of the predicate."),
     subsectionWithPath("statements.*[]").description("A list of embeded statement representations."),
 )
 
@@ -553,7 +513,7 @@ fun embeddedStatementResponseFields() = listOf(
     timestampFieldWithPath("created_at", "the thing was created"),
     fieldWithPath("created_by").description("The UUID of the user or service who created the thing."),
     fieldWithPath("statements").description("A map of predicate id to nested statement request parts."),
-    fieldWithPath("statements.*").type("object").description("The ID of the predicate.").optional(),
+    fieldWithPath("statements.*").type("object").description("The ID of the predicate."),
     subsectionWithPath("statements.*[]").type("array").description("The list of nested embedded statement request parts."),
 )
 
@@ -607,8 +567,7 @@ fun commonTemplatePropertyResponseFields() = listOf(
     fieldWithPath("min_count").description("The minimum cardinality of the property. Must be at least one, or zero for infinite cardinality. (optional)").optional(),
     fieldWithPath("max_count").description("The maximum cardinality of the property. Must be at least one, or zero for infinite cardinality. Must also be higher than min_count. (optional)").optional(),
     fieldWithPath("path").description("The predicate id for the path of the property."),
-    fieldWithPath("path.id").description("The id of the thing."),
-    fieldWithPath("path.label").description("The label of the thing."),
+    *applyPathPrefix("path.", labeledObjectResponseFields()).toTypedArray(),
     timestampFieldWithPath("created_at", "the template property was created"),
     // TODO: Add links to documentation of special user UUIDs.
     fieldWithPath("created_by").description("The UUID of the user or service who created this template property."),
@@ -647,4 +606,18 @@ fun literalReferenceResponseFields() = listOf(
     fieldWithPath("label").description("The label of the literal."),
     fieldWithPath("datatype").type("string").description("The data type of the literal."),
     fieldWithPath("_class").description("Indicates which type of entity was returned. Always has the value `literal_ref`."),
+)
+
+fun versionInfoResponseFields(path: String = "versions") = listOf(
+    fieldWithPath("$path.head").description("The head version of the entity."),
+    fieldWithPath("$path.head.id").description("The id of the head version."),
+    fieldWithPath("$path.head.label").description("The label of the head version."),
+    timestampFieldWithPath("$path.head.created_at", "the head version was created"),
+    fieldWithPath("$path.head.created_by").type("String").description("The UUID of the user or service who created the version."),
+    fieldWithPath("$path.published").description("The list of published versions of the entity."),
+    fieldWithPath("$path.published[].id").description("The id of the published version."),
+    fieldWithPath("$path.published[].label").description("The label of the published version."),
+    timestampFieldWithPath("$path.published[].created_at", "the published version was created"),
+    fieldWithPath("$path.published[].created_by").type("String").description("The UUID of the user or service who created the version."),
+    fieldWithPath("$path.published[].changelog").description("The changelog of the published version."),
 )

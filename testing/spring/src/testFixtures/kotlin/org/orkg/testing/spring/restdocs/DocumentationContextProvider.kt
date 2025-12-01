@@ -7,4 +7,6 @@ interface DocumentationContextProvider {
     val typeMappings: Map<KClass<*>, String> get() = emptyMap()
 
     fun applyConstraints(constraints: MutableList<Constraint>, type: KClass<*>) = Unit
+
+    fun resolveFormat(type: KClass<*>): String? = null
 }

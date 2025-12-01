@@ -25,10 +25,15 @@ import org.springframework.http.MediaType
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.restdocs.RestDocumentationContextProvider
 import org.springframework.restdocs.RestDocumentationExtension
+import org.springframework.restdocs.cookies.CookieDescriptor
+import org.springframework.restdocs.cookies.CookieDocumentation.cookieWithName
 import org.springframework.restdocs.generate.RestDocumentationGenerator
+import org.springframework.restdocs.headers.HeaderDescriptor
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
 import org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders
 import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
+import org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel
+import org.springframework.restdocs.hypermedia.LinkDescriptor
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders
@@ -36,15 +41,23 @@ import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler
 import org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest
 import org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse
 import org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint
+import org.springframework.restdocs.payload.FieldDescriptor
+import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.requestPartFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
+import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
+import org.springframework.restdocs.payload.SubsectionDescriptor
+import org.springframework.restdocs.request.ParameterDescriptor
 import org.springframework.restdocs.request.RequestDocumentation.formParameters
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
+import org.springframework.restdocs.request.RequestDocumentation.partWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.restdocs.request.RequestDocumentation.requestParts
+import org.springframework.restdocs.request.RequestPartDescriptor
 import org.springframework.restdocs.snippet.AbstractDescriptor
+import org.springframework.restdocs.snippet.Attributes
 import org.springframework.restdocs.snippet.Snippet
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity
 import org.springframework.test.context.TestPropertySource
@@ -124,7 +137,7 @@ abstract class MockMvcBaseTest(val prefix: String) : MockkBaseTest {
     protected fun ResultActions.andDocument(builder: DocumentationBuilder.() -> Unit): ResultActions {
         val documentationParameters = DocumentationBuilder(documentationContext)
             .apply(builder)
-            .also { if (it.tags.isEmpty()) it.tag(convertPrefixToTag(prefix)) }
+            .also { if (!it.hasTags()) it.tag(convertPrefixToTag(prefix)) }
             .build()
         val snippets = mutableListOf<Snippet>(resource(documentationParameters.toResourceSnippetParameters()))
         // We need to manually register custom documentation snippets to the documentation handler.
@@ -310,7 +323,7 @@ abstract class MockMvcBaseTest(val prefix: String) : MockkBaseTest {
             if (this is String) stripAsciidocFormatting() else this
 
         private fun <T : AbstractDescriptor<T>> List<T>.stripAsciidocFormatting(): List<T> =
-            map { it.description(it.description.stripAsciidocFormatting()) }
+            map { it.copy().description(it.description.stripAsciidocFormatting()) }
 
         private fun convertPrefixToTag(prefix: String): String =
             prefix.foldIndexed(StringBuilder()) { index, acc, c ->
@@ -321,5 +334,52 @@ abstract class MockMvcBaseTest(val prefix: String) : MockkBaseTest {
                     else -> acc.append(c)
                 }
             }.toString()
+
+        @Suppress("UNCHECKED_CAST")
+        private fun <T : AbstractDescriptor<T>> T.copy(): T {
+            val descriptor = when (this) {
+                is HeaderDescriptor -> headerWithName(name)
+                    .also { if (isOptional) it.optional() }
+                is ParameterDescriptor -> parameterWithName(name)
+                    .also { if (isOptional) it.optional() }
+                    .also { if (isIgnored) it.ignored() }
+                is LinkDescriptor -> linkWithRel(rel)
+                    .also { if (isOptional) it.optional() }
+                    .also { if (isIgnored) it.ignored() }
+                is CookieDescriptor -> cookieWithName(name)
+                    .also { if (isOptional) it.optional() }
+                    .also { if (isIgnored) it.ignored() }
+                is SubsectionDescriptor -> subsectionWithPath(path)
+                    .type(type)
+                    .also { if (isOptional) it.optional() }
+                    .also { if (isIgnored) it.ignored() }
+                is FieldDescriptor -> fieldWithPath(path)
+                    .type(type)
+                    .also { if (isOptional) it.optional() }
+                    .also { if (isIgnored) it.ignored() }
+                is RequestPartDescriptor -> partWithName(name)
+                    .also { if (isOptional) it.optional() }
+                    .also { if (isIgnored) it.ignored() }
+                is ParameterDescriptorWithType -> ParameterDescriptorWithType(name)
+                    .type(type)
+                    .also {
+                        it.defaultValue = defaultValue
+                        if (optional) it.optional()
+                        if (isIgnored) it.ignored()
+                    }
+                is HeaderDescriptorWithType -> HeaderDescriptorWithType(name)
+                    .type(type)
+                    .also {
+                        it.defaultValue = defaultValue
+                        it.example = example
+                        if (optional) it.optional()
+                    }
+                else -> throw IllegalArgumentException("Unknown descriptor class ${this::class}")
+            }
+
+            descriptor.description(description)
+            descriptor.attributes(*attributes.map { Attributes.Attribute(it.key, it.value) }.toTypedArray())
+            return descriptor as T
+        }
     }
 }

@@ -21,7 +21,7 @@ import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.graph.testing.asciidoc.allowedVisibilityFilterValues
+import org.orkg.graph.testing.asciidoc.visibilityFilterQueryParameter
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectResource
@@ -199,7 +199,7 @@ internal class ObservatoryResourceControllerUnitTest : MockMvcBaseTest("observat
                 )
                 pagedQueryParameters(
                     parameterWithName("filter_config").description("The filter config to use. (optional)").optional(),
-                    parameterWithName("visibility").description("Visibility of this resource. Can be one of $allowedVisibilityFilterValues. (optional)").optional(),
+                    visibilityFilterQueryParameter(),
                 )
                 pagedResponseFields<ResourceRepresentation>(resourceResponseFields())
                 throws(InvalidFilterConfig::class)

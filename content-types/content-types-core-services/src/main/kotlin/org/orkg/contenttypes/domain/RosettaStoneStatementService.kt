@@ -132,7 +132,7 @@ class RosettaStoneStatementService(
         return steps.execute(command, UpdateRosettaStoneStatementState()).rosettaStoneStatementId!!
     }
 
-    override fun softDelete(id: ThingId, contributorId: ContributorId) {
+    override fun softDeleteById(id: ThingId, contributorId: ContributorId) {
         findByIdOrVersionId(id).ifPresent {
             if (!it.modifiable) {
                 throw RosettaStoneStatementNotModifiable(id)
@@ -146,7 +146,7 @@ class RosettaStoneStatementService(
         }
     }
 
-    override fun delete(id: ThingId, contributorId: ContributorId) {
+    override fun deleteById(id: ThingId, contributorId: ContributorId) {
         findByIdOrVersionId(id).ifPresent {
             if (!it.modifiable) {
                 throw RosettaStoneStatementNotModifiable(id)

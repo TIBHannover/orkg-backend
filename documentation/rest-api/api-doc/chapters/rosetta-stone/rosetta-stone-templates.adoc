@@ -41,6 +41,6 @@ operation::rosetta-stone-templates_update[snippets='path-parameters,request-fiel
 [[rosetta-stone-templates-delete]]
 == Deleting Rosetta Stone Templates
 
-include::{snippets}/rosetta-stone-templates_delete/description.adoc[]
+include::{snippets}/rosetta-stone-templates_delete-by-id/description.adoc[]
 
-operation::rosetta-stone-templates_delete[snippets='path-parameters,curl-request,http-response']
+operation::rosetta-stone-templates_delete-by-id[snippets='path-parameters,curl-request,http-response']

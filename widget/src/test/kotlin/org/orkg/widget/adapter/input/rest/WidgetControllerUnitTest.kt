@@ -9,16 +9,14 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.MissingParameter
 import org.orkg.common.exceptions.TooManyParameters
-import org.orkg.common.json.CommonJacksonModule
 import org.orkg.graph.testing.asciidoc.Asciidoc
-import org.orkg.testing.configuration.ExceptionTestConfiguration
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectDetail
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorResponse
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectTitle
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
+import org.orkg.widget.adapter.input.rest.testing.fixtures.WidgetControllerUnitTestConfiguration
 import org.orkg.widget.input.ResolveDOIUseCase
 import org.orkg.widget.input.ResolveDOIUseCase.WidgetInfo
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -32,14 +30,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 /** An example DOI. Will resolve to the DOI handbook. */
 const val EXAMPLE_DOI = "10.1000/182"
 
-@ContextConfiguration(
-    classes = [
-        WidgetController::class,
-        ExceptionTestConfiguration::class,
-        CommonJacksonModule::class,
-        FixedClockConfig::class
-    ]
-)
+@ContextConfiguration(classes = [WidgetController::class, WidgetControllerUnitTestConfiguration::class])
 @WebMvcTest(controllers = [WidgetController::class])
 internal class WidgetControllerUnitTest : MockMvcBaseTest("widget") {
     @MockkBean

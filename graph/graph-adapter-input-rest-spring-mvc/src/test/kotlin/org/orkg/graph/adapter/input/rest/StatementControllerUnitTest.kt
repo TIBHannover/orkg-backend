@@ -47,6 +47,8 @@ import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
+import org.orkg.testing.spring.restdocs.format
+import org.orkg.testing.spring.restdocs.repeatable
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.Sort
@@ -171,14 +173,14 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
                     """
                 )
                 pagedQueryParameters(
-                    parameterWithName("subject_classes").description("A comma-separated set of classes that the subject of the statement must have. The ids `Resource`, `Class` and `Predicate` can be used to filter for a general type of subject. (optional)").optional(),
+                    parameterWithName("subject_classes").description("A comma-separated set of classes that the subject of the statement must have. The ids `Resource`, `Class` and `Predicate` can be used to filter for a general type of subject. (optional)").repeatable().optional(),
                     parameterWithName("subject_id").description("Filter for the subject id. (optional)").optional(),
                     parameterWithName("subject_label").description("Filter for the label of the subject. The label has to match exactly. (optional)").optional(),
                     parameterWithName("predicate_id").description("""Filter for the predicate id of the statement. (optional)""").optional(),
-                    parameterWithName("created_by").description("Filter for the UUID of the user or service who created this statement. (optional)").optional(),
+                    parameterWithName("created_by").description("Filter for the UUID of the user or service who created this statement. (optional)").format("uuid").optional(),
                     parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned statement can have. (optional)").optional(),
                     parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned statement can have. (optional)").optional(),
-                    parameterWithName("object_classes").description("A comma-separated set of classes that the object of the statement must have. The ids `Resource`, `Class`, `Predicate` and `Literal` can be used to filter for a general type of object. (optional)").optional(),
+                    parameterWithName("object_classes").description("A comma-separated set of classes that the object of the statement must have. The ids `Resource`, `Class`, `Predicate` and `Literal` can be used to filter for a general type of object. (optional)").repeatable().optional(),
                     parameterWithName("object_id").description("Filter for the object id. (optional)").optional(),
                     parameterWithName("object_label").description("Filter for the label of the object. The label has to match exactly. (optional)").optional(),
                 )

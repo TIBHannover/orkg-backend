@@ -236,12 +236,12 @@ internal class ComparisonRelatedFigureControllerUnitTest : MockMvcBaseTest("comp
     @Test
     @TestWithMockUser
     @DisplayName("Given a comparison related figure, when deleting and service succeeds, then status is 204 NO CONTENT")
-    fun delete() {
+    fun deleteByIdAndComparisonId() {
         val comparisonId = ThingId("R123")
         val comparisonRelatedFigureId = ThingId("R456")
 
         every {
-            comparisonRelatedFigureService.delete(
+            comparisonRelatedFigureService.deleteByIdAndComaprisonId(
                 comparisonId = comparisonId,
                 comparisonRelatedFigureId = comparisonRelatedFigureId,
                 contributorId = any()
@@ -273,7 +273,7 @@ internal class ComparisonRelatedFigureControllerUnitTest : MockMvcBaseTest("comp
             }
 
         verify(exactly = 1) {
-            comparisonRelatedFigureService.delete(
+            comparisonRelatedFigureService.deleteByIdAndComaprisonId(
                 comparisonId = comparisonId,
                 comparisonRelatedFigureId = comparisonRelatedFigureId,
                 contributorId = ContributorId(MockUserId.USER)

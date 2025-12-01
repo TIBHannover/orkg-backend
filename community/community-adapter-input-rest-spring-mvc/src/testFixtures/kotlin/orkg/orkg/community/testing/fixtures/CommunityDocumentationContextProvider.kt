@@ -20,4 +20,10 @@ class CommunityDocumentationContextProvider : DocumentationContextProvider {
             ObservatoryFilterId::class, ConferenceSeriesId::class -> constraints.add(uuidConstraint)
         }
     }
+
+    override fun resolveFormat(type: KClass<*>): String? =
+        when (type) {
+            ObservatoryFilterId::class, ConferenceSeriesId::class -> "uuid"
+            else -> super.resolveFormat(type)
+        }
 }

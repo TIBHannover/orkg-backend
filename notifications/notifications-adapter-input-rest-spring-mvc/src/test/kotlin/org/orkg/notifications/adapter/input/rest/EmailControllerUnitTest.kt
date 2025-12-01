@@ -8,24 +8,17 @@ import io.mockk.verify
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.notifications.adapter.input.rest.EmailController.SendTestEmailRequest
+import org.orkg.notifications.adapter.input.rest.testing.fixtures.configuration.DataImportControllerUnitTestConfiguration
 import org.orkg.notifications.domain.Recipient
 import org.orkg.notifications.input.NotificationUseCases
 import org.orkg.testing.annotations.TestWithMockAdmin
-import org.orkg.testing.configuration.ExceptionTestConfiguration
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@ContextConfiguration(
-    classes = [
-        EmailController::class,
-        ExceptionTestConfiguration::class,
-        FixedClockConfig::class
-    ]
-)
+@ContextConfiguration(classes = [EmailController::class, DataImportControllerUnitTestConfiguration::class])
 @WebMvcTest(controllers = [EmailController::class])
 internal class EmailControllerUnitTest : MockMvcBaseTest("emails") {
     @MockkBean

@@ -63,8 +63,8 @@ import org.orkg.graph.domain.URINotAbsolute
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
-import org.orkg.graph.testing.asciidoc.allowedVisibilityFilterValues
 import org.orkg.graph.testing.asciidoc.allowedVisibilityValues
+import org.orkg.graph.testing.asciidoc.visibilityFilterQueryParameter
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectTable
 import org.orkg.testing.annotations.TestWithMockUser
@@ -72,6 +72,7 @@ import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
+import org.orkg.testing.spring.restdocs.format
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
@@ -198,12 +199,12 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                 pagedQueryParameters(
                     parameterWithName("q").description("A search term that must be contained in the label of the table. (optional)").optional(),
                     parameterWithName("exact").description("Whether title matching is exact or fuzzy (optional, default: false)").optional(),
-                    parameterWithName("visibility").description("""Optional filter for visibility. Either of $allowedVisibilityFilterValues.""").optional(),
-                    parameterWithName("created_by").description("Filter for the UUID of the user or service who created this table. (optional)").optional(),
+                    visibilityFilterQueryParameter(),
+                    parameterWithName("created_by").description("Filter for the UUID of the user or service who created this table. (optional)").format("uuid").optional(),
                     parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned resource can have. (optional)").optional(),
                     parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned resource can have. (optional)").optional(),
-                    parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the resource belongs to. (optional)").optional(),
-                    parameterWithName("organization_id").description("Filter for the UUID of the organization that the resource belongs to. (optional)").optional(),
+                    parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the resource belongs to. (optional)").format("uuid").optional(),
+                    parameterWithName("organization_id").description("Filter for the UUID of the organization that the resource belongs to. (optional)").format("uuid").optional(),
                 )
                 pagedResponseFields<TableRepresentation>(tableResponseFields())
                 throws(UnknownSortingProperty::class)

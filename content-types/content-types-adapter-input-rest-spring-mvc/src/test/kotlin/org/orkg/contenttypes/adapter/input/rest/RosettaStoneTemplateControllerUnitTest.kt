@@ -60,7 +60,7 @@ import org.orkg.graph.domain.InvalidDescription
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.NeitherOwnerNorCurator
 import org.orkg.graph.domain.VisibilityFilter
-import org.orkg.graph.testing.asciidoc.allowedVisibilityFilterValues
+import org.orkg.graph.testing.asciidoc.visibilityFilterQueryParameter
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectRosettaStoneTemplate
@@ -69,6 +69,7 @@ import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
+import org.orkg.testing.spring.restdocs.format
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.NOT_FOUND
@@ -205,12 +206,12 @@ internal class RosettaStoneTemplateControllerUnitTest : MockMvcBaseTest("rosetta
                 pagedQueryParameters(
                     parameterWithName("q").description("Optional filter for the rosetta stone template label.").optional(),
                     parameterWithName("exact").description("Optional flag for whether label matching should be exact. (default: false)").optional(),
-                    parameterWithName("visibility").description("""Optional filter for visibility. Either of $allowedVisibilityFilterValues.""").optional(),
-                    parameterWithName("created_by").description("Optional filter for the UUID of the user or service who created the rosetta stone template.").optional(),
+                    visibilityFilterQueryParameter(),
+                    parameterWithName("created_by").description("Optional filter for the UUID of the user or service who created the rosetta stone template.").format("uuid").optional(),
                     parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned rosetta stone template can have. (optional)").optional(),
                     parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned rosetta stone template can have. (optional)").optional(),
-                    parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the rosetta stone template belongs to. (optional)").optional(),
-                    parameterWithName("organization_id").description("Filter for the UUID of the organization that the rosetta stone template belongs to. (optional)").optional(),
+                    parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the rosetta stone template belongs to. (optional)").format("uuid").optional(),
+                    parameterWithName("organization_id").description("Filter for the UUID of the organization that the rosetta stone template belongs to. (optional)").format("uuid").optional(),
                 )
                 pagedResponseFields<RosettaStoneTemplateRepresentation>(rosettaStoneTemplateResponseFields())
                 throws(UnknownSortingProperty::class)
@@ -379,9 +380,9 @@ internal class RosettaStoneTemplateControllerUnitTest : MockMvcBaseTest("rosetta
     @Test
     @TestWithMockUser
     @DisplayName("Given a rosetta stone template, when deleting and service succeeds, then status is 204 NO CONTENT")
-    fun delete() {
+    fun deleteById() {
         val id = ThingId("R123")
-        every { templateService.delete(id, any()) } just runs
+        every { templateService.deleteById(id, any()) } just runs
 
         documentedDeleteRequestTo("/api/rosetta-stone/templates/{id}", id)
             .accept(ROSETTA_STONE_TEMPLATE_JSON_V1)
@@ -409,7 +410,7 @@ internal class RosettaStoneTemplateControllerUnitTest : MockMvcBaseTest("rosetta
                 )
             }
 
-        verify(exactly = 1) { templateService.delete(id, ContributorId(MockUserId.USER)) }
+        verify(exactly = 1) { templateService.deleteById(id, ContributorId(MockUserId.USER)) }
     }
 
     private fun createRosettaStoneTemplateRequest() =

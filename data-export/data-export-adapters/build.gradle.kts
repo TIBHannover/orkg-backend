@@ -57,4 +57,5 @@ dependencies {
     testFixturesApi("org.springframework.boot:spring-boot-test")
     testFixturesApi(project(":common:spring-webmvc"))
     testFixturesApi(testFixtures(project(":testing:spring")))
+    testFixturesApi(testFixtures(project(":common:core-identifiers")))
 }

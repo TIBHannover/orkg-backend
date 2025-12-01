@@ -26,6 +26,16 @@ class DocumentationContext(
         }
     }
 
+    fun resolveFormat(type: KClass<*>): String? {
+        documentationContextProviders.forEach {
+            val format = it.resolveFormat(type)
+            if (format != null) {
+                return format
+            }
+        }
+        return null
+    }
+
     fun hasTypeMapping(type: KClass<*>): Boolean =
         resolveTypeName(type) != type.simpleName
 }

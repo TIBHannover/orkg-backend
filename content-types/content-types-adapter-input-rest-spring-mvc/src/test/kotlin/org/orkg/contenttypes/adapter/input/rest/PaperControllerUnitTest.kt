@@ -57,6 +57,7 @@ import org.orkg.contenttypes.input.testing.fixtures.authorListFields
 import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerUnitTestConfiguration
 import org.orkg.contenttypes.input.testing.fixtures.paperIdentifierFields
 import org.orkg.contenttypes.input.testing.fixtures.paperResponseFields
+import org.orkg.contenttypes.input.testing.fixtures.publicationInfoRequestFields
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.InvalidLabel
@@ -72,8 +73,8 @@ import org.orkg.graph.domain.URINotAbsolute
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
-import org.orkg.graph.testing.asciidoc.allowedVisibilityFilterValues
 import org.orkg.graph.testing.asciidoc.allowedVisibilityValues
+import org.orkg.graph.testing.asciidoc.visibilityFilterQueryParameter
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectPaper
@@ -84,6 +85,7 @@ import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectError
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
 import org.orkg.testing.spring.restdocs.arrayItemsType
 import org.orkg.testing.spring.restdocs.constraints
+import org.orkg.testing.spring.restdocs.format
 import org.orkg.testing.spring.restdocs.references
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
@@ -230,18 +232,18 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
                     If no paging request parameters are provided, the default values will be used.
                     """
                 )
-                queryParameters(
+                pagedQueryParameters(
                     parameterWithName("title").description("A search term that must be contained in the title of the paper. (optional)").optional(),
                     parameterWithName("exact").description("Whether title matching is exact or fuzzy (optional, default: false)").optional(),
                     parameterWithName("doi").description("Filter for the DOI of the paper. (optional)").optional(),
                     parameterWithName("doi_prefix").description("Filter for the DOI prefix of the DOI of the paper. (optional)").optional(),
-                    parameterWithName("visibility").description("""Optional filter for visibility. Either of $allowedVisibilityFilterValues.""").optional(),
+                    visibilityFilterQueryParameter(),
                     parameterWithName("verified").description("Filter for the verified flag of the paper. (optional)").optional(),
-                    parameterWithName("created_by").description("Filter for the UUID of the user or service who created this paper. (optional)").optional(),
+                    parameterWithName("created_by").description("Filter for the UUID of the user or service who created this paper. (optional)").format("uuid").optional(),
                     parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned paper can have. (optional)").optional(),
                     parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned paper can have. (optional)").optional(),
-                    parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the paper belongs to. (optional)").optional(),
-                    parameterWithName("organization_id").description("Filter for the UUID of the organization that the paper belongs to. (optional)").optional(),
+                    parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the paper belongs to. (optional)").format("uuid").optional(),
+                    parameterWithName("organization_id").description("Filter for the UUID of the organization that the paper belongs to. (optional)").format("uuid").optional(),
                     parameterWithName("research_field").description("Filter for research field id. (optional)").optional(),
                     parameterWithName("include_subfields").description("Flag for whether subfields are included in the search or not. (optional, default: false)").optional(),
                     parameterWithName("sdg").description("Filter for the sustainable development goal that the paper belongs to. (optional)").optional(),
@@ -318,6 +320,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
                 pathParameters(
                     parameterWithName("id").description("The identifier of the paper."),
                 )
+                pagedQueryParameters()
                 pagedResponseFields<UUID>(
                     fieldWithPath("content[]")
                         .references<UUID>()
@@ -506,11 +509,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
                 requestFields<CreatePaperRequest>(
                     fieldWithPath("title").description("The title of the paper."),
                     fieldWithPath("research_fields").description("The list of research fields the paper will be assigned to. Must be exactly one research field."),
-                    fieldWithPath("publication_info").description("The publication info of the paper. (optional)").optional(),
-                    fieldWithPath("publication_info.published_month").description("The month in which the paper was published. (optional)").optional(),
-                    fieldWithPath("publication_info.published_year").description("The year in which the paper was published. (optional)").optional(),
-                    fieldWithPath("publication_info.published_in").description("The venue where the paper was published. (optional)").optional(),
-                    fieldWithPath("publication_info.url").description("The URL to the original paper. (optional)").optional(),
+                    *publicationInfoRequestFields().toTypedArray(),
                     fieldWithPath("sdgs").description("The set of ids of sustainable development goals the paper will be assigned to. (optional)").arrayItemsType("String").constraints(thingIdConstraint).optional(),
                     fieldWithPath("mentionings").description("The set of ids of resources that are mentioned in the paper and should be used for extended search. (optional)").optional(),
                     fieldWithPath("contents").description("Definition of the contents of the paper. (optional)").optional(),
@@ -872,11 +871,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
                 requestFields<UpdatePaperRequest>(
                     fieldWithPath("title").description("The title of the paper. (optional)").optional(),
                     fieldWithPath("research_fields").description("The list of research fields the paper will be assigned to. (optional)").optional(),
-                    fieldWithPath("publication_info").description("The publication info of the paper. (optional)").optional(),
-                    fieldWithPath("publication_info.published_month").description("The month in which the paper was published. (optional)").optional(),
-                    fieldWithPath("publication_info.published_year").description("The year in which the paper was published. (optional)").optional(),
-                    fieldWithPath("publication_info.published_in").description("The venue where the paper was published. (optional)").optional(),
-                    fieldWithPath("publication_info.url").description("The URL to the original paper. (optional)").optional(),
+                    *publicationInfoRequestFields().toTypedArray(),
                     fieldWithPath("sdgs").description("The set of ids of sustainable development goals the paper will be assigned to. (optional)").arrayItemsType("String").constraints(thingIdConstraint).optional(),
                     fieldWithPath("mentionings").description("The updated set of ids of resources that are mentioned in the paper and should be used for extended search. (optional)").optional(),
                     fieldWithPath("organizations[]").description("The list of IDs of the organizations the paper belongs to. (optional)").optional(),

@@ -20,4 +20,10 @@ class DataImportDocumentationContextProvider : DocumentationContextProvider {
             CSVID::class -> constraints.add(uuidConstraint)
         }
     }
+
+    override fun resolveFormat(type: KClass<*>): String? =
+        when (type) {
+            CSVID::class -> "uuid"
+            else -> super.resolveFormat(type)
+        }
 }

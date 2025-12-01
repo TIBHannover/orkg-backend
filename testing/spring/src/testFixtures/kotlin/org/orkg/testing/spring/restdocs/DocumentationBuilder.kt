@@ -3,6 +3,7 @@ package org.orkg.testing.spring.restdocs
 import com.epages.restdocs.apispec.FieldDescriptors
 import com.epages.restdocs.apispec.HeaderDescriptorWithType
 import com.epages.restdocs.apispec.ParameterDescriptorWithType
+import com.epages.restdocs.apispec.ParameterType
 import com.epages.restdocs.apispec.References
 import com.epages.restdocs.apispec.Schema
 import com.epages.restdocs.apispec.Schema.Companion.schema
@@ -23,42 +24,24 @@ import org.orkg.testing.spring.restdocs.pagedResponseFields as pagedResponseFiel
  * Based on [com.epages.restdocs.apispec.ResourceSnippetParametersBuilder]
  */
 class DocumentationBuilder(private val documentationContext: DocumentationContext) {
-    var summary: String? = null
-        protected set
-    var description: String? = null
-        protected set
-    var requestSchema: Schema? = null
-        protected set
-    var responseSchema: Schema? = null
-        protected set
-    var privateResource: Boolean = false
-        protected set
-    var deprecated: Boolean = false
-        protected set
-    var tags: Set<String> = setOf()
-        protected set
-    var requestFields: List<FieldDescriptor> = emptyList()
-        private set
-    var responseFields: List<FieldDescriptor> = emptyList()
-        private set
-    var links: List<LinkDescriptor> = emptyList()
-        private set
-    var pathParameters: List<ParameterDescriptorWithType> = emptyList()
-        private set
-    var queryParameters: List<ParameterDescriptorWithType> = emptyList()
-        private set
-    var formParameters: List<ParameterDescriptorWithType> = emptyList()
-        private set
-    var requestHeaders: List<HeaderDescriptorWithType> = emptyList()
-        private set
-    var responseHeaders: List<HeaderDescriptorWithType> = emptyList()
-        private set
-    var requestParts: List<RequestPartDescriptor> = emptyList()
-        private set
-    var requestPartFields: Map<String, List<FieldDescriptor>> = emptyMap()
-        private set
-    var throws: List<KClass<out Throwable>> = emptyList()
-        private set
+    private var summary: String? = null
+    private var description: String? = null
+    private var requestSchema: Schema? = null
+    private var responseSchema: Schema? = null
+    private var privateResource: Boolean = false
+    private var deprecated: Boolean = false
+    private var tags: Set<String> = setOf()
+    private var requestFields: List<FieldDescriptor> = emptyList()
+    private var responseFields: List<FieldDescriptor> = emptyList()
+    private var links: List<LinkDescriptor> = emptyList()
+    private var pathParameters: List<ParameterDescriptorWithType> = emptyList()
+    private var queryParameters: List<ParameterDescriptorWithType> = emptyList()
+    private var formParameters: List<ParameterDescriptorWithType> = emptyList()
+    private var requestHeaders: List<HeaderDescriptorWithType> = emptyList()
+    private var responseHeaders: List<HeaderDescriptorWithType> = emptyList()
+    private var requestParts: List<RequestPartDescriptor> = emptyList()
+    private var requestPartFields: Map<String, List<FieldDescriptor>> = emptyMap()
+    private var throws: List<KClass<out Throwable>> = emptyList()
 
     private val validatorConstraintResolver = ValidatorConstraintResolver()
 
@@ -203,7 +186,7 @@ class DocumentationBuilder(private val documentationContext: DocumentationContex
     }
 
     fun pathParameters(vararg pathParameters: ParameterDescriptor) =
-        pathParameters(pathParameters.map { ParameterDescriptorWithType.fromParameterDescriptor(it) })
+        pathParameters(pathParameters.map { it.toParameterDescriptorWithType() })
 
     fun queryParameters(vararg requestParameters: ParameterDescriptorWithType) =
         queryParameters(requestParameters.toList())
@@ -213,7 +196,7 @@ class DocumentationBuilder(private val documentationContext: DocumentationContex
     }
 
     fun queryParameters(vararg requestParameters: ParameterDescriptor) =
-        queryParameters(requestParameters.map { ParameterDescriptorWithType.fromParameterDescriptor(it) })
+        queryParameters(requestParameters.map { it.toParameterDescriptorWithType() })
 
     fun pagedQueryParameters() =
         pagedQueryParameters(emptyList<ParameterDescriptorWithType>())
@@ -225,9 +208,9 @@ class DocumentationBuilder(private val documentationContext: DocumentationContex
         queryParameters(
             listOf<ParameterDescriptorWithType>(
                 *requestParameters.toTypedArray(),
-                ParameterDescriptorWithType("page").type(SimpleType.INTEGER).description("The page number requested, 0-indexed.").optional(),
-                ParameterDescriptorWithType("size").type(SimpleType.INTEGER).description("The number of elements per page. May be lowered if it exceeds the limit.").optional(),
-                ParameterDescriptorWithType("sort").description(
+                ParameterDescriptorWithType("page").type(ParameterType.INTEGER).description("The page number requested, 0-indexed.").size().optional(),
+                ParameterDescriptorWithType("size").type(ParameterType.INTEGER).description("The number of elements per page. May be lowered if it exceeds the limit.").size(1).optional(),
+                ParameterDescriptorWithType("sort").type(ParameterType.ARRAY).description(
                     """
                     A string in the form "\{property},\{direction}".
                     Sortable properties are dependent on the endpoint.
@@ -240,7 +223,7 @@ class DocumentationBuilder(private val documentationContext: DocumentationContex
     }
 
     fun pagedQueryParameters(vararg requestParameters: ParameterDescriptor) =
-        pagedQueryParameters(requestParameters.toList().map { ParameterDescriptorWithType.fromParameterDescriptor(it) })
+        pagedQueryParameters(requestParameters.toList().map { it.toParameterDescriptorWithType() })
 
     fun formParameters(vararg formParameters: ParameterDescriptorWithType) =
         formParameters(formParameters.toList())
@@ -250,7 +233,7 @@ class DocumentationBuilder(private val documentationContext: DocumentationContex
     }
 
     fun formParameters(vararg formParameters: ParameterDescriptor) =
-        formParameters(formParameters.map { ParameterDescriptorWithType.fromParameterDescriptor(it) })
+        formParameters(formParameters.map { it.toParameterDescriptorWithType() })
 
     fun requestHeaders(requestHeaders: List<HeaderDescriptorWithType>) {
         this.requestHeaders = requestHeaders
@@ -298,6 +281,8 @@ class DocumentationBuilder(private val documentationContext: DocumentationContex
         this.tags += tags
     }
 
+    fun hasTags() = tags.isNotEmpty()
+
     fun throws(vararg throws: KClass<out Throwable>) {
         this.throws += throws
     }
@@ -311,6 +296,7 @@ class DocumentationBuilder(private val documentationContext: DocumentationContex
             constraints += validatorConstraintResolver.resolveForProperty(propertyPath.fieldName, propertyPath.enclosingClass)
         }
         documentationContext.applyConstraints(constraints, kType)
+        documentationContext.resolveFormat(kType)?.let { format -> format(format) }
         if (!attributes.contains("schemaName")) {
             if (isExternalType(jType)) {
                 references(kType)
@@ -332,6 +318,7 @@ class DocumentationBuilder(private val documentationContext: DocumentationContex
                 documentationContext.applyConstraints(constraints, kItemsType)
                 if (jItemsType.isJvmType() || isPrimitiveType(itemsTypeName)) {
                     arrayItemsType(itemsTypeName)
+                    documentationContext.resolveFormat(kItemsType)?.let { format -> format(format) }
                 } else {
                     arrayItemsType("object")
                     references(kItemsType)
@@ -345,6 +332,9 @@ class DocumentationBuilder(private val documentationContext: DocumentationContex
         }
         if (constraints.isNotEmpty()) {
             constraints(constraints)
+        }
+        if (type == null && (kType == Long::class || kType == Int::class)) {
+            type("integer")
         }
         return this
     }
@@ -387,4 +377,15 @@ class DocumentationBuilder(private val documentationContext: DocumentationContex
         tags = tags,
         throws = throws,
     )
+
+    companion object {
+        private fun ParameterDescriptor.toParameterDescriptorWithType(): ParameterDescriptorWithType {
+            val type = attributes.remove("type") as? ParameterType
+            val parameterWithType = ParameterDescriptorWithType.fromParameterDescriptor(this)
+            if (type != null) {
+                parameterWithType.type(type)
+            }
+            return parameterWithType
+        }
+    }
 }

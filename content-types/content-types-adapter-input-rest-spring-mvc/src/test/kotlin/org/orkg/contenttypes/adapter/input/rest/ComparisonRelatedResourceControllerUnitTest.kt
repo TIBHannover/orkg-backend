@@ -238,12 +238,12 @@ internal class ComparisonRelatedResourceControllerUnitTest : MockMvcBaseTest("co
     @Test
     @TestWithMockUser
     @DisplayName("Given a comparison related resource, when deleting and service succeeds, then status is 204 NO CONTENT")
-    fun delete() {
+    fun deleteByIdAndComparisonId() {
         val comparisonId = ThingId("R123")
         val comparisonRelatedResourceId = ThingId("R456")
 
         every {
-            comparisonRelatedResourceService.delete(
+            comparisonRelatedResourceService.deleteByIdAndComparisonId(
                 comparisonId = comparisonId,
                 comparisonRelatedResourceId = comparisonRelatedResourceId,
                 contributorId = any()
@@ -275,7 +275,7 @@ internal class ComparisonRelatedResourceControllerUnitTest : MockMvcBaseTest("co
             }
 
         verify(exactly = 1) {
-            comparisonRelatedResourceService.delete(
+            comparisonRelatedResourceService.deleteByIdAndComparisonId(
                 comparisonId = comparisonId,
                 comparisonRelatedResourceId = comparisonRelatedResourceId,
                 contributorId = ContributorId(MockUserId.USER)

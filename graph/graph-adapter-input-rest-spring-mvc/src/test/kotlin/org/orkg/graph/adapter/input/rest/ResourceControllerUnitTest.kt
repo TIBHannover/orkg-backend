@@ -45,8 +45,8 @@ import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
-import org.orkg.graph.testing.asciidoc.allowedVisibilityFilterValues
 import org.orkg.graph.testing.asciidoc.allowedVisibilityValues
+import org.orkg.graph.testing.asciidoc.visibilityFilterQueryParameter
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
@@ -56,6 +56,8 @@ import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
+import org.orkg.testing.spring.restdocs.format
+import org.orkg.testing.spring.restdocs.repeatable
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageImpl
@@ -244,15 +246,15 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
                 pagedQueryParameters(
                     parameterWithName("q").description("A search term that must be contained in the label. (optional)").optional(),
                     parameterWithName("exact").description("Whether label matching is exact or fuzzy (optional, default: false)").optional(),
-                    parameterWithName("visibility").description("""Filter for visibility. Either of $allowedVisibilityFilterValues. (optional)""").optional(),
-                    parameterWithName("created_by").description("Filter for the UUID of the user or service who created this resource. (optional)").optional(),
+                    visibilityFilterQueryParameter(),
+                    parameterWithName("created_by").description("Filter for the UUID of the user or service who created this resource. (optional)").format("uuid").optional(),
                     parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned resource can have. (optional)").optional(),
                     parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned resource can have. (optional)").optional(),
-                    parameterWithName("include").description("A comma-separated set of classes that the resource must have. (optional)").optional(),
-                    parameterWithName("exclude").description("A comma-separated set of classes that the resource must not have. (optional)").optional(),
+                    parameterWithName("include").description("A comma-separated set of classes that the resource must have. (optional)").repeatable().optional(),
+                    parameterWithName("exclude").description("A comma-separated set of classes that the resource must not have. (optional)").repeatable().optional(),
                     parameterWithName("base_class").description("The id of the base class that the resource has to be an instance of. (optional)").optional(),
-                    parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the resource belongs to. (optional)").optional(),
-                    parameterWithName("organization_id").description("Filter for the UUID of the organization that the resource belongs to. (optional)").optional(),
+                    parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the resource belongs to. (optional)").format("uuid").optional(),
+                    parameterWithName("organization_id").description("Filter for the UUID of the organization that the resource belongs to. (optional)").format("uuid").optional(),
                 )
                 pagedResponseFields<ResourceRepresentation>(resourceResponseFields())
                 throws(UnknownSortingProperty::class)

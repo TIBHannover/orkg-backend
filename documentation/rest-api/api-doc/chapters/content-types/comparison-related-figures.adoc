@@ -37,6 +37,6 @@ operation::comparison-related-figures_update[snippets='path-parameters,request-f
 [[comparisons-related-figure-delete]]
 == Deleting Comparison Related Figures
 
-include::{snippets}/comparison-related-figures_delete/description.adoc[]
+include::{snippets}/comparison-related-figures_delete-by-id-and-comparison-id/description.adoc[]
 
-operation::comparison-related-figures_delete[snippets='path-parameters,curl-request,response-headers,http-response']
+operation::comparison-related-figures_delete-by-id-and-comparison-id[snippets='path-parameters,curl-request,response-headers,http-response']

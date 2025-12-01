@@ -64,7 +64,7 @@ import org.orkg.graph.domain.URIAlreadyInUse
 import org.orkg.graph.domain.URINotAbsolute
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
-import org.orkg.graph.testing.asciidoc.allowedVisibilityFilterValues
+import org.orkg.graph.testing.asciidoc.visibilityFilterQueryParameter
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectRosettaStoneStatement
@@ -74,6 +74,7 @@ import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
+import org.orkg.testing.spring.restdocs.format
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
@@ -199,12 +200,12 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
                     parameterWithName("context").description("Filter for the id of the context that the rosetta stone statement was created with. (optional)").optional(),
                     parameterWithName("template_id").description("Filter for the template id that was used to instantiate the rosetta stone statement. (optional)").optional(),
                     parameterWithName("class_id").description("Filter for the class id of the rosetta stone statement. (optional)").optional(),
-                    parameterWithName("visibility").description("""Optional filter for visibility. Either of $allowedVisibilityFilterValues.""").optional(),
-                    parameterWithName("created_by").description("Filter for the UUID of the user or service who created the first version of the rosetta stone statement. (optional)").optional(),
+                    visibilityFilterQueryParameter(),
+                    parameterWithName("created_by").description("Filter for the UUID of the user or service who created the first version of the rosetta stone statement. (optional)").format("uuid").optional(),
                     parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned rosetta stone statement can have. (optional)").optional(),
                     parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned rosetta stone statement can have. (optional)").optional(),
-                    parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the rosetta stone statement belongs to. (optional)").optional(),
-                    parameterWithName("organization_id").description("Filter for the UUID of the organization that the rosetta stone statement belongs to. (optional)").optional(),
+                    parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the rosetta stone statement belongs to. (optional)").format("uuid").optional(),
+                    parameterWithName("organization_id").description("Filter for the UUID of the organization that the rosetta stone statement belongs to. (optional)").format("uuid").optional(),
                 )
                 pagedResponseFields<RosettaStoneStatementRepresentation>(rosettaStoneStatementResponseFields())
                 throws(UnknownSortingProperty::class)
@@ -468,9 +469,9 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
     @Test
     @TestWithMockUser
     @DisplayName("Given a rosetta stone statement, when soft deleting and service succeeds, then status is 204 NO CONTENT")
-    fun softDelete() {
+    fun softDeleteById() {
         val id = ThingId("R123")
-        every { statementService.softDelete(id, any()) } just runs
+        every { statementService.softDeleteById(id, any()) } just runs
 
         documentedDeleteRequestTo("/api/rosetta-stone/statements/{id}", id)
             .accept(ROSETTA_STONE_STATEMENT_JSON_V1)
@@ -493,15 +494,15 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
                 )
             }
 
-        verify(exactly = 1) { statementService.softDelete(id, ContributorId(MockUserId.USER)) }
+        verify(exactly = 1) { statementService.softDeleteById(id, ContributorId(MockUserId.USER)) }
     }
 
     @Test
     @TestWithMockCurator
     @DisplayName("Given a rosetta stone statement, when deleting and service succeeds, then status is 204 NO CONTENT")
-    fun delete() {
+    fun deleteById() {
         val id = ThingId("R123")
-        every { statementService.delete(id, any()) } just runs
+        every { statementService.deleteById(id, any()) } just runs
 
         documentedDeleteRequestTo("/api/rosetta-stone/statements/{id}/versions", id)
             .accept(ROSETTA_STONE_STATEMENT_JSON_V1)
@@ -529,7 +530,7 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
                 )
             }
 
-        verify(exactly = 1) { statementService.delete(id, ContributorId(MockUserId.CURATOR)) }
+        verify(exactly = 1) { statementService.deleteById(id, ContributorId(MockUserId.CURATOR)) }
     }
 
     private fun createRosettaStoneStatementRequest() =

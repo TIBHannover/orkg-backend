@@ -23,7 +23,7 @@ import org.orkg.community.domain.ObservatoryNotFound
 import org.orkg.community.domain.OrganizationNotFound
 import org.orkg.contenttypes.adapter.input.rest.LiteratureListController.CreateLiteratureListRequest
 import org.orkg.contenttypes.adapter.input.rest.LiteratureListController.LiteratureListListSectionRequest
-import org.orkg.contenttypes.adapter.input.rest.LiteratureListController.LiteratureListListSectionRequest.Entry
+import org.orkg.contenttypes.adapter.input.rest.LiteratureListController.LiteratureListListSectionRequest.ListSectionEntry
 import org.orkg.contenttypes.adapter.input.rest.LiteratureListController.LiteratureListTextSectionRequest
 import org.orkg.contenttypes.adapter.input.rest.LiteratureListController.PublishLiteratureListRequest
 import org.orkg.contenttypes.adapter.input.rest.LiteratureListController.UpdateLiteratureListRequest
@@ -66,8 +66,8 @@ import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
-import org.orkg.graph.testing.asciidoc.allowedVisibilityFilterValues
 import org.orkg.graph.testing.asciidoc.allowedVisibilityValues
+import org.orkg.graph.testing.asciidoc.visibilityFilterQueryParameter
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectLiteratureList
@@ -81,6 +81,7 @@ import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectError
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
 import org.orkg.testing.spring.restdocs.arrayItemsType
 import org.orkg.testing.spring.restdocs.constraints
+import org.orkg.testing.spring.restdocs.format
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
@@ -207,12 +208,12 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
                 pagedQueryParameters(
                     parameterWithName("title").description("A search term that must be contained in the title of the literature list. (optional)").optional(),
                     parameterWithName("exact").description("Whether title matching is exact or fuzzy (optional, default: false)").optional(),
-                    parameterWithName("visibility").description("""Optional filter for visibility. Either of $allowedVisibilityFilterValues.""").optional(),
-                    parameterWithName("created_by").description("Filter for the UUID of the user or service who created this literature list. (optional)").optional(),
+                    visibilityFilterQueryParameter(),
+                    parameterWithName("created_by").description("Filter for the UUID of the user or service who created this literature list. (optional)").format("uuid").optional(),
                     parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned resource can have. (optional)").optional(),
                     parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned resource can have. (optional)").optional(),
-                    parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the resource belongs to. (optional)").optional(),
-                    parameterWithName("organization_id").description("Filter for the UUID of the organization that the resource belongs to. (optional)").optional(),
+                    parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the resource belongs to. (optional)").format("uuid").optional(),
+                    parameterWithName("organization_id").description("Filter for the UUID of the organization that the resource belongs to. (optional)").format("uuid").optional(),
                     parameterWithName("research_field").description("Filter for research field id. (optional)").optional(),
                     parameterWithName("include_subfields").description("Flag for whether subfields are included in the search or not. (optional, default: false)").optional(),
                     parameterWithName("published").description("Filter for the publication status of the literature lists. (optional)").optional(),
@@ -326,8 +327,8 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
         val sectionId = ThingId("R123")
         val request = LiteratureListListSectionRequest(
             entries = listOf(
-                Entry(ThingId("R123")),
-                Entry(ThingId("R456"))
+                ListSectionEntry(ThingId("R123")),
+                ListSectionEntry(ThingId("R456"))
             )
         )
         every { literatureListService.create(any<CreateLiteratureListSectionUseCase.CreateListSectionCommand>()) } returns sectionId
@@ -387,8 +388,8 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
         val index = 5
         val request = LiteratureListListSectionRequest(
             entries = listOf(
-                Entry(ThingId("R123")),
-                Entry(ThingId("R456"))
+                ListSectionEntry(ThingId("R123")),
+                ListSectionEntry(ThingId("R456"))
             )
         )
         every { literatureListService.create(any<CreateLiteratureListSectionUseCase.CreateListSectionCommand>()) } returns sectionId
@@ -630,7 +631,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
         val id = ThingId("R3541")
         val sectionId = ThingId("R123")
         val request = LiteratureListListSectionRequest(
-            entries = listOf(Entry(ThingId("R123")), Entry(ThingId("R456")))
+            entries = listOf(ListSectionEntry(ThingId("R123")), ListSectionEntry(ThingId("R456")))
         )
         every { literatureListService.update(any<UpdateLiteratureListSectionUseCase.UpdateCommand>()) } just runs
 
@@ -1008,8 +1009,8 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
     private fun listSectionRequest() =
         LiteratureListListSectionRequest(
             entries = listOf(
-                Entry(ThingId("R123"), "Example description of an entry"),
-                Entry(ThingId("R456"))
+                ListSectionEntry(ThingId("R123"), "Example description of an entry"),
+                ListSectionEntry(ThingId("R456"))
             )
         )
 }

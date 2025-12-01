@@ -50,6 +50,7 @@ dependencies {
     testFixturesImplementation("org.springframework.security:spring-security-oauth2-resource-server")
     testFixturesImplementation("org.springframework:spring-orm")
     testFixturesImplementation("io.jsonwebtoken:jjwt-api")
+    testFixturesImplementation("jakarta.validation:jakarta.validation-api")
     testFixturesImplementation(project(":common:string-utils"))
     testFixturesRuntimeOnly("io.jsonwebtoken:jjwt-impl")
     testFixturesRuntimeOnly("io.jsonwebtoken:jjwt-jackson")

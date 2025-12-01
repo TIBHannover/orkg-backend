@@ -84,7 +84,7 @@ interface UpdateRosettaStoneStatementUseCase {
 }
 
 interface DeleteRosettaStoneStatementUseCase {
-    fun softDelete(id: ThingId, contributorId: ContributorId)
+    fun softDeleteById(id: ThingId, contributorId: ContributorId)
 
-    fun delete(id: ThingId, contributorId: ContributorId)
+    fun deleteById(id: ThingId, contributorId: ContributorId)
 }

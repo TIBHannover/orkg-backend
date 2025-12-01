@@ -2,6 +2,7 @@
 
 plugins {
     id("org.orkg.gradle.input-adapter-spring-web")
+    id("org.orkg.gradle.kotlin-library-with-test-fixtures")
 }
 
 dependencies {
@@ -14,6 +15,12 @@ dependencies {
     implementation(project(":content-types:content-types-core-model"))
     implementation(project(":graph:graph-core-model"))
     implementation(project(":graph:graph-core-constants"))
+
+    testFixturesApi("org.springframework:spring-context")
+    testFixturesApi("org.springframework.boot:spring-boot-test")
+    testFixturesApi(project(":common:serialization"))
+    testFixturesApi(testFixtures(project(":testing:spring")))
+    testFixturesApi(testFixtures(project(":common:core-identifiers")))
 }
 
 testing {
@@ -35,7 +42,6 @@ testing {
                 implementation("org.springframework.restdocs:spring-restdocs-core")
                 implementation("org.springframework:spring-test")
                 implementation("com.ninja-squad:springmockk")
-                implementation(project(":common:serialization"))
                 implementation(testFixtures(project(":common:testing")))
                 implementation(testFixtures(project(":graph:graph-core-model")))
                 implementation(testFixtures(project(":testing:spring")))

@@ -29,7 +29,7 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.graph.testing.asciidoc.allowedVisibilityFilterValues
+import org.orkg.graph.testing.asciidoc.visibilityFilterQueryParameter
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.andExpectComparison
 import org.orkg.testing.andExpectLiteratureList
@@ -43,6 +43,9 @@ import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
+import org.orkg.testing.spring.restdocs.enumValues
+import org.orkg.testing.spring.restdocs.format
+import org.orkg.testing.spring.restdocs.repeatable
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.restdocs.request.ParameterDescriptor
@@ -325,13 +328,13 @@ internal class ContentTypeControllerUnitTest : MockMvcBaseTest("content-types") 
     }
 
     private fun queryParametersFindAll(): List<ParameterDescriptor> = listOf(
-        parameterWithName("classes").description("Filter for the content type classes. Available classes are $allowedContentTypeClassValues (optional)").optional(),
-        parameterWithName("visibility").description("Filter for visibility. Either of $allowedVisibilityFilterValues. (optional)").optional(),
-        parameterWithName("created_by").description("Filter for the UUID of the user or service who created this content type. (optional)").optional(),
+        parameterWithName("classes").description("Filter for the content type classes. Available classes are $allowedContentTypeClassValues (optional)").enumValues(ContentTypeClass::class).repeatable().optional(),
+        visibilityFilterQueryParameter(),
+        parameterWithName("created_by").description("Filter for the UUID of the user or service who created this content type. (optional)").format("uuid").optional(),
         parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned content type can have. (optional)").optional(),
         parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned content type can have. (optional)").optional(),
-        parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the content type belongs to. (optional)").optional(),
-        parameterWithName("organization_id").description("Filter for the UUID of the organization that the content type belongs to. (optional)").optional(),
+        parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the content type belongs to. (optional)").format("uuid").optional(),
+        parameterWithName("organization_id").description("Filter for the UUID of the organization that the content type belongs to. (optional)").format("uuid").optional(),
         parameterWithName("research_field").description("Filter for research field id that the content type belongs to. (optional)").optional(),
         parameterWithName("include_subfields").description("Flag for whether subfields are included in the search or not. (optional, default: false)").optional(),
         parameterWithName("sdg").description("Filter for the sustainable development goal that the content type belongs to. (optional)").optional(),

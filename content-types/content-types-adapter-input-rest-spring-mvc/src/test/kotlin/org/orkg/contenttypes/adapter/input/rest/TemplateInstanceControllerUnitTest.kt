@@ -53,7 +53,7 @@ import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
-import org.orkg.graph.testing.asciidoc.allowedVisibilityFilterValues
+import org.orkg.graph.testing.asciidoc.visibilityFilterQueryParameter
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectTemplateInstance
 import org.orkg.testing.annotations.TestWithMockUser
@@ -61,6 +61,7 @@ import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
+import org.orkg.testing.spring.restdocs.format
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
@@ -214,12 +215,12 @@ internal class TemplateInstanceControllerUnitTest : MockMvcBaseTest("template-in
                 pagedQueryParameters(
                     parameterWithName("q").description("A search term that must be contained in the label. (optional)").optional(),
                     parameterWithName("exact").description("Whether label matching is exact or fuzzy (optional, default: false)").optional(),
-                    parameterWithName("visibility").description("""Filter for visibility. Either of $allowedVisibilityFilterValues. (optional)""").optional(),
-                    parameterWithName("created_by").description("Filter for the UUID of the user or service who created this template instance. (optional)").optional(),
+                    visibilityFilterQueryParameter(),
+                    parameterWithName("created_by").description("Filter for the UUID of the user or service who created this template instance. (optional)").format("uuid").optional(),
                     parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned template instance can have. (optional)").optional(),
                     parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned template instance can have. (optional)").optional(),
-                    parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the template instance belongs to. (optional)").optional(),
-                    parameterWithName("organization_id").description("Filter for the UUID of the organization that the template instance belongs to. (optional)").optional(),
+                    parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the template instance belongs to. (optional)").format("uuid").optional(),
+                    parameterWithName("organization_id").description("Filter for the UUID of the organization that the template instance belongs to. (optional)").format("uuid").optional(),
                 )
                 pagedResponseFields<TemplateInstanceRepresentation>(templateInstanceResponseFields())
                 throws(TemplateNotFound::class, UnknownSortingProperty::class)

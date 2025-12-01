@@ -3,6 +3,7 @@ package org.orkg.graph.testing.asciidoc
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
+import org.orkg.testing.spring.restdocs.enumValues
 import org.springframework.restdocs.request.ParameterDescriptor
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 
@@ -18,9 +19,10 @@ val allowedVisibilityFilterValues =
 val allowedThingClassValues =
     listOf("class", "resource", "predicate", "literal").sorted().joinToString(separator = "`, `", prefix = "`", postfix = "`")
 
-fun visibilityFilterRequestParameter(): ParameterDescriptor =
+fun visibilityFilterQueryParameter(): ParameterDescriptor =
     parameterWithName("visibility")
-        .description("The visibility modifier. Must be one of $allowedVisibilityFilterValues. If it is not provided, it will be determined from the `featured` and `unlisted` request parameters (where available).")
+        .description("Filter for the visibility modifier. Must be one of $allowedVisibilityFilterValues.")
+        .enumValues(VisibilityFilter::class)
         .optional()
 
 fun legacyVisibilityFilterRequestParameters(): Array<ParameterDescriptor> = arrayOf(

@@ -59,6 +59,7 @@ internal class DatasetControllerUnitTest : MockMvcBaseTest("datasets") {
                 pathParameters(
                     parameterWithName("id").description("The identifier of the research problem."),
                 )
+                pagedQueryParameters()
                 pagedResponseFields<DatasetRepresentation>(datasetResponseFields())
             }
 
@@ -88,6 +89,7 @@ internal class DatasetControllerUnitTest : MockMvcBaseTest("datasets") {
                 pathParameters(
                     parameterWithName("id").description("The identifier of the dataset."),
                 )
+                pagedQueryParameters()
                 pagedResponseFields<ResearchProblem>(
                     fieldWithPath("id").description("The identifier of the research problem."),
                     fieldWithPath("label").description("The label of the research problem."),
@@ -134,6 +136,7 @@ internal class DatasetControllerUnitTest : MockMvcBaseTest("datasets") {
                     parameterWithName("id").description("The identifier of the dataset."),
                     parameterWithName("researchProblemId").description("The identifier of the research problem."),
                 )
+                pagedQueryParameters()
                 pagedResponseFields<DatasetSummaryRepresentation>(datasetSummaryResponseFields())
             }
 

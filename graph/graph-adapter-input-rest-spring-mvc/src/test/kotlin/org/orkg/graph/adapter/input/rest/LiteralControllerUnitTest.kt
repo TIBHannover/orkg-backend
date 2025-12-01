@@ -40,6 +40,7 @@ import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
+import org.orkg.testing.spring.restdocs.format
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -164,7 +165,7 @@ internal class LiteralControllerUnitTest : MockMvcBaseTest("literals") {
                 pagedQueryParameters(
                     parameterWithName("q").description("A search term that must be contained in the label. (optional)").optional(),
                     parameterWithName("exact").description("Whether label matching is exact or fuzzy (optional, default: false)").optional(),
-                    parameterWithName("created_by").description("Filter for the UUID of the user or service who created this literal. (optional)").optional(),
+                    parameterWithName("created_by").description("Filter for the UUID of the user or service who created this literal. (optional)").format("uuid").optional(),
                     parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned literal can have. (optional)").optional(),
                     parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned literal can have. (optional)").optional(),
                 )

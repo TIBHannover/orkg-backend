@@ -11,7 +11,6 @@ import org.orkg.auth.adapter.input.rest.LegacyUserController.UserDetails
 import org.orkg.common.CommonDocumentationContextProvider
 import org.orkg.common.ContributorId
 import org.orkg.common.configuration.WebMvcConfiguration
-import org.orkg.common.exceptions.Unauthorized
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.community.domain.ContributorNotFound
 import org.orkg.community.output.ContributorRepository
@@ -80,7 +79,7 @@ internal class LegacyUserControllerUnitTest : MockMvcBaseTest("users") {
                     fieldWithPath("observatory_id").type("string").description("The id of the observatory the user belongs to. (optional)").optional(),
                     fieldWithPath("is_curation_allowed").description("Whether the user is allowed to curate content."),
                 )
-                throws(Unauthorized::class, ContributorNotFound::class)
+                throws(ContributorNotFound::class)
             }
 
         verify(exactly = 1) { contributorRepository.findById(contributorId) }

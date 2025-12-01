@@ -191,7 +191,7 @@ internal class RdfControllerUnitTest : MockMvcBaseTest("rdf-hints") {
                 summary("Creating RDF Dumps")
                 description(
                     """
-                    Dumps are created automatically by the system, but can also be triggered manually usng a `POST` request.
+                    Dumps are created automatically by the system, but can also be triggered manually using a `POST` request.
                     
                     NOTE: This endpoint requires the admin role.
                     """

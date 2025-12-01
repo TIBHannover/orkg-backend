@@ -316,9 +316,9 @@ class LiteratureListController(
     }
 
     data class LiteratureListListSectionRequest(
-        val entries: List<Entry>,
+        val entries: List<ListSectionEntry>,
     ) : LiteratureListSectionRequest {
-        data class Entry(
+        data class ListSectionEntry(
             val id: ThingId,
             val description: String? = null,
         ) {

@@ -649,7 +649,7 @@ internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
         every { statementRepository.deleteByStatementIds(any()) } just runs
         every { resourceService.delete(any(), contributorId) } just runs
 
-        service.delete(template.id, contributorId)
+        service.deleteById(template.id, contributorId)
 
         verify(exactly = 1) { resourceService.findById(template.id) }
         verify(exactly = 1) { thingRepository.isUsedAsObject(template.id) }
@@ -689,7 +689,7 @@ internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
 
         every { resourceService.findById(id) } returns Optional.empty()
 
-        service.delete(id, contributorId)
+        service.deleteById(id, contributorId)
 
         verify(exactly = 1) { resourceService.findById(id) }
     }
@@ -706,7 +706,7 @@ internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
         every { resourceService.findById(template.id) } returns Optional.of(resource)
 
         assertThrows<RosettaStoneTemplateNotFound> {
-            service.delete(template.id, contributorId)
+            service.deleteById(template.id, contributorId)
         }
 
         verify(exactly = 1) { resourceService.findById(template.id) }
@@ -726,7 +726,7 @@ internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
         every { resourceService.findById(template.id) } returns Optional.of(resource)
 
         assertThrows<RosettaStoneTemplateNotModifiable> {
-            service.delete(template.id, contributorId)
+            service.deleteById(template.id, contributorId)
         }
 
         verify(exactly = 1) { resourceService.findById(template.id) }
@@ -746,7 +746,7 @@ internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
         every { thingRepository.isUsedAsObject(template.id) } returns true
 
         assertThrows<RosettaStoneTemplateInUse> {
-            service.delete(template.id, contributorId)
+            service.deleteById(template.id, contributorId)
         }
 
         verify(exactly = 1) { resourceService.findById(template.id) }
@@ -775,7 +775,7 @@ internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
         )
 
         assertThrows<RosettaStoneTemplateInUse> {
-            service.delete(template.id, contributorId)
+            service.deleteById(template.id, contributorId)
         }
 
         verify(exactly = 1) { resourceService.findById(template.id) }
@@ -809,7 +809,7 @@ internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
         every { contributorRepository.findById(contributorId) } returns Optional.empty()
 
         assertThrows<ContributorNotFound> {
-            service.delete(template.id, contributorId)
+            service.deleteById(template.id, contributorId)
         }
 
         verify(exactly = 1) { resourceService.findById(template.id) }
@@ -845,7 +845,7 @@ internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
         every { contributorRepository.findById(contributorId) } returns Optional.of(contributor)
 
         assertThrows<NeitherOwnerNorCurator> {
-            service.delete(template.id, contributorId)
+            service.deleteById(template.id, contributorId)
         }
 
         verify(exactly = 1) { resourceService.findById(template.id) }

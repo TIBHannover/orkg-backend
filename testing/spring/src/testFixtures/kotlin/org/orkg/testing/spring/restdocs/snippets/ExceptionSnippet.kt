@@ -2,6 +2,8 @@ package org.orkg.testing.spring.restdocs.snippets
 
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import org.orkg.common.exceptions.Unauthorized
+import org.springframework.http.HttpHeaders
 import org.springframework.restdocs.RestDocumentationContext
 import org.springframework.restdocs.operation.Operation
 import org.springframework.restdocs.snippet.RestDocumentationContextPlaceholderResolverFactory
@@ -18,6 +20,10 @@ class ExceptionSnippet private constructor(
         val placeholderResolverFactory = RestDocumentationContextPlaceholderResolverFactory()
         val writerResolver = StandardWriterResolver(placeholderResolverFactory, Charsets.UTF_8.name(), JsonTemplateFormat)
         val writer = writerResolver.resolve(operation.getName(), "exceptions", context)
+        val exceptions = exceptions.toMutableList()
+        if (operation.request.headers.containsKey(HttpHeaders.AUTHORIZATION)) {
+            exceptions.add(Unauthorized::class)
+        }
         writer.use { writer ->
             writer.append(objectMapper.writeValueAsString(exceptions.map { it.simpleName!! }))
         }

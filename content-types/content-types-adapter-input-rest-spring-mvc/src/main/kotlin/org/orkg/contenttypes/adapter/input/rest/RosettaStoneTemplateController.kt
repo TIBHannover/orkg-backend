@@ -112,12 +112,12 @@ class RosettaStoneTemplateController(
 
     @RequireLogin
     @DeleteMapping("/{id}")
-    fun delete(
+    fun deleteById(
         @PathVariable id: ThingId,
         currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
-        service.delete(id, userId)
+        service.deleteById(id, userId)
         return noContent().build()
     }
 

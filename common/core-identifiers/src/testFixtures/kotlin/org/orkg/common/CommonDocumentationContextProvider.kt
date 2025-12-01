@@ -1,9 +1,12 @@
 package org.orkg.common
 
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.validation.NullableNotBlank
 import org.orkg.testing.spring.restdocs.DocumentationContextProvider
 import org.springframework.boot.test.context.TestComponent
 import org.springframework.restdocs.constraints.Constraint
+import java.net.URI
+import java.time.OffsetDateTime
 import java.util.UUID
 import kotlin.reflect.KClass
 
@@ -30,4 +33,18 @@ class CommonDocumentationContextProvider : DocumentationContextProvider {
             }
         }
     }
+
+    override fun resolveFormat(type: KClass<*>): String? =
+        when (type) {
+            UUID::class, ContributorId::class, ObservatoryId::class, OrganizationId::class -> "uuid"
+            URI::class -> "uri"
+            ParsedIRI::class -> "iri"
+            Byte::class -> "byte"
+            Integer::class -> "int32"
+            Long::class -> "int64"
+            Float::class -> "float"
+            Double::class -> "double"
+            OffsetDateTime::class -> "datetime"
+            else -> super.resolveFormat(type)
+        }
 }

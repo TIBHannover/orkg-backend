@@ -29,6 +29,7 @@ import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.restdocs.pagedResponseFields
 import org.orkg.testing.spring.restdocs.referencesPageOf
+import org.orkg.testing.spring.restdocs.repeatable
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageRequest
 import org.springframework.restdocs.payload.PayloadDocumentation.applyPathPrefix
@@ -92,7 +93,7 @@ internal class BulkStatementControllerUnitTest : MockMvcBaseTest("bulk-statement
                     A `GET` request to get statements of multiple resources in the subject position.
                     """
                 )
-                pagedQueryParameters(parameterWithName("ids").description("The list of resource ids to fetch."))
+                pagedQueryParameters(parameterWithName("ids").description("The list of resource ids to fetch.").repeatable())
                 listResponseFields<BulkStatementRepresentation>(
                     fieldWithPath("id").description("The subject id that was used to fetch the following statements."),
                     fieldWithPath("statements").description("The page of statements.").referencesPageOf<StatementRepresentation>(),
@@ -156,7 +157,7 @@ internal class BulkStatementControllerUnitTest : MockMvcBaseTest("bulk-statement
                     A `GET` request to get statements of multiple resources/literals in the object position.
                     """
                 )
-                pagedQueryParameters(parameterWithName("ids").description("The list of object ids to fetch."))
+                pagedQueryParameters(parameterWithName("ids").description("The list of object ids to fetch.").repeatable())
                 listResponseFields<BulkStatementRepresentation>(
                     fieldWithPath("id").description("The object id that was used to fetch the following statements."),
                     fieldWithPath("statements").description("The page of statements.").referencesPageOf<StatementRepresentation>(),
@@ -241,7 +242,7 @@ internal class BulkStatementControllerUnitTest : MockMvcBaseTest("bulk-statement
                     A `PUT` request to edit multiple statements, with the same update body.
                     """
                 )
-                queryParameters(parameterWithName("ids").description("The list of statements to update"))
+                queryParameters(parameterWithName("ids").description("The list of statements to update").repeatable())
                 requestFields<BulkStatementUpdateRequest>(
                     fieldWithPath("subject_id").description("The updated id of the subject.").optional(),
                     fieldWithPath("predicate_id").description("The updated id of the predicate.").optional(),

@@ -6,8 +6,6 @@ import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.restdocs.payload.ResponseFieldsSnippet
-import org.springframework.restdocs.snippet.AbstractDescriptor
-import org.springframework.restdocs.snippet.Attributes
 import java.time.OffsetDateTime
 import kotlin.reflect.KClass
 
@@ -25,10 +23,10 @@ fun pageableDetailedFieldParameters(
         }
     }.description("The result of the request as a (sorted) array."),
     subsectionWithPath("page").description("Paging information."),
-    fieldWithPath("page.number").description("The number of the current page."),
-    fieldWithPath("page.size").description("The size of the current page."),
-    fieldWithPath("page.total_elements").description("The total amounts of elements."),
-    fieldWithPath("page.total_pages").description("The total number of pages."),
+    fieldWithPath("page.number").description("The number of the current page.").format("int32").size(),
+    fieldWithPath("page.size").description("The size of the current page.").format("int32").size(),
+    fieldWithPath("page.total_elements").description("The total amounts of elements.").format("int64").size(),
+    fieldWithPath("page.total_pages").description("The total number of pages.").format("int32").size(),
 )
 
 fun pagedResponseFields(vararg fieldDescriptor: FieldDescriptor): ResponseFieldsSnippet =
@@ -64,14 +62,6 @@ fun timestampFieldWithPath(path: String, suffix: String): FieldDescriptor = fiel
             "(Also see https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/OffsetDateTime.html[JavaDoc])."
     )
     .type("String")
-
-fun <T : AbstractDescriptor<T>> AbstractDescriptor<T>.deprecated(): T =
-    description(listOfNotNull("*Deprecated*", description).joinToString(" "))
-        .attributes(Attributes.Attribute("deprecated", true))
-
-fun <T : AbstractDescriptor<T>> AbstractDescriptor<T>.deprecated(replaceWith: String): T =
-    description(listOfNotNull("*Deprecated*. See `$replaceWith` for replacement.", description).joinToString(" "))
-        .attributes(Attributes.Attribute("deprecated", true))
 
 fun exceptionResponseFields(type: String) = listOf(
     fieldWithPath("type").description("A URI reference that identifies the problem type. Always `$type` for this error."),

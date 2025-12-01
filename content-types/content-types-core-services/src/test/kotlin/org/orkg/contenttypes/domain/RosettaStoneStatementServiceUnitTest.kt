@@ -81,7 +81,7 @@ internal class RosettaStoneStatementServiceUnitTest : MockkBaseTest {
         every { repository.findByIdOrVersionId(statement.id) } returns Optional.of(statement)
         every { repository.softDelete(statement.id, contributorId) } just runs
 
-        service.softDelete(statement.id, contributorId)
+        service.softDeleteById(statement.id, contributorId)
 
         verify(exactly = 1) { repository.findByIdOrVersionId(statement.id) }
         verify(exactly = 1) { repository.softDelete(statement.id, contributorId) }
@@ -94,7 +94,7 @@ internal class RosettaStoneStatementServiceUnitTest : MockkBaseTest {
 
         every { repository.findByIdOrVersionId(statementId) } returns Optional.empty()
 
-        service.softDelete(statementId, contributorId)
+        service.softDeleteById(statementId, contributorId)
 
         verify(exactly = 1) { repository.findByIdOrVersionId(statementId) }
     }
@@ -106,7 +106,7 @@ internal class RosettaStoneStatementServiceUnitTest : MockkBaseTest {
 
         every { repository.findByIdOrVersionId(statement.id) } returns Optional.of(statement)
 
-        assertThrows<RosettaStoneStatementNotModifiable> { service.softDelete(statement.id, contributorId) }
+        assertThrows<RosettaStoneStatementNotModifiable> { service.softDeleteById(statement.id, contributorId) }
 
         verify(exactly = 1) { repository.findByIdOrVersionId(statement.id) }
     }
@@ -119,7 +119,7 @@ internal class RosettaStoneStatementServiceUnitTest : MockkBaseTest {
 
         every { repository.findByIdOrVersionId(id) } returns Optional.of(statement)
 
-        assertThrows<CannotDeleteIndividualRosettaStoneStatementVersion> { service.softDelete(id, contributorId) }
+        assertThrows<CannotDeleteIndividualRosettaStoneStatementVersion> { service.softDeleteById(id, contributorId) }
 
         verify(exactly = 1) { repository.findByIdOrVersionId(id) }
     }
@@ -131,7 +131,7 @@ internal class RosettaStoneStatementServiceUnitTest : MockkBaseTest {
 
         every { repository.findByIdOrVersionId(statement.id) } returns Optional.of(statement)
 
-        service.softDelete(statement.id, contributorId)
+        service.softDeleteById(statement.id, contributorId)
 
         verify(exactly = 1) { repository.findByIdOrVersionId(statement.id) }
     }
@@ -147,7 +147,7 @@ internal class RosettaStoneStatementServiceUnitTest : MockkBaseTest {
         every { repository.isUsedAsObject(statement.id) } returns false
         every { repository.delete(statement.id) } just runs
 
-        service.delete(statement.id, contributorId)
+        service.deleteById(statement.id, contributorId)
 
         verify(exactly = 1) { repository.findByIdOrVersionId(statement.id) }
         verify(exactly = 1) { contributorRepository.findById(contributorId) }
@@ -162,7 +162,7 @@ internal class RosettaStoneStatementServiceUnitTest : MockkBaseTest {
 
         every { repository.findByIdOrVersionId(statementId) } returns Optional.empty()
 
-        service.delete(statementId, contributorId)
+        service.deleteById(statementId, contributorId)
 
         verify(exactly = 1) { repository.findByIdOrVersionId(statementId) }
     }
@@ -174,7 +174,7 @@ internal class RosettaStoneStatementServiceUnitTest : MockkBaseTest {
 
         every { repository.findByIdOrVersionId(statement.id) } returns Optional.of(statement)
 
-        assertThrows<RosettaStoneStatementNotModifiable> { service.delete(statement.id, contributorId) }
+        assertThrows<RosettaStoneStatementNotModifiable> { service.deleteById(statement.id, contributorId) }
 
         verify(exactly = 1) { repository.findByIdOrVersionId(statement.id) }
     }
@@ -187,7 +187,7 @@ internal class RosettaStoneStatementServiceUnitTest : MockkBaseTest {
         every { repository.findByIdOrVersionId(statement.versions.first().id) } returns Optional.of(statement)
 
         assertThrows<CannotDeleteIndividualRosettaStoneStatementVersion> {
-            service.delete(statement.versions.first().id, contributorId)
+            service.deleteById(statement.versions.first().id, contributorId)
         }
 
         verify(exactly = 1) { repository.findByIdOrVersionId(statement.versions.first().id) }
@@ -201,7 +201,7 @@ internal class RosettaStoneStatementServiceUnitTest : MockkBaseTest {
         every { repository.findByIdOrVersionId(statement.id) } returns Optional.of(statement)
         every { contributorRepository.findById(contributorId) } returns Optional.empty()
 
-        assertThrows<ContributorNotFound> { service.delete(statement.id, contributorId) }
+        assertThrows<ContributorNotFound> { service.deleteById(statement.id, contributorId) }
 
         verify(exactly = 1) { repository.findByIdOrVersionId(statement.id) }
         verify(exactly = 1) { contributorRepository.findById(contributorId) }
@@ -216,7 +216,7 @@ internal class RosettaStoneStatementServiceUnitTest : MockkBaseTest {
         every { repository.findByIdOrVersionId(statement.id) } returns Optional.of(statement)
         every { contributorRepository.findById(contributorId) } returns Optional.of(contributor)
 
-        assertThrows<NotACurator> { service.delete(statement.id, contributorId) }
+        assertThrows<NotACurator> { service.deleteById(statement.id, contributorId) }
 
         verify(exactly = 1) { repository.findByIdOrVersionId(statement.id) }
         verify(exactly = 1) { contributorRepository.findById(contributorId) }
@@ -232,7 +232,7 @@ internal class RosettaStoneStatementServiceUnitTest : MockkBaseTest {
         every { contributorRepository.findById(contributorId) } returns Optional.of(contributor)
         every { repository.isUsedAsObject(statement.id) } returns true
 
-        assertThrows<RosettaStoneStatementInUse> { service.delete(statement.id, contributorId) }
+        assertThrows<RosettaStoneStatementInUse> { service.deleteById(statement.id, contributorId) }
 
         verify(exactly = 1) { repository.findByIdOrVersionId(statement.id) }
         verify(exactly = 1) { contributorRepository.findById(contributorId) }

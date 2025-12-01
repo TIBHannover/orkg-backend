@@ -47,7 +47,7 @@ interface UpdateComparisonRelatedResourceUseCase {
 }
 
 interface DeleteComparisonRelatedResourceUseCase {
-    fun delete(
+    fun deleteByIdAndComparisonId(
         comparisonId: ThingId,
         comparisonRelatedResourceId: ThingId,
         contributorId: ContributorId,

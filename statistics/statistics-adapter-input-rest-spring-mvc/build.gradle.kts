@@ -3,6 +3,7 @@
 
 plugins {
     id("org.orkg.gradle.input-adapter-spring-web")
+    id("org.orkg.gradle.kotlin-library-with-test-fixtures")
 }
 
 testing {
@@ -17,7 +18,6 @@ testing {
                 implementation("org.springframework.restdocs:spring-restdocs-core")
                 implementation("org.springframework:spring-test")
                 implementation("com.ninja-squad:springmockk")
-                implementation(project(":common:serialization"))
                 implementation(testFixtures(project(":statistics:statistics-core-model")))
                 implementation(testFixtures(project(":testing:spring")))
                 runtimeOnly("com.jayway.jsonpath:json-path")
@@ -34,4 +34,10 @@ dependencies {
     api(project(":statistics:statistics-core-model"))
     api(project(":statistics:statistics-adapter-input-representations"))
     api(project(":statistics:statistics-ports-input"))
+
+    testFixturesApi("org.springframework:spring-context")
+    testFixturesApi("org.springframework.boot:spring-boot-test")
+    testFixturesApi(project(":common:serialization"))
+    testFixturesApi(testFixtures(project(":testing:spring")))
+    testFixturesApi(testFixtures(project(":common:core-identifiers")))
 }

@@ -3,7 +3,7 @@
 
 plugins {
     id("org.orkg.gradle.input-adapter-spring-web")
-    id("org.orkg.gradle.kotlin-library")
+    id("org.orkg.gradle.kotlin-library-with-test-fixtures")
 }
 
 dependencies {
@@ -15,6 +15,11 @@ dependencies {
     implementation("org.springframework.security:spring-security-oauth2-core")
     implementation("org.springframework.security:spring-security-oauth2-jose")
     implementation(project(":notifications:notifications-core-model"))
+
+    testFixturesApi("org.springframework:spring-context")
+    testFixturesApi("org.springframework.boot:spring-boot-test")
+    testFixturesApi(testFixtures(project(":testing:spring")))
+    testFixturesApi(testFixtures(project(":common:core-identifiers")))
 }
 
 testing {

@@ -135,7 +135,7 @@ class ComparisonRelatedResourceService(
         ).execute(command)
     }
 
-    override fun delete(
+    override fun deleteByIdAndComparisonId(
         comparisonId: ThingId,
         comparisonRelatedResourceId: ThingId,
         contributorId: ContributorId,

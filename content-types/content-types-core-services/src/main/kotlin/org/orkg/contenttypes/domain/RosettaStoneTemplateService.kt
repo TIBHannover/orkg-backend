@@ -150,7 +150,7 @@ class RosettaStoneTemplateService(
         steps.execute(command, UpdateRosettaStoneTemplateState())
     }
 
-    override fun delete(id: ThingId, contributorId: ContributorId) {
+    override fun deleteById(id: ThingId, contributorId: ContributorId) {
         resourceService.findById(id).ifPresent { template ->
             if (Classes.rosettaNodeShape !in template.classes) {
                 throw RosettaStoneTemplateNotFound(template.id)

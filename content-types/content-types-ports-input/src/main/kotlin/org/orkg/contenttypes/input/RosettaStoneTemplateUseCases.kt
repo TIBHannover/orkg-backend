@@ -67,5 +67,5 @@ interface UpdateRosettaStoneTemplateUseCase {
 }
 
 interface DeleteRosettaStoneTemplateUseCase {
-    fun delete(id: ThingId, contributorId: ContributorId)
+    fun deleteById(id: ThingId, contributorId: ContributorId)
 }

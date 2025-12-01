@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.contenttypes.adapter.input.rest.VisibilityParametersDocTest.VisibilityRequestParametersDummyController
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.testing.asciidoc.legacyVisibilityFilterRequestParameters
-import org.orkg.graph.testing.asciidoc.visibilityFilterRequestParameter
+import org.orkg.graph.testing.asciidoc.visibilityFilterQueryParameter
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus
@@ -44,7 +44,7 @@ internal class VisibilityParametersDocTest : MockMvcBaseTest("visibility") {
             .param("visibility", "ALL_LISTED")
             .perform()
             .andExpect(status().isNoContent)
-            .andDo(documentationHandler.document(queryParameters(visibilityFilterRequestParameter())))
+            .andDo(documentationHandler.document(queryParameters(visibilityFilterQueryParameter())))
     }
 
     @RestController

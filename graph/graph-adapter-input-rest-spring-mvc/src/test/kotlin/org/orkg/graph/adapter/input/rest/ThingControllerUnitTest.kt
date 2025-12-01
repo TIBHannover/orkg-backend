@@ -20,7 +20,7 @@ import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.ThingUseCases
-import org.orkg.graph.testing.asciidoc.allowedVisibilityFilterValues
+import org.orkg.graph.testing.asciidoc.visibilityFilterQueryParameter
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
@@ -29,7 +29,9 @@ import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
+import org.orkg.testing.spring.restdocs.format
 import org.orkg.testing.spring.restdocs.oneOf
+import org.orkg.testing.spring.restdocs.repeatable
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
@@ -155,14 +157,14 @@ internal class ThingControllerUnitTest : MockMvcBaseTest("things") {
                 pagedQueryParameters(
                     parameterWithName("q").description("A search term that must be contained in the label. (optional)").optional(),
                     parameterWithName("exact").description("Whether label matching is exact or fuzzy (optional, default: false)").optional(),
-                    parameterWithName("visibility").description("""Filter for visibility. Either of $allowedVisibilityFilterValues. (optional)""").optional(),
-                    parameterWithName("created_by").description("Filter for the UUID of the user or service who created this thing. (optional)").optional(),
+                    visibilityFilterQueryParameter(),
+                    parameterWithName("created_by").description("Filter for the UUID of the user or service who created this thing. (optional)").format("uuid").optional(),
                     parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned thing can have. (optional)").optional(),
                     parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned thing can have. (optional)").optional(),
-                    parameterWithName("include").description("A comma-separated set of classes that the thing must have. The ids `Resource`, `Class`, `Predicate` and `Literal` can be used to filter for a general type of object. (optional)").optional(),
-                    parameterWithName("exclude").description("A comma-separated set of classes that the thing must not have. The ids `Resource`, `Class`, `Predicate` and `Literal` can be used to filter for a general type of object. (optional)").optional(),
-                    parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the thing belongs to. (optional)").optional(),
-                    parameterWithName("organization_id").description("Filter for the UUID of the organization that the thing belongs to. (optional)").optional(),
+                    parameterWithName("include").description("A comma-separated set of classes that the thing must have. The ids `Resource`, `Class`, `Predicate` and `Literal` can be used to filter for a general type of object. (optional)").repeatable().optional(),
+                    parameterWithName("exclude").description("A comma-separated set of classes that the thing must not have. The ids `Resource`, `Class`, `Predicate` and `Literal` can be used to filter for a general type of object. (optional)").repeatable().optional(),
+                    parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the thing belongs to. (optional)").format("uuid").optional(),
+                    parameterWithName("organization_id").description("Filter for the UUID of the organization that the thing belongs to. (optional)").format("uuid").optional(),
                 )
                 pagedResponseFields<ThingRepresentation>(thingResponseFields())
                 throws(UnknownSortingProperty::class)

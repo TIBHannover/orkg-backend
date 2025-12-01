@@ -6,16 +6,15 @@ import io.mockk.verify
 import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.orkg.common.json.CommonJacksonModule
 import org.orkg.statistics.adapter.input.rest.mapping.MetricRepresentationAdapter.MetricResponseFormat
+import org.orkg.statistics.adapter.input.rest.testing.asciidoc.allowedMetricResponseFormatValues
+import org.orkg.statistics.adapter.input.rest.testing.fixtures.StatisticsControllerUnitTestConfiguration
 import org.orkg.statistics.domain.GroupNotFound
 import org.orkg.statistics.domain.MetricNotFound
 import org.orkg.statistics.domain.TooManyParameterValues
 import org.orkg.statistics.input.StatisticsUseCases
 import org.orkg.statistics.testing.fixtures.createMetrics
 import org.orkg.statistics.testing.fixtures.createSimpleMetric
-import org.orkg.testing.configuration.ExceptionTestConfiguration
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.restdocs.enumValues
 import org.orkg.testing.spring.restdocs.wildcard
@@ -30,12 +29,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.util.LinkedMultiValueMap
 
-val allowedMetricResponseFormatValues =
-    MetricResponseFormat.entries.sorted().joinToString(separator = ", ", prefix = "`", postfix = "`")
-
-@ContextConfiguration(
-    classes = [StatisticsController::class, ExceptionTestConfiguration::class, CommonJacksonModule::class, FixedClockConfig::class]
-)
+@ContextConfiguration(classes = [StatisticsController::class, StatisticsControllerUnitTestConfiguration::class])
 @WebMvcTest(controllers = [StatisticsController::class])
 internal class StatisticsControllerUnitTest : MockMvcBaseTest("statistics") {
     @MockkBean

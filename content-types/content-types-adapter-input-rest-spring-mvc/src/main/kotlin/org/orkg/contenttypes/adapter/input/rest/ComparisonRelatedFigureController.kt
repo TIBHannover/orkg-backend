@@ -86,14 +86,14 @@ class ComparisonRelatedFigureController(
 
     @RequireLogin
     @DeleteMapping("/{id}/related-figures/{comparisonRelatedFigureId}")
-    fun delete(
+    fun deleteByIdAndComaprisonId(
         @PathVariable id: ThingId,
         @PathVariable comparisonRelatedFigureId: ThingId,
         uriComponentsBuilder: UriComponentsBuilder,
         currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
-        service.delete(id, comparisonRelatedFigureId, userId)
+        service.deleteByIdAndComaprisonId(id, comparisonRelatedFigureId, userId)
         val location = uriComponentsBuilder
             .path("/api/comparisons/{id}")
             .buildAndExpand(id)

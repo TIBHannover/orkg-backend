@@ -45,7 +45,7 @@ interface UpdateComparisonRelatedFigureUseCase {
 }
 
 interface DeleteComparisonRelatedFigureUseCase {
-    fun delete(
+    fun deleteByIdAndComaprisonId(
         comparisonId: ThingId,
         comparisonRelatedFigureId: ThingId,
         contributorId: ContributorId,

@@ -53,6 +53,7 @@ internal class ImportControllerUnitTest : MockMvcBaseTest("import") {
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("/api/resources/$id")))
             .andDocument {
+                tag("Entity Import")
                 summary("Importing resources by URI")
                 description(
                     """
@@ -97,6 +98,7 @@ internal class ImportControllerUnitTest : MockMvcBaseTest("import") {
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("/api/resources/$id")))
             .andDocument {
+                tag("Entity Import")
                 summary("Importing resources by short form")
                 description(
                     """
@@ -141,6 +143,7 @@ internal class ImportControllerUnitTest : MockMvcBaseTest("import") {
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("/api/predicates/$id")))
             .andDocument {
+                tag("Entity Import")
                 summary("Importing predicates by URI")
                 description(
                     """
@@ -185,6 +188,7 @@ internal class ImportControllerUnitTest : MockMvcBaseTest("import") {
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("/api/predicates/$id")))
             .andDocument {
+                tag("Entity Import")
                 summary("Importing predicates by short form")
                 description(
                     """
@@ -229,6 +233,7 @@ internal class ImportControllerUnitTest : MockMvcBaseTest("import") {
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("/api/classes/$id")))
             .andDocument {
+                tag("Entity Import")
                 summary("Importing classes by URI")
                 description(
                     """
@@ -273,6 +278,7 @@ internal class ImportControllerUnitTest : MockMvcBaseTest("import") {
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("/api/classes/$id")))
             .andDocument {
+                tag("Entity Import")
                 summary("Importing classes by short form")
                 description(
                     """

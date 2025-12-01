@@ -233,8 +233,11 @@ val aggregateOpenApiSnippets by tasks.registering(Sync::class) {
     from(aggregateRestDocsSnippets.get().outputs) {
         includeEmptyDirs = false
         include("**/resource.json")
-        exclude("errors_*/resource.json") // TODO: creates a lot of empty directories
+        exclude("errors_*/resource.json")
+        exclude("classes_find-by-uri")
         exclude("contributor-identifiers_delete")
+        exclude("papers_exists-by-doi")
+        exclude("papers_exists-by-title")
     }
     into(aggregatedOpenApiSnippetsDir)
 }
@@ -336,36 +339,42 @@ artifacts {
     add("staticFiles", packageHTML)
 }
 
-val openApiServerUrls = listOf("http://localhost:8080")
-val openApiAuthServerUrl = "http://localhost:8888/realms/orkg"
+val openApiServerUrls = mapOf(
+    "http://localhost:8080" to "Local instance",
+    "https://incubating.orkg.org" to "Testing instance (latest)",
+    "https://sandbox.orkg.org" to "Testing instance (release)",
+    "https://orkg.org" to "Production instance",
+)
+val openApiAuthServerUrl = "https://accounts.orkg.org/realms/orkg"
 
 openapi3 {
     snippetsDirectory = aggregatedOpenApiSnippetsDir.get().asFile.path
 
     title = "Open Research Knowledge Graph (ORKG) REST API"
-    description = "" // TODO
+    description = title
     version = "${project.version}"
     format = "yaml"
     hiddenEndpointPaths = listOf(
         "/open-api-doc-test"
     )
-    excludedOperationIds = listOf(
-        "papers_exists-by-doi",
-        "papers_exists-by-title",
-    )
-    setServers(openApiServerUrls.map { serverClosure { url = it } })
-    setOauth2SecuritySchemeDefinition(
-        oauthConfigClosure {
-            flows = arrayOf(
-                "authorizationCode",
-                "clientCredentials",
-                "implicit",
-                "password",
-            )
-            tokenUrl = "$openApiAuthServerUrl/protocol/openid-connect/token"
-            authorizationUrl = "$openApiAuthServerUrl/protocol/openid-connect/auth"
+    setServers(
+        openApiServerUrls.map { (url, description) ->
+            serverClosure {
+                this.url = url
+                this.description = description
+            }
         }
     )
+    oauth2SecuritySchemeDefinition = PluginOauth2Configuration().apply {
+        flows = arrayOf(
+            "authorizationCode",
+            "clientCredentials",
+            "implicit",
+            "password",
+        )
+        tokenUrl = "$openApiAuthServerUrl/protocol/openid-connect/token"
+        authorizationUrl = "$openApiAuthServerUrl/protocol/openid-connect/auth"
+    }
 }
 
 tasks {
@@ -437,7 +446,3 @@ tasks {
 @Suppress("UNCHECKED_CAST")
 fun serverClosure(action: Server.() -> Unit): Closure<Server> =
     closureOf(action) as Closure<Server>
-
-@Suppress("UNCHECKED_CAST")
-fun oauthConfigClosure(action: PluginOauth2Configuration.() -> Unit): Closure<PluginOauth2Configuration> =
-    closureOf(action) as Closure<PluginOauth2Configuration>

@@ -30,7 +30,7 @@ class JobController(
     JobResultRepresentationAdapter {
     @RequireAdminRole
     @GetMapping("/{id}")
-    fun status(
+    fun findStatusById(
         @PathVariable id: JobId,
         currentUser: Authentication?,
     ): JobStatusRepresentation =
@@ -40,7 +40,7 @@ class JobController(
 
     @RequireAdminRole
     @GetMapping("/{id}/results")
-    fun results(
+    fun findResultsById(
         @PathVariable id: JobId,
         pageable: Pageable,
         currentUser: Authentication?,
@@ -51,7 +51,7 @@ class JobController(
 
     @RequireAdminRole
     @DeleteMapping("/{id}")
-    fun stop(
+    fun stopById(
         @PathVariable id: JobId,
         currentUser: Authentication?,
     ): ResponseEntity<Any> {

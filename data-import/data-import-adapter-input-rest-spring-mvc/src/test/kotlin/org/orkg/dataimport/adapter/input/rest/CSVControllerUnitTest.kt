@@ -1,5 +1,6 @@
 package org.orkg.dataimport.adapter.input.rest
 
+import com.epages.restdocs.apispec.SimpleType
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.matchers.shouldBe
 import io.mockk.every
@@ -10,19 +11,28 @@ import org.hamcrest.CoreMatchers.endsWith
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
-import org.orkg.common.json.CommonJacksonModule
 import org.orkg.common.testing.fixtures.Assets.csv
-import org.orkg.contenttypes.input.testing.fixtures.authorListFields
-import org.orkg.dataimport.adapter.input.rest.json.DataImportJacksonModule
 import org.orkg.dataimport.adapter.input.rest.mapping.JobResultRepresentationFactory
 import org.orkg.dataimport.adapter.input.rest.mapping.jobs.ImportPaperCSVJobResultRepresentationFormatter
 import org.orkg.dataimport.adapter.input.rest.mapping.jobs.ValidatePaperCSVJobResultRepresentationFormatter
+import org.orkg.dataimport.domain.CSVAlreadyExists
+import org.orkg.dataimport.domain.CSVAlreadyImported
+import org.orkg.dataimport.domain.CSVAlreadyValidated
+import org.orkg.dataimport.domain.CSVCannotBeBlank
+import org.orkg.dataimport.domain.CSVImportAlreadyRunning
+import org.orkg.dataimport.domain.CSVImportJobNotFound
+import org.orkg.dataimport.domain.CSVImportRestartFailed
+import org.orkg.dataimport.domain.CSVNotFound
+import org.orkg.dataimport.domain.CSVNotValidated
+import org.orkg.dataimport.domain.CSVValidationAlreadyRunning
+import org.orkg.dataimport.domain.CSVValidationJobNotFound
+import org.orkg.dataimport.domain.CSVValidationRestartFailed
+import org.orkg.dataimport.domain.JobNotFound
+import org.orkg.dataimport.domain.JobNotRunning
 import org.orkg.dataimport.domain.csv.CSV
 import org.orkg.dataimport.domain.csv.CSVID
 import org.orkg.dataimport.domain.jobs.JobId
 import org.orkg.dataimport.domain.jobs.JobNames
-import org.orkg.dataimport.domain.testing.asciidoc.allowedCSVStateValues
-import org.orkg.dataimport.domain.testing.asciidoc.allowedEntityTypeValues
 import org.orkg.dataimport.domain.testing.fixtures.createCSV
 import org.orkg.dataimport.domain.testing.fixtures.createJobResult
 import org.orkg.dataimport.domain.testing.fixtures.createJobStatus
@@ -32,29 +42,23 @@ import org.orkg.dataimport.input.CSVUseCases
 import org.orkg.dataimport.input.ImportCSVUseCase
 import org.orkg.dataimport.input.JobUseCases
 import org.orkg.dataimport.input.ValidateCSVUseCase
-import org.orkg.dataimport.testing.fixtures.jobStatusResponseFields
-import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
+import org.orkg.dataimport.testing.fixtures.configuration.DataImportControllerUnitTestConfiguration
+import org.orkg.dataimport.testing.fixtures.csvJobStatusResponseFields
+import org.orkg.dataimport.testing.fixtures.csvResponseFields
+import org.orkg.dataimport.testing.fixtures.paperCSVRecordImportResultResponseFields
+import org.orkg.dataimport.testing.fixtures.paperCSVRecordResponseFields
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectCSV
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.annotations.TestWithMockUser
-import org.orkg.testing.configuration.ExceptionTestConfiguration
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
-import org.orkg.testing.spring.restdocs.pagedResponseFields
-import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.mock.web.MockPart
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
-import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
-import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.partWithName
-import org.springframework.restdocs.request.RequestDocumentation.pathParameters
-import org.springframework.restdocs.request.RequestDocumentation.requestParts
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
@@ -65,13 +69,10 @@ import java.util.Optional
 @ContextConfiguration(
     classes = [
         CSVController::class,
-        ExceptionTestConfiguration::class,
-        CommonJacksonModule::class,
-        DataImportJacksonModule::class,
         JobResultRepresentationFactory::class,
         ImportPaperCSVJobResultRepresentationFormatter::class,
         ValidatePaperCSVJobResultRepresentationFormatter::class,
-        FixedClockConfig::class
+        DataImportControllerUnitTestConfiguration::class
     ]
 )
 @TestPropertySource(properties = ["orkg.import.csv.enabled=true"])
@@ -86,7 +87,7 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
     @Test
     @TestWithMockUser
     @DisplayName("Given a csv, when it is fetched by id, and service succeeds, then status is 200 OK and csv is returned")
-    fun getSingle() {
+    fun findById() {
         val csv = createCSV()
         val contributorId = ContributorId(MockUserId.USER)
 
@@ -96,24 +97,27 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
             .perform()
             .andExpect(status().isOk)
             .andExpectCSV()
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the CSV to retrieve."),
-                    ),
-                    responseFields(
-                        fieldWithPath("id").description("The identifier of the CSV."),
-                        fieldWithPath("name").description("The name of the CSV."),
-                        fieldWithPath("type").description("The type of the CSV. See <<csv-types,CSV Types>>."),
-                        fieldWithPath("format").description("The format of the CSV. See <<csv-formats,CSV Formats>>."),
-                        fieldWithPath("state").description("The state of the CSV. Either of $allowedCSVStateValues."),
-                        timestampFieldWithPath("created_at", "the CSV was created"),
-                        // TODO: Add links to documentation of special user UUIDs.
-                        fieldWithPath("created_by").description("The UUID of the user or service who created the CSV."),
-                    )
+            .andDocument {
+                tag("CSVs")
+                summary("Fetching CSVs")
+                description(
+                    """
+                    A `GET` request provides information about a CSV.
+                    
+                    [NOTE]
+                    ====
+                    1. This endpoint requires authentication.
+                    2. Only CSVs created by the active user can be fetched.
+                    3. Contents of a CSV need to be fetched separately. See <<csvs-data,Fetching CSV data>>.
+                    ====
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the CSV to retrieve."),
+                )
+                responseFields<CSVRepresentation>(csvResponseFields())
+                throws(CSVNotFound::class)
+            }
 
         verify(exactly = 1) { csvUseCases.findByIdAndCreatedBy(csv.id, contributorId) }
     }
@@ -121,7 +125,7 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
     @Test
     @TestWithMockUser
     @DisplayName("Given a csv, when its contents are fetched by id, and service succeeds, then status is 200 OK and csv is returned")
-    fun getSingleData() {
+    fun findDataById() {
         val csv = createCSV()
         val contributorId = ContributorId(MockUserId.USER)
 
@@ -132,14 +136,20 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
             .perform()
             .andExpect(status().isOk)
             .andExpect(content().string(csv.data))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the CSV to retrieve."),
-                    )
+            .andDocument {
+                tag("CSVs")
+                summary("Fetching CSV data")
+                description(
+                    """
+                    A `GET` request returns the contents of a CSV.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the CSV to retrieve."),
+                )
+                simpleResponse(SimpleType.STRING)
+                throws(CSVNotFound::class)
+            }
 
         verify(exactly = 1) { csvUseCases.findByIdAndCreatedBy(csv.id, contributorId) }
     }
@@ -147,7 +157,7 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
     @Test
     @TestWithMockUser
     @DisplayName("Given several csvs, when they are fetched by id, and service succeeds, then status is 200 OK and csvs are returned")
-    fun getPaged() {
+    fun findAll() {
         val contributorId = ContributorId(MockUserId.USER)
 
         every { csvUseCases.findAllByCreatedBy(contributorId, any()) } returns pageOf(createCSV())
@@ -157,7 +167,25 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
             .andExpect(status().isOk)
             .andExpectPage()
             .andExpectCSV("$.content[*]")
-            .andDo(generateDefaultDocSnippets())
+            .andDocument {
+                tag("CSVs")
+                summary("Listing CSVs")
+                description(
+                    """
+                    A `GET` request returns a <<sorting-and-pagination,paged>> list of <<csvs-fetch,CSVs>> of the current user.
+                    If no paging request parameters are provided, the default values will be used.
+                    
+                    [NOTE]
+                    ====
+                    1. This endpoint requires authentication.
+                    2. Only CSVs created by the active user can be listed.
+                    3. Contents of each CSV need to be fetched separately. See <<csvs-data,Fetching CSV data>>.
+                    ====
+                    """
+                )
+                pagedQueryParameters()
+                pagedResponseFields<CSVRepresentation>(csvResponseFields())
+            }
 
         verify(exactly = 1) { csvUseCases.findAllByCreatedBy(contributorId, any()) }
     }
@@ -182,19 +210,27 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
             .perform()
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("/api/csvs/$id")))
-            .andDo(
-                documentationHandler.document(
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the CSV metadata can be fetched from.")
-                    ),
-                    requestParts(
-                        partWithName("file").description("The CSV file."),
-                        partWithName("type").description("The type of the CSV. See <<csv-types,CSV Types>>."),
-                        partWithName("format").description("The format of the CSV. See <<csv-formats,CSV Formats>>. (optional, default: `${CSV.Format.DEFAULT.name}`)")
-                    )
+            .andDocument {
+                tag("CSVs")
+                summary("Creating CSVs")
+                description(
+                    """
+                    A `POST` request creates a new CSV.
+                    The response status will be `201 Created` when successful.
+                    The CSV can be retrieved by following the URI in the `Location` header field.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the CSV metadata can be fetched from."),
+                )
+                requestParts(
+                    "CreateCSVRequest",
+                    partWithName("file").description("The CSV file."),
+                    partWithName("type").description("The type of the CSV. See <<csv-types,CSV Types>>."),
+                    partWithName("format").description("The format of the CSV. See <<csv-formats,CSV Formats>>. (optional, default: `${CSV.Format.DEFAULT.name}`)")
+                )
+                throws(CSVCannotBeBlank::class, CSVAlreadyExists::class)
+            }
 
         verify(exactly = 1) {
             csvUseCases.create(
@@ -228,19 +264,32 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
             .part(MockPart("format", format.name.toByteArray()))
             .perform()
             .andExpect(status().isNoContent)
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the CSV to update."),
-                    ),
-                    requestParts(
-                        partWithName("file").description("The updated CSV file. (optional)"),
-                        partWithName("type").description("The updated type of the CSV. See <<csv-types,CSV Types>>. (optional)"),
-                        partWithName("format").description("The updated format of the CSV. See <<csv-formats,CSV Formats>>. (optional)")
-                    )
+            .andDocument {
+                tag("CSVs")
+                summary("Updating CSVs")
+                description(
+                    """
+                    A `PUT` request updates an existing CSV.
+                    The response status will be `204 No Content` when successful.
+                    
+                    [NOTE]
+                    ====
+                    1. A CSV can only be updated as long as the import was not started yet.
+                    2. Updating a CSV will reset the state of the CSV to `UPLOADED`.
+                    ====
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the CSV to update."),
+                )
+                requestParts(
+                    "UpdateCSVRequest",
+                    partWithName("file").description("The updated CSV file. (optional)").optional(),
+                    partWithName("type").description("The updated type of the CSV. See <<csv-types,CSV Types>>. (optional)").optional(),
+                    partWithName("format").description("The updated format of the CSV. See <<csv-formats,CSV Formats>>. (optional)").optional(),
+                )
+                throws(CSVNotFound::class, CSVAlreadyImported::class, CSVAlreadyExists::class)
+            }
 
         verify(exactly = 1) {
             csvUseCases.update(
@@ -259,7 +308,7 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
     @Test
     @TestWithMockUser
     @DisplayName("Given a csv, when deleting by id, and service succeeds, then status is 204 NO CONTENT")
-    fun delete() {
+    fun deleteById() {
         val id = CSVID("bf59dd89-6a4b-424b-b9d5-36042661e837")
         val contributorId = ContributorId(MockUserId.USER)
 
@@ -268,14 +317,20 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
         documentedDeleteRequestTo("/api/csvs/{id}", id)
             .perform()
             .andExpect(status().isNoContent)
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the CSV to delete."),
-                    )
+            .andDocument {
+                tag("CSVs")
+                summary("Deleting CSVs")
+                description(
+                    """
+                    A `DELETE` request deletes a CSV associated with the given id.
+                    The response status will be `204 NO CONTENT` when successful.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the CSV to delete."),
+                )
+                throws(CSVNotFound::class)
+            }
 
         verify(exactly = 1) { csvUseCases.deleteById(id, contributorId) }
     }
@@ -283,7 +338,7 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
     @Test
     @TestWithMockUser
     @DisplayName("Given a csv, when fetching the validation job status, and service succeeds, then status is 200 OK and status is returned")
-    fun getValidationStatus() {
+    fun findValidationStatusById() {
         val jobId = JobId(123)
         val id = CSVID("bf59dd89-6a4b-424b-b9d5-36042661e837")
         val contributorId = ContributorId(MockUserId.USER)
@@ -299,15 +354,26 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
         documentedGetRequestTo("/api/csvs/{id}/validate", id)
             .perform()
             .andExpect(status().isOk)
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the CSV to fetch the vaidation job status for."),
-                    ),
-                    responseFields(jobStatusResponseFields())
+            .andDocument {
+                tag("CSVs")
+                summary("Fetching CSV validation status")
+                description(
+                    """
+                    A `GET` request provides information about the validation job status.
+                    
+                    [NOTE]
+                    ====
+                    1. This endpoint requires authentication.
+                    2. Only jobs started by the active user can be fetched.
+                    ====
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the CSV to fetch the vaidation job status for."),
+                )
+                responseFields<JobStatusRepresentation>(csvJobStatusResponseFields())
+                throws(CSVNotFound::class, CSVValidationJobNotFound::class, JobNotFound::class)
+            }
 
         verify(exactly = 1) { csvUseCases.findByIdAndCreatedBy(id, contributorId) }
         verify(exactly = 1) { jobUseCases.findJobStatusById(jobId, contributorId) }
@@ -316,7 +382,7 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
     @Test
     @TestWithMockUser
     @DisplayName("Given a csv, when fetching the validation job results, and service succeeds, then status is 200 OK and results are returned")
-    fun getValidationResults() {
+    fun findValidationResultsById() {
         val jobId = JobId(123)
         val id = CSVID("bf59dd89-6a4b-424b-b9d5-36042661e837")
         val contributorId = ContributorId(MockUserId.USER)
@@ -333,35 +399,28 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
         documentedGetRequestTo("/api/csvs/{id}/validate/results", id)
             .perform()
             .andExpect(status().isOk)
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the CSV to retrieve the validation job results for."),
-                    ),
-                    pagedResponseFields(
-                        fieldWithPath("id").description("The id of the parsed paper record."),
-                        fieldWithPath("csv_id").description("The id of the csv where the parsed paper record originated from."),
-                        fieldWithPath("item_number").description("The item number of the parsed paper record."),
-                        fieldWithPath("line_number").description("The line number of the parsed paper record within the CSV."),
-                        fieldWithPath("title").description("The title of the parsed paper record."),
-                        fieldWithPath("published_month").description("The publication month of the parsed paper record. (optional)"),
-                        fieldWithPath("published_year").description("The publication year of the parsed paper record. (optional)"),
-                        fieldWithPath("published_in").description("The publication venue of the parsed paper record. (optional)"),
-                        fieldWithPath("url").description("The url of the parsed paper record. (optional)"),
-                        fieldWithPath("doi").description("The DOI of the parsed paper record. (optional)"),
-                        fieldWithPath("research_field_id").description("The id of the research field of the parsed paper record."),
-                        fieldWithPath("extraction_method").description("The extraction method of the parsed paper record. Either of $allowedExtractionMethodValues."),
-                        fieldWithPath("statements[]").description("The list of parsed statements that will be added to a new contribution of the paper."),
-                        fieldWithPath("statements[].predicate_id").description("The id of the predicate of the statement. If present, indicates that an already existing predicate with the provided id will be reused. Mutually exclusive with `predicate_id`.").optional(),
-                        fieldWithPath("statements[].predicate_label").description("The label of the predicate of the statemment. If present, indicates that a new predicate will be created with the provided label. Mutually exclusive with `predicate_id`.").optional(),
-                        fieldWithPath("statements[].object").description("The object of the statement."),
-                        fieldWithPath("statements[].object.namespace").description("The namespace of the object. (optional)"),
-                        fieldWithPath("statements[].object.value").description("The value of the object. (optional)").optional(),
-                        fieldWithPath("statements[].object.type").description("The type of the object."),
-                    ).and(authorListFields(type = "parsed paper record", path = "content[*].authors"))
+            .andDocument {
+                tag("CSVs")
+                summary("Fetching CSV validation results")
+                description(
+                    """
+                    A `GET` request provides information about the validation results.
+                    
+                    [NOTE]
+                    ====
+                    1. This endpoint requires authentication.
+                    2. Only jobs started by the active user can be fetched.
+                    3. Results are only available for completed validation jobs.
+                    4. The response status will be `400 BAD REQUEST` with response body contents of type orkg:problem:job_execution_exception, if the validation ran into an error.
+                    ====
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the CSV to retrieve the validation job results for."),
+                )
+                pagedResponseFields<PaperCSVRecordRepresentation>(paperCSVRecordResponseFields())
+                throws(CSVNotFound::class, CSVValidationJobNotFound::class, JobNotFound::class, JobNotRunning::class)
+            }
 
         verify(exactly = 1) { csvUseCases.findByIdAndCreatedBy(id, contributorId) }
         verify(exactly = 1) { jobUseCases.findJobResultById(jobId, contributorId, any()) }
@@ -370,7 +429,7 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
     @Test
     @TestWithMockUser
     @DisplayName("Given a csv, when starting the validation job, and service succeeds, then status is 202 ACCEPTED")
-    fun startValidation() {
+    fun startValidationById() {
         val id = CSVID("bf59dd89-6a4b-424b-b9d5-36042661e837")
         val contributorId = ContributorId(MockUserId.USER)
         val command = ValidateCSVUseCase.ValidateCommand(id, contributorId)
@@ -381,14 +440,25 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
         documentedPostRequestTo("/api/csvs/{id}/validate", id)
             .perform()
             .andExpect(status().isAccepted)
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the CSV to validate."),
-                    )
+            .andDocument {
+                tag("CSVs")
+                summary("Starting CSV validation")
+                description(
+                    """
+                    A `POST` request queues a new job to validate a CSV.
+                    The response status will be `202 Accepted` when successful.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the CSV to validate."),
+                )
+                throws(
+                    CSVNotFound::class,
+                    CSVAlreadyValidated::class,
+                    CSVValidationAlreadyRunning::class,
+                    CSVValidationRestartFailed::class,
+                )
+            }
 
         verify(exactly = 1) { csvUseCases.validate(command) }
     }
@@ -396,7 +466,7 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
     @Test
     @TestWithMockUser
     @DisplayName("Given a csv, when stopping the validation job, and service succeeds, then status is 204 NO CONTENT")
-    fun stopValidation() {
+    fun stopValidationById() {
         val jobId = JobId(123)
         val id = CSVID("bf59dd89-6a4b-424b-b9d5-36042661e837")
         val contributorId = ContributorId(MockUserId.USER)
@@ -408,14 +478,26 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
         documentedDeleteRequestTo("/api/csvs/{id}/validate", id)
             .perform()
             .andExpect(status().isNoContent)
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the CSV to stop the validation job for."),
-                    )
+            .andDocument {
+                tag("CSVs")
+                summary("Stopping CSV validation")
+                description(
+                    """
+                    A `DELETE` request stops an active CSV validation job.
+                    The response status will be `204 No Content` when successful.
+                    
+                    [NOTE]
+                    ====
+                    1. This endpoint requires authentication.
+                    2. Only jobs started by the active user can be stopped.
+                    ====
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the CSV to stop the validation job for."),
+                )
+                throws(CSVNotFound::class, CSVValidationJobNotFound::class, JobNotFound::class, JobNotRunning::class)
+            }
 
         verify(exactly = 1) { csvUseCases.findByIdAndCreatedBy(id, contributorId) }
         verify(exactly = 1) { jobUseCases.stopJob(jobId, contributorId) }
@@ -424,7 +506,7 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
     @Test
     @TestWithMockUser
     @DisplayName("Given a csv, when fetching the import job status, and service succeeds, then status is 200 OK and status is returned")
-    fun getImportStatus() {
+    fun findImportStatusById() {
         val jobId = JobId(123)
         val id = CSVID("bf59dd89-6a4b-424b-b9d5-36042661e837")
         val contributorId = ContributorId(MockUserId.USER)
@@ -440,15 +522,26 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
         documentedGetRequestTo("/api/csvs/{id}/import", id)
             .perform()
             .andExpect(status().isOk)
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the CSV to fetch the vaidation job status for."),
-                    ),
-                    responseFields(jobStatusResponseFields())
+            .andDocument {
+                tag("CSVs")
+                summary("Fetching CSV import status")
+                description(
+                    """
+                    A `GET` request provides information about the import job status.
+                    
+                    [NOTE]
+                    ====
+                    1. This endpoint requires authentication.
+                    2. Only jobs started by the active user can be fetched.
+                    ====
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the CSV to fetch the vaidation job status for."),
+                )
+                responseFields<JobStatusRepresentation>(csvJobStatusResponseFields())
+                throws(CSVNotFound::class, CSVImportJobNotFound::class, JobNotFound::class)
+            }
 
         verify(exactly = 1) { csvUseCases.findByIdAndCreatedBy(id, contributorId) }
         verify(exactly = 1) { jobUseCases.findJobStatusById(jobId, contributorId) }
@@ -457,7 +550,7 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
     @Test
     @TestWithMockUser
     @DisplayName("Given a csv, when fetching the import job results, and service succeeds, then status is 200 OK and results are returned")
-    fun getImportResults() {
+    fun findImportResultsById() {
         val jobId = JobId(123)
         val id = CSVID("bf59dd89-6a4b-424b-b9d5-36042661e837")
         val contributorId = ContributorId(MockUserId.USER)
@@ -474,22 +567,28 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
         documentedGetRequestTo("/api/csvs/{id}/import/results", id)
             .perform()
             .andExpect(status().isOk)
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the CSV to retrieve the import job results for."),
-                    ),
-                    pagedResponseFields(
-                        fieldWithPath("id").description("The id of the paper import result."),
-                        fieldWithPath("imported_entity_id").description("The id of the created entity."),
-                        fieldWithPath("imported_entity_type").description("The type of the created entity. Either of $allowedEntityTypeValues."),
-                        fieldWithPath("csv_id").description("The id of the csv."),
-                        fieldWithPath("item_number").description("The item number of the entity."),
-                        fieldWithPath("line_number").description("The line number of the entity."),
-                    )
+            .andDocument {
+                tag("CSVs")
+                summary("Fetching CSV import results")
+                description(
+                    """
+                    A `GET` request provides information about the import results.
+                    
+                    [NOTE]
+                    ====
+                    1. This endpoint requires authentication.
+                    2. Only jobs started by the active user can be fetched.
+                    3. Results are only available for completed imports.
+                    4. The response status will be `400 BAD REQUEST` with response body contents of type orkg:problem:job_execution_exception, if the import ran into an error.
+                    ====
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the CSV to retrieve the import job results for."),
+                )
+                pagedResponseFields<PaperCSVRecordImportResultRepresentation>(paperCSVRecordImportResultResponseFields())
+                throws(CSVNotFound::class, CSVImportJobNotFound::class, JobNotFound::class)
+            }
 
         verify(exactly = 1) { csvUseCases.findByIdAndCreatedBy(id, contributorId) }
         verify(exactly = 1) { jobUseCases.findJobResultById(jobId, contributorId, any()) }
@@ -498,7 +597,7 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
     @Test
     @TestWithMockUser
     @DisplayName("Given a csv, when starting the import job, and service succeeds, then status is 202 ACCEPTED")
-    fun startImport() {
+    fun startImportById() {
         val id = CSVID("bf59dd89-6a4b-424b-b9d5-36042661e837")
         val contributorId = ContributorId(MockUserId.USER)
         val command = ImportCSVUseCase.ImportCommand(id, contributorId)
@@ -509,14 +608,26 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
         documentedPostRequestTo("/api/csvs/{id}/import", id)
             .perform()
             .andExpect(status().isAccepted)
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the CSV to import."),
-                    )
+            .andDocument {
+                tag("CSVs")
+                summary("Starting a CSV import")
+                description(
+                    """
+                    A `POST` request queues a new job to import a CSV.
+                    The response status will be `202 Accepted` when successful.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the CSV to import."),
+                )
+                throws(
+                    CSVNotFound::class,
+                    CSVAlreadyImported::class,
+                    CSVImportAlreadyRunning::class,
+                    CSVNotValidated::class,
+                    CSVImportRestartFailed::class,
+                )
+            }
 
         verify(exactly = 1) { csvUseCases.import(command) }
     }
@@ -524,7 +635,7 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
     @Test
     @TestWithMockUser
     @DisplayName("Given a csv, when stopping the import job, and service succeeds, then status is 204 NO CONTENT")
-    fun stopImport() {
+    fun stopImportById() {
         val jobId = JobId(123)
         val id = CSVID("bf59dd89-6a4b-424b-b9d5-36042661e837")
         val contributorId = ContributorId(MockUserId.USER)
@@ -536,14 +647,26 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
         documentedDeleteRequestTo("/api/csvs/{id}/import", id)
             .perform()
             .andExpect(status().isNoContent)
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the CSV to stop the import job for."),
-                    )
+            .andDocument {
+                tag("CSVs")
+                summary("Stopping CSV imports")
+                description(
+                    """
+                    A `DELETE` request stops an active CSV import job.
+                    The response status will be `204 No Content` when successful.
+                    
+                    [NOTE]
+                    ====
+                    1. This endpoint requires authentication.
+                    2. Only jobs started by the active user can be stopped.
+                    ====
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the CSV to stop the import job for."),
+                )
+                throws(CSVNotFound::class, CSVImportJobNotFound::class, JobNotFound::class, JobNotRunning::class)
+            }
 
         verify(exactly = 1) { csvUseCases.findByIdAndCreatedBy(id, contributorId) }
         verify(exactly = 1) { jobUseCases.stopJob(jobId, contributorId) }

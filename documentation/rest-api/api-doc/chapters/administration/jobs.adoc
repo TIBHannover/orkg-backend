@@ -5,30 +5,24 @@ Jobs are long running, asynchronous tasks that allow processing of large amounts
 [[jobs-fetch-status]]
 == Fetching Job status
 
-A `GET` request provides information about a job.
+include::{snippets}/jobs_find-status-by-id/description.adoc[]
 
-operation::jobs_get-status[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::jobs_find-status-by-id[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[jobs-fetch-results]]
 == Fetching Job results
 
-A `GET` request provides information about a the results of a job.
+include::{snippets}/jobs_find-results-by-id_validate-paper-csv_done/description.adoc[]
 
-[NOTE]
-====
-Results are only available for completed jobs.
-====
-
-operation::jobs_get-results[snippets='path-parameters,curl-request,http-response']
-
-[[jobs-stop]]
-== Stopping Jobs
-
-A `DELETE` request attempts to stop a running job.
-The response will be `201 NO CONTENT` when successful.
-
-operation::jobs_stop[snippets='path-parameters,curl-request,http-response']
+operation::jobs_find-results-by-id_validate-paper-csv_done[snippets='path-parameters,curl-request,http-response']
 
 === Response fields
 
 Response fields are specific for each job type.
+
+[[jobs-stop]]
+== Stopping Jobs
+
+include::{snippets}/jobs_stop-by-id/description.adoc[]
+
+operation::jobs_stop-by-id[snippets='path-parameters,curl-request,http-response']

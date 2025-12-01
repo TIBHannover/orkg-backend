@@ -23,7 +23,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
@@ -38,7 +37,7 @@ internal class CSVExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""A CSV with the same data already exists.""")
-            .andDocumentWithDefaultExceptionResponseFields(type)
+            .andDocumentWithDefaultExceptionResponseFields(CSVAlreadyExists::class, type)
     }
 
     @Test
@@ -49,7 +48,7 @@ internal class CSVExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""The CSV can not be blank.""")
-            .andDocumentWithDefaultExceptionResponseFields(type)
+            .andDocumentWithDefaultExceptionResponseFields(CSVCannotBeBlank::class, type)
     }
 
     @Test
@@ -61,13 +60,12 @@ internal class CSVExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Not Found")
             .andExpectDetail("""CSV "6d57f7fd-5f34-4f1a-985d-affc3e22194b" not found.""")
             .andExpect(jsonPath("$.csv_id").value("6d57f7fd-5f34-4f1a-985d-affc3e22194b"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("csv_id").description("The id of the CSV."),
-                    )
+            .andDocument {
+                responseFields<CSVNotFound>(
+                    fieldWithPath("csv_id").description("The id of the CSV."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -80,14 +78,13 @@ internal class CSVExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectDetail("""CSV validation job not found.""")
             .andExpect(jsonPath("$.csv_id").value("6d57f7fd-5f34-4f1a-985d-affc3e22194b"))
             .andExpect(jsonPath("$.job_id").value("1"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("csv_id").description("The id of the CSV."),
-                        fieldWithPath("job_id").description("The id of the job."),
-                    )
+            .andDocument {
+                responseFields<CSVValidationJobNotFound>(
+                    fieldWithPath("csv_id").description("The id of the CSV."),
+                    fieldWithPath("job_id").description("The id of the job."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -100,14 +97,13 @@ internal class CSVExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectDetail("""CSV import job not found.""")
             .andExpect(jsonPath("$.csv_id").value("6d57f7fd-5f34-4f1a-985d-affc3e22194b"))
             .andExpect(jsonPath("$.job_id").value("1"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("csv_id").description("The id of the CSV."),
-                        fieldWithPath("job_id").description("The id of the job."),
-                    )
+            .andDocument {
+                responseFields<CSVImportJobNotFound>(
+                    fieldWithPath("csv_id").description("The id of the CSV."),
+                    fieldWithPath("job_id").description("The id of the job."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -119,13 +115,12 @@ internal class CSVExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""CSV "6d57f7fd-5f34-4f1a-985d-affc3e22194b" was already validated.""")
             .andExpect(jsonPath("$.csv_id").value("6d57f7fd-5f34-4f1a-985d-affc3e22194b"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("csv_id").description("The id of the CSV."),
-                    )
+            .andDocument {
+                responseFields<CSVAlreadyValidated>(
+                    fieldWithPath("csv_id").description("The id of the CSV."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -137,13 +132,12 @@ internal class CSVExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Validation for CSV "6d57f7fd-5f34-4f1a-985d-affc3e22194b" is already running.""")
             .andExpect(jsonPath("$.csv_id").value("6d57f7fd-5f34-4f1a-985d-affc3e22194b"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("csv_id").description("The id of the CSV."),
-                    )
+            .andDocument {
+                responseFields<CSVValidationAlreadyRunning>(
+                    fieldWithPath("csv_id").description("The id of the CSV."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -155,13 +149,12 @@ internal class CSVExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Could not restart validation for CSV "6d57f7fd-5f34-4f1a-985d-affc3e22194b".""")
             .andExpect(jsonPath("$.csv_id").value("6d57f7fd-5f34-4f1a-985d-affc3e22194b"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("csv_id").description("The id of the CSV."),
-                    )
+            .andDocument {
+                responseFields<CSVValidationRestartFailed>(
+                    fieldWithPath("csv_id").description("The id of the CSV."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -173,13 +166,12 @@ internal class CSVExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""CSV "6d57f7fd-5f34-4f1a-985d-affc3e22194b" must be validated before import.""")
             .andExpect(jsonPath("$.csv_id").value("6d57f7fd-5f34-4f1a-985d-affc3e22194b"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("csv_id").description("The id of the CSV."),
-                    )
+            .andDocument {
+                responseFields<CSVNotValidated>(
+                    fieldWithPath("csv_id").description("The id of the CSV."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -191,13 +183,12 @@ internal class CSVExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""CSV "6d57f7fd-5f34-4f1a-985d-affc3e22194b" was already imported.""")
             .andExpect(jsonPath("$.csv_id").value("6d57f7fd-5f34-4f1a-985d-affc3e22194b"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("csv_id").description("The id of the CSV."),
-                    )
+            .andDocument {
+                responseFields<CSVAlreadyImported>(
+                    fieldWithPath("csv_id").description("The id of the CSV."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -209,13 +200,12 @@ internal class CSVExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Import for CSV "6d57f7fd-5f34-4f1a-985d-affc3e22194b" is already running.""")
             .andExpect(jsonPath("$.csv_id").value("6d57f7fd-5f34-4f1a-985d-affc3e22194b"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("csv_id").description("The id of the CSV."),
-                    )
+            .andDocument {
+                responseFields<CSVImportAlreadyRunning>(
+                    fieldWithPath("csv_id").description("The id of the CSV."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -227,12 +217,11 @@ internal class CSVExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Could not restart import for CSV "6d57f7fd-5f34-4f1a-985d-affc3e22194b".""")
             .andExpect(jsonPath("$.csv_id").value("6d57f7fd-5f34-4f1a-985d-affc3e22194b"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("csv_id").description("The id of the CSV."),
-                    )
+            .andDocument {
+                responseFields<CSVImportRestartFailed>(
+                    fieldWithPath("csv_id").description("The id of the CSV."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 }

@@ -25,6 +25,7 @@ import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
 import org.orkg.graph.testing.asciidoc.allowedVisibilityValues
 import org.orkg.testing.spring.restdocs.arrayItemsType
 import org.orkg.testing.spring.restdocs.constraints
+import org.orkg.testing.spring.restdocs.polymorphicResponseFields
 import org.orkg.testing.spring.restdocs.references
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.restdocs.payload.FieldDescriptor
@@ -647,10 +648,3 @@ fun literalReferenceResponseFields() = listOf(
     fieldWithPath("datatype").type("string").description("The data type of the literal."),
     fieldWithPath("_class").description("Indicates which type of entity was returned. Always has the value `literal_ref`."),
 )
-
-private fun polymorphicResponseFields(vararg responseFields: List<FieldDescriptor>): List<FieldDescriptor> =
-    responseFields.map { it.toSet() }.let { fields ->
-        val sharedFields = fields.reduce { a, b -> a intersect b }
-        val allFields = fields.reduce { a, b -> a union b }
-        sharedFields.toList() + (allFields - sharedFields).map { it.optional() }
-    }

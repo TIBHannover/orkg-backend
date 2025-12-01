@@ -168,7 +168,7 @@ class CSVController(
 
     @RequireLogin
     @PostMapping("/{id}/validate")
-    fun startValidation(
+    fun startValidationById(
         @PathVariable("id") id: CSVID,
         currentUser: Authentication?,
     ): ResponseEntity<Any> {
@@ -179,7 +179,7 @@ class CSVController(
 
     @RequireLogin
     @DeleteMapping("/{id}/validate")
-    fun stopValidation(
+    fun stopValidationById(
         @PathVariable("id") id: CSVID,
         currentUser: Authentication?,
     ): ResponseEntity<Any> {
@@ -230,7 +230,7 @@ class CSVController(
 
     @RequireLogin
     @PostMapping("/{id}/import")
-    fun startImport(
+    fun startImportById(
         @PathVariable id: CSVID,
         currentUser: Authentication?,
     ): ResponseEntity<Any> {
@@ -241,7 +241,7 @@ class CSVController(
 
     @RequireLogin
     @DeleteMapping("/{id}/import")
-    fun stopImport(
+    fun stopImportById(
         @PathVariable("id") id: CSVID,
         currentUser: Authentication?,
     ): ResponseEntity<Any> {

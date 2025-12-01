@@ -104,3 +104,10 @@ fun validationExceptionResponseFields(type: String) = listOf(
     fieldWithPath("errors[].message").description("A description of the issue.").deprecated("detail"),
     fieldWithPath("errors[].field").description("A JSON path that describes the location of the problem within the request's content.").deprecated("pointer"),
 )
+
+fun polymorphicResponseFields(vararg responseFields: List<FieldDescriptor>): List<FieldDescriptor> =
+    responseFields.map { it.toSet() }.let { fields ->
+        val sharedFields = fields.reduce { a, b -> a intersect b }
+        val allFields = fields.reduce { a, b -> a union b }
+        sharedFields.toList() + (allFields - sharedFields).map { it.optional() }
+    }

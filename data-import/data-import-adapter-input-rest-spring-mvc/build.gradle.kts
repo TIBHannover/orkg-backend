@@ -24,14 +24,24 @@ dependencies {
     api(project(":data-import:data-import-core-model"))
     implementation(project(":common:functional"))
 
+    testFixturesApi("org.springframework:spring-context")
+    testFixturesApi("org.springframework.boot:spring-boot-test")
     testFixturesApi("org.springframework.restdocs:spring-restdocs-core")
+    testFixturesApi(project(":common:serialization"))
+    testFixturesApi(project(":common:spring-webmvc"))
+    testFixturesApi(testFixtures(project(":common:core-identifiers")))
+    testFixturesApi(testFixtures(project(":testing:spring")))
     testFixturesImplementation(testFixtures(project(":data-import:data-import-core-model")))
+    testFixturesImplementation(testFixtures(project(":common:external-identifiers")))
+    testFixturesImplementation(testFixtures(project(":content-types:content-types-adapter-input-rest-spring-mvc")))
+    testFixturesImplementation(testFixtures(project(":graph:graph-core-model")))
 }
 
 testing {
     suites {
         val test by getting(JvmTestSuite::class) {
             dependencies {
+                implementation("com.epages:restdocs-api-spec")
                 implementation("com.ninja-squad:springmockk")
                 implementation("io.kotest:kotest-assertions-core")
                 implementation("io.mockk:mockk-dsl")
@@ -42,12 +52,10 @@ testing {
                 implementation("org.springframework:spring-test")
                 implementation("org.springframework.boot:spring-boot-test-autoconfigure")
                 implementation("org.springframework.restdocs:spring-restdocs-core")
-                implementation("org.springframework.restdocs:spring-restdocs-mockmvc")
                 implementation(project(":common:serialization"))
+                implementation(project(":graph:graph-core-constants"))
                 implementation(testFixtures(project(":common:testing")))
-                implementation(testFixtures(project(":content-types:content-types-adapter-input-rest-spring-mvc")))
                 implementation(testFixtures(project(":data-import:data-import-core-model")))
-                implementation(testFixtures(project(":graph:graph-core-model")))
                 implementation(testFixtures(project(":testing:spring")))
                 runtimeOnly("com.jayway.jsonpath:json-path")
                 runtimeOnly("org.springframework.boot:spring-boot-starter-validation")

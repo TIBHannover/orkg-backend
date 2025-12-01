@@ -18,7 +18,6 @@ import org.orkg.testing.spring.restdocs.exceptionResponseFields
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -38,13 +37,12 @@ internal class CSVParsingExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.csv_headers.duplicate_header_name").isArray)
             .andExpect(jsonPath("$.csv_headers.duplicate_header_name[0]").value(0))
             .andExpect(jsonPath("$.csv_headers.duplicate_header_name[1]").value(2))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        subsectionWithPath("csv_headers").description("A mapping of header names to column indexes."),
-                    )
+            .andDocument {
+                responseFields<DuplicateCSVHeaders>(
+                    subsectionWithPath("csv_headers").description("A mapping of header names to column indexes."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -56,13 +54,12 @@ internal class CSVParsingExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""The CSV header value in column 2 must not be blank.""")
             .andExpect(jsonPath("$.csv_column").value("2"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("csv_column").description("The column of the CSV."),
-                    )
+            .andDocument {
+                responseFields<BlankCSVHeaderValue>(
+                    fieldWithPath("csv_column").description("The column of the CSV."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -73,7 +70,7 @@ internal class CSVParsingExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""The CSV header must not be empty.""")
-            .andDocumentWithDefaultExceptionResponseFields(type)
+            .andDocumentWithDefaultExceptionResponseFields(EmptyCSVHeader::class, type)
     }
 
     @Test
@@ -88,16 +85,15 @@ internal class CSVParsingExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.csv_value").value("value"))
             .andExpect(jsonPath("$.csv_row").value("1"))
             .andExpect(jsonPath("$.csv_column").value("2"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("csv_namespace").description("The namespace of the value."),
-                        fieldWithPath("csv_value").description("The value of the cell."),
-                        fieldWithPath("csv_row").description("The row of the CSV."),
-                        fieldWithPath("csv_column").description("The column of the CSV."),
-                    )
+            .andDocument {
+                responseFields<UnknownCSVNamespace>(
+                    fieldWithPath("csv_namespace").description("The namespace of the value."),
+                    fieldWithPath("csv_value").description("The value of the cell."),
+                    fieldWithPath("csv_row").description("The row of the CSV."),
+                    fieldWithPath("csv_column").description("The column of the CSV."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -112,16 +108,15 @@ internal class CSVParsingExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.csv_value").value("value"))
             .andExpect(jsonPath("$.csv_row").value("1"))
             .andExpect(jsonPath("$.csv_column").value("2"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("csv_namespace").description("The namespace of the value."),
-                        fieldWithPath("csv_value").description("The value of the cell."),
-                        fieldWithPath("csv_row").description("The row of the CSV."),
-                        fieldWithPath("csv_column").description("The column of the CSV."),
-                    )
+            .andDocument {
+                responseFields<UnknownCSVNamespaceValue>(
+                    fieldWithPath("csv_namespace").description("The namespace of the value."),
+                    fieldWithPath("csv_value").description("The value of the cell."),
+                    fieldWithPath("csv_row").description("The row of the CSV."),
+                    fieldWithPath("csv_column").description("The column of the CSV."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -136,16 +131,15 @@ internal class CSVParsingExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.expected_csv_cell_value_type").value("Boolean"))
             .andExpect(jsonPath("$.csv_row").value("1"))
             .andExpect(jsonPath("$.csv_column").value("2"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("actual_csv_cell_value_type").description("The actual data type of the value."),
-                        fieldWithPath("expected_csv_cell_value_type").description("The expected data type of the value."),
-                        fieldWithPath("csv_row").description("The row of the CSV."),
-                        fieldWithPath("csv_column").description("The column of the CSV."),
-                    )
+            .andDocument {
+                responseFields<UnexpectedCSVValueType>(
+                    fieldWithPath("actual_csv_cell_value_type").description("The actual data type of the value."),
+                    fieldWithPath("expected_csv_cell_value_type").description("The expected data type of the value."),
+                    fieldWithPath("csv_row").description("The row of the CSV."),
+                    fieldWithPath("csv_column").description("The column of the CSV."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -159,15 +153,14 @@ internal class CSVParsingExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.csv_cell_value_type").value("NotAType"))
             .andExpect(jsonPath("$.csv_row").value("1"))
             .andExpect(jsonPath("$.csv_column").value("2"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("csv_cell_value_type").description("The data type of the value."),
-                        fieldWithPath("csv_row").description("The row of the CSV."),
-                        fieldWithPath("csv_column").description("The column of the CSV."),
-                    )
+            .andDocument {
+                responseFields<UnknownCSVValueType>(
+                    fieldWithPath("csv_cell_value_type").description("The data type of the value."),
+                    fieldWithPath("csv_row").description("The row of the CSV."),
+                    fieldWithPath("csv_column").description("The column of the CSV."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -181,15 +174,14 @@ internal class CSVParsingExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.actual_csv_column_count").value("5"))
             .andExpect(jsonPath("$.expected_csv_column_count").value("8"))
             .andExpect(jsonPath("$.csv_row").value("4"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("actual_csv_column_count").description("The actual count of column values in the row."),
-                        fieldWithPath("expected_csv_column_count").description("The expected count of column values in the row."),
-                        fieldWithPath("csv_row").description("The row of the CSV."),
-                    )
+            .andDocument {
+                responseFields<InconsistentCSVColumnCount>(
+                    fieldWithPath("actual_csv_column_count").description("The actual count of column values in the row."),
+                    fieldWithPath("expected_csv_column_count").description("The expected count of column values in the row."),
+                    fieldWithPath("csv_row").description("The row of the CSV."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -204,16 +196,15 @@ internal class CSVParsingExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.csv_row").value("1"))
             .andExpect(jsonPath("$.csv_column").value("2"))
             .andExpect(jsonPath("$.reason").value("5.7 is not an Integer"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("csv_cell_value").description("The value of the cell."),
-                        fieldWithPath("csv_row").description("The row of the CSV."),
-                        fieldWithPath("csv_column").description("The column of the CSV."),
-                        fieldWithPath("reason").description("The reason why the value is invalid."),
-                    )
+            .andDocument {
+                responseFields<InvalidCSVValue>(
+                    fieldWithPath("csv_cell_value").description("The value of the cell."),
+                    fieldWithPath("csv_row").description("The row of the CSV."),
+                    fieldWithPath("csv_column").description("The column of the CSV."),
+                    fieldWithPath("reason").description("The reason why the value is invalid."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test

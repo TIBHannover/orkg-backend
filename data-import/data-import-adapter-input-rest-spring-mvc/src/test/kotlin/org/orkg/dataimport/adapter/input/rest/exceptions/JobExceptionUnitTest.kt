@@ -20,7 +20,6 @@ import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.ProblemDetail
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -36,13 +35,12 @@ internal class JobExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpect(jsonPath("$.errors").isArray)
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFieldsWithoutDetail(type)).and(
-                        subsectionWithPath("errors[]").description("A list of RFC 9457 problem details."),
-                    )
+            .andDocument {
+                responseFields<JobException>(
+                    subsectionWithPath("errors[]").description("A list of RFC 9457 problem details."),
+                    *exceptionResponseFieldsWithoutDetail(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -54,13 +52,12 @@ internal class JobExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Not Found")
             .andExpectDetail("""Job "1" not found.""")
             .andExpect(jsonPath("$.job_id").value("1"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("job_id").description("The id of the job."),
-                    )
+            .andDocument {
+                responseFields<JobNotFound>(
+                    fieldWithPath("job_id").description("The id of the job."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -72,13 +69,12 @@ internal class JobExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Not Found")
             .andExpectDetail("""Result for job "1" not found.""".trimMargin())
             .andExpect(jsonPath("$.job_id").value("1"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("job_id").description("The id of the job."),
-                    )
+            .andDocument {
+                responseFields<JobResultNotFound>(
+                    fieldWithPath("job_id").description("The id of the job."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -90,13 +86,12 @@ internal class JobExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Job "1" is not complete.""")
             .andExpect(jsonPath("$.job_id").value("1"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("job_id").description("The id of the job."),
-                    )
+            .andDocument {
+                responseFields<JobNotComplete>(
+                    fieldWithPath("job_id").description("The id of the job."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -108,13 +103,12 @@ internal class JobExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Job "1" is not running.""")
             .andExpect(jsonPath("$.job_id").value("1"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("job_id").description("The id of the job."),
-                    )
+            .andDocument {
+                responseFields<JobNotRunning>(
+                    fieldWithPath("job_id").description("The id of the job."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -126,13 +120,12 @@ internal class JobExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Job "1" is already running.""")
             .andExpect(jsonPath("$.job_id").value("1"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("job_id").description("The id of the job."),
-                    )
+            .andDocument {
+                responseFields<JobAlreadyRunning>(
+                    fieldWithPath("job_id").description("The id of the job."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -144,13 +137,12 @@ internal class JobExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Job "1" is already complete.""")
             .andExpect(jsonPath("$.job_id").value("1"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("job_id").description("The id of the job."),
-                    )
+            .andDocument {
+                responseFields<JobAlreadyComplete>(
+                    fieldWithPath("job_id").description("The id of the job."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -162,12 +154,11 @@ internal class JobExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Could not restart job "1".""")
             .andExpect(jsonPath("$.job_id").value("1"))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("job_id").description("The id of the job."),
-                    )
+            .andDocument {
+                responseFields<JobRestartFailed>(
+                    fieldWithPath("job_id").description("The id of the job."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 }

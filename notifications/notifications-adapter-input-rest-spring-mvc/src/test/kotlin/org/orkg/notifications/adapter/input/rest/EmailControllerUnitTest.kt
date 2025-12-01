@@ -15,6 +15,7 @@ import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -43,7 +44,17 @@ internal class EmailControllerUnitTest : MockMvcBaseTest("emails") {
             .content(request)
             .perform()
             .andExpect(status().isNoContent)
-            .andDo(generateDefaultDocSnippets())
+            .andDocument {
+                summary("Sending test emails")
+                description(
+                    """
+                    A `POST` request sends a test email to the user who performed the request.
+                    """
+                )
+                requestFields<SendTestEmailRequest>(
+                    fieldWithPath("message").description("The message to contain in the test email."),
+                )
+            }
 
         verify(exactly = 1) { notificationUseCases.sendTestEmail(recipient, request.message) }
     }

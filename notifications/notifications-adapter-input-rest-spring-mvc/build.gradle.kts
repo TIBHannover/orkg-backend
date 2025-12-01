@@ -28,6 +28,7 @@ testing {
                 runtimeOnly("org.springframework.boot:spring-boot-starter-test")
                 implementation("org.springframework.boot:spring-boot-test-autoconfigure")
                 implementation("org.springframework:spring-test")
+                implementation("org.springframework.restdocs:spring-restdocs-core")
                 implementation("com.ninja-squad:springmockk")
                 implementation(testFixtures(project(":testing:spring")))
             }

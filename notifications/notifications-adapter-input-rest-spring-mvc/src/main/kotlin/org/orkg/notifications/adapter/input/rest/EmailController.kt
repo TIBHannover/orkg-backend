@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
 @RequestMapping("/api/emails")
@@ -25,7 +24,6 @@ class EmailController(
     fun sendTestEmail(
         @RequestBody @Valid request: SendTestEmailRequest,
         currentUser: JwtAuthenticationToken,
-        uriComponentsBuilder: UriComponentsBuilder,
     ): ResponseEntity<Any> {
         val jwt = currentUser.token as Jwt
         val email = jwt.getClaim<String>("email")!!

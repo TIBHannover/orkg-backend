@@ -9,6 +9,7 @@ import org.orkg.notifications.domain.internal.EmailTemplateLoader
 import org.orkg.notifications.domain.internal.MessageFormatter
 import org.orkg.notifications.input.NotificationUseCases
 import org.orkg.notifications.output.EmailService
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.io.StringWriter
 
@@ -18,6 +19,7 @@ class NotificationService(
     private val emailTemplateLoader: EmailTemplateLoader,
 ) : NotificationUseCases {
     private val emailTemplateCache = mutableMapOf<String, Template>()
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
     override fun sendTestEmail(recipient: Recipient, message: String) {
         val model = mapOf(
@@ -35,7 +37,11 @@ class NotificationService(
         val textBody = getEmailTemplate("text/$templateName.ftl").render(textModel)
         val subject = emailTemplateLoader.messages[subjectKey] ?: throw IllegalArgumentException("Unknown subject key: $subjectKey")
         val email = Email(subject, htmlBody, textBody)
-        emailService.send(recipient, email)
+        try {
+            emailService.send(recipient, email)
+        } catch (t: Throwable) {
+            logger.error("""Error sending email. Subject: "{}", Template: "{}", Model: {}.""", subjectKey, templateName, model, t)
+        }
     }
 
     private fun getEmailTemplate(templateName: String): Template =

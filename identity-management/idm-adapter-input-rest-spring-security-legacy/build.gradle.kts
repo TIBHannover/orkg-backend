@@ -9,10 +9,15 @@ testing {
     suites {
         val test by getting(JvmTestSuite::class) {
             dependencies {
+                implementation(project(":common:serialization"))
+                implementation(testFixtures(project(":common:core-identifiers")))
                 implementation(testFixtures(project(":common:spring-webmvc")))
+                implementation(testFixtures(project(":community:community-core-model")))
                 implementation(testFixtures(project(":testing:spring")))
                 implementation("io.kotest:kotest-assertions-core")
                 implementation("io.kotest:kotest-assertions-shared")
+                implementation("io.mockk:mockk-dsl")
+                implementation("io.mockk:mockk-jvm")
                 implementation("org.hamcrest:hamcrest")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
                 implementation("org.junit.jupiter:junit-jupiter-api")
@@ -20,9 +25,9 @@ testing {
                 implementation("org.springframework.boot:spring-boot-test")
                 implementation("org.springframework.boot:spring-boot-test-autoconfigure")
                 implementation("org.springframework.restdocs:spring-restdocs-core")
-                implementation("org.springframework.restdocs:spring-restdocs-mockmvc")
                 implementation("org.springframework:spring-context")
                 implementation("org.springframework:spring-test")
+                implementation("com.ninja-squad:springmockk")
                 runtimeOnly("com.fasterxml.jackson.module:jackson-module-kotlin")
                 runtimeOnly("com.jayway.jsonpath:json-path")
                 runtimeOnly("org.springframework.boot:spring-boot-starter-test")

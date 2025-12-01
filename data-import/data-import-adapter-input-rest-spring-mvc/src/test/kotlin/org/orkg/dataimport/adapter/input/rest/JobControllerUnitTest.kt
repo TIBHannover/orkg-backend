@@ -95,7 +95,6 @@ internal class JobControllerUnitTest : MockMvcBaseTest("jobs") {
         documentedGetRequestTo("/api/jobs/{id}/results", jobId)
             .perform()
             .andExpect(status().isOk)
-            .andPrint()
             .andDocument {
                 summary("Fetching job results")
                 description(

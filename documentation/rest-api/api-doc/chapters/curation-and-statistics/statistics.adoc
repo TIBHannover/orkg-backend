@@ -4,27 +4,22 @@ Statistics are a way to obtain valuable information about the state of the graph
 Every data point is provided by a predefined metric, which are organized in groups.
 
 [[statistics-list-groups]]
-== Listing Groups
+== Listing groups
 
-A `GET` request provides a list of all available metric groups.
+include::{snippets}/statistics_find-all-groups/description.adoc[]
 
 operation::statistics_find-all-groups[snippets='curl-request,http-response,response-fields']
 
 [[statistics-list-metrics-of-group]]
-== Listing Metrics of Groups
+== Listing metrics of groups
 
-A `GET` request provides a list of all available metrics of a given group.
+include::{snippets}/statistics_find-all-metrics-by-group/description.adoc[]
 
 operation::statistics_find-all-metrics-by-group[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[statistics-fetch-metric]]
-== Fetching Metrics
+== Fetching metrics
 
-A `GET` request provides information about a given metric within a group.
+include::{snippets}/statistics_find-metric-by-group-and-name_default/description.adoc[]
 
-[NOTE]
-====
-The values of some metrics are cached and therefore might not reflect the real value of the metric at that point in time.
-====
-
-operation::statistics_find-metric-by-group-and-name[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::statistics_find-metric-by-group-and-name_default[snippets='path-parameters,curl-request,http-response,response-fields']

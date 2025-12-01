@@ -5,13 +5,15 @@ import com.epages.restdocs.apispec.Discriminator
 import com.epages.restdocs.apispec.References
 import org.springframework.restdocs.constraints.Constraint
 import org.springframework.restdocs.payload.FieldDescriptor
+import org.springframework.restdocs.request.ParameterDescriptor
+import org.springframework.restdocs.snippet.AbstractDescriptor
 import org.springframework.restdocs.snippet.Attributes
 import kotlin.reflect.KClass
 
-fun FieldDescriptor.references(schemaClass: KClass<*>): FieldDescriptor =
+fun <T : AbstractDescriptor<T>> T.references(schemaClass: KClass<*>): T =
     attributes(Attributes.Attribute("schemaName", schemaClass.simpleName!!))
 
-fun FieldDescriptor.referencesPageOf(schemaClass: KClass<*>): FieldDescriptor =
+fun <T : AbstractDescriptor<T>> T.referencesPageOf(schemaClass: KClass<*>): T =
     attributes(Attributes.Attribute("schemaName", "PageOf${schemaClass.simpleName!!}s"))
 
 inline fun <reified T> FieldDescriptor.references(): FieldDescriptor =
@@ -20,27 +22,32 @@ inline fun <reified T> FieldDescriptor.references(): FieldDescriptor =
 inline fun <reified T> FieldDescriptor.referencesPageOf(): FieldDescriptor =
     referencesPageOf(T::class)
 
-fun FieldDescriptor.arrayItemsType(type: String): FieldDescriptor =
+fun <T : AbstractDescriptor<T>> T.arrayItemsType(type: String): T =
     attributes(Attributes.Attribute("itemsType", type))
 
-fun FieldDescriptor.enumValues(values: List<String>): FieldDescriptor =
+fun <T : AbstractDescriptor<T>> T.enumValues(values: List<String>): T =
     attributes(Attributes.Attribute("enumValues", values))
 
-fun FieldDescriptor.enumValues(enum: Class<out Enum<*>>): FieldDescriptor =
+fun <T : AbstractDescriptor<T>> T.enumValues(enum: Class<out Enum<*>>): T =
     enumValues(enum.enumConstants.map { it.name })
 
-fun FieldDescriptor.enumValues(enum: KClass<out Enum<*>>): FieldDescriptor =
+fun <T : AbstractDescriptor<T>> T.enumValues(enum: KClass<out Enum<*>>): T =
     enumValues(enum.java)
 
-inline fun <reified T : Enum<*>> FieldDescriptor.enumValues(): FieldDescriptor =
-    enumValues(T::class)
-
-fun FieldDescriptor.constraints(vararg constraints: Constraint): FieldDescriptor =
+fun <T : AbstractDescriptor<T>> T.constraints(vararg constraints: Constraint): T =
     constraints(constraints.toList())
 
-fun FieldDescriptor.constraints(constraints: List<Constraint>): FieldDescriptor {
+fun <T : AbstractDescriptor<T>> T.constraints(constraints: List<Constraint>): T {
     @Suppress("UNCHECKED_CAST")
     attributes.getOrPut("validationConstraints") { mutableListOf<Constraint>() } as MutableList<Constraint> += constraints
+    return this
+}
+
+fun ParameterDescriptor.wildcard(examples: Map<String, Any?>? = null): ParameterDescriptor {
+    attributes(Attributes.Attribute("wildcard", true))
+    if (examples != null) {
+        attributes(Attributes.Attribute("wildcardExamples", examples))
+    }
     return this
 }
 

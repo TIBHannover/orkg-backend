@@ -8,20 +8,24 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.statistics.adapter.input.rest.mapping.MetricRepresentationAdapter.MetricResponseFormat
+import org.orkg.statistics.domain.GroupNotFound
+import org.orkg.statistics.domain.MetricNotFound
+import org.orkg.statistics.domain.TooManyParameterValues
 import org.orkg.statistics.input.StatisticsUseCases
 import org.orkg.statistics.testing.fixtures.createMetrics
 import org.orkg.statistics.testing.fixtures.createSimpleMetric
 import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcBaseTest
+import org.orkg.testing.spring.restdocs.enumValues
+import org.orkg.testing.spring.restdocs.wildcard
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.restdocs.payload.FieldDescriptor
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.pathParameters
-import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.util.LinkedMultiValueMap
@@ -49,15 +53,18 @@ internal class StatisticsControllerUnitTest : MockMvcBaseTest("statistics") {
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.group1.href").value(endsWith("/api/statistics/group1")))
             .andExpect(jsonPath("$.group2.href").value(endsWith("/api/statistics/group2")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(
-                        fieldWithPath("*").description("The name of the group."),
-                        fieldWithPath("*.href").description("The URI of the group, which can be used to fetch a list of available metrics that are associated with this group.")
-                    )
+            .andDocument {
+                summary("Listing groups")
+                description(
+                    """
+                    A `GET` request provides a list of all available metric groups.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                mapResponseFields<EndpointReference>(
+                    "The id of the entry",
+                    fieldWithPath("href").description("The URI of the endpoint, which can be used to fetch a additional information about the entity."),
+                )
+            }
 
         verify(exactly = 1) { service.findAllGroups() }
     }
@@ -75,65 +82,104 @@ internal class StatisticsControllerUnitTest : MockMvcBaseTest("statistics") {
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.metric1.href").value(endsWith("/api/statistics/$group/metric1")))
             .andExpect(jsonPath("$.metric2.href").value(endsWith("/api/statistics/$group/metric2")))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("group").description("The name of the group of metrics.")
-                    ),
-                    responseFields(
-                        fieldWithPath("*").description("The name of the metric."),
-                        fieldWithPath("*.href").description("The URI of the metric, which can be used to fetch information about the metric and its current value.")
-                    )
+            .andDocument {
+                summary("Listing metrics of groups")
+                description(
+                    """
+                    A `GET` request provides a list of all available metrics of a given group.
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("group").description("The name of the group of metrics.")
+                )
+                mapResponseFields<EndpointReference>(
+                    "The id of the entry.",
+                    fieldWithPath("href").description("The URI of the endpoint, which can be used to fetch a additional information about the entity."),
+                )
+                throws(GroupNotFound::class)
+            }
 
         verify(exactly = 1) { service.findAllMetricsByGroup(group) }
     }
 
-    @Test
-    @DisplayName("Given a metric, when fetched, then status is 200 OK and metric is returned")
-    fun findMetricByGroupAndName() {
+    private inline fun <reified T> findMetricByGroupAndName(
+        responseFormat: MetricResponseFormat,
+        responseFields: List<FieldDescriptor>,
+    ): ResultActions {
         val metric = createSimpleMetric()
 
         every { service.findMetricByGroupAndName(metric.group, metric.name) } returns metric
 
-        documentedGetRequestTo("/api/statistics/{group}/{name}", metric.group, metric.name)
-            .param("filter", "5")
+        val result = documentedGetRequestTo("/api/statistics/{group}/{name}", metric.group, metric.name)
+            .param("filter", "2")
+            .param("response_format", responseFormat.name)
             .perform()
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.name").value(metric.name))
-            .andExpect(jsonPath("$.description").value(metric.description))
-            .andExpect(jsonPath("$.group").value(metric.group))
-            .andExpect(jsonPath("$.value").value(metric.value(LinkedMultiValueMap()).toString()))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("group").description("The name of the group of metrics."),
-                        parameterWithName("name").description("The name of the metric.")
-                    ),
-                    queryParameters(
-                        parameterWithName("response_format").description("The response format of the metric. Either of $allowedMetricResponseFormatValues. (optional, default: `${MetricResponseFormat.DEFAULT})`").optional(),
-                        parameterWithName("filter").ignored()
-                    ),
-                    responseFields(
-                        fieldWithPath("name").description("The name of the metric."),
-                        fieldWithPath("description").description("The description of the metric."),
-                        fieldWithPath("group").description("The group of the metric."),
-                        fieldWithPath("value").description("The value of the metric."),
-                        subsectionWithPath("parameters[]").description("A list of optional query parameters."),
-                        fieldWithPath("parameters[].id").description("The id of the parameter, which doubles as the query parameter name."),
-                        fieldWithPath("parameters[].name").description("The name of the parameter."),
-                        fieldWithPath("parameters[].description").description("The description of the parameter."),
-                        fieldWithPath("parameters[].type").description("The type of the parameter."),
-                        fieldWithPath("parameters[].multivalued").description("Whether the parameter accepts multiple values at once."),
-                        fieldWithPath("parameters[].values[]").description("A list of possible values for the parameter. (optional)").optional(),
-                    )
+            .andDocument {
+                summary("Fetching metrics")
+                description(
+                    """
+                    A `GET` request provides information about a given metric within a group.
+                    
+                    [NOTE]
+                    ====
+                    The values of some metrics are cached and therefore might not reflect the real value of the metric at that point in time.
+                    ====
+                    """
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+                pathParameters(
+                    parameterWithName("group").description("The name of the group of metrics."),
+                    parameterWithName("name").description("The name of the metric."),
+                )
+                queryParameters(
+                    parameterWithName("response_format").description("The response format of the metric. Either of $allowedMetricResponseFormatValues. (optional, default: `${MetricResponseFormat.DEFAULT}`)").enumValues(MetricResponseFormat::class).optional(),
+                    parameterWithName("parameters").description("Filter parameters specific for each metric.").wildcard(mapOf("filter" to "2")).optional(),
+                    parameterWithName("filter").ignored(),
+                )
+                responseFields(T::class, responseFields)
+                throws(GroupNotFound::class, MetricNotFound::class, TooManyParameterValues::class)
+            }
 
         verify(exactly = 1) { service.findMetricByGroupAndName(metric.group, metric.name) }
+
+        return result
+    }
+
+    @Test
+    @DisplayName("Given a metric, when fetched (deafult), then status is 200 OK and metric is returned")
+    fun findMetricByGroupAndName_default() {
+        findMetricByGroupAndName<DefaultMetricRepresentation>(
+            responseFormat = MetricResponseFormat.DEFAULT,
+            responseFields = listOf(
+                fieldWithPath("name").description("The name of the metric."),
+                fieldWithPath("description").description("The description of the metric."),
+                fieldWithPath("group").description("The group of the metric."),
+                fieldWithPath("value").description("The value of the metric."),
+                subsectionWithPath("parameters[]").description("A list of optional query parameters."),
+                fieldWithPath("parameters[].id").description("The id of the parameter, which doubles as the query parameter name."),
+                fieldWithPath("parameters[].name").description("The name of the parameter."),
+                fieldWithPath("parameters[].description").description("The description of the parameter."),
+                fieldWithPath("parameters[].type").description("The type of the parameter."),
+                fieldWithPath("parameters[].multivalued").description("Whether the parameter accepts multiple values at once."),
+                fieldWithPath("parameters[].values[]").description("A list of possible values for the parameter. (optional)").optional(),
+            )
+        )
+            .andExpect(jsonPath("$.name").value("metric1"))
+            .andExpect(jsonPath("$.description").value("Description of the metric."))
+            .andExpect(jsonPath("$.group").value("group1"))
+            .andExpect(jsonPath("$.value").value(1))
+    }
+
+    @Test
+    @DisplayName("Given a metric, when fetched (slim), then status is 200 OK and metric is returned")
+    fun findMetricByGroupAndName_slim() {
+        findMetricByGroupAndName<SlimMetricRepresentation>(
+            responseFormat = MetricResponseFormat.SLIM,
+            responseFields = listOf(
+                fieldWithPath("value").description("The value of the metric.")
+            ),
+        )
+            .andExpect(jsonPath("$.value").value(1))
     }
 
     @Test

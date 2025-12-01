@@ -174,6 +174,20 @@ class DocumentationBuilder(private val documentationContext: DocumentationContex
     inline fun <reified T : Any> listResponseFields(fieldDescriptors: FieldDescriptors) =
         listResponseFields(T::class, fieldDescriptors.fieldDescriptors)
 
+    fun mapResponseFields(schemaClass: KClass<*>, keyDescription: String, responseFields: List<FieldDescriptor>) {
+        this.responseSchema = schema("MapOf${schemaClass.simpleName!!}s")
+        this.responseFields = applyPathPrefix("*.", responseFields.map { it.enhance(schemaClass) }) +
+            fieldWithPath("*").description(keyDescription).references(schemaClass)
+    }
+
+    inline fun <reified T : Any> mapResponseFields(keyDescription: String, responseFields: List<FieldDescriptor>) {
+        mapResponseFields(T::class, keyDescription, responseFields)
+    }
+
+    inline fun <reified T : Any> mapResponseFields(keyDescription: String, vararg responseFields: FieldDescriptor) {
+        mapResponseFields(T::class, keyDescription, responseFields.toList())
+    }
+
     fun links(vararg links: LinkDescriptor) =
         links(links.toList())
 

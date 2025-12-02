@@ -73,7 +73,6 @@ build:
 generate_api_clients:
   stage: package
   extends: .gradle_build_job
-  when: manual
   cache:
     - <<: *gradle_cache
       policy: pull
@@ -82,6 +81,7 @@ generate_api_clients:
   needs:
     - job: build
       artifacts: false
+  allow_failure: true
   script:
     - ./gradlew --build-cache :documentation:generateAllClients
   artifacts:
@@ -92,6 +92,9 @@ generate_api_clients:
       - documentation/build/generated-clients
   rules:
     - if: $CI_COMMIT_REF_NAME != $CI_DEFAULT_BRANCH
+      when: manual
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+      when: always
 
 # Deploy documentation to GitLab Pages.
 pages:
@@ -177,6 +180,45 @@ secret_detection:
     - when: always
   variables:
     SECRET_DETECTION_EXCLUDED_PATHS: '.gradle'
+
+publish_typescript_client:
+  stage: deploy
+  image: node:latest
+  cache: []
+  allow_failure: true
+  variables:
+    GIT_STRATEGY: none
+  needs:
+    - job: generate_api_clients
+      artifacts: true
+  rules:
+    - if: $CI_COMMIT_TAG
+  script:
+    - cd ./documentation/build/generated-clients/typescript-client
+    - echo "@orkg:registry=${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/npm/" > .npmrc
+    - echo "//${CI_SERVER_HOST}/api/v4/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=${CI_JOB_TOKEN}" >> .npmrc
+    - npm install
+    - npm publish
+
+publish_python_client:
+  stage: deploy
+  image: python:latest
+  cache: []
+  allow_failure: true
+  variables:
+    GIT_STRATEGY: none
+    TWINE_USERNAME: gitlab-ci-token
+    TWINE_PASSWORD: $CI_JOB_TOKEN
+  needs:
+    - job: generate_api_clients
+      artifacts: true
+  rules:
+    - if: $CI_COMMIT_TAG
+  script:
+    - pip install build twine
+    - cd ./documentation/build/generated-clients/python-client
+    - python -m build
+    - python -m twine upload --repository-url ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/pypi dist/*
 
 deployment_trigger:incubating:
   stage: deploy

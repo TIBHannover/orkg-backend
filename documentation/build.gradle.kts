@@ -394,7 +394,7 @@ tasks {
         removeOperationIdPrefix = true
         gitHost = "gitlab.com"
         gitUserId = "TIBHannover/orkg"
-        gitRepoId = "orkg-backend" // TODO: configure for each client?
+        gitRepoId = "orkg-backend"
         dependsOn("openapi3")
     }
 
@@ -404,7 +404,7 @@ tasks {
         httpUserAgent = "ORKG-TypeScript-Client/${project.version}"
         // See https://github.com/OpenAPITools/openapi-generator/blob/master/docs/generators/typescript-fetch.md
         configOptions = mapOf(
-            "npmName" to "orkg-typescript-client",
+            "npmName" to "@orkg/orkg-client",
             "npmVersion" to project.version.toString(),
             "licenseName" to "MIT",
             "prefixParameterInterfaces" to "true",
@@ -418,7 +418,7 @@ tasks {
         httpUserAgent = "ORKG-Python-Client/${project.version}"
         // See https://github.com/OpenAPITools/openapi-generator/blob/master/docs/generators/python.md
         configOptions = mapOf(
-            "packageName" to "orkg_python_client",
+            "packageName" to "orkg_client",
             "packageVersion" to project.version.toString(),
             "useOneOfDiscriminatorLookup" to "true",
         )
@@ -431,7 +431,7 @@ tasks {
         httpUserAgent = "ORKG-R-Client/${project.version}"
         // See https://github.com/OpenAPITools/openapi-generator/blob/master/docs/generators/r.md
         configOptions = mapOf(
-            "packageName" to "orkg_r_client",
+            "packageName" to "orkg_client",
             "packageVersion" to project.version.toString(),
         )
     }

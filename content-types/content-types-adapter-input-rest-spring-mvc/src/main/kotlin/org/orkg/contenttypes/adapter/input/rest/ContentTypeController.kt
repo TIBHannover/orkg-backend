@@ -66,7 +66,8 @@ class ContentTypeController(
             researchField = researchField,
             includeSubfields = includeSubfields,
             sustainableDevelopmentGoal = sustainableDevelopmentGoal,
-            authorId = authorId
+            authorId = authorId,
+            authorName = authorName,
         ).mapToContentTypeRepresentation()
     }
 
@@ -102,7 +103,8 @@ class ContentTypeController(
             researchField = researchField,
             includeSubfields = includeSubfields,
             sustainableDevelopmentGoal = sustainableDevelopmentGoal,
-            authorId = authorId
+            authorId = authorId,
+            authorName = authorName,
         ).mapToResourceRepresentation(capabilities)
     }
 }

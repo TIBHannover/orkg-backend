@@ -50,6 +50,11 @@ import org.orkg.contenttypes.domain.TooManyTableRowValues
 import org.orkg.contenttypes.domain.testing.fixtures.createTable
 import org.orkg.contenttypes.input.TableUseCases
 import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerUnitTestConfiguration
+import org.orkg.contenttypes.input.testing.fixtures.mapOfCreateClassRequestPartRequestFields
+import org.orkg.contenttypes.input.testing.fixtures.mapOfCreateListRequestPartRequestFields
+import org.orkg.contenttypes.input.testing.fixtures.mapOfCreateLiteralRequestPartRequestFields
+import org.orkg.contenttypes.input.testing.fixtures.mapOfCreatePredicateRequestPartRequestFields
+import org.orkg.contenttypes.input.testing.fixtures.mapOfCreateResourceRequestPartRequestFields
 import org.orkg.contenttypes.input.testing.fixtures.tableResponseFields
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
@@ -273,26 +278,11 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                 )
                 requestFields<CreateTableRequest>(
                     fieldWithPath("label").description("The label of the table."),
-                    fieldWithPath("resources").description("A map of temporary ids to resource definitions for resources that need to be created. (optional)").optional(),
-                    fieldWithPath("resources.*").type("Object").description("Defines a single resource that needs to be created in the process."),
-                    fieldWithPath("resources.*.label").description("The label of the resource."),
-                    fieldWithPath("resources.*.classes").description("The list of classes of the resource."),
-                    fieldWithPath("literals").description("A map of temporary ids to literal definitions for literals that need to be created. (optional)").optional(),
-                    fieldWithPath("literals.*").type("Object").description("Defines a single literal that needs to be created in the process."),
-                    fieldWithPath("literals.*.label").description("The value of the literal."),
-                    fieldWithPath("literals.*.data_type").description("The data type of the literal."),
-                    fieldWithPath("predicates").description("A map of temporary ids to predicate definitions for predicates that need to be created. (optional)").optional(),
-                    fieldWithPath("predicates.*").type("Object").description("Defines a single predicate that needs to be created in the process."),
-                    fieldWithPath("predicates.*.label").description("The label of the predicate."),
-                    fieldWithPath("predicates.*.description").description("The description of the predicate."),
-                    fieldWithPath("lists").description("A map of temporary ids to list definitions for lists that need to be created (optional).").optional(),
-                    fieldWithPath("lists.*").type("Object").description("Defines a single list that needs to be created in the process."),
-                    fieldWithPath("lists.*.label").description("The label of the list."),
-                    fieldWithPath("lists.*.elements").description("The IDs of the elements of the list."),
-                    fieldWithPath("classes").description("A map of temporary ids to class definitions for classes that need to be created. (optional)").optional(),
-                    fieldWithPath("classes.*").type("Object").description("Defines a single class that needs to be created in the process."),
-                    fieldWithPath("classes.*.label").description("The label of the class."),
-                    fieldWithPath("classes.*.uri").description("The uri of the class."),
+                    *mapOfCreateResourceRequestPartRequestFields().toTypedArray(),
+                    *mapOfCreateLiteralRequestPartRequestFields().toTypedArray(),
+                    *mapOfCreatePredicateRequestPartRequestFields().toTypedArray(),
+                    *mapOfCreateListRequestPartRequestFields().toTypedArray(),
+                    *mapOfCreateClassRequestPartRequestFields().toTypedArray(),
                     fieldWithPath("rows[]").description("The ordered list of rows of the table. The first row always represents the header of the table and must only consist of string literals. Additionally, one data row is required. Every row must have the same length."),
                     fieldWithPath("rows[].label").description("The label of the row. (optional)").optional(),
                     fieldWithPath("rows[].data[]").description("The ordered list of values (thing ids, temporary ids or `null`) of the row."),
@@ -364,26 +354,11 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                 )
                 requestFields<UpdateTableRequest>(
                     fieldWithPath("label").description("The label of the table. (optional)").optional(),
-                    fieldWithPath("resources").description("A map of temporary ids to resource definitions for resources that need to be created. (optional)").optional(),
-                    fieldWithPath("resources.*").type("Object").description("Defines a single resource that needs to be created in the process."),
-                    fieldWithPath("resources.*.label").description("The label of the resource."),
-                    fieldWithPath("resources.*.classes").description("The list of classes of the resource."),
-                    fieldWithPath("literals").description("A map of temporary ids to literal definitions for literals that need to be created. (optional)").optional(),
-                    fieldWithPath("literals.*").type("Object").description("Defines a single literal that needs to be created in the process."),
-                    fieldWithPath("literals.*.label").description("The value of the literal."),
-                    fieldWithPath("literals.*.data_type").description("The data type of the literal."),
-                    fieldWithPath("predicates").description("A map of temporary ids to predicate definitions for predicates that need to be created. (optional)").optional(),
-                    fieldWithPath("predicates.*").type("Object").description("Defines a single predicate that needs to be created in the process."),
-                    fieldWithPath("predicates.*.label").description("The label of the predicate."),
-                    fieldWithPath("predicates.*.description").description("The description of the predicate."),
-                    fieldWithPath("lists").description("A map of temporary ids to list definitions for lists that need to be created (optional).").optional(),
-                    fieldWithPath("lists.*").type("Object").description("Defines a single list that needs to be created in the process."),
-                    fieldWithPath("lists.*.label").description("The label of the list."),
-                    fieldWithPath("lists.*.elements").description("The IDs of the elements of the list."),
-                    fieldWithPath("classes").description("A map of temporary ids to class definitions for classes that need to be created. (optional)").optional(),
-                    fieldWithPath("classes.*").type("Object").description("Defines a single class that needs to be created in the process."),
-                    fieldWithPath("classes.*.label").description("The label of the class."),
-                    fieldWithPath("classes.*.uri").description("The uri of the class."),
+                    *mapOfCreateResourceRequestPartRequestFields().toTypedArray(),
+                    *mapOfCreateLiteralRequestPartRequestFields().toTypedArray(),
+                    *mapOfCreatePredicateRequestPartRequestFields().toTypedArray(),
+                    *mapOfCreateListRequestPartRequestFields().toTypedArray(),
+                    *mapOfCreateClassRequestPartRequestFields().toTypedArray(),
                     fieldWithPath("rows[]").description("The ordered list of rows of the table. The first row always represents the header of the table and must only consist of string literals. Additionally, one data row is required. Every row must have the same length. (optional)").optional(),
                     fieldWithPath("rows[].label").description("The label of the row. (optional)").optional(),
                     fieldWithPath("rows[].data[]").description("The ordered list of values (thing ids, temporary ids or `null`) of the row."),
@@ -471,26 +446,11 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                     headerWithName("Location").description("The uri path where the updated table can be fetched from."),
                 )
                 requestFields<CreateTableRowRequest>(
-                    fieldWithPath("resources").description("A map of temporary ids to resource definitions for resources that need to be created. (optional)").optional(),
-                    fieldWithPath("resources.*").type("Object").description("Defines a single resource that needs to be created in the process.").optional(),
-                    fieldWithPath("resources.*.label").type("String").description("The label of the resource.").optional(),
-                    fieldWithPath("resources.*.classes").type("Array").description("The list of classes of the resource.").optional(),
-                    fieldWithPath("literals").description("A map of temporary ids to literal definitions for literals that need to be created. (optional)").optional(),
-                    fieldWithPath("literals.*").type("Object").description("Defines a single literal that needs to be created in the process.").optional(),
-                    fieldWithPath("literals.*.label").type("String").description("The value of the literal.").optional(),
-                    fieldWithPath("literals.*.data_type").type("String").description("The data type of the literal.").optional(),
-                    fieldWithPath("predicates").description("A map of temporary ids to predicate definitions for predicates that need to be created. (optional)").optional(),
-                    fieldWithPath("predicates.*").type("Object").description("Defines a single predicate that needs to be created in the process.").optional(),
-                    fieldWithPath("predicates.*.label").type("String").description("The label of the predicate.").optional(),
-                    fieldWithPath("predicates.*.description").type("String").description("The description of the predicate.").optional(),
-                    fieldWithPath("lists").description("A map of temporary ids to list definitions for lists that need to be created (optional).").optional(),
-                    fieldWithPath("lists.*").type("Object").description("Defines a single list that needs to be created in the process.").optional(),
-                    fieldWithPath("lists.*.label").type("String").description("The label of the list.").optional(),
-                    fieldWithPath("lists.*.elements").type("Array").description("The IDs of the elements of the list.").optional(),
-                    fieldWithPath("classes").description("A map of temporary ids to class definitions for classes that need to be created. (optional)").optional(),
-                    fieldWithPath("classes.*").type("Object").description("Defines a single class that needs to be created in the process.").optional(),
-                    fieldWithPath("classes.*.label").type("String").description("The label of the class.").optional(),
-                    fieldWithPath("classes.*.uri").type("String").description("The uri of the class.").optional(),
+                    *mapOfCreateResourceRequestPartRequestFields().toTypedArray(),
+                    *mapOfCreateLiteralRequestPartRequestFields().toTypedArray(),
+                    *mapOfCreatePredicateRequestPartRequestFields().toTypedArray(),
+                    *mapOfCreateListRequestPartRequestFields().toTypedArray(),
+                    *mapOfCreateClassRequestPartRequestFields().toTypedArray(),
                     fieldWithPath("row").description("The table row. It must have the same length as the table header"),
                     fieldWithPath("row.label").description("The label of the row. (optional)").optional(),
                     fieldWithPath("row.data[]").description("The ordered list of values (thing ids, temporary ids or `null`) of the row."),
@@ -553,26 +513,11 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                     headerWithName("Location").description("The uri path where the updated table can be fetched from."),
                 )
                 requestFields<UpdateTableRowRequest>(
-                    fieldWithPath("resources").description("A map of temporary ids to resource definitions for resources that need to be created. (optional)").optional(),
-                    fieldWithPath("resources.*").type("Object").description("Defines a single resource that needs to be created in the process.").optional(),
-                    fieldWithPath("resources.*.label").type("String").description("The label of the resource.").optional(),
-                    fieldWithPath("resources.*.classes").type("Array").description("The list of classes of the resource.").optional(),
-                    fieldWithPath("literals").description("A map of temporary ids to literal definitions for literals that need to be created. (optional)").optional(),
-                    fieldWithPath("literals.*").type("Object").description("Defines a single literal that needs to be created in the process.").optional(),
-                    fieldWithPath("literals.*.label").type("String").description("The value of the literal.").optional(),
-                    fieldWithPath("literals.*.data_type").type("String").description("The data type of the literal.").optional(),
-                    fieldWithPath("predicates").description("A map of temporary ids to predicate definitions for predicates that need to be created. (optional)").optional(),
-                    fieldWithPath("predicates.*").type("Object").description("Defines a single predicate that needs to be created in the process.").optional(),
-                    fieldWithPath("predicates.*.label").type("String").description("The label of the predicate.").optional(),
-                    fieldWithPath("predicates.*.description").type("String").description("The description of the predicate.").optional(),
-                    fieldWithPath("lists").description("A map of temporary ids to list definitions for lists that need to be created (optional).").optional(),
-                    fieldWithPath("lists.*").type("Object").description("Defines a single list that needs to be created in the process.").optional(),
-                    fieldWithPath("lists.*.label").type("String").description("The label of the list.").optional(),
-                    fieldWithPath("lists.*.elements").type("Array").description("The IDs of the elements of the list.").optional(),
-                    fieldWithPath("classes").description("A map of temporary ids to class definitions for classes that need to be created. (optional)").optional(),
-                    fieldWithPath("classes.*").type("Object").description("Defines a single class that needs to be created in the process.").optional(),
-                    fieldWithPath("classes.*.label").type("String").description("The label of the class.").optional(),
-                    fieldWithPath("classes.*.uri").type("String").description("The uri of the class.").optional(),
+                    *mapOfCreateResourceRequestPartRequestFields().toTypedArray(),
+                    *mapOfCreateLiteralRequestPartRequestFields().toTypedArray(),
+                    *mapOfCreatePredicateRequestPartRequestFields().toTypedArray(),
+                    *mapOfCreateListRequestPartRequestFields().toTypedArray(),
+                    *mapOfCreateClassRequestPartRequestFields().toTypedArray(),
                     fieldWithPath("row").description("The table row. It must have the same length as the table header"),
                     fieldWithPath("row.label").description("The label of the row. (optional)").optional(),
                     fieldWithPath("row.data[]").description("The ordered list of values (thing ids, temporary ids or `null`) of the row. (optional)").optional(),
@@ -701,22 +646,11 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                     headerWithName("Location").description("The uri path where the updated table can be fetched from."),
                 )
                 requestFields<TableColumnRequest>(
-                    fieldWithPath("resources").description("A map of temporary ids to resource definitions for resources that need to be created. (optional)").optional(),
-                    fieldWithPath("resources.*").type("Object").description("Defines a single resource that needs to be created in the process.").optional(),
-                    fieldWithPath("resources.*.label").type("String").description("The label of the resource.").optional(),
-                    fieldWithPath("resources.*.classes").type("Array").description("The list of classes of the resource.").optional(),
-                    fieldWithPath("literals").description("A map of temporary ids to literal definitions for literals that need to be created. (optional)").optional(),
-                    fieldWithPath("literals.*").type("Object").description("Defines a single literal that needs to be created in the process.").optional(),
-                    fieldWithPath("literals.*.label").type("String").description("The value of the literal.").optional(),
-                    fieldWithPath("literals.*.data_type").type("String").description("The data type of the literal.").optional(),
-                    fieldWithPath("predicates").description("A map of temporary ids to predicate definitions for predicates that need to be created. (optional)").optional(),
-                    fieldWithPath("predicates.*").type("Object").description("Defines a single predicate that needs to be created in the process.").optional(),
-                    fieldWithPath("predicates.*.label").type("String").description("The label of the predicate.").optional(),
-                    fieldWithPath("predicates.*.description").type("String").description("The description of the predicate.").optional(),
-                    fieldWithPath("lists").description("A map of temporary ids to list definitions for lists that need to be created (optional).").optional(),
-                    fieldWithPath("lists.*").type("Object").description("Defines a single list that needs to be created in the process.").optional(),
-                    fieldWithPath("lists.*.label").type("String").description("The label of the list.").optional(),
-                    fieldWithPath("lists.*.elements").type("Array").description("The IDs of the elements of the list.").optional(),
+                    *mapOfCreateResourceRequestPartRequestFields().toTypedArray(),
+                    *mapOfCreateLiteralRequestPartRequestFields().toTypedArray(),
+                    *mapOfCreatePredicateRequestPartRequestFields().toTypedArray(),
+                    *mapOfCreateListRequestPartRequestFields().toTypedArray(),
+                    *mapOfCreateClassRequestPartRequestFields().toTypedArray(),
                     fieldWithPath("classes").description("A map of temporary ids to class definitions for classes that need to be created. (optional)").optional(),
                     fieldWithPath("classes.*").type("Object").description("Defines a single class that needs to be created in the process.").optional(),
                     fieldWithPath("classes.*.label").type("String").description("The label of the class.").optional(),
@@ -783,26 +717,11 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                     headerWithName("Location").description("The uri path where the updated table can be fetched from."),
                 )
                 requestFields<TableColumnRequest>(
-                    fieldWithPath("resources").description("A map of temporary ids to resource definitions for resources that need to be created. (optional)").optional(),
-                    fieldWithPath("resources.*").type("Object").description("Defines a single resource that needs to be created in the process.").optional(),
-                    fieldWithPath("resources.*.label").type("String").description("The label of the resource.").optional(),
-                    fieldWithPath("resources.*.classes").type("Array").description("The list of classes of the resource.").optional(),
-                    fieldWithPath("literals").description("A map of temporary ids to literal definitions for literals that need to be created. (optional)").optional(),
-                    fieldWithPath("literals.*").type("Object").description("Defines a single literal that needs to be created in the process.").optional(),
-                    fieldWithPath("literals.*.label").type("String").description("The value of the literal.").optional(),
-                    fieldWithPath("literals.*.data_type").type("String").description("The data type of the literal.").optional(),
-                    fieldWithPath("predicates").description("A map of temporary ids to predicate definitions for predicates that need to be created. (optional)").optional(),
-                    fieldWithPath("predicates.*").type("Object").description("Defines a single predicate that needs to be created in the process.").optional(),
-                    fieldWithPath("predicates.*.label").type("String").description("The label of the predicate.").optional(),
-                    fieldWithPath("predicates.*.description").type("String").description("The description of the predicate.").optional(),
-                    fieldWithPath("lists").description("A map of temporary ids to list definitions for lists that need to be created (optional).").optional(),
-                    fieldWithPath("lists.*").type("Object").description("Defines a single list that needs to be created in the process.").optional(),
-                    fieldWithPath("lists.*.label").type("String").description("The label of the list.").optional(),
-                    fieldWithPath("lists.*.elements").type("Array").description("The IDs of the elements of the list.").optional(),
-                    fieldWithPath("classes").description("A map of temporary ids to class definitions for classes that need to be created. (optional)").optional(),
-                    fieldWithPath("classes.*").type("Object").description("Defines a single class that needs to be created in the process.").optional(),
-                    fieldWithPath("classes.*.label").type("String").description("The label of the class.").optional(),
-                    fieldWithPath("classes.*.uri").type("String").description("The uri of the class.").optional(),
+                    *mapOfCreateResourceRequestPartRequestFields().toTypedArray(),
+                    *mapOfCreateLiteralRequestPartRequestFields().toTypedArray(),
+                    *mapOfCreatePredicateRequestPartRequestFields().toTypedArray(),
+                    *mapOfCreateListRequestPartRequestFields().toTypedArray(),
+                    *mapOfCreateClassRequestPartRequestFields().toTypedArray(),
                     fieldWithPath("column[]").description("The ordered list of column values (thing ids, temporary ids or `null`). The first value always represents the header of the table and must be a string literal."),
                 )
                 throws(
@@ -1049,10 +968,10 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                     classes = setOf(ThingId("Result"))
                 )
             ),
-            literals = emptyMap(),
-            predicates = emptyMap(),
-            lists = emptyMap(),
-            classes = emptyMap(),
+            literals = null,
+            predicates = null,
+            lists = null,
+            classes = null,
             row = CreateRowRequest(
                 label = "row 3",
                 data = listOf("R456", "#temp1", null)
@@ -1067,10 +986,10 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                     classes = setOf(ThingId("Result"))
                 )
             ),
-            literals = emptyMap(),
-            predicates = emptyMap(),
-            lists = emptyMap(),
-            classes = emptyMap(),
+            literals = null,
+            predicates = null,
+            lists = null,
+            classes = null,
             row = UpdateRowRequest(
                 label = "row 3",
                 data = listOf("R456", "#temp1", null)
@@ -1079,13 +998,13 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
 
     private fun tableColumnRequest() =
         TableColumnRequest(
-            resources = emptyMap(),
+            resources = null,
             literals = mapOf(
                 "#temp1" to CreateLiteralRequestPart("column 1", Literals.XSD.STRING.prefixedUri),
             ),
-            predicates = emptyMap(),
-            lists = emptyMap(),
-            classes = emptyMap(),
+            predicates = null,
+            lists = null,
+            classes = null,
             column = listOf("#temp1", null, "R456"),
         )
 

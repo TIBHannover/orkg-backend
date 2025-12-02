@@ -24,7 +24,12 @@ import org.orkg.contenttypes.domain.ThingNotDefined
 import org.orkg.contenttypes.domain.testing.fixtures.createContribution
 import org.orkg.contenttypes.input.ContributionUseCases
 import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerUnitTestConfiguration
+import org.orkg.contenttypes.input.testing.fixtures.constributionRequestPartRequestFields
 import org.orkg.contenttypes.input.testing.fixtures.contributionResponseFields
+import org.orkg.contenttypes.input.testing.fixtures.mapOfCreateListRequestPartRequestFields
+import org.orkg.contenttypes.input.testing.fixtures.mapOfCreateLiteralRequestPartRequestFields
+import org.orkg.contenttypes.input.testing.fixtures.mapOfCreatePredicateRequestPartRequestFields
+import org.orkg.contenttypes.input.testing.fixtures.mapOfCreateResourceRequestPartRequestFields
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.InvalidLiteralDatatype
 import org.orkg.graph.domain.InvalidLiteralLabel
@@ -44,8 +49,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
+import org.springframework.restdocs.payload.PayloadDocumentation.applyPathPrefix
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
@@ -159,28 +164,12 @@ internal class ContributionControllerUnitTest : MockMvcBaseTest("contributions")
                 )
                 requestFields<CreateContributionRequest>(
                     fieldWithPath("extraction_method").description("""The method used to extract the contribution resource. Can be one of $allowedExtractionMethodValues. (default: `UNKNOWN`)""").optional(),
-                    fieldWithPath("resources").description("A map of temporary ids to resource definitions for resources that need to be created. (optional)").optional(),
-                    fieldWithPath("resources.*").type("Object").description("Defines a single resource that needs to be created in the process."),
-                    fieldWithPath("resources.*.label").description("The label of the resource."),
-                    fieldWithPath("resources.*.classes").description("The list of classes of the resource."),
-                    fieldWithPath("literals").description("A map of temporary ids to literal definitions for literals that need to be created. (optional)").optional(),
-                    fieldWithPath("literals.*").type("Object").description("Defines a single literal that needs to be created in the process."),
-                    fieldWithPath("literals.*.label").description("The value of the literal."),
-                    fieldWithPath("literals.*.data_type").description("The data type of the literal."),
-                    fieldWithPath("predicates").description("A map of temporary ids to predicate definitions for predicates that need to be created. (optional)").optional(),
-                    fieldWithPath("predicates.*").type("Object").description("Defines a single predicate that needs to be created in the process."),
-                    fieldWithPath("predicates.*.label").description("The label of the predicate."),
-                    fieldWithPath("predicates.*.description").description("The description of the predicate."),
-                    fieldWithPath("lists").description("A map of temporary ids to list definitions for lists that need to be created. (optional)").optional(),
-                    fieldWithPath("lists.*").type("Object").description("Defines a single list that needs to be created in the process."),
-                    fieldWithPath("lists.*.label").description("The label of the list."),
-                    fieldWithPath("lists.*.elements").description("The IDs of the elements of the list."),
-                    fieldWithPath("contribution").description("List of definitions of contribution that need to be created."),
-                    fieldWithPath("contribution.label").description("Label of the contribution."),
-                    fieldWithPath("contribution.classes").description("The classes of the contribution resource. (optional)").optional(),
-                    fieldWithPath("contribution.statements").description("A recursive map of predicate id to list of statements contained within the contribution."),
-                    fieldWithPath("contribution.statements.*").description("A predicate id."),
-                    subsectionWithPath("contribution.statements.*[]").description("A list of statement object requests."),
+                    *mapOfCreateResourceRequestPartRequestFields().toTypedArray(),
+                    *mapOfCreateLiteralRequestPartRequestFields().toTypedArray(),
+                    *mapOfCreatePredicateRequestPartRequestFields().toTypedArray(),
+                    *mapOfCreateListRequestPartRequestFields().toTypedArray(),
+                    fieldWithPath("contribution").description("The definition of the contribution."),
+                    *applyPathPrefix("contribution.", constributionRequestPartRequestFields()).toTypedArray(),
                 )
                 throws(
                     InvalidTempId::class,

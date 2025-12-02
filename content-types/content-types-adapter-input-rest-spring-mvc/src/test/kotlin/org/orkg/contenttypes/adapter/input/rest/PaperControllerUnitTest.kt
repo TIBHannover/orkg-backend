@@ -55,6 +55,11 @@ import org.orkg.contenttypes.input.CreatePaperUseCase
 import org.orkg.contenttypes.input.PaperUseCases
 import org.orkg.contenttypes.input.testing.fixtures.authorListFields
 import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerUnitTestConfiguration
+import org.orkg.contenttypes.input.testing.fixtures.constributionRequestPartRequestFields
+import org.orkg.contenttypes.input.testing.fixtures.mapOfCreateListRequestPartRequestFields
+import org.orkg.contenttypes.input.testing.fixtures.mapOfCreateLiteralRequestPartRequestFields
+import org.orkg.contenttypes.input.testing.fixtures.mapOfCreatePredicateRequestPartRequestFields
+import org.orkg.contenttypes.input.testing.fixtures.mapOfCreateResourceRequestPartRequestFields
 import org.orkg.contenttypes.input.testing.fixtures.paperIdentifierFields
 import org.orkg.contenttypes.input.testing.fixtures.paperResponseFields
 import org.orkg.contenttypes.input.testing.fixtures.publicationInfoRequestFields
@@ -92,8 +97,8 @@ import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
+import org.springframework.restdocs.payload.PayloadDocumentation.applyPathPrefix
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
@@ -513,24 +518,12 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
                     fieldWithPath("sdgs").description("The set of ids of sustainable development goals the paper will be assigned to. (optional)").arrayItemsType("String").constraints(thingIdConstraint).optional(),
                     fieldWithPath("mentionings").description("The set of ids of resources that are mentioned in the paper and should be used for extended search. (optional)").optional(),
                     fieldWithPath("contents").description("Definition of the contents of the paper. (optional)").optional(),
-                    fieldWithPath("contents.resources").description("A map of temporary ids to resource definitions for resources that need to be created. (optional)").optional(),
-                    fieldWithPath("contents.resources.*.label").description("The label of the resource."),
-                    fieldWithPath("contents.resources.*.classes").description("The list of classes of the resource."),
-                    fieldWithPath("contents.literals").description("A map of temporary ids to literal definitions for literals that need to be created. (optional)").optional(),
-                    fieldWithPath("contents.literals.*.label").description("The value of the literal."),
-                    fieldWithPath("contents.literals.*.data_type").description("The data type of the literal."),
-                    fieldWithPath("contents.predicates").description("A map of temporary ids to predicate definitions for predicates that need to be created. (optional)").optional(),
-                    fieldWithPath("contents.predicates.*.label").description("The label of the predicate."),
-                    fieldWithPath("contents.predicates.*.description").description("The description of the predicate."),
-                    fieldWithPath("contents.lists").description("A map of temporary ids to list definitions for lists that need to be created. (optional)").optional(),
-                    fieldWithPath("contents.lists.*.label").description("The label of the list."),
-                    fieldWithPath("contents.lists.*.elements").description("The IDs of the elements of the list."),
-                    fieldWithPath("contents.contributions").description("List of definitions of contribution that need to be created."),
-                    fieldWithPath("contents.contributions[].label").description("Label of the contribution."),
-                    fieldWithPath("contents.contributions[].classes").description("The classes of the contribution resource."),
-                    fieldWithPath("contents.contributions[].statements").description("A recursive map of predicate id to list of statements contained within the contribution."),
-                    fieldWithPath("contents.contributions[].statements.*").description("A predicate id."),
-                    subsectionWithPath("contents.contributions[].statements.*[]").description("A list of statement object requests."),
+                    *mapOfCreateResourceRequestPartRequestFields("contents.resources").toTypedArray(),
+                    *mapOfCreateLiteralRequestPartRequestFields("contents.literals").toTypedArray(),
+                    *mapOfCreatePredicateRequestPartRequestFields("contents.predicates").toTypedArray(),
+                    *mapOfCreateListRequestPartRequestFields("contents.lists").toTypedArray(),
+                    fieldWithPath("contents.contributions").description("A list of definitions of contribution that need to be created."),
+                    *applyPathPrefix("contents.contributions[].", constributionRequestPartRequestFields()).toTypedArray(),
                     fieldWithPath("organizations[]").description("The list of IDs of the organizations the paper belongs to. Can be at most one organization id."),
                     fieldWithPath("observatories[]").description("The list of IDs of the observatories the paper belongs to. Can be at most one observatory id."),
                     fieldWithPath("extraction_method").description("""The method used to extract the paper resource. Can be one of $allowedExtractionMethodValues."""),

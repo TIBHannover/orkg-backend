@@ -46,6 +46,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":common:core-identifiers")))
     testFixturesApi(testFixtures(project(":graph:graph-adapter-input-rest-spring-mvc")))
     testFixturesApi(testFixtures(project(":testing:spring")))
+    testFixturesImplementation("org.eclipse.rdf4j:rdf4j-common-io")
     testFixturesImplementation(project(":common:datatypes"))
     testFixturesImplementation(project(":common:core-identifiers"))
     testFixturesImplementation(project(":graph:graph-core-constants"))

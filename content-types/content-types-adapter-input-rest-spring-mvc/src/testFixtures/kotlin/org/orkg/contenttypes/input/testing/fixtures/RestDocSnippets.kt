@@ -1,5 +1,6 @@
 package org.orkg.contenttypes.input.testing.fixtures
 
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.doiConstraint
 import org.orkg.common.testing.fixtures.googleScholarIdConstraint
@@ -11,6 +12,7 @@ import org.orkg.common.testing.fixtures.orcidConstraint
 import org.orkg.common.testing.fixtures.researchGateIdConstraint
 import org.orkg.common.testing.fixtures.researcherIdConstraint
 import org.orkg.common.testing.fixtures.wikidataIdConstraint
+import org.orkg.common.thingIdConstraint
 import org.orkg.contenttypes.adapter.input.rest.LabeledObjectRepresentation
 import org.orkg.contenttypes.adapter.input.rest.LiteratureListSectionRepresentation
 import org.orkg.contenttypes.adapter.input.rest.SmartReviewSectionRepresentation
@@ -28,6 +30,7 @@ import org.orkg.testing.spring.restdocs.constraints
 import org.orkg.testing.spring.restdocs.polymorphicResponseFields
 import org.orkg.testing.spring.restdocs.references
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
+import org.orkg.testing.spring.restdocs.type
 import org.springframework.restdocs.payload.FieldDescriptor
 import org.springframework.restdocs.payload.PayloadDocumentation.applyPathPrefix
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
@@ -624,4 +627,67 @@ fun versionInfoResponseFields(path: String = "versions") = listOf(
     timestampFieldWithPath("$path.published[].created_at", "the published version was created"),
     fieldWithPath("$path.published[].created_by").type("String").description("The UUID of the user or service who created the version."),
     fieldWithPath("$path.published[].changelog").description("The changelog of the published version."),
+)
+
+fun createResourceRequestPartRequestFields() = listOf(
+    fieldWithPath("label").description("The label of the resource.").type("string"),
+    fieldWithPath("classes").description("The list of classes of the resource.").type("array").arrayItemsType("string").constraints(thingIdConstraint),
+)
+
+fun createLiteralRequestPartRequestFields() = listOf(
+    fieldWithPath("label").description("The value of the literal.").type("string"),
+    fieldWithPath("data_type").description("The data type of the literal.").type("string").optional(),
+)
+
+fun createPredicateRequestPartRequestFields() = listOf(
+    fieldWithPath("label").description("The label of the predicate.").type("string"),
+    fieldWithPath("description").description("The description of the predicate.").type("string").optional(),
+)
+
+fun createClassRequestPartRequestFields() = listOf(
+    fieldWithPath("label").description("The label of the class.").type("string"),
+    fieldWithPath("uri").description("The uri of the class.").type<ParsedIRI>().optional(),
+)
+
+fun createListRequestPartRequestFields() = listOf(
+    fieldWithPath("label").description("The label of the list.").type("string"),
+    fieldWithPath("elements").description("The ids of the elements of the list.").type("array").arrayItemsType("string").constraints(thingIdConstraint),
+)
+
+fun constributionRequestPartRequestFields() = listOf(
+    fieldWithPath("label").description("The label of the contribution."),
+    fieldWithPath("classes").description("The classes of the contribution resource."),
+    fieldWithPath("statements").description("A recursive key-value map of predicate ids to list of statements contained within the contribution."),
+    fieldWithPath("statements.*").description("A predicate id."),
+    subsectionWithPath("statements.*[]").description("A list of statement object requests."),
+)
+
+fun mapOfCreateResourceRequestPartRequestFields(path: String = "resources") = listOf(
+    fieldWithPath(path).description("A key-value map of temporary ids to resource definitions for resources that need to be created. (optional)").optional(),
+    fieldWithPath("$path.*").type("object").description("The definition of the resource that needs to be created."),
+    *applyPathPrefix("$path.*.", createResourceRequestPartRequestFields()).toTypedArray(),
+)
+
+fun mapOfCreateLiteralRequestPartRequestFields(path: String = "literals") = listOf(
+    fieldWithPath(path).description("A key-value map of temporary ids to literal definitions for literals that need to be created. (optional)").optional(),
+    fieldWithPath("$path.*").type("object").description("The definition of the literal that needs to be created."),
+    *applyPathPrefix("$path.*.", createLiteralRequestPartRequestFields()).toTypedArray(),
+)
+
+fun mapOfCreatePredicateRequestPartRequestFields(path: String = "predicates") = listOf(
+    fieldWithPath(path).description("A key-value map of temporary ids to predicate definitions for predicates that need to be created. (optional)").optional(),
+    fieldWithPath("$path.*").type("object").description("The definition of the predicate that needs to be created."),
+    *applyPathPrefix("$path.*.", createPredicateRequestPartRequestFields()).toTypedArray(),
+)
+
+fun mapOfCreateClassRequestPartRequestFields(path: String = "classes") = listOf(
+    fieldWithPath(path).description("A key-value map of temporary ids to class definitions for classes that need to be created. (optional)").optional(),
+    fieldWithPath("$path.*").type("object").description("The definition of the class that needs to be created."),
+    *applyPathPrefix("$path.*.", createClassRequestPartRequestFields()).toTypedArray(),
+)
+
+fun mapOfCreateListRequestPartRequestFields(path: String = "lists") = listOf(
+    fieldWithPath(path).description("A key-value map of temporary ids to list definitions for lists that need to be created. (optional)").optional(),
+    fieldWithPath("$path.*").type("object").description("The definition of the list that needs to be created."),
+    *applyPathPrefix("$path.*.", createListRequestPartRequestFields()).toTypedArray(),
 )

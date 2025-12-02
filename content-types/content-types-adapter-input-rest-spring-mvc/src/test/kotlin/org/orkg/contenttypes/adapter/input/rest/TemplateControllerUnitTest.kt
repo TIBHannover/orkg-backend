@@ -578,6 +578,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
                     TemplateNotFound::class,
                     InvalidLabel::class,
                     InvalidDescription::class,
+                    TemplateClosed::class,
                     ContributorNotFound::class,
                     NeitherOwnerNorCurator::class,
                     ClassNotFound::class,

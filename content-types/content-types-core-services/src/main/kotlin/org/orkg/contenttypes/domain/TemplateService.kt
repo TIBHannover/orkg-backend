@@ -25,6 +25,7 @@ import org.orkg.contenttypes.domain.actions.VisibilityValidator
 import org.orkg.contenttypes.domain.actions.execute
 import org.orkg.contenttypes.domain.actions.templates.TemplateClosedCreator
 import org.orkg.contenttypes.domain.actions.templates.TemplateClosedUpdater
+import org.orkg.contenttypes.domain.actions.templates.TemplateClosedValidator
 import org.orkg.contenttypes.domain.actions.templates.TemplateDescriptionCreator
 import org.orkg.contenttypes.domain.actions.templates.TemplateDescriptionUpdater
 import org.orkg.contenttypes.domain.actions.templates.TemplateExistenceValidator
@@ -167,6 +168,7 @@ class TemplateService(
             LabelValidator { it.label },
             DescriptionValidator { it.description },
             LabelValidator("formatted_label") { it.formattedLabel?.value },
+            TemplateClosedValidator(),
             VisibilityValidator(contributorRepository, { it.contributorId }, { it.template!! }, { it.visibility }),
             TemplateTargetClassValidator(classRepository, statementRepository, { it.targetClass }, { it.template!!.targetClass.id }),
             TemplateRelationsUpdateValidator(resourceRepository, predicateRepository),

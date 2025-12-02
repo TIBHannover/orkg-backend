@@ -47,7 +47,7 @@ internal class ContributorIdentifierControllerIntegrationTest : MockMvcBaseTest(
             .andExpect(jsonPath("$.content[0].type").value(ContributorIdentifier.Type.ORCID.id))
 
         delete("/api/contributors/{id}/identifiers", contributorId)
-            .content(requestJson("orkg/deleteContributorIdentifier"))
+            .param("value", "0000-0001-5109-3700")
             .perform()
             .andExpect(status().isNoContent)
 

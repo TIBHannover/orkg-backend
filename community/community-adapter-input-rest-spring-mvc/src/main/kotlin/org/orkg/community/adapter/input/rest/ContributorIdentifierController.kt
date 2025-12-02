@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 
@@ -56,14 +57,13 @@ class ContributorIdentifierController(
 
     @RequireLogin
     @DeleteMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])
-    fun delete(
+    fun deleteByContributorIdAndValue(
         @PathVariable id: ContributorId,
-        @RequestBody @Valid request: DeleteContributorIdentifierRequest,
+        @RequestParam value: String,
         currentUser: Authentication,
-        uriComponentsBuilder: UriComponentsBuilder,
     ): ResponseEntity<Any> {
         val contributorId = currentUser.contributorId()
-        contributorIdentifierUseCases.delete(contributorId, request.value)
+        contributorIdentifierUseCases.deleteByContributorIdAndValue(contributorId, value)
         return noContent().build()
     }
 
@@ -74,8 +74,4 @@ class ContributorIdentifierController(
         fun toCreateCommand(contributorId: ContributorId) =
             CreateContributorIdentifierUseCase.CreateCommand(contributorId, type, value)
     }
-
-    data class DeleteContributorIdentifierRequest(
-        val value: String,
-    )
 }

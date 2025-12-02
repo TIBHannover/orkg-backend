@@ -25,7 +25,7 @@ interface CreateContributorIdentifierUseCase {
 }
 
 interface DeleteContributorIdentifierUseCase {
-    fun delete(contributorId: ContributorId, value: String)
+    fun deleteByContributorIdAndValue(contributorId: ContributorId, value: String)
 
     fun deleteAll()
 }

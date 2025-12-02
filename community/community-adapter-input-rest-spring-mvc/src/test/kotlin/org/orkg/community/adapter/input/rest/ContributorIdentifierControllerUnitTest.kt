@@ -10,7 +10,6 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.community.adapter.input.rest.ContributorIdentifierController.CreateContributorIdentifierRequest
-import org.orkg.community.adapter.input.rest.ContributorIdentifierController.DeleteContributorIdentifierRequest
 import org.orkg.community.adapter.input.rest.ContributorIdentifierControllerUnitTest.TestController
 import org.orkg.community.adapter.input.rest.mapping.ContributorIdentifierRepresentationAdapter
 import org.orkg.community.domain.ContributorIdentifier
@@ -128,14 +127,15 @@ internal class ContributorIdentifierControllerUnitTest : MockMvcBaseTest("contri
     @Test
     @TestWithMockUser
     @DisplayName("Given a contributor identifier, when deleted by id, then status is 204 NO CONTENT")
-    fun delete() {
+    fun deleteByContributorIdAndValue() {
         val contributorId = ContributorId(MockUserId.USER)
-        val request = deleteContributorIdentifierRequest()
+        val value = "0000-0001-5109-3700"
 
-        every { contributorIdentifierUseCases.delete(contributorId, request.value) } just runs
+        every { contributorIdentifierUseCases.deleteByContributorIdAndValue(contributorId, value) } just runs
 
-        documentedDeleteRequestTo("/api/contributors/{id}/identifiers", contributorId)
-            .content(request)
+        // TODO: For unknown reasons, delete requests do not work with param builders.
+        // Tested on spring rest docs 3.0.3.
+        documentedDeleteRequestTo("/api/contributors/{id}/identifiers?value=$value", contributorId)
             .perform()
             .andExpect(status().isNoContent)
             .andDocument {
@@ -149,12 +149,12 @@ internal class ContributorIdentifierControllerUnitTest : MockMvcBaseTest("contri
                 pathParameters(
                     parameterWithName("id").description("The identifier of the contributor."),
                 )
-                requestFields<DeleteContributorIdentifierRequest>(
-                    fieldWithPath("value").description("The value of the identifier."),
+                queryParameters(
+                    parameterWithName("value").description("The value of the identifier."),
                 )
             }
 
-        verify(exactly = 1) { contributorIdentifierUseCases.delete(contributorId, request.value) }
+        verify(exactly = 1) { contributorIdentifierUseCases.deleteByContributorIdAndValue(contributorId, value) }
     }
 
     @TestComponent
@@ -170,7 +170,4 @@ internal class ContributorIdentifierControllerUnitTest : MockMvcBaseTest("contri
             type = ContributorIdentifier.Type.ORCID,
             value = "0000-0001-5109-3700"
         )
-
-    private fun deleteContributorIdentifierRequest() =
-        DeleteContributorIdentifierRequest("0000-0001-5109-3700")
 }

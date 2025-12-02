@@ -45,7 +45,7 @@ class ContributorIdentifierService(
         return identifier
     }
 
-    override fun delete(contributorId: ContributorId, value: String) =
+    override fun deleteByContributorIdAndValue(contributorId: ContributorId, value: String) =
         contributorIdentifierRepository.deleteByContributorIdAndValue(contributorId, value)
 
     override fun deleteAll() =

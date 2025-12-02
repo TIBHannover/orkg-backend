@@ -20,10 +20,11 @@ import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.community.domain.ObservatoryNotFound
 import org.orkg.community.domain.OrganizationNotFound
 import org.orkg.contenttypes.adapter.input.rest.TableController.CreateTableRequest
+import org.orkg.contenttypes.adapter.input.rest.TableController.CreateTableRowRequest
 import org.orkg.contenttypes.adapter.input.rest.TableController.TableColumnRequest
-import org.orkg.contenttypes.adapter.input.rest.TableController.TableRowRequest
 import org.orkg.contenttypes.adapter.input.rest.TableController.UpdateTableCellRequest
 import org.orkg.contenttypes.adapter.input.rest.TableController.UpdateTableRequest
+import org.orkg.contenttypes.adapter.input.rest.TableController.UpdateTableRowRequest
 import org.orkg.contenttypes.domain.CannotDeleteTableHeader
 import org.orkg.contenttypes.domain.DuplicateTempIds
 import org.orkg.contenttypes.domain.InvalidTableColumnIndex
@@ -78,7 +79,6 @@ import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
@@ -295,7 +295,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                     fieldWithPath("classes.*.uri").description("The uri of the class."),
                     fieldWithPath("rows[]").description("The ordered list of rows of the table. The first row always represents the header of the table and must only consist of string literals. Additionally, one data row is required. Every row must have the same length."),
                     fieldWithPath("rows[].label").description("The label of the row. (optional)").optional(),
-                    subsectionWithPath("rows[].data[]").description("The ordered list of values (thing ids, temporary ids or `null`) of the row.").optional(),
+                    fieldWithPath("rows[].data[]").description("The ordered list of values (thing ids, temporary ids or `null`) of the row."),
                     fieldWithPath("organizations[]").description("The list of IDs of the organizations or conference series the table belongs to."),
                     fieldWithPath("observatories[]").description("The list of IDs of the observatories the table belongs to."),
                     fieldWithPath("extraction_method").description("""The method used to extract the table resource. Can be one of $allowedExtractionMethodValues."""),
@@ -386,7 +386,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                     fieldWithPath("classes.*.uri").description("The uri of the class."),
                     fieldWithPath("rows[]").description("The ordered list of rows of the table. The first row always represents the header of the table and must only consist of string literals. Additionally, one data row is required. Every row must have the same length. (optional)").optional(),
                     fieldWithPath("rows[].label").description("The label of the row. (optional)").optional(),
-                    fieldWithPath("rows[].data[]").description("The ordered list of values (thing ids, temporary ids or `null`) of the row.").optional(),
+                    fieldWithPath("rows[].data[]").description("The ordered list of values (thing ids, temporary ids or `null`) of the row."),
                     fieldWithPath("organizations[]").description("The list of IDs of the organizations or conference series the table belongs to. (optional)").optional(),
                     fieldWithPath("observatories[]").description("The list of IDs of the observatories the table belongs to. (optional)").optional(),
                     fieldWithPath("extraction_method").description("""The method used to extract the table resource. Can be one of $allowedExtractionMethodValues. (optional)""").optional(),
@@ -429,7 +429,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
         every { tableService.createTableRow(any()) } returns ThingId("R456")
 
         post("/api/tables/{id}/rows", id)
-            .content(tableRowRequest())
+            .content(createTableRowRequest())
             .accept(TABLE_ROW_JSON_V1)
             .contentType(TABLE_ROW_JSON_V1)
             .perform()
@@ -448,7 +448,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
         every { tableService.createTableRow(any()) } returns ThingId("R456")
 
         documentedPostRequestTo("/api/tables/{id}/rows/{index}", id, index)
-            .content(tableRowRequest())
+            .content(createTableRowRequest())
             .accept(TABLE_ROW_JSON_V1)
             .contentType(TABLE_ROW_JSON_V1)
             .perform()
@@ -470,7 +470,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                 responseHeaders(
                     headerWithName("Location").description("The uri path where the updated table can be fetched from."),
                 )
-                requestFields<TableRowRequest>(
+                requestFields<CreateTableRowRequest>(
                     fieldWithPath("resources").description("A map of temporary ids to resource definitions for resources that need to be created. (optional)").optional(),
                     fieldWithPath("resources.*").type("Object").description("Defines a single resource that needs to be created in the process.").optional(),
                     fieldWithPath("resources.*.label").type("String").description("The label of the resource.").optional(),
@@ -493,7 +493,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                     fieldWithPath("classes.*.uri").type("String").description("The uri of the class.").optional(),
                     fieldWithPath("row").description("The table row. It must have the same length as the table header"),
                     fieldWithPath("row.label").description("The label of the row. (optional)").optional(),
-                    fieldWithPath("row.data[]").description("The ordered list of values (thing ids, temporary ids or `null`) of the row.").optional(),
+                    fieldWithPath("row.data[]").description("The ordered list of values (thing ids, temporary ids or `null`) of the row."),
                 )
                 throws(
                     TableNotFound::class,
@@ -530,7 +530,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
         every { tableService.updateTableRow(any()) } just runs
 
         documentedPutRequestTo("/api/tables/{id}/rows/{index}", id, index)
-            .content(tableRowRequest())
+            .content(updateTableRowRequest())
             .accept(TABLE_ROW_JSON_V1)
             .contentType(TABLE_ROW_JSON_V1)
             .perform()
@@ -552,7 +552,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                 responseHeaders(
                     headerWithName("Location").description("The uri path where the updated table can be fetched from."),
                 )
-                requestFields<TableRowRequest>(
+                requestFields<UpdateTableRowRequest>(
                     fieldWithPath("resources").description("A map of temporary ids to resource definitions for resources that need to be created. (optional)").optional(),
                     fieldWithPath("resources.*").type("Object").description("Defines a single resource that needs to be created in the process.").optional(),
                     fieldWithPath("resources.*.label").type("String").description("The label of the resource.").optional(),
@@ -575,7 +575,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                     fieldWithPath("classes.*.uri").type("String").description("The uri of the class.").optional(),
                     fieldWithPath("row").description("The table row. It must have the same length as the table header"),
                     fieldWithPath("row.label").description("The label of the row. (optional)").optional(),
-                    fieldWithPath("row.data[]").description("The ordered list of values (thing ids, temporary ids or `null`) of the row.").optional(),
+                    fieldWithPath("row.data[]").description("The ordered list of values (thing ids, temporary ids or `null`) of the row. (optional)").optional(),
                 )
                 throws(
                     TableNotFound::class,
@@ -963,15 +963,15 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                 )
             ),
             rows = listOf(
-                RowRequest(
+                CreateRowRequest(
                     label = "header",
                     data = listOf("#temp1", "#temp2", "#temp3")
                 ),
-                RowRequest(
+                CreateRowRequest(
                     label = null,
                     data = listOf("R456", "#temp4", "#temp5")
                 ),
-                RowRequest(
+                CreateRowRequest(
                     label = "row 2",
                     data = listOf("#temp6", null, "#temp7")
                 )
@@ -1018,15 +1018,15 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                 )
             ),
             rows = listOf(
-                RowRequest(
+                CreateRowRequest(
                     label = "header",
                     data = listOf("#temp1", "#temp2", "#temp3")
                 ),
-                RowRequest(
+                CreateRowRequest(
                     label = null,
                     data = listOf("R456", "#temp4", "#temp5")
                 ),
-                RowRequest(
+                CreateRowRequest(
                     label = "row 2",
                     data = listOf("#temp6", null, "#temp7")
                 )
@@ -1041,8 +1041,8 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
             visibility = Visibility.DEFAULT
         )
 
-    private fun tableRowRequest() =
-        TableRowRequest(
+    private fun createTableRowRequest() =
+        CreateTableRowRequest(
             resources = mapOf(
                 "#temp1" to CreateResourceRequestPart(
                     label = "MOTO",
@@ -1053,7 +1053,25 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
             predicates = emptyMap(),
             lists = emptyMap(),
             classes = emptyMap(),
-            row = RowRequest(
+            row = CreateRowRequest(
+                label = "row 3",
+                data = listOf("R456", "#temp1", null)
+            ),
+        )
+
+    private fun updateTableRowRequest() =
+        UpdateTableRowRequest(
+            resources = mapOf(
+                "#temp1" to CreateResourceRequestPart(
+                    label = "MOTO",
+                    classes = setOf(ThingId("Result"))
+                )
+            ),
+            literals = emptyMap(),
+            predicates = emptyMap(),
+            lists = emptyMap(),
+            classes = emptyMap(),
+            row = UpdateRowRequest(
                 label = "row 3",
                 data = listOf("R456", "#temp1", null)
             ),

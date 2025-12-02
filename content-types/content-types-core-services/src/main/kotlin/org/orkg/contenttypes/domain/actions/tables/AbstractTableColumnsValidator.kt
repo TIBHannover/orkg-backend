@@ -4,8 +4,8 @@ import org.orkg.common.Either
 import org.orkg.contenttypes.domain.TableHeaderValueMustBeLiteral
 import org.orkg.contenttypes.domain.actions.ThingIdValidator
 import org.orkg.contenttypes.input.CreateLiteralCommandPart
+import org.orkg.contenttypes.input.CreateRowCommand
 import org.orkg.contenttypes.input.CreateThingCommandPart
-import org.orkg.contenttypes.input.RowCommand
 import org.orkg.graph.domain.Literal
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Thing
@@ -17,7 +17,7 @@ class AbstractTableColumnsValidator(
     constructor(thingRepository: ThingRepository) : this(ThingIdValidator(thingRepository))
 
     internal fun validate(
-        rows: List<RowCommand>,
+        rows: List<CreateRowCommand>,
         thingCommands: Map<String, CreateThingCommandPart>,
         validationCacheIn: Map<String, Either<CreateThingCommandPart, Thing>>,
     ): Map<String, Either<CreateThingCommandPart, Thing>> {

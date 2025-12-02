@@ -14,8 +14,8 @@ import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.TableHeaderValueMustBeLiteral
 import org.orkg.contenttypes.domain.ThingNotDefined
 import org.orkg.contenttypes.input.CreateLiteralCommandPart
+import org.orkg.contenttypes.input.CreateRowCommand
 import org.orkg.contenttypes.input.CreateThingCommandPart
-import org.orkg.contenttypes.input.RowCommand
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.domain.ThingNotFound
@@ -41,7 +41,7 @@ internal class AbstractTableColumnsValidatorUnitTest : MockkBaseTest {
             "#temp1" to temp1
         )
         val rows = listOf(
-            RowCommand(
+            CreateRowCommand(
                 label = "header",
                 data = listOf("L123", "L456", "#temp1")
             )
@@ -68,7 +68,7 @@ internal class AbstractTableColumnsValidatorUnitTest : MockkBaseTest {
     fun `Given a list of table rows, when validating column definitions and temp id cannot be resolved, it throws an exception`() {
         val thingCommands = emptyMap<String, CreateThingCommandPart>()
         val rows = listOf(
-            RowCommand(
+            CreateRowCommand(
                 label = "header",
                 data = listOf("#temp1")
             )
@@ -84,7 +84,7 @@ internal class AbstractTableColumnsValidatorUnitTest : MockkBaseTest {
     fun `Given a list of table rows, when validating column definitions and thing id cannot be resolved, it throws an exception`() {
         val thingCommands = emptyMap<String, CreateThingCommandPart>()
         val rows = listOf(
-            RowCommand(
+            CreateRowCommand(
                 label = "header",
                 data = listOf("L123")
             )
@@ -105,7 +105,7 @@ internal class AbstractTableColumnsValidatorUnitTest : MockkBaseTest {
     fun `Given a list of table rows, when validating column definitions and header row contains a non-literal thing, it throws an exception`(thing: Thing) {
         val thingCommands = emptyMap<String, CreateThingCommandPart>()
         val rows = listOf(
-            RowCommand(
+            CreateRowCommand(
                 label = "header",
                 data = listOf(thing.id.value)
             )
@@ -126,7 +126,7 @@ internal class AbstractTableColumnsValidatorUnitTest : MockkBaseTest {
         val literal = createLiteral(label = "true", datatype = Literals.XSD.BOOLEAN.prefixedUri)
         val thingCommands = emptyMap<String, CreateThingCommandPart>()
         val rows = listOf(
-            RowCommand(
+            CreateRowCommand(
                 label = "header",
                 data = listOf(literal.id.value)
             )

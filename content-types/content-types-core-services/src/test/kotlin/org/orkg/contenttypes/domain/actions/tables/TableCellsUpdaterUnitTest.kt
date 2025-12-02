@@ -13,8 +13,8 @@ import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.UpdateTableState
 import org.orkg.contenttypes.domain.testing.fixtures.createRowGraph
+import org.orkg.contenttypes.input.CreateRowCommand
 import org.orkg.contenttypes.input.CreateThingCommandPart
-import org.orkg.contenttypes.input.RowCommand
 import org.orkg.contenttypes.input.testing.fixtures.updateTableCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
@@ -35,11 +35,11 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
     fun `Given a table update command, when updating table cells and cells are identical, it does nothing`() {
         val command = updateTableCommand().copy(
             rows = listOf(
-                RowCommand(
+                CreateRowCommand(
                     label = "header",
                     data = listOf("Column_1_Title", "Column_2_Title", "Column_3_Title")
                 ),
-                RowCommand(
+                CreateRowCommand(
                     label = "Row Row_1 Label",
                     data = listOf("R123", "R456", "R789")
                 )
@@ -101,11 +101,11 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
     fun `Given a table update command, when updating table cells and cells value has changed, it links the new value`() {
         val command = updateTableCommand().copy(
             rows = listOf(
-                RowCommand(
+                CreateRowCommand(
                     label = "header",
                     data = listOf("Column_1_Title", "Column_2_Title", "Column_3_Title")
                 ),
-                RowCommand(
+                CreateRowCommand(
                     label = "Row Row_1 Label",
                     data = listOf("R123", "R456", "RNEW")
                 )
@@ -192,11 +192,11 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
     fun `Given a table update command, when updating table cells and cells was previously missing, it creates a new cell`() {
         val command = updateTableCommand().copy(
             rows = listOf(
-                RowCommand(
+                CreateRowCommand(
                     label = "header",
                     data = listOf("Column_1_Title", "Column_2_Title", "Column_3_Title")
                 ),
-                RowCommand(
+                CreateRowCommand(
                     label = "Row Row_1 Label",
                     data = listOf("R123", "R456", "RNEW")
                 )
@@ -281,15 +281,15 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
     fun `Given a table update command, when updating table cells and a new row got added, it creates a new cell for each column of the new row`() {
         val command = updateTableCommand().copy(
             rows = listOf(
-                RowCommand(
+                CreateRowCommand(
                     label = "header",
                     data = listOf("Column_1_Title", "Column_2_Title", "Column_3_Title")
                 ),
-                RowCommand(
+                CreateRowCommand(
                     label = "Row Row_1 Label",
                     data = listOf("R123", "R456", "R789")
                 ),
-                RowCommand(
+                CreateRowCommand(
                     label = "Row Row_2 Label",
                     data = listOf("R321", "R654", "R987")
                 )
@@ -388,11 +388,11 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
     fun `Given a table update command, when updating table cells and a new column got added, it creates a new cell for the column in each already existing row`() {
         val command = updateTableCommand().copy(
             rows = listOf(
-                RowCommand(
+                CreateRowCommand(
                     label = "header",
                     data = listOf("Column_1_Title", "Column_2_Title", "Column_3_Title")
                 ),
-                RowCommand(
+                CreateRowCommand(
                     label = "Row Row_1 Label",
                     data = listOf("R123", "R456", "R789")
                 ),
@@ -471,11 +471,11 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
     fun `Given a table update command, when updating table cells and a column gets deleted, it deletes all cell subgraphs of that column`() {
         val command = updateTableCommand().copy(
             rows = listOf(
-                RowCommand(
+                CreateRowCommand(
                     label = "header",
                     data = listOf("Column_1_Title", "Column_2_Title")
                 ),
-                RowCommand(
+                CreateRowCommand(
                     label = "Row Row_1 Label",
                     data = listOf("R123", "R456")
                 ),
@@ -543,11 +543,11 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
     fun `Given a table update command, when updating table cells and a row gets deleted, it deletes all cell subgraphs of that row`() {
         val command = updateTableCommand().copy(
             rows = listOf(
-                RowCommand(
+                CreateRowCommand(
                     label = "header",
                     data = listOf("Column_1_Title", "Column_2_Title", "Column_3_Title")
                 ),
-                RowCommand(
+                CreateRowCommand(
                     label = "Row Row_1 Label",
                     data = listOf("R123", "R456", "R789")
                 ),

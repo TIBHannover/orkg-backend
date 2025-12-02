@@ -12,8 +12,8 @@ import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.UpdateTableState
 import org.orkg.contenttypes.domain.testing.fixtures.createTable
 import org.orkg.contenttypes.domain.testing.fixtures.createTableStatements
+import org.orkg.contenttypes.input.CreateRowCommand
 import org.orkg.contenttypes.input.CreateThingCommandPart
-import org.orkg.contenttypes.input.RowCommand
 import org.orkg.contenttypes.input.testing.fixtures.updateTableCommand
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.testing.fixtures.createResource
@@ -28,11 +28,11 @@ internal class TableCellsUpdateValidatorUnitTest : MockkBaseTest {
     fun `Given a table update command, when validating its cells, it returns success`() {
         val command = updateTableCommand().copy(
             rows = listOf(
-                RowCommand(
+                CreateRowCommand(
                     label = "header",
                     data = listOf("#temp1", "#temp2")
                 ),
-                RowCommand(
+                CreateRowCommand(
                     label = null,
                     data = listOf("R456", "#temp4")
                 )

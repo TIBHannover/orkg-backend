@@ -16,7 +16,7 @@ import org.orkg.contenttypes.domain.actions.tables.TableThingsCommandUpdateCreat
 import org.orkg.contenttypes.domain.actions.tables.TableThingsCommandUpdateValidator
 import org.orkg.contenttypes.domain.actions.tables.TableUpdateValidationCacheInitializer
 import org.orkg.contenttypes.domain.actions.tables.columns.CreateTableColumnAction.State
-import org.orkg.contenttypes.domain.actions.tables.toRowCommand
+import org.orkg.contenttypes.domain.actions.tables.toCreateRowCommand
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.UnsafeClassUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
@@ -42,7 +42,7 @@ class TableColumnCreator(
         val columnCount = state.table!!.rows.firstOrNull()?.data?.size ?: 0
         val columnIndex = (command.columnIndex ?: columnCount).coerceAtMost(columnCount)
         val rows = state.table.rows.mapIndexed { index, row ->
-            val rowCommand = row.toRowCommand()
+            val rowCommand = row.toCreateRowCommand()
             val updatedData = rowCommand.data.toMutableList()
             updatedData.add(columnIndex, command.column[index])
             rowCommand.copy(data = updatedData)

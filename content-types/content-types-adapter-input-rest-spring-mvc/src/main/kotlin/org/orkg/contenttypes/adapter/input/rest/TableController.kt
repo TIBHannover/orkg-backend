@@ -126,7 +126,7 @@ class TableController(
     fun createTableRow(
         @PathVariable id: ThingId,
         @PathVariable(required = false) @PositiveOrZero index: Int?,
-        @RequestBody @Valid request: TableRowRequest,
+        @RequestBody @Valid request: CreateTableRowRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         currentUser: Authentication?,
     ): ResponseEntity<Any> {
@@ -144,7 +144,7 @@ class TableController(
     fun updateTableRow(
         @PathVariable id: ThingId,
         @PathVariable @PositiveOrZero index: Int,
-        @RequestBody @Valid request: TableRowRequest,
+        @RequestBody @Valid request: UpdateTableRowRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         currentUser: Authentication?,
     ): ResponseEntity<Any> {
@@ -229,7 +229,7 @@ class TableController(
 
     @RequireLogin
     @PutMapping("/{id}/cells/{row}/{column}", consumes = [TABLE_CELL_JSON_V1], produces = [TABLE_CELL_JSON_V1])
-    fun updateTableColumn(
+    fun updateTableCell(
         @PathVariable id: ThingId,
         @PathVariable @PositiveOrZero row: Int,
         @PathVariable @PositiveOrZero column: Int,
@@ -261,12 +261,12 @@ class TableController(
         val lists: Map<String, CreateListRequestPart>?,
         @field:Valid
         @field:Size(min = 2)
-        val rows: List<RowRequest>,
+        val rows: List<CreateRowRequest>,
         @field:Size(max = 1)
         val observatories: List<ObservatoryId>,
         @field:Size(max = 1)
         val organizations: List<OrganizationId>,
-        @JsonProperty("extraction_method")
+        @param:JsonProperty("extraction_method")
         val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     ) {
         fun toCreateCommand(contributorId: ContributorId): CreateTableUseCase.CreateCommand =
@@ -278,7 +278,7 @@ class TableController(
                 predicates = predicates?.mapValues { it.value.toCreateCommand() }.orEmpty(),
                 classes = classes?.mapValues { it.value.toCreateCommand() }.orEmpty(),
                 lists = lists?.mapValues { it.value.toCreateCommand() }.orEmpty(),
-                rows = rows.map { it.toRowCommand() },
+                rows = rows.map { it.toCreateRowCommand() },
                 observatories = observatories,
                 organizations = organizations,
                 extractionMethod = extractionMethod
@@ -300,12 +300,12 @@ class TableController(
         val lists: Map<String, CreateListRequestPart>?,
         @field:Valid
         @field:Size(min = 2)
-        val rows: List<RowRequest>?,
+        val rows: List<CreateRowRequest>?,
         @field:Size(max = 1)
         val observatories: List<ObservatoryId>?,
         @field:Size(max = 1)
         val organizations: List<OrganizationId>?,
-        @JsonProperty("extraction_method")
+        @param:JsonProperty("extraction_method")
         val extractionMethod: ExtractionMethod?,
         val visibility: Visibility?,
     ) {
@@ -319,7 +319,7 @@ class TableController(
                 predicates = predicates?.mapValues { it.value.toCreateCommand() }.orEmpty(),
                 classes = classes?.mapValues { it.value.toCreateCommand() }.orEmpty(),
                 lists = lists?.mapValues { it.value.toCreateCommand() }.orEmpty(),
-                rows = rows?.map { it.toRowCommand() },
+                rows = rows?.map { it.toCreateRowCommand() },
                 observatories = observatories,
                 organizations = organizations,
                 extractionMethod = extractionMethod,
@@ -327,7 +327,7 @@ class TableController(
             )
     }
 
-    data class TableRowRequest(
+    data class CreateTableRowRequest(
         @field:Valid
         val resources: Map<String, CreateResourceRequestPart>?,
         @field:Valid
@@ -339,7 +339,7 @@ class TableController(
         @field:Valid
         val lists: Map<String, CreateListRequestPart>?,
         @field:Valid
-        val row: RowRequest,
+        val row: CreateRowRequest,
     ) {
         fun toCreateCommand(tableId: ThingId, contributorId: ContributorId, rowIndex: Int?): CreateTableRowUseCase.CreateCommand =
             CreateTableRowUseCase.CreateCommand(
@@ -351,9 +351,24 @@ class TableController(
                 predicates = predicates?.mapValues { it.value.toCreateCommand() }.orEmpty(),
                 classes = classes?.mapValues { it.value.toCreateCommand() }.orEmpty(),
                 lists = lists?.mapValues { it.value.toCreateCommand() }.orEmpty(),
-                row = row.toRowCommand(),
+                row = row.toCreateRowCommand(),
             )
+    }
 
+    data class UpdateTableRowRequest(
+        @field:Valid
+        val resources: Map<String, CreateResourceRequestPart>?,
+        @field:Valid
+        val literals: Map<String, CreateLiteralRequestPart>?,
+        @field:Valid
+        val predicates: Map<String, CreatePredicateRequestPart>?,
+        @field:Valid
+        val classes: Map<String, CreateClassRequestPart>?,
+        @field:Valid
+        val lists: Map<String, CreateListRequestPart>?,
+        @field:Valid
+        val row: UpdateRowRequest,
+    ) {
         fun toUpdateCommand(tableId: ThingId, contributorId: ContributorId, rowIndex: Int): UpdateTableRowUseCase.UpdateCommand =
             UpdateTableRowUseCase.UpdateCommand(
                 tableId = tableId,
@@ -364,7 +379,7 @@ class TableController(
                 predicates = predicates?.mapValues { it.value.toCreateCommand() }.orEmpty(),
                 classes = classes?.mapValues { it.value.toCreateCommand() }.orEmpty(),
                 lists = lists?.mapValues { it.value.toCreateCommand() }.orEmpty(),
-                row = row.toRowCommand(),
+                row = row.toUpdateRowCommand(),
             )
     }
 

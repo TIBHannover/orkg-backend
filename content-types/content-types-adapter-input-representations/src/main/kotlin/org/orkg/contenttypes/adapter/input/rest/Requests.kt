@@ -12,13 +12,14 @@ import org.orkg.contenttypes.input.CreateListCommandPart
 import org.orkg.contenttypes.input.CreateLiteralCommandPart
 import org.orkg.contenttypes.input.CreatePredicateCommandPart
 import org.orkg.contenttypes.input.CreateResourceCommandPart
+import org.orkg.contenttypes.input.CreateRowCommand
 import org.orkg.contenttypes.input.NumberLiteralPropertyCommand
 import org.orkg.contenttypes.input.OtherLiteralPropertyCommand
 import org.orkg.contenttypes.input.ResourcePropertyCommand
-import org.orkg.contenttypes.input.RowCommand
 import org.orkg.contenttypes.input.StringLiteralPropertyCommand
 import org.orkg.contenttypes.input.TemplatePropertyCommand
 import org.orkg.contenttypes.input.UntypedPropertyCommand
+import org.orkg.contenttypes.input.UpdateRowCommand
 import org.orkg.graph.domain.Literals
 
 data class CreateListRequestPart(
@@ -187,11 +188,20 @@ data class IdentifierMapRequest(
     val values: Map<String, List<String>>,
 )
 
-data class RowRequest(
+data class CreateRowRequest(
     @field:NullableNotBlank
     val label: String?,
     val data: List<String?>,
 ) {
-    fun toRowCommand(): RowCommand =
-        RowCommand(label, data)
+    fun toCreateRowCommand(): CreateRowCommand =
+        CreateRowCommand(label, data)
+}
+
+data class UpdateRowRequest(
+    @field:NullableNotBlank
+    val label: String?,
+    val data: List<String?>,
+) {
+    fun toUpdateRowCommand(): UpdateRowCommand =
+        UpdateRowCommand(label, data)
 }

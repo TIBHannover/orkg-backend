@@ -6,19 +6,19 @@ import org.orkg.contenttypes.domain.MissingTableHeaderValue
 import org.orkg.contenttypes.domain.MissingTableRowValues
 import org.orkg.contenttypes.domain.MissingTableRows
 import org.orkg.contenttypes.domain.TooManyTableRowValues
-import org.orkg.contenttypes.input.RowCommand
+import org.orkg.contenttypes.input.CreateRowCommand
 
 internal class TableDimensionsValidatorUnitTest {
-    private val tableDimensionsValidator = TableDimensionsValidator<List<RowCommand>?, Unit> { it }
+    private val tableDimensionsValidator = TableDimensionsValidator<List<CreateRowCommand>?, Unit> { it }
 
     @Test
     fun `Given a list of row definitions, when validating, it returns success`() {
         val rows = listOf(
-            RowCommand(
+            CreateRowCommand(
                 label = null,
                 data = listOf("1", "2", "3")
             ),
-            RowCommand(
+            CreateRowCommand(
                 label = "contents",
                 data = listOf(null, "content", "other")
             )
@@ -39,7 +39,7 @@ internal class TableDimensionsValidatorUnitTest {
     @Test
     fun `Given a list of row definitions, when header is missing a value, it throws an exception`() {
         val rows = listOf(
-            RowCommand(
+            CreateRowCommand(
                 label = null,
                 data = listOf("1", null, "3")
             )
@@ -50,7 +50,7 @@ internal class TableDimensionsValidatorUnitTest {
     @Test
     fun `Given a list of row definitions, when header value is blank, it throws an exception`() {
         val rows = listOf(
-            RowCommand(
+            CreateRowCommand(
                 label = null,
                 data = listOf("1", "2", "")
             )
@@ -61,11 +61,11 @@ internal class TableDimensionsValidatorUnitTest {
     @Test
     fun `Given a list of row definitions, when data row has more values than header, it throws an exception`() {
         val rows = listOf(
-            RowCommand(
+            CreateRowCommand(
                 label = null,
                 data = listOf("1", "2", "3")
             ),
-            RowCommand(
+            CreateRowCommand(
                 label = "contents",
                 data = listOf("1", "2", "3", "too many")
             )
@@ -76,11 +76,11 @@ internal class TableDimensionsValidatorUnitTest {
     @Test
     fun `Given a list of row definitions, when data row has less values than header, it throws an exception`() {
         val rows = listOf(
-            RowCommand(
+            CreateRowCommand(
                 label = null,
                 data = listOf("1", "2", "3")
             ),
-            RowCommand(
+            CreateRowCommand(
                 label = "contents",
                 data = listOf("too", "few")
             )

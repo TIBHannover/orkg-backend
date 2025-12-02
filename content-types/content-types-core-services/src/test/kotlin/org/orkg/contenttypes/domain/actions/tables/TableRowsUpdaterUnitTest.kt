@@ -12,7 +12,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.UpdateTableState
 import org.orkg.contenttypes.domain.testing.fixtures.createRowGraph
-import org.orkg.contenttypes.input.RowCommand
+import org.orkg.contenttypes.input.CreateRowCommand
 import org.orkg.contenttypes.input.testing.fixtures.updateTableCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
@@ -34,11 +34,11 @@ internal class TableRowsUpdaterUnitTest : MockkBaseTest {
     fun `Given a table update command, when updating table rows and rows are identical, it does nothing`() {
         val command = updateTableCommand().copy(
             rows = listOf(
-                RowCommand(
+                CreateRowCommand(
                     label = "header",
                     data = listOf("Column_1_Title", "Column_2_Title", "Column_3_Title")
                 ),
-                RowCommand(
+                CreateRowCommand(
                     label = "Row Row_1 Label",
                     data = listOf("R123", "R456", "R789")
                 )
@@ -81,11 +81,11 @@ internal class TableRowsUpdaterUnitTest : MockkBaseTest {
     fun `Given a table update command, when updating table rows and row title should be deleted, it marks the row title statement for deletion`() {
         val command = updateTableCommand().copy(
             rows = listOf(
-                RowCommand(
+                CreateRowCommand(
                     label = "header",
                     data = listOf("Column_1_Title", "Column_2_Title", "Column_3_Title")
                 ),
-                RowCommand(
+                CreateRowCommand(
                     label = null,
                     data = listOf("R123", "R456", "R789")
                 )
@@ -129,11 +129,11 @@ internal class TableRowsUpdaterUnitTest : MockkBaseTest {
     fun `Given a table update command, when updating table rows and row title was previously missing, it creates a new row title statement`() {
         val command = updateTableCommand().copy(
             rows = listOf(
-                RowCommand(
+                CreateRowCommand(
                     label = "header",
                     data = listOf("Column_1_Title", "Column_2_Title", "Column_3_Title")
                 ),
-                RowCommand(
+                CreateRowCommand(
                     label = "New row title",
                     data = listOf("R123", "R456", "R789")
                 )
@@ -200,11 +200,11 @@ internal class TableRowsUpdaterUnitTest : MockkBaseTest {
     fun `Given a table update command, when updating table rows and row title has changed, it updates the row title literal`() {
         val command = updateTableCommand().copy(
             rows = listOf(
-                RowCommand(
+                CreateRowCommand(
                     label = "header",
                     data = listOf("Column_1_Title", "Column_2_Title", "Column_3_Title")
                 ),
-                RowCommand(
+                CreateRowCommand(
                     label = "New row title",
                     data = listOf("R123", "R456", "R789")
                 )
@@ -259,15 +259,15 @@ internal class TableRowsUpdaterUnitTest : MockkBaseTest {
     fun `Given a table update command, when updating table rows, it creates missing table rows`() {
         val command = updateTableCommand().copy(
             rows = listOf(
-                RowCommand(
+                CreateRowCommand(
                     label = "header",
                     data = listOf("Column_1_Title", "Column_2_Title", "Column_3_Title")
                 ),
-                RowCommand(
+                CreateRowCommand(
                     label = "Row Row_1 Label",
                     data = listOf("R123", "R456", "R789")
                 ),
-                RowCommand(
+                CreateRowCommand(
                     label = "New row2 label",
                     data = listOf("R123", "R456", "R789")
                 )
@@ -328,11 +328,11 @@ internal class TableRowsUpdaterUnitTest : MockkBaseTest {
     fun `Given a table update command, when updating table rows and rows get deleted, it returns success`() {
         val command = updateTableCommand().copy(
             rows = listOf(
-                RowCommand(
+                CreateRowCommand(
                     label = "header",
                     data = listOf("Column_1_Title", "Column_2_Title", "Column_3_Title")
                 ),
-                RowCommand(
+                CreateRowCommand(
                     label = "Row Row_1 Label",
                     data = listOf("R123", "R456", "R789")
                 )

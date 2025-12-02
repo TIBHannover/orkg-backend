@@ -16,7 +16,7 @@ import org.orkg.contenttypes.domain.actions.tables.TableThingsCommandUpdateCreat
 import org.orkg.contenttypes.domain.actions.tables.TableThingsCommandUpdateValidator
 import org.orkg.contenttypes.domain.actions.tables.TableUpdateValidationCacheInitializer
 import org.orkg.contenttypes.domain.actions.tables.columns.UpdateTableColumnAction.State
-import org.orkg.contenttypes.domain.actions.tables.toRowCommand
+import org.orkg.contenttypes.domain.actions.tables.toCreateRowCommand
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.UnsafeClassUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
@@ -40,7 +40,7 @@ class TableColumnUpdater(
 ) : UpdateTableColumnAction {
     override fun invoke(command: UpdateTableColumnCommand, state: State): State {
         val rows = state.table!!.rows.mapIndexed { index, row ->
-            val rowCommand = row.toRowCommand()
+            val rowCommand = row.toCreateRowCommand()
             val updatedData = rowCommand.data.toMutableList()
             updatedData[command.columnIndex] = command.column[index]
             rowCommand.copy(data = updatedData)

@@ -2,12 +2,12 @@ package org.orkg.contenttypes.domain.actions.tables
 
 import dev.forkhandles.values.ofOrNull
 import org.orkg.contenttypes.domain.actions.Action
-import org.orkg.contenttypes.input.RowCommand
+import org.orkg.contenttypes.input.CreateRowCommand
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.Label
 
 class TableRowsValidator<T, S>(
-    private val valueSelector: (T) -> List<RowCommand>?,
+    private val valueSelector: (T) -> List<CreateRowCommand>?,
 ) : Action<T, S> {
     override fun invoke(command: T, state: S): S {
         val rows = valueSelector(command)

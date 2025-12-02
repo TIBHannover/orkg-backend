@@ -3,12 +3,12 @@ package org.orkg.contenttypes.domain.actions.tables
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Table
 import org.orkg.contenttypes.domain.wherePredicate
-import org.orkg.contenttypes.input.RowCommand
+import org.orkg.contenttypes.input.CreateRowCommand
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Predicates
 
-internal fun Table.Row.toRowCommand(): RowCommand =
-    RowCommand(
+internal fun Table.Row.toCreateRowCommand(): CreateRowCommand =
+    CreateRowCommand(
         label = label,
         data = data.map { it?.id?.value }
     )

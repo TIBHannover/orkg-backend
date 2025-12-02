@@ -13,7 +13,7 @@ import org.orkg.contenttypes.domain.actions.tables.TableRowsUpdater
 import org.orkg.contenttypes.domain.actions.tables.TableRowsValidator
 import org.orkg.contenttypes.domain.actions.tables.TableUpdateValidationCacheInitializer
 import org.orkg.contenttypes.domain.actions.tables.columns.DeleteTableColumnAction.State
-import org.orkg.contenttypes.domain.actions.tables.toRowCommand
+import org.orkg.contenttypes.domain.actions.tables.toCreateRowCommand
 import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
@@ -40,7 +40,7 @@ class TableColumnDeleter(
             predicates = emptyMap(),
             classes = emptyMap(),
             lists = emptyMap(),
-            rows = columns.map { it.toRowCommand() },
+            rows = columns.map { it.toCreateRowCommand() },
             observatories = null,
             organizations = null,
             extractionMethod = null,

@@ -16,7 +16,7 @@ import org.orkg.contenttypes.domain.actions.tables.TableThingsCommandUpdateCreat
 import org.orkg.contenttypes.domain.actions.tables.TableThingsCommandUpdateValidator
 import org.orkg.contenttypes.domain.actions.tables.TableUpdateValidationCacheInitializer
 import org.orkg.contenttypes.domain.actions.tables.rows.CreateTableRowAction.State
-import org.orkg.contenttypes.domain.actions.tables.toRowCommand
+import org.orkg.contenttypes.domain.actions.tables.toCreateRowCommand
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.UnsafeClassUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
@@ -39,7 +39,7 @@ class TableRowCreator(
     private val listService: ListUseCases,
 ) : CreateTableRowAction {
     override fun invoke(command: CreateTableRowCommand, state: State): State {
-        val rows = state.table!!.rows.map { it.toRowCommand() }.toMutableList()
+        val rows = state.table!!.rows.map { it.toCreateRowCommand() }.toMutableList()
         val rowIndex = (command.rowIndex ?: rows.size).coerceAtMost(rows.size)
         rows.add(rowIndex, command.row)
         val updateCommand = UpdateTableCommand(

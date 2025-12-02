@@ -52,7 +52,7 @@ interface CreateTableUseCase {
         override val predicates: Map<String, CreatePredicateCommandPart>,
         override val classes: Map<String, CreateClassCommandPart>,
         override val lists: Map<String, CreateListCommandPart>,
-        val rows: List<RowCommand>,
+        val rows: List<CreateRowCommand>,
         val observatories: List<ObservatoryId>,
         val organizations: List<OrganizationId>,
         val extractionMethod: ExtractionMethod,
@@ -71,7 +71,7 @@ interface UpdateTableUseCase {
         override val predicates: Map<String, CreatePredicateCommandPart>,
         override val classes: Map<String, CreateClassCommandPart>,
         override val lists: Map<String, CreateListCommandPart>,
-        val rows: List<RowCommand>?,
+        val rows: List<CreateRowCommand>?,
         val observatories: List<ObservatoryId>?,
         val organizations: List<OrganizationId>?,
         val extractionMethod: ExtractionMethod?,
@@ -91,7 +91,7 @@ interface CreateTableRowUseCase {
         override val predicates: Map<String, CreatePredicateCommandPart>,
         override val classes: Map<String, CreateClassCommandPart>,
         override val lists: Map<String, CreateListCommandPart>,
-        val row: RowCommand,
+        val row: CreateRowCommand,
     ) : CreateThingsCommand
 }
 
@@ -107,7 +107,7 @@ interface UpdateTableRowUseCase {
         override val predicates: Map<String, CreatePredicateCommandPart>,
         override val classes: Map<String, CreateClassCommandPart>,
         override val lists: Map<String, CreateListCommandPart>,
-        val row: RowCommand,
+        val row: UpdateRowCommand,
     ) : CreateThingsCommand
 }
 
@@ -175,13 +175,21 @@ interface UpdateTableCellUseCase {
     )
 }
 
-data class RowCommand(
+data class CreateRowCommand(
     val label: String?,
     val data: List<String?>,
 ) {
-    fun matchesRow(row: Table.Row): Boolean =
-        row.label == label && matchesRowData(row)
-
     fun matchesRowData(row: Table.Row): Boolean =
         data.size == row.data.size && data.zip(row.data).all { (a, b) -> a == b?.id?.value }
+}
+
+data class UpdateRowCommand(
+    val label: String?,
+    val data: List<String?>?,
+) {
+    fun toCreateRowCommand(original: CreateRowCommand) =
+        CreateRowCommand(
+            label = label,
+            data = data ?: original.data,
+        )
 }

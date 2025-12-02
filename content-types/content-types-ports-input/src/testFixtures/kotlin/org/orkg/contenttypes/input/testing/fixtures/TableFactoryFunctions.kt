@@ -10,12 +10,13 @@ import org.orkg.contenttypes.input.CreateListCommandPart
 import org.orkg.contenttypes.input.CreateLiteralCommandPart
 import org.orkg.contenttypes.input.CreatePredicateCommandPart
 import org.orkg.contenttypes.input.CreateResourceCommandPart
+import org.orkg.contenttypes.input.CreateRowCommand
 import org.orkg.contenttypes.input.CreateTableColumnUseCase
 import org.orkg.contenttypes.input.CreateTableRowUseCase
 import org.orkg.contenttypes.input.CreateTableUseCase
 import org.orkg.contenttypes.input.DeleteTableColumnUseCase
 import org.orkg.contenttypes.input.DeleteTableRowUseCase
-import org.orkg.contenttypes.input.RowCommand
+import org.orkg.contenttypes.input.UpdateRowCommand
 import org.orkg.contenttypes.input.UpdateTableCellUseCase
 import org.orkg.contenttypes.input.UpdateTableColumnUseCase
 import org.orkg.contenttypes.input.UpdateTableRowUseCase
@@ -57,15 +58,15 @@ fun createTableCommand() = CreateTableUseCase.CreateCommand(
         )
     ),
     rows = listOf(
-        RowCommand(
+        CreateRowCommand(
             label = "header",
             data = listOf("#temp1", "#temp2", "#temp3")
         ),
-        RowCommand(
+        CreateRowCommand(
             label = null,
             data = listOf("R456", "#temp4", "#temp5")
         ),
-        RowCommand(
+        CreateRowCommand(
             label = "row 2",
             data = listOf("#temp6", null, "#temp7")
         )
@@ -113,15 +114,15 @@ fun updateTableCommand() = UpdateTableUseCase.UpdateCommand(
         )
     ),
     rows = listOf(
-        RowCommand(
+        CreateRowCommand(
             label = "header",
             data = listOf("#temp1", "#temp2", "#temp3")
         ),
-        RowCommand(
+        CreateRowCommand(
             label = null,
             data = listOf("R456", "#temp4", "#temp5")
         ),
-        RowCommand(
+        CreateRowCommand(
             label = "row 2",
             data = listOf("#temp6", null, "#temp7")
         )
@@ -150,7 +151,7 @@ fun createTableRowCommand() = CreateTableRowUseCase.CreateCommand(
     predicates = emptyMap(),
     lists = emptyMap(),
     classes = emptyMap(),
-    row = RowCommand(
+    row = CreateRowCommand(
         label = "updated",
         data = listOf("R456", null, "#temp1")
     )
@@ -170,7 +171,7 @@ fun updateTableRowCommand() = UpdateTableRowUseCase.UpdateCommand(
     predicates = emptyMap(),
     lists = emptyMap(),
     classes = emptyMap(),
-    row = RowCommand(
+    row = UpdateRowCommand(
         label = "updated",
         data = listOf("R456", null, "#temp1")
     )

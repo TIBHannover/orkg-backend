@@ -10,7 +10,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.UpdateTableState
 import org.orkg.contenttypes.domain.testing.fixtures.createColumnGraph
-import org.orkg.contenttypes.input.RowCommand
+import org.orkg.contenttypes.input.CreateRowCommand
 import org.orkg.contenttypes.input.testing.fixtures.from
 import org.orkg.contenttypes.input.testing.fixtures.updateTableCommand
 import org.orkg.graph.domain.Predicates
@@ -28,7 +28,7 @@ internal class TableColumnsUpdaterUnitTest : MockkBaseTest {
     fun `Given a table update command, when updating table columns and columns are identical, it does nothing`() {
         val command = updateTableCommand().copy(
             rows = listOf(
-                RowCommand(
+                CreateRowCommand(
                     label = "header",
                     data = listOf("Column_1_Title", "Column_2_Title", "Column_3_Title")
                 )
@@ -240,7 +240,7 @@ internal class TableColumnsUpdaterUnitTest : MockkBaseTest {
     fun `Given a table update command, when updating table columns, it deletes exceeding table columns`() {
         val command = updateTableCommand().copy(
             rows = listOf(
-                RowCommand(
+                CreateRowCommand(
                     label = "header",
                     data = listOf("#temp1")
                 )

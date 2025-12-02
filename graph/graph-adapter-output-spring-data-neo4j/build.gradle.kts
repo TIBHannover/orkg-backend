@@ -18,6 +18,7 @@ dependencies {
     implementation(project(":common:string-utils"))
     implementation(project(":graph:graph-core-constants"))
 
+    api("org.eclipse.rdf4j:rdf4j-common-io")
     api("org.neo4j.driver:neo4j-java-driver")
     api("org.neo4j:neo4j-cypher-dsl")
     api("org.springframework.boot:spring-boot-autoconfigure")
@@ -26,7 +27,6 @@ dependencies {
     api("org.springframework:spring-context")
     api("org.springframework:spring-core")
 
-    implementation("org.eclipse.rdf4j:rdf4j-common-io")
     implementation("org.apache.lucene:lucene-queryparser")
     implementation("org.jetbrains:annotations")
 

@@ -48,12 +48,6 @@ class ClassController(
     ): ClassRepresentation =
         service.findById(id).mapToClassRepresentation().orElseThrow { ClassNotFound.withThingId(id) }
 
-    @GetMapping(params = ["uri"])
-    fun findByURI(
-        @RequestParam uri: ParsedIRI,
-    ): ClassRepresentation =
-        service.findByURI(uri).mapToClassRepresentation().orElseThrow { ClassNotFound.withURI(uri) }
-
     @GetMapping
     fun findAll(
         @RequestParam("q", required = false) string: String?,
@@ -61,6 +55,7 @@ class ClassController(
         @RequestParam("created_by", required = false) createdBy: ContributorId?,
         @RequestParam("created_at_start", required = false) @DateTimeFormat(iso = ISO.DATE_TIME) createdAtStart: OffsetDateTime?,
         @RequestParam("created_at_end", required = false) @DateTimeFormat(iso = ISO.DATE_TIME) createdAtEnd: OffsetDateTime?,
+        @RequestParam("uri", required = false) uri: ParsedIRI?,
         pageable: Pageable,
     ): Page<ClassRepresentation> =
         service.findAll(
@@ -69,6 +64,7 @@ class ClassController(
             createdBy = createdBy,
             createdAtStart = createdAtStart,
             createdAtEnd = createdAtEnd,
+            uri = uri,
         ).mapToClassRepresentation()
 
     @RequireLogin

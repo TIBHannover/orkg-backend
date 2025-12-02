@@ -25,13 +25,13 @@ interface UnsafeClassUseCases :
 interface RetrieveClassUseCase {
     fun existsById(id: ThingId): Boolean
 
-    // legacy methods:
     fun findAll(
         pageable: Pageable,
         label: SearchString? = null,
         createdBy: ContributorId? = null,
         createdAtStart: OffsetDateTime? = null,
         createdAtEnd: OffsetDateTime? = null,
+        uri: ParsedIRI? = null,
     ): Page<Class>
 
     fun findById(id: ThingId): Optional<Class>

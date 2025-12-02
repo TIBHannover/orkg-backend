@@ -10,7 +10,6 @@ import io.mockk.verify
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.PageRequests
@@ -22,7 +21,6 @@ import org.orkg.graph.adapter.input.rest.ClassController.UpdateClassRequest
 import org.orkg.graph.adapter.input.rest.testing.fixtures.classResponseFields
 import org.orkg.graph.adapter.input.rest.testing.fixtures.configuration.GraphControllerUnitTestConfiguration
 import org.orkg.graph.domain.CannotResetURI
-import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.ClassAlreadyExists
 import org.orkg.graph.domain.ClassNotFound
 import org.orkg.graph.domain.ClassNotModifiable
@@ -48,13 +46,11 @@ import org.orkg.testing.spring.restdocs.format
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
-import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.Clock
 import java.time.OffsetDateTime
@@ -91,10 +87,10 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
             .andExpect(status().isOk)
             .andExpectClass()
             .andDocument {
-                summary("Fetching classes by ID")
+                summary("Fetching classes")
                 description(
                     """
-                    A `GET` request provides information about a class by ID.
+                    A `GET` request provides information about a class.
                     """
                 )
                 pathParameters(
@@ -105,49 +101,6 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
             }
 
         verify(exactly = 1) { classService.findById(any()) }
-        verify(exactly = 1) {
-            statementService.findAll(
-                pageable = PageRequests.SINGLE,
-                subjectId = `class`.id,
-                predicateId = Predicates.description,
-                objectClasses = setOf(Classes.literal)
-            )
-        }
-    }
-
-    @Test
-    fun findByURI() {
-        val `class` = createClass()
-        every { classService.findByURI(any()) } returns Optional.of(`class`)
-        every {
-            statementService.findAll(
-                pageable = PageRequests.SINGLE,
-                subjectId = `class`.id,
-                predicateId = Predicates.description,
-                objectClasses = setOf(Classes.literal)
-            )
-        } returns pageOf()
-
-        documentedGetRequestTo("/api/classes")
-            .param("uri", `class`.uri.toString())
-            .perform()
-            .andExpect(status().isOk)
-            .andExpectClass()
-            .andDocument {
-                summary("Fetching classes by URI")
-                description(
-                    """
-                    A `GET` request provides information about a class by URI.
-                    """
-                )
-                queryParameters(
-                    parameterWithName("uri").description("The URI of the class to retrieve")
-                )
-                responseFields<ClassRepresentation>(classResponseFields())
-                throws(ClassNotFound::class)
-            }
-
-        verify(exactly = 1) { classService.findByURI(any()) }
         verify(exactly = 1) {
             statementService.findAll(
                 pageable = PageRequests.SINGLE,
@@ -178,7 +131,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
     @Test
     @DisplayName("Given several classes, when they are fetched with all possible filtering parameters, then status is 200 OK and classes are returned")
     fun findAll() {
-        every { classService.findAll(any(), any(), any(), any(), any()) } returns pageOf(createClass())
+        every { classService.findAll(any(), any(), any(), any(), any(), any()) } returns pageOf(createClass())
         every { statementService.findAllDescriptionsById(any<Set<ThingId>>()) } returns emptyMap()
 
         val label = "label"
@@ -186,6 +139,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
         val createdBy = ContributorId(MockUserId.USER)
         val createdAtStart = OffsetDateTime.now(clock).minusHours(1)
         val createdAtEnd = OffsetDateTime.now(clock).plusHours(1)
+        val uri = ParsedIRI.create("https://example.org/OK")
 
         documentedGetRequestTo("/api/classes")
             .param("q", label)
@@ -193,6 +147,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
             .param("created_by", createdBy.value.toString())
             .param("created_at_start", createdAtStart.format(ISO_OFFSET_DATE_TIME))
             .param("created_at_end", createdAtEnd.format(ISO_OFFSET_DATE_TIME))
+            .param("uri", uri.toString())
             .perform()
             .andExpect(status().isOk)
             .andExpectPage()
@@ -211,6 +166,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
                     parameterWithName("created_by").description("Filter for the UUID of the user or service who created the class. (optional)").format("uuid").optional(),
                     parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned class can have. (optional)").optional(),
                     parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned class can have. (optional)").optional(),
+                    parameterWithName("uri").description("Filter for the URI of the class. Must match exactly. (optional)").format("iri").optional(),
                 )
                 pagedResponseFields<ClassRepresentation>(classResponseFields())
                 throws(UnknownSortingProperty::class)
@@ -224,7 +180,8 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
                 },
                 createdBy = createdBy,
                 createdAtStart = createdAtStart,
-                createdAtEnd = createdAtEnd
+                createdAtEnd = createdAtEnd,
+                uri = uri,
             )
         }
         verify(exactly = 1) { statementService.findAllDescriptionsById(any<Set<ThingId>>()) }
@@ -242,58 +199,6 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
             .andExpectType("orkg:problem:unknown_sorting_property")
 
         verify(exactly = 1) { classService.findAll(any()) }
-    }
-
-    @Nested
-    @DisplayName("When a class with a URI exists")
-    inner class URIsExist {
-        @Test
-        @DisplayName("Then querying for that URI should return `200 OK`")
-        fun shouldReturn200() {
-            every { classService.findByURI(any()) } returns Optional.of(mockReply())
-            every {
-                statementService.findAll(
-                    pageable = PageRequests.SINGLE,
-                    subjectId = any(),
-                    predicateId = Predicates.description,
-                    objectClasses = setOf(Classes.literal)
-                )
-            } returns pageOf()
-
-            get("/api/classes")
-                .param("uri", "https://example.org/exists")
-                .perform()
-                .andExpect(status().isOk)
-                .andExpect(jsonPath("$.uri").value("https://example.org/exists"))
-
-            verify(exactly = 1) { classService.findByURI(any()) }
-            verify(exactly = 1) {
-                statementService.findAll(
-                    pageable = PageRequests.SINGLE,
-                    subjectId = mockReply().id,
-                    predicateId = Predicates.description,
-                    objectClasses = setOf(Classes.literal)
-                )
-            }
-        }
-    }
-
-    @Nested
-    @DisplayName("When no class with a given URI exists")
-    inner class URIDoesNotExist {
-        @Test
-        @DisplayName("Then querying for that URI should return `404 Not Found`")
-        fun shouldReturn404() {
-            every { classService.findByURI(any()) } returns Optional.empty()
-
-            get("/api/classes")
-                .param("uri", "http://example.org/non-existent")
-                .perform()
-                .andExpectErrorStatus(NOT_FOUND)
-                .andExpectType("orkg:problem:class_not_found")
-
-            verify(exactly = 1) { classService.findByURI(any()) }
-        }
     }
 
     @Test
@@ -484,11 +389,4 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
             )
         }
     }
-
-    private fun mockReply() = Class(
-        id = ThingId("C1"),
-        label = "test class",
-        createdAt = OffsetDateTime.now(clock),
-        uri = ParsedIRI.create("https://example.org/exists")
-    )
 }

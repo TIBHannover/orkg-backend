@@ -1,5 +1,6 @@
 package org.orkg.graph.adapter.output.neo4j
 
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.neo4j.cypherdsl.core.Cypher
 import org.neo4j.cypherdsl.core.Cypher.anonParameter
 import org.neo4j.cypherdsl.core.Cypher.call
@@ -71,6 +72,7 @@ class SpringDataNeo4jClassAdapter(
         createdBy: ContributorId?,
         createdAtStart: OffsetDateTime?,
         createdAtEnd: OffsetDateTime?,
+        uri: ParsedIRI?,
     ): Page<Class> = cypherQueryBuilderFactory.newBuilder(Uncached)
         .withCommonQuery {
             val node = Cypher.node("Class").named("node")
@@ -95,7 +97,8 @@ class SpringDataNeo4jClassAdapter(
             match.where(
                 createdBy.toCondition { node.property("created_by").eq(anonParameter(it.value.toString())) },
                 createdAtStart.toCondition { node.property("created_at").gte(anonParameter(it.format(ISO_OFFSET_DATE_TIME))) },
-                createdAtEnd.toCondition { node.property("created_at").lte(anonParameter(it.format(ISO_OFFSET_DATE_TIME))) }
+                createdAtEnd.toCondition { node.property("created_at").lte(anonParameter(it.format(ISO_OFFSET_DATE_TIME))) },
+                uri.toCondition { node.property("uri").eq(anonParameter(it.toString())) },
             )
         }
         .withQuery { commonQuery ->

@@ -1,5 +1,6 @@
 package org.orkg.graph.output
 
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.Class
@@ -20,6 +21,7 @@ interface ClassRepository : EntityRepository<Class, ThingId> {
         createdBy: ContributorId? = null,
         createdAtStart: OffsetDateTime? = null,
         createdAtEnd: OffsetDateTime? = null,
+        uri: ParsedIRI? = null,
     ): Page<Class>
 
     fun findByUri(uri: String): Optional<Class>

@@ -235,7 +235,6 @@ val aggregateOpenApiSnippets by tasks.registering(Sync::class) {
         include("**/resource.json")
         exclude(
             "errors_*/resource.json",
-            "classes_find-by-uri",
             "papers_exists-by-doi",
             "papers_exists-by-title",
             "paged_page",

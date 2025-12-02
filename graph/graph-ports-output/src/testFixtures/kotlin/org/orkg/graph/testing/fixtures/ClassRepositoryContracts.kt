@@ -4,6 +4,7 @@ import dev.forkhandles.fabrikate.FabricatorConfig
 import dev.forkhandles.fabrikate.Fabrikate
 import io.kotest.assertions.asClue
 import io.kotest.core.spec.style.describeSpec
+import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.comparables.shouldBeLessThan
@@ -258,6 +259,34 @@ fun <
                     }
                 }
             }
+            context("by uri") {
+                val classes = fabricator.random<List<Class>>()
+                classes.forEach(repository::save)
+
+                val expected = classes[3]
+                val result = repository.findAll(
+                    pageable = PageRequest.of(0, 5),
+                    uri = expected.uri,
+                )
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe 1
+                    result.content shouldContain expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 5
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe 1
+                }
+                it("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt shouldBeLessThan b.createdAt
+                    }
+                }
+            }
             context("using all parameters") {
                 val classes = fabricator.random<List<Class>>()
                 classes.forEach(repository::save)
@@ -271,6 +300,7 @@ fun <
                     createdBy = expected.createdBy,
                     createdAtStart = expected.createdAt,
                     createdAtEnd = expected.createdAt,
+                    uri = expected.uri,
                 )
 
                 it("returns the correct result") {

@@ -60,9 +60,10 @@ internal class ClassControllerIntegrationTest : MockMvcBaseTest("classes") {
             .param("uri", uri.toString())
             .perform()
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.id").value(id.value))
-            .andExpect(jsonPath("$.label").value(label))
-            .andExpect(jsonPath("$.uri").value(uri.toString()))
+            .andExpect(jsonPath("$.content[0].id").value(id.value))
+            .andExpect(jsonPath("$.content[0].label").value(label))
+            .andExpect(jsonPath("$.content[0].uri").value(uri.toString()))
+            .andExpect(jsonPath("$.page.total_elements").value(1))
     }
 
     @Test

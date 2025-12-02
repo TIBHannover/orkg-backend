@@ -27,8 +27,8 @@ import org.springframework.data.neo4j.core.fetchAs
     ]
 )
 internal class SpringDataNeo4jClassAdapterContractTests(
-    @Autowired private val springDataNeo4jClassAdapter: ClassRepository,
-    @Autowired private val neo4jClient: Neo4jClient,
+    @param:Autowired private val springDataNeo4jClassAdapter: ClassRepository,
+    @param:Autowired private val neo4jClient: Neo4jClient,
 ) : DescribeSpec({
         include(
             classRepositoryContract(

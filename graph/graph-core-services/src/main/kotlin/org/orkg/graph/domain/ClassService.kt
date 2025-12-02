@@ -52,8 +52,9 @@ class ClassService(
         createdBy: ContributorId?,
         createdAtStart: OffsetDateTime?,
         createdAtEnd: OffsetDateTime?,
+        uri: ParsedIRI?,
     ): Page<Class> =
-        repository.findAll(pageable, label, createdBy, createdAtStart, createdAtEnd)
+        repository.findAll(pageable, label, createdBy, createdAtStart, createdAtEnd, uri)
 
     override fun findById(id: ThingId): Optional<Class> =
         repository.findById(id)

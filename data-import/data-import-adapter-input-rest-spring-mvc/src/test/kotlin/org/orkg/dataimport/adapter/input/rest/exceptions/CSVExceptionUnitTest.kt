@@ -37,7 +37,7 @@ internal class CSVExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""A CSV with the same data already exists.""")
-            .andDocumentWithDefaultExceptionResponseFields(CSVAlreadyExists::class, type)
+            .andDocumentWithDefaultExceptionResponseFields<CSVAlreadyExists>(type)
     }
 
     @Test
@@ -48,7 +48,7 @@ internal class CSVExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""The CSV can not be blank.""")
-            .andDocumentWithDefaultExceptionResponseFields(CSVCannotBeBlank::class, type)
+            .andDocumentWithDefaultExceptionResponseFields<CSVCannotBeBlank>(type)
     }
 
     @Test

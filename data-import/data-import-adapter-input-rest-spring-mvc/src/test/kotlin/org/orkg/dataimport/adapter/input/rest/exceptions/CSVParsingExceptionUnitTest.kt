@@ -73,7 +73,7 @@ internal class CSVParsingExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""The CSV header must not be empty.""")
-            .andDocumentWithDefaultExceptionResponseFields(EmptyCSVHeader::class, type)
+            .andDocumentWithDefaultExceptionResponseFields<EmptyCSVHeader>(type)
     }
 
     @Test

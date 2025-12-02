@@ -14,7 +14,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestComponent
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
@@ -64,18 +63,6 @@ abstract class MockMvcExceptionBaseTest : MockMvcBaseTest("errors") {
         return result
     }
 
-    @Deprecated("To be removed", ReplaceWith("andDocumentWithDefaultExceptionResponseFields<SchemaClass>(type)"))
-    protected final fun ResultActions.andDocumentWithDefaultExceptionResponseFields(type: String) =
-        andDo(documentationHandler.document(responseFields(exceptionResponseFields(type))))
-
-    @Deprecated("To be removed", ReplaceWith("andDocumentWithoutDetailExceptionResponseFields<SchemaClass>(type)"))
-    protected final fun ResultActions.andDocumentWithoutDetailExceptionResponseFields(type: String) =
-        andDo(documentationHandler.document(responseFields(exceptionResponseFieldsWithoutDetail(type))))
-
-    @Deprecated("To be removed", ReplaceWith("andDocumentWithValidationExceptionResponseFields<SchemaClass>(type)"))
-    protected final fun ResultActions.andDocumentWithValidationExceptionResponseFields(type: String) =
-        andDo(documentationHandler.document(responseFields(validationExceptionResponseFields(type))))
-
     protected final fun ResultActions.andDocumentWithDefaultExceptionResponseFields(schemaClass: KClass<*>, type: String) =
         andDocument { responseFields(schemaClass, exceptionResponseFields(type)) }
 
@@ -85,16 +72,14 @@ abstract class MockMvcExceptionBaseTest : MockMvcBaseTest("errors") {
     protected final fun ResultActions.andDocumentWithValidationExceptionResponseFields(schemaClass: KClass<*>, type: String) =
         andDocument { responseFields(schemaClass, validationExceptionResponseFields(type)) }
 
-//  TODO: Migrate to functions below once deprecated functions with the same name above are removed (signature clash)
-//
-//    protected final inline fun <reified T> ResultActions.andDocumentWithDefaultExceptionResponseFields(type: String) =
-//        andDocumentWithDefaultExceptionResponseFields(T::class, type)
-//
-//    protected final inline fun <reified T> ResultActions.andDocumentWithoutDetailExceptionResponseFields(type: String) =
-//        andDocumentWithoutDetailExceptionResponseFields(T::class, type)
-//
-//    protected final inline fun <reified T> ResultActions.andDocumentWithValidationExceptionResponseFields(type: String) =
-//        andDocumentWithValidationExceptionResponseFields(T::class, type)
+    protected final inline fun <reified T> ResultActions.andDocumentWithDefaultExceptionResponseFields(type: String) =
+        andDocumentWithDefaultExceptionResponseFields(T::class, type)
+
+    protected final inline fun <reified T> ResultActions.andDocumentWithoutDetailExceptionResponseFields(type: String) =
+        andDocumentWithoutDetailExceptionResponseFields(T::class, type)
+
+    protected final inline fun <reified T> ResultActions.andDocumentWithValidationExceptionResponseFields(type: String) =
+        andDocumentWithValidationExceptionResponseFields(T::class, type)
 
     @TestComponent
     @RestController

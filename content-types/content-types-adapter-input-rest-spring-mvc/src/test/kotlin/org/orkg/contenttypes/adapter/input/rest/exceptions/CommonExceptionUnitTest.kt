@@ -91,7 +91,7 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Ony one research field is allowed.""")
-            .andDocumentWithDefaultExceptionResponseFields(OnlyOneResearchFieldAllowed::class, type)
+            .andDocumentWithDefaultExceptionResponseFields<OnlyOneResearchFieldAllowed>(type)
     }
 
     @Test
@@ -102,7 +102,7 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Ony one organization is allowed.""")
-            .andDocumentWithDefaultExceptionResponseFields(OnlyOneOrganizationAllowed::class, type)
+            .andDocumentWithDefaultExceptionResponseFields<OnlyOneOrganizationAllowed>(type)
     }
 
     @Test
@@ -113,7 +113,7 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Ony one observatory is allowed.""")
-            .andDocumentWithDefaultExceptionResponseFields(OnlyOneObservatoryAllowed::class, type)
+            .andDocumentWithDefaultExceptionResponseFields<OnlyOneObservatoryAllowed>(type)
     }
 
     @Test
@@ -124,7 +124,7 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""At least two contributions are required.""")
-            .andDocumentWithDefaultExceptionResponseFields(RequiresAtLeastTwoContributions::class, type)
+            .andDocumentWithDefaultExceptionResponseFields<RequiresAtLeastTwoContributions>(type)
     }
 
     @Test

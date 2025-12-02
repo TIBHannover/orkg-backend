@@ -86,13 +86,13 @@ fun validationExceptionResponseFields(type: String) = listOf(
     fieldWithPath("title").description("A short, human-readable summary of the problem type."),
     fieldWithPath("instance").description("A URI reference that identifies the specific occurrence of the problem.").type<URI>(),
     fieldWithPath("errors").description("An array that describes the details of each validation error."),
-    fieldWithPath("errors[].detail").description("A description of the issue."),
+    fieldWithPath("errors[].detail").description("A description of the issue.").type("string").optional(),
     fieldWithPath("errors[].pointer").description("A JSON Pointer that describes the location of the problem within the request's content."),
     // legacy fields
     fieldWithPath("error").description("The human-readable error description of the status code, e.g. \"Bad Request\" for code 400.").deprecated("title"),
     fieldWithPath("path").description("The path to which the request was made that caused the error.").type<URI>().deprecated("instance"),
     fieldWithPath("timestamp").description("The <<timestamp-representation,timestamp>> of when the error happened.").type<OffsetDateTime>().deprecated(),
-    fieldWithPath("errors[].message").description("A description of the issue.").deprecated("detail"),
+    fieldWithPath("errors[].message").description("A description of the issue.").type("string").optional().deprecated("detail"),
     fieldWithPath("errors[].field").description("A JSON path that describes the location of the problem within the request's content.").deprecated("pointer"),
 )
 

@@ -96,7 +96,7 @@ internal class TableExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Missing table rows. At least one row is required.""")
-            .andDocumentWithDefaultExceptionResponseFields(MissingTableRows::class, type)
+            .andDocumentWithDefaultExceptionResponseFields<MissingTableRows>(type)
     }
 
     @Test

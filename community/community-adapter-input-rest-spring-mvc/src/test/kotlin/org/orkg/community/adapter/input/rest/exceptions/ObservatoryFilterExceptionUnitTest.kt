@@ -45,7 +45,7 @@ internal class ObservatoryFilterExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Invalid filter config.""")
-            .andDocumentWithDefaultExceptionResponseFields(InvalidFilterConfig::class, type)
+            .andDocumentWithDefaultExceptionResponseFields<InvalidFilterConfig>(type)
     }
 
     @Test

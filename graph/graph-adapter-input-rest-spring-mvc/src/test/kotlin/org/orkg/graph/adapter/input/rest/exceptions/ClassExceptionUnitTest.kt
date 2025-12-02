@@ -55,7 +55,7 @@ internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpect(jsonPath("$.errors[0].detail", `is`("""The URI <https://example.org/C123> is already assigned to class with ID "C123".""")))
             .andExpect(jsonPath("$.errors[0].pointer", `is`("#/uri")))
-            .andDocumentWithValidationExceptionResponseFields(URIAlreadyInUse::class, type)
+            .andDocumentWithValidationExceptionResponseFields<URIAlreadyInUse>(type)
     }
 
     @Test
@@ -67,7 +67,7 @@ internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpect(jsonPath("$.errors[0].detail", `is`("""The URI <invalid> is not absolute.""")))
             .andExpect(jsonPath("$.errors[0].pointer", `is`("#/uri")))
-            .andDocumentWithValidationExceptionResponseFields(URINotAbsolute::class, type)
+            .andDocumentWithValidationExceptionResponseFields<URINotAbsolute>(type)
     }
 
     @Test
@@ -113,7 +113,7 @@ internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Forbidden")
             .andExpect(jsonPath("$.errors[0].detail", `is`("""The class "${Classes.list}" already has a URI. It is not allowed to change URIs.""")))
             .andExpect(jsonPath("$.errors[0].pointer", `is`("#/uri")))
-            .andDocumentWithValidationExceptionResponseFields(CannotResetURI::class, type)
+            .andDocumentWithValidationExceptionResponseFields<CannotResetURI>(type)
     }
 
     @Test

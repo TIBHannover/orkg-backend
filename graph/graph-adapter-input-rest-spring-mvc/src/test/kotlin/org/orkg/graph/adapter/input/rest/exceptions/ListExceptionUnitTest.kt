@@ -82,6 +82,6 @@ internal class ListExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpect(jsonPath("$.errors[0].detail", `is`("""All elements inside the list have to exist.""")))
             .andExpect(jsonPath("$.errors[0].pointer", `is`("#/elements")))
-            .andDocumentWithValidationExceptionResponseFields(ListElementNotFound::class, type)
+            .andDocumentWithValidationExceptionResponseFields<ListElementNotFound>(type)
     }
 }

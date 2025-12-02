@@ -52,7 +52,7 @@ internal class StatementExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""A list element statement cannot be managed using the statements endpoint. Please see the documentation on how to manage lists.""")
-            .andDocumentWithDefaultExceptionResponseFields(InvalidStatement::class, type)
+            .andDocumentWithDefaultExceptionResponseFields<InvalidStatement>(type)
     }
 
     @Test
@@ -166,6 +166,6 @@ internal class StatementExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""A statement cannot be deleted when it is used in a list. Please see the documentation on how to manage lists.""")
-            .andDocumentWithDefaultExceptionResponseFields(StatementInUse::class, type)
+            .andDocumentWithDefaultExceptionResponseFields<StatementInUse>(type)
     }
 }

@@ -33,7 +33,7 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpect(jsonPath("$.errors[0].detail", `is`("""A label must not be blank or contain newlines or NULL characters and must be at most $MAX_LABEL_LENGTH characters long.""")))
             .andExpect(jsonPath("$.errors[0].pointer", `is`("""#/label""")))
-            .andDocumentWithValidationExceptionResponseFields(InvalidLabel::class, type)
+            .andDocumentWithValidationExceptionResponseFields<InvalidLabel>(type)
     }
 
     @Test
@@ -55,7 +55,7 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpect(jsonPath("$.errors[0].detail", `is`("""A description must not be blank or contain NULL characters and must be at most $MAX_LABEL_LENGTH characters long.""")))
             .andExpect(jsonPath("$.errors[0].pointer", `is`("""#/description""")))
-            .andDocumentWithValidationExceptionResponseFields(InvalidDescription::class, type)
+            .andDocumentWithValidationExceptionResponseFields<InvalidDescription>(type)
     }
 
     @Test

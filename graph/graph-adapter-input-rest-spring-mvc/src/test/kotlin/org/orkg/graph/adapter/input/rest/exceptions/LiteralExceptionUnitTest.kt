@@ -67,7 +67,7 @@ internal class LiteralExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpect(jsonPath("$.errors[0].detail", `is`("""A literal must be at most $MAX_LABEL_LENGTH characters long.""")))
             .andExpect(jsonPath("$.errors[0].pointer", `is`("""#/label""")))
-            .andDocumentWithValidationExceptionResponseFields(InvalidLiteralLabel::class, type)
+            .andDocumentWithValidationExceptionResponseFields<InvalidLiteralLabel>(type)
     }
 
     @Test
@@ -90,7 +90,7 @@ internal class LiteralExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpect(jsonPath("$.errors[0].detail", `is`("""A literal datatype must be a URI or a "xsd:"-prefixed type.""")))
             .andExpect(jsonPath("$.errors[0].pointer", `is`("""#/datatype""")))
-            .andDocumentWithValidationExceptionResponseFields(InvalidLiteralDatatype::class, type)
+            .andDocumentWithValidationExceptionResponseFields<InvalidLiteralDatatype>(type)
     }
 
     @Test

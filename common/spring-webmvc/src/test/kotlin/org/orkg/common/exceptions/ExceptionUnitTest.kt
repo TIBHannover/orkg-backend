@@ -2,8 +2,10 @@ package org.orkg.common.exceptions
 
 import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Test
+import org.orkg.common.CommonDocumentationContextProvider
 import org.orkg.common.configuration.CommonSpringConfig
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
+import org.orkg.testing.spring.restdocs.arrayItemsType
 import org.orkg.testing.spring.restdocs.exceptionResponseFields
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.BAD_REQUEST
@@ -11,12 +13,11 @@ import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE
 import org.springframework.http.HttpStatus.UNAUTHORIZED
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import java.net.URISyntaxException
 
-@ContextConfiguration(classes = [CommonSpringConfig::class])
+@ContextConfiguration(classes = [CommonSpringConfig::class, CommonDocumentationContextProvider::class])
 internal class ExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun serviceUnavailable() {
@@ -26,7 +27,7 @@ internal class ExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType(type)
             .andExpectTitle("Service Unavailable")
             .andExpectDetail("Service unavailable.")
-            .andDocumentWithDefaultExceptionResponseFields(type)
+            .andDocumentWithDefaultExceptionResponseFields<ServiceUnavailable>(type)
     }
 
     @Test
@@ -39,14 +40,13 @@ internal class ExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectDetail("""Malformed value "true" for media type capability "formatted-label".""")
             .andExpect(jsonPath("capability_name", `is`("formatted-label")))
             .andExpect(jsonPath("capability_value", `is`("true")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("capability_name").description("The name of the media type capability."),
-                        fieldWithPath("capability_value").description("The value of the media type capability."),
-                    )
+            .andDocument {
+                responseFields<MalformedMediaTypeCapability>(
+                    fieldWithPath("capability_name").description("The name of the media type capability."),
+                    fieldWithPath("capability_value").description("The value of the media type capability."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -58,13 +58,12 @@ internal class ExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Missing parameter: At least one parameter out of "param1", "param2" is required.""")
             .andExpect(jsonPath("parameter_names", `is`(listOf("param1", "param2"))))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("parameter_names").description("A list of possible parameters.")
-                    )
+            .andDocument {
+                responseFields<MissingParameter>(
+                    fieldWithPath("parameter_names[]").description("A list of possible parameters.").arrayItemsType("string"),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -76,13 +75,12 @@ internal class ExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Too many parameters: Only exactly one out of "param1", "param2" is allowed.""")
             .andExpect(jsonPath("parameter_names", `is`(listOf("param1", "param2"))))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("parameter_names").description("A list of allowed parameters.")
-                    )
+            .andDocument {
+                responseFields<TooManyParameters>(
+                    fieldWithPath("parameter_names").description("A list of allowed parameters."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -104,13 +102,12 @@ internal class ExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Unknown parameter "formatted-label".""")
             .andExpect(jsonPath("parameter_name", `is`("formatted-label")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("parameter_name").description("The name of the unknown parameter.")
-                    )
+            .andDocument {
+                responseFields<UnknownParameter>(
+                    fieldWithPath("parameter_name").description("The name of the unknown parameter."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -122,13 +119,12 @@ internal class ExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Unknown sorting property "unknown".""")
             .andExpect(jsonPath("property_name", `is`("unknown")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("property_name").description("The name of the unknown property.")
-                    )
+            .andDocument {
+                responseFields<UnknownSortingProperty>(
+                    fieldWithPath("property_name").description("The name of the unknown property."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -140,7 +136,7 @@ internal class ExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpect(jsonPath("$.errors[0].detail", `is`("""Value "not a uuid" is not a valid UUID.""")))
             .andExpect(jsonPath("$.errors[0].pointer", `is`("""#/id""")))
-            .andDocumentWithValidationExceptionResponseFields(type)
+            .andDocumentWithValidationExceptionResponseFields<InvalidUUID>(type)
     }
 
     @Test
@@ -151,7 +147,7 @@ internal class ExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType(type)
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Forbidden.""")
-            .andDocumentWithDefaultExceptionResponseFields(type)
+            .andDocumentWithDefaultExceptionResponseFields<Forbidden>(type)
     }
 
     @Test
@@ -162,7 +158,7 @@ internal class ExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType(type)
             .andExpectTitle("Unauthorized")
             .andExpectDetail("""Unauthorized.""")
-            .andDocumentWithDefaultExceptionResponseFields(type)
+            .andDocumentWithDefaultExceptionResponseFields<Unauthorized>(type)
     }
 
     @Test
@@ -174,13 +170,12 @@ internal class ExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Invalid URI: http://example.org:-80""")
             .andExpect(jsonPath("$.iri", `is`("http://example.org:-80")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("iri").description("The provided iri.")
-                    )
+            .andDocument {
+                responseFields<URISyntaxException>(
+                    fieldWithPath("iri").description("The provided iri."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test

@@ -103,7 +103,7 @@ internal class OrganizationExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Invalid image encoding.""")
-            .andDocumentWithDefaultExceptionResponseFields(InvalidImageEncoding::class, type)
+            .andDocumentWithDefaultExceptionResponseFields<InvalidImageEncoding>(type)
     }
 
     @Test

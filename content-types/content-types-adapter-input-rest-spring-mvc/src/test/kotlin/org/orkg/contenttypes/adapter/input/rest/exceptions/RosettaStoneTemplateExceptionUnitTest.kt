@@ -187,7 +187,7 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
             .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""The updated dynamic label must start with the previous label.""")
-            .andDocumentWithDefaultExceptionResponseFields(RosettaStoneTemplateLabelMustStartWithPreviousVersion::class, type)
+            .andDocumentWithDefaultExceptionResponseFields<RosettaStoneTemplateLabelMustStartWithPreviousVersion>(type)
     }
 
     @Test
@@ -198,7 +198,7 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
             .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Too many new dynamic label sections. Must be exactly one optional section per new template property.""")
-            .andDocumentWithDefaultExceptionResponseFields(TooManyNewRosettaStoneTemplateLabelSections::class, type)
+            .andDocumentWithDefaultExceptionResponseFields<TooManyNewRosettaStoneTemplateLabelSections>(type)
     }
 
     @Test
@@ -209,7 +209,7 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
             .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""The dynamic label can only be updated in combination with the addition of new template properties.""")
-            .andDocumentWithDefaultExceptionResponseFields(RosettaStoneTemplateLabelUpdateRequiresNewTemplateProperties::class, type)
+            .andDocumentWithDefaultExceptionResponseFields<RosettaStoneTemplateLabelUpdateRequiresNewTemplateProperties>(type)
     }
 
     @Test
@@ -220,7 +220,7 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
             .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""New sections of the dynamic label must be optional.""")
-            .andDocumentWithDefaultExceptionResponseFields(NewRosettaStoneTemplateLabelSectionsMustBeOptional::class, type)
+            .andDocumentWithDefaultExceptionResponseFields<NewRosettaStoneTemplateLabelSectionsMustBeOptional>(type)
     }
 
     @Test
@@ -231,7 +231,7 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
             .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""The dynamic label must be updated when updating template properties.""")
-            .andDocumentWithDefaultExceptionResponseFields(RosettaStoneTemplateLabelMustBeUpdated::class, type)
+            .andDocumentWithDefaultExceptionResponseFields<RosettaStoneTemplateLabelMustBeUpdated>(type)
     }
 
     @Test
@@ -242,7 +242,7 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
             .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""New example usage must start with the previous example usage.""")
-            .andDocumentWithDefaultExceptionResponseFields(NewRosettaStoneTemplateExampleUsageMustStartWithPreviousExampleUsage::class, type)
+            .andDocumentWithDefaultExceptionResponseFields<NewRosettaStoneTemplateExampleUsageMustStartWithPreviousExampleUsage>(type)
     }
 
     @Test
@@ -272,7 +272,7 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
             .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Invalid subject position cardinality. Minimum cardinality must be at least one.""")
-            .andDocumentWithDefaultExceptionResponseFields(InvalidSubjectPositionCardinality::class, type)
+            .andDocumentWithDefaultExceptionResponseFields<InvalidSubjectPositionCardinality>(type)
     }
 
     @Test
@@ -283,7 +283,7 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
             .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Invalid subject position type. Subject position must not be a literal property.""")
-            .andDocumentWithDefaultExceptionResponseFields(InvalidSubjectPositionType::class, type)
+            .andDocumentWithDefaultExceptionResponseFields<InvalidSubjectPositionType>(type)
     }
 
     @Test
@@ -294,7 +294,7 @@ internal class RosettaStoneTemplateExceptionUnitTest : MockMvcExceptionBaseTest(
             .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Missing subject position. There must be at least one property with path "${Predicates.hasSubjectPosition}" that has a minimum cardinality of at least one.""")
-            .andDocumentWithDefaultExceptionResponseFields(MissingSubjectPosition::class, type)
+            .andDocumentWithDefaultExceptionResponseFields<MissingSubjectPosition>(type)
     }
 
     @Test

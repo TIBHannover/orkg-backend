@@ -1,9 +1,13 @@
 package org.orkg.common.exceptions
 
 import org.junit.jupiter.api.Test
+import org.orkg.common.CommonDocumentationContextProvider
 import org.orkg.common.configuration.CommonSpringConfig
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
+import org.orkg.testing.spring.restdocs.arrayItemsType
+import org.orkg.testing.spring.restdocs.deprecated
 import org.orkg.testing.spring.restdocs.exceptionResponseFields
+import org.orkg.testing.spring.restdocs.references
 import org.springframework.beans.ConversionNotSupportedException
 import org.springframework.beans.TypeMismatchException
 import org.springframework.core.MethodParameter
@@ -24,7 +28,6 @@ import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.http.converter.HttpMessageNotWritableException
 import org.springframework.mock.http.client.MockClientHttpResponse
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
@@ -47,7 +50,7 @@ import org.springframework.web.multipart.support.MissingServletRequestPartExcept
 import org.springframework.web.servlet.NoHandlerFoundException
 import org.springframework.web.servlet.resource.NoResourceFoundException
 
-@ContextConfiguration(classes = [CommonSpringConfig::class])
+@ContextConfiguration(classes = [CommonSpringConfig::class, CommonDocumentationContextProvider::class])
 internal class SpringExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun propertyReferenceException() {
@@ -57,13 +60,12 @@ internal class SpringExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Unknown property "property".""")
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("property").description("The property that failed validation."),
-                    )
+            .andDocument {
+                responseFields<PropertyReferenceException>(
+                    fieldWithPath("property").description("The property that failed validation."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -75,7 +77,7 @@ internal class SpringExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Not Acceptable")
             .andExpectDetail("""Unsupported response media type. Please check the 'Accept' header for a list of supported media types.""")
             .andExpect(header().string("Accept", "application/json, application/xml"))
-            .andDocumentWithDefaultExceptionResponseFields(type)
+            .andDocumentWithDefaultExceptionResponseFields<HttpMediaTypeNotAcceptableException>(type)
     }
 
     @Test
@@ -87,7 +89,7 @@ internal class SpringExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Unsupported Media Type")
             .andExpectDetail("""Unsupported request media type. Please check the 'Accept' header for a list of supported media types.""")
             .andExpect(header().string("Accept", "application/json, application/xml"))
-            .andDocumentWithDefaultExceptionResponseFields(type)
+            .andDocumentWithDefaultExceptionResponseFields<HttpMediaTypeNotSupportedException>(type)
     }
 
     @Test
@@ -97,7 +99,7 @@ internal class SpringExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectErrorStatus(SERVICE_UNAVAILABLE)
             .andExpectType(type)
             .andExpectTitle("Service Unavailable")
-            .andDocumentWithoutDetailExceptionResponseFields(type)
+            .andDocumentWithoutDetailExceptionResponseFields<AsyncRequestTimeoutException>(type)
     }
 
     @Test
@@ -108,7 +110,7 @@ internal class SpringExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType(type)
             .andExpectTitle("Internal Server Error")
             .andExpectDetail("""Failed to convert 'null' with value: 'null'""")
-            .andDocumentWithDefaultExceptionResponseFields(type)
+            .andDocumentWithDefaultExceptionResponseFields<ConversionNotSupportedException>(type)
     }
 
     @Test
@@ -126,7 +128,7 @@ internal class SpringExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType(type)
             .andExpectTitle("Internal Server Error")
             .andExpectDetail("""Validation failure""")
-            .andDocumentWithDefaultExceptionResponseFields(type)
+            .andDocumentWithDefaultExceptionResponseFields<HandlerMethodValidationException>(type)
     }
 
     @Test
@@ -137,7 +139,7 @@ internal class SpringExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Failed to read request""")
-            .andDocumentWithDefaultExceptionResponseFields(type)
+            .andDocumentWithDefaultExceptionResponseFields<HttpMessageNotReadableException>(type)
     }
 
     @Test
@@ -148,7 +150,7 @@ internal class SpringExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType(type)
             .andExpectTitle("Internal Server Error")
             .andExpectDetail("""Failed to write request""")
-            .andDocumentWithDefaultExceptionResponseFields(type)
+            .andDocumentWithDefaultExceptionResponseFields<HttpMessageNotWritableException>(type)
     }
 
     @Test
@@ -159,14 +161,16 @@ internal class SpringExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType(type)
             .andExpectTitle("Method Not Allowed")
             .andExpectDetail("""Method 'PATCH' is not supported.""")
-            .andDocumentWithDefaultExceptionResponseFields(type)
+            .andDocumentWithDefaultExceptionResponseFields<HttpRequestMethodNotSupportedException>(type)
     }
 
     @Test
     fun methodArgumentNotValidException() {
         val methodArgumentNotValidException = MethodArgumentNotValidException(
             MethodParameter(this::class.java.getDeclaredMethod("methodArgumentNotValidException"), -1),
-            MapBindingResult(mapOf("key" to "value"), "field")
+            MapBindingResult(mapOf("key" to "value"), "field").apply {
+                addError(org.springframework.validation.FieldError("Container", "field", "Invalid value."))
+            }
         )
         val type = "orkg:problem:invalid_argument"
         documentedGetRequestTo(methodArgumentNotValidException)
@@ -174,13 +178,16 @@ internal class SpringExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Invalid request content.""")
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("errors").description("An array of error descriptions.")
-                    )
+            .andDocument {
+                responseFields<MethodArgumentNotValidException>(
+                    fieldWithPath("errors").description("An array that describes the details of each validation error.").arrayItemsType("object").references<FieldError>(),
+                    fieldWithPath("errors[].detail").description("A description of the issue.").optional(),
+                    fieldWithPath("errors[].pointer").description("A JSON Pointer that describes the location of the problem within the request's content."),
+                    fieldWithPath("errors[].message").description("A description of the issue.").optional().deprecated("detail"),
+                    fieldWithPath("errors[].field").description("A JSON path that describes the location of the problem within the request's content.").deprecated("pointer"),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -195,7 +202,7 @@ internal class SpringExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Required header 'header-name' is not present.""")
-            .andDocumentWithDefaultExceptionResponseFields(type)
+            .andDocumentWithDefaultExceptionResponseFields<MissingRequestHeaderException>(type)
     }
 
     @Test
@@ -206,7 +213,7 @@ internal class SpringExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Required parameter 'name' is not present.""")
-            .andDocumentWithDefaultExceptionResponseFields(type)
+            .andDocumentWithDefaultExceptionResponseFields<MissingServletRequestParameterException>(type)
     }
 
     @Test
@@ -221,7 +228,7 @@ internal class SpringExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Required path parameter 'variable-name' is not present.""")
-            .andDocumentWithDefaultExceptionResponseFields(type)
+            .andDocumentWithDefaultExceptionResponseFields<MissingMatrixVariableException>(type)
     }
 
     @Test
@@ -235,7 +242,7 @@ internal class SpringExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectErrorStatus(INTERNAL_SERVER_ERROR)
             .andExpectType(type)
             .andExpectTitle("Internal Server Error")
-            .andDocumentWithDefaultExceptionResponseFields(type)
+            .andDocumentWithDefaultExceptionResponseFields<MissingPathVariableException>(type)
     }
 
     @Test
@@ -250,7 +257,7 @@ internal class SpringExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Required cookie 'cookie-name' is not present.""")
-            .andDocumentWithDefaultExceptionResponseFields(type)
+            .andDocumentWithDefaultExceptionResponseFields<MissingRequestCookieException>(type)
     }
 
     @Test
@@ -261,7 +268,7 @@ internal class SpringExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Required part 'part' is not present.""")
-            .andDocumentWithDefaultExceptionResponseFields(type)
+            .andDocumentWithDefaultExceptionResponseFields<MissingServletRequestPartException>(type)
     }
 
     @Test
@@ -272,7 +279,7 @@ internal class SpringExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType(type)
             .andExpectTitle("Not Found")
             .andExpectDetail("""No endpoint GET localhost.""")
-            .andDocumentWithDefaultExceptionResponseFields(type)
+            .andDocumentWithDefaultExceptionResponseFields<NoHandlerFoundException>(type)
     }
 
     @Test
@@ -283,7 +290,7 @@ internal class SpringExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType(type)
             .andExpectTitle("Not Found")
             .andExpectDetail("""No static resource /resource.""")
-            .andDocumentWithDefaultExceptionResponseFields(type)
+            .andDocumentWithDefaultExceptionResponseFields<NoResourceFoundException>(type)
     }
 
     @Test
@@ -294,7 +301,7 @@ internal class SpringExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Failed to convert 'null' with value: 'null'""")
-            .andDocumentWithDefaultExceptionResponseFields(type)
+            .andDocumentWithDefaultExceptionResponseFields<TypeMismatchException>(type)
     }
 
     @Test
@@ -304,6 +311,6 @@ internal class SpringExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectErrorStatus(FORBIDDEN)
             .andExpectType(type)
             .andExpectTitle("Forbidden")
-            .andDocumentWithoutDetailExceptionResponseFields(type)
+            .andDocumentWithoutDetailExceptionResponseFields<AccessDeniedException>(type)
     }
 }

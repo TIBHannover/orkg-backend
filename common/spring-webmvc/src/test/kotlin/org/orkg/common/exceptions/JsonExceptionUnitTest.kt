@@ -2,6 +2,7 @@ package org.orkg.common.exceptions
 
 import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Test
+import org.orkg.common.CommonDocumentationContextProvider
 import org.orkg.common.configuration.CommonSpringConfig
 import org.orkg.common.exceptions.JsonExceptionUnitTest.TestController
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
@@ -10,15 +11,20 @@ import org.springframework.boot.test.context.TestComponent
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.MediaType
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
-@ContextConfiguration(classes = [CommonSpringConfig::class, TestController::class])
+@ContextConfiguration(classes = [CommonSpringConfig::class, CommonDocumentationContextProvider::class, TestController::class])
 internal class JsonExceptionUnitTest : MockMvcExceptionBaseTest() {
+    class MismatchedJsonInput
+
+    class UnknownJsonField
+
+    class InvalidJson
+
     @Test
     fun jsonMissingFieldException() {
         val type = "orkg:problem:mismatched_json_input"
@@ -31,13 +37,12 @@ internal class JsonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Field "$.nested.field" is either missing, "null", of invalid type, or contains "null" values.""")
             .andExpect(jsonPath("$.pointer", `is`("#/nested/field")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("pointer").description("A JSON Pointer that describes the location of the problem within the request's content.")
-                    )
+            .andDocument {
+                responseFields<MismatchedJsonInput>(
+                    fieldWithPath("pointer").description("A JSON Pointer that describes the location of the problem within the request's content."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -52,13 +57,12 @@ internal class JsonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Unknown field "$.nested.unknown".""")
             .andExpect(jsonPath("$.pointer", `is`("#/nested/unknown")))
-            .andDo(
-                documentationHandler.document(
-                    responseFields(exceptionResponseFields(type)).and(
-                        fieldWithPath("pointer").description("A JSON Pointer that describes the location of the problem within the request's content.")
-                    )
+            .andDocument {
+                responseFields<UnknownJsonField>(
+                    fieldWithPath("pointer").description("A JSON Pointer that describes the location of the problem within the request's content."),
+                    *exceptionResponseFields(type).toTypedArray(),
                 )
-            )
+            }
     }
 
     @Test
@@ -126,7 +130,7 @@ internal class JsonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectType(type)
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Unexpected character ('"' (code 34)): was expecting comma to separate Object entries""")
-            .andDocumentWithDefaultExceptionResponseFields(type)
+            .andDocumentWithDefaultExceptionResponseFields<InvalidJson>(type)
     }
 
     @TestComponent

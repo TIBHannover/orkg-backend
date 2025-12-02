@@ -30,6 +30,7 @@ testing {
         val test by getting(JvmTestSuite::class) {
             dependencies {
                 implementation(project(":common:serialization"))
+                implementation(testFixtures(project(":common:core-identifiers")))
                 implementation(testFixtures(project(":common:testing")))
                 implementation(testFixtures(project(":testing:spring")))
                 implementation("io.kotest:kotest-assertions-core")
@@ -42,7 +43,6 @@ testing {
                 implementation("org.springframework.boot:spring-boot-test-autoconfigure")
                 implementation("org.springframework.restdocs:spring-restdocs-core")
                 implementation("org.springframework:spring-test")
-                implementation("org.springframework.restdocs:spring-restdocs-mockmvc")
                 runtimeOnly("com.jayway.jsonpath:json-path")
                 compileOnly("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-starter")
             }

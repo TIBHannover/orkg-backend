@@ -19,6 +19,7 @@ import org.orkg.contenttypes.domain.testing.fixtures.createComparisonRelatedReso
 import org.orkg.contenttypes.input.ComparisonRelatedResourceUseCases
 import org.orkg.contenttypes.input.testing.fixtures.comparisonRelatedResourceResponseFields
 import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerUnitTestConfiguration
+import org.orkg.graph.domain.InvalidDescription
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectComparisonRelatedResource
@@ -161,7 +162,7 @@ internal class ComparisonRelatedResourceControllerUnitTest : MockMvcBaseTest("co
                     fieldWithPath("url").description("The url of the comparison related resource. (optional)").optional(),
                     fieldWithPath("description").description("The description of the comparison related resource. (optional)").optional(),
                 )
-                throws(InvalidLabel::class, ComparisonNotFound::class)
+                throws(InvalidLabel::class, InvalidDescription::class, ComparisonNotFound::class)
             }
 
         verify(exactly = 1) { comparisonRelatedResourceService.create(any()) }

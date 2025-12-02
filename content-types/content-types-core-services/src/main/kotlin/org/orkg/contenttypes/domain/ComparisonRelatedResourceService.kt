@@ -10,6 +10,8 @@ import org.orkg.contenttypes.domain.actions.comparisons.ComparisonRelatedResourc
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonRelatedResourceUpdater
 import org.orkg.contenttypes.input.ComparisonRelatedResourceUseCases
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.Description
+import org.orkg.graph.domain.InvalidDescription
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.Label
 import org.orkg.graph.domain.Predicates
@@ -59,6 +61,9 @@ class ComparisonRelatedResourceService(
 
     override fun create(command: CreateComparisonRelatedResourceCommand): ThingId {
         Label.ofOrNull(command.label) ?: throw InvalidLabel()
+        command.image?.let { Label.ofOrNull(it) ?: throw InvalidLabel("image") }
+        command.url?.let { Label.ofOrNull(it) ?: throw InvalidLabel("url") }
+        command.description?.let { Description.ofOrNull(it) ?: throw InvalidDescription() }
         resourceRepository.findById(command.comparisonId)
             .filter { Classes.comparison in it.classes }
             .orElseThrow { ComparisonNotFound(command.comparisonId) }

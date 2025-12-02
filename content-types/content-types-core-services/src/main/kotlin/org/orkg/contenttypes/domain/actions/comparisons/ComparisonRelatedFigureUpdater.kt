@@ -1,5 +1,6 @@
 package org.orkg.contenttypes.domain.actions.comparisons
 
+import dev.forkhandles.values.ofOrNull
 import org.orkg.common.PageRequests
 import org.orkg.contenttypes.domain.ComparisonNotFound
 import org.orkg.contenttypes.domain.ComparisonRelatedFigureNotFound
@@ -8,6 +9,10 @@ import org.orkg.contenttypes.domain.actions.SingleStatementPropertyUpdater
 import org.orkg.contenttypes.domain.actions.UpdateComparisonRelatedFigureCommand
 import org.orkg.contenttypes.input.ComparisonRelatedFigureUseCases
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.Description
+import org.orkg.graph.domain.InvalidDescription
+import org.orkg.graph.domain.InvalidLabel
+import org.orkg.graph.domain.Label
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
@@ -35,6 +40,9 @@ class ComparisonRelatedFigureUpdater(
     )
 
     fun execute(command: UpdateComparisonRelatedFigureCommand) {
+        // command.label is validated by the resource service below
+        command.image?.let { Label.ofOrNull(it) ?: throw InvalidLabel("image") }
+        command.description?.let { Description.ofOrNull(it) ?: throw InvalidDescription() }
         resourceService.findById(command.comparisonId)
             .filter {
                 if (Classes.comparisonPublished in it.classes) {

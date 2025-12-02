@@ -18,7 +18,7 @@ import org.orkg.graph.input.UnsafeStatementUseCases
 internal class ComparisonContributionCreatorUnitTest : MockkBaseTest {
     private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
 
-    private val contributionCreator = ComparisonContributionCreator(unsafeStatementUseCases)
+    private val comparisonContributionCreator = ComparisonContributionCreator(unsafeStatementUseCases)
 
     @Test
     fun `Given a subject resource, when linking contributions, it returns success`() {
@@ -30,7 +30,7 @@ internal class ComparisonContributionCreatorUnitTest : MockkBaseTest {
 
         every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
 
-        val result = contributionCreator(command, state)
+        val result = comparisonContributionCreator(command, state)
 
         result.asClue {
             it.authors.size shouldBe 0

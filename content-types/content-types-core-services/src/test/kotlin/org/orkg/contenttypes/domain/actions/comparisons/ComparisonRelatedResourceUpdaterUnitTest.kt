@@ -1,5 +1,8 @@
 package org.orkg.contenttypes.domain.actions.comparisons
 
+import io.kotest.assertions.asClue
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
@@ -20,6 +23,9 @@ import org.orkg.contenttypes.domain.actions.UpdateComparisonRelatedResourceComma
 import org.orkg.contenttypes.domain.testing.fixtures.createComparisonRelatedResource
 import org.orkg.contenttypes.input.ComparisonRelatedResourceUseCases
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.InvalidDescription
+import org.orkg.graph.domain.InvalidLabel
+import org.orkg.graph.domain.MAX_LABEL_LENGTH
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.ResourceUseCases
@@ -36,7 +42,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
     private val statementService: StatementUseCases = mockk()
     private val singleStatementPropertyUpdater: SingleStatementPropertyUpdater = mockk()
 
-    private val contributionCreator = ComparisonRelatedResourceUpdater(
+    private val comparisonRelatedResourceUpdater = ComparisonRelatedResourceUpdater(
         comparisonRelatedResourceUseCases,
         resourceService,
         statementService,
@@ -57,7 +63,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
             )
         } returns Optional.of(comparisonRelatedResource)
 
-        contributionCreator.execute(command)
+        comparisonRelatedResourceUpdater.execute(command)
 
         verify(exactly = 1) { resourceService.findById(command.comparisonId) }
         verify(exactly = 1) {
@@ -69,13 +75,46 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
     }
 
     @Test
+    fun `Given a comparison related resource update command, when image is invalid, it throws an exception`() {
+        val command = createComparisonRelatedResource()
+            .toComparisonRelatedResourceUpdateCommand()
+            .copy(image = "\n")
+
+        shouldThrow<InvalidLabel> { comparisonRelatedResourceUpdater.execute(command) }.asClue {
+            it.property shouldBe "image"
+        }
+    }
+
+    @Test
+    fun `Given a comparison related resource update command, when url is invalid, it throws an exception`() {
+        val command = createComparisonRelatedResource()
+            .toComparisonRelatedResourceUpdateCommand()
+            .copy(url = "\n")
+
+        shouldThrow<InvalidLabel> { comparisonRelatedResourceUpdater.execute(command) }.asClue {
+            it.property shouldBe "url"
+        }
+    }
+
+    @Test
+    fun `Given a comparison related resource update command, when description is invalid, it throws an exception`() {
+        val command = createComparisonRelatedResource()
+            .toComparisonRelatedResourceUpdateCommand()
+            .copy(description = "a".repeat(MAX_LABEL_LENGTH + 1))
+
+        shouldThrow<InvalidDescription> { comparisonRelatedResourceUpdater.execute(command) }.asClue {
+            it.property shouldBe "description"
+        }
+    }
+
+    @Test
     fun `Given a comparison related resource update command, when comparison does not exist, it throws an exception`() {
         val comparisonRelatedResource = createComparisonRelatedResource()
         val command = comparisonRelatedResource.toComparisonRelatedResourceUpdateCommand()
 
         every { resourceService.findById(command.comparisonId) } returns Optional.empty()
 
-        assertThrows<ComparisonNotFound> { contributionCreator.execute(command) }
+        assertThrows<ComparisonNotFound> { comparisonRelatedResourceUpdater.execute(command) }
 
         verify(exactly = 1) { resourceService.findById(command.comparisonId) }
     }
@@ -94,7 +133,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
             )
         } returns Optional.empty()
 
-        assertThrows<ComparisonRelatedResourceNotFound> { contributionCreator.execute(command) }
+        assertThrows<ComparisonRelatedResourceNotFound> { comparisonRelatedResourceUpdater.execute(command) }
 
         verify(exactly = 1) { resourceService.findById(command.comparisonId) }
         verify(exactly = 1) {
@@ -113,7 +152,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
 
         every { resourceService.findById(command.comparisonId) } returns Optional.of(comparison)
 
-        assertThrows<ComparisonRelatedResourceNotModifiable> { contributionCreator.execute(command) }
+        assertThrows<ComparisonRelatedResourceNotModifiable> { comparisonRelatedResourceUpdater.execute(command) }
 
         verify(exactly = 1) { resourceService.findById(command.comparisonId) }
     }
@@ -140,7 +179,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
         } returns Optional.of(comparisonRelatedResource)
         every { resourceService.update(updateResourceCommand) } just runs
 
-        contributionCreator.execute(command)
+        comparisonRelatedResourceUpdater.execute(command)
 
         verify(exactly = 1) { resourceService.findById(command.comparisonId) }
         verify(exactly = 1) {
@@ -187,7 +226,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
             )
         } just runs
 
-        contributionCreator.execute(command)
+        comparisonRelatedResourceUpdater.execute(command)
 
         verify(exactly = 1) { resourceService.findById(command.comparisonId) }
         verify(exactly = 1) {
@@ -248,7 +287,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
             )
         } just runs
 
-        contributionCreator.execute(command)
+        comparisonRelatedResourceUpdater.execute(command)
 
         verify(exactly = 1) { resourceService.findById(command.comparisonId) }
         verify(exactly = 1) {
@@ -309,7 +348,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
             )
         } just runs
 
-        contributionCreator.execute(command)
+        comparisonRelatedResourceUpdater.execute(command)
 
         verify(exactly = 1) { resourceService.findById(command.comparisonId) }
         verify(exactly = 1) {

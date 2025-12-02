@@ -10,6 +10,8 @@ import org.orkg.contenttypes.domain.actions.comparisons.ComparisonRelatedFigureD
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonRelatedFigureUpdater
 import org.orkg.contenttypes.input.ComparisonRelatedFigureUseCases
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.Description
+import org.orkg.graph.domain.InvalidDescription
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.Label
 import org.orkg.graph.domain.Predicates
@@ -59,6 +61,8 @@ class ComparisonRelatedFigureService(
 
     override fun create(command: CreateComparisonRelatedFigureCommand): ThingId {
         Label.ofOrNull(command.label) ?: throw InvalidLabel()
+        command.image?.let { Label.ofOrNull(it) ?: throw InvalidLabel("image") }
+        command.description?.let { Description.ofOrNull(it) ?: throw InvalidDescription() }
         resourceRepository.findById(command.comparisonId)
             .filter { Classes.comparison in it.classes }
             .orElseThrow { ComparisonNotFound(command.comparisonId) }

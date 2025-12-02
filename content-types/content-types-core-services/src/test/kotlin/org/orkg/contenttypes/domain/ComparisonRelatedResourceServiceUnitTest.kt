@@ -1,5 +1,6 @@
 package org.orkg.contenttypes.domain
 
+import io.kotest.assertions.asClue
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.mockk.every
@@ -11,7 +12,9 @@ import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreateComparisonRelatedResourceCommand
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.InvalidDescription
 import org.orkg.graph.domain.InvalidLabel
+import org.orkg.graph.domain.MAX_LABEL_LENGTH
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateLiteralUseCase
@@ -226,7 +229,54 @@ internal class ComparisonRelatedResourceServiceUnitTest : MockkBaseTest {
             url = null,
             description = null
         )
-        shouldThrow<InvalidLabel> { service.create(command) }
+        shouldThrow<InvalidLabel> { service.create(command) }.asClue {
+            it.property shouldBe "label"
+        }
+    }
+
+    @Test
+    fun `Given a comparison related resource create command, when image is invalid, it throws an exception`() {
+        val command = CreateComparisonRelatedResourceCommand(
+            comparisonId = ThingId("R123"),
+            contributorId = ContributorId(UUID.randomUUID()),
+            label = "related resource",
+            image = "\n",
+            url = null,
+            description = null
+        )
+        shouldThrow<InvalidLabel> { service.create(command) }.asClue {
+            it.property shouldBe "image"
+        }
+    }
+
+    @Test
+    fun `Given a comparison related resource create command, when url is invalid, it throws an exception`() {
+        val command = CreateComparisonRelatedResourceCommand(
+            comparisonId = ThingId("R123"),
+            contributorId = ContributorId(UUID.randomUUID()),
+            label = "related resource",
+            image = null,
+            url = "\n",
+            description = null
+        )
+        shouldThrow<InvalidLabel> { service.create(command) }.asClue {
+            it.property shouldBe "url"
+        }
+    }
+
+    @Test
+    fun `Given a comparison related resource create command, when description is invalid, it throws an exception`() {
+        val command = CreateComparisonRelatedResourceCommand(
+            comparisonId = ThingId("R123"),
+            contributorId = ContributorId(UUID.randomUUID()),
+            label = "related resource",
+            image = null,
+            url = null,
+            description = "a".repeat(MAX_LABEL_LENGTH + 1)
+        )
+        shouldThrow<InvalidDescription> { service.create(command) }.asClue {
+            it.property shouldBe "description"
+        }
     }
 
     @Test

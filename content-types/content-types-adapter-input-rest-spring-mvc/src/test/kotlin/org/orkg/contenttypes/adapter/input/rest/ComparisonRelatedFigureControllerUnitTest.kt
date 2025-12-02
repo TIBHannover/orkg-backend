@@ -19,6 +19,7 @@ import org.orkg.contenttypes.domain.testing.fixtures.createComparisonRelatedFigu
 import org.orkg.contenttypes.input.ComparisonRelatedFigureUseCases
 import org.orkg.contenttypes.input.testing.fixtures.comparisonRelatedFigureResponseFields
 import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerUnitTestConfiguration
+import org.orkg.graph.domain.InvalidDescription
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectComparisonRelatedFigure
@@ -160,7 +161,7 @@ internal class ComparisonRelatedFigureControllerUnitTest : MockMvcBaseTest("comp
                     fieldWithPath("image").description("The url to the image of the comparison related figure. (optional)").optional(),
                     fieldWithPath("description").description("The description of the comparison related figure. (optional)").optional(),
                 )
-                throws(InvalidLabel::class, ComparisonNotFound::class)
+                throws(InvalidLabel::class, InvalidDescription::class, ComparisonNotFound::class)
             }
 
         verify(exactly = 1) { comparisonRelatedFigureService.create(any()) }
@@ -227,6 +228,7 @@ internal class ComparisonRelatedFigureControllerUnitTest : MockMvcBaseTest("comp
                     ComparisonNotFound::class,
                     ComparisonRelatedFigureNotFound::class,
                     InvalidLabel::class,
+                    InvalidDescription::class,
                 )
             }
 

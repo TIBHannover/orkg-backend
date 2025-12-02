@@ -1,5 +1,8 @@
 package org.orkg.contenttypes.domain.actions.comparisons
 
+import io.kotest.assertions.asClue
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
@@ -20,6 +23,9 @@ import org.orkg.contenttypes.domain.actions.UpdateComparisonRelatedFigureCommand
 import org.orkg.contenttypes.domain.testing.fixtures.createComparisonRelatedFigure
 import org.orkg.contenttypes.input.ComparisonRelatedFigureUseCases
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.InvalidDescription
+import org.orkg.graph.domain.InvalidLabel
+import org.orkg.graph.domain.MAX_LABEL_LENGTH
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.ResourceUseCases
@@ -36,7 +42,7 @@ internal class ComparisonRelatedFigureUpdaterUnitTest : MockkBaseTest {
     private val statementService: StatementUseCases = mockk()
     private val singleStatementPropertyUpdater: SingleStatementPropertyUpdater = mockk()
 
-    private val contributionCreator = ComparisonRelatedFigureUpdater(
+    private val comparisonRelatedFigureUpdater = ComparisonRelatedFigureUpdater(
         comparisonRelatedFigureUseCases,
         resourceService,
         statementService,
@@ -57,7 +63,7 @@ internal class ComparisonRelatedFigureUpdaterUnitTest : MockkBaseTest {
             )
         } returns Optional.of(comparisonRelatedFigure)
 
-        contributionCreator.execute(command)
+        comparisonRelatedFigureUpdater.execute(command)
 
         verify(exactly = 1) { resourceService.findById(command.comparisonId) }
         verify(exactly = 1) {
@@ -69,13 +75,35 @@ internal class ComparisonRelatedFigureUpdaterUnitTest : MockkBaseTest {
     }
 
     @Test
+    fun `Given a comparison related figure update command, when image is invalid, it throws an exception`() {
+        val command = createComparisonRelatedFigure()
+            .toComparisonRelatedFigureUpdateCommand()
+            .copy(image = "\n")
+
+        shouldThrow<InvalidLabel> { comparisonRelatedFigureUpdater.execute(command) }.asClue {
+            it.property shouldBe "image"
+        }
+    }
+
+    @Test
+    fun `Given a comparison related figure update command, when description is invalid, it throws an exception`() {
+        val command = createComparisonRelatedFigure()
+            .toComparisonRelatedFigureUpdateCommand()
+            .copy(description = "a".repeat(MAX_LABEL_LENGTH + 1))
+
+        shouldThrow<InvalidDescription> { comparisonRelatedFigureUpdater.execute(command) }.asClue {
+            it.property shouldBe "description"
+        }
+    }
+
+    @Test
     fun `Given a comparison related figure update command, when comparison does not exist, it throws an exception`() {
         val comparisonRelatedFigure = createComparisonRelatedFigure()
         val command = comparisonRelatedFigure.toComparisonRelatedFigureUpdateCommand()
 
         every { resourceService.findById(command.comparisonId) } returns Optional.empty()
 
-        assertThrows<ComparisonNotFound> { contributionCreator.execute(command) }
+        assertThrows<ComparisonNotFound> { comparisonRelatedFigureUpdater.execute(command) }
 
         verify(exactly = 1) { resourceService.findById(command.comparisonId) }
     }
@@ -94,7 +122,7 @@ internal class ComparisonRelatedFigureUpdaterUnitTest : MockkBaseTest {
             )
         } returns Optional.empty()
 
-        assertThrows<ComparisonRelatedFigureNotFound> { contributionCreator.execute(command) }
+        assertThrows<ComparisonRelatedFigureNotFound> { comparisonRelatedFigureUpdater.execute(command) }
 
         verify(exactly = 1) { resourceService.findById(command.comparisonId) }
         verify(exactly = 1) {
@@ -113,7 +141,7 @@ internal class ComparisonRelatedFigureUpdaterUnitTest : MockkBaseTest {
 
         every { resourceService.findById(command.comparisonId) } returns Optional.of(comparison)
 
-        assertThrows<ComparisonRelatedFigureNotModifiable> { contributionCreator.execute(command) }
+        assertThrows<ComparisonRelatedFigureNotModifiable> { comparisonRelatedFigureUpdater.execute(command) }
 
         verify(exactly = 1) { resourceService.findById(command.comparisonId) }
     }
@@ -140,7 +168,7 @@ internal class ComparisonRelatedFigureUpdaterUnitTest : MockkBaseTest {
         } returns Optional.of(comparisonRelatedFigure)
         every { resourceService.update(updateFigureCommand) } just runs
 
-        contributionCreator.execute(command)
+        comparisonRelatedFigureUpdater.execute(command)
 
         verify(exactly = 1) { resourceService.findById(command.comparisonId) }
         verify(exactly = 1) {
@@ -187,7 +215,7 @@ internal class ComparisonRelatedFigureUpdaterUnitTest : MockkBaseTest {
             )
         } just runs
 
-        contributionCreator.execute(command)
+        comparisonRelatedFigureUpdater.execute(command)
 
         verify(exactly = 1) { resourceService.findById(command.comparisonId) }
         verify(exactly = 1) {
@@ -248,7 +276,7 @@ internal class ComparisonRelatedFigureUpdaterUnitTest : MockkBaseTest {
             )
         } just runs
 
-        contributionCreator.execute(command)
+        comparisonRelatedFigureUpdater.execute(command)
 
         verify(exactly = 1) { resourceService.findById(command.comparisonId) }
         verify(exactly = 1) {

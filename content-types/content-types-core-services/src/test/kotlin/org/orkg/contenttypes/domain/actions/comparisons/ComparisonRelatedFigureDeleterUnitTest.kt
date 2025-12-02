@@ -28,7 +28,7 @@ internal class ComparisonRelatedFigureDeleterUnitTest : MockkBaseTest {
     private val statementService: StatementUseCases = mockk()
     private val resourceService: ResourceUseCases = mockk()
 
-    private val contributionCreator = ComparisonRelatedFigureDeleter(statementService, resourceService)
+    private val comparisonRelatedFigureDeleter = ComparisonRelatedFigureDeleter(statementService, resourceService)
 
     @Test
     fun `Given a comparison related figure, when deleting, it deletes the comparison related figure`() {
@@ -78,7 +78,7 @@ internal class ComparisonRelatedFigureDeleterUnitTest : MockkBaseTest {
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
         every { resourceService.delete(comparisonRelatedFigureId, contributorId) } just runs
 
-        contributionCreator.execute(comparisonId, comparisonRelatedFigureId, contributorId)
+        comparisonRelatedFigureDeleter.execute(comparisonId, comparisonRelatedFigureId, contributorId)
 
         verify(exactly = 1) {
             statementService.findAll(
@@ -134,7 +134,7 @@ internal class ComparisonRelatedFigureDeleterUnitTest : MockkBaseTest {
         } returns pageOf()
 
         assertThrows<ComparisonRelatedFigureNotFound> {
-            contributionCreator.execute(comparisonId, comparisonRelatedFigureId, contributorId)
+            comparisonRelatedFigureDeleter.execute(comparisonId, comparisonRelatedFigureId, contributorId)
         }
 
         verify(exactly = 1) {
@@ -182,7 +182,7 @@ internal class ComparisonRelatedFigureDeleterUnitTest : MockkBaseTest {
         )
 
         assertThrows<ComparisonRelatedFigureNotModifiable> {
-            contributionCreator.execute(comparisonId, comparisonRelatedFigureId, contributorId)
+            comparisonRelatedFigureDeleter.execute(comparisonId, comparisonRelatedFigureId, contributorId)
         }
 
         verify(exactly = 1) {
@@ -240,7 +240,7 @@ internal class ComparisonRelatedFigureDeleterUnitTest : MockkBaseTest {
         } returns pageOf()
 
         assertThrows<ComparisonRelatedFigureNotModifiable> {
-            contributionCreator.execute(comparisonId, comparisonRelatedFigureId, contributorId)
+            comparisonRelatedFigureDeleter.execute(comparisonId, comparisonRelatedFigureId, contributorId)
         }
 
         verify(exactly = 1) {
@@ -300,7 +300,7 @@ internal class ComparisonRelatedFigureDeleterUnitTest : MockkBaseTest {
         } returns pageOf(hasRelatedFigure, createStatement(`object` = comparisonRelatedFigure))
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
 
-        contributionCreator.execute(comparisonId, comparisonRelatedFigureId, contributorId)
+        comparisonRelatedFigureDeleter.execute(comparisonId, comparisonRelatedFigureId, contributorId)
 
         verify(exactly = 1) {
             statementService.findAll(

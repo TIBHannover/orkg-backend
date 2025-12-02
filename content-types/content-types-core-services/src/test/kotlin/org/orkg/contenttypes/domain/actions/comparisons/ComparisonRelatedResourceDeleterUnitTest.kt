@@ -28,7 +28,7 @@ internal class ComparisonRelatedResourceDeleterUnitTest : MockkBaseTest {
     private val statementService: StatementUseCases = mockk()
     private val resourceService: ResourceUseCases = mockk()
 
-    private val contributionCreator = ComparisonRelatedResourceDeleter(statementService, resourceService)
+    private val comparisonRelatedResourceDeleter = ComparisonRelatedResourceDeleter(statementService, resourceService)
 
     @Test
     fun `Given a comparison related resource, when deleting, it deletes the comparison related resource`() {
@@ -78,7 +78,7 @@ internal class ComparisonRelatedResourceDeleterUnitTest : MockkBaseTest {
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
         every { resourceService.delete(comparisonRelatedResourceId, contributorId) } just runs
 
-        contributionCreator.execute(comparisonId, comparisonRelatedResourceId, contributorId)
+        comparisonRelatedResourceDeleter.execute(comparisonId, comparisonRelatedResourceId, contributorId)
 
         verify(exactly = 1) {
             statementService.findAll(
@@ -134,7 +134,7 @@ internal class ComparisonRelatedResourceDeleterUnitTest : MockkBaseTest {
         } returns pageOf()
 
         assertThrows<ComparisonRelatedResourceNotFound> {
-            contributionCreator.execute(comparisonId, comparisonRelatedResourceId, contributorId)
+            comparisonRelatedResourceDeleter.execute(comparisonId, comparisonRelatedResourceId, contributorId)
         }
 
         verify(exactly = 1) {
@@ -182,7 +182,7 @@ internal class ComparisonRelatedResourceDeleterUnitTest : MockkBaseTest {
         )
 
         assertThrows<ComparisonRelatedResourceNotModifiable> {
-            contributionCreator.execute(comparisonId, comparisonRelatedResourceId, contributorId)
+            comparisonRelatedResourceDeleter.execute(comparisonId, comparisonRelatedResourceId, contributorId)
         }
 
         verify(exactly = 1) {
@@ -240,7 +240,7 @@ internal class ComparisonRelatedResourceDeleterUnitTest : MockkBaseTest {
         } returns pageOf()
 
         assertThrows<ComparisonRelatedResourceNotModifiable> {
-            contributionCreator.execute(comparisonId, comparisonRelatedResourceId, contributorId)
+            comparisonRelatedResourceDeleter.execute(comparisonId, comparisonRelatedResourceId, contributorId)
         }
 
         verify(exactly = 1) {
@@ -300,7 +300,7 @@ internal class ComparisonRelatedResourceDeleterUnitTest : MockkBaseTest {
         } returns pageOf(hasRelatedResource, createStatement(`object` = comparisonRelatedResource))
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
 
-        contributionCreator.execute(comparisonId, comparisonRelatedResourceId, contributorId)
+        comparisonRelatedResourceDeleter.execute(comparisonId, comparisonRelatedResourceId, contributorId)
 
         verify(exactly = 1) {
             statementService.findAll(

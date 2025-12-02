@@ -12,7 +12,6 @@ import org.orkg.createLiteral
 import org.orkg.createPredicates
 import org.orkg.createResource
 import org.orkg.createStatement
-import org.orkg.graph.adapter.input.rest.testing.fixtures.resourceResponseFields
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.LiteralService
 import org.orkg.graph.domain.Predicates
@@ -23,13 +22,7 @@ import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
 import org.orkg.testing.spring.MockMvcBaseTest
-import org.orkg.testing.spring.restdocs.pageableDetailedFieldParameters
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.restdocs.payload.PayloadDocumentation.applyPathPrefix
-import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
-import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -126,7 +119,7 @@ internal class LegacyComparisonControllerIntegrationTest : MockMvcBaseTest("comp
         statementService.createStatement(comparison, Predicates.comparesContribution, cont2)
         statementService.createStatement(comparison, Predicates.comparesContribution, cont3)
 
-        documentedGetRequestTo("/api/comparisons/{id}/authors", comparison)
+        get("/api/comparisons/{id}/authors", comparison)
             .param("size", "2")
             .perform()
             .andExpect(status().isOk)
@@ -139,31 +132,5 @@ internal class LegacyComparisonControllerIntegrationTest : MockMvcBaseTest("comp
                     anyOf(nullValue(), `is`<List<Int?>>(emptyList()))
                 )
             )
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the comparison.")
-                    ),
-                    authorsOfComparisonResponseFields()
-                )
-            )
-            .andDo(generateDefaultDocSnippets())
     }
-
-    private fun authorsOfComparisonResponseFields() =
-        responseFields(pageableDetailedFieldParameters())
-            .andWithPrefix(
-                "content[].",
-                listOf(
-                    fieldWithPath("author").description("author"),
-                    fieldWithPath("author.value").type("string").description("The author name"),
-                    *applyPathPrefix("author.value.", resourceResponseFields()).toTypedArray(),
-                    fieldWithPath("info[]").description("Information about the compared papers of each author"),
-                    fieldWithPath("info[].paper_id").description("The paper resource ID"),
-                    fieldWithPath("info[].paper_year").description("The year in which the paper was published (optional)").optional(),
-                    fieldWithPath("info[].author_index").description("Zero-based index of the author in the authors list")
-                ),
-            )
-            .andWithPrefix("content[].author.value.", resourceResponseFields())
-            .andWithPrefix("")
 }

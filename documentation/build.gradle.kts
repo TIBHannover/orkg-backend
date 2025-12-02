@@ -233,11 +233,16 @@ val aggregateOpenApiSnippets by tasks.registering(Sync::class) {
     from(aggregateRestDocsSnippets.get().outputs) {
         includeEmptyDirs = false
         include("**/resource.json")
-        exclude("errors_*/resource.json")
-        exclude("classes_find-by-uri")
-        exclude("contributor-identifiers_delete")
-        exclude("papers_exists-by-doi")
-        exclude("papers_exists-by-title")
+        exclude(
+            "errors_*/resource.json",
+            "classes_find-by-uri",
+            "contributor-identifiers_delete",
+            "papers_exists-by-doi",
+            "papers_exists-by-title",
+            "paged_page",
+            "filter-configs_get-single",
+            "rdf-hints_legacy-redirect-to-dump",
+        )
     }
     into(aggregatedOpenApiSnippetsDir)
 }

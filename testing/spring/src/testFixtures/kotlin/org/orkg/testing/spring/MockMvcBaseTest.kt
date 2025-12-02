@@ -86,12 +86,9 @@ abstract class MockMvcBaseTest(val prefix: String) : MockkBaseTest {
     @Autowired
     private lateinit var documentationContext: DocumentationContext
 
-    @Deprecated(
-        message = "This variable will be changed to private in the future, when migration to the documentation dsl is complete."
-    )
-    protected lateinit var documentationHandler: RestDocumentationResultHandler
+    private lateinit var documentationHandler: RestDocumentationResultHandler
 
-    protected lateinit var mockMvc: MockMvc
+    private lateinit var mockMvc: MockMvc
 
     val identifier = "${prefix}_{method-name}"
 
@@ -116,7 +113,14 @@ abstract class MockMvcBaseTest(val prefix: String) : MockkBaseTest {
     }
 
     /**
-     * Syntactic sugar to generate the default documentation snippets (`curl-request.adoc`, etc.).
+     * Syntactic sugar to generate the default documentation snippets.
+     * This includes:
+     *   - curl-request
+     *   - http-request
+     *   - http-response
+     *   - httpie-request
+     *   - request-body
+     *   - response-body
      */
     protected fun generateDefaultDocSnippets(): ResultHandler = documentationHandler
 

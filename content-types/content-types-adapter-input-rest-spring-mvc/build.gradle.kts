@@ -78,7 +78,6 @@ testing {
                 implementation("io.kotest:kotest-assertions-core")
                 implementation("io.kotest:kotest-assertions-shared")
                 implementation("com.ninja-squad:springmockk")
-                implementation("org.springframework.restdocs:spring-restdocs-mockmvc")
                 implementation(project(":content-types:content-types-adapter-input-rest-spring-mvc"))
                 implementation(testFixtures(project(":common:testing")))
                 implementation(testFixtures(project(":community:community-adapter-input-rest-spring-mvc")))

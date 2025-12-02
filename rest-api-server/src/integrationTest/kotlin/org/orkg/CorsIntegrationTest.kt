@@ -91,8 +91,9 @@ internal class CorsIntegrationTest : MockMvcBaseTest("cors") {
     @Test
     @DisplayName("CORS Preflight request declares Location header as safe")
     fun preflightRequestDeclaresLocationHeaderAsSafe() {
-        val response = mockMvc
-            .perform(options("/headers/location").header("Origin", "https://example.com"))
+        val response = options("/headers/location")
+            .header("Origin", "https://example.com")
+            .perform()
             .andExpect(status().isOk)
             .andReturn()
             .response

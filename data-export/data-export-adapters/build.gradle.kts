@@ -22,7 +22,6 @@ testing {
                 implementation("io.kotest:kotest-assertions-core")
                 implementation("io.kotest:kotest-assertions-shared")
                 implementation("com.ninja-squad:springmockk")
-                implementation("org.springframework.restdocs:spring-restdocs-mockmvc")
                 implementation(project(":data-export:data-export-core"))
             }
         }

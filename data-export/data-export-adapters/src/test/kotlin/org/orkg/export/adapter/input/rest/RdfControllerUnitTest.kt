@@ -32,9 +32,6 @@ import org.springframework.core.task.TaskExecutor
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
-import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
-import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -71,14 +68,11 @@ internal class RdfControllerUnitTest : MockMvcBaseTest("rdf-hints") {
             .perform()
             .andExpect(status().isMovedPermanently)
             .andExpect(header().string("Location", endsWith("/files/rdf-dumps/rdf-export-orkg.nt")))
-            .andDo(
-                documentationHandler.document(
-                    responseHeaders(
-                        headerWithName("Location").description("Location to the rdf dump.")
-                    )
+            .andDocument {
+                responseHeaders(
+                    headerWithName("Location").description("Location to the rdf dump.")
                 )
-            )
-            .andDo(generateDefaultDocSnippets())
+            }
     }
 
     @Test
@@ -103,15 +97,6 @@ internal class RdfControllerUnitTest : MockMvcBaseTest("rdf-hints") {
             .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content[0].label", `is`("Resource 1234")))
-            .andDo(
-                documentationHandler.document(
-                    queryParameters(
-                        parameterWithName("q").description("The search string for the label."),
-                        parameterWithName("exact").description("Determine if exact search should be performed. (Default: `false`)"),
-                        parameterWithName("type").description("The type of entity to be retrieved. Can be one of `property`, `class`, or `item`."),
-                    )
-                )
-            )
 
         verify(exactly = 1) { statementService.countAllIncomingStatementsById(setOf(someId)) }
         verify(exactly = 1) {

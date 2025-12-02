@@ -6,7 +6,7 @@
 The ORKG provides a dump of the entire graph in RDF, the dump is in N-Triples format.
 
 [[rdf-dump]]
-=== Fetting the RDF Dump
+=== Fetching the RDF Dump
 
 WARNING: This endpoint is deprecated. Clients are advised to update, because this endpoint will be removed in the future.
 

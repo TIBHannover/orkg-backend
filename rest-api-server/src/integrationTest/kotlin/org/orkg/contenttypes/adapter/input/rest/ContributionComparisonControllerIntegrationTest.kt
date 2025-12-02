@@ -19,11 +19,8 @@ import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
 import org.orkg.testing.spring.MockMvcBaseTest
-import org.orkg.testing.spring.restdocs.pageableDetailedFieldParameters
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
-import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -88,18 +85,12 @@ internal class ContributionComparisonControllerIntegrationTest : MockMvcBaseTest
 
         val ids = listOf(cont1, cont2)
 
-        documentedGetRequestTo("/api/contribution-comparisons/contributions")
+        get("/api/contribution-comparisons/contributions")
             .param("ids", *ids.map(ThingId::value).toTypedArray())
             .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(ids.size)))
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
-            .andDo(
-                documentationHandler.document(
-                    contributionInfoPageResponseFields()
-                )
-            )
-            .andDo(generateDefaultDocSnippets())
     }
 
     @Test
@@ -121,18 +112,4 @@ internal class ContributionComparisonControllerIntegrationTest : MockMvcBaseTest
             .perform()
             .andExpect(status().isBadRequest)
     }
-
-    private fun contributionInfoPageResponseFields() =
-        responseFields(pageableDetailedFieldParameters())
-            .andWithPrefix("content[].", contributionInfoResponseFields())
-            .andWithPrefix("")
-
-    private fun contributionInfoResponseFields() =
-        listOf(
-            fieldWithPath("id").description("The resource ID of the contribution"),
-            fieldWithPath("label").description("The label of the contribution"),
-            fieldWithPath("paper_title").description("The paper title of the parent paper"),
-            fieldWithPath("paper_year").description("The publication year of the paper, if available").optional(),
-            fieldWithPath("paper_id").description("The resource ID of the parent paper"),
-        )
 }

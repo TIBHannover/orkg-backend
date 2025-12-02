@@ -68,16 +68,10 @@ internal class LegacyPaperControllerIntegrationTest : MockMvcBaseTest("papers") 
         statementService.createStatement(intermediateResource, predicate1, id)
         statementService.createStatement(unrelatedPaper, predicate1, unrelatedResource)
 
-        documentedGetRequestTo("/api/papers")
+        get("/api/papers")
             .param("linked_to", "$id")
             .param("size", "50")
             .perform()
             .andExpect(status().isOk)
-            .andDo(
-                documentationHandler.document(
-                    // TODO: figure out how to document this call
-                )
-            )
-            .andDo(generateDefaultDocSnippets())
     }
 }

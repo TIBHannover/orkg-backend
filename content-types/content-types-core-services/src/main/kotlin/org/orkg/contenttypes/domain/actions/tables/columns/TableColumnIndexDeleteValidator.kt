@@ -11,7 +11,7 @@ class TableColumnIndexDeleteValidator : DeleteTableColumnAction {
         if (columnCount <= 1) {
             throw TooFewTableColumns(command.tableId)
         }
-        if (command.columnIndex !in 1 until columnCount) {
+        if (command.columnIndex !in 0 until columnCount) {
             throw TableColumnNotFound(command.tableId, command.columnIndex)
         }
         return state

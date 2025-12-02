@@ -31,13 +31,15 @@ class TableCellUpdater(
         val columns = columnGraphs.map { it.second }
         if (command.rowIndex == 0) {
             val columnGraph = columns[command.columnIndex]
-            singleStatementPropertyUpdater.updateRequiredProperty(
-                statements = state.statements[columnGraph.columnId].orEmpty(),
-                contributorId = command.contributorId,
-                subjectId = columnGraph.columnId,
-                predicateId = Predicates.csvwTitles,
-                objectId = command.id!!,
-            )
+            if (columnGraph.labelStatement?.`object`?.id != command.id) {
+                singleStatementPropertyUpdater.updateRequiredProperty(
+                    statements = state.statements[columnGraph.columnId].orEmpty(),
+                    contributorId = command.contributorId,
+                    subjectId = columnGraph.columnId,
+                    predicateId = Predicates.csvwTitles,
+                    objectId = command.id!!,
+                )
+            }
         } else {
             val headerIndices = columnGraphs.map { it.first!! }
             val rowGraphs = parseRowGraphs(command.tableId, state.statements, headerIndices)
@@ -50,7 +52,7 @@ class TableCellUpdater(
                     columnId = columns[command.columnIndex].columnId,
                     value = command.id,
                 )
-            } else {
+            } else if (cellGraph.value?.id != command.id) {
                 singleStatementPropertyUpdater.updateOptionalProperty(
                     statements = state.statements[cellGraph.cellId].orEmpty(),
                     contributorId = command.contributorId,

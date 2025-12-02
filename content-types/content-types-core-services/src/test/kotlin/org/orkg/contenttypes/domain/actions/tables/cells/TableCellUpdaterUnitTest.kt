@@ -86,6 +86,26 @@ internal class TableCellUpdaterUnitTest : MockkBaseTest {
         }
     }
 
+    @Test
+    fun `Given a table cell update command, when updating a cell value, and cell graph exists, and value is the same, it does nothing`() {
+        val command = updateTableCellCommand().copy(id = ThingId("Value_1_2"))
+        val statements = createTableStatements(
+            tableId = command.tableId,
+            rowCount = 2,
+            columnCount = 2,
+            valueIds = listOf(
+                listOf(ThingId("Value_1_1"), ThingId("Value_1_2")),
+                listOf(ThingId("Value_2_1"), ThingId("Value_2_2")),
+            )
+        )
+        val state = UpdateTableCellState(
+            table = createTable(),
+            statements = statements.groupBy { it.subject.id }
+        )
+
+        tableCellUpdater(command, state) shouldBe state
+    }
+
     // Note: The provided id in the command is assumed to be non-null. The validation is not part of this class.
     @Test
     fun `Given a table cell update command, when updating a cell value, and value is part of the header, it updates the title statement`() {
@@ -113,5 +133,22 @@ internal class TableCellUpdaterUnitTest : MockkBaseTest {
                 objectId = command.id!!,
             )
         }
+    }
+
+    // Note: The provided id in the command is assumed to be non-null. The validation is not part of this class.
+    @Test
+    fun `Given a table cell update command, when updating a cell value, and value is part of the header, and value is the same, it does nothing`() {
+        val command = updateTableCellCommand().copy(rowIndex = 0, id = ThingId("Column_2_Title"))
+        val statements = createTableStatements(
+            tableId = command.tableId,
+            rowCount = 2,
+            columnCount = 2
+        )
+        val state = UpdateTableCellState(
+            table = createTable(),
+            statements = statements.groupBy { it.subject.id }
+        )
+
+        tableCellUpdater(command, state) shouldBe state
     }
 }

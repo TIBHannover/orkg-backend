@@ -1,0 +1,12 @@
+{
+  "openapi" : "3.0.1",
+  "info" : {
+    "title" : "Open Research Knowledge Graph (ORKG) REST API",
+    "description" : "Open Research Knowledge Graph (ORKG) REST API"
+  },
+  "servers" : [ {
+    "url" : "http://localhost:8080"
+  } ],
+  "tags" : [ ],
+  "paths" : [ ]
+}

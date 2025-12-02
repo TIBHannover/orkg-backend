@@ -123,7 +123,7 @@ pages:
       policy: pull
   needs:
     - job: build
-      artifacts: false
+      artifacts: true
   script:
     # Turn a list of whitespace-separated tags into a comma-separated list, as GitLab gets confused with commas and variable substitutions.
     - docker_tags=$(echo "$IMAGE_TAGS" | sed 's/ \+/,/g')

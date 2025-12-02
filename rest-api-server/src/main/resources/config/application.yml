@@ -119,6 +119,8 @@ orkg:
         frontend: "https://orkg.org/resources/{id}/snapshots/{snapshotId}"
   http:
     user-agent: "ORKG-API/${project.version}"
+  api-spec:
+    path: "openapi3.yaml"
 management:
   endpoints:
     enabled-by-default: false

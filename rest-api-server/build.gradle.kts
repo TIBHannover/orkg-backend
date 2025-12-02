@@ -1,6 +1,6 @@
 @file:Suppress("UnstableApiUsage")
 
-import org.gradle.kotlin.dsl.implementation
+import com.google.cloud.tools.jib.gradle.JibTask
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 import org.springframework.boot.gradle.tasks.run.BootRun
 
@@ -19,10 +19,11 @@ testing {
         val test by getting(JvmTestSuite::class) {
             dependencies {
                 implementation(testFixtures(project(":common:spring-webmvc")))
+                implementation(testFixtures(project(":common:testing")))
                 implementation(testFixtures(project(":testing:spring")))
-
                 implementation("io.kotest:kotest-assertions-core")
                 implementation("io.kotest:kotest-assertions-shared")
+                implementation("org.hamcrest:hamcrest")
                 implementation("org.jetbrains.kotlin:kotlin-reflect")
                 implementation("org.junit.jupiter:junit-jupiter-api")
                 implementation("org.springframework.boot:spring-boot-test-autoconfigure")
@@ -30,6 +31,7 @@ testing {
                 implementation(project(":common:serialization"))
                 implementation("org.springframework.boot:spring-boot-test")
                 compileOnly("jakarta.servlet:jakarta.servlet-api")
+                runtimeOnly("com.jayway.jsonpath:json-path")
                 runtimeOnly("org.apache.tomcat.embed:tomcat-embed-core")
             }
         }
@@ -86,6 +88,17 @@ tasks.named<BootJar>("bootJar") {
 tasks.named<Jar>("jar") {
     // Build regular JAR, so we can share the application class and database migrations (e.g. for use in tests)
     enabled = true
+}
+
+jib {
+    extraDirectories {
+        // We cannot reference the openapi3 task here, so we depend on the documentation project instead
+        setPaths(project(":documentation").layout.buildDirectory.file("api-spec"))
+    }
+}
+
+tasks.withType<JibTask> {
+    dependsOn(":documentation:openapi3")
 }
 
 dependencies {
@@ -204,6 +217,7 @@ dependencies {
     implementation("org.springframework:spring-webmvc")
     implementation("org.springframework:spring-orm")
     implementation("jakarta.persistence:jakarta.persistence-api")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
 
     kapt("org.springframework.boot:spring-boot-configuration-processor")
 

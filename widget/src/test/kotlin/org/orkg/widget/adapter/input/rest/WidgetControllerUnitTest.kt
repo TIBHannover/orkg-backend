@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.MissingParameter
 import org.orkg.common.exceptions.TooManyParameters
+import org.orkg.graph.domain.PUBLISHABLE_CLASSES
 import org.orkg.graph.testing.asciidoc.Asciidoc
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectDetail
@@ -16,6 +17,8 @@ import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectError
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectTitle
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
+import org.orkg.testing.spring.restdocs.enumValues
+import org.orkg.testing.spring.restdocs.type
 import org.orkg.widget.adapter.input.rest.testing.fixtures.WidgetControllerUnitTestConfiguration
 import org.orkg.widget.input.ResolveDOIUseCase
 import org.orkg.widget.input.ResolveDOIUseCase.WidgetInfo
@@ -74,10 +77,10 @@ internal class WidgetControllerUnitTest : MockMvcBaseTest("widget") {
                 )
                 responseFields<WidgetInfo>(
                     fieldWithPath("id").description("The identifier of the resource."),
-                    fieldWithPath("doi").description("The DOI of the resource. May be `null` if the resource does not have a DOI."),
+                    fieldWithPath("doi").description("The DOI of the resource. May be `null` if the resource does not have a DOI.").optional(),
                     fieldWithPath("title").description("The title of the resource."),
-                    fieldWithPath("class").description("The class of the resource. Always one of ${Asciidoc.formatPublishableClasses()}."),
-                    fieldWithPath("num_statements").description("The number of statements connected to the resource if the class is `Paper`, or 0 in all other cases."),
+                    fieldWithPath("class").description("The class of the resource. Always one of ${Asciidoc.formatPublishableClasses()}.").type("enum").enumValues(PUBLISHABLE_CLASSES.map(ThingId::value)),
+                    fieldWithPath("num_statements").description("The number of statements connected to the resource if the class is `Paper`, or 0 in all other cases.").type<Long>(),
                 )
             }
 

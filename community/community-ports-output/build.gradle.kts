@@ -12,6 +12,7 @@ dependencies {
     testFixturesApi("org.junit.jupiter:junit-jupiter-api")
     testFixturesApi(project(":community:community-ports-output"))
     testFixturesApi(project(":eventbus"))
+    testFixturesImplementation("com.github.multiformats:java-multihash")
     testFixturesImplementation("dev.forkhandles:values4k")
     testFixturesImplementation("io.kotest:kotest-assertions-core")
     testFixturesImplementation("io.kotest:kotest-assertions-shared")

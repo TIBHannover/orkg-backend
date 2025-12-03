@@ -7,5 +7,6 @@ rootProject.name = "world"
 dependencyResolutionManagement {
     repositories {
         mavenCentral()
+        maven("https://jitpack.io")
     }
 }

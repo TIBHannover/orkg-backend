@@ -1,6 +1,6 @@
 package org.orkg.community.domain
 
-import org.orkg.community.domain.internal.MD5Hash
+import org.orkg.community.domain.internal.SHA256
 
 /**
  * An ID that can be used to obtain data from Gravatar.
@@ -16,7 +16,7 @@ import org.orkg.community.domain.internal.MD5Hash
 data class GravatarId(private val email: String? = null) {
     private val hashed: String by lazy {
         if (email != null) {
-            return@lazy MD5Hash.fromEmail(email).value
+            return@lazy SHA256.fromEmail(email).toDigestHex()
         }
         // Default: force "mystery person" icon
         "?d=mp&f=y"

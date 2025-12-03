@@ -1,5 +1,6 @@
 package org.orkg
 
+import io.ipfs.multihash.Multihash
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
@@ -7,7 +8,7 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.community.domain.OrganizationType
-import org.orkg.community.domain.internal.MD5Hash
+import org.orkg.community.domain.internal.SHA256
 import org.orkg.community.input.ContributorUseCases
 import org.orkg.community.input.CreateContributorUseCase
 import org.orkg.community.input.CreateObservatoryUseCase
@@ -117,7 +118,7 @@ fun ContributorUseCases.createContributor(
     joinedAt: OffsetDateTime = OffsetDateTime.now(fixedClock),
     organizationId: OrganizationId = OrganizationId.UNKNOWN,
     observatoryId: ObservatoryId = ObservatoryId.UNKNOWN,
-    emailMD5: MD5Hash = MD5Hash.fromEmail("user@example.org"),
+    emailHash: Multihash = SHA256.fromEmail("user@example.org"),
     isCurator: Boolean = false,
     isAdmin: Boolean = false,
 ): ContributorId = create(
@@ -127,7 +128,7 @@ fun ContributorUseCases.createContributor(
         joinedAt = joinedAt,
         organizationId = organizationId,
         observatoryId = observatoryId,
-        emailMD5 = emailMD5,
+        emailHash = emailHash,
         isCurator = isCurator,
         isAdmin = isAdmin
     )

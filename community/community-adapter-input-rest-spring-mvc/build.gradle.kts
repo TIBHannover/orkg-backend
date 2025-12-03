@@ -61,6 +61,8 @@ dependencies {
     api(project(":graph:graph-ports-input"))
     api(project(":media-storage:media-storage-core-model"))
     api(project(":media-storage:media-storage-ports-input"))
+    implementation("com.github.multiformats:java-multibase")
+    implementation("com.github.multiformats:java-multihash")
     implementation("org.springframework:spring-core")
     testFixturesApi("org.springframework:spring-context")
     testFixturesApi("org.springframework.boot:spring-boot-test")

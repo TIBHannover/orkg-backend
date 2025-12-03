@@ -3,10 +3,11 @@ package org.orkg.community.domain
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
+import io.ipfs.multihash.Multihash
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
-import org.orkg.community.domain.internal.MD5Hash
+import org.orkg.community.domain.internal.SHA256
 import java.time.OffsetDateTime
 
 /**
@@ -48,7 +49,7 @@ data class Contributor(
      * Used to generate the Gravatar image URL.
      */
     @JsonIgnore
-    val emailMD5: MD5Hash,
+    val emailHash: Multihash,
     /**
      * Determines if the contributor is a curator.
      */
@@ -65,7 +66,7 @@ data class Contributor(
      */
     @Suppress("unused")
     @get:JsonProperty("gravatar_id")
-    val gravatarId: String = emailMD5.value
+    val gravatarId: String = emailHash.toDigestHex()
 
     /**
      * The URL to an image that represents the user (aka. an avatar).
@@ -74,7 +75,7 @@ data class Contributor(
      */
     @Suppress("unused")
     @get:JsonProperty("avatar_url")
-    val avatarURL: String = "https://www.gravatar.com/avatar/${emailMD5.value}"
+    val avatarURL: String = "https://www.gravatar.com/avatar/${emailHash.toDigestHex()}"
 
     companion object {
         val UNKNOWN: Contributor =
@@ -82,7 +83,7 @@ data class Contributor(
                 id = ContributorId.UNKNOWN,
                 name = "Unknown User",
                 joinedAt = OffsetDateTime.MIN,
-                emailMD5 = MD5Hash.ZERO,
+                emailHash = SHA256.ZERO,
             )
     }
 }

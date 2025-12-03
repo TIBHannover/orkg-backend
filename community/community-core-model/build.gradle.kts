@@ -7,9 +7,10 @@ plugins {
 
 dependencies {
     api("com.fasterxml.jackson.core:jackson-annotations")
+    api("com.github.multiformats:java-multihash")
     api("org.springframework:spring-web")
-    implementation(project(":common:datatypes"))
     implementation(project(":common:string-utils"))
+    implementation("com.github.multiformats:java-multibase")
     implementation("dev.forkhandles:values4k")
     api(project(":common:core-identifiers"))
     api(project(":common:external-identifiers"))

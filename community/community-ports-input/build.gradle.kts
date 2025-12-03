@@ -6,6 +6,7 @@ plugins {
 }
 
 dependencies {
+    api("com.github.multiformats:java-multihash")
     api("org.springframework.data:spring-data-commons")
     api(project(":common:core-identifiers"))
     api(project(":community:community-core-model"))

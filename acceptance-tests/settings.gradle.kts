@@ -7,6 +7,7 @@ rootProject.name = "acceptance-tests"
 dependencyResolutionManagement {
     repositories {
         mavenCentral()
+        maven("https://jitpack.io")
     }
 }
 

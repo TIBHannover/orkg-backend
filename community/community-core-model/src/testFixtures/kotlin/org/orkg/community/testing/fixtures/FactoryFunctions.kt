@@ -17,7 +17,7 @@ import org.orkg.community.domain.ObservatoryFilterId
 import org.orkg.community.domain.Organization
 import org.orkg.community.domain.OrganizationType
 import org.orkg.community.domain.PeerReviewType
-import org.orkg.community.domain.internal.MD5Hash
+import org.orkg.community.domain.internal.SHA256
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.PredicatePath
 import org.orkg.graph.domain.Predicates
@@ -42,7 +42,7 @@ fun createContributor(
     joinedAt = joinedAt,
     observatoryId = observatoryId,
     organizationId = organizationId,
-    emailMD5 = MD5Hash.fromEmail(email),
+    emailHash = SHA256.fromEmail(email),
     isCurator = isCurator,
     isAdmin = isAdmin,
 )

@@ -13,7 +13,7 @@ import org.orkg.community.domain.Metadata
 import org.orkg.community.domain.Observatory
 import org.orkg.community.domain.Organization
 import org.orkg.community.domain.PeerReviewType
-import org.orkg.community.domain.internal.MD5Hash
+import org.orkg.community.domain.internal.SHA256
 import org.orkg.community.input.ConferenceSeriesUseCases
 import org.orkg.community.input.DummyDataUseCases
 import org.orkg.community.input.ObservatoryUseCases
@@ -88,7 +88,7 @@ class PostgresDummyDataSetup(
                     id = exampleUserId,
                     name = "Example User",
                     joinedAt = OffsetDateTime.now(),
-                    emailMD5 = MD5Hash.fromEmail("user@example.org"),
+                    emailHash = SHA256.fromEmail("user@example.org"),
                     isAdmin = true,
                     isCurator = true
                 )
@@ -223,7 +223,7 @@ class PostgresDummyDataSetup(
                 joinedAt = OffsetDateTime.now(),
                 organizationId = OrganizationId.UNKNOWN,
                 observatoryId = ObservatoryId.UNKNOWN,
-                emailMD5 = MD5Hash.fromEmail(email)
+                emailHash = SHA256.fromEmail(email)
             )
         )
     }

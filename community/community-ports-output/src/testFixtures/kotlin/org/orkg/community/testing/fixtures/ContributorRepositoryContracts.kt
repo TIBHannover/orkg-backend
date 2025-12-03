@@ -27,7 +27,7 @@ interface ContributorRepositoryContracts {
             it.name shouldBe expected.name
             it.organizationId shouldBe expected.organizationId
             it.observatoryId shouldBe expected.observatoryId
-            it.emailMD5 shouldBe expected.emailMD5
+            it.emailHash shouldBe expected.emailHash
             it.isCurator shouldBe expected.isCurator
             it.isAdmin shouldBe expected.isAdmin
             // getter

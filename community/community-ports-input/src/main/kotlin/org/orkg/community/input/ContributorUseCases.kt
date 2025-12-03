@@ -1,10 +1,10 @@
 package org.orkg.community.input
 
+import io.ipfs.multihash.Multihash
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.community.domain.Contributor
-import org.orkg.community.domain.internal.MD5Hash
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import java.time.OffsetDateTime
@@ -44,7 +44,7 @@ interface CreateContributorUseCase {
         val joinedAt: OffsetDateTime,
         val organizationId: OrganizationId = OrganizationId.UNKNOWN,
         val observatoryId: ObservatoryId = ObservatoryId.UNKNOWN,
-        val emailMD5: MD5Hash,
+        val emailHash: Multihash,
         val isCurator: Boolean = false,
         val isAdmin: Boolean = false,
     )

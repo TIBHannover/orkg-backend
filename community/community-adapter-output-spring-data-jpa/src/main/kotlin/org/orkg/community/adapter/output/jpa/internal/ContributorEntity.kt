@@ -1,5 +1,6 @@
 package org.orkg.community.adapter.output.jpa.internal
 
+import io.ipfs.multihash.Multihash
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
@@ -7,9 +8,8 @@ import jakarta.persistence.Table
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
-import org.orkg.common.md5
 import org.orkg.community.domain.Contributor
-import org.orkg.community.domain.internal.MD5Hash
+import org.orkg.community.domain.internal.SHA256
 import org.orkg.eventbus.events.UserRegistered
 import org.orkg.eventbus.events.UserRegistered.Role.ADMIN
 import org.orkg.eventbus.events.UserRegistered.Role.CURATOR
@@ -32,23 +32,24 @@ class ContributorEntity(
     var organizationId: UUID? = null,
     @Column(name = "observatory_id")
     var observatoryId: UUID? = null,
-    @Column(name = "email_md5")
-    var emailMD5: String? = null,
+    @Column(name = "email_multihash")
+    var emailMultiHash: String? = null,
     var curator: Boolean? = null,
     var admin: Boolean? = null,
 ) {
     companion object {
-        fun from(event: UserRegistered) = ContributorEntity(
-            id = UUID.fromString(event.id),
-            displayName = event.displayName,
-            joinedAt = event.createdAt,
-            joinedAtOffsetTotalSeconds = event.createdAt.offset.totalSeconds,
-            organizationId = event.organizationId?.let { UUID.fromString(event.organizationId) },
-            observatoryId = event.observatoryId?.let { UUID.fromString(event.observatoryId) },
-            emailMD5 = event.email.trim().lowercase().md5,
-            curator = CURATOR in event.roles || ADMIN in event.roles,
-            admin = ADMIN in event.roles,
-        )
+        fun from(event: UserRegistered): ContributorEntity =
+            ContributorEntity(
+                id = UUID.fromString(event.id),
+                displayName = event.displayName,
+                joinedAt = event.createdAt,
+                joinedAtOffsetTotalSeconds = event.createdAt.offset.totalSeconds,
+                organizationId = event.organizationId?.let { UUID.fromString(event.organizationId) },
+                observatoryId = event.observatoryId?.let { UUID.fromString(event.observatoryId) },
+                emailMultiHash = SHA256.fromEmail(event.email).toHex(),
+                curator = CURATOR in event.roles || ADMIN in event.roles,
+                admin = ADMIN in event.roles,
+            )
     }
 }
 
@@ -58,7 +59,7 @@ fun ContributorEntity.toContributor() = Contributor(
     joinedAt = joinedAt!!.withOffsetSameInstant(ZoneOffset.ofTotalSeconds(joinedAtOffsetTotalSeconds!!)),
     organizationId = organizationId?.let(::OrganizationId) ?: OrganizationId.UNKNOWN,
     observatoryId = observatoryId?.let(::ObservatoryId) ?: ObservatoryId.UNKNOWN,
-    emailMD5 = MD5Hash(emailMD5!!),
+    emailHash = Multihash.fromHex(emailMultiHash),
     isCurator = curator!!,
     isAdmin = admin!!,
 )

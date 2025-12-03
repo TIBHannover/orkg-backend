@@ -17,7 +17,10 @@ pluginManagement {
 
 dependencyResolutionManagement {
     // Get components from Maven Central
-    repositories.mavenCentral()
+    repositories {
+        mavenCentral()
+        maven("https://jitpack.io")
+    }
     // In the main build, find the platform in 'gradle/platform'
     if (File(rootDir, "gradle/platform").exists()) {
         includeBuild("gradle/platform")

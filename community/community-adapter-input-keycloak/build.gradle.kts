@@ -13,6 +13,7 @@ dependencies {
     implementation(project(":common:core-identifiers"))
     implementation(project(":community:community-core-model"))
     implementation("jakarta.ws.rs:jakarta.ws.rs-api")
+    implementation("com.github.multiformats:java-multihash")
     implementation("org.keycloak:keycloak-client-common-synced")
     implementation("org.slf4j:slf4j-api")
 }

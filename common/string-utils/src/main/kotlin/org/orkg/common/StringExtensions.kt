@@ -47,6 +47,18 @@ fun String.toCamelCase(): String =
  * @return The MD5 in hexadecimal, zero-prefixed to 32 characters.
  */
 val String.md5: String
-    get() = BigInteger(1, MessageDigest.getInstance("MD5").digest(this.toByteArray()))
-        .toString(16)
-        .padStart(32, '0')
+    get() = BigInteger(1, md5digest).toString(16).padStart(32, '0')
+
+val String.md5digest: ByteArray
+    get() = MessageDigest.getInstance("MD5").digest(toByteArray())
+
+/**
+ * Calculate the SHA256 of a string.
+ *
+ * @return The SHA256 in hexadecimal
+ */
+val String.sha256: String
+    get() = sha256digest.fold(StringBuilder(), { acc, b -> acc.append("%02x".format(b)) }).toString()
+
+val String.sha256digest: ByteArray
+    get() = MessageDigest.getInstance("SHA-256").digest(toByteArray())

@@ -9,4 +9,5 @@ dependencies {
     api(project(":community:community-ports-input"))
     api(project(":community:community-ports-input-legacy"))
     api(project(":community:community-ports-output"))
+    implementation("com.github.multiformats:java-multihash")
 }

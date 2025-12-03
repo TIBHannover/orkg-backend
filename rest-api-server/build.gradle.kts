@@ -194,6 +194,7 @@ dependencies {
     runtimeOnly(project(":migrations:neo4j-migrations"))
 
     // Direct transitive dependencies
+    implementation("com.github.multiformats:java-multihash")
     implementation("org.eclipse.rdf4j:rdf4j-common-io")
     implementation("org.neo4j.driver:neo4j-java-driver")
     implementation("org.slf4j:slf4j-api")
@@ -265,6 +266,7 @@ dependencies {
     "integrationTestApi"(project(":graph:graph-ports-input"))
     "integrationTestApi"(project(":media-storage:media-storage-core-model"))
     "integrationTestApi"("com.fasterxml.jackson.core:jackson-annotations")
+    "integrationTestApi"("com.github.multiformats:java-multihash")
     "integrationTestApi"("org.eclipse.rdf4j:rdf4j-common-io")
     "integrationTestApi"("org.springframework:spring-context")
     "integrationTestApi"("com.fasterxml.jackson.core:jackson-databind")

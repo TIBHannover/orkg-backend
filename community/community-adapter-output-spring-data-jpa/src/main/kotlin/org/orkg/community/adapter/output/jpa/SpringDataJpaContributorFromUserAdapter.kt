@@ -57,7 +57,7 @@ class SpringDataJpaContributorFromUserAdapter(
                 joinedAtOffsetTotalSeconds = contributor.joinedAt.offset.totalSeconds,
                 organizationId = contributor.organizationId.takeUnless { it == OrganizationId.UNKNOWN }?.value,
                 observatoryId = contributor.observatoryId.takeUnless { it == ObservatoryId.UNKNOWN }?.value,
-                emailMD5 = contributor.emailMD5.value,
+                emailMultiHash = contributor.emailHash.toHex(),
                 curator = contributor.isCurator,
                 admin = contributor.isAdmin
             )

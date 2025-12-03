@@ -20,6 +20,7 @@ dependencies {
     implementation(project(":content-types:content-types-core-model"))
     implementation(project(":graph:graph-core-model")) // for ResearchFields
     implementation(project(":graph:graph-core-constants"))
+    implementation("com.github.multiformats:java-multihash")
     implementation("org.springframework:spring-core")
 }
 

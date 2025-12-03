@@ -9,7 +9,7 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.community.domain.Contributor
 import org.orkg.community.domain.EventType
-import org.orkg.community.domain.internal.MD5Hash
+import org.orkg.community.domain.internal.SHA256
 import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.KeycloakEventStateRepository
 import org.slf4j.LoggerFactory
@@ -125,7 +125,7 @@ class KeycloakEventProcessor(
             joinedAt = OffsetDateTime.ofInstant(Instant.ofEpochMilli(user.createdTimestamp), ZoneId.systemDefault()),
             organizationId = OrganizationId.UNKNOWN,
             observatoryId = ObservatoryId.UNKNOWN,
-            emailMD5 = MD5Hash.fromEmail(user.email),
+            emailHash = SHA256.fromEmail(user.email),
             isCurator = roles.any { it.name == "curator" },
             isAdmin = roles.any { it.name == "admin" }
         )

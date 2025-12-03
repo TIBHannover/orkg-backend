@@ -36,7 +36,7 @@ class ContributorService(
                 joinedAt = command.joinedAt,
                 organizationId = command.organizationId,
                 observatoryId = command.observatoryId,
-                emailMD5 = command.emailMD5,
+                emailHash = command.emailHash,
                 isCurator = command.isCurator,
                 isAdmin = command.isAdmin,
             )

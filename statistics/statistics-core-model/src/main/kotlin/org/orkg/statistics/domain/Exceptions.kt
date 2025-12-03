@@ -28,3 +28,17 @@ class TooManyParameterValues(name: String) :
         """Too many values for parameter "$name".""",
         properties = mapOf("parameter_name" to name)
     )
+
+class InvalidParameterValue(
+    parameter: String,
+    value: String,
+    cause: Throwable,
+) : SimpleMessageException(
+        HttpStatus.BAD_REQUEST,
+        """Invalid value "$value" for parameter "$parameter".""",
+        properties = mapOf(
+            "parameter_name" to parameter,
+            "parameter_value" to value,
+            "reason" to cause.message
+        )
+    )

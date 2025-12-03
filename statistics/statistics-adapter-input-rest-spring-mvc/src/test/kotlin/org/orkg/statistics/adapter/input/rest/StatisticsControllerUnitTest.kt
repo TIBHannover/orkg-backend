@@ -10,6 +10,7 @@ import org.orkg.statistics.adapter.input.rest.mapping.MetricRepresentationAdapte
 import org.orkg.statistics.adapter.input.rest.testing.asciidoc.allowedMetricResponseFormatValues
 import org.orkg.statistics.adapter.input.rest.testing.fixtures.configuration.StatisticsControllerUnitTestConfiguration
 import org.orkg.statistics.domain.GroupNotFound
+import org.orkg.statistics.domain.InvalidParameterValue
 import org.orkg.statistics.domain.MetricNotFound
 import org.orkg.statistics.domain.TooManyParameterValues
 import org.orkg.statistics.input.StatisticsUseCases
@@ -131,7 +132,7 @@ internal class StatisticsControllerUnitTest : MockMvcBaseTest("statistics") {
                     parameterWithName("filter").ignored(),
                 )
                 responseFields(T::class, responseFields)
-                throws(GroupNotFound::class, MetricNotFound::class, TooManyParameterValues::class)
+                throws(GroupNotFound::class, MetricNotFound::class, TooManyParameterValues::class, InvalidParameterValue::class)
             }
 
         verify(exactly = 1) { service.findMetricByGroupAndName(metric.group, metric.name) }

@@ -22,8 +22,12 @@ class CachedMetric private constructor(
     }
 
     override fun value(parameters: MultiValueMap<String, String>): Number =
-        cache?.get(computeKey(parameters)) { super.value(parameters) }
-            ?: super.value(parameters)
+        try {
+            cache?.get(computeKey(parameters)) { super.value(parameters) }
+                ?: super.value(parameters)
+        } catch (e: Cache.ValueRetrievalException) {
+            throw e.cause ?: e
+        }
 
     private fun computeKey(parameters: MultiValueMap<String, String>): String =
         "$group-$name:[${parameters.entries.joinToString(",") { (key, value) -> "$key=${value.joinToString(",")}" }}]"

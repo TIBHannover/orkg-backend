@@ -9,6 +9,12 @@ class SingleValueParameterSpec<out T : Any>(
     val values: List<T> = emptyList(),
     private val parser: (String) -> T,
 ) : ParameterSpec<T> {
-    override fun parse(value: List<String>): T =
-        parser(value.singleOrNull() ?: throw TooManyParameterValues(name))
+    override fun parse(values: List<String>): T {
+        val value = values.singleOrNull() ?: throw TooManyParameterValues(name)
+        try {
+            return parser(value)
+        } catch (e: Throwable) {
+            throw InvalidParameterValue(name, value, e)
+        }
+    }
 }

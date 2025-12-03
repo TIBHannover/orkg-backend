@@ -9,5 +9,12 @@ class MultiValueParameterSpec<out T : Any>(
     val values: List<T> = emptyList(),
     private val parser: (String) -> T,
 ) : ParameterSpec<List<T>> {
-    override fun parse(value: List<String>): List<T> = value.map(parser)
+    override fun parse(values: List<String>): List<T> =
+        values.map { value ->
+            try {
+                parser(value)
+            } catch (e: Throwable) {
+                throw InvalidParameterValue(name, value, e)
+            }
+        }
 }

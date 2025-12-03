@@ -154,15 +154,17 @@ internal class CachedMetricTest : MockkBaseTest {
             supplier = mockMetricSupplier
         )
         val parameters = MultiValueMap.fromSingleValue(mapOf("filter" to "value"))
+        val cacheKey = "test-test:[filter=value]"
+        val valueRetrievalException = Cache.ValueRetrievalException(cacheKey, { throw UnknownParameter("filter") }, UnknownParameter("filter"))
 
         verify(exactly = 1) { cacheManager.getCache(METRICS_NAME_AND_PARAMETERS_TO_VALUE_CACHE) }
 
-        every { cache.get("test-test:[filter=value]", any<Callable<Number>>()) } throws UnknownParameter("filter")
+        every { cache.get(cacheKey, any<Callable<Number>>()) } throws valueRetrievalException
 
         shouldThrow<UnknownParameter> { metric.value(parameters) }.asClue {
             it.message shouldBe """Unknown parameter "filter"."""
         }
 
-        verify(exactly = 1) { cache.get("test-test:[filter=value]", any<Callable<Number>>()) }
+        verify(exactly = 1) { cache.get(cacheKey, any<Callable<Number>>()) }
     }
 }

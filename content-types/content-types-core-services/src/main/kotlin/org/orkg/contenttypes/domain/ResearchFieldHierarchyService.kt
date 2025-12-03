@@ -2,8 +2,8 @@ package org.orkg.contenttypes.domain
 
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.input.ResearchFieldHierarchyUseCases
+import org.orkg.contenttypes.output.LegacyResearchFieldRepository
 import org.orkg.contenttypes.output.ResearchFieldHierarchyRepository
-import org.orkg.contenttypes.output.ResearchFieldRepository
 import org.orkg.graph.domain.Resource
 import org.orkg.spring.data.annotations.TransactionalOnNeo4j
 import org.springframework.data.domain.Page
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service
 @TransactionalOnNeo4j
 class ResearchFieldHierarchyService(
     private val repository: ResearchFieldHierarchyRepository,
-    private val researchFieldRepository: ResearchFieldRepository,
+    private val researchFieldRepository: LegacyResearchFieldRepository,
 ) : ResearchFieldHierarchyUseCases {
     override fun findAllChildrenByAncestorId(id: ThingId, pageable: Pageable): Page<ResearchFieldWithChildCount> =
         researchFieldRepository.findById(id)

@@ -4,7 +4,7 @@ import org.orkg.common.ThingId
 import org.orkg.contenttypes.adapter.input.rest.mapping.BenchmarkSummaryRepresentationAdapter
 import org.orkg.contenttypes.domain.ResearchField
 import org.orkg.contenttypes.input.BenchmarkUseCases
-import org.orkg.contenttypes.input.ResearchFieldUseCases
+import org.orkg.contenttypes.input.LegacyResearchFieldUseCases
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.GetMapping
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class BenchmarkController(
-    private val retrieveResearchField: ResearchFieldUseCases,
+    private val retrieveResearchField: LegacyResearchFieldUseCases,
     private val retrieveBenchmarks: BenchmarkUseCases,
 ) : BenchmarkSummaryRepresentationAdapter {
     @GetMapping("/api/research-fields/benchmarks")

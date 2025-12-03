@@ -44,7 +44,7 @@ private const val MATCH_PROBLEM_RELATED_TO_RESEARCH_FIELD_WITH_ID = """MATCH (no
 
 private const val PAGE_PARAMS = ":#{orderBy(#pageable)} SKIP ${'$'}skip LIMIT ${'$'}limit"
 
-interface Neo4jResearchFieldRepository : Neo4jRepository<Neo4jResource, ThingId> {
+interface LegacyNeo4jResearchFieldRepository : Neo4jRepository<Neo4jResource, ThingId> {
     @Query("""MATCH (field:ResearchField:Resource {id: $ID}) RETURN field""")
     override fun findById(id: ThingId): Optional<Neo4jResource>
 

@@ -1,132 +1,67 @@
 package org.orkg.contenttypes.adapter.input.rest
 
+import org.orkg.common.ContributorId
 import org.orkg.common.MediaTypeCapabilities
+import org.orkg.common.ObservatoryId
+import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.community.domain.Contributor
-import org.orkg.contenttypes.adapter.input.rest.mapping.PaperCountPerResearchProblemRepresentationAdapter
+import org.orkg.contenttypes.domain.ResearchFieldNotFound
 import org.orkg.contenttypes.input.ResearchFieldUseCases
-import org.orkg.graph.adapter.input.rest.PaperCountPerResearchProblemRepresentation
 import org.orkg.graph.adapter.input.rest.ResourceRepresentation
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
-import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.FormattedLabelUseCases
-import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.format.annotation.DateTimeFormat
+import org.springframework.format.annotation.DateTimeFormat.ISO
 import org.springframework.http.MediaType
-import org.springframework.http.ResponseEntity
-import org.springframework.http.ResponseEntity.ok
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import java.util.Optional
+import java.time.OffsetDateTime
 
-/**
- * This controller class fetches a list of
- * problems, papers, etc., based on a
- * research field ID
- */
 @RestController
 @RequestMapping("/api/research-fields", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ResearchFieldController(
     private val service: ResearchFieldUseCases,
-    private val resourceService: ResourceUseCases,
     override val statementService: StatementUseCases,
     override val formattedLabelService: FormattedLabelUseCases,
-) : ResourceRepresentationAdapter,
-    PaperCountPerResearchProblemRepresentationAdapter {
-    /**
-     * Fetches all the research problems and
-     * number of papers based on a research
-     * field {id} that excludes the
-     * sub-research fields
-     */
-    @GetMapping("/{id}/problems")
-    fun findAllPaperCountsPerResearchProblem(
+) : ResourceRepresentationAdapter {
+    @GetMapping("/{id}")
+    fun findById(
         @PathVariable id: ThingId,
-        pageable: Pageable,
-        capabilities: MediaTypeCapabilities,
-    ): Page<PaperCountPerResearchProblemRepresentation> {
-        resourceService.findById(id)
-            .orElseThrow { ResourceNotFound(id) }
-        return service.findAllPaperCountsPerResearchProblem(id, pageable)
-            .mapToPaperCountPerResearchProblemRepresentation(capabilities)
-    }
+        mediaTypeCapabilities: MediaTypeCapabilities,
+    ): ResourceRepresentation =
+        service.findById(id)
+            .mapToResourceRepresentation(mediaTypeCapabilities)
+            .orElseThrow { ResearchFieldNotFound(id) }
 
-    /**
-     * Fetches all the research problems
-     * based on a research field {id}
-     * that includes the sub-research fields
-     */
-    @GetMapping("/{id}/subfields/research-problems")
-    fun findAllResearchProblemsByResearchFieldIncludingSubfields(
-        @PathVariable id: ThingId,
-        @RequestParam("visibility") visibility: VisibilityFilter = VisibilityFilter.ALL_LISTED,
+    @GetMapping
+    fun findAll(
+        @RequestParam("visibility", required = false) visibility: VisibilityFilter?,
+        @RequestParam("created_by", required = false) createdBy: ContributorId?,
+        @RequestParam("created_at_start", required = false) @DateTimeFormat(iso = ISO.DATE_TIME) createdAtStart: OffsetDateTime?,
+        @RequestParam("created_at_end", required = false) @DateTimeFormat(iso = ISO.DATE_TIME) createdAtEnd: OffsetDateTime?,
+        @RequestParam("observatory_id", required = false) observatoryId: ObservatoryId?,
+        @RequestParam("organization_id", required = false) organizationId: OrganizationId?,
+        @RequestParam("research_problem", required = false) researchProblem: ThingId?,
+        @RequestParam("include_subproblems", required = false) includeSubproblems: Boolean = false,
         pageable: Pageable,
-        capabilities: MediaTypeCapabilities,
-    ): Page<ResourceRepresentation> {
-        // Add if condition to check if featured is present and pass the variable
-        // Do the same for all
-        resourceService.findById(id).orElseThrow { ResourceNotFound(id) }
-        return service.findAllResearchProblemsByResearchField(
-            id = id,
+        mediaTypeCapabilities: MediaTypeCapabilities,
+    ): Page<ResourceRepresentation> =
+        service.findAll(
+            pageable = pageable,
             visibility = visibility,
-            includeSubFields = true,
-            pageable = pageable
-        ).mapToResourceRepresentation(capabilities)
-    }
-
-    /**
-     * Fetches all the contributors
-     * based on a research field {id}
-     * that includes the sub-research fields
-     */
-    @GetMapping("/{id}/subfields/contributors")
-    fun findAllContributorsIncludingSubFields(
-        @PathVariable id: ThingId,
-        pageable: Pageable,
-    ): ResponseEntity<Page<Contributor>> {
-        resourceService.findById(id).orElseThrow { ResourceNotFound(id) }
-        return ok(service.findAllContributorsIncludingSubFields(id, pageable))
-    }
-
-    /**
-     * Fetches all the contributors
-     * based on a research field {id}
-     * that excludes the sub-research fields
-     */
-    @GetMapping("/{id}/contributors")
-    fun findAllContributorsExcludingSubFields(
-        @PathVariable id: ThingId,
-        @RequestParam("featured")
-        featured: Optional<Boolean>,
-        pageable: Pageable,
-    ): ResponseEntity<Page<Contributor>> {
-        resourceService.findById(id).orElseThrow { ResourceNotFound(id) }
-        return ok(service.findAllContributorsExcludingSubFields(id, pageable))
-    }
-
-    /**
-     * Fetches all the research problems
-     * based on a research field {id}
-     */
-    @GetMapping("/{id}/research-problems")
-    fun findAllResearchProblemsByResearchFieldExcludingSubfields(
-        @PathVariable id: ThingId,
-        @RequestParam("visibility") visibility: VisibilityFilter = VisibilityFilter.ALL_LISTED,
-        pageable: Pageable,
-        capabilities: MediaTypeCapabilities,
-    ): Page<ResourceRepresentation> {
-        resourceService.findById(id).orElseThrow { ResourceNotFound(id) }
-        return service.findAllResearchProblemsByResearchField(
-            id = id,
-            visibility = visibility,
-            includeSubFields = false,
-            pageable = pageable
-        ).mapToResourceRepresentation(capabilities)
-    }
+            createdBy = createdBy,
+            createdAtStart = createdAtStart,
+            createdAtEnd = createdAtEnd,
+            observatoryId = observatoryId,
+            organizationId = organizationId,
+            researchProblem = researchProblem,
+            includeSubproblems = includeSubproblems,
+        ).mapToResourceRepresentation(mediaTypeCapabilities)
 }

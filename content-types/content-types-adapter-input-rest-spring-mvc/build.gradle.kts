@@ -84,6 +84,7 @@ testing {
                 implementation(testFixtures(project(":community:community-adapter-input-rest-spring-mvc")))
                 implementation(testFixtures(project(":community:community-core-model")))
                 implementation(testFixtures(project(":content-types:content-types-core-model")))
+                implementation(testFixtures(project(":graph:graph-adapter-input-rest-spring-mvc")))
                 implementation(testFixtures(project(":graph:graph-core-model")))
                 implementation(testFixtures(project(":testing:spring")))
             }

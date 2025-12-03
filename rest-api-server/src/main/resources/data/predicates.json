@@ -490,5 +490,9 @@
     {
         "id": "CSVW_Value",
         "label": "value"
+    },
+    {
+        "id": "subProblem",
+        "label": "Sub Problem"
     }
 ]

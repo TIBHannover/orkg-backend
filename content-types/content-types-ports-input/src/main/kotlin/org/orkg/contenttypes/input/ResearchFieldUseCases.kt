@@ -1,29 +1,30 @@
 package org.orkg.contenttypes.input
 
+import org.orkg.common.ContributorId
+import org.orkg.common.ObservatoryId
+import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.community.domain.Contributor
-import org.orkg.contenttypes.domain.ResearchField
-import org.orkg.graph.domain.PaperCountPerResearchProblem
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.VisibilityFilter
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import java.time.OffsetDateTime
+import java.util.Optional
 
 interface ResearchFieldUseCases : RetrieveResearchFieldUseCase
 
 interface RetrieveResearchFieldUseCase {
-    fun findAllPaperCountsPerResearchProblem(id: ThingId, pageable: Pageable): Page<PaperCountPerResearchProblem>
+    fun findById(id: ThingId): Optional<Resource>
 
-    fun findAllContributorsIncludingSubFields(id: ThingId, pageable: Pageable): Page<Contributor>
-
-    fun findAllContributorsExcludingSubFields(id: ThingId, pageable: Pageable): Page<Contributor>
-
-    fun findAllResearchProblemsByResearchField(
-        id: ThingId,
-        visibility: VisibilityFilter,
-        includeSubFields: Boolean = false,
+    fun findAll(
         pageable: Pageable,
+        visibility: VisibilityFilter? = null,
+        createdBy: ContributorId? = null,
+        createdAtStart: OffsetDateTime? = null,
+        createdAtEnd: OffsetDateTime? = null,
+        observatoryId: ObservatoryId? = null,
+        organizationId: OrganizationId? = null,
+        researchProblem: ThingId? = null,
+        includeSubproblems: Boolean = false,
     ): Page<Resource>
-
-    fun findAllWithBenchmarks(pageable: Pageable): Page<ResearchField>
 }

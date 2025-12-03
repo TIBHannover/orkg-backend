@@ -3,42 +3,44 @@ package org.orkg.contenttypes.adapter.input.rest
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
+import org.orkg.common.ObservatoryId
+import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.community.domain.Contributor
-import org.orkg.community.testing.fixtures.createContributor
+import org.orkg.common.exceptions.UnknownSortingProperty
+import org.orkg.contenttypes.domain.ResearchFieldNotFound
 import org.orkg.contenttypes.input.ResearchFieldUseCases
 import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerUnitTestConfiguration
-import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.graph.adapter.input.rest.ResourceRepresentation
 import org.orkg.graph.adapter.input.rest.testing.fixtures.resourceResponseFields
 import org.orkg.graph.domain.Classes
-import org.orkg.graph.domain.ResourceNotFound
+import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.FormattedLabelUseCases
-import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.testing.asciidoc.allowedVisibilityFilterValues
 import org.orkg.graph.testing.fixtures.createResource
+import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
+import org.orkg.testing.andExpectResource
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import orkg.orkg.community.testing.fixtures.contributorResponseFields
+import java.time.Clock
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import java.util.Optional
-import java.util.UUID
 
 @ContextConfiguration(classes = [ResearchFieldController::class, ContentTypeControllerUnitTestConfiguration::class])
 @WebMvcTest(controllers = [ResearchFieldController::class])
 internal class ResearchFieldControllerUnitTest : MockMvcBaseTest("research-fields") {
     @MockkBean
-    private lateinit var useCases: ResearchFieldUseCases
-
-    @MockkBean
-    private lateinit var resourceService: ResourceUseCases
+    private lateinit var researchFieldService: ResearchFieldUseCases
 
     @MockkBean
     private lateinit var statementService: StatementUseCases
@@ -46,156 +48,117 @@ internal class ResearchFieldControllerUnitTest : MockMvcBaseTest("research-field
     @MockkBean
     private lateinit var formattedLabelService: FormattedLabelUseCases
 
-    @MockkBean
-    private lateinit var comparisonRepository: ComparisonRepository
+    @Autowired
+    private lateinit var clock: Clock
 
     @Test
-    fun findAllResearchProblemsByResearchFieldId() {
-        val id = ThingId("RF1234")
-        val fieldResource = createResource(id, classes = setOf(Classes.researchField), label = "Fancy research")
-        val problemResource = createResource(ThingId("RP234"), classes = setOf(Classes.problem))
+    @DisplayName("Given a research field, when fetched by id, then status is 200 OK and research field is returned")
+    fun findById() {
+        val resource = createResource(classes = setOf(Classes.researchField))
+        every { researchFieldService.findById(any()) } returns Optional.of(resource)
+        every { statementService.countIncomingStatementsById(resource.id) } returns 23
 
-        every { resourceService.findById(id) } returns Optional.of(fieldResource)
-        every { statementService.countAllIncomingStatementsById(setOf(problemResource.id)) } returns mapOf(id to 4)
-        every { useCases.findAllResearchProblemsByResearchField(id, any(), any(), any()) } returns pageOf(problemResource)
-
-        documentedGetRequestTo("/api/research-fields/{id}/research-problems", id)
+        documentedGetRequestTo("/api/research-fields/{id}", resource.id)
             .perform()
             .andExpect(status().isOk)
-            .andExpectPage()
+            .andExpectResource()
             .andDocument {
-                summary("Listing research problems of research fields")
+                summary("Fetching research fields")
                 description(
                     """
-                    A `GET` request returns a <<sorting-and-pagination,paged>> list of all research problem <<resources,resources>> belonging to a given research field.
-                    The endpoint supports <<visibility-filtering-legacy>>.
+                    A `GET` request provides information about a resource.
                     """
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of the research field."),
+                    parameterWithName("id").description("The identifier of the research field to retrieve."),
                 )
-                pagedQueryParameters()
+                responseFields<ResourceRepresentation>(resourceResponseFields())
+                throws(ResearchFieldNotFound::class)
+            }
+
+        verify(exactly = 1) { researchFieldService.findById(any()) }
+        verify(exactly = 1) { statementService.countIncomingStatementsById(resource.id) }
+    }
+
+    @Test
+    @DisplayName("Given several research fields, when filtering by no parameters, then status is 200 OK and research fields are returned")
+    fun getPaged() {
+        every { researchFieldService.findAll(any()) } returns pageOf(createResource(classes = setOf(Classes.researchField)))
+        every { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) } returns emptyMap()
+
+        documentedGetRequestTo("/api/research-fields")
+            .perform()
+            .andExpect(status().isOk)
+            .andExpectPage()
+            .andExpectResource("$.content[*]")
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { researchFieldService.findAll(any()) }
+        verify(exactly = 1) { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) }
+    }
+
+    @Test
+    @DisplayName("Given several research fields, when they are fetched with all possible filtering parameters, then status is 200 OK and research fields are returned")
+    fun findAll() {
+        every { researchFieldService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns pageOf(createResource())
+        every { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) } returns emptyMap()
+
+        val visibility = VisibilityFilter.ALL_LISTED
+        val createdBy = ContributorId(MockUserId.USER)
+        val createdAtStart = OffsetDateTime.now(clock).minusHours(1)
+        val createdAtEnd = OffsetDateTime.now(clock).plusHours(1)
+        val observatoryId = ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece")
+        val organizationId = OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f")
+        val researchProblem = ThingId("R456")
+        val includeSubproblems = true
+
+        documentedGetRequestTo("/api/research-fields")
+            .param("visibility", visibility.toString())
+            .param("created_by", createdBy.value.toString())
+            .param("created_at_start", createdAtStart.format(ISO_OFFSET_DATE_TIME))
+            .param("created_at_end", createdAtEnd.format(ISO_OFFSET_DATE_TIME))
+            .param("observatory_id", observatoryId.value.toString())
+            .param("organization_id", organizationId.value.toString())
+            .param("research_problem", researchProblem.toString())
+            .param("include_subproblems", includeSubproblems.toString())
+            .perform()
+            .andExpect(status().isOk)
+            .andExpectPage()
+            .andExpectResource("$.content[*]")
+            .andDocument {
+                summary("Listing research fields")
+                description(
+                    """
+                    A `GET` request lists all research-fields.
+                    """
+                )
+                pagedQueryParameters(
+                    parameterWithName("visibility").description("""Filter for visibility. Either of $allowedVisibilityFilterValues. (optional)""").optional(),
+                    parameterWithName("created_by").description("Filter for the UUID of the user or service who created this resource. (optional)").optional(),
+                    parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned resource can have. (optional)").optional(),
+                    parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned resource can have. (optional)").optional(),
+                    parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the resource belongs to. (optional)").optional(),
+                    parameterWithName("organization_id").description("Filter for the UUID of the organization that the resource belongs to. (optional)").optional(),
+                    parameterWithName("research_problem").description("Filter for research problem id. (optional)").optional(),
+                    parameterWithName("include_subproblems").description("Flag for whether subproblems are included in the search or not. (optional, default: false)").optional(),
+                )
                 pagedResponseFields<ResourceRepresentation>(resourceResponseFields())
-                throws(ResourceNotFound::class)
+                throws(UnknownSortingProperty::class)
             }
 
-        verify(exactly = 1) { resourceService.findById(id) }
-        verify(exactly = 1) { statementService.countAllIncomingStatementsById(setOf(problemResource.id)) }
-        verify(exactly = 1) { useCases.findAllResearchProblemsByResearchField(id, any(), any(), any()) }
-    }
-
-    @Test
-    fun findAllResearchProblemsByResearchFieldIdIncludingSubfields() {
-        val id = ThingId("RF1234")
-        val fieldResource = createResource(id, classes = setOf(Classes.researchField), label = "Fancy research")
-        val problemResource = createResource(ThingId("RP234"), classes = setOf(Classes.problem))
-
-        every { resourceService.findById(id) } returns Optional.of(fieldResource)
-        every { statementService.countAllIncomingStatementsById(setOf(problemResource.id)) } returns mapOf(id to 4)
-        every { useCases.findAllResearchProblemsByResearchField(id, any(), any(), any()) } returns pageOf(problemResource)
-
-        documentedGetRequestTo("/api/research-fields/{id}/subfields/research-problems", id)
-            .perform()
-            .andExpect(status().isOk)
-            .andExpectPage()
-            .andDocument {
-                deprecated()
-                summary("Listing research problems of research fields and subfields")
-                description(
-                    """
-                    A `GET` request returns a <<sorting-and-pagination,paged>> list of all research problem <<resources,resources>> belonging to a given research field and their subfields.
-                    The endpoint supports <<visibility-filtering-legacy>>.
-                    """
-                )
-                pathParameters(
-                    parameterWithName("id").description("The identifier of the research field."),
-                )
-                pagedQueryParameters()
-                pagedResponseFields<ResourceRepresentation>(resourceResponseFields())
-                throws(ResourceNotFound::class)
-            }
-
-        verify(exactly = 1) { resourceService.findById(id) }
-        verify(exactly = 1) { statementService.countAllIncomingStatementsById(setOf(problemResource.id)) }
-        verify(exactly = 1) { useCases.findAllResearchProblemsByResearchField(id, any(), any(), any()) }
-    }
-
-    @Test
-    fun findAllContributorsByResearchFieldId() {
-        val id = ThingId("RF1234")
-        val fieldResource = createResource(id, classes = setOf(Classes.researchField), label = "Fancy research")
-        val contributor1 = createContributor(
-            id = ContributorId(UUID.fromString("3a6b2e25-5890-44cd-b6e7-16137f8b9c6a")),
-            name = "Some One"
-        )
-        val contributor2 = createContributor(
-            id = ContributorId(UUID.fromString("fd4a1478-ce49-4e8e-b04a-39a8cac9e33f")),
-            name = "Another One"
-        )
-        every { resourceService.findById(id) } returns Optional.of(fieldResource)
-        every { useCases.findAllContributorsExcludingSubFields(id, any()) } returns pageOf(contributor1, contributor2)
-
-        documentedGetRequestTo("/api/research-fields/{id}/contributors", id)
-            .perform()
-            .andExpect(status().isOk)
-            .andExpectPage()
-            .andDocument {
-                summary("Listing contributors of research fields")
-                description(
-                    """
-                    A `GET` request returns a <<sorting-and-pagination,paged>> list of <<contributors,contributors>> that contributed to a given research field and their subfields.
-                    
-                    WARNING: This endpoint does *not* support <<visibility-filter,visibility filtering>>!
-                    """
-                )
-                pathParameters(
-                    parameterWithName("id").description("The identifier of the research field."),
-                )
-                pagedQueryParameters()
-                pagedResponseFields<Contributor>(contributorResponseFields())
-            }
-
-        verify(exactly = 1) { resourceService.findById(id) }
-        verify(exactly = 1) { useCases.findAllContributorsExcludingSubFields(id, any()) }
-    }
-
-    @Test
-    fun findAllContributorsByResearchFieldIdIncludingSubfields() {
-        val id = ThingId("RF1234")
-        val fieldResource = createResource(id, classes = setOf(Classes.researchField), label = "Fancy research")
-        val contributor1 = createContributor(
-            id = ContributorId(UUID.fromString("3a6b2e25-5890-44cd-b6e7-16137f8b9c6a")),
-            name = "Some One"
-        )
-        val contributor2 = createContributor(
-            id = ContributorId(UUID.fromString("fd4a1478-ce49-4e8e-b04a-39a8cac9e33f")),
-            name = "Another One"
-        )
-        every { resourceService.findById(id) } returns Optional.of(fieldResource)
-        every { useCases.findAllContributorsIncludingSubFields(id, any()) } returns pageOf(contributor1, contributor2)
-
-        documentedGetRequestTo("/api/research-fields/{id}/subfields/contributors", id)
-            .perform()
-            .andExpect(status().isOk)
-            .andExpectPage()
-            .andDocument {
-                deprecated()
-                summary("Listing contributors of research fields and subfields")
-                description(
-                    """
-                    A `GET` request returns a <<sorting-and-pagination,paged>> list of <<contributors,contributors>> that contributed to a given research field.
-                    
-                    WARNING: This endpoint does *not* support <<visibility-filter,visibility filtering>>!
-                    """
-                )
-                pathParameters(
-                    parameterWithName("id").description("The identifier of the research field."),
-                )
-                pagedQueryParameters()
-                pagedResponseFields<Contributor>(contributorResponseFields())
-            }
-
-        verify(exactly = 1) { resourceService.findById(id) }
-        verify(exactly = 1) { useCases.findAllContributorsIncludingSubFields(id, any()) }
+        verify(exactly = 1) {
+            researchFieldService.findAll(
+                pageable = any(),
+                visibility = visibility,
+                createdBy = createdBy,
+                createdAtStart = createdAtStart,
+                createdAtEnd = createdAtEnd,
+                observatoryId = observatoryId,
+                organizationId = organizationId,
+                researchProblem = researchProblem,
+                includeSubproblems = includeSubproblems,
+            )
+        }
+        verify(exactly = 1) { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) }
     }
 }

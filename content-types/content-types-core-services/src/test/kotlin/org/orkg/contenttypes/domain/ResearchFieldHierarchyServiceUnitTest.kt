@@ -8,8 +8,8 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
+import org.orkg.contenttypes.output.LegacyResearchFieldRepository
 import org.orkg.contenttypes.output.ResearchFieldHierarchyRepository
-import org.orkg.contenttypes.output.ResearchFieldRepository
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.pageOf
@@ -19,7 +19,7 @@ import java.util.Optional
 
 internal class ResearchFieldHierarchyServiceUnitTest : MockkBaseTest {
     private val repository: ResearchFieldHierarchyRepository = mockk()
-    private val researchFieldRepository: ResearchFieldRepository = mockk()
+    private val researchFieldRepository: LegacyResearchFieldRepository = mockk()
     private val service = ResearchFieldHierarchyService(repository, researchFieldRepository)
 
     @Test

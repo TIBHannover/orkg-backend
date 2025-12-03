@@ -10,7 +10,7 @@ import org.orkg.contenttypes.domain.BenchmarkSummary
 import org.orkg.contenttypes.domain.ResearchField
 import org.orkg.contenttypes.domain.ResearchProblem
 import org.orkg.contenttypes.input.BenchmarkUseCases
-import org.orkg.contenttypes.input.ResearchFieldUseCases
+import org.orkg.contenttypes.input.LegacyResearchFieldUseCases
 import org.orkg.contenttypes.input.testing.fixtures.benchmarkSummaryResponseFields
 import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerUnitTestConfiguration
 import org.orkg.testing.pageOf
@@ -25,7 +25,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @WebMvcTest(controllers = [BenchmarkController::class])
 internal class BenchmarkControllerUnitTest : MockMvcBaseTest("benchmarks") {
     @MockkBean
-    private lateinit var retrieveResearchField: ResearchFieldUseCases
+    private lateinit var retrieveResearchField: LegacyResearchFieldUseCases
 
     @MockkBean
     private lateinit var retrieveBenchmarks: BenchmarkUseCases

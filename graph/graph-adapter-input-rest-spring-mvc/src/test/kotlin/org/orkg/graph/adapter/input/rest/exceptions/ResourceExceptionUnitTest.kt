@@ -15,6 +15,7 @@ import org.orkg.graph.domain.ResourceAlreadyExists
 import org.orkg.graph.domain.ResourceInUse
 import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.domain.ResourceNotModifiable
+import org.orkg.graph.domain.RosettaStoneStatementResourceNotModifiable
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
 import org.orkg.testing.spring.restdocs.arrayItemsType
 import org.orkg.testing.spring.restdocs.constraints
@@ -169,6 +170,23 @@ internal class ResourceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andDocument {
                 responseFields<ReservedClass>(
                     fieldWithPath("class_id").description("The id of the class.").type<ThingId>(),
+                    *exceptionResponseFields(type).toTypedArray(),
+                )
+            }
+    }
+
+    @Test
+    fun rosettaStoneStatementResourceNotModifiable() {
+        val type = "orkg:problem:rosetta_stone_statement_resource_not_modifiable"
+        documentedGetRequestTo(RosettaStoneStatementResourceNotModifiable(ThingId("R123")))
+            .andExpectErrorStatus(FORBIDDEN)
+            .andExpectType(type)
+            .andExpectTitle("Forbidden")
+            .andExpectDetail("""A rosetta stone statement resource cannot be managed using the resources endpoint. Please see the documentation on how to manage rosetta stone statements.""")
+            .andExpect(jsonPath("$.resource_id", `is`("R123")))
+            .andDocument {
+                responseFields<RosettaStoneStatementResourceNotModifiable>(
+                    fieldWithPath("resource_id").description("The id of the resource.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }

@@ -379,6 +379,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
                                     "visibility" to version.visibility.name,
                                     "unlisted_by" to version.unlistedBy?.value?.toString(),
                                     "modifiable" to version.modifiable,
+                                    "version" to 0,
                                 ),
                                 "__subjects__" to version.subjects.mapIndexed { idx, subject ->
                                     mapOf(

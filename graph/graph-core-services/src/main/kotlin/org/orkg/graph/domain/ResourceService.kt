@@ -114,6 +114,9 @@ class ResourceService(
         if (!resource.modifiable) {
             throw ResourceNotModifiable(command.id)
         }
+        if (Classes.rosettaStoneStatement in resource.classes) {
+            throw RosettaStoneStatementResourceNotModifiable(command.id)
+        }
         command.label?.also { Label.ofOrNull(it) ?: throw InvalidLabel() }
         command.classes?.also { validateClasses(it) }
         command.observatoryId?.also { observatoryId ->

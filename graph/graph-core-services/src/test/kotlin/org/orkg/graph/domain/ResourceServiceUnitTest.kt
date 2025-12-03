@@ -728,4 +728,18 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
             )
         }
     }
+
+    @Test
+    fun `Given a resource update command, when updating a rosetta stone statement resource, it throws an exception`() {
+        val resource = createResource(classes = setOf(Classes.rosettaStoneStatement))
+        val command = UpdateResourceUseCase.UpdateCommand(resource.id, ContributorId(MockUserId.USER), label = "new label")
+
+        every { repository.findById(resource.id) } returns Optional.of(resource)
+
+        shouldThrow<RosettaStoneStatementResourceNotModifiable> { service.update(command) }.asClue {
+            it.message shouldBe """A rosetta stone statement resource cannot be managed using the resources endpoint. Please see the documentation on how to manage rosetta stone statements."""
+        }
+
+        verify(exactly = 1) { repository.findById(resource.id) }
+    }
 }

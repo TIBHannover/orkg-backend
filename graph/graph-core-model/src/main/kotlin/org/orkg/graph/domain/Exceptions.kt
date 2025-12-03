@@ -486,3 +486,10 @@ class NotACurator private constructor(
             )
     }
 }
+
+class RosettaStoneStatementResourceNotModifiable(id: ThingId) :
+    SimpleMessageException(
+        HttpStatus.FORBIDDEN,
+        """A rosetta stone statement resource cannot be managed using the resources endpoint. Please see the documentation on how to manage rosetta stone statements.""",
+        properties = mapOf("resource_id" to id),
+    )

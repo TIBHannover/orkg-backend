@@ -38,6 +38,7 @@ import org.orkg.graph.domain.ResourceContributor
 import org.orkg.graph.domain.ResourceInUse
 import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.domain.ResourceNotModifiable
+import org.orkg.graph.domain.RosettaStoneStatementResourceNotModifiable
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.CreateResourceUseCase.CreateCommand
 import org.orkg.graph.input.FormattedLabelUseCases
@@ -360,6 +361,7 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
                 throws(
                     ResourceNotFound::class,
                     ResourceNotModifiable::class,
+                    RosettaStoneStatementResourceNotModifiable::class,
                     InvalidLabel::class,
                     ReservedClass::class,
                     InvalidClassCollection::class,

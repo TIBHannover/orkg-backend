@@ -26,6 +26,8 @@ class OLSServiceAdapter(
     private val userAgent: String,
     @Value("\${orkg.external-services.ols.host}")
     private val host: String,
+    @Value("\${orkg.external-services.ols.caller}")
+    private val caller: String?,
 ) : ExternalResourceService,
     ExternalClassService,
     ExternalPredicateService {
@@ -85,6 +87,7 @@ class OLSServiceAdapter(
         val request = HttpRequest.newBuilder(uri)
             .header(ACCEPT, MediaType.APPLICATION_JSON_VALUE)
             .header(USER_AGENT, userAgent)
+            .also { if (caller != null) it.header("caller", caller) }
             .GET()
             .build()
         return httpClient.send(request, "OntologyLookupService") { response ->

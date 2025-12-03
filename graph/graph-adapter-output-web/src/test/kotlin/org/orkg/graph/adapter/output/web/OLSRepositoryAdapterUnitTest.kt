@@ -31,44 +31,41 @@ import java.net.http.HttpClient
 import java.net.http.HttpResponse
 import java.util.stream.Stream
 
+private const val CALLER = "caller"
+
 internal class OLSRepositoryAdapterUnitTest : MockkBaseTest {
     private val olsHostUrl = "https://example.org/ols"
     private val userAgent = "test user agent"
+    private val caller = "Some Component"
     private val httpClient: HttpClient = mockk()
     private val objectMapper = ObjectMapper()
         .findAndRegisterModules()
         .registerModules(CommonJacksonModule(), GraphJacksonModule())
         .disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
-    private val repository = OLSServiceAdapter(objectMapper, httpClient, userAgent, olsHostUrl)
+    private val repository = OLSServiceAdapter(objectMapper, httpClient, userAgent, olsHostUrl, caller)
 
     @ParameterizedTest
     @MethodSource("validInputs")
-    fun <T : Any> `Given an ontology id and user input, when ols returns success, it returns the external object`(
-        entityType: String,
-        userInput: T,
-        ontologyId: String,
-        methodInvoker: (OLSServiceAdapter, String, T) -> ExternalThing?,
-        successResponse: String,
-        expectedResult: ExternalThing,
-    ) {
+    fun <T : Any> `Given an ontology id and user input, when ols returns success, it returns the external object`(params: TestParameters<T>) {
         // Mock HttpClient dsl
         val response = mockk<HttpResponse<String>>()
 
         every { httpClient.send(any(), any<HttpResponse.BodyHandler<String>>()) } returns response
         every { response.statusCode() } returns 200
-        every { response.body() } returns successResponse
+        every { response.body() } returns params.successResponse
 
-        val result = methodInvoker(repository, ontologyId, userInput)
+        val result = params.methodInvoker(repository, params.ontologyId, params.userInput)
         result shouldNotBe null
-        result shouldBe expectedResult
+        result shouldBe params.expectedResult
 
         verify(exactly = 1) {
             httpClient.send(
                 withArg {
-                    it.uri() shouldBe userInput.toUri(ontologyId, entityType)
+                    it.uri() shouldBe params.userInput.toUri(params.ontologyId, params.entityType)
                     it.headers().map() shouldContainAll mapOf(
                         ACCEPT to listOf(APPLICATION_JSON_VALUE),
                         USER_AGENT to listOf(userAgent),
+                        CALLER to listOf(caller),
                     )
                 },
                 any<HttpResponse.BodyHandler<String>>()
@@ -80,30 +77,24 @@ internal class OLSRepositoryAdapterUnitTest : MockkBaseTest {
 
     @ParameterizedTest
     @MethodSource("validInputs")
-    @Suppress("UNUSED_PARAMETER")
-    fun <T : Any> `Given an ontology id and user input, when ols returns status not found, it returns null`(
-        entityType: String,
-        userInput: T,
-        ontologyId: String,
-        methodInvoker: (OLSServiceAdapter, String, T) -> ExternalThing?,
-        successResponse: String,
-    ) {
+    fun <T : Any> `Given an ontology id and user input, when ols returns status not found, it returns null`(params: TestParameters<T>) {
         // Mock HttpClient dsl
         val response = mockk<HttpResponse<String>>()
 
         every { httpClient.send(any(), any<HttpResponse.BodyHandler<String>>()) } returns response
         every { response.statusCode() } returns 404
 
-        val result = methodInvoker(repository, ontologyId, userInput)
+        val result = params.methodInvoker(repository, params.ontologyId, params.userInput)
         result shouldBe null
 
         verify(exactly = 1) {
             httpClient.send(
                 withArg {
-                    it.uri() shouldBe userInput.toUri(ontologyId, entityType)
+                    it.uri() shouldBe params.userInput.toUri(params.ontologyId, params.entityType)
                     it.headers().map() shouldContainAll mapOf(
                         ACCEPT to listOf(APPLICATION_JSON_VALUE),
                         USER_AGENT to listOf(userAgent),
+                        CALLER to listOf(caller),
                     )
                 },
                 any<HttpResponse.BodyHandler<String>>()
@@ -114,12 +105,7 @@ internal class OLSRepositoryAdapterUnitTest : MockkBaseTest {
 
     @ParameterizedTest
     @MethodSource("validInputs")
-    fun <T : Any> `Given an ontology id and user input, when ols service is not available, it throws an exception`(
-        entityType: String,
-        userInput: T,
-        ontologyId: String,
-        methodInvoker: (OLSServiceAdapter, String, T) -> ExternalThing?,
-    ) {
+    fun <T : Any> `Given an ontology id and user input, when ols service is not available, it throws an exception`(params: TestParameters<T>) {
         // Mock HttpClient dsl
         val response = mockk<HttpResponse<String>>()
 
@@ -127,7 +113,7 @@ internal class OLSRepositoryAdapterUnitTest : MockkBaseTest {
         every { response.statusCode() } returns 500
         every { response.body() } returns "Error message"
 
-        assertThrows<ServiceUnavailable> { methodInvoker(repository, ontologyId, userInput) }.asClue {
+        assertThrows<ServiceUnavailable> { params.methodInvoker(repository, params.ontologyId, params.userInput) }.asClue {
             it.message shouldBe "Service unavailable."
             it.internalMessage shouldBe """OntologyLookupService service returned status 500 with error response: "Error message"."""
         }
@@ -135,10 +121,11 @@ internal class OLSRepositoryAdapterUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             httpClient.send(
                 withArg {
-                    it.uri() shouldBe userInput.toUri(ontologyId, entityType)
+                    it.uri() shouldBe params.userInput.toUri(params.ontologyId, params.entityType)
                     it.headers().map() shouldContainAll mapOf(
                         ACCEPT to listOf(APPLICATION_JSON_VALUE),
                         USER_AGENT to listOf(userAgent),
+                        CALLER to listOf(caller),
                     )
                 },
                 any<HttpResponse.BodyHandler<String>>()
@@ -184,82 +171,91 @@ internal class OLSRepositoryAdapterUnitTest : MockkBaseTest {
                 .toUri()
         }
 
+    data class TestParameters<T>(
+        val entityType: String,
+        val userInput: T,
+        val ontologyId: String,
+        val methodInvoker: (OLSServiceAdapter, String, T) -> ExternalThing?,
+        val successResponse: String,
+        val expectedResult: ExternalThing,
+    )
+
     companion object {
         @JvmStatic
         fun validInputs(): Stream<Arguments> = Stream.of(
-            Arguments.of(
-                "individuals",
-                "AbsenceObservation",
-                "abcd",
-                OLSServiceAdapter::findResourceByShortForm,
-                responseJson("ols/individualSuccess"),
-                ExternalThing(
+            TestParameters(
+                entityType = "individuals",
+                userInput = "AbsenceObservation",
+                ontologyId = "abcd",
+                methodInvoker = OLSServiceAdapter::findResourceByShortForm,
+                successResponse = responseJson("ols/individualSuccess"),
+                expectedResult = ExternalThing(
                     uri = ParsedIRI.create("http://rs.tdwg.org/abcd/terms/AbsenceObservation"),
                     label = "AbsenceObservation",
                     description = "A record describing an output of an observation process with indication of the absence of an observation"
                 )
             ),
-            Arguments.of(
-                "individuals",
-                ParsedIRI.create("http://rs.tdwg.org/abcd/terms/AbsenceObservation"),
-                "abcd",
-                OLSServiceAdapter::findResourceByURI,
-                responseJson("ols/individualSuccess"),
-                ExternalThing(
+            TestParameters(
+                entityType = "individuals",
+                userInput = ParsedIRI.create("http://rs.tdwg.org/abcd/terms/AbsenceObservation"),
+                ontologyId = "abcd",
+                methodInvoker = OLSServiceAdapter::findResourceByURI,
+                successResponse = responseJson("ols/individualSuccess"),
+                expectedResult = ExternalThing(
                     uri = ParsedIRI.create("http://rs.tdwg.org/abcd/terms/AbsenceObservation"),
                     label = "AbsenceObservation",
                     description = "A record describing an output of an observation process with indication of the absence of an observation"
                 )
             ),
-            Arguments.of(
-                "classes",
-                "Collection",
-                "skos",
-                OLSServiceAdapter::findClassByShortForm,
-                responseJson("ols/termSuccess"),
-                ExternalThing(
+            TestParameters(
+                entityType = "classes",
+                userInput = "Collection",
+                ontologyId = "skos",
+                methodInvoker = OLSServiceAdapter::findClassByShortForm,
+                successResponse = responseJson("ols/termSuccess"),
+                expectedResult = ExternalThing(
                     uri = ParsedIRI.create("http://www.w3.org/2004/02/skos/core#Collection"),
                     label = "Collection",
                     description = "A meaningful collection of concepts."
                 )
             ),
-            Arguments.of(
-                "classes",
-                ParsedIRI.create("https://sws.geonames.org/2950159"),
-                "skos",
-                OLSServiceAdapter::findClassByURI,
-                responseJson("ols/termSuccess"),
-                ExternalThing(
+            TestParameters(
+                entityType = "classes",
+                userInput = ParsedIRI.create("https://sws.geonames.org/2950159"),
+                ontologyId = "skos",
+                methodInvoker = OLSServiceAdapter::findClassByURI,
+                successResponse = responseJson("ols/termSuccess"),
+                expectedResult = ExternalThing(
                     uri = ParsedIRI.create("http://www.w3.org/2004/02/skos/core#Collection"),
                     label = "Collection",
                     description = "A meaningful collection of concepts."
                 )
             ),
-            Arguments.of(
-                "properties",
-                "hasCountry",
-                "abcd",
-                OLSServiceAdapter::findPredicateByShortForm,
-                responseJson("ols/propertySuccess"),
-                ExternalThing(
+            TestParameters(
+                entityType = "properties",
+                userInput = "hasCountry",
+                ontologyId = "abcd",
+                methodInvoker = OLSServiceAdapter::findPredicateByShortForm,
+                successResponse = responseJson("ols/propertySuccess"),
+                expectedResult = ExternalThing(
                     uri = ParsedIRI.create("http://rs.tdwg.org/abcd/terms/hasCountry"),
                     label = "has Country",
                     description = "Property to connect an instance of a class to a Country."
                 )
             ),
-            Arguments.of(
-                "properties",
-                ParsedIRI.create("http://rs.tdwg.org/abcd/terms/hasCountry"),
-                "abcd",
-                OLSServiceAdapter::findPredicateByURI,
-                responseJson("ols/propertySuccess"),
-                ExternalThing(
+            TestParameters(
+                entityType = "properties",
+                userInput = ParsedIRI.create("http://rs.tdwg.org/abcd/terms/hasCountry"),
+                ontologyId = "abcd",
+                methodInvoker = OLSServiceAdapter::findPredicateByURI,
+                successResponse = responseJson("ols/propertySuccess"),
+                expectedResult = ExternalThing(
                     uri = ParsedIRI.create("http://rs.tdwg.org/abcd/terms/hasCountry"),
                     label = "has Country",
                     description = "Property to connect an instance of a class to a Country."
                 )
             )
-        )
+        ).map(Arguments::of)
 
         @JvmStatic
         fun invalidInputs(): Stream<Arguments> = Stream.of(

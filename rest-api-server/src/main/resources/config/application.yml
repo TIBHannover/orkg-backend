@@ -90,6 +90,7 @@ orkg:
       username: "demo"
     ols:
       host: "https://api.terminology.tib.eu/api/v2"
+      caller: "ORKG"
     wikidata:
       host: "https://www.wikidata.org"
   keycloak:

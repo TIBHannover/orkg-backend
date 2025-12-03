@@ -1,20 +1,40 @@
-#!/bin/sh
+#!/bin/bash
 #
 # This script will trash the existing database and reload the latest dump into a fresh one.
 #
 set -e
+shopt -s expand_aliases
 
 neo4j_version=5-community
 
 dump_volume=orkg-dumps
 source_dir=orkg-backend
+is_podman=false
 
-docker_exe=$(which docker >/dev/null && echo found || echo missing)
+function check_docker_availability() {
+    docker_exe=$(docker -v 2>/dev/null | grep version >/dev/null && echo found || echo missing)
+}
+
+check_docker_availability
+
 if [ "$docker_exe" != "found" ]; then
-    echo "ERROR: Docker client was not found in the path. Please ensure it is installed and can be called."
+    alias docker=podman
+    is_podman=true
+    check_docker_availability
+fi
+
+if [ "$docker_exe" != "found" ]; then
+    alias podman='podman-remote-static-linux_amd64'
+    check_docker_availability
+fi
+
+if [ "$docker_exe" != "found" ]; then
+    echo "ERROR: Docker client was not found. Please ensure it is installed and can be called."
     exit 1
 fi
+
 docker_compose_exe=$(docker compose version 2>/dev/null | grep version >/dev/null && echo found || echo missing)
+
 if [ "$docker_compose_exe" != "found" ]; then
     echo "ERROR: Unable to find Docker Compose plug-in. Please ensure that it is installed."
     exit 1
@@ -24,9 +44,20 @@ fi
 root_dir="$(git rev-parse --show-toplevel)"
 
 # Load dump into separate volume
-docker volume create "$dump_volume"
-temp_container=$(docker container create --volume "${dump_volume}:/dumps" alpine)
-docker cp -L "${1:-"${root_dir}/dumps/neo4j-dump-latest.dump"}" "${temp_container}:/dumps/neo4j-dump-latest.dump"
+if [ "$is_podman" == "true" ]; then
+    # podman throws an error when volume already exists, pass --ignore
+    docker volume create --ignore "$dump_volume"
+    temp_container=$(docker container create --volume "${dump_volume}:/dumps" alpine)
+    # podman follows symlinks by default
+    docker cp "${1:-"${root_dir}/dumps/neo4j-dump-latest.dump"}" "${temp_container}:/dumps/neo4j-dump-latest.dump"
+else
+    # docker does not throw an error when volume already exists
+    docker volume create "$dump_volume"
+    temp_container=$(docker container create --volume "${dump_volume}:/dumps" alpine)
+    # docker does not follow symlinks by default, pass -L parameter
+    docker cp -L "${1:-"${root_dir}/dumps/neo4j-dump-latest.dump"}" "${temp_container}:/dumps/neo4j-dump-latest.dump"
+fi
+
 docker rm "$temp_container"
 
 # Shutdown and remove Neo4j
@@ -41,7 +72,7 @@ docker volume rm "${source_dir}_neo4j-data"
 #   ( docker-compose up neo4j & ) | grep -q 'Remote interface available at http:'
 # but that does not seem to work in Windows Subsystem for Linux (WSL).
 docker compose up -d neo4j
-until docker compose logs neo4j | grep -q 'Remote interface available at http:'; do sleep 1; done
+until docker compose logs neo4j 2>/dev/null | grep -q 'Remote interface available at http:'; do sleep 1; done
 docker compose stop neo4j
 
 # Load dump.
@@ -54,9 +85,12 @@ EOS
 # Data is already stored in the volume, so this only affects the container.
 docker compose rm -f neo4j
 
+# Destroy dump volume
+docker volume rm "$dump_volume"
+
 # Bring up database
 docker compose up -d neo4j
-until docker compose logs neo4j | grep -q 'Remote interface available at http:'; do sleep 1; done
+until docker compose logs neo4j 2>/dev/null | grep -q 'Remote interface available at http:'; do sleep 1; done
 
 # Apply some migrations that already ran, containing custom procedures. This is a work-around because we cannot share
 # the "system" database.

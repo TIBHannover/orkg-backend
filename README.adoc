@@ -13,6 +13,51 @@ It is based on the https://spring.io/[Spring Framework] and uses https://gradle.
 The documentation can be found at {apidoc_url}.
 Alternatively, an OpenAPI specification can be fetched directly from the API at {openapi_url}.
 
+== Client API libraries
+
+The backend API project provides two auto-generated client libraries, based on OpenAPI.
+The version of the client library matches the version of the backend API.
+
+=== TypeScript client
+
+==== Prerequisites
+
+Please follow the respective installation instructions for TypeScript 4.0 or later.
+Add the package registry of this project to your `.npmrc` by running:
+
+NOTE: This only needs to be done once.
+
+    echo @orkg:registry=https://gitlab.com/api/v4/projects/12710144/packages/npm/ >> .npmrc
+
+==== Installation
+
+To install the TypeScript client, run:
+
+    npm install @orkg/orkg-client
+
+==== Usage
+
+[source,ts]
+----
+require 'sinatra'
+
+get '/hi' do
+  "Hello World!"
+end
+----
+
+=== Python client
+
+==== Prerequisites
+
+Please follow the respective installation instructions for Python 3.9 or later.
+
+==== Installation
+
+To install the Python client, run:
+
+    pip install orkg_client --index-url https://gitlab.com/api/v4/projects/12710144/packages/pypi/simple
+
 == Building and running
 
 === Prerequisites

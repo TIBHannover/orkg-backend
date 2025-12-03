@@ -26,12 +26,12 @@ The response will be `200 Created` when successful.
 The organization can be retrieved by following the URI in the `Location` header field.
 
 // FIXME: implement missing test
-operation::organization_controller-test-add[snippets='request-fields,curl-request,http-response']
+operation::organization_controller-test-add[snippets='request-fields,curl-request,http-response,errors']
 
 The response body consists of the following fields:
 
 // FIXME: implement missing test
-operation::organization_controller-test-add[snippets='response-fields']
+operation::organization_controller-test-add[snippets='response-fields,errors']
 ////
 
 [[organizations-edit]]
@@ -40,4 +40,4 @@ operation::organization_controller-test-add[snippets='response-fields']
 
 include::{snippets}/organizations_update/description.adoc[]
 
-operation::organizations_update[snippets='path-parameters,request-parts,request-part-properties-fields,curl-request,response-headers,http-response']
+operation::organizations_update[snippets='path-parameters,request-parts,request-part-properties-fields,curl-request,response-headers,http-response,errors']

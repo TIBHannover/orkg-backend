@@ -22,7 +22,7 @@ This allows storing and retrieving provenance information about them.
 
 include::{snippets}/statements_find-by-id/description.adoc[]
 
-operation::statements_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::statements_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields,errors']
 
 [[statements-list]]
 == Listing Statements
@@ -33,32 +33,32 @@ operation::statements_get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::statements_find-all[snippets='query-parameters,curl-request']
+operation::statements_find-all[snippets='query-parameters,curl-request,errors']
 
 [[statements-create]]
 == Creating Statements
 
 include::{snippets}/statements_create/description.adoc[]
 
-operation::statements_create[snippets='request-fields,curl-request,http-response']
+operation::statements_create[snippets='request-fields,curl-request,http-response,errors']
 
 [[statements-edit]]
 == Updating Statements
 
 include::{snippets}/statements_update/description.adoc[]
 
-operation::statements_update[snippets='path-parameters,request-fields,curl-request,http-response']
+operation::statements_update[snippets='path-parameters,request-fields,curl-request,http-response,errors']
 
 [[statements-delete]]
 == Deleting Statement
 
 include::{snippets}/statements_delete-by-id/description.adoc[]
 
-operation::statements_delete-by-id[snippets='path-parameters,curl-request,http-response']
+operation::statements_delete-by-id[snippets='path-parameters,curl-request,http-response,errors']
 
 [[statements-fetch-as-bundle]]
 == Fetching Statements as Bundles
 
 include::{snippets}/statements_fetch-as-bundle/description.adoc[]
 
-operation::statements_fetch-as-bundle[snippets='path-parameters,query-parameters,curl-request,http-response,response-fields']
+operation::statements_fetch-as-bundle[snippets='path-parameters,query-parameters,curl-request,http-response,response-fields,errors']

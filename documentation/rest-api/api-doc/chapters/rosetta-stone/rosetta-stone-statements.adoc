@@ -9,7 +9,7 @@ NOTE: The following endpoints use content negotiation, meaning that the contents
 
 include::{snippets}/rosetta-stone-statements_find-by-id/description.adoc[]
 
-operation::rosetta-stone-statements_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::rosetta-stone-statements_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields,errors']
 
 [[rosetta-stone-statements-list]]
 == Listing Rosetta Stone Statements
@@ -20,28 +20,28 @@ operation::rosetta-stone-statements_get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::rosetta-stone-statements_find-all[snippets='query-parameters,curl-request']
+operation::rosetta-stone-statements_find-all[snippets='query-parameters,curl-request,errors']
 
 [[rosetta-stone-statements-list-versions]]
 == Listing Rosetta Stone Statement Versions
 
 include::{snippets}/rosetta-stone-statements_find-all-versions-by-id/description.adoc[]
 
-operation::rosetta-stone-statements_find-all-versions-by-id[snippets='path-parameters,curl-request']
+operation::rosetta-stone-statements_find-all-versions-by-id[snippets='path-parameters,curl-request,errors']
 
 [[rosetta-stone-statements-create]]
 == Creating Rosetta Stone Statements
 
 include::{snippets}/rosetta-stone-statements_create/description.adoc[]
 
-operation::rosetta-stone-statements_create[snippets='request-fields,curl-request,response-headers,http-response']
+operation::rosetta-stone-statements_create[snippets='request-fields,curl-request,response-headers,http-response,errors']
 
 [[rosetta-stone-statements-edit]]
 == Updating Rosetta Stone Statements
 
 include::{snippets}/rosetta-stone-statements_update/description.adoc[]
 
-operation::rosetta-stone-statements_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::rosetta-stone-statements_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
 [[rosetta-stone-statements-delete]]
 == Deleting Rosetta Stone Statements
@@ -50,10 +50,10 @@ operation::rosetta-stone-statements_update[snippets='path-parameters,request-fie
 
 include::{snippets}/rosetta-stone-statements_soft-delete-by-id/description.adoc[]
 
-operation::rosetta-stone-statements_soft-delete-by-id[snippets='path-parameters,curl-request,http-response']
+operation::rosetta-stone-statements_soft-delete-by-id[snippets='path-parameters,curl-request,http-response,errors']
 
 === Fully Deleting Rosetta Stone Statements
 
 include::{snippets}/rosetta-stone-statements_delete-by-id/description.adoc[]
 
-operation::rosetta-stone-statements_delete-by-id[snippets='path-parameters,curl-request,http-response']
+operation::rosetta-stone-statements_delete-by-id[snippets='path-parameters,curl-request,http-response,errors']

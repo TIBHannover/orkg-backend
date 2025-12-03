@@ -44,7 +44,7 @@ Example:
 
 include::{snippets}/users_fetch-user-data/description.adoc[]
 
-operation::users_fetch-user-data[snippets='curl-request,http-response,response-fields']
+operation::users_fetch-user-data[snippets='curl-request,http-response,response-fields,errors']
 
 ////
 TODO: update documentation to OICD

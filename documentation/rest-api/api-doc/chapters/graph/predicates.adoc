@@ -10,7 +10,7 @@ IDs always start with "P", followed by a number.
 
 include::{snippets}/predicates_find-by-id/description.adoc[]
 
-operation::predicates_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::predicates_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields,errors']
 
 [[predicates-list]]
 == Listing Predicates
@@ -21,28 +21,28 @@ operation::predicates_get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::predicates_find-all[snippets='query-parameters,curl-request']
+operation::predicates_find-all[snippets='query-parameters,curl-request,errors']
 
 [[predicates-create]]
 == Creating Predicates
 
 include::{snippets}/predicates_create/description.adoc[]
 
-operation::predicates_create[snippets='request-fields,curl-request,response-headers,http-response']
+operation::predicates_create[snippets='request-fields,curl-request,response-headers,http-response,errors']
 
 [[predicates-edit]]
 == Updating Predicates
 
 include::{snippets}/predicates_update/description.adoc[]
 
-operation::predicates_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::predicates_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
 [[predicates-delete]]
 == Deleting Predicates
 
 include::{snippets}/predicates_delete-by-id/description.adoc[]
 
-operation::predicates_delete-by-id[snippets='path-parameters,curl-request,http-response']
+operation::predicates_delete-by-id[snippets='path-parameters,curl-request,http-response,errors']
 
 [[predicates-import]]
 == Importing Predicates
@@ -54,11 +54,11 @@ The {orkg} REST API provides two endpoints for importing predicates from externa
 
 include::{snippets}/import_import-predicate-by-uri/description.adoc[]
 
-operation::import_import-predicate-by-uri[snippets='request-fields,curl-request,response-headers,http-response']
+operation::import_import-predicate-by-uri[snippets='request-fields,curl-request,response-headers,http-response,errors']
 
 [[predicates-import-by-short-form]]
 === Importing Predicates by Short Form
 
 include::{snippets}/import_import-predicate-by-short-form/description.adoc[]
 
-operation::import_import-predicate-by-short-form[snippets='request-fields,curl-request,response-headers,http-response']
+operation::import_import-predicate-by-short-form[snippets='request-fields,curl-request,response-headers,http-response,errors']

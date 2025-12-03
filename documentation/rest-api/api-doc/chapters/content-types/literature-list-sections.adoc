@@ -14,14 +14,14 @@ NOTE: The following endpoints use content negotiation, meaning that the contents
 
 include::{snippets}/literature-lists_create-section-at-index_text/description.adoc[]
 
-operation::literature-lists_create-section-at-index_text[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::literature-lists_create-section-at-index_text[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
 [[literature-list-sections-edit-text-section]]
 === Updating Text Sections
 
 include::{snippets}/literature-lists_update-section_text/description.adoc[]
 
-operation::literature-lists_update-section_text[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::literature-lists_update-section_text[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
 [[literature-list-sections-list-sections]]
 == List Sections
@@ -31,18 +31,18 @@ operation::literature-lists_update-section_text[snippets='path-parameters,reques
 
 include::{snippets}/literature-lists_create-section-at-index_list/description.adoc[]
 
-operation::literature-lists_create-section-at-index_list[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::literature-lists_create-section-at-index_list[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
 [[literature-list-sections-edit-list-section]]
 === Updating List Sections
 
 include::{snippets}/literature-lists_update-section_list/description.adoc[]
 
-operation::literature-lists_update-section_list[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::literature-lists_update-section_list[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
 [[literature-list-sections-delete]]
 == Deleting Literature List Sections
 
 include::{snippets}/literature-lists_delete-section/description.adoc[]
 
-operation::literature-lists_delete-section[snippets='path-parameters,curl-request,response-headers,http-response']
+operation::literature-lists_delete-section[snippets='path-parameters,curl-request,response-headers,http-response,errors']

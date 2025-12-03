@@ -14,6 +14,8 @@ operation::things_find-by-id[snippets='path-parameters,curl-request,http-respons
 === Response fields
 The response object can either be a <<classes-fetch,class>>, <<resources-fetch,resource>>, <<predicates-fetch,predicate>> or a <<literals-fetch,literal>>.
 
+operation::things_find-by-id[snippets='errors']
+
 [[things-list]]
 == Listing Things
 
@@ -23,4 +25,4 @@ operation::things_get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::things_find-all[snippets='query-parameters,curl-request']
+operation::things_find-all[snippets='query-parameters,curl-request,errors']

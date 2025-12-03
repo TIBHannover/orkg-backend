@@ -41,14 +41,14 @@ stateDiagram-v2
 
 include::{snippets}/csvs_find-by-id/description.adoc[]
 
-operation::csvs_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::csvs_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields,errors']
 
 [[csvs-fetch-data]]
 == Fetching CSV data
 
 include::{snippets}/csvs_find-data-by-id/description.adoc[]
 
-operation::csvs_find-data-by-id[snippets='path-parameters,curl-request,http-response']
+operation::csvs_find-data-by-id[snippets='path-parameters,curl-request,http-response,errors']
 
 [[csvs-list]]
 == Listing CSVs
@@ -62,14 +62,14 @@ operation::csvs_find-all[snippets='curl-request']
 
 include::{snippets}/csvs_create/description.adoc[]
 
-operation::csvs_create[snippets='request-parts,curl-request,response-headers,http-response']
+operation::csvs_create[snippets='request-parts,curl-request,response-headers,http-response,errors']
 
 [[csvs-update]]
 == Updating CSVs
 
 include::{snippets}/csvs_update/description.adoc[]
 
-operation::csvs_update[snippets='path-parameters,request-parts,curl-request,http-response']
+operation::csvs_update[snippets='path-parameters,request-parts,curl-request,http-response,errors']
 
 [[csvs-validate]]
 == Validating CSVs
@@ -82,28 +82,28 @@ The following endpoints describe the workflow of validating a CSV.
 
 include::{snippets}/csvs_start-validation-by-id/description.adoc[]
 
-operation::csvs_start-validation-by-id[snippets='path-parameters,curl-request,http-response']
+operation::csvs_start-validation-by-id[snippets='path-parameters,curl-request,http-response,errors']
 
 [[csvs-validate-fetch-status]]
 === Fetching CSV Validation Status
 
 include::{snippets}/csvs_find-validation-status-by-id/description.adoc[]
 
-operation::csvs_find-validation-status-by-id[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::csvs_find-validation-status-by-id[snippets='path-parameters,curl-request,http-response,response-fields,errors']
 
 [[csvs-validate-fetch-results]]
 === Fetching CSV Validation Results
 
 include::{snippets}/csvs_find-validation-results-by-id/description.adoc[]
 
-operation::csvs_find-validation-results-by-id[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::csvs_find-validation-results-by-id[snippets='path-parameters,curl-request,http-response,response-fields,errors']
 
 [[csvs-validate-stop]]
 === Stopping CSV Validation
 
 include::{snippets}/csvs_stop-validation-by-id/description.adoc[]
 
-operation::csvs_stop-validation-by-id[snippets='path-parameters,curl-request,http-response']
+operation::csvs_stop-validation-by-id[snippets='path-parameters,curl-request,http-response,errors']
 
 [[csvs-import]]
 == Importing CSVs
@@ -116,32 +116,32 @@ The following endpoints describe the workflow of importing a CSV.
 
 include::{snippets}/csvs_start-import-by-id/description.adoc[]
 
-operation::csvs_start-import-by-id[snippets='path-parameters,curl-request,http-response']
+operation::csvs_start-import-by-id[snippets='path-parameters,curl-request,http-response,errors']
 
 [[csvs-import-fetch-status]]
 === Fetching CSV Import Status
 
 include::{snippets}/csvs_find-import-status-by-id/description.adoc[]
 
-operation::csvs_find-import-status-by-id[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::csvs_find-import-status-by-id[snippets='path-parameters,curl-request,http-response,response-fields,errors']
 
 [[csvs-import-fetch-results]]
 === Fetching CSV Import Results
 
 include::{snippets}/csvs_find-import-results-by-id/description.adoc[]
 
-operation::csvs_find-import-results-by-id[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::csvs_find-import-results-by-id[snippets='path-parameters,curl-request,http-response,response-fields,errors']
 
 [[csvs-import-stop]]
 === Stopping CSV Imports
 
 include::{snippets}/csvs_stop-import-by-id/description.adoc[]
 
-operation::csvs_stop-import-by-id[snippets='path-parameters,curl-request,http-response']
+operation::csvs_stop-import-by-id[snippets='path-parameters,curl-request,http-response,errors']
 
 [[csvs-delete]]
 == Deleting CSVs
 
 include::{snippets}/csvs_delete-by-id/description.adoc[]
 
-operation::csvs_delete-by-id[snippets='path-parameters,curl-request,http-response']
+operation::csvs_delete-by-id[snippets='path-parameters,curl-request,http-response,errors']

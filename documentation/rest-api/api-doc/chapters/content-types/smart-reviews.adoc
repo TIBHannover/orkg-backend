@@ -11,7 +11,7 @@ NOTE: The following endpoints use content negotiation, meaning that the contents
 
 include::{snippets}/smart-reviews_find-by-id/description.adoc[]
 
-operation::smart-reviews_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::smart-reviews_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields,errors']
 
 [[smart-reviews-list]]
 == Listing Smart Reviews
@@ -22,35 +22,35 @@ operation::smart-reviews_get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::smart-reviews_find-all[snippets='query-parameters,curl-request']
+operation::smart-reviews_find-all[snippets='query-parameters,curl-request,errors']
 
 [[smart-reviews-create]]
 == Creating Smart Reviews
 
 include::{snippets}/smart-reviews_create/description.adoc[]
 
-operation::smart-reviews_create[snippets='request-fields,curl-request,response-headers,http-response']
+operation::smart-reviews_create[snippets='request-fields,curl-request,response-headers,http-response,errors']
 
 [[smart-reviews-edit]]
 == Updating Smart Reviews
 
 include::{snippets}/smart-reviews_update/description.adoc[]
 
-operation::smart-reviews_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::smart-reviews_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
 [[smart-reviews-publish]]
 == Publishing Smart Reviews
 
 include::{snippets}/smart-reviews_publish/description.adoc[]
 
-operation::smart-reviews_publish[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::smart-reviews_publish[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
 [[smart-reviews-published-contents]]
 == Fetching Published Smart Review Contents
 
 include::{snippets}/smart-reviews_find-published-content-by-id_statements/description.adoc[]
 
-operation::smart-reviews_find-published-content-by-id_statements[snippets='path-parameters,curl-request']
+operation::smart-reviews_find-published-content-by-id_statements[snippets='path-parameters,curl-request,errors']
 
 Depending on the type of the requested content, the following representations are returned:
 
@@ -62,4 +62,4 @@ Depending on the type of the requested content, the following representations ar
 | Other          | A wrapped list of <<statements-fetch,statements>>. See response fields below for more information.
 |===
 
-operation::smart-reviews_find-published-content-by-id_statements[snippets='response-fields']
+operation::smart-reviews_find-published-content-by-id_statements[snippets='response-fields,errors']

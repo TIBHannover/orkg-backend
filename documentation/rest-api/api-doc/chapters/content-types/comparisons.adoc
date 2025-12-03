@@ -11,7 +11,7 @@ NOTE: The following endpoints use content negotiation, meaning that the contents
 
 include::{snippets}/comparisons_find-by-id/description.adoc[]
 
-operation::comparisons_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::comparisons_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields,errors']
 
 [[comparisons-list]]
 == Listing Comparisons
@@ -22,25 +22,25 @@ operation::comparisons_get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::comparisons_find-all[snippets='query-parameters,curl-request']
+operation::comparisons_find-all[snippets='query-parameters,curl-request,errors']
 
 [[comparisons-create]]
 == Creating Comparisons
 
 include::{snippets}/comparisons_create/description.adoc[]
 
-operation::comparisons_create[snippets='request-fields,curl-request,response-headers,http-response']
+operation::comparisons_create[snippets='request-fields,curl-request,response-headers,http-response,errors']
 
 [[comparisons-edit]]
 == Updating Comparisons
 
 include::{snippets}/comparisons_update/description.adoc[]
 
-operation::comparisons_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::comparisons_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
 [[comparisons-publish]]
 == Publishing Comparisons
 
 include::{snippets}/comparisons_publish/description.adoc[]
 
-operation::comparisons_publish[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::comparisons_publish[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']

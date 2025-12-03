@@ -8,21 +8,21 @@ A class can have at most one parent class.
 
 include::{snippets}/class-hierarchies_find-all-children-by-ancestor-id/description.adoc[]
 
-operation::class-hierarchies_find-all-children-by-ancestor-id[snippets='path-parameters,curl-request,response-fields,http-response']
+operation::class-hierarchies_find-all-children-by-ancestor-id[snippets='path-parameters,curl-request,response-fields,http-response,errors']
 
 [[class-hierarchies-fetch-parents]]
 == Fetching Parent Classes
 
 include::{snippets}/class-hierarchies_find-parent-by-child-id/description.adoc[]
 
-operation::class-hierarchies_find-parent-by-child-id[snippets='path-parameters,curl-request']
+operation::class-hierarchies_find-parent-by-child-id[snippets='path-parameters,curl-request,errors']
 
 [[class-hierarchies-list-roots]]
 == Listing Root Classes
 
 include::{snippets}/class-hierarchies_find-root-by-descendant-id/description.adoc[]
 
-operation::class-hierarchies_find-root-by-descendant-id[snippets='path-parameters,curl-request']
+operation::class-hierarchies_find-root-by-descendant-id[snippets='path-parameters,curl-request,errors']
 
 [[class-hierarchies-list-all-roots]]
 == Listing all Root Classes
@@ -36,39 +36,39 @@ operation::class-hierarchies_find-all-roots[snippets='curl-request']
 
 include::{snippets}/class-hierarchies_find-class-hierarchy/description.adoc[]
 
-operation::class-hierarchies_find-class-hierarchy[snippets='path-parameters,curl-request,response-fields,http-response']
+operation::class-hierarchies_find-class-hierarchy[snippets='path-parameters,curl-request,response-fields,http-response,errors']
 
 [[class-hierarchies-create-child-relations]]
 == Creating Child Class Relations
 
 include::{snippets}/class-hierarchies_create-child-relations/description.adoc[]
 
-operation::class-hierarchies_create-child-relations[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::class-hierarchies_create-child-relations[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
 [[class-hierarchies-edit-child-relations]]
 == Updating Child Class Relations
 
 include::{snippets}/class-hierarchies_update-child-relations/description.adoc[]
 
-operation::class-hierarchies_update-child-relations[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::class-hierarchies_update-child-relations[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
 [[class-hierarchies-create-parent-relations]]
 == Creating Parent Class Relations
 
 include::{snippets}/class-hierarchies_create-parent-relation/description.adoc[]
 
-operation::class-hierarchies_create-parent-relation[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::class-hierarchies_create-parent-relation[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
 [[class-hierarchies-delete-child-relations]]
 == Deleting Parent Class Relations
 
 include::{snippets}/class-hierarchies_delete-by-child-id/description.adoc[]
 
-operation::class-hierarchies_delete-by-child-id[snippets='path-parameters,curl-request,http-response']
+operation::class-hierarchies_delete-by-child-id[snippets='path-parameters,curl-request,http-response,errors']
 
 [[class-hierarchies-count-instances]]
 == Counting Class Instances
 
 include::{snippets}/class-hierarchies_count-class-instances/description.adoc[]
 
-operation::class-hierarchies_count-class-instances[snippets='path-parameters,curl-request,response-fields,http-response']
+operation::class-hierarchies_count-class-instances[snippets='path-parameters,curl-request,response-fields,http-response,errors']

@@ -9,7 +9,7 @@ NOTE: The following endpoints use content negotiation, meaning that the contents
 
 include::{snippets}/template-instances_find-by-template-id-and-resource-id/description.adoc[]
 
-operation::template-instances_find-by-template-id-and-resource-id[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::template-instances_find-by-template-id-and-resource-id[snippets='path-parameters,curl-request,http-response,response-fields,errors']
 
 [[template-instances-list]]
 == Listing Template Instances
@@ -20,11 +20,11 @@ operation::template-instances_get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::template-instances_find-all-by-template-id[snippets='query-parameters,curl-request']
+operation::template-instances_find-all-by-template-id[snippets='query-parameters,curl-request,errors']
 
 [[template-instances-edit]]
 == Updating Template Instances
 
 include::{snippets}/template-instances_update/description.adoc[]
 
-operation::template-instances_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::template-instances_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']

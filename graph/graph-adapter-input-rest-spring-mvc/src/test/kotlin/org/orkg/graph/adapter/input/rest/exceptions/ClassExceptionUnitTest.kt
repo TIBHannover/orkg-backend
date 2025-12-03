@@ -97,7 +97,7 @@ internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectDetail("""Class "${Classes.list}" already exists.""")
             .andExpect(jsonPath("$.class_id").value(Classes.list.value))
             .andDocument {
-                responseFields<CannotResetURI>(
+                responseFields<ClassAlreadyExists>(
                     fieldWithPath("class_id").description("The id of the class.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )

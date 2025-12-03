@@ -7,14 +7,14 @@ Jobs are long running, asynchronous tasks that allow processing of large amounts
 
 include::{snippets}/jobs_find-status-by-id/description.adoc[]
 
-operation::jobs_find-status-by-id[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::jobs_find-status-by-id[snippets='path-parameters,curl-request,http-response,response-fields,errors']
 
 [[jobs-fetch-results]]
 == Fetching Job results
 
 include::{snippets}/jobs_find-results-by-id_validate-paper-csv_done/description.adoc[]
 
-operation::jobs_find-results-by-id_validate-paper-csv_done[snippets='path-parameters,curl-request,http-response']
+operation::jobs_find-results-by-id_validate-paper-csv_done[snippets='path-parameters,curl-request,http-response,errors']
 
 === Response fields
 
@@ -25,4 +25,4 @@ Response fields are specific for each job type.
 
 include::{snippets}/jobs_stop-by-id/description.adoc[]
 
-operation::jobs_stop-by-id[snippets='path-parameters,curl-request,http-response']
+operation::jobs_stop-by-id[snippets='path-parameters,curl-request,http-response,errors']

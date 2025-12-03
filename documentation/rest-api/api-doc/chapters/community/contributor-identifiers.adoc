@@ -16,7 +16,7 @@ operation::contributor-identifiers_find-all-by-contributor-id[snippets='path-par
 
 include::{snippets}/contributor-identifiers_create/description.adoc[]
 
-operation::contributor-identifiers_create[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::contributor-identifiers_create[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
 [[contributor-identifiers-delete]]
 == Deleting Contributor Identifiers

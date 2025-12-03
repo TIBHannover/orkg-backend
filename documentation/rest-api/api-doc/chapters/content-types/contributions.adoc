@@ -11,18 +11,18 @@ NOTE: The following endpoints use content negotiation, meaning that the contents
 
 include::{snippets}/contributions_find-by-id/description.adoc[]
 
-operation::contributions_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::contributions_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields,errors']
 
 [[contributions-list]]
 == Listing Contributions
 
 include::{snippets}/contributions_find-all/description.adoc[]
 
-operation::contributions_find-all[snippets='curl-request']
+operation::contributions_find-all[snippets='curl-request,errors']
 
 [[contributions-create]]
 == Creating Contributions
 
 include::{snippets}/contributions_create/description.adoc[]
 
-operation::contributions_create[snippets='request-fields,curl-request,http-response']
+operation::contributions_create[snippets='request-fields,curl-request,http-response,errors']

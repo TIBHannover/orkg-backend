@@ -8,7 +8,7 @@ They can be used to create and assign persistent identifiers to resource subgrap
 
 include::{snippets}/template-based-resource-snapshots_find-by-id/description.adoc[]
 
-operation::template-based-resource-snapshots_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::template-based-resource-snapshots_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields,errors']
 
 [[template-based-resource-snapshots-list]]
 == Listing Template Based Resource Snapshots
@@ -27,4 +27,4 @@ operation::template-based-resource-snapshots_find-all[snippets='query-parameters
 
 include::{snippets}/template-based-resource-snapshots_create/description.adoc[]
 
-operation::template-based-resource-snapshots_create[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::template-based-resource-snapshots_create[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']

@@ -23,18 +23,18 @@ operation::observatories_find-all[snippets='query-parameters,curl-request']
 
 include::{snippets}/observatories_create/description.adoc[]
 
-operation::observatories_create[snippets='request-fields,curl-request,response-headers,http-response']
+operation::observatories_create[snippets='request-fields,curl-request,response-headers,http-response,errors']
 
 [[observatories-edit]]
 == Updating Observatories
 
 include::{snippets}/observatories_update/description.adoc[]
 
-operation::observatories_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::observatories_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
 [[observatories-list-papers]]
 == Listing Papers of Observatories
 
 include::{snippets}/observatory-resources_find-all-papers/description.adoc[]
 
-operation::observatory-resources_find-all-papers[snippets='path-parameters,curl-request,query-parameters']
+operation::observatory-resources_find-all-papers[snippets='path-parameters,curl-request,query-parameters,errors']

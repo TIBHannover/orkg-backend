@@ -11,7 +11,7 @@ operation::content-types_get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::content-types_find-all[snippets='query-parameters']
+operation::content-types_find-all[snippets='query-parameters,errors']
 
 [[content-types-list-as-resource]]
 == Listing Content-Types as Resources
@@ -22,4 +22,4 @@ operation::content-types_get-paged-as-resource[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::content-types_find-all-as-resources[snippets='query-parameters']
+operation::content-types_find-all-as-resources[snippets='query-parameters,errors']

@@ -25,18 +25,18 @@ operation::comparison-related-figures_find-all-by-comparison-id[snippets='path-p
 
 include::{snippets}/comparison-related-figures_create/description.adoc[]
 
-operation::comparison-related-figures_create[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::comparison-related-figures_create[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
 [[comparisons-related-figure-edit]]
 == Updating Comparison Related Figures
 
 include::{snippets}/comparison-related-figures_update/description.adoc[]
 
-operation::comparison-related-figures_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::comparison-related-figures_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
 [[comparisons-related-figure-delete]]
 == Deleting Comparison Related Figures
 
 include::{snippets}/comparison-related-figures_delete-by-id-and-comparison-id/description.adoc[]
 
-operation::comparison-related-figures_delete-by-id-and-comparison-id[snippets='path-parameters,curl-request,response-headers,http-response']
+operation::comparison-related-figures_delete-by-id-and-comparison-id[snippets='path-parameters,curl-request,response-headers,http-response,errors']

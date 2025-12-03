@@ -8,7 +8,7 @@ Research problems in the ORKG are important concepts and thus have their own API
 
 A `GET` request get all research fields relating to a problem
 
-//operation::organization_controller-test-index[snippets='curl-request,http-response']
+//operation::organization_controller-test-index[snippets='curl-request,http-response,errors']
 ////
 
 [[problems-users]]

@@ -36,21 +36,21 @@ For a list of supported media types, see <<vocab-accept>> below.
 
 include::{snippets}/rdf-vocab_resolve-resource_application-rdf-xml/description.adoc[]
 
-operation::rdf-vocab_resolve-resource_application-rdf-xml[snippets='path-parameters,curl-request,http-response']
+operation::rdf-vocab_resolve-resource_application-rdf-xml[snippets='path-parameters,curl-request,http-response,errors']
 
 [[vocab-predicate]]
 === Resolve a predicate
 
 include::{snippets}/rdf-vocab_resolve-predicate_text-n3/description.adoc[]
 
-operation::rdf-vocab_resolve-predicate_text-n3[snippets='path-parameters,curl-request,http-response']
+operation::rdf-vocab_resolve-predicate_text-n3[snippets='path-parameters,curl-request,http-response,errors']
 
 [[vocab-class]]
 === Resolve a class
 
 include::{snippets}/rdf-vocab_resolve-class_application-trig/description.adoc[]
 
-operation::rdf-vocab_resolve-class_application-trig[snippets='path-parameters,curl-request,http-response']
+operation::rdf-vocab_resolve-class_application-trig[snippets='path-parameters,curl-request,http-response,errors']
 
 [[vocab-accept]]
 === Supported media types

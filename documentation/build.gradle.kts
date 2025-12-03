@@ -43,7 +43,7 @@ dependencies {
     asciidoctor("io.spring.asciidoctor.backends:spring-asciidoctor-backends:0.0.7")
 }
 
-val aggregatedSnippetsDir = layout.buildDirectory.dir("generated-snippets")
+val aggregatedSnippetsDir = layout.buildDirectory.dir("aggregated-snippets")
 
 val aggregateRestDocsSnippets by tasks.registering(Sync::class) {
     group = "documentation"
@@ -63,6 +63,37 @@ val aggregateRestDocsSnippets by tasks.registering(Sync::class) {
     into(aggregatedSnippetsDir)
 }
 
+val generatedSnippetsDir = layout.buildDirectory.dir("generated-snippets")
+
+val generateRestDocsSnippets by tasks.registering(Sync::class) {
+    group = "documentation"
+
+    from(aggregateRestDocsSnippets) {
+        exclude("**/*.json")
+    }
+    from(generateErrorSnippets)
+    from(generateErrorListing)
+
+    into(generatedSnippetsDir)
+}
+
+object AsciiDocHelper {
+    private val typeRegex = Regex("Always `([a-z:_]+)` for this error.")
+
+    fun findExceptionTypeFromText(file: File): String = file.useLines { lines ->
+        val line = lines.firstOrNull { typeRegex.containsMatchIn(it) }
+            ?: throw RuntimeException("Cannot find a line containing the type!")
+        // We already know that we can match, so ignoring null handling
+        typeRegex.find(line)!!.groups[1]!!.value
+    }
+
+    fun findExceptionTypeFromText(text: String): String? =
+        typeRegex.find(text)?.groups?.get(1)?.value
+
+    fun exceptionTypeToAnchorType(type: String): String =
+        type.replace(":", "-").replace("_", "-")
+}
+
 abstract class GenerateErrorListingTask : DefaultTask() {
     @get:InputDirectory
     abstract val snippetsDir: DirectoryProperty
@@ -72,12 +103,8 @@ abstract class GenerateErrorListingTask : DefaultTask() {
 
     init {
         group = "documentation"
-        snippetsDir.convention(project.layout.buildDirectory.dir("generated-snippets"))
+        snippetsDir.convention(project.layout.buildDirectory.dir("aggregated-snippets"))
         errorListing.set(project.layout.buildDirectory.file("error-snippets/all-errors.adoc"))
-    }
-
-    companion object {
-        private val typeRegex = Regex("Always `([a-z:_]+)` for this error.")
     }
 
     @TaskAction
@@ -89,11 +116,12 @@ abstract class GenerateErrorListingTask : DefaultTask() {
             // Customization of text is done in the documentation, this only produces a simple list of snippets.
             // Headings are used to separate entries, and may need adjustments using "leveloffset" on include.
             errorFiles.forEach { file ->
-                val type = findTypeFromText(file)
-                val anchorType = type.replace(":", "-").replace("_", "-")
+                val type = AsciiDocHelper.findExceptionTypeFromText(file)
+                val anchorType = AsciiDocHelper.exceptionTypeToAnchorType(type)
                 writer.write(
                     """
-                    |[discrete,#error-$anchorType]
+                    |[[error-$anchorType]]
+                    |[discrete]
                     |== $type
                     |[cols="1,1,3"]
                     |include::{snippets}/${file.toRelativeString(snippetsDir)}[]
@@ -104,15 +132,9 @@ abstract class GenerateErrorListingTask : DefaultTask() {
             }
         }
     }
-
-    private fun findTypeFromText(file: File): String = file.useLines { lines ->
-        val line = lines.firstOrNull { typeRegex.containsMatchIn(it) } ?: throw RuntimeException("Cannot find a line containing the type!")
-        // We already know that we can match, so ignoring null handling
-        typeRegex.find(line)!!.groups[1]!!.value
-    }
 }
 
-abstract class GenerateOpenApiExceptionSnippetsTask : DefaultTask() {
+abstract class GenerateOpenApiErrorSnippetsTask : DefaultTask() {
     @get:InputDirectory
     abstract val snippetsDir: DirectoryProperty
 
@@ -121,8 +143,8 @@ abstract class GenerateOpenApiExceptionSnippetsTask : DefaultTask() {
 
     init {
         group = "documentation"
-        snippetsDir.convention(project.layout.buildDirectory.dir("generated-snippets"))
-        outputDir.convention(project.layout.buildDirectory.dir("generated-exception-snippets"))
+        snippetsDir.convention(project.layout.buildDirectory.dir("aggregated-snippets"))
+        outputDir.convention(project.layout.buildDirectory.dir("generated-openapi-error-snippets"))
     }
 
     @TaskAction
@@ -167,6 +189,67 @@ abstract class GenerateOpenApiExceptionSnippetsTask : DefaultTask() {
 
     private fun createErrorSnippetOperationId(operationId: String, exceptionSnippet: JsonNode): String =
         operationId + "-" + exceptionSnippet["operationId"].textValue().replaceFirst("errors_", "error-").substringBefore('_')
+}
+
+abstract class GenerateErrorSnippetsTask : DefaultTask() {
+    @get:InputDirectory
+    abstract val snippetsDir: DirectoryProperty
+
+    @get:OutputDirectory
+    abstract val outputDir: DirectoryProperty
+
+    init {
+        group = "documentation"
+        snippetsDir.convention(project.layout.buildDirectory.dir("aggregated-snippets"))
+        outputDir.convention(project.layout.buildDirectory.dir("generated-error-snippets"))
+    }
+
+    @TaskAction
+    fun action() {
+        outputDir.asFile.get().deleteRecursively()
+        val objectMapper = jacksonObjectMapper().enable(SerializationFeature.INDENT_OUTPUT)
+        val errorSnippetFiles = snippetsDir.asFileTree.matching({ include("errors_*/resource.json") }).files
+        val exceptionNameToUri = errorSnippetFiles.associate {
+            val json = objectMapper.readTree(it)
+            val path = json.path("response")
+            val exceptionName = path.path("schema").path("name").textValue()
+            val exceptionType = path.path("responseFields")
+                .find { (it as ObjectNode).path("path").textValue() == "type" }!!
+                .path("description").textValue()
+                .let(AsciiDocHelper::findExceptionTypeFromText)!!
+            exceptionName to exceptionType
+        }
+        val exceptionFiles = snippetsDir.asFileTree.matching({ include("**/resource.json", "**/exceptions.json") }).files
+            .groupBy { it.parentFile.name }
+            .filter { it.value.size == 2 }
+            .mapValues { (_, value) -> value.sortedBy { it.name } }
+        exceptionFiles.forEach { (operationId, value) ->
+            val exceptions = objectMapper.readValue<List<String>>(value[0])
+            val errorsSnippet = exceptions.map { exceptionNameToUri[it]!! }.sorted()
+                .joinToString("\n", prefix = errorSnippetDisclaimer) { type ->
+                    "- <<error-${AsciiDocHelper.exceptionTypeToAnchorType(type)},$type>>"
+                }
+            val outputSnippetFolder = File(outputDir.asFile.get(), operationId)
+            val outputSnippetFile = File(outputSnippetFolder, "errors.adoc")
+            if (!outputSnippetFolder.exists()) {
+                outputSnippetFolder.mkdirs()
+            }
+            outputSnippetFile.writeText(errorsSnippet)
+        }
+    }
+
+    companion object {
+        val errorSnippetDisclaimer =
+            """
+            |[NOTE]
+            |====
+            |The following list only includes ORKG-related errors.
+            |Other errors, e.g. authentication failures, can still happen but are excluded from this list.
+            |====
+            |
+            |
+            """.trimMargin()
+    }
 }
 
 abstract class GenerateOpenApiSpecPythonTask : DefaultTask() {
@@ -217,7 +300,11 @@ val generateErrorListing by tasks.registering(GenerateErrorListingTask::class) {
     inputs.files(aggregateRestDocsSnippets.get().outputs)
 }
 
-val generateOpenApiExceptionSnippets by tasks.registering(GenerateOpenApiExceptionSnippetsTask::class) {
+val generateErrorSnippets by tasks.registering(GenerateErrorSnippetsTask::class) {
+    inputs.files(aggregateRestDocsSnippets.get().outputs)
+}
+
+val generateOpenApiErrorSnippets by tasks.registering(GenerateOpenApiErrorSnippetsTask::class) {
     inputs.files(aggregateRestDocsSnippets.get().outputs)
 }
 
@@ -229,7 +316,7 @@ val generateOpenApiSpecPython by tasks.registering(GenerateOpenApiSpecPythonTask
 val aggregatedOpenApiSnippetsDir = layout.buildDirectory.dir("generated-openapi-snippets")
 
 val aggregateOpenApiSnippets by tasks.registering(Sync::class) {
-    from(generateOpenApiExceptionSnippets.get().outputs)
+    from(generateOpenApiErrorSnippets.get().outputs)
     from(aggregateRestDocsSnippets.get().outputs) {
         includeEmptyDirs = false
         include("**/resource.json")
@@ -253,7 +340,7 @@ val asciidoctor by tasks.existing(AsciidoctorTask::class) {
     // Declare all generated Asciidoc snippets as inputs. This connects the tasks, so dependsOn() is not required.
     // Other outputs are filtered, because they do not affect the output of this task.
     val docSources = files(sourceDir).asFileTree.matching { include("**/*.adoc", "**/*.css", "**/*.svg", "**/*.html") }
-    inputs.files(docSources, aggregateRestDocsSnippets, generateErrorListing)
+    inputs.files(docSources, generateRestDocsSnippets)
         .withPathSensitivity(PathSensitivity.RELATIVE)
         .ignoreEmptyDirectories()
         .withPropertyName("asciidocFiles")
@@ -299,7 +386,7 @@ val asciidoctor by tasks.existing(AsciidoctorTask::class) {
             "icons" to "font",
             "linkattrs" to "true",
             "encoding" to "utf-8",
-            "snippets" to aggregatedSnippetsDir.get(),
+            "snippets" to generatedSnippetsDir.get(),
             "docinfo" to "shared,private"
         )
     )

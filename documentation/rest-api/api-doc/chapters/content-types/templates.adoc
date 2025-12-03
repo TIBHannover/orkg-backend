@@ -11,7 +11,7 @@ NOTE: The following endpoints use content negotiation, meaning that the contents
 
 include::{snippets}/templates_find-by-id/description.adoc[]
 
-operation::templates_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::templates_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields,errors']
 
 [[templates-list]]
 == Listing Templates
@@ -22,18 +22,18 @@ operation::templates_get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::templates_find-all[snippets='query-parameters,curl-request']
+operation::templates_find-all[snippets='query-parameters,curl-request,errors']
 
 [[templates-create]]
 == Creating Templates
 
 include::{snippets}/templates_create/description.adoc[]
 
-operation::templates_create[snippets='request-fields,curl-request,response-headers,http-response']
+operation::templates_create[snippets='request-fields,curl-request,response-headers,http-response,errors']
 
 [[templates-edit]]
 == Updating Templates
 
 include::{snippets}/templates_update/description.adoc[]
 
-operation::templates_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::templates_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']

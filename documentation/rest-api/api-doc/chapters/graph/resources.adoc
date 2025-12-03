@@ -8,7 +8,7 @@ They can appear in the subject or object position in <<Statements,statements>>.
 
 include::{snippets}/resources_find-by-id/description.adoc[]
 
-operation::resources_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::resources_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields,errors']
 
 [[resources-list]]
 == Listing Resources
@@ -19,28 +19,28 @@ operation::resources_get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::resources_find-all[snippets='query-parameters,curl-request']
+operation::resources_find-all[snippets='query-parameters,curl-request,errors']
 
 [[resources-create]]
 == Creating Resources
 
 include::{snippets}/resources_create/description.adoc[]
 
-operation::resources_create[snippets='request-fields,curl-request,response-headers,http-response']
+operation::resources_create[snippets='request-fields,curl-request,response-headers,http-response,errors']
 
 [[resources-edit]]
 == Updating Resources
 
 include::{snippets}/resources_update/description.adoc[]
 
-operation::resources_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::resources_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
 [[resources-delete]]
 == Deleting Resources
 
 include::{snippets}/resources_delete-by-id/description.adoc[]
 
-operation::resources_delete-by-id[snippets='path-parameters,curl-request,http-response']
+operation::resources_delete-by-id[snippets='path-parameters,curl-request,http-response,errors']
 
 [[resources-import]]
 == Importing Resources
@@ -52,11 +52,11 @@ The {orkg} REST API provides two endpoints for importing resources from external
 
 include::{snippets}/import_import-resource-by-uri/description.adoc[]
 
-operation::import_import-resource-by-uri[snippets='request-fields,curl-request,response-headers,http-response']
+operation::import_import-resource-by-uri[snippets='request-fields,curl-request,response-headers,http-response,errors']
 
 [[resources-import-by-short-form]]
 === Importing Resources by Short Form
 
 include::{snippets}/import_import-resource-by-short-form/description.adoc[]
 
-operation::import_import-resource-by-short-form[snippets='request-fields,curl-request,response-headers,http-response']
+operation::import_import-resource-by-short-form[snippets='request-fields,curl-request,response-headers,http-response,errors']

@@ -14,14 +14,14 @@ NOTE: The following endpoints use content negotiation, meaning that the contents
 
 include::{snippets}/smart-reviews_create-section-at-index_comparison/description.adoc[]
 
-operation::smart-reviews_create-section-at-index_comparison[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::smart-reviews_create-section-at-index_comparison[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
 [[smart-review-sections-edit-comparison-section]]
 === Updating Comparison Sections
 
 include::{snippets}/smart-reviews_update-section_comparison/description.adoc[]
 
-operation::smart-reviews_update-section_comparison[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::smart-reviews_update-section_comparison[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
 [[smart-review-sections-visualization-sections]]
 == Visualization Sections
@@ -31,14 +31,14 @@ operation::smart-reviews_update-section_comparison[snippets='path-parameters,req
 
 include::{snippets}/smart-reviews_create-section-at-index_visualization/description.adoc[]
 
-operation::smart-reviews_create-section-at-index_visualization[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::smart-reviews_create-section-at-index_visualization[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
 [[smart-review-sections-edit-visualization-section]]
 === Updating Visualization Sections
 
 include::{snippets}/smart-reviews_update-section_visualization/description.adoc[]
 
-operation::smart-reviews_update-section_visualization[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::smart-reviews_update-section_visualization[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
 [[smart-review-sections-resource-sections]]
 == Resource Sections
@@ -48,14 +48,14 @@ operation::smart-reviews_update-section_visualization[snippets='path-parameters,
 
 include::{snippets}/smart-reviews_create-section-at-index_resource/description.adoc[]
 
-operation::smart-reviews_create-section-at-index_resource[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::smart-reviews_create-section-at-index_resource[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
 [[smart-review-sections-edit-resource-section]]
 === Updating Resource Sections
 
 include::{snippets}/smart-reviews_update-section_resource/description.adoc[]
 
-operation::smart-reviews_update-section_resource[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::smart-reviews_update-section_resource[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
 [[smart-review-sections-predicate-sections]]
 == Predicate Sections
@@ -65,14 +65,14 @@ operation::smart-reviews_update-section_resource[snippets='path-parameters,reque
 
 include::{snippets}/smart-reviews_create-section-at-index_predicate/description.adoc[]
 
-operation::smart-reviews_create-section-at-index_predicate[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::smart-reviews_create-section-at-index_predicate[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
 [[smart-review-sections-edit-predicate-section]]
 === Updating Predicate Sections
 
 include::{snippets}/smart-reviews_update-section_predicate/description.adoc[]
 
-operation::smart-reviews_update-section_predicate[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::smart-reviews_update-section_predicate[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
 [[smart-review-sections-ontology-sections]]
 == Ontology Sections
@@ -82,14 +82,14 @@ operation::smart-reviews_update-section_predicate[snippets='path-parameters,requ
 
 include::{snippets}/smart-reviews_create-section-at-index_ontology/description.adoc[]
 
-operation::smart-reviews_create-section-at-index_ontology[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::smart-reviews_create-section-at-index_ontology[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
 [[smart-review-sections-edit-ontology-section]]
 === Updating Ontology Sections
 
 include::{snippets}/smart-reviews_update-section_ontology/description.adoc[]
 
-operation::smart-reviews_update-section_ontology[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::smart-reviews_update-section_ontology[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
 [[smart-review-sections-text-sections]]
 == Text Sections
@@ -99,18 +99,18 @@ operation::smart-reviews_update-section_ontology[snippets='path-parameters,reque
 
 include::{snippets}/smart-reviews_create-section-at-index_text/description.adoc[]
 
-operation::smart-reviews_create-section-at-index_text[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::smart-reviews_create-section-at-index_text[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
 [[smart-review-sections-edit-text-section]]
 === Updating Text Sections
 
 include::{snippets}/smart-reviews_update-section_text/description.adoc[]
 
-operation::smart-reviews_update-section_text[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::smart-reviews_update-section_text[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
 [[smart-review-sections-delete]]
 == Deleting Smart Review Sections
 
 include::{snippets}/smart-reviews_delete-section/description.adoc[]
 
-operation::smart-reviews_delete-section[snippets='path-parameters,curl-request,response-headers,http-response']
+operation::smart-reviews_delete-section[snippets='path-parameters,curl-request,response-headers,http-response,errors']

@@ -9,25 +9,25 @@ The elements of a list can only be modified using the dedicated list endpoints.
 
 include::{snippets}/lists_find-by-id/description.adoc[]
 
-operation::lists_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::lists_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields,errors']
 
 [[list-elements]]
 == Fetching List Elements
 
 include::{snippets}/lists_find-all-elements-by-id/description.adoc[]
 
-operation::lists_find-all-elements-by-id[snippets='path-parameters,curl-request,http-response']
+operation::lists_find-all-elements-by-id[snippets='path-parameters,curl-request,http-response,errors']
 
 [[lists-create]]
 == Creating Lists
 
 include::{snippets}/lists_create/description.adoc[]
 
-operation::lists_create[snippets='request-fields,curl-request,response-headers,http-response']
+operation::lists_create[snippets='request-fields,curl-request,response-headers,http-response,errors']
 
 [[lists-update]]
 == Updating Lists
 
 include::{snippets}/lists_update/description.adoc[]
 
-operation::lists_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::lists_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']

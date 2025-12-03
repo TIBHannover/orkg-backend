@@ -12,7 +12,7 @@ NOTE: In the following sections, the response fields of the page object are omit
 
 include::{snippets}/research-fields_find-all-research-problems-by-research-field-id/description.adoc[]
 
-operation::research-fields_find-all-research-problems-by-research-field-id[snippets='path-parameters,curl-request']
+operation::research-fields_find-all-research-problems-by-research-field-id[snippets='path-parameters,curl-request,errors']
 
 [[research-fields-list-research-problems-with-subfields]]
 === Listing Research Problems of Research Fields and their Subfields
@@ -43,21 +43,21 @@ All path and request parameters are exactly the same as on the <<research-fields
 
 include::{snippets}/research-fields_find-all-children-by-parent-id/description.adoc[]
 
-operation::research-fields_find-all-children-by-parent-id[snippets='path-parameters,curl-request,response-fields']
+operation::research-fields_find-all-children-by-parent-id[snippets='path-parameters,curl-request,response-fields,errors']
 
 [[research-fields-list-parents]]
 == Listing Parent Research Fields
 
 include::{snippets}/research-fields_find-all-parents-by-child-id/description.adoc[]
 
-operation::research-fields_find-all-parents-by-child-id[snippets='path-parameters,curl-request']
+operation::research-fields_find-all-parents-by-child-id[snippets='path-parameters,curl-request,errors']
 
 [[research-fields-list-roots]]
 == Listing Root Research Fields of Subfields
 
 include::{snippets}/research-fields_find-all-roots-by-descendant-id/description.adoc[]
 
-operation::research-fields_find-all-roots-by-descendant-id[snippets='path-parameters,curl-request']
+operation::research-fields_find-all-roots-by-descendant-id[snippets='path-parameters,curl-request,errors']
 
 [[research-fields-list-all-roots]]
 == Listing all Root Research Fields
@@ -71,4 +71,4 @@ operation::research-fields_find-all-roots[snippets='curl-request']
 
 include::{snippets}/research-fields_find-research-field-hierarchy-by-research-field-id/description.adoc[]
 
-operation::research-fields_find-research-field-hierarchy-by-research-field-id[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::research-fields_find-research-field-hierarchy-by-research-field-id[snippets='path-parameters,curl-request,http-response,response-fields,errors']

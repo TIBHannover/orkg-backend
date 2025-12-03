@@ -8,7 +8,7 @@ They can be attached to <<Resources,resources>> to indicate that the resource be
 
 include::{snippets}/classes_find-by-id/description.adoc[]
 
-operation::classes_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::classes_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields,errors']
 
 [[classes-list]]
 == Listing Classes
@@ -19,14 +19,14 @@ operation::classes_get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::classes_find-all[snippets='query-parameters,curl-request']
+operation::classes_find-all[snippets='query-parameters,curl-request,errors']
 
 [[classes-create]]
 == Creating Classes
 
 include::{snippets}/classes_create/description.adoc[]
 
-operation::classes_create[snippets='request-fields,curl-request,response-headers,http-response']
+operation::classes_create[snippets='request-fields,curl-request,response-headers,http-response,errors']
 
 [[classes-edit]]
 == Updating Classes
@@ -38,14 +38,14 @@ The Open Research Knowledge Graph REST API provides two endpoints for updating c
 
 include::{snippets}/classes_update/description.adoc[]
 
-operation::classes_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::classes_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
 [[classes-replace]]
 === Updating Classes (PUT)
 
 include::{snippets}/classes_replace/description.adoc[]
 
-operation::classes_replace[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::classes_replace[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
 [[class-hierarchies]]
 include::class-hierarchies.adoc[leveloffset=+1]
@@ -60,11 +60,11 @@ The {orkg} REST API provides two endpoints for importing classes from external o
 
 include::{snippets}/import_import-class-by-uri/description.adoc[]
 
-operation::import_import-class-by-uri[snippets='request-fields,curl-request,response-headers,http-response']
+operation::import_import-class-by-uri[snippets='request-fields,curl-request,response-headers,http-response,errors']
 
 [[classes-import-by-short-form]]
 === Importing Classes by Short Form
 
 include::{snippets}/import_import-class-by-short-form/description.adoc[]
 
-operation::import_import-class-by-short-form[snippets='request-fields,curl-request,response-headers,http-response']
+operation::import_import-class-by-short-form[snippets='request-fields,curl-request,response-headers,http-response,errors']

@@ -7,32 +7,32 @@ Observatory filters are persistent filter configurations (presets) for observato
 
 include::{snippets}/observatory-filters_find-by-id/description.adoc[]
 
-operation::observatory-filters_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::observatory-filters_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields,errors']
 
 [[observatory-filters-list]]
 == Listing Observatory Filters
 
 include::{snippets}/observatory-filters_find-all/description.adoc[]
 
-operation::observatory-filters_find-all[snippets='path-parameters,curl-request']
+operation::observatory-filters_find-all[snippets='path-parameters,curl-request,errors']
 
 [[observatory-filters-create]]
 == Creating Observatory Filters
 
 include::{snippets}/observatory-filters_create/description.adoc[]
 
-operation::observatory-filters_create[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::observatory-filters_create[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
 [[observatory-filters-update]]
 == Updating Observatory Filters
 
 include::{snippets}/observatory-filters_update/description.adoc[]
 
-operation::observatory-filters_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::observatory-filters_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
 [[observatory-filters-delete]]
 == Deleting Observatory Filters
 
 include::{snippets}/observatory-filters_delete-by-id/description.adoc[]
 
-operation::observatory-filters_delete-by-id[snippets='path-parameters,curl-request,http-response']
+operation::observatory-filters_delete-by-id[snippets='path-parameters,curl-request,http-response,errors']

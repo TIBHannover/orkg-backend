@@ -11,7 +11,7 @@ NOTE: The following endpoints use content negotiation, meaning that the contents
 
 include::{snippets}/visualizations_find-by-id/description.adoc[]
 
-operation::visualizations_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::visualizations_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields,errors']
 
 [[visualizations-list]]
 == Listing Visualizations
@@ -22,11 +22,11 @@ operation::visualizations_get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::visualizations_find-all[snippets='query-parameters']
+operation::visualizations_find-all[snippets='query-parameters,errors']
 
 [[visualizations-create]]
 == Creating Visualizations
 
 include::{snippets}/visualizations_create/description.adoc[]
 
-operation::visualizations_create[snippets='request-fields,curl-request,response-headers,http-response']
+operation::visualizations_create[snippets='request-fields,curl-request,response-headers,http-response,errors']

@@ -25,18 +25,18 @@ operation::comparison-related-resources_find-all-by-comparison-id[snippets='path
 
 include::{snippets}/comparison-related-resources_create/description.adoc[]
 
-operation::comparison-related-resources_create[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::comparison-related-resources_create[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
 [[comparisons-related-resource-edit]]
 == Updating Comparison Related Resources
 
 include::{snippets}/comparison-related-resources_update/description.adoc[]
 
-operation::comparison-related-resources_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::comparison-related-resources_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
 [[comparisons-related-resource-delete]]
 == Deleting Comparison Related Resources
 
 include::{snippets}/comparison-related-resources_delete-by-id-and-comparison-id/description.adoc[]
 
-operation::comparison-related-resources_delete-by-id-and-comparison-id[snippets='path-parameters,curl-request,response-headers,http-response']
+operation::comparison-related-resources_delete-by-id-and-comparison-id[snippets='path-parameters,curl-request,response-headers,http-response,errors']

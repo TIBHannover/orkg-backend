@@ -15,11 +15,11 @@ operation::statistics_find-all-groups[snippets='curl-request,http-response,respo
 
 include::{snippets}/statistics_find-all-metrics-by-group/description.adoc[]
 
-operation::statistics_find-all-metrics-by-group[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::statistics_find-all-metrics-by-group[snippets='path-parameters,curl-request,http-response,response-fields,errors']
 
 [[statistics-fetch-metric]]
 == Fetching metrics
 
 include::{snippets}/statistics_find-metric-by-group-and-name_default/description.adoc[]
 
-operation::statistics_find-metric-by-group-and-name_default[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::statistics_find-metric-by-group-and-name_default[snippets='path-parameters,curl-request,http-response,response-fields,errors']

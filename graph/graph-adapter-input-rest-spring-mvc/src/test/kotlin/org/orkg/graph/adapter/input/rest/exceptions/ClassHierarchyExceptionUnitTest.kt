@@ -19,7 +19,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 @ContextConfiguration(classes = [GraphControllerExceptionUnitTestConfiguration::class])
 internal class ClassHierarchyExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
-    fun classNotModifiable() {
+    fun invalidSubclassRelation() {
         val type = "orkg:problem:invalid_subclass_relation"
         documentedGetRequestTo(InvalidSubclassRelation(ThingId("C123"), ThingId("C456")))
             .andExpectErrorStatus(BAD_REQUEST)

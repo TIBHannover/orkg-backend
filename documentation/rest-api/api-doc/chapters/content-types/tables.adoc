@@ -11,7 +11,7 @@ NOTE: The following endpoints use content negotiation, meaning that the contents
 
 include::{snippets}/tables_find-by-id/description.adoc[]
 
-operation::tables_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::tables_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields,errors']
 
 [[tables-list]]
 == Listing Tables
@@ -22,18 +22,18 @@ operation::tables_get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::tables_find-all[snippets='query-parameters,curl-request']
+operation::tables_find-all[snippets='query-parameters,curl-request,errors']
 
 [[tables-create]]
 == Creating Tables
 
 include::{snippets}/tables_create/description.adoc[]
 
-operation::tables_create[snippets='request-fields,curl-request,response-headers,http-response']
+operation::tables_create[snippets='request-fields,curl-request,response-headers,http-response,errors']
 
 [[tables-edit]]
 == Updating Tables
 
 include::{snippets}/tables_update/description.adoc[]
 
-operation::tables_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::tables_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']

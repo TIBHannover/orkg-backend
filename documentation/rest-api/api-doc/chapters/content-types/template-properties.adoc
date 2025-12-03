@@ -14,14 +14,14 @@ NOTE: The following endpoints use content negotiation, meaning that the contents
 
 include::{snippets}/templates_create-property_untyped/description.adoc[]
 
-operation::templates_create-property_untyped[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::templates_create-property_untyped[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
 [[template-properties-edit-untyped-property]]
 === Updating Untyped Template Properties
 
 include::{snippets}/templates_update-property_untyped/description.adoc[]
 
-operation::templates_update-property_untyped[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::templates_update-property_untyped[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
 [[template-properties-other-literal-properties]]
 == Literal Template Properties
@@ -31,14 +31,14 @@ operation::templates_update-property_untyped[snippets='path-parameters,request-f
 
 include::{snippets}/templates_create-property_other-literal/description.adoc[]
 
-operation::templates_create-property_other-literal[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::templates_create-property_other-literal[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
 [[template-properties-edit-other-literal-property]]
 === Updating Literal Template Properties
 
 include::{snippets}/templates_update-property_other-literal/description.adoc[]
 
-operation::templates_update-property_other-literal[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::templates_update-property_other-literal[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
 [[template-properties-string-literal-properties]]
 == String Literal Template Properties
@@ -48,14 +48,14 @@ operation::templates_update-property_other-literal[snippets='path-parameters,req
 
 include::{snippets}/templates_create-property_string-literal/description.adoc[]
 
-operation::templates_create-property_string-literal[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::templates_create-property_string-literal[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
 [[template-properties-edit-string-literal-property]]
 === Updating String Literal Template Properties
 
 include::{snippets}/templates_update-property_string-literal/description.adoc[]
 
-operation::templates_update-property_string-literal[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::templates_update-property_string-literal[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
 [[template-properties-number-literal-properties]]
 == Number Literal Template Properties
@@ -65,14 +65,14 @@ operation::templates_update-property_string-literal[snippets='path-parameters,re
 
 include::{snippets}/templates_create-property_number-literal/description.adoc[]
 
-operation::templates_create-property_number-literal[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::templates_create-property_number-literal[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
 [[template-properties-edit-number-literal-property]]
 === Updating Number Literal Template Properties
 
 include::{snippets}/templates_update-property_untyped/description.adoc[]
 
-operation::templates_update-property_untyped[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::templates_update-property_untyped[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
 [[template-properties-resource-properties]]
 == Resource Template Properties
@@ -82,11 +82,11 @@ operation::templates_update-property_untyped[snippets='path-parameters,request-f
 
 include::{snippets}/templates_create-property_resource/description.adoc[]
 
-operation::templates_create-property_resource[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::templates_create-property_resource[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
 [[template-properties-edit-resource-property]]
 === Updating Resource Template Properties
 
 include::{snippets}/templates_update-property_resource/description.adoc[]
 
-operation::templates_update-property_resource[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::templates_update-property_resource[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']

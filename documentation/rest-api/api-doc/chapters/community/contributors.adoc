@@ -8,7 +8,7 @@ They can become a member of an <<organizations,organization>> or join an <<obser
 
 include::{snippets}/contributors_find-by-id/description.adoc[]
 
-operation::contributors_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::contributors_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields,errors']
 
 [[contributor-list]]
 == Listing Contributors

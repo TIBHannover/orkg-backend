@@ -9,18 +9,18 @@ NOTE: The following endpoints use content negotiation, meaning that the contents
 
 include::{snippets}/tables_create-column-at-index/description.adoc[]
 
-operation::tables_create-column-at-index[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::tables_create-column-at-index[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
 [[table-columns-edit]]
 == Updating Table Columns
 
 include::{snippets}/tables_update-column/description.adoc[]
 
-operation::tables_update-column[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::tables_update-column[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
 [[table-columns-delete]]
 == Deleting Table Columns
 
 include::{snippets}/tables_delete-column/description.adoc[]
 
-operation::tables_delete-column[snippets='path-parameters,curl-request,http-response']
+operation::tables_delete-column[snippets='path-parameters,curl-request,http-response,errors']

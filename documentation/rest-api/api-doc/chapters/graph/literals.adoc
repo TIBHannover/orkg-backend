@@ -8,7 +8,7 @@ They can appear in the object position in <<Statements,statements>>.
 
 include::{snippets}/literals_find-by-id/description.adoc[]
 
-operation::literals_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields']
+operation::literals_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields,errors']
 
 [[literals-list]]
 == Listing Literals
@@ -19,18 +19,18 @@ operation::literals_get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::literals_find-all[snippets='query-parameters,curl-request']
+operation::literals_find-all[snippets='query-parameters,curl-request,errors']
 
 [[literals-create]]
 == Creating Literals
 
 include::{snippets}/literals_create/description.adoc[]
 
-operation::literals_create[snippets='request-fields,curl-request,response-headers,http-response']
+operation::literals_create[snippets='request-fields,curl-request,response-headers,http-response,errors']
 
 [[literals-edit]]
 == Updating Literals
 
 include::{snippets}/literals_update/description.adoc[]
 
-operation::literals_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+operation::literals_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']

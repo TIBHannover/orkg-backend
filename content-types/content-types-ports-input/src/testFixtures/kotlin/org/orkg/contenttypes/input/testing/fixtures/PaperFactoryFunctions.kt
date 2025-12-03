@@ -11,6 +11,7 @@ import org.orkg.contenttypes.input.CreateLiteralCommandPart
 import org.orkg.contenttypes.input.CreatePaperUseCase
 import org.orkg.contenttypes.input.CreatePredicateCommandPart
 import org.orkg.contenttypes.input.CreateResourceCommandPart
+import org.orkg.contenttypes.input.DeletePaperUseCase
 import org.orkg.contenttypes.input.PublicationInfoCommand
 import org.orkg.contenttypes.input.PublishPaperUseCase
 import org.orkg.contenttypes.input.UpdatePaperUseCase
@@ -166,6 +167,11 @@ fun updatePaperCommand() = UpdatePaperUseCase.UpdateCommand(
     extractionMethod = ExtractionMethod.AUTOMATIC,
     visibility = Visibility.DEFAULT,
     verified = false
+)
+
+fun deletePaperCommand() = DeletePaperUseCase.DeleteCommand(
+    paperId = ThingId("R123"),
+    contributorId = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
 )
 
 fun publishPaperCommand() = PublishPaperUseCase.PublishCommand(

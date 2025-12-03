@@ -11,6 +11,7 @@ import org.orkg.contenttypes.domain.actions.literaturelists.sections.CreateLiter
 import org.orkg.contenttypes.domain.actions.literaturelists.sections.DeleteLiteratureListSectionAction
 import org.orkg.contenttypes.domain.actions.literaturelists.sections.UpdateLiteratureListSectionAction
 import org.orkg.contenttypes.domain.actions.papers.CreatePaperAction
+import org.orkg.contenttypes.domain.actions.papers.DeletePaperAction
 import org.orkg.contenttypes.domain.actions.papers.PublishPaperAction
 import org.orkg.contenttypes.domain.actions.papers.UpdatePaperAction
 import org.orkg.contenttypes.domain.actions.rosettastone.statements.CreateRosettaStoneStatementAction
@@ -56,6 +57,7 @@ import org.orkg.contenttypes.input.CreateTemplatePropertyUseCase
 import org.orkg.contenttypes.input.CreateTemplateUseCase
 import org.orkg.contenttypes.input.CreateVisualizationUseCase
 import org.orkg.contenttypes.input.DeleteLiteratureListSectionUseCase
+import org.orkg.contenttypes.input.DeletePaperUseCase
 import org.orkg.contenttypes.input.DeleteSmartReviewSectionUseCase
 import org.orkg.contenttypes.input.DeleteTableColumnUseCase
 import org.orkg.contenttypes.input.DeleteTableRowUseCase
@@ -119,6 +121,7 @@ internal typealias UpdateTemplateCommand = UpdateTemplateUseCase.UpdateCommand
 internal typealias UpdateTemplateInstanceCommand = UpdateTemplateInstanceUseCase.UpdateCommand
 internal typealias UpdateTemplatePropertyCommand = UpdateTemplatePropertyUseCase.UpdateCommand
 
+internal typealias DeletePaperCommand = DeletePaperUseCase.DeleteCommand
 internal typealias DeleteLiteratureListSectionCommand = DeleteLiteratureListSectionUseCase.DeleteCommand
 internal typealias DeleteSmartReviewSectionCommand = DeleteSmartReviewSectionUseCase.DeleteCommand
 internal typealias DeleteTableColumnCommand = DeleteTableColumnUseCase.DeleteCommand
@@ -165,6 +168,7 @@ internal typealias PublishPaperState = PublishPaperAction.State
 internal typealias PublishLiteratureListState = PublishLiteratureListAction.State
 internal typealias PublishSmartReviewState = PublishSmartReviewAction.State
 
+internal typealias DeletePaperState = DeletePaperAction.State
 internal typealias DeleteLiteratureListSectionState = DeleteLiteratureListSectionAction.State
 internal typealias DeleteSmartReviewSectionState = DeleteSmartReviewSectionAction.State
 internal typealias DeleteTableColumnState = DeleteTableColumnAction.State

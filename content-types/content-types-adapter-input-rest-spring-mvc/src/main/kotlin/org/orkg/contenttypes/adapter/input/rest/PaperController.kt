@@ -19,6 +19,7 @@ import org.orkg.contenttypes.domain.PaperNotFound
 import org.orkg.contenttypes.domain.PaperWithStatementCount
 import org.orkg.contenttypes.input.CreateContributionCommandPart
 import org.orkg.contenttypes.input.CreatePaperUseCase
+import org.orkg.contenttypes.input.DeletePaperUseCase
 import org.orkg.contenttypes.input.PaperUseCases
 import org.orkg.contenttypes.input.PublishPaperUseCase
 import org.orkg.contenttypes.input.UpdatePaperUseCase
@@ -38,6 +39,7 @@ import org.springframework.http.ResponseEntity.noContent
 import org.springframework.http.ResponseEntity.notFound
 import org.springframework.http.ResponseEntity.ok
 import org.springframework.security.core.Authentication
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -148,6 +150,18 @@ class PaperController(
             .buildAndExpand(id)
             .toUri()
         return noContent().location(location).build()
+    }
+
+    @RequireLogin
+    @DeleteMapping("/{id}", consumes = [PAPER_JSON_V2])
+    fun deleteById(
+        @PathVariable id: ThingId,
+        uriComponentsBuilder: UriComponentsBuilder,
+        currentUser: Authentication?,
+    ): ResponseEntity<Any> {
+        val userId = currentUser.contributorId()
+        service.deleteById(DeletePaperUseCase.DeleteCommand(id, userId))
+        return noContent().build()
     }
 
     @RequireLogin

@@ -13,12 +13,15 @@ import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.domain.actions.Action
 import org.orkg.contenttypes.domain.actions.CreatePaperCommand
 import org.orkg.contenttypes.domain.actions.CreatePaperState
+import org.orkg.contenttypes.domain.actions.DeletePaperCommand
+import org.orkg.contenttypes.domain.actions.DeletePaperState
 import org.orkg.contenttypes.domain.actions.ObservatoryValidator
 import org.orkg.contenttypes.domain.actions.OrganizationValidator
 import org.orkg.contenttypes.domain.actions.PublicationInfoValidator
 import org.orkg.contenttypes.domain.actions.PublishPaperCommand
 import org.orkg.contenttypes.domain.actions.PublishPaperState
 import org.orkg.contenttypes.domain.actions.ResearchFieldValidator
+import org.orkg.contenttypes.domain.actions.ResourceOwnerValidator
 import org.orkg.contenttypes.domain.actions.ResourceValidator
 import org.orkg.contenttypes.domain.actions.SDGValidator
 import org.orkg.contenttypes.domain.actions.TempIdValidator
@@ -33,7 +36,10 @@ import org.orkg.contenttypes.domain.actions.papers.PaperAuthorListUpdateValidato
 import org.orkg.contenttypes.domain.actions.papers.PaperAuthorListUpdater
 import org.orkg.contenttypes.domain.actions.papers.PaperContributionCreator
 import org.orkg.contenttypes.domain.actions.papers.PaperContributionValidator
-import org.orkg.contenttypes.domain.actions.papers.PaperExistenceValidator
+import org.orkg.contenttypes.domain.actions.papers.PaperDeleteValidator
+import org.orkg.contenttypes.domain.actions.papers.PaperDeleter
+import org.orkg.contenttypes.domain.actions.papers.PaperExistenceDeleteValidator
+import org.orkg.contenttypes.domain.actions.papers.PaperExistenceUpdateValidator
 import org.orkg.contenttypes.domain.actions.papers.PaperIdentifierCreateValidator
 import org.orkg.contenttypes.domain.actions.papers.PaperIdentifierCreator
 import org.orkg.contenttypes.domain.actions.papers.PaperIdentifierUpdateValidator
@@ -194,8 +200,8 @@ class PaperService(
 
     override fun update(command: UpdatePaperCommand) {
         val steps = listOf(
-            PaperExistenceValidator(this, resourceRepository),
-            PaperModifiableValidator(),
+            PaperExistenceUpdateValidator(this, resourceRepository),
+            PaperModifiableValidator({ it.paper?.modifiable }, { it.paperId }),
             PublicationInfoValidator { it.publicationInfo },
             VisibilityValidator(contributorRepository, { it.contributorId }, { it.paper!! }, { it.visibility }),
             VerifiedValidator(contributorRepository, { it.contributorId }, { it.paper!!.verified }, { it.verified }),
@@ -216,6 +222,17 @@ class PaperService(
             PaperMentioningsUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases)
         )
         steps.execute(command, UpdatePaperState())
+    }
+
+    override fun deleteById(command: DeletePaperCommand) {
+        val steps = listOf(
+            PaperExistenceDeleteValidator(this, resourceRepository),
+            PaperModifiableValidator({ it.paper?.modifiable }, { it.paperId }),
+            ResourceOwnerValidator(contributorRepository, { it.paper }, { it.contributorId }),
+            PaperDeleteValidator(thingRepository),
+            PaperDeleter(unsafeResourceUseCases, unsafeStatementUseCases, statementRepository),
+        )
+        steps.execute(command, DeletePaperState())
     }
 
     override fun publish(command: PublishPaperCommand): ThingId {

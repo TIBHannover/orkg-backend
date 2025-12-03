@@ -351,6 +351,13 @@ class PaperAlreadyExists private constructor(
     }
 }
 
+class PaperInUse(id: ThingId) :
+    SimpleMessageException(
+        HttpStatus.FORBIDDEN,
+        """Unable to delete paper "$id" because it is used in at least one statement.""",
+        properties = mapOf("paper_id" to id)
+    )
+
 class AmbiguousAuthor(author: Author) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,

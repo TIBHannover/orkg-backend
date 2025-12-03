@@ -8,7 +8,7 @@ import org.orkg.contenttypes.domain.actions.papers.UpdatePaperAction.State
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.output.ResourceRepository
 
-class PaperExistenceValidator(
+class PaperExistenceUpdateValidator(
     private val paperService: PaperService,
     private val resourceRepository: ResourceRepository,
 ) : UpdatePaperAction {

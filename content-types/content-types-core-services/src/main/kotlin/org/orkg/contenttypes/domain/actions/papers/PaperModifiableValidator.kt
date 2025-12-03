@@ -1,13 +1,16 @@
 package org.orkg.contenttypes.domain.actions.papers
 
+import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.PaperNotModifiable
-import org.orkg.contenttypes.domain.actions.UpdatePaperCommand
-import org.orkg.contenttypes.domain.actions.papers.UpdatePaperAction.State
+import org.orkg.contenttypes.domain.actions.Action
 
-class PaperModifiableValidator : UpdatePaperAction {
-    override fun invoke(command: UpdatePaperCommand, state: State): State {
-        if (!state.paper!!.modifiable) {
-            throw PaperNotModifiable(command.paperId)
+class PaperModifiableValidator<T, S>(
+    private val modifiableSelector: (S) -> Boolean?,
+    private val idSelector: (T) -> ThingId,
+) : Action<T, S> {
+    override fun invoke(command: T, state: S): S {
+        if (modifiableSelector(state) == false) {
+            throw PaperNotModifiable(idSelector(command))
         }
         return state
     }

@@ -1,28 +1,26 @@
 package org.orkg.contenttypes.domain.actions.papers
 
+import io.kotest.assertions.throwables.shouldNotThrow
+import io.kotest.assertions.throwables.shouldThrow
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.NullSource
+import org.junit.jupiter.params.provider.ValueSource
+import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.PaperNotModifiable
-import org.orkg.contenttypes.domain.actions.UpdatePaperState
-import org.orkg.contenttypes.domain.testing.fixtures.createPaper
-import org.orkg.contenttypes.input.testing.fixtures.updatePaperCommand
 
 internal class PaperModifiableValidatorUnitTest {
-    private val paperModifiableValidator = PaperModifiableValidator()
+    private val paperModifiableValidator = PaperModifiableValidator<ThingId, Boolean?>({ it }, { it })
 
-    @Test
-    fun `Given a paper update command, when paper is modifiable, it returns success`() {
-        val command = updatePaperCommand()
-        val state = UpdatePaperState(paper = createPaper())
-
-        paperModifiableValidator(command, state)
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(booleans = [true])
+    fun `Given a paper update command, when paper is modifiable, it returns success`(modifiable: Boolean?) {
+        shouldNotThrow<PaperNotModifiable> { paperModifiableValidator(ThingId("R123"), modifiable) }
     }
 
     @Test
     fun `Given a paper update command, when paper is not modifiable, it throws an exception`() {
-        val command = updatePaperCommand()
-        val state = UpdatePaperState(paper = createPaper().copy(modifiable = false))
-
-        assertThrows<PaperNotModifiable> { paperModifiableValidator(command, state) }
+        shouldThrow<PaperNotModifiable> { paperModifiableValidator(ThingId("R123"), false) }
     }
 }

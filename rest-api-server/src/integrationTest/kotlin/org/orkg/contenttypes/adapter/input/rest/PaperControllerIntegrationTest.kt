@@ -193,7 +193,7 @@ internal class PaperControllerIntegrationTest : MockMvcBaseTest("papers") {
 
     @Test
     @TestWithMockUser
-    fun createAndFetchAndUpdate() {
+    fun createAndFetchAndUpdateAndDelete() {
         val id = post("/api/papers")
             .content(requestJson("orkg/createPaper"))
             .accept(PAPER_JSON_V2)
@@ -379,5 +379,13 @@ internal class PaperControllerIntegrationTest : MockMvcBaseTest("papers") {
             it.modifiable shouldBe true
             it.unlistedBy shouldBe null
         }
+
+        delete("/api/papers/{id}", paper.id)
+            .accept(PAPER_JSON_V2)
+            .contentType(PAPER_JSON_V2)
+            .perform()
+            .andExpect(status().isNoContent)
+
+        paperService.findById(paper.id).isPresent shouldBe false
     }
 }

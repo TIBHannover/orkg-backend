@@ -45,6 +45,13 @@ include::{snippets}/papers_update/description.adoc[]
 
 operation::papers_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
+[[papers-delete]]
+== Deleting Papers
+
+include::{snippets}/papers_delete-by-id/description.adoc[]
+
+operation::papers_delete-by-id[snippets='path-parameters,curl-request,http-response,errors']
+
 [[papers-publish]]
 == Publishing Papers
 

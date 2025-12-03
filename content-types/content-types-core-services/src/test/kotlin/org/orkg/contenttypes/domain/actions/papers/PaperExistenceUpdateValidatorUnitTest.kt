@@ -22,11 +22,11 @@ import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 import java.util.Optional
 
-internal class PaperExistenceValidatorUnitTest : MockkBaseTest {
+internal class PaperExistenceUpdateValidatorUnitTest : MockkBaseTest {
     private val paperService: PaperService = mockk()
     private val resourceRepository: ResourceRepository = mockk()
 
-    private val paperExistenceValidator = PaperExistenceValidator(paperService, resourceRepository)
+    private val paperExistenceUpdateValidator = PaperExistenceUpdateValidator(paperService, resourceRepository)
 
     @Test
     fun `Given a paper update command, when checking for paper existence, it returns success`() {
@@ -45,7 +45,7 @@ internal class PaperExistenceValidatorUnitTest : MockkBaseTest {
             every { paperService.findSubgraph(root) } returns ContentTypeSubgraph(root.id, statements)
             every { Paper.from(root, statements) } returns paper
 
-            paperExistenceValidator(command, state).asClue {
+            paperExistenceUpdateValidator(command, state).asClue {
                 it.paper shouldBe paper
                 it.statements shouldBe statements
                 it.authors shouldBe state.authors
@@ -65,7 +65,7 @@ internal class PaperExistenceValidatorUnitTest : MockkBaseTest {
 
         every { resourceRepository.findById(paper.id) } returns Optional.empty()
 
-        shouldThrow<PaperNotFound> { paperExistenceValidator(command, state) }
+        shouldThrow<PaperNotFound> { paperExistenceUpdateValidator(command, state) }
 
         verify(exactly = 1) { resourceRepository.findById(paper.id) }
     }

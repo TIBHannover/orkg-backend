@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.DOI
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.PaperAlreadyExists
+import org.orkg.contenttypes.domain.PaperInUse
 import org.orkg.contenttypes.domain.PaperNotFound
 import org.orkg.contenttypes.domain.PaperNotModifiable
 import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerExceptionUnitTestConfiguration
@@ -104,5 +105,22 @@ internal class PaperExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Paper with identifier "10.123/456" already exists.""")
             .andExpect(jsonPath("$.paper_identifier", `is`("10.123/456")))
+    }
+
+    @Test
+    fun paperInUse() {
+        val type = "orkg:problem:paper_in_use"
+        documentedGetRequestTo(PaperInUse(ThingId("R123")))
+            .andExpectErrorStatus(FORBIDDEN)
+            .andExpectType(type)
+            .andExpectTitle("Forbidden")
+            .andExpectDetail("""Unable to delete paper "R123" because it is used in at least one statement.""")
+            .andExpect(jsonPath("$.paper_id").value("R123"))
+            .andDocument {
+                responseFields<PaperInUse>(
+                    fieldWithPath("paper_id").description("The id of the paper.").type<ThingId>(),
+                    *exceptionResponseFields(type).toTypedArray(),
+                )
+            }
     }
 }

@@ -22,6 +22,7 @@ interface PaperUseCases :
     RetrievePaperUseCase,
     CreatePaperUseCase,
     UpdatePaperUseCase,
+    DeletePaperUseCase,
     PublishPaperUseCase
 
 interface RetrievePaperUseCase {
@@ -104,6 +105,15 @@ interface UpdatePaperUseCase {
         val extractionMethod: ExtractionMethod?,
         val visibility: Visibility?,
         val verified: Boolean?,
+    )
+}
+
+interface DeletePaperUseCase {
+    fun deleteById(command: DeleteCommand)
+
+    data class DeleteCommand(
+        val paperId: ThingId,
+        val contributorId: ContributorId,
     )
 }
 

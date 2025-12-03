@@ -43,6 +43,7 @@ import org.orkg.contenttypes.domain.OnlyOneObservatoryAllowed
 import org.orkg.contenttypes.domain.OnlyOneOrganizationAllowed
 import org.orkg.contenttypes.domain.OnlyOneResearchFieldAllowed
 import org.orkg.contenttypes.domain.PaperAlreadyExists
+import org.orkg.contenttypes.domain.PaperInUse
 import org.orkg.contenttypes.domain.PaperNotFound
 import org.orkg.contenttypes.domain.PaperNotModifiable
 import org.orkg.contenttypes.domain.ResearchFieldNotFound
@@ -350,6 +351,57 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .andExpectType("orkg:problem:paper_not_found")
 
         verify(exactly = 1) { paperService.findAllContributorsByPaperId(id, any()) }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a paper, when deleting and service succeeds, then status 204 NO CONTENT")
+    fun deleteById() {
+        val id = ThingId("R123")
+
+        every { paperService.deleteById(any()) } just runs
+
+        documentedDeleteRequestTo("/api/papers/{id}", id)
+            .accept(PAPER_JSON_V2)
+            .contentType(PAPER_JSON_V2)
+            .perform()
+            .andExpect(status().isNoContent)
+            .andDocument {
+                summary("Deleting papers")
+                description(
+                    """
+                    A `DELETE` request deletes an existing paper from the graph.
+                    The response will be `204 No Content` when successful.
+                    
+                    [NOTE]
+                    ====
+                    1. If the paper doesn't exist, the return status will be `204 NO CONTENT`.
+                    2. If the paper is not modifiable, the return status will be `403 FORBIDDEN`.
+                    3. If the paper is used in a statement (excluding subject position), the return status will be `403 FORBIDDEN`.
+                    4. If the performing user is not the creator of the paper and does not have the curator role, the return status will be `403 FORBIDDEN`.
+                    ====
+                    
+                    [WARNING]
+                    ====
+                    1. Author resources of the authors list will not be removed.
+                    2. Only the subgraph up until the contribution resource(s) (including) will be removed.
+                    ====
+                    """
+                )
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the paper.")
+                )
+                throws(PaperNotModifiable::class, NeitherOwnerNorCurator::class, ContributorNotFound::class, PaperInUse::class)
+            }
+
+        verify(exactly = 1) {
+            paperService.deleteById(
+                withArg {
+                    it.paperId shouldBe id
+                    it.contributorId shouldBe ContributorId(MockUserId.USER)
+                }
+            )
+        }
     }
 
     @Test

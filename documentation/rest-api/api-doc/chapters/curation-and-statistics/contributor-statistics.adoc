@@ -1,0 +1,24 @@
+= Contributor Statistics
+
+Contributor statistics are aggregated statistics about contributors and the objects they created in the graph.
+
+[[contributor-statistics-list]]
+== Listing contributor statistics
+
+include::{snippets}/contributor-statistics_find-all/description.adoc[]
+
+operation::contributor-statistics_find-all[snippets='query-parameters,curl-request,http-response,response-fields']
+
+[[contributor-statistics-list-by-research-field]]
+== Listing contributor statistics by research field
+
+include::{snippets}/contributor-statistics_find-all-by-research-field-id/description.adoc[]
+
+operation::contributor-statistics_find-all-by-research-field-id[snippets='query-parameters,curl-request,http-response,response-fields']
+
+[[contributor-statistics-list-by-research-problem]]
+== Listing contributor statistics by research problem
+
+include::{snippets}/contributor-statistics_find-all-by-research-problem-id/description.adoc[]
+
+operation::contributor-statistics_find-all-by-research-problem-id[snippets='query-parameters,curl-request,http-response,response-fields']

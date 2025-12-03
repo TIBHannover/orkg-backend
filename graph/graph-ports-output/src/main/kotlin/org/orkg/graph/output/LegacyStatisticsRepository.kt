@@ -2,7 +2,7 @@ package org.orkg.graph.output
 
 import org.orkg.common.ObservatoryId
 import org.orkg.common.ThingId
-import org.orkg.graph.domain.ContributorRecord
+import org.orkg.graph.domain.LegacyContributorRecord
 import org.orkg.graph.domain.ObservatoryStats
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -17,17 +17,17 @@ interface LegacyStatisticsRepository {
     fun getTopCurrentContributorIdsAndContributionsCount(
         date: LocalDate,
         pageable: Pageable,
-    ): Page<ContributorRecord>
+    ): Page<LegacyContributorRecord>
 
     fun getTopCurContribIdsAndContribCountByResearchFieldId(
         id: ThingId,
         date: LocalDate,
         pageable: Pageable,
-    ): Page<ContributorRecord>
+    ): Page<LegacyContributorRecord>
 
     fun getTopCurContribIdsAndContribCountByResearchFieldIdExcludeSubFields(
         id: ThingId,
         date: LocalDate,
         pageable: Pageable,
-    ): Page<ContributorRecord>
+    ): Page<LegacyContributorRecord>
 }

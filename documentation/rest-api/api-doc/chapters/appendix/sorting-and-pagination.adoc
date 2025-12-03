@@ -63,4 +63,12 @@ By default, sorting is done by the `created_at` property (time-based).
 | organizationId | The id of the organization the conference series belongs to
 | homepage	     | The homepage of the conference series
 | display_id     | The display id (slug) of the conference series
+2+^| *For sorting contributor records*
+| contributor_id         | The id of the contributor
+| comparison_count       | The count of comparisons created
+| paper_count	         | The coutn of papers created
+| contribution_count     | The count of contributions created
+| research_problem_count | The count of research problems created
+| visualization_count    | The count of visualizations created
+| total_count            | The total count of contributions created
 |==============================================================================================

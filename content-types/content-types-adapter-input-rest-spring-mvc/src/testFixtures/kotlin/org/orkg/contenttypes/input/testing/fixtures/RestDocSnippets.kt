@@ -691,3 +691,13 @@ fun mapOfCreateListRequestPartRequestFields(path: String = "lists") = listOf(
     fieldWithPath("$path.*").type("object").description("The definition of the list that needs to be created."),
     *applyPathPrefix("$path.*.", createListRequestPartRequestFields()).toTypedArray(),
 )
+
+fun contributorRecordResponseFields(): List<FieldDescriptor> = listOf(
+    fieldWithPath("contributor_id").description("The ID of the contributor."),
+    fieldWithPath("comparison_count").description("The count of comparisons the contributor created."),
+    fieldWithPath("paper_count").description("The count of papers the contributor created."),
+    fieldWithPath("contribution_count").description("The count of contributions the contributor created."),
+    fieldWithPath("research_problem_count").description("The count of research problems the contributor created."),
+    fieldWithPath("visualization_count").description("The count of visualizations the contributor created."),
+    fieldWithPath("total_count").description("The total count of contributions of the contributor."),
+)

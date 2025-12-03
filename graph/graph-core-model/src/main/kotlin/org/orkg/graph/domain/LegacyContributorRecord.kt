@@ -2,7 +2,7 @@ package org.orkg.graph.domain
 
 import org.orkg.common.ContributorId
 
-data class ContributorRecord(
+data class LegacyContributorRecord(
     val contributor: ContributorId,
     val comparisons: Long = 0,
     val papers: Long = 0,

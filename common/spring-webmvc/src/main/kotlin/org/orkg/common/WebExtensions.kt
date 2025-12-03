@@ -1,6 +1,10 @@
 package org.orkg.common
 
 import org.orkg.common.exceptions.ServiceUnavailable
+import org.orkg.common.exceptions.UnknownSortingProperty
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.http.CacheControl
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -12,6 +16,15 @@ import java.time.Duration
 
 fun <T> T.withCacheControl(duration: Duration): ResponseEntity<T> =
     ResponseEntity.ok().cacheControl(CacheControl.maxAge(duration)).body(this)
+
+fun Pageable.withSort(sort: Sort): Pageable =
+    PageRequest.of(pageNumber, pageSize, sort)
+
+fun Pageable.remapSort(mapping: Map<String, String>) =
+    if (sort.isUnsorted) this else withSort(sort.remap(mapping))
+
+fun Sort.remap(mapping: Map<String, String>): Sort =
+    Sort.by(map { order -> Sort.Order(order.direction, mapping[order.property] ?: throw UnknownSortingProperty(order.property)) }.toList())
 
 fun <T> HttpClient.send(httpRequest: HttpRequest, serviceName: String, successCallback: (String) -> T): T? {
     try {

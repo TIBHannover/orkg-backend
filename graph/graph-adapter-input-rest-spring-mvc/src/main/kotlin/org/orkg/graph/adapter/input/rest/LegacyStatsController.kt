@@ -2,7 +2,7 @@ package org.orkg.graph.adapter.input.rest
 
 import org.orkg.common.ObservatoryId
 import org.orkg.common.ThingId
-import org.orkg.graph.domain.ContributorRecord
+import org.orkg.graph.domain.LegacyContributorRecord
 import org.orkg.graph.domain.ObservatoryStats
 import org.orkg.graph.input.LegacyStatisticsUseCases
 import org.springframework.data.domain.Page
@@ -33,7 +33,7 @@ class LegacyStatsController(
     fun getTopContributors(
         @RequestParam(required = false, defaultValue = "0") days: Long,
         pageable: Pageable,
-    ): Page<ContributorRecord> =
+    ): Page<LegacyContributorRecord> =
         service.getTopCurrentContributors(days, pageable)
 
     /**
@@ -45,7 +45,7 @@ class LegacyStatsController(
         @PathVariable id: ThingId,
         @RequestParam(required = false, defaultValue = "0") days: Long,
         pageable: Pageable,
-    ): Page<ContributorRecord> =
+    ): Page<LegacyContributorRecord> =
         service.getTopCurrentContributorsByResearchField(id, days, pageable)
 
     /**
@@ -57,7 +57,7 @@ class LegacyStatsController(
         @PathVariable id: ThingId,
         @RequestParam(required = false, defaultValue = "0") days: Long,
         pageable: Pageable,
-    ): Page<ContributorRecord> =
+    ): Page<LegacyContributorRecord> =
         service.getTopCurrentContributorsByResearchFieldExcludeSubFields(id, days, pageable)
 
     @GetMapping("/observatories")

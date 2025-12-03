@@ -2,7 +2,7 @@ package org.orkg.graph.adapter.output.neo4j.internal
 
 import org.orkg.common.ObservatoryId
 import org.orkg.common.ThingId
-import org.orkg.graph.domain.ContributorRecord
+import org.orkg.graph.domain.LegacyContributorRecord
 import org.orkg.graph.domain.ObservatoryStats
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -106,7 +106,7 @@ CALL () {
 } WITH DISTINCT id
 RETURN COUNT(id)"""
     )
-    fun getTopCurrentContributorIdsAndContributionsCount(date: String, pageable: Pageable): Page<ContributorRecord>
+    fun getTopCurrentContributorIdsAndContributionsCount(date: String, pageable: Pageable): Page<LegacyContributorRecord>
 
     /**
      * This query fetches the contributor IDs from sub research fields as well.
@@ -167,7 +167,7 @@ WHERE n IS NOT NULL AND n.created_by <> "00000000-0000-0000-0000-000000000000" A
 WITH DISTINCT n.created_by AS contributor
 RETURN COUNT(contributor)"""
     )
-    fun getTopCurContribIdsAndContribCountByResearchFieldId(id: ThingId, date: String, pageable: Pageable): Page<ContributorRecord>
+    fun getTopCurContribIdsAndContribCountByResearchFieldId(id: ThingId, date: String, pageable: Pageable): Page<LegacyContributorRecord>
 
     /**
      * This query fetches the contributor ID from only research fields and excludes sub research fields.
@@ -204,5 +204,5 @@ WHERE n IS NOT NULL AND n.created_by <> "00000000-0000-0000-0000-000000000000" A
 WITH DISTINCT n.created_by AS contributor
 RETURN COUNT(contributor)"""
     )
-    fun getTopCurContribIdsAndContribCountByResearchFieldIdExcludeSubFields(id: ThingId, date: String, pageable: Pageable): Page<ContributorRecord>
+    fun getTopCurContribIdsAndContribCountByResearchFieldIdExcludeSubFields(id: ThingId, date: String, pageable: Pageable): Page<LegacyContributorRecord>
 }

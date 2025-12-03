@@ -41,8 +41,6 @@ import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.output.PredicateRepository
-import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
@@ -288,9 +286,6 @@ fun matchDistinct(
     patternGenerator(node).let { patterns ->
         match(node).let { if (patterns.isNotEmpty()) it.match(patterns) else it }.withDistinct(node)
     }
-
-fun Pageable.withSort(sort: Sort): Pageable =
-    PageRequest.of(pageNumber, pageSize, sort)
 
 inline fun Sort.orElseGet(sort: () -> Sort): Sort =
     if (isSorted) this else sort()

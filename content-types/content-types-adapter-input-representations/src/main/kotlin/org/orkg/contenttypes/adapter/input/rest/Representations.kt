@@ -799,3 +799,20 @@ data class TemplateBasedResourceSnapshotRepresentation(
     val templateId: ThingId,
     val handle: Handle?,
 )
+
+data class ContributorRecordRepresentation(
+    @get:JsonProperty("contributor_id")
+    val contributorId: ContributorId,
+    @get:JsonProperty("comparison_count")
+    val comparisonCount: Long,
+    @get:JsonProperty("paper_count")
+    val paperCount: Long,
+    @get:JsonProperty("contribution_count")
+    val contributionCount: Long,
+    @get:JsonProperty("research_problem_count")
+    val researchProblemCount: Long,
+    @get:JsonProperty("visualization_count")
+    val visualizationCount: Long,
+    @get:JsonProperty("total_count")
+    val totalCount: Long,
+)

@@ -2,7 +2,7 @@ package org.orkg.graph.input
 
 import org.orkg.common.ObservatoryId
 import org.orkg.common.ThingId
-import org.orkg.graph.domain.ContributorRecord
+import org.orkg.graph.domain.LegacyContributorRecord
 import org.orkg.graph.domain.ObservatoryStats
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -21,12 +21,12 @@ interface LegacyStatisticsUseCases {
     /**
      * Get top contributors
      */
-    fun getTopCurrentContributors(days: Long, pageable: Pageable): Page<ContributorRecord>
+    fun getTopCurrentContributors(days: Long, pageable: Pageable): Page<LegacyContributorRecord>
 
     /**
      * Get top contributors by research field ID
      */
-    fun getTopCurrentContributorsByResearchField(id: ThingId, days: Long, pageable: Pageable): Page<ContributorRecord>
+    fun getTopCurrentContributorsByResearchField(id: ThingId, days: Long, pageable: Pageable): Page<LegacyContributorRecord>
 
     /**
      * Get top contributors by research field ID excluding sub research fields
@@ -35,5 +35,5 @@ interface LegacyStatisticsUseCases {
         id: ThingId,
         days: Long,
         pageable: Pageable,
-    ): Page<ContributorRecord>
+    ): Page<LegacyContributorRecord>
 }

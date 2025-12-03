@@ -500,3 +500,12 @@ fun ResultActions.andExpectJobStatus(path: String = "$"): ResultActions = this
     .andExpect(jsonPath("$path.job_name", `is`(notNullValue())))
     .andExpect(jsonPath("$path.context", `is`(notNullValue())))
     .andExpect(jsonPath("$path.status", `is`(notNullValue())))
+
+fun ResultActions.andExpectContributionRecord(path: String = "$"): ResultActions = this
+    .andExpect(jsonPath("$path.id", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.comparison_count", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.paper_count", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.contribution_count", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.research_problem_count", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.visualization_count", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.total_count", `is`(notNullValue())))

@@ -33,14 +33,14 @@ class LegacyStatisticsService(
     override fun getTopCurrentContributors(
         days: Long,
         pageable: Pageable,
-    ): Page<ContributorRecord> =
+    ): Page<LegacyContributorRecord> =
         legacyStatisticsRepository.getTopCurrentContributorIdsAndContributionsCount(calculateStartDate(daysAgo = days), pageable)
 
     override fun getTopCurrentContributorsByResearchField(
         id: ThingId,
         days: Long,
         pageable: Pageable,
-    ): Page<ContributorRecord> =
+    ): Page<LegacyContributorRecord> =
         legacyStatisticsRepository.getTopCurContribIdsAndContribCountByResearchFieldId(
             id,
             calculateStartDate(daysAgo = days),
@@ -51,7 +51,7 @@ class LegacyStatisticsService(
         id: ThingId,
         days: Long,
         pageable: Pageable,
-    ): Page<ContributorRecord> =
+    ): Page<LegacyContributorRecord> =
         legacyStatisticsRepository.getTopCurContribIdsAndContribCountByResearchFieldIdExcludeSubFields(
             id,
             calculateStartDate(daysAgo = days),

@@ -5,3 +5,6 @@ include::curation-and-statistics/curation.adoc[leveloffset=+1]
 
 [[statistics]]
 include::curation-and-statistics/statistics.adoc[leveloffset=+1]
+
+[[contributor-statistics]]
+include::curation-and-statistics/contributor-statistics.adoc[leveloffset=+1]

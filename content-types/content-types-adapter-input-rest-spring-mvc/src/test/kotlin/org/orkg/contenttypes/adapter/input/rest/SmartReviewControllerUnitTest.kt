@@ -49,7 +49,6 @@ import org.orkg.contenttypes.domain.SmartReviewNotModifiable
 import org.orkg.contenttypes.domain.SmartReviewSectionTypeMismatch
 import org.orkg.contenttypes.domain.SustainableDevelopmentGoalNotFound
 import org.orkg.contenttypes.domain.UnrelatedSmartReviewSection
-import org.orkg.contenttypes.domain.Visualization
 import org.orkg.contenttypes.domain.VisualizationNotFound
 import org.orkg.contenttypes.domain.testing.fixtures.createComparison
 import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
@@ -1528,7 +1527,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                     parameterWithName("id").description("The id of the published smart review."),
                     parameterWithName("contentId").description("The id of the resource to fetch.")
                 )
-                responseFields<Visualization>(visualizationResponseFields())
+                responseFields<VisualizationRepresentation>(visualizationResponseFields())
                 throws(SmartReviewNotFound::class, PublishedSmartReviewContentNotFound::class)
             }
 

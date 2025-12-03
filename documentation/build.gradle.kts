@@ -12,6 +12,7 @@ import groovy.lang.Closure
 import io.swagger.v3.oas.models.servers.Server
 import org.asciidoctor.gradle.jvm.AsciidoctorTask
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
+import org.openapitools.generator.gradle.plugin.tasks.ValidateTask
 
 plugins {
     id("org.orkg.gradle.openapi")
@@ -472,6 +473,13 @@ tasks {
     // TODO: Try again with new version of the restdocs-api-spec Gradle plugin.
     withType(OpenApi3Task::class).configureEach {
         dependsOn(aggregateOpenApiSnippets)
+        finalizedBy("openApiValidate")
+    }
+
+    named<ValidateTask>("openApiValidate") {
+        // TODO: Refactor to only depend on outputs of openapi3 task
+        dependsOn("openapi3")
+        inputSpec.set(layout.buildDirectory.file("api-spec/openapi3.yaml").get().asFile.path)
     }
 
     withType<GenerateTask>().configureEach {

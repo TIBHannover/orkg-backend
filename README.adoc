@@ -3,6 +3,7 @@ Manuel Prinz <manuel.prinz@tib.eu>
 
 :icons: font
 :apidoc_url: https://tibhannover.gitlab.io/orkg/orkg-backend/api-doc/index.html
+:openapi_url: https://orkg.org/api
 
 This repository contains a backend API for the Open Research Knowledge Graph (ORKG) written in https://kotlinlang.org/[Kotlin].
 It is based on the https://spring.io/[Spring Framework] and uses https://gradle.org/[Gradle] for its build process.
@@ -10,6 +11,7 @@ It is based on the https://spring.io/[Spring Framework] and uses https://gradle.
 == REST API documentation
 
 The documentation can be found at {apidoc_url}.
+Alternatively, an OpenAPI specification can be fetched directly from the API at {openapi_url}.
 
 == Building and running
 

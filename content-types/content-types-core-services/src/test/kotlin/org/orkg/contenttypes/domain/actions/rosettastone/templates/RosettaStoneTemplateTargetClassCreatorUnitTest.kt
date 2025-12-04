@@ -3,15 +3,20 @@ package org.orkg.contenttypes.domain.actions.rosettastone.templates
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.runs
 import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreateRosettaStoneTemplateState
 import org.orkg.contenttypes.input.testing.fixtures.createRosettaStoneTemplateCommand
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
+import org.orkg.graph.input.ClassHierarchyUseCases
+import org.orkg.graph.input.CreateClassHierarchyUseCase
 import org.orkg.graph.input.CreateClassUseCase
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateStatementUseCase
@@ -23,11 +28,13 @@ internal class RosettaStoneTemplateTargetClassCreatorUnitTest : MockkBaseTest {
     private val unsafeClassUseCases: UnsafeClassUseCases = mockk()
     private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
     private val unsafeLiteralUseCases: UnsafeLiteralUseCases = mockk()
+    private val classHierarchyUseCases: ClassHierarchyUseCases = mockk()
 
     private val rosettaStoneTemplateTargetClassCreator = RosettaStoneTemplateTargetClassCreator(
         unsafeClassUseCases,
         unsafeStatementUseCases,
-        unsafeLiteralUseCases
+        unsafeLiteralUseCases,
+        classHierarchyUseCases,
     )
 
     @Test
@@ -43,6 +50,7 @@ internal class RosettaStoneTemplateTargetClassCreatorUnitTest : MockkBaseTest {
         every { unsafeClassUseCases.create(any()) } returns classId
         every { unsafeLiteralUseCases.create(any()) } returns exampleUsageId andThen descriptionId
         every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
+        every { classHierarchyUseCases.create(any()) } just runs
 
         val result = rosettaStoneTemplateTargetClassCreator(command, state)
 
@@ -101,6 +109,15 @@ internal class RosettaStoneTemplateTargetClassCreatorUnitTest : MockkBaseTest {
                     subjectId = classId,
                     predicateId = Predicates.description,
                     objectId = descriptionId
+                )
+            )
+        }
+        verify(exactly = 1) {
+            classHierarchyUseCases.create(
+                CreateClassHierarchyUseCase.CreateCommand(
+                    parentId = Classes.rosettaStoneStatement,
+                    childIds = setOf(classId),
+                    contributorId = command.contributorId,
                 )
             )
         }

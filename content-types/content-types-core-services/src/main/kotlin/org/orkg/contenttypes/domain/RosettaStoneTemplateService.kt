@@ -49,6 +49,7 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
+import org.orkg.graph.input.ClassHierarchyUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeClassUseCases
@@ -84,6 +85,7 @@ class RosettaStoneTemplateService(
     private val rosettaStoneStatementRepository: RosettaStoneStatementRepository,
     private val contributorRepository: ContributorRepository,
     private val thingRepository: ThingRepository,
+    private val classHierarchyUseCases: ClassHierarchyUseCases,
 ) : RosettaStoneTemplateUseCases {
     override fun findById(id: ThingId): Optional<RosettaStoneTemplate> =
         resourceRepository.findById(id)
@@ -121,7 +123,7 @@ class RosettaStoneTemplateService(
             OrganizationValidator(organizationRepository, { it.organizations }),
             ObservatoryValidator(observatoryRepository, { it.observatories }),
             RosettaStoneTemplateResourceCreator(unsafeResourceUseCases),
-            RosettaStoneTemplateTargetClassCreator(unsafeClassUseCases, unsafeStatementUseCases, unsafeLiteralUseCases),
+            RosettaStoneTemplateTargetClassCreator(unsafeClassUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, classHierarchyUseCases),
             RosettaStoneTemplateDescriptionCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
             RosettaStoneTemplateDynamicLabelCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
             RosettaStoneTemplateClosedCreator(unsafeLiteralUseCases, unsafeStatementUseCases),

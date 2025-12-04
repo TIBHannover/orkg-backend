@@ -2,7 +2,10 @@ package org.orkg.contenttypes.domain.actions.rosettastone.templates
 
 import org.orkg.contenttypes.domain.actions.CreateRosettaStoneTemplateCommand
 import org.orkg.contenttypes.domain.actions.rosettastone.templates.CreateRosettaStoneTemplateAction.State
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.input.ClassHierarchyUseCases
+import org.orkg.graph.input.CreateClassHierarchyUseCase
 import org.orkg.graph.input.CreateClassUseCase
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateStatementUseCase.CreateCommand
@@ -14,6 +17,7 @@ class RosettaStoneTemplateTargetClassCreator(
     private val unsafeClassUseCases: UnsafeClassUseCases,
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
     private val unsafeLiteralUseCases: UnsafeLiteralUseCases,
+    private val classHierarchyUseCases: ClassHierarchyUseCases,
 ) : CreateRosettaStoneTemplateAction {
     override fun invoke(command: CreateRosettaStoneTemplateCommand, state: State): State {
         val classId = unsafeClassUseCases.create(
@@ -56,6 +60,13 @@ class RosettaStoneTemplateTargetClassCreator(
                 subjectId = classId,
                 predicateId = Predicates.description,
                 objectId = descriptionId
+            )
+        )
+        classHierarchyUseCases.create(
+            CreateClassHierarchyUseCase.CreateCommand(
+                parentId = Classes.rosettaStoneStatement,
+                childIds = setOf(classId),
+                contributorId = command.contributorId,
             )
         )
         return state

@@ -42,6 +42,7 @@ import org.orkg.graph.domain.Visibility
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
+import org.orkg.graph.input.UnsafeClassUseCases
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectRosettaStoneTemplate
 import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
@@ -64,6 +65,9 @@ internal class RosettaStoneTemplateControllerIntegrationTest : MockMvcBaseTest("
 
     @Autowired
     private lateinit var classService: ClassUseCases
+
+    @Autowired
+    private lateinit var unsafeClassService: UnsafeClassUseCases
 
     @Autowired
     private lateinit var organizationService: OrganizationUseCases
@@ -119,6 +123,9 @@ internal class RosettaStoneTemplateControllerIntegrationTest : MockMvcBaseTest("
             Classes.problem,
             Classes.researchField,
         )
+
+        // Create class with reserved id using unsafe class service
+        unsafeClassService.createClasses(Classes.rosettaStoneStatement)
 
         Literals.XSD.entries.forEach { xsd ->
             classService.createClass(

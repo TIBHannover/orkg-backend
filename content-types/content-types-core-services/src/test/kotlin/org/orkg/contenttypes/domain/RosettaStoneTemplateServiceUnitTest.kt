@@ -33,6 +33,7 @@ import org.orkg.graph.domain.NeitherOwnerNorCurator
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.Visibility
+import org.orkg.graph.input.ClassHierarchyUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeClassUseCases
@@ -71,6 +72,7 @@ internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
     private val rosettaStoneStatementRepository: RosettaStoneStatementRepository = mockk()
     private val contributorRepository: ContributorRepository = mockk()
     private val thingRepository: ThingRepository = mockk()
+    private val classHierarchyUseCases: ClassHierarchyUseCases = mockk()
 
     private val service = RosettaStoneTemplateService(
         resourceRepository,
@@ -87,7 +89,8 @@ internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
         unsafeLiteralUseCases,
         rosettaStoneStatementRepository,
         contributorRepository,
-        thingRepository
+        thingRepository,
+        classHierarchyUseCases,
     )
 
     @Test

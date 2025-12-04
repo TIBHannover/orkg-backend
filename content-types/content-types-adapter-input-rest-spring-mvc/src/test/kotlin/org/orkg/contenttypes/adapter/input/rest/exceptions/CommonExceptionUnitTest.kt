@@ -43,7 +43,7 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.month").value("0"))
             .andDocument {
                 responseFields<InvalidMonth>(
-                    fieldWithPath("month").description("The month value.").type<Integer>(),
+                    fieldWithPath("month").description("The month value.").type<Int>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }

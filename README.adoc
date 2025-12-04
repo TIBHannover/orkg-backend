@@ -37,13 +37,62 @@ To install the TypeScript client, run:
 
 ==== Usage
 
-[source,ts]
-----
-require 'sinatra'
+===== Configuration
 
-get '/hi' do
-  "Hello World!"
-end
+[source,typescript]
+----
+import {Configuration, ResourcesApi, ThingsApi} from '@orkg/orkg-client';
+
+const configuration = new Configuration({basePath: "https://incubating.orkg.org"});
+const thingsApi = new ThingsApi(configuration)
+const resourcesApi = new ResourcesApi(configuration)
+----
+
+===== Fetching a thing by id
+
+Async API usage:
+
+[source,typescript]
+----
+thingsApi.findById({id: "R1000"})
+    .then((result) => console.log(result))
+    .catch(async (error) => console.log(await error.response.json()));
+----
+
+Sync API usage:
+
+[source,typescript]
+----
+try {
+    const thing = await thingsApi.findById({id: "R1000"});
+    console.log(thing);
+} catch (error: any) {
+    console.log(await error.response.json());
+}
+----
+
+===== Creating a new resource
+
+Async API usage:
+
+[source,typescript]
+----
+resourcesApi.createRaw({createResourceRequest: {label: "example"}})
+    .then((result) => console.log(result.raw.headers.get("Location")))
+    .catch(async (error) => console.log(await error.response.json()));
+----
+
+Sync API usage:
+
+[source,typescript]
+----
+try {
+    const resource = await resourcesApi.createRaw({createResourceRequest: {label: "example"}});
+    const location = resource.raw.headers.get("Location");
+    console.log(location);
+} catch (error: any) {
+    console.log(await error.response.json());
+}
 ----
 
 === Python client
@@ -57,6 +106,44 @@ Please follow the respective installation instructions for Python 3.9 or later.
 To install the Python client, run:
 
     pip install orkg_client --index-url https://gitlab.com/api/v4/projects/12710144/packages/pypi/simple
+
+==== Usage
+
+===== Configuration
+
+[source,python]
+----
+from orkg_client import ApiClient, Configuration, ThingsApi, ResourcesApi, CreateResourceRequest
+from orkg_client.exceptions import ApiException
+
+configuration = Configuration(host="https://incubating.orkg.org")
+api_client = ApiClient(configuration=configuration)
+things_api = ThingsApi(api_client)
+resources_api = ResourcesApi(api_client)
+----
+
+==== Fetching a thing by id
+
+[source,python]
+----
+try:
+    thing = things_api.find_by_id(id="R1000")
+    print(thing.actual_instance)
+except ApiException as error:
+    print(error.data)
+----
+
+==== Creating a new resource
+
+[source,python]
+----
+try:
+    resource = resources_api.create_with_http_info(CreateResourceRequest(label="example"))
+    location = resource.headers["Location"]
+    print(location)
+except ApiException as error:
+    print(error.data)
+----
 
 == Building and running
 

@@ -97,8 +97,11 @@ fun validationExceptionResponseFields(type: String) = listOf(
 )
 
 fun polymorphicResponseFields(vararg responseFields: List<FieldDescriptor>): List<FieldDescriptor> =
-    responseFields.map { it.toSet() }.let { fields ->
-        val sharedFields = fields.reduce { a, b -> a intersect b }
-        val allFields = fields.reduce { a, b -> a union b }
-        sharedFields.toList() + (allFields - sharedFields).map { it.optional() }
-    }
+    responseFields.flatMap { it }.groupBy { it.path }
+        .map { (_, samePathDescriptors) ->
+            if (samePathDescriptors.size == 1) {
+                samePathDescriptors.single().optional()
+            } else {
+                samePathDescriptors.first()
+            }
+        }

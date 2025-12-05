@@ -786,7 +786,7 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
                     fieldWithPath("data.predicates[].n_contributions").description("The count of contributions that contain a statements for the predicate."),
                     fieldWithPath("data.predicates[].active").description("Whether the predicate (row or column if transposed) should be displayed."),
                     fieldWithPath("data.predicates[].similar_predicates").description("The list of similar predicate labels."),
-                    fieldWithPath("data.data").description("The values of the comparison. (optional)").optional(),
+                    fieldWithPath("data.data").description("The values of the comparison"),
                     fieldWithPath("data.data.*").description("A map of predicate ids to the values for each contribution."),
                     fieldWithPath("data.data.*[]").description("All values for the predicate in the comparison. This corresponds to a row (or column if transposed) of the comparison."),
                     fieldWithPath("data.data.*[][]").description("All values for the predicate and a single contribution. Every value corresponds to a single cell of the comparison."),

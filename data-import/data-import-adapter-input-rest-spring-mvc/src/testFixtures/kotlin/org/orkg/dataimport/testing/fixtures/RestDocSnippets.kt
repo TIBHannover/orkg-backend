@@ -1,5 +1,6 @@
 package org.orkg.dataimport.testing.fixtures
 
+import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.doiConstraint
 import org.orkg.contenttypes.input.testing.fixtures.authorListFields
 import org.orkg.dataimport.adapter.input.rest.TypedValueRepresentation
@@ -12,6 +13,7 @@ import org.orkg.testing.spring.restdocs.constraints
 import org.orkg.testing.spring.restdocs.polymorphicResponseFields
 import org.orkg.testing.spring.restdocs.references
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
+import org.orkg.testing.spring.restdocs.type
 import org.springframework.restdocs.payload.PayloadDocumentation.applyPathPrefix
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
@@ -78,7 +80,7 @@ fun newPredicateContributionStatementResponseFields() = listOf(
 fun typedValueResponseFields() = listOf(
     fieldWithPath("namespace").description("The namespace of the object. (optional)").optional(),
     fieldWithPath("value").description("The value of the object. (optional)").optional(),
-    fieldWithPath("type").description("The type of the object."),
+    fieldWithPath("type").description("The type of the object.").type<ThingId>(),
 )
 
 fun paperCSVRecordImportResultResponseFields() = listOf(

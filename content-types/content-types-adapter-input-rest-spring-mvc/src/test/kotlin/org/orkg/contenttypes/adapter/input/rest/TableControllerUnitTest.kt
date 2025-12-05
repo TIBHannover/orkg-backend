@@ -651,10 +651,6 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                     *mapOfCreatePredicateRequestPartRequestFields().toTypedArray(),
                     *mapOfCreateListRequestPartRequestFields().toTypedArray(),
                     *mapOfCreateClassRequestPartRequestFields().toTypedArray(),
-                    fieldWithPath("classes").description("A map of temporary ids to class definitions for classes that need to be created. (optional)").optional(),
-                    fieldWithPath("classes.*").type("Object").description("Defines a single class that needs to be created in the process.").optional(),
-                    fieldWithPath("classes.*.label").type("String").description("The label of the class.").optional(),
-                    fieldWithPath("classes.*.uri").type("String").description("The uri of the class.").optional(),
                     fieldWithPath("column[]").description("The ordered list of column values (thing ids, temporary ids or `null`). The first value always represents the header of the table and must be a string literal."),
                 )
                 throws(

@@ -39,6 +39,10 @@ import org.orkg.contenttypes.domain.UnknownTemplateProperties
 import org.orkg.contenttypes.domain.testing.fixtures.createTemplateInstance
 import org.orkg.contenttypes.input.TemplateInstanceUseCases
 import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerUnitTestConfiguration
+import org.orkg.contenttypes.input.testing.fixtures.mapOfCreateClassRequestPartRequestFields
+import org.orkg.contenttypes.input.testing.fixtures.mapOfCreateListRequestPartRequestFields
+import org.orkg.contenttypes.input.testing.fixtures.mapOfCreatePredicateRequestPartRequestFields
+import org.orkg.contenttypes.input.testing.fixtures.mapOfCreateResourceRequestPartRequestFields
 import org.orkg.contenttypes.input.testing.fixtures.templateInstanceResponseFields
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.InvalidLiteralDatatype
@@ -267,24 +271,12 @@ internal class TemplateInstanceControllerUnitTest : MockMvcBaseTest("template-in
                     fieldWithPath("statements").description("Map of predicate ids to list of object ids that represent the statements of the template instance."),
                     fieldWithPath("statements.*").description("A predicate id"),
                     fieldWithPath("statements.*[]").description("A list of thing ids or temp ids representing the objects of a statement."),
-                    fieldWithPath("resources").description("A map of temporary ids to resource definitions for resources that need to be created. (optional)").optional(),
-                    fieldWithPath("resources.*").type("Object").description("Defines a single resource that needs to be created in the process."),
-                    fieldWithPath("resources.*.label").description("The label of the resource."),
-                    fieldWithPath("resources.*.classes").description("The list of classes of the resource."),
-                    fieldWithPath("literals").description("A map of temporary ids to literal definitions for literals that need to be created. (optional)").optional(),
-                    fieldWithPath("literals.*").description("Key value pairs of literal temp ids to literal values. The type will be automatically assigned based on the template."),
-                    fieldWithPath("predicates").description("A map of temporary ids to predicate definitions for predicates that need to be created. (optional)").optional(),
-                    fieldWithPath("predicates.*").type("Object").description("Defines a single predicate that needs to be created in the process."),
-                    fieldWithPath("predicates.*.label").description("The label of the predicate."),
-                    fieldWithPath("predicates.*.description").description("The description of the predicate."),
-                    fieldWithPath("lists").description("A map of temporary ids to list definitions for lists that need to be created. (optional)").optional(),
-                    fieldWithPath("lists.*").type("Object").description("Defines a single list that needs to be created in the process."),
-                    fieldWithPath("lists.*.label").description("The label of the list."),
-                    fieldWithPath("lists.*.elements").description("The IDs of the elements of the list."),
-                    fieldWithPath("classes").description("A map of temporary ids to class definitions for classes that need to be created. (optional)").optional(),
-                    fieldWithPath("classes.*").type("Object").description("Defines a single class that needs to be created in the process."),
-                    fieldWithPath("classes.*.label").description("The label of the class."),
-                    fieldWithPath("classes.*.uri").description("The uri of the class."),
+                    *mapOfCreateResourceRequestPartRequestFields().toTypedArray(),
+                    fieldWithPath("literals").description("A key-value map of temporary ids to literal definitions for literals that need to be created. (optional)").optional(),
+                    fieldWithPath("literals.*").description("The value of the literal. The type will be automatically assigned based on the template."),
+                    *mapOfCreatePredicateRequestPartRequestFields().toTypedArray(),
+                    *mapOfCreateListRequestPartRequestFields().toTypedArray(),
+                    *mapOfCreateClassRequestPartRequestFields().toTypedArray(),
                     fieldWithPath("extraction_method").description("""The method used to extract the template instance. Can be one of $allowedExtractionMethodValues. (optional)""").optional()
                 )
                 throws(

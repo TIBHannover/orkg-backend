@@ -19,13 +19,14 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.graph.testing.asciidoc.allowedVisibilityFilterValues
+import org.orkg.graph.testing.asciidoc.visibilityFilterQueryParameter
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectResource
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
+import org.orkg.testing.spring.restdocs.format
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
@@ -133,12 +134,12 @@ internal class ResearchFieldControllerUnitTest : MockMvcBaseTest("research-field
                     """
                 )
                 pagedQueryParameters(
-                    parameterWithName("visibility").description("""Filter for visibility. Either of $allowedVisibilityFilterValues. (optional)""").optional(),
-                    parameterWithName("created_by").description("Filter for the UUID of the user or service who created this resource. (optional)").optional(),
+                    visibilityFilterQueryParameter(),
+                    parameterWithName("created_by").description("Filter for the UUID of the user or service who created this resource. (optional)").format("uuid").optional(),
                     parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned resource can have. (optional)").optional(),
                     parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned resource can have. (optional)").optional(),
-                    parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the resource belongs to. (optional)").optional(),
-                    parameterWithName("organization_id").description("Filter for the UUID of the organization that the resource belongs to. (optional)").optional(),
+                    parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the resource belongs to. (optional)").format("uuid").optional(),
+                    parameterWithName("organization_id").description("Filter for the UUID of the organization that the resource belongs to. (optional)").format("uuid").optional(),
                     parameterWithName("research_problem").description("Filter for research problem id. (optional)").optional(),
                     parameterWithName("include_subproblems").description("Flag for whether subproblems are included in the search or not. (optional, default: false)").optional(),
                 )

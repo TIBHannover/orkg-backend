@@ -6,7 +6,6 @@ import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Pattern
 import jakarta.validation.constraints.Size
-import org.apache.tomcat.util.http.fileupload.IOUtils
 import org.orkg.common.ContributorId
 import org.orkg.common.OrganizationId
 import org.orkg.common.annotations.RequireCuratorRole
@@ -169,7 +168,9 @@ class OrganizationController(
     ) {
         val logo = service.findLogoById(id).orElseThrow { LogoNotFound(id) }
         response.contentType = logo.mimeType.toString()
-        IOUtils.copy(ByteArrayInputStream(logo.data.bytes), response.outputStream)
+        ByteArrayInputStream(logo.data.bytes).use {
+            it.transferTo(response.outputStream)
+        }
     }
 
     fun String.isValidUUID(id: String): Boolean = try {

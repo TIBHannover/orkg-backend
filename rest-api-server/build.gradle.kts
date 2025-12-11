@@ -235,8 +235,6 @@ dependencies {
     runtimeOnly("org.springframework.data:spring-data-neo4j")
     runtimeOnly("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-starter")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    // File uploads
-    runtimeOnly("commons-fileupload:commons-fileupload")
     // Caching
     runtimeOnly("org.springframework.boot:spring-boot-starter-cache")
     implementation("com.github.ben-manes.caffeine:caffeine")

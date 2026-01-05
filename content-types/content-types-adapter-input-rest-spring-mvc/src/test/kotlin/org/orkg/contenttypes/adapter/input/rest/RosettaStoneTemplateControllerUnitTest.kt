@@ -1,5 +1,6 @@
 package org.orkg.contenttypes.adapter.input.rest
 
+import com.epages.restdocs.apispec.ParameterType
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.matchers.shouldBe
 import io.mockk.every
@@ -70,6 +71,7 @@ import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
 import org.orkg.testing.spring.restdocs.format
+import org.orkg.testing.spring.restdocs.type
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.NOT_FOUND
@@ -205,7 +207,7 @@ internal class RosettaStoneTemplateControllerUnitTest : MockMvcBaseTest("rosetta
                 )
                 pagedQueryParameters(
                     parameterWithName("q").description("Optional filter for the rosetta stone template label.").optional(),
-                    parameterWithName("exact").description("Optional flag for whether label matching should be exact. (default: false)").optional(),
+                    parameterWithName("exact").description("Optional flag for whether label matching should be exact. (default: false)").type(ParameterType.BOOLEAN).optional(),
                     visibilityFilterQueryParameter(),
                     parameterWithName("created_by").description("Optional filter for the UUID of the user or service who created the rosetta stone template.").format("uuid").optional(),
                     parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned rosetta stone template can have. (optional)").optional(),

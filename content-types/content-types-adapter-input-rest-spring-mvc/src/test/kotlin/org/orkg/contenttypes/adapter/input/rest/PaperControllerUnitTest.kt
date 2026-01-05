@@ -1,5 +1,6 @@
 package org.orkg.contenttypes.adapter.input.rest
 
+import com.epages.restdocs.apispec.ParameterType
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
@@ -93,6 +94,7 @@ import org.orkg.testing.spring.restdocs.arrayItemsType
 import org.orkg.testing.spring.restdocs.constraints
 import org.orkg.testing.spring.restdocs.format
 import org.orkg.testing.spring.restdocs.references
+import org.orkg.testing.spring.restdocs.type
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
@@ -240,7 +242,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
                 )
                 pagedQueryParameters(
                     parameterWithName("title").description("A search term that must be contained in the title of the paper. (optional)").optional(),
-                    parameterWithName("exact").description("Whether title matching is exact or fuzzy (optional, default: false)").optional(),
+                    parameterWithName("exact").description("Whether title matching is exact or fuzzy (optional, default: false)").type(ParameterType.BOOLEAN).optional(),
                     parameterWithName("doi").description("Filter for the DOI of the paper. (optional)").optional(),
                     parameterWithName("doi_prefix").description("Filter for the DOI prefix of the DOI of the paper. (optional)").optional(),
                     visibilityFilterQueryParameter(),

@@ -1,5 +1,6 @@
 package org.orkg.contenttypes.adapter.input.rest
 
+import com.epages.restdocs.apispec.ParameterType
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
@@ -44,6 +45,7 @@ import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
 import org.orkg.testing.spring.restdocs.format
+import org.orkg.testing.spring.restdocs.type
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
@@ -173,7 +175,7 @@ internal class VisualizationControllerUnitTest : MockMvcBaseTest("visualizations
                 )
                 pagedQueryParameters(
                     parameterWithName("title").description("A search term that must be contained in the title of the visualization. (optional).").optional(),
-                    parameterWithName("exact").description("Whether label matching is exact or fuzzy (optional, default: false)").optional(),
+                    parameterWithName("exact").description("Whether label matching is exact or fuzzy (optional, default: false)").type(ParameterType.BOOLEAN).optional(),
                     visibilityFilterQueryParameter(),
                     parameterWithName("created_by").description("Filter for the UUID of the user or service who created the visualization. (optional)").format("uuid").optional(),
                     parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned visualization can have. (optional)").optional(),

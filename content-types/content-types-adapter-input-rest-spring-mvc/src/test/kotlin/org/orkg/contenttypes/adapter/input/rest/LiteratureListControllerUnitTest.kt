@@ -1,5 +1,6 @@
 package org.orkg.contenttypes.adapter.input.rest
 
+import com.epages.restdocs.apispec.ParameterType
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
@@ -82,6 +83,7 @@ import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
 import org.orkg.testing.spring.restdocs.arrayItemsType
 import org.orkg.testing.spring.restdocs.constraints
 import org.orkg.testing.spring.restdocs.format
+import org.orkg.testing.spring.restdocs.type
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
@@ -207,7 +209,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
                 )
                 pagedQueryParameters(
                     parameterWithName("title").description("A search term that must be contained in the title of the literature list. (optional)").optional(),
-                    parameterWithName("exact").description("Whether title matching is exact or fuzzy (optional, default: false)").optional(),
+                    parameterWithName("exact").description("Whether title matching is exact or fuzzy (optional, default: false)").type(ParameterType.BOOLEAN).optional(),
                     visibilityFilterQueryParameter(),
                     parameterWithName("created_by").description("Filter for the UUID of the user or service who created this literature list. (optional)").format("uuid").optional(),
                     parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned resource can have. (optional)").optional(),

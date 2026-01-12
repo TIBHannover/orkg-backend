@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.community.domain.ContributorAlreadyExists
 import org.orkg.community.domain.ContributorNotFound
+import org.orkg.community.testing.fixtures.configuration.CommunityControllerExceptionUnitTestConfiguration
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
 import org.orkg.testing.spring.restdocs.exceptionResponseFields
 import org.orkg.testing.spring.restdocs.type
@@ -14,7 +15,6 @@ import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-import orkg.orkg.community.testing.fixtures.configuration.CommunityControllerExceptionUnitTestConfiguration
 
 @WebMvcTest
 @ContextConfiguration(classes = [CommunityControllerExceptionUnitTestConfiguration::class])

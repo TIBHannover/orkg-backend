@@ -21,6 +21,7 @@ import org.orkg.community.domain.ObservatoryNotFound
 import org.orkg.community.domain.OrganizationNotFound
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.output.ObservatoryRepository
+import org.orkg.community.testing.fixtures.configuration.CommunityControllerUnitTestConfiguration
 import org.orkg.community.testing.fixtures.createObservatory
 import org.orkg.contenttypes.domain.ResearchFieldNotFound
 import org.orkg.contenttypes.domain.SustainableDevelopmentGoalNotFound
@@ -47,7 +48,6 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import orkg.orkg.community.testing.fixtures.configuration.CommunityControllerUnitTestConfiguration
 import java.util.Optional
 import java.util.UUID
 

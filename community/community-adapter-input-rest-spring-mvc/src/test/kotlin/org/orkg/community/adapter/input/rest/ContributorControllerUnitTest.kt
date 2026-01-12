@@ -10,6 +10,8 @@ import org.orkg.common.testing.fixtures.IsIso8601DateTimeString
 import org.orkg.community.domain.Contributor
 import org.orkg.community.domain.ContributorNotFound
 import org.orkg.community.input.RetrieveContributorUseCase
+import org.orkg.community.testing.fixtures.configuration.CommunityControllerUnitTestConfiguration
+import org.orkg.community.testing.fixtures.contributorResponseFields
 import org.orkg.community.testing.fixtures.createContributor
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectContributor
@@ -23,8 +25,6 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import orkg.orkg.community.testing.fixtures.configuration.CommunityControllerUnitTestConfiguration
-import orkg.orkg.community.testing.fixtures.contributorResponseFields
 import java.util.Optional
 
 @ContextConfiguration(classes = [ContributorController::class, CommunityControllerUnitTestConfiguration::class])

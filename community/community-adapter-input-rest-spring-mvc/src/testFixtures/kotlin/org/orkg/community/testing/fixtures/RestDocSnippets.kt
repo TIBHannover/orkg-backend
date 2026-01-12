@@ -1,4 +1,4 @@
-package orkg.orkg.community.testing.fixtures
+package org.orkg.community.testing.fixtures
 
 import org.orkg.common.thingIdConstraint
 import org.orkg.community.domain.ContributorIdentifier

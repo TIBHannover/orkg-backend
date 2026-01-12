@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.community.domain.Contributor
+import org.orkg.community.testing.fixtures.contributorResponseFields
 import org.orkg.community.testing.fixtures.createContributor
 import org.orkg.contenttypes.input.LegacyResearchFieldUseCases
 import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerUnitTestConfiguration
@@ -26,7 +27,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import orkg.orkg.community.testing.fixtures.contributorResponseFields
 import java.util.Optional
 import java.util.UUID
 

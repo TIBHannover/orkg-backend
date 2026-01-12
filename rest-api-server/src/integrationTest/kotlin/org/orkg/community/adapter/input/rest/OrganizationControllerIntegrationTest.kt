@@ -12,6 +12,8 @@ import org.orkg.community.domain.OrganizationNotFound
 import org.orkg.community.input.ContributorUseCases
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
+import org.orkg.community.testing.fixtures.CommunityDocumentationContextProvider
+import org.orkg.community.testing.fixtures.organizationResponseFields
 import org.orkg.createClasses
 import org.orkg.createContributor
 import org.orkg.createObservatory
@@ -31,8 +33,6 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.util.MimeType
-import orkg.orkg.community.testing.fixtures.CommunityDocumentationContextProvider
-import orkg.orkg.community.testing.fixtures.organizationResponseFields
 
 @Neo4jContainerIntegrationTest
 @Import(CommonDocumentationContextProvider::class, CommunityDocumentationContextProvider::class)

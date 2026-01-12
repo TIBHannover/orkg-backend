@@ -17,6 +17,8 @@ import org.orkg.community.domain.ContributorIdentifierAlreadyExists
 import org.orkg.community.domain.ContributorNotFound
 import org.orkg.community.input.ContributorIdentifierUseCases
 import org.orkg.community.testing.asciidoc.allowedContributorIdentifierValues
+import org.orkg.community.testing.fixtures.configuration.CommunityControllerUnitTestConfiguration
+import org.orkg.community.testing.fixtures.contributorIdentifierResponseFields
 import org.orkg.community.testing.fixtures.createContributorIdentifier
 import org.orkg.contenttypes.domain.InvalidIdentifier
 import org.orkg.testing.MockUserId
@@ -35,8 +37,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
-import orkg.orkg.community.testing.fixtures.configuration.CommunityControllerUnitTestConfiguration
-import orkg.orkg.community.testing.fixtures.contributorIdentifierResponseFields
 
 @ContextConfiguration(
     classes = [ContributorIdentifierController::class, TestController::class, CommunityControllerUnitTestConfiguration::class]

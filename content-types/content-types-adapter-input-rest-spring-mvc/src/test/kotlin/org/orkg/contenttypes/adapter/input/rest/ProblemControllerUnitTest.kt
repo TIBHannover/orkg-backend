@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.community.input.RetrieveContributorUseCase
+import org.orkg.community.testing.fixtures.contributorResponseFields
 import org.orkg.community.testing.fixtures.createContributor
 import org.orkg.contenttypes.domain.PaperAuthor
 import org.orkg.contenttypes.domain.SimpleAuthor
@@ -31,7 +32,6 @@ import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import orkg.orkg.community.testing.fixtures.contributorResponseFields
 import java.util.Optional
 
 @ContextConfiguration(classes = [ProblemController::class, ContentTypeControllerUnitTestConfiguration::class])

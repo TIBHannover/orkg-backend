@@ -15,6 +15,7 @@ import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.community.testing.asciidoc.allowedOrganizationTypeValues
+import org.orkg.community.testing.fixtures.configuration.CommunityControllerUnitTestConfiguration
 import org.orkg.community.testing.fixtures.createOrganization
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.mediastorage.domain.ImageId
@@ -42,7 +43,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import orkg.orkg.community.testing.fixtures.configuration.CommunityControllerUnitTestConfiguration
 import java.util.Optional
 import java.util.UUID
 

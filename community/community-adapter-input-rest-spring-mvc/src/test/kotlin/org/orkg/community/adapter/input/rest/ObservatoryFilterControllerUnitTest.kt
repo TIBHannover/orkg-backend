@@ -22,9 +22,14 @@ import org.orkg.community.domain.ObservatoryNotFound
 import org.orkg.community.input.ObservatoryFilterUseCases
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.RetrieveContributorUseCase
+import org.orkg.community.testing.fixtures.OBSERVATORY_FILTER_EXACT_MATCH_DESCRIPTION
+import org.orkg.community.testing.fixtures.OBSERVATORY_FILTER_PATH_DESCRIPTION
+import org.orkg.community.testing.fixtures.OBSERVATORY_FILTER_RANGE_DESCRIPTION
+import org.orkg.community.testing.fixtures.configuration.CommunityControllerUnitTestConfiguration
 import org.orkg.community.testing.fixtures.createContributor
 import org.orkg.community.testing.fixtures.createObservatory
 import org.orkg.community.testing.fixtures.createObservatoryFilter
+import org.orkg.community.testing.fixtures.observatoryFilterResponseFields
 import org.orkg.graph.domain.ClassNotFound
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.PredicateNotFound
@@ -45,11 +50,6 @@ import org.springframework.restdocs.request.RequestDocumentation.parameterWithNa
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import orkg.orkg.community.testing.fixtures.OBSERVATORY_FILTER_EXACT_MATCH_DESCRIPTION
-import orkg.orkg.community.testing.fixtures.OBSERVATORY_FILTER_PATH_DESCRIPTION
-import orkg.orkg.community.testing.fixtures.OBSERVATORY_FILTER_RANGE_DESCRIPTION
-import orkg.orkg.community.testing.fixtures.configuration.CommunityControllerUnitTestConfiguration
-import orkg.orkg.community.testing.fixtures.observatoryFilterResponseFields
 import java.util.Optional
 import java.util.UUID
 

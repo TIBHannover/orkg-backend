@@ -8,6 +8,7 @@ import org.orkg.community.domain.InvalidPeerReviewType
 import org.orkg.community.domain.LogoNotFound
 import org.orkg.community.domain.OrganizationAlreadyExists
 import org.orkg.community.domain.OrganizationNotFound
+import org.orkg.community.testing.fixtures.configuration.CommunityControllerExceptionUnitTestConfiguration
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
 import org.orkg.testing.spring.restdocs.exceptionResponseFields
 import org.orkg.testing.spring.restdocs.type
@@ -17,7 +18,6 @@ import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-import orkg.orkg.community.testing.fixtures.configuration.CommunityControllerExceptionUnitTestConfiguration
 
 @WebMvcTest
 @ContextConfiguration(classes = [CommunityControllerExceptionUnitTestConfiguration::class])

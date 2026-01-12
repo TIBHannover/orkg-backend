@@ -1,4 +1,4 @@
-package orkg.orkg.community.testing.fixtures
+package org.orkg.community.testing.fixtures
 
 import org.orkg.common.uuidConstraint
 import org.orkg.community.domain.ConferenceSeriesId

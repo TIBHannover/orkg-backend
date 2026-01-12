@@ -382,6 +382,9 @@ val restdocs: Configuration by configurations.creating {
 }
 
 val integrationTest by tasks.getting {
+    doFirst {
+        restdocsSnippetsDir.get().asFile.deleteRecursively()
+    }
     outputs.dir(restdocsSnippetsDir).withPropertyName("restdocsSnippetsDirectory")
 }
 
@@ -390,6 +393,8 @@ tasks {
         archiveClassifier.set("restdocs")
         from(integrationTest.outputs) {
             include("**/*.adoc")
+            include("**/resource.json") // for OpenAPI documentation
+            include("**/exceptions.json") // for OpenAPI documentation
         }
         includeEmptyDirs = false
     }

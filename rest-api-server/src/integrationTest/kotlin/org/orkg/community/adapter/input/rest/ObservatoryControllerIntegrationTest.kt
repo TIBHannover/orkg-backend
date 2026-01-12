@@ -6,6 +6,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.orkg.common.CommonDocumentationContextProvider
 import org.orkg.common.ThingId
 import org.orkg.community.input.ContributorUseCases
 import org.orkg.community.input.ObservatoryUseCases
@@ -21,13 +22,16 @@ import org.orkg.graph.input.ResourceUseCases
 import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageRequest
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import orkg.orkg.community.testing.fixtures.CommunityDocumentationContextProvider
 import orkg.orkg.community.testing.fixtures.observatoryResponseFields
 
 @Neo4jContainerIntegrationTest
+@Import(CommonDocumentationContextProvider::class, CommunityDocumentationContextProvider::class)
 internal class ObservatoryControllerIntegrationTest : MockMvcBaseTest("observatories") {
     @Autowired
     private lateinit var contributorService: ContributorUseCases

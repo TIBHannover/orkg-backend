@@ -5,8 +5,9 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.keycloak.representations.idm.OrganizationRepresentation
+import org.orkg.common.CommonDocumentationContextProvider
 import org.orkg.common.testing.fixtures.Assets.png
+import org.orkg.community.domain.Organization
 import org.orkg.community.domain.OrganizationNotFound
 import org.orkg.community.input.ContributorUseCases
 import org.orkg.community.input.ObservatoryUseCases
@@ -25,13 +26,16 @@ import org.orkg.mediastorage.input.ImageUseCases
 import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageRequest
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.util.MimeType
+import orkg.orkg.community.testing.fixtures.CommunityDocumentationContextProvider
 import orkg.orkg.community.testing.fixtures.organizationResponseFields
 
 @Neo4jContainerIntegrationTest
+@Import(CommonDocumentationContextProvider::class, CommunityDocumentationContextProvider::class)
 internal class OrganizationControllerIntegrationTest : MockMvcBaseTest("organizations") {
     @Autowired
     private lateinit var contributorService: ContributorUseCases
@@ -89,7 +93,7 @@ internal class OrganizationControllerIntegrationTest : MockMvcBaseTest("organiza
                 pathParameters(
                     parameterWithName("id").description("The identifier of the organization."),
                 )
-                responseFields<OrganizationRepresentation>(organizationResponseFields())
+                responseFields<Organization>(organizationResponseFields())
                 throws(OrganizationNotFound::class)
             }
     }
@@ -110,7 +114,7 @@ internal class OrganizationControllerIntegrationTest : MockMvcBaseTest("organiza
                     A `GET` request lists all organizations.
                     """
                 )
-                listResponseFields<OrganizationRepresentation>(organizationResponseFields())
+                listResponseFields<Organization>(organizationResponseFields())
             }
     }
 

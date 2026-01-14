@@ -10,7 +10,7 @@ import org.orkg.contenttypes.domain.Dataset
 import org.orkg.contenttypes.domain.DatasetSummary
 import org.orkg.contenttypes.domain.ResearchProblem
 import org.orkg.contenttypes.input.DatasetUseCases
-import org.orkg.contenttypes.input.ResearchProblemUseCases
+import org.orkg.contenttypes.input.LegacyResearchProblemUseCases
 import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerUnitTestConfiguration
 import org.orkg.contenttypes.input.testing.fixtures.datasetResponseFields
 import org.orkg.contenttypes.input.testing.fixtures.datasetSummaryResponseFields
@@ -29,7 +29,7 @@ internal class DatasetControllerUnitTest : MockMvcBaseTest("datasets") {
     private lateinit var retrieveDatasets: DatasetUseCases
 
     @MockkBean
-    private lateinit var retrieveProblems: ResearchProblemUseCases
+    private lateinit var retrieveProblems: LegacyResearchProblemUseCases
 
     @Test
     @DisplayName("Given a set of datasets, when fetching by research problem, then status is 200 OK and datasets are returned")

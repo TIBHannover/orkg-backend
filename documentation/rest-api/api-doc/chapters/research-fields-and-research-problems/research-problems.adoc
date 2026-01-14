@@ -1,6 +1,32 @@
 = Research Problems
 
-Research problems in the ORKG are important concepts and thus have their own API endpoint to get all related concepts.
+Research problems are meta objects that help better classify the content within the ORKG.
+The research problem is essentially a <<Resources,resource>> and hence inherits all the specifications of resources.
+
+[[research-problems-fetch]]
+== Fetching Research Problems
+
+include::{snippets}/research-problems_find-by-id/description.adoc[]
+
+operation::research-problems_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields,errors']
+
+[[research-problems-list]]
+== Listing Research Problems
+
+include::{snippets}/research-problems_find-all/description.adoc[]
+
+This endpoint supports the following additional sorting parameters:
+
+|===
+|Name |Description
+
+|`research_problem_count`
+|Sorts the returned research problems by the count of associated research fields.
+A research problem is considered associated when there exists a path from a research problem to a research field in the form of: (Problem)<-[P32]-(Contribution)<-[P31]-(Paper)-[P30]->(ResearchField)
+
+|===
+
+operation::research-problems_get-paged[snippets='curl-request']
 
 ////
 [[problems-fields]]

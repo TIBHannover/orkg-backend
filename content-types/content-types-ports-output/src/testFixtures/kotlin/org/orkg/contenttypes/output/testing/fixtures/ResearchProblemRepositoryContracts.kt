@@ -1,0 +1,620 @@
+package org.orkg.contenttypes.output.testing.fixtures
+
+import dev.forkhandles.fabrikate.FabricatorConfig
+import dev.forkhandles.fabrikate.Fabrikate
+import io.kotest.core.spec.style.describeSpec
+import io.kotest.matchers.collections.shouldContainAll
+import io.kotest.matchers.collections.shouldContainInOrder
+import io.kotest.matchers.comparables.shouldBeGreaterThan
+import io.kotest.matchers.comparables.shouldBeLessThan
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import org.orkg.common.ContributorId
+import org.orkg.common.ObservatoryId
+import org.orkg.common.OrganizationId
+import org.orkg.contenttypes.output.ResearchProblemRepository
+import org.orkg.graph.domain.Class
+import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.GeneralStatement
+import org.orkg.graph.domain.Literal
+import org.orkg.graph.domain.Predicate
+import org.orkg.graph.domain.Predicates
+import org.orkg.graph.domain.Resource
+import org.orkg.graph.domain.Thing
+import org.orkg.graph.domain.Visibility
+import org.orkg.graph.domain.VisibilityFilter
+import org.orkg.graph.output.ClassRepository
+import org.orkg.graph.output.LiteralRepository
+import org.orkg.graph.output.PredicateRepository
+import org.orkg.graph.output.ResourceRepository
+import org.orkg.graph.output.StatementRepository
+import org.orkg.graph.testing.fixtures.createPredicate
+import org.orkg.graph.testing.fixtures.createResource
+import org.orkg.graph.testing.fixtures.withGraphMappings
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
+import java.time.OffsetDateTime
+import java.util.UUID
+
+fun <
+    Q : ResearchProblemRepository,
+    S : StatementRepository,
+    C : ClassRepository,
+    L : LiteralRepository,
+    R : ResourceRepository,
+    P : PredicateRepository,
+> researchProblemRepositoryContract(
+    repository: Q,
+    statementRepository: S,
+    classRepository: C,
+    literalRepository: L,
+    resourceRepository: R,
+    predicateRepository: P,
+) = describeSpec {
+    beforeTest {
+        statementRepository.deleteAll()
+        classRepository.deleteAll()
+        literalRepository.deleteAll()
+        resourceRepository.deleteAll()
+        predicateRepository.deleteAll()
+    }
+
+    val fabricator = Fabrikate(
+        FabricatorConfig(
+            collectionSizes = 12..12,
+            nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull // FIXME: because "id" is nullable
+        )
+            .withStandardMappings()
+            .withGraphMappings()
+    )
+
+    val saveThing: (Thing) -> Unit = {
+        when (it) {
+            is Class -> classRepository.save(it)
+            is Literal -> literalRepository.save(it)
+            is Resource -> resourceRepository.save(it)
+            is Predicate -> predicateRepository.save(it)
+        }
+    }
+
+    val saveStatement: (GeneralStatement) -> Unit = {
+        saveThing(it.subject)
+        saveThing(it.predicate)
+        saveThing(it.`object`)
+        statementRepository.save(it)
+    }
+
+    val hasResearchField = createPredicate(Predicates.hasResearchField)
+    val hasResearchProblem = createPredicate(Predicates.hasResearchProblem)
+    val hasContribution = createPredicate(Predicates.hasContribution)
+
+    fun List<Resource>.toResearchProblems(): List<Resource> = map { it.copy(classes = setOf(Classes.problem)) }
+
+    fun Resource.associateResearchField(researchField: Resource) {
+        val paper = fabricator.random<Resource>().copy(classes = setOf(Classes.paper))
+        val contribution = fabricator.random<Resource>().copy(classes = setOf(Classes.contribution))
+        saveStatement(
+            fabricator.random<GeneralStatement>().copy(
+                subject = paper,
+                predicate = hasResearchField,
+                `object` = researchField,
+            )
+        )
+        saveStatement(
+            fabricator.random<GeneralStatement>().copy(
+                subject = paper,
+                predicate = hasContribution,
+                `object` = contribution,
+            )
+        )
+        saveStatement(
+            fabricator.random<GeneralStatement>().copy(
+                subject = contribution,
+                predicate = hasResearchProblem,
+                `object` = this,
+            )
+        )
+    }
+
+    fun Resource.associatePaper(paper: Resource) {
+        val contribution = fabricator.random<Resource>().copy(classes = setOf(Classes.contribution))
+        saveStatement(
+            fabricator.random<GeneralStatement>().copy(
+                subject = paper,
+                predicate = hasContribution,
+                `object` = contribution,
+            )
+        )
+        saveStatement(
+            fabricator.random<GeneralStatement>().copy(
+                subject = contribution,
+                predicate = hasResearchProblem,
+                `object` = this,
+            )
+        )
+    }
+
+    describe("finding several research problems") {
+        context("using no parameters") {
+            val resources = fabricator.random<List<Resource>>().toResearchProblems()
+            resources.forEach(resourceRepository::save)
+
+            val expected = resources.sortedBy { it.createdAt }.take(10)
+            val pageable = PageRequest.of(0, 10)
+            val result = repository.findAll(pageable = pageable)
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe 10
+                result.content shouldContainAll expected
+            }
+            it("pages the result correctly") {
+                result.size shouldBe 10
+                result.number shouldBe 0
+                result.totalPages shouldBe 2
+                result.totalElements shouldBe resources.size
+            }
+            it("sorts the results by creation date by default") {
+                result.content.zipWithNext { a, b ->
+                    a.createdAt shouldBeLessThan b.createdAt
+                }
+            }
+        }
+        context("by visibility") {
+            val resources = fabricator.random<List<Resource>>().toResearchProblems().mapIndexed { index, resource ->
+                resource.copy(
+                    visibility = Visibility.entries[index % Visibility.entries.size]
+                )
+            }
+            VisibilityFilter.entries.forEach { visibilityFilter ->
+                context("when visibility is $visibilityFilter") {
+                    resources.forEach(resourceRepository::save)
+                    val expected = resources.filter { it.visibility in visibilityFilter.targets }
+                    val result = repository.findAll(
+                        visibility = visibilityFilter,
+                        pageable = PageRequest.of(0, 10)
+                    )
+
+                    it("returns the correct result") {
+                        result shouldNotBe null
+                        result.content shouldNotBe null
+                        result.content.size shouldBe expected.size
+                        result.content shouldContainAll expected
+                    }
+                    it("pages the result correctly") {
+                        result.size shouldBe 10
+                        result.number shouldBe 0
+                        result.totalPages shouldBe 1
+                        result.totalElements shouldBe expected.size
+                    }
+                    it("sorts the results by creation date by default") {
+                        result.content.zipWithNext { a, b ->
+                            a.createdAt shouldBeLessThan b.createdAt
+                        }
+                    }
+                }
+            }
+        }
+        context("by created by") {
+            val expectedCount = 3
+            val resources = fabricator.random<List<Resource>>().toResearchProblems().toMutableList()
+            val createdBy = ContributorId(UUID.randomUUID())
+            (0 until 3).forEach {
+                resources[it] = resources[it].copy(createdBy = createdBy)
+            }
+            resources.forEach(resourceRepository::save)
+
+            val expected = resources.take(expectedCount)
+            val result = repository.findAll(
+                pageable = PageRequest.of(0, 5),
+                createdBy = createdBy
+            )
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe expectedCount
+                result.content shouldContainAll expected
+            }
+            it("pages the result correctly") {
+                result.size shouldBe 5
+                result.number shouldBe 0
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe expectedCount
+            }
+            it("sorts the results by creation date by default") {
+                result.content.zipWithNext { a, b ->
+                    a.createdAt shouldBeLessThan b.createdAt
+                }
+            }
+        }
+        context("by created at start") {
+            val expectedCount = 3
+            val resources = fabricator.random<List<Resource>>().toResearchProblems().mapIndexed { index, resource ->
+                resource.copy(
+                    createdAt = OffsetDateTime.now().minusHours(index.toLong())
+                )
+            }
+            resources.forEach(resourceRepository::save)
+
+            val expected = resources.take(expectedCount)
+            val result = repository.findAll(
+                pageable = PageRequest.of(0, 5),
+                createdAtStart = expected.last().createdAt
+            )
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe expectedCount
+                result.content shouldContainAll expected
+            }
+            it("pages the result correctly") {
+                result.size shouldBe 5
+                result.number shouldBe 0
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe expectedCount
+            }
+            it("sorts the results by creation date by default") {
+                result.content.zipWithNext { a, b ->
+                    a.createdAt shouldBeLessThan b.createdAt
+                }
+            }
+        }
+        context("by created at end") {
+            val expectedCount = 3
+            val resources = fabricator.random<List<Resource>>().toResearchProblems().mapIndexed { index, resource ->
+                resource.copy(
+                    createdAt = OffsetDateTime.now().plusHours(index.toLong())
+                )
+            }
+            resources.forEach(resourceRepository::save)
+
+            val expected = resources.take(expectedCount)
+            val result = repository.findAll(
+                pageable = PageRequest.of(0, 5),
+                createdAtEnd = expected.last().createdAt
+            )
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe expectedCount
+                result.content shouldContainAll expected
+            }
+            it("pages the result correctly") {
+                result.size shouldBe 5
+                result.number shouldBe 0
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe expectedCount
+            }
+            it("sorts the results by creation date by default") {
+                result.content.zipWithNext { a, b ->
+                    a.createdAt shouldBeLessThan b.createdAt
+                }
+            }
+        }
+        context("by observatory id") {
+            val expectedCount = 3
+            val resources = fabricator.random<List<Resource>>().toResearchProblems().toMutableList()
+            val observatoryId = ObservatoryId(UUID.randomUUID())
+            (0 until 3).forEach {
+                resources[it] = resources[it].copy(observatoryId = observatoryId)
+            }
+            resources.forEach(resourceRepository::save)
+
+            val expected = resources.take(expectedCount)
+            val result = repository.findAll(
+                pageable = PageRequest.of(0, 5),
+                observatoryId = observatoryId
+            )
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe expectedCount
+                result.content shouldContainAll expected
+            }
+            it("pages the result correctly") {
+                result.size shouldBe 5
+                result.number shouldBe 0
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe expectedCount
+            }
+            it("sorts the results by creation date by default") {
+                result.content.zipWithNext { a, b ->
+                    a.createdAt shouldBeLessThan b.createdAt
+                }
+            }
+        }
+        context("by organization id") {
+            val expectedCount = 3
+            val resources = fabricator.random<List<Resource>>().toResearchProblems().toMutableList()
+            val organizationId = OrganizationId(UUID.randomUUID())
+            (0 until 3).forEach {
+                resources[it] = resources[it].copy(organizationId = organizationId)
+            }
+            resources.forEach(resourceRepository::save)
+
+            val expected = resources.take(expectedCount)
+            val result = repository.findAll(
+                pageable = PageRequest.of(0, 5),
+                organizationId = organizationId
+            )
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe expectedCount
+                result.content shouldContainAll expected
+            }
+            it("pages the result correctly") {
+                result.size shouldBe 5
+                result.number shouldBe 0
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe expectedCount
+            }
+            it("sorts the results by creation date by default") {
+                result.content.zipWithNext { a, b ->
+                    a.createdAt shouldBeLessThan b.createdAt
+                }
+            }
+        }
+        context("by research field") {
+            context("excluding subfields") {
+                val expectedCount = 3
+                val resources = fabricator.random<List<Resource>>().toResearchProblems()
+                val researchField = fabricator.random<Resource>().copy(
+                    classes = setOf(Classes.researchField)
+                )
+
+                resources.take(expectedCount).forEach {
+                    it.associateResearchField(researchField)
+                }
+                resources.drop(expectedCount).forEach {
+                    it.associateResearchField(fabricator.random<Resource>().copy(classes = setOf(Classes.researchField)))
+                }
+
+                val expected = resources.take(expectedCount)
+                val result = repository.findAll(
+                    pageable = PageRequest.of(0, 5),
+                    researchField = researchField.id
+                )
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe expectedCount
+                    result.content shouldContainAll expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 5
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe expectedCount
+                }
+                it("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt shouldBeLessThan b.createdAt
+                    }
+                }
+            }
+            context("including subfields") {
+                val expectedCount = 2
+                val resources = fabricator.random<List<Resource>>().toResearchProblems()
+                val researchField = fabricator.random<Resource>().copy(
+                    classes = setOf(Classes.researchField)
+                )
+
+                // directly attached
+                resources[0].associateResearchField(researchField)
+
+                // indirectly attached
+                val subfield = fabricator.random<Resource>().copy(
+                    classes = setOf(Classes.researchField)
+                )
+                val hasSubfield = createPredicate(Predicates.hasSubfield)
+                saveStatement(
+                    fabricator.random<GeneralStatement>().copy(
+                        subject = researchField,
+                        predicate = hasSubfield,
+                        `object` = subfield
+                    )
+                )
+                resources[1].associateResearchField(subfield)
+
+                // attach random research field to other research fields
+                resources.drop(expectedCount).forEach {
+                    it.associateResearchField(fabricator.random<Resource>().copy(classes = setOf(Classes.problem)))
+                }
+
+                val expected = resources.take(expectedCount)
+                val result = repository.findAll(
+                    pageable = PageRequest.of(0, 5),
+                    researchField = researchField.id,
+                    includeSubfields = true
+                )
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe expectedCount
+                    result.content shouldContainAll expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 5
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe expectedCount
+                }
+                it("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt shouldBeLessThan b.createdAt
+                    }
+                }
+            }
+        }
+        context("by addressing observatory") {
+            val expectedCount = 3
+            val resources = fabricator.random<List<Resource>>().toResearchProblems().toMutableList()
+            resources.forEach(resourceRepository::save)
+
+            val observatoryId = fabricator.random<ObservatoryId>()
+            resources.take(expectedCount).forEach {
+                it.associatePaper(
+                    fabricator.random<Resource>().copy(
+                        classes = setOf(Classes.paper),
+                        observatoryId = observatoryId,
+                    )
+                )
+            }
+            resources.drop(expectedCount).forEach {
+                it.associatePaper(fabricator.random<Resource>().copy(classes = setOf(Classes.paper)))
+            }
+
+            val expected = resources.take(expectedCount)
+            val result = repository.findAll(
+                pageable = PageRequest.of(0, 5),
+                addressedByObservatory = observatoryId
+            )
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe expectedCount
+                result.content shouldContainAll expected
+            }
+            it("pages the result correctly") {
+                result.size shouldBe 5
+                result.number shouldBe 0
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe expectedCount
+            }
+            it("sorts the results by creation date by default") {
+                result.content.zipWithNext { a, b ->
+                    a.createdAt shouldBeLessThan b.createdAt
+                }
+            }
+        }
+        context("by addressing organization") {
+            val expectedCount = 3
+            val resources = fabricator.random<List<Resource>>().toResearchProblems().toMutableList()
+            resources.forEach(resourceRepository::save)
+
+            val organizationId = fabricator.random<OrganizationId>()
+            resources.take(expectedCount).forEach {
+                it.associatePaper(
+                    fabricator.random<Resource>().copy(
+                        classes = setOf(Classes.paper),
+                        organizationId = organizationId,
+                    )
+                )
+            }
+            resources.drop(expectedCount).forEach {
+                it.associatePaper(fabricator.random<Resource>().copy(classes = setOf(Classes.paper)))
+            }
+
+            val expected = resources.take(expectedCount)
+            val result = repository.findAll(
+                pageable = PageRequest.of(0, 5),
+                addressedByOrganization = organizationId
+            )
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe expectedCount
+                result.content shouldContainAll expected
+            }
+            it("pages the result correctly") {
+                result.size shouldBe 5
+                result.number shouldBe 0
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe expectedCount
+            }
+            it("sorts the results by creation date by default") {
+                result.content.zipWithNext { a, b ->
+                    a.createdAt shouldBeLessThan b.createdAt
+                }
+            }
+        }
+        context("using all parameters") {
+            val researchField = fabricator.random<Resource>().copy(classes = setOf(Classes.researchField))
+            val paper = fabricator.random<Resource>().copy(classes = setOf(Classes.paper))
+
+            fabricator.random<List<Resource>>().toResearchProblems().forEach { researchProblem ->
+                researchProblem.associateResearchField(fabricator.random<Resource>().copy(classes = setOf(Classes.researchField)))
+            }
+
+            val expected = createResource(classes = setOf(Classes.problem), verified = true)
+
+            expected.associateResearchField(researchField)
+            expected.associatePaper(paper)
+
+            val result = repository.findAll(
+                pageable = PageRequest.of(0, 5),
+                visibility = VisibilityFilter.ALL_LISTED,
+                createdBy = expected.createdBy,
+                createdAtStart = expected.createdAt,
+                createdAtEnd = expected.createdAt,
+                observatoryId = expected.observatoryId,
+                organizationId = expected.organizationId,
+                researchField = researchField.id,
+                includeSubfields = true,
+                addressedByObservatory = paper.observatoryId,
+                addressedByOrganization = paper.organizationId,
+            )
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe 1
+                result.content shouldContainAll setOf(expected)
+            }
+            it("pages the result correctly") {
+                result.size shouldBe 5
+                result.number shouldBe 0
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe 1
+            }
+            it("sorts the results by creation date by default") {
+                result.content.zipWithNext { a, b ->
+                    a.createdAt shouldBeLessThan b.createdAt
+                }
+            }
+        }
+        it("sorts the results by multiple properties") {
+            val resources = fabricator.random<List<Resource>>().toResearchProblems().toMutableList()
+            resources[1] = resources[1].copy(label = resources[0].label)
+            resources.forEach(resourceRepository::save)
+
+            val sort = Sort.by("label").ascending().and(Sort.by("created_at").descending())
+            val result = repository.findAll(PageRequest.of(0, 12, sort))
+
+            result.content.zipWithNext { a, b ->
+                if (a.label == b.label) {
+                    a.createdAt shouldBeGreaterThan b.createdAt
+                } else {
+                    a.label shouldBeLessThan b.label
+                }
+            }
+        }
+        it("sorts the results by research field count") {
+            val resources = fabricator.random<List<Resource>>().toResearchProblems()
+            val count = 3
+            resources.take(count).forEachIndexed { index, resource ->
+                IntRange(0, index + 1).forEach {
+                    resource.associateResearchField(fabricator.random<Resource>().copy(classes = setOf(Classes.researchField)))
+                }
+            }
+            resources.drop(count).forEach(resourceRepository::save)
+
+            val expected = resources.take(count).reversed() + resources.drop(count).sortedBy { it.label }
+            val sort = Sort.by("research_field_count").descending().and(Sort.by("label").ascending())
+            val result = repository.findAll(PageRequest.of(0, 12, sort))
+
+            result.content shouldContainInOrder expected
+        }
+    }
+}

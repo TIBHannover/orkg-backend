@@ -6,9 +6,11 @@ import org.orkg.contenttypes.output.ContentTypeRepository
 import org.orkg.contenttypes.output.ContributionComparisonRepository
 import org.orkg.contenttypes.output.FindDatasetsQuery
 import org.orkg.contenttypes.output.LegacyResearchFieldRepository
+import org.orkg.contenttypes.output.LegacyResearchProblemRepository
 import org.orkg.contenttypes.output.LiteratureListRepository
 import org.orkg.contenttypes.output.PaperRepository
 import org.orkg.contenttypes.output.ResearchFieldHierarchyRepository
+import org.orkg.contenttypes.output.ResearchFieldRepository
 import org.orkg.contenttypes.output.ResearchProblemRepository
 import org.orkg.contenttypes.output.SmartReviewRepository
 import org.orkg.contenttypes.output.SummarizeBenchmarkQuery
@@ -64,6 +66,8 @@ class Neo4jRepositoryProfiler(
         CurationRepository::class,
         FindDatasetsQuery::class,
         FormattedLabelRepository::class,
+        LegacyResearchFieldRepository::class,
+        LegacyResearchProblemRepository::class,
         LegacyStatisticsRepository::class,
         ListRepository::class,
         LiteralRepository::class,
@@ -71,7 +75,7 @@ class Neo4jRepositoryProfiler(
         PaperRepository::class,
         PredicateRepository::class,
         ResearchFieldHierarchyRepository::class,
-        LegacyResearchFieldRepository::class,
+        ResearchFieldRepository::class,
         ResearchProblemRepository::class,
         ResourceRepository::class,
         SmartReviewRepository::class,

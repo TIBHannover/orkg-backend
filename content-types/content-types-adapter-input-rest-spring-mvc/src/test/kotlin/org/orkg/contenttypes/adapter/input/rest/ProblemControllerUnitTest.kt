@@ -13,7 +13,7 @@ import org.orkg.community.testing.fixtures.createContributor
 import org.orkg.contenttypes.domain.PaperAuthor
 import org.orkg.contenttypes.domain.SimpleAuthor
 import org.orkg.contenttypes.input.AuthorUseCases
-import org.orkg.contenttypes.input.ResearchProblemUseCases
+import org.orkg.contenttypes.input.LegacyResearchProblemUseCases
 import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerUnitTestConfiguration
 import org.orkg.graph.adapter.input.rest.PaperAuthorRepresentation
 import org.orkg.graph.adapter.input.rest.testing.fixtures.resourceResponseFields
@@ -34,11 +34,11 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.Optional
 
-@ContextConfiguration(classes = [ProblemController::class, ContentTypeControllerUnitTestConfiguration::class])
-@WebMvcTest(controllers = [ProblemController::class])
+@ContextConfiguration(classes = [LegacyProblemController::class, ContentTypeControllerUnitTestConfiguration::class])
+@WebMvcTest(controllers = [LegacyProblemController::class])
 internal class ProblemControllerUnitTest : MockMvcBaseTest("research-problems") {
     @MockkBean
-    private lateinit var researchProblemService: ResearchProblemUseCases
+    private lateinit var researchProblemService: LegacyResearchProblemUseCases
 
     @MockkBean
     private lateinit var resourceService: ResourceUseCases

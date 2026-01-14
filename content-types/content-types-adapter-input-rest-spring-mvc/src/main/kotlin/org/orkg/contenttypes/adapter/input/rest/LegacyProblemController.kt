@@ -7,7 +7,7 @@ import org.orkg.contenttypes.adapter.input.rest.mapping.ContributorWithContribut
 import org.orkg.contenttypes.adapter.input.rest.mapping.FieldPerProblemRepresentationAdapter
 import org.orkg.contenttypes.adapter.input.rest.mapping.LegacyAuthorRepresentationAdapter
 import org.orkg.contenttypes.input.AuthorUseCases
-import org.orkg.contenttypes.input.ResearchProblemUseCases
+import org.orkg.contenttypes.input.LegacyResearchProblemUseCases
 import org.orkg.graph.adapter.input.rest.FieldWithFreqRepresentation
 import org.orkg.graph.adapter.input.rest.PaperAuthorRepresentation
 import org.orkg.graph.input.FormattedLabelUseCases
@@ -22,8 +22,8 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/problems", produces = [MediaType.APPLICATION_JSON_VALUE])
-class ProblemController(
-    private val service: ResearchProblemUseCases,
+class LegacyProblemController(
+    private val service: LegacyResearchProblemUseCases,
     override val contributorService: RetrieveContributorUseCase,
     private val authorService: AuthorUseCases,
     override val statementService: StatementUseCases,

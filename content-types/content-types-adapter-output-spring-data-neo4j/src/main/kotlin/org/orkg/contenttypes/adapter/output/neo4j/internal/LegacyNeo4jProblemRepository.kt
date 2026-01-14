@@ -20,7 +20,7 @@ private const val ID = "${'$'}id"
 
 private const val PAGE_PARAMS = ":#{orderBy(#pageable)} SKIP ${'$'}skip LIMIT ${'$'}limit"
 
-interface Neo4jProblemRepository : Neo4jRepository<Neo4jResource, ThingId> {
+interface LegacyNeo4jProblemRepository : Neo4jRepository<Neo4jResource, ThingId> {
     @Query("""MATCH (node:Problem:Resource {id: $ID}) RETURN node""")
     override fun findById(id: ThingId): Optional<Neo4jResource>
 

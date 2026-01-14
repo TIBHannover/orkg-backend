@@ -13,7 +13,10 @@ dependencies {
     api("com.fasterxml.jackson.core:jackson-databind")
     api("org.apache.tomcat.embed:tomcat-embed-core") // for HttpServletRequest
     api("org.springframework.data:spring-data-commons")
-    api("org.springframework.security:spring-security-core") // for AccessDeniedException, UserDetails
+    api("org.springframework.security:spring-security-config")
+    api("org.springframework.security:spring-security-core")
+    api("org.springframework.security:spring-security-oauth2-jose")
+    api("org.springframework.security:spring-security-web")
     api("org.springframework:spring-beans")
     api("org.springframework:spring-context")
     api("org.springframework:spring-core")
@@ -22,6 +25,7 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-core")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.slf4j:slf4j-api")
+    implementation("org.springframework.security:spring-security-oauth2-resource-server")
     runtimeOnly("com.fasterxml.jackson.datatype:jackson-datatype-jsr310") // for timestamp serialization
 }
 

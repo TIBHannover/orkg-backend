@@ -1,6 +1,7 @@
 package org.orkg.common
 
 import org.orkg.common.exceptions.ServiceUnavailable
+import org.orkg.common.exceptions.Unauthorized
 import org.orkg.common.exceptions.UnknownSortingProperty
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
@@ -8,6 +9,7 @@ import org.springframework.data.domain.Sort
 import org.springframework.http.CacheControl
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.Authentication
 import java.io.IOException
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -38,3 +40,6 @@ fun <T> HttpClient.send(httpRequest: HttpRequest, serviceName: String, successCa
         throw ServiceUnavailable.create(serviceName, e)
     }
 }
+
+fun Authentication?.contributorId(): ContributorId =
+    this?.name?.let(::ContributorId) ?: throw Unauthorized()

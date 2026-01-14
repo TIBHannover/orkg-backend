@@ -7,15 +7,16 @@ import com.epages.restdocs.apispec.ResourceSnippetParameters
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith
+import org.orkg.common.JwtAuthenticationConverter
+import org.orkg.common.SecurityConfiguration
 import org.orkg.common.configuration.SpringJacksonConfiguration
 import org.orkg.common.testing.fixtures.MockkBaseTest
-import org.orkg.testing.configuration.SecurityTestConfiguration
-import org.orkg.testing.configuration.UnsecureJwtDecoder
 import org.orkg.testing.spring.restdocs.DocumentationBuilder
 import org.orkg.testing.spring.restdocs.DocumentationContext
 import org.orkg.testing.spring.restdocs.DocumentationParameters
 import org.orkg.testing.spring.restdocs.snippets.DescriptionSnippet.Companion.description
 import org.orkg.testing.spring.restdocs.snippets.ExceptionSnippet.Companion.exceptions
+import org.orkg.testing.spring.security.UnsecureJwtDecoder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
 import org.springframework.http.HttpMethod.PATCH
@@ -73,7 +74,13 @@ import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 
-@Import(SecurityTestConfiguration::class, SpringJacksonConfiguration::class, UnsecureJwtDecoder::class, DocumentationContext::class)
+@Import(
+    SecurityConfiguration::class,
+    JwtAuthenticationConverter::class,
+    UnsecureJwtDecoder::class,
+    SpringJacksonConfiguration::class,
+    DocumentationContext::class,
+)
 @ExtendWith(RestDocumentationExtension::class)
 @TestPropertySource(properties = ["spring.jackson.mapper.sort-properties-alphabetically=true"])
 abstract class MockMvcBaseTest(val prefix: String) : MockkBaseTest {

@@ -16,7 +16,6 @@ import org.junit.jupiter.params.provider.ValueSource
 import org.orkg.common.testing.fixtures.TestBodyPublisher
 import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
-import org.orkg.testing.configuration.SecurityTestConfiguration
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
@@ -59,7 +58,6 @@ import java.util.Base64
     classes = [
         LegacyAuthController::class,
         FixedClockConfig::class,
-        SecurityTestConfiguration::class,
         LegacyAuthControllerUnitTest.LegacyAuthControllerTestConfiguration::class,
         ExceptionTestConfiguration::class
     ]

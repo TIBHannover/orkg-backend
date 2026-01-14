@@ -7,18 +7,18 @@ import org.junit.jupiter.api.Test
 import org.orkg.MediaTypeCapabilitiesControllerTest.NonProducingFakeController
 import org.orkg.MediaTypeCapabilitiesControllerTest.ProducingFakeController
 import org.orkg.MediaTypeCapabilitiesControllerTest.TestConfiguration
+import org.orkg.common.JwtAuthenticationConverter
 import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.MediaTypeCapabilityRegistry
+import org.orkg.common.SecurityConfiguration
 import org.orkg.common.configuration.WebMvcConfiguration
 import org.orkg.common.testing.fixtures.FORMATTED_LABEL_CAPABILITY
 import org.orkg.common.testing.fixtures.INCOMING_STATEMENTS_COUNT_CAPABILITY
 import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
-import org.orkg.testing.configuration.SecurityTestConfiguration
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestComponent
-import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.ResultActions
@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
-@Import(SecurityTestConfiguration::class)
 @ContextConfiguration(
     classes = [
         ProducingFakeController::class,
@@ -36,10 +35,12 @@ import org.springframework.web.bind.annotation.RestController
         FixedClockConfig::class,
         WebMvcConfiguration::class,
         MediaTypeCapabilityRegistry::class,
-        TestConfiguration::class
+        TestConfiguration::class,
+        SecurityConfiguration::class,
+        JwtAuthenticationConverter::class,
     ]
 )
-@WebMvcTest
+@WebMvcTest(controllers = [ProducingFakeController::class, NonProducingFakeController::class])
 internal class MediaTypeCapabilitiesControllerTest : MockMvcBaseTest("media-type-capabilities") {
     @Test
     fun `Given rest controller, when an endpoint produces a media type that supports capabilities, then media type capabilities are parsed correctly`() {

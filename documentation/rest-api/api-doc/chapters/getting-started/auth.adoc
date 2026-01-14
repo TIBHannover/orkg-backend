@@ -8,6 +8,35 @@ NOTE: This endpoint only delivers information about the currently logged-in user
 
 == Obtaining an Access Token
 
+=== Authenticate via OpenID Connect
+
+Authentication is handled via https://openid.net/developers/how-connect-works/[OpenID Connect (OIDC)], an authentication layer based on https://oauth.net/2/[OAuth2].
+The OIDC configuration can be fetched from https://accounts.orkg.org/realms/orkg/.well-known/openid-configuration.
+A token can be obtained from the token endpoint from the OIDC configuration using the `password` grant.
+The client needs to provide its client ID, username and password.
+All request parameters need to be passed in `application/x-www-form-urlencoded`.
+The parameters are:
+
+`grant_type`:: Always `password`.
+`username`:: The email address of the user.
+`password`:: The password defined by the user.
+`client_id`:: Always `orkg-client`.
+
+Example:
+
+  curl -X POST -d 'grant_type=password&username=user@example.org&password=password&client_id=orkg-client' https://accounts.orkg.org/realms/orkg/protocol/openid-connect/token
+
+The response will contain the access token, a refresh token, their invalidation times, the token type and the scopes covered by the token.
+The token can be refreshed using the token endpoint from the OIDC configuration using the `refresh_token` grant together with the refresh token obtained from the initial authentication request.
+
+Example:
+
+  curl -X POST -d 'grant_type=refresh_token&refresh_token=refresh_token&client_id=orkg-client' https://accounts.orkg.org/realms/orkg/protocol/openid-connect/token
+
+=== Authenticate via REST-API
+
+WARNING: *Deprecated*: This authentication method is obsolete and will be removed soon. Please switch to <<_authenticate_via_openid_connect>>!
+
 A token can be obtained by sending a `POST` request to the `/oauth/token` endpoint.
 The client needs to provide its client ID and secret via basic authentication (base64-encoded).
 All request parameters need to be passed in `application/x-www-form-urlencoded`.

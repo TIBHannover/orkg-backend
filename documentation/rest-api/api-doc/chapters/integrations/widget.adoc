@@ -1,6 +1,6 @@
 = ORKG Widget
 :icons: font
 
-include::{snippets}/widget_success/description.adoc[]
+include::{snippets}/widget_find-by-doi-or-title/description.adoc[]
 
-operation::widget_success[snippets='query-parameters,curl-request,http-response,response-fields']
+operation::widget_find-by-doi-or-title[snippets='query-parameters,curl-request,http-response,response-fields']

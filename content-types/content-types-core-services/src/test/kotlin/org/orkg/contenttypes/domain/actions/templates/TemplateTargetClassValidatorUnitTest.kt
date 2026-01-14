@@ -14,6 +14,7 @@ import org.orkg.contenttypes.domain.TemplateAlreadyExistsForClass
 import org.orkg.graph.domain.ClassNotFound
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.domain.ReservedClass
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.createClass
@@ -32,26 +33,42 @@ internal class TemplateTargetClassValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a target class id, when validating, it returns success`() {
-        val targetClass = ThingId("targetClass")
+        val targetClassId = ThingId("targetClass")
 
-        every { classRepository.findById(targetClass) } returns Optional.of(createClass())
+        every { classRepository.findById(targetClassId) } returns Optional.of(createClass())
+        every {
+            statementRepository.findAll(
+                subjectClasses = setOf(Classes.rosettaNodeShape),
+                predicateId = Predicates.shTargetClass,
+                objectId = targetClassId,
+                pageable = PageRequests.SINGLE
+            )
+        } returns pageOf()
         every {
             statementRepository.findAll(
                 subjectClasses = setOf(Classes.nodeShape),
                 predicateId = Predicates.shTargetClass,
-                objectId = targetClass,
+                objectId = targetClassId,
                 pageable = PageRequests.SINGLE
             )
         } returns pageOf()
 
-        assertDoesNotThrow { templateTargetClassValidator(targetClass, null) }
+        assertDoesNotThrow { templateTargetClassValidator(targetClassId, null) }
 
-        verify(exactly = 1) { classRepository.findById(targetClass) }
+        verify(exactly = 1) { classRepository.findById(targetClassId) }
+        verify(exactly = 1) {
+            statementRepository.findAll(
+                subjectClasses = setOf(Classes.rosettaNodeShape),
+                predicateId = Predicates.shTargetClass,
+                objectId = targetClassId,
+                pageable = PageRequests.SINGLE
+            )
+        }
         verify(exactly = 1) {
             statementRepository.findAll(
                 subjectClasses = setOf(Classes.nodeShape),
                 predicateId = Predicates.shTargetClass,
-                objectId = targetClass,
+                objectId = targetClassId,
                 pageable = PageRequests.SINGLE
             )
         }
@@ -64,13 +81,13 @@ internal class TemplateTargetClassValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a target class id, when target class does not exist, it throws an exception`() {
-        val targetClass = ThingId("targetClass")
+        val targetClassId = ThingId("targetClass")
 
-        every { classRepository.findById(targetClass) } returns Optional.empty()
+        every { classRepository.findById(targetClassId) } returns Optional.empty()
 
-        assertThrows<ClassNotFound> { templateTargetClassValidator(targetClass, null) }
+        assertThrows<ClassNotFound> { templateTargetClassValidator(targetClassId, null) }
 
-        verify(exactly = 1) { classRepository.findById(targetClass) }
+        verify(exactly = 1) { classRepository.findById(targetClassId) }
     }
 
     @Test
@@ -81,6 +98,14 @@ internal class TemplateTargetClassValidatorUnitTest : MockkBaseTest {
         val exception = TemplateAlreadyExistsForClass(targetClassId, otherTemplate.id)
 
         every { classRepository.findById(targetClassId) } returns Optional.of(targetClass)
+        every {
+            statementRepository.findAll(
+                subjectClasses = setOf(Classes.rosettaNodeShape),
+                predicateId = Predicates.shTargetClass,
+                objectId = targetClassId,
+                pageable = PageRequests.SINGLE
+            )
+        } returns pageOf()
         every {
             statementRepository.findAll(
                 subjectClasses = setOf(Classes.nodeShape),
@@ -101,6 +126,14 @@ internal class TemplateTargetClassValidatorUnitTest : MockkBaseTest {
         verify(exactly = 1) { classRepository.findById(targetClassId) }
         verify(exactly = 1) {
             statementRepository.findAll(
+                subjectClasses = setOf(Classes.rosettaNodeShape),
+                predicateId = Predicates.shTargetClass,
+                objectId = targetClassId,
+                pageable = PageRequests.SINGLE
+            )
+        }
+        verify(exactly = 1) {
+            statementRepository.findAll(
                 subjectClasses = setOf(Classes.nodeShape),
                 predicateId = Predicates.shTargetClass,
                 objectId = targetClassId,
@@ -110,8 +143,51 @@ internal class TemplateTargetClassValidatorUnitTest : MockkBaseTest {
     }
 
     @Test
+    fun `Given a target class id, when target class id equals rosetta stone statement class id, it throws an exception`() {
+        val targetClassId = Classes.rosettaStoneStatement
+        val exception = ReservedClass(targetClassId)
+        assertThrows<ReservedClass> { templateTargetClassValidator(targetClassId, null) } shouldBe exception
+    }
+
+    @Test
+    fun `Given a target class id, when target class already has a rosetta stone template, it throws an exception`() {
+        val targetClassId = ThingId("targetClass")
+        val otherTemplate = createResource()
+        val targetClass = createClass(targetClassId)
+        val exception = ReservedClass(targetClassId)
+
+        every { classRepository.findById(targetClassId) } returns Optional.of(targetClass)
+        every {
+            statementRepository.findAll(
+                subjectClasses = setOf(Classes.rosettaNodeShape),
+                predicateId = Predicates.shTargetClass,
+                objectId = targetClassId,
+                pageable = PageRequests.SINGLE
+            )
+        } returns pageOf(
+            createStatement(
+                subject = otherTemplate,
+                predicate = createPredicate(Predicates.shTargetClass),
+                `object` = targetClass
+            )
+        )
+
+        assertThrows<ReservedClass> { templateTargetClassValidator(targetClassId, null) } shouldBe exception
+
+        verify(exactly = 1) { classRepository.findById(targetClassId) }
+        verify(exactly = 1) {
+            statementRepository.findAll(
+                subjectClasses = setOf(Classes.rosettaNodeShape),
+                predicateId = Predicates.shTargetClass,
+                objectId = targetClassId,
+                pageable = PageRequests.SINGLE
+            )
+        }
+    }
+
+    @Test
     fun `Given a target class id, when it is identical to old target class, it returns success`() {
-        val targetClass = ThingId("targetClass")
-        assertDoesNotThrow { templateTargetClassValidator(targetClass, targetClass) }
+        val targetClassId = ThingId("targetClass")
+        assertDoesNotThrow { templateTargetClassValidator(targetClassId, targetClassId) }
     }
 }

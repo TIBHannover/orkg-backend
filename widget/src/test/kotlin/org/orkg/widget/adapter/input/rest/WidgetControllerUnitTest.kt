@@ -40,7 +40,8 @@ internal class WidgetControllerUnitTest : MockMvcBaseTest("widget") {
     private lateinit var resolveDOIUseCase: ResolveDOIUseCase
 
     @Test
-    fun success() {
+    @DisplayName("Given a doi, when resolved successfully, it returns the widget info")
+    fun findByDoiOrTitle() {
         every { resolveDOIUseCase.resolveDOI(EXAMPLE_DOI, null) } returns WidgetInfo(
             id = ThingId("R1234"),
             doi = EXAMPLE_DOI,

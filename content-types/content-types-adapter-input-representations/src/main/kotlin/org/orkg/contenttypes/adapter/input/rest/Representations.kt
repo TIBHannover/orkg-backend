@@ -816,3 +816,18 @@ data class ContributorRecordRepresentation(
     @get:JsonProperty("total_count")
     val totalCount: Long,
 )
+
+data class AuthorRecordRepresentation(
+    @get:JsonProperty("author_id")
+    val authorId: ThingId?,
+    @get:JsonProperty("author_name")
+    val authorName: String,
+    @get:JsonProperty("comparison_count")
+    val comparisonCount: Long,
+    @get:JsonProperty("paper_count")
+    val paperCount: Long,
+    @get:JsonProperty("visualization_count")
+    val visualizationCount: Long,
+    @get:JsonProperty("total_count")
+    val totalCount: Long,
+)

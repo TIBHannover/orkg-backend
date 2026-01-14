@@ -701,3 +701,12 @@ fun contributorRecordResponseFields(): List<FieldDescriptor> = listOf(
     fieldWithPath("visualization_count").description("The count of visualizations the contributor created."),
     fieldWithPath("total_count").description("The total count of contributions of the contributor."),
 )
+
+fun authorRecordResponseFields(): List<FieldDescriptor> = listOf(
+    fieldWithPath("author_id").description("The ID of the author resource. `null` if the author is only described as a literal.").type<ThingId>().optional(),
+    fieldWithPath("author_name").description("The name of the author."),
+    fieldWithPath("comparison_count").description("The count of comparisons the author is attributed to."),
+    fieldWithPath("paper_count").description("The count of papers the contributor author is attributed to."),
+    fieldWithPath("visualization_count").description("The count of visualizations the author is attributed to."),
+    fieldWithPath("total_count").description("The total count of contributions the author is attributed to."),
+)

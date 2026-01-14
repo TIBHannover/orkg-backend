@@ -1,0 +1,10 @@
+= Author Statistics
+
+Author statistics are aggregated statistics about authors and the objects they were attributed to in the graph.
+
+[[author-statistics-list-by-research-problem]]
+== Listing author statistics by research problem
+
+include::{snippets}/author-statistics_find-all-by-research-problem-id/description.adoc[]
+
+operation::author-statistics_find-all-by-research-problem-id[snippets='query-parameters,curl-request,http-response,response-fields']

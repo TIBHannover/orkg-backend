@@ -21,6 +21,7 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.DynamicLabel
 import org.orkg.graph.domain.Thing
 import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import java.util.function.BiFunction
 
@@ -203,3 +204,9 @@ private fun matchUnpublishedComparisons(
     patternGenerator: (Node) -> Collection<RelationshipPattern>,
 ): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere =
     matchDistinct(node("Comparison").named(symbolicName), patternGenerator)
+
+fun OffsetDateTime?.toAfterString(): String =
+    (this ?: OffsetDateTime.MIN).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+
+fun OffsetDateTime?.toBeforeString(): String =
+    (this ?: OffsetDateTime.MAX).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME).dropWhile { it == '+' }

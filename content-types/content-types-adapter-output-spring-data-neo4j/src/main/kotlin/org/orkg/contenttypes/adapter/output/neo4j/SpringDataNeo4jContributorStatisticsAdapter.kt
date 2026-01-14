@@ -11,7 +11,6 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Component
 import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter
 
 private val contributorRecordSortMapping = mapOf(
     "contributor_id" to "contributorId",
@@ -91,12 +90,6 @@ class SpringDataNeo4jContributorStatisticsAdapter(
             )
         }
     }
-
-    private fun OffsetDateTime?.toAfterString(): String =
-        (this ?: OffsetDateTime.MIN).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
-
-    private fun OffsetDateTime?.toBeforeString(): String =
-        (this ?: OffsetDateTime.MAX).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME).dropWhile { it == '+' }
 
     private fun Pageable.withDefaultAndMappedSort(): Pageable =
         withDefaultSort { Sort.by("total_count").descending() }.remapSort(contributorRecordSortMapping)

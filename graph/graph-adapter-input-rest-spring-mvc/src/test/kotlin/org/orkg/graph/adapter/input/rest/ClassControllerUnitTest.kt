@@ -235,7 +235,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
                 requestFields<CreateClassRequest>(
                     fieldWithPath("id").description("The class id (optional)").optional(),
                     fieldWithPath("label").description("The class label"),
-                    fieldWithPath("uri").description("The class URI")
+                    fieldWithPath("uri").description("The class URI (optional)").optional(),
                 )
                 throws(InvalidLabel::class, URINotAbsolute::class, URIAlreadyInUse::class, ReservedClassId::class, ClassAlreadyExists::class)
             }

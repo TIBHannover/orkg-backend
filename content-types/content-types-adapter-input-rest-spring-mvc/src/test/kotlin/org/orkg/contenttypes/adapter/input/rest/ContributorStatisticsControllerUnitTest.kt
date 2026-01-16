@@ -1,5 +1,6 @@
 package org.orkg.contenttypes.adapter.input.rest
 
+import com.epages.restdocs.apispec.ParameterType
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
@@ -15,6 +16,7 @@ import org.orkg.testing.andExpectContributionRecord
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
+import org.orkg.testing.spring.restdocs.type
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.test.context.ContextConfiguration
@@ -112,7 +114,7 @@ internal class ContributorStatisticsControllerUnitTest : MockMvcBaseTest("contri
                     """
                 )
                 pagedQueryParameters(
-                    parameterWithName("include_subfields").description("Flag for whether subfields are included in the search or not. (optional, default: false)").optional(),
+                    parameterWithName("include_subfields").description("Flag for whether subfields are included in the search or not. (optional, default: false)").type(ParameterType.BOOLEAN).optional(),
                     parameterWithName("after").description("Filter for the 'created at' timestamp, limiting exploration to resources that were created after the specified date. (optional)").optional(),
                     parameterWithName("before").description("Filter for the 'created at' timestamp, limiting exploration to resources that were created before the specified date. (optional)").optional(),
                 )

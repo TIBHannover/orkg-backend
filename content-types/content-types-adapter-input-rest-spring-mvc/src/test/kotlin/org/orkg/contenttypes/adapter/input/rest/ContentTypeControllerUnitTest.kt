@@ -1,5 +1,6 @@
 package org.orkg.contenttypes.adapter.input.rest
 
+import com.epages.restdocs.apispec.ParameterType
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
@@ -46,6 +47,7 @@ import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
 import org.orkg.testing.spring.restdocs.enumValues
 import org.orkg.testing.spring.restdocs.format
 import org.orkg.testing.spring.restdocs.repeatable
+import org.orkg.testing.spring.restdocs.type
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.restdocs.request.ParameterDescriptor
@@ -336,7 +338,7 @@ internal class ContentTypeControllerUnitTest : MockMvcBaseTest("content-types") 
         parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the content type belongs to. (optional)").format("uuid").optional(),
         parameterWithName("organization_id").description("Filter for the UUID of the organization that the content type belongs to. (optional)").format("uuid").optional(),
         parameterWithName("research_field").description("Filter for research field id that the content type belongs to. (optional)").optional(),
-        parameterWithName("include_subfields").description("Flag for whether subfields are included in the search or not. (optional, default: false)").optional(),
+        parameterWithName("include_subfields").description("Flag for whether subfields are included in the search or not. (optional, default: false)").type(ParameterType.BOOLEAN).optional(),
         parameterWithName("sdg").description("Filter for the sustainable development goal that the content type belongs to. (optional)").optional(),
         parameterWithName("author_id").description("Filter for the author of the content type. Cannot be used in combination with `author_name`. (optional)").optional(),
         parameterWithName("author_name").description("Filter for the name of the author of the content type. Cannot be used in combination with `author_id`. (optional)").optional(),

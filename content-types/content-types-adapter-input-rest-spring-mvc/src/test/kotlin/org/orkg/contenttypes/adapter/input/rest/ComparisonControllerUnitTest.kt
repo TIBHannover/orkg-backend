@@ -263,8 +263,8 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
                     parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the resource belongs to. (optional)").format("uuid").optional(),
                     parameterWithName("organization_id").description("Filter for the UUID of the organization that the resource belongs to. (optional)").format("uuid").optional(),
                     parameterWithName("research_field").description("Filter for research field id. (optional)").optional(),
-                    parameterWithName("include_subfields").description("Flag for whether subfields are included in the search or not. (optional, default: false)").optional(),
-                    parameterWithName("published").description("Filter for the publication status of the comparison. (optional)").optional(),
+                    parameterWithName("include_subfields").description("Flag for whether subfields are included in the search or not. (optional, default: false)").type(ParameterType.BOOLEAN).optional(),
+                    parameterWithName("published").description("Filter for the publication status of the comparison. (optional)").type(ParameterType.BOOLEAN).optional(),
                     parameterWithName("sdg").description("Filter for the sustainable development goal that the comparison belongs to. (optional)").optional(),
                     parameterWithName("research_problem").description("Filter for the research problem id the comparison is related to. (optional)").optional(),
                 )

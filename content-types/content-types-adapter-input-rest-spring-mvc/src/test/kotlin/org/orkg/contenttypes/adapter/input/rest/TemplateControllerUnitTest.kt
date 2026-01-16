@@ -228,7 +228,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
                     parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the template belongs to. (optional)").format("uuid").optional(),
                     parameterWithName("organization_id").description("Filter for the UUID of the organization that the template belongs to. (optional)").format("uuid").optional(),
                     parameterWithName("research_field").description("Filter for research field id. (optional)").optional(),
-                    parameterWithName("include_subfields").description("Flag for whether subfields are included in the search or not. (optional, default: false)").optional(),
+                    parameterWithName("include_subfields").description("Flag for whether subfields are included in the search or not. (optional, default: false)").type(ParameterType.BOOLEAN).optional(),
                     parameterWithName("research_problem").description("Filter for related research problem id. (optional)").optional(),
                     parameterWithName("target_class").description("Filter for the target class. (optional)").optional(),
                 )

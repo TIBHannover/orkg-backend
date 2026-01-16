@@ -1,5 +1,6 @@
 package org.orkg.contenttypes.adapter.input.rest
 
+import com.epages.restdocs.apispec.ParameterType
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
@@ -27,6 +28,7 @@ import org.orkg.testing.andExpectResource
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.restdocs.format
+import org.orkg.testing.spring.restdocs.type
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
@@ -147,7 +149,7 @@ internal class ResearchProblemControllerUnitTest : MockMvcBaseTest("research-pro
                     parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the resource belongs to. (optional)").format("uuid").optional(),
                     parameterWithName("organization_id").description("Filter for the UUID of the organization that the resource belongs to. (optional)").format("uuid").optional(),
                     parameterWithName("research_field").description("Filter for research field id. (optional)").optional(),
-                    parameterWithName("include_subfields").description("Flag for whether subfields are included in the search or not. (optional, default: false)").optional(),
+                    parameterWithName("include_subfields").description("Flag for whether subfields are included in the search or not. (optional, default: false)").type(ParameterType.BOOLEAN).optional(),
                     parameterWithName("addressed_by_observatory").description("Filter for an observatory that are addresses the research problem. An observatory is considered as addressing when there exists a path in the form of: (Problem)<-(Contribution)<-(Comparison|Paper) where the comparison or paper node needs to be assigned to the respective observatory. (optional)").format("uuid").optional(),
                     parameterWithName("addressed_by_organization").description("Filter for an organization that are addresses the research problem. An observatory is considered as addressing when there exists a path in the form of: (Problem)<-(Contribution)<-(Comparison|Paper) where the comparison or paper node needs to be assigned to the respective organization. (optional)").format("uuid").optional(),
                 )

@@ -16,7 +16,7 @@ dependencies.constraints {
     // Not fixed in 4.0.2 yet, possibly in later versions.
     api("org.asciidoctor:asciidoctor-gradle-jvm:$asciidoctorVersion")
     api("org.asciidoctor:asciidoctor-gradle-jvm-gems:$asciidoctorVersion")
-    api("org.openapitools:openapi-generator-gradle-plugin:7.15.0")
+    api("org.openapitools:openapi-generator-gradle-plugin:7.18.0")
 
     api("dev.jacomet.gradle.plugins:logging-capabilities:0.11.1")
     api("org.gradlex:jvm-dependency-conflict-resolution:2.1.2")

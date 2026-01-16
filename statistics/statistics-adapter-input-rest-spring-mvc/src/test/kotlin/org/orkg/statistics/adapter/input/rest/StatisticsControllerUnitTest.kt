@@ -18,6 +18,8 @@ import org.orkg.statistics.testing.fixtures.createMetrics
 import org.orkg.statistics.testing.fixtures.createSimpleMetric
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.restdocs.enumValues
+import org.orkg.testing.spring.restdocs.explode
+import org.orkg.testing.spring.restdocs.style
 import org.orkg.testing.spring.restdocs.wildcard
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.restdocs.payload.FieldDescriptor
@@ -128,7 +130,7 @@ internal class StatisticsControllerUnitTest : MockMvcBaseTest("statistics") {
                 )
                 queryParameters(
                     parameterWithName("response_format").description("The response format of the metric. Either of $allowedMetricResponseFormatValues. (optional, default: `${MetricResponseFormat.DEFAULT}`)").enumValues(MetricResponseFormat::class).optional(),
-                    parameterWithName("parameters").description("Filter parameters specific for each metric.").wildcard(mapOf("filter" to "2")).optional(),
+                    parameterWithName("parameters").description("Filter parameters specific for each metric.").wildcard(mapOf("filter" to "2")).style("FORM").explode(true).optional(),
                     parameterWithName("filter").ignored(),
                 )
                 responseFields(T::class, responseFields)

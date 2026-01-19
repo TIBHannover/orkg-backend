@@ -28,7 +28,6 @@ class CommonDocumentationContextProvider : DocumentationContextProvider {
     override fun applyConstraints(constraints: MutableList<Constraint>, type: KClass<*>) {
         when (type) {
             ThingId::class -> constraints.add(thingIdConstraint)
-            UUID::class, ContributorId::class, ObservatoryId::class, OrganizationId::class -> constraints.add(uuidConstraint)
         }
         if (constraints.isNotEmpty()) {
             constraints.toList().forEachIndexed { index, constraint ->

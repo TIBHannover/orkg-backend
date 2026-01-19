@@ -21,7 +21,6 @@ import org.orkg.common.exceptions.ServiceUnavailable
 import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.common.thingIdConstraint
-import org.orkg.common.uuidConstraint
 import org.orkg.community.domain.ContributorNotFound
 import org.orkg.community.domain.ObservatoryNotFound
 import org.orkg.community.domain.OrganizationNotFound
@@ -330,10 +329,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
                 )
                 pagedQueryParameters()
                 pagedResponseFields<UUID>(
-                    fieldWithPath("content[]")
-                        .references<UUID>()
-                        .constraints(uuidConstraint)
-                        .arrayItemsType("string")
+                    fieldWithPath("content[]").references<UUID>().arrayItemsType("string"),
                 )
                 throws(PaperNotFound::class)
             }

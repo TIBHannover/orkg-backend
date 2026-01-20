@@ -28,6 +28,10 @@ A research problem is considered associated when there exists a path from a rese
 
 operation::research-problems_get-paged[snippets='curl-request']
 
+The following list of request parameters are supported:
+
+operation::research-problems_find-all[snippets='query-parameters,curl-request,errors']
+
 ////
 [[problems-fields]]
 == Fields per problem

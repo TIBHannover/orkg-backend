@@ -68,6 +68,7 @@ internal class ProblemControllerUnitTest : MockMvcBaseTest("research-problems") 
             .perform()
             .andExpect(status().isOk)
             .andDocument {
+                deprecated()
                 summary("Listing contributors of research problems")
                 description(
                     """
@@ -112,6 +113,7 @@ internal class ProblemControllerUnitTest : MockMvcBaseTest("research-problems") 
             .perform()
             .andExpect(status().isOk)
             .andDocument {
+                deprecated()
                 summary("Listing paper authors of research problems")
                 description(
                     """

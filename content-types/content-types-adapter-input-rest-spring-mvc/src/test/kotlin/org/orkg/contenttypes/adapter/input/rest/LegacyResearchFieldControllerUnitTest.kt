@@ -139,6 +139,7 @@ internal class LegacyResearchFieldControllerUnitTest : MockMvcBaseTest("research
             .andExpect(status().isOk)
             .andExpectPage()
             .andDocument {
+                deprecated()
                 summary("Listing contributors of research fields")
                 description(
                     """

@@ -5,12 +5,16 @@ Bulk operations on statements. Helps to perform multiple calls together.
 [[bulk-statements-fetch-by-subject]]
 == Fetching Statements by Subjects (Bulk)
 
+WARNING: **Deprecated**: Replace with <<statements-list,Listing Statements>>.
+
 include::{snippets}/bulk-statements_find-all-by-subject-ids/description.adoc[]
 
 operation::bulk-statements_find-all-by-subject-ids[snippets='query-parameters,curl-request,http-response,response-fields,errors']
 
 [[bulk-statements-fetch-by-object]]
 == Fetching Statements by Objects (Bulk)
+
+WARNING: **Deprecated**: Replace with <<statements-list,Listing Statements>>.
 
 include::{snippets}/bulk-statements_find-all-by-object-ids/description.adoc[]
 
@@ -19,12 +23,16 @@ operation::bulk-statements_find-all-by-object-ids[snippets='query-parameters,cur
 [[bulk-statements-edit]]
 == Updating Statements (Bulk)
 
+WARNING: **Deprecated**: Replace with <<statements-edit,Updating Statements>>.
+
 include::{snippets}/bulk-statements_update-all-by-ids/description.adoc[]
 
 operation::bulk-statements_update-all-by-ids[snippets='query-parameters,request-fields,curl-request,http-response,response-fields,errors']
 
 [[bulk-statements-delete]]
 == Deleting Statements (Bulk)
+
+WARNING: **Deprecated**: Replace with <<statements-delete,Deleting Statements>>.
 
 include::{snippets}/bulk-statements_delete-all-by-ids/description.adoc[]
 

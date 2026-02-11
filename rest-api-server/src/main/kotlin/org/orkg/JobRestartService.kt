@@ -5,7 +5,6 @@ import org.springframework.batch.core.BatchStatus
 import org.springframework.batch.core.job.Job
 import org.springframework.batch.core.launch.JobOperator
 import org.springframework.batch.core.repository.JobRepository
-import org.springframework.batch.core.repository.explore.JobExplorer
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
 import org.springframework.stereotype.Component
@@ -14,7 +13,6 @@ import java.time.LocalDateTime
 
 @Component
 class JobRestartService(
-    private val jobExplorer: JobExplorer,
     private val jobOperator: JobOperator,
     private val jobRepository: JobRepository,
     private val jobs: List<Job>,
@@ -27,11 +25,11 @@ class JobRestartService(
             if (!job.isRestartable) {
                 return@forEach
             }
-            jobExplorer.findRunningJobExecutions(job.name).forEach { jobExecution ->
+            jobRepository.findRunningJobExecutions(job.name).forEach { jobExecution ->
                 if (jobExecution.isRunning) {
                     logger.info("""Restarting job execution {}.""", jobExecution)
                     try {
-                        jobOperator.stop(jobExecution.id)
+                        jobOperator.stop(jobExecution)
                     } catch (e: Throwable) {
                         logger.error("Failed to stop job {}.", jobExecution, e)
                     }
@@ -43,7 +41,7 @@ class JobRestartService(
                     jobExecution.setEndTime(LocalDateTime.now(clock))
                     jobRepository.update(jobExecution)
                     try {
-                        jobOperator.restart(jobExecution.id)
+                        jobOperator.restart(jobExecution)
                     } catch (e: Throwable) {
                         logger.error("Failed to restart job {}.", jobExecution, e)
                     }

@@ -77,7 +77,7 @@ class ValidatePaperCSVJobConfiguration(
 
     private fun parseTypedRecords(): Step =
         StepBuilder("parse-typed-records", jobRepository)
-            .chunk<PositionAwareCSVRecord, TypedCSVRecord>(1, transactionManager)
+            .chunk<PositionAwareCSVRecord, TypedCSVRecord>(1)
             .reader(csvRecordReader)
             .processor(typedCSVRecordParser)
             .writer(typedCSVRecordWriter)
@@ -93,7 +93,7 @@ class ValidatePaperCSVJobConfiguration(
 
     private fun parsePapers(): Step =
         StepBuilder("parse-papers", jobRepository)
-            .chunk<TypedCSVRecord, PaperCSVRecord>(1, transactionManager)
+            .chunk<TypedCSVRecord, PaperCSVRecord>(1)
             .reader(typedCSVRecordReader)
             .processor(paperCSVRecordParser)
             .writer(paperCSVRecordWriter)

@@ -15,18 +15,16 @@ import org.springframework.batch.core.job.parameters.JobParameters
 import org.springframework.batch.core.launch.JobExecutionAlreadyRunningException
 import org.springframework.batch.core.launch.JobExecutionNotRunningException
 import org.springframework.batch.core.launch.JobInstanceAlreadyCompleteException
-import org.springframework.batch.core.launch.JobLauncher
 import org.springframework.batch.core.launch.JobOperator
 import org.springframework.batch.core.launch.JobRestartException
-import org.springframework.batch.core.repository.explore.JobExplorer
+import org.springframework.batch.core.repository.JobRepository
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
 import java.util.Optional
 
 @Component
 class JobService(
-    private val jobExplorer: JobExplorer,
-    private val jobLauncher: JobLauncher,
+    private val jobRepository: JobRepository,
     private val jobOperator: JobOperator,
     private val jobStatusFactory: JobStatusFactory,
     private val jobResultFactory: JobResultFactory,
@@ -38,7 +36,7 @@ class JobService(
     override fun runJob(jobName: String, jobParameters: JobParameters): JobId {
         val job = jobsByName[jobName] ?: throw IllegalArgumentException("""Job "$jobName" not found.""")
         try {
-            val jobExecution = jobLauncher.run(job, jobParameters)
+            val jobExecution = jobOperator.start(job, jobParameters)
             return JobId(jobExecution.id)
         } catch (_: JobExecutionAlreadyRunningException) {
             throw JobAlreadyRunning(findJobIdByNameAndParameters(jobName, jobParameters)!!)
@@ -77,14 +75,14 @@ class JobService(
             throw JobNotRunning(jobId)
         }
         try {
-            jobOperator.stop(jobId.value)
+            jobOperator.stop(jobExecution)
         } catch (_: JobExecutionNotRunningException) {
             throw JobNotRunning(jobId)
         }
     }
 
     private fun findJobExecutionById(jobId: JobId, contributorId: ContributorId): JobExecution {
-        val jobExecution = jobExplorer.getJobExecution(jobId.value)
+        val jobExecution = jobRepository.getJobExecution(jobId.value)
         if (jobExecution == null || (extractContributorId(jobExecution) != contributorId && !contributorRepository.isAdmin(contributorId))) {
             throw JobNotFound(jobId)
         }
@@ -92,5 +90,5 @@ class JobService(
     }
 
     private fun findJobIdByNameAndParameters(jobName: String, jobParameters: JobParameters): JobId? =
-        jobExplorer.getJobInstance(jobName, jobParameters)?.id?.let(::JobId)
+        jobRepository.getJobInstance(jobName, jobParameters)?.id?.let(::JobId)
 }

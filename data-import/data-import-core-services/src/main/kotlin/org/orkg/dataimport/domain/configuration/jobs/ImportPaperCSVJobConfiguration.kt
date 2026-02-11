@@ -21,13 +21,10 @@ import org.springframework.batch.infrastructure.item.data.RepositoryItemWriter
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.transaction.PlatformTransactionManager
 import tools.jackson.databind.ObjectMapper
 
 @Configuration
 class ImportPaperCSVJobConfiguration(
-    @param:Qualifier("jpaTransactionManager")
-    private val transactionManager: PlatformTransactionManager,
     private val problemResponseFactory: ProblemResponseFactory,
     private val objectMapper: ObjectMapper,
     private val jobRepository: JobRepository,
@@ -57,7 +54,7 @@ class ImportPaperCSVJobConfiguration(
 
     private fun createPredicates(): Step =
         StepBuilder("create-predicates", jobRepository)
-            .chunk<PaperCSVRecord, PaperCSVRecord>(1, transactionManager)
+            .chunk<PaperCSVRecord, PaperCSVRecord>(1)
             .reader(paperCSVRecordReader)
             .processor(paperCSVPredicateProcessor)
             .writer(paperCSVRecordWriter)
@@ -65,7 +62,7 @@ class ImportPaperCSVJobConfiguration(
 
     private fun createStatementObjects(): Step =
         StepBuilder("create-statement-objects", jobRepository)
-            .chunk<PaperCSVRecord, PaperCSVRecord>(1, transactionManager)
+            .chunk<PaperCSVRecord, PaperCSVRecord>(1)
             .reader(paperCSVRecordReader)
             .processor(paperCSVStatementObjectProcessor)
             .writer(paperCSVRecordWriter)
@@ -73,7 +70,7 @@ class ImportPaperCSVJobConfiguration(
 
     private fun createPapers(): Step =
         StepBuilder("create-papers", jobRepository)
-            .chunk<PaperCSVRecord, PaperCSVRecordImportResult>(1, transactionManager)
+            .chunk<PaperCSVRecord, PaperCSVRecordImportResult>(1)
             .reader(paperCSVRecordReader)
             .processor(paperCSVRecordProcessor)
             .writer(paperCSVRecordImportResultWriter)

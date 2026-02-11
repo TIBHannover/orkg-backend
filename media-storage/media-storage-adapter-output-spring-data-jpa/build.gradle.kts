@@ -20,6 +20,7 @@ testing {
         val test by getting(JvmTestSuite::class) {
             dependencies {
                 compileOnly("org.junit.jupiter:junit-jupiter-api")
+                compileOnly("org.springframework.boot:spring-boot-data-jpa-test")
                 implementation("org.springframework.boot:spring-boot-jdbc-test")
                 implementation("org.springframework.boot:spring-boot-test")
                 implementation("org.springframework:spring-beans")
@@ -30,6 +31,7 @@ testing {
                 runtimeOnly("io.kotest:kotest-extensions-spring")
                 runtimeOnly("org.liquibase:liquibase-core")
                 runtimeOnly("org.postgresql:postgresql")
+                runtimeOnly("org.springframework.boot:spring-boot-data-jpa-test")
                 runtimeOnly("org.springframework.boot:spring-boot-liquibase")
                 runtimeOnly("org.springframework.boot:spring-boot-starter-data-jpa")
                 runtimeOnly("org.springframework.boot:spring-boot-starter-test")

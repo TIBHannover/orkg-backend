@@ -30,12 +30,14 @@ testing {
     suites {
         val test by getting(JvmTestSuite::class) {
             dependencies {
+                compileOnly("org.springframework.boot:spring-boot-data-jpa-test")
                 implementation("org.assertj:assertj-core")
                 implementation("org.junit.jupiter:junit-jupiter-api")
                 implementation("org.assertj:assertj-core")
                 runtimeOnly(project(":migrations:liquibase"))
                 runtimeOnly("org.liquibase:liquibase-core")
                 runtimeOnly("org.postgresql:postgresql")
+                runtimeOnly("org.springframework.boot:spring-boot-data-jpa-test")
                 runtimeOnly("org.springframework.boot:spring-boot-liquibase")
                 implementation("org.springframework.boot:spring-boot-jdbc-test")
                 implementation("org.springframework.boot:spring-boot-test")

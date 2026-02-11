@@ -33,9 +33,11 @@ testing {
             dependencies {
                 runtimeOnly("org.liquibase:liquibase-core")
                 runtimeOnly("org.postgresql:postgresql")
+                runtimeOnly("org.springframework.boot:spring-boot-data-jpa-test")
                 runtimeOnly("org.springframework.boot:spring-boot-liquibase")
                 runtimeOnly(project(":migrations:liquibase"))
                 compileOnly("org.junit.jupiter:junit-jupiter-api")
+                compileOnly("org.springframework.boot:spring-boot-data-jpa-test")
                 implementation("org.springframework:spring-beans")
                 implementation("org.springframework:spring-orm")
                 implementation("org.springframework:spring-test")

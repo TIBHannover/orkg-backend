@@ -9,14 +9,14 @@ import org.orkg.community.input.ContributorIdentifierUseCases
 import org.orkg.community.input.ContributorUseCases
 import org.orkg.createContributor
 import org.orkg.testing.MockUserId
+import org.orkg.testing.annotations.PostgresContainerIntegrationTest
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@SpringBootTest
+@PostgresContainerIntegrationTest
 internal class ContributorIdentifierControllerIntegrationTest : MockMvcBaseTest("contributor-identifiers") {
     @Autowired
     private lateinit var contributorIdentifierUseCases: ContributorIdentifierUseCases

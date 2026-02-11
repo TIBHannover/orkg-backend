@@ -52,6 +52,7 @@ import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.testing.MockUserId
 import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
+import org.orkg.testing.annotations.PostgresContainerIntegrationTest
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.beans.factory.annotation.Autowired
@@ -60,6 +61,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @Neo4jContainerIntegrationTest
+@PostgresContainerIntegrationTest
 @Import(InMemorySimCompThingRepositoryAdapter::class)
 internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparisons") {
     @Autowired

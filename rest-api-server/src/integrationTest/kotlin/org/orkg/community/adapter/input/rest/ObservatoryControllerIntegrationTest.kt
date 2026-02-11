@@ -22,6 +22,7 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
+import org.orkg.testing.annotations.PostgresContainerIntegrationTest
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
@@ -31,6 +32,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @Neo4jContainerIntegrationTest
+@PostgresContainerIntegrationTest
 @Import(CommonDocumentationContextProvider::class, CommunityDocumentationContextProvider::class)
 internal class ObservatoryControllerIntegrationTest : MockMvcBaseTest("observatories") {
     @Autowired

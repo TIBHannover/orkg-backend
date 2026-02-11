@@ -2,14 +2,14 @@ package org.orkg.testing.annotations
 
 import ac.simons.neo4j.migrations.springframework.boot.autoconfigure.MigrationsAutoConfiguration
 import org.neo4j.driver.Driver
+import org.orkg.constants.BuildConfig
 import org.orkg.testing.MockUserId
 import org.orkg.testing.Neo4jContainerInitializer
+import org.orkg.testing.PostgresContainerInitializer
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
-import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest
 import org.springframework.boot.data.neo4j.test.autoconfigure.DataNeo4jTest
-import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.boot.transaction.autoconfigure.TransactionManagerCustomizers
@@ -28,6 +28,11 @@ import kotlin.reflect.KClass
 @ImportAutoConfiguration(MigrationsAutoConfiguration::class)
 @TestPropertySource(properties = ["org.neo4j.migrations.packages-to-scan=org.orkg.migrations.neo4j"])
 annotation class Neo4jContainerIntegrationTest
+
+@SpringBootTest
+@ContextConfiguration(initializers = [PostgresContainerInitializer::class])
+@TestPropertySource(properties = ["spring.datasource.url=jdbc:tc:postgresql:${BuildConfig.CONTAINER_IMAGE_POSTGRES_TAG}://localhost/db"])
+annotation class PostgresContainerIntegrationTest
 
 @DataNeo4jTest
 @EnableAutoConfiguration
@@ -52,16 +57,6 @@ class Neo4jTestConfiguration {
             optionalCustomizers.ifAvailable { customizer -> customizer.customize(transactionManager) }
         }
 }
-
-/**
- * Annotation that helps to set up tests with PostgreSQL in TestContainers.
- *
- * Tests are transactional by default. The test database is replaced with a TestContainers Docker container that is
- * configured via `application.yaml`.
- */
-@DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-annotation class TestContainersJpaTest
 
 @Retention(RUNTIME)
 @WithMockAuthentication(

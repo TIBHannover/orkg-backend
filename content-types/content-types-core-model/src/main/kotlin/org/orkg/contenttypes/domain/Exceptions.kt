@@ -487,6 +487,13 @@ class InvalidRegexPattern(
         properties = mapOf("regex_pattern" to pattern)
     )
 
+class DuplicateTemplatePropertyPaths(val duplicates: Map<ThingId, Int>) :
+    SimpleMessageException(
+        HttpStatus.BAD_REQUEST,
+        """Duplicate template property paths: ${duplicates.entries.joinToString { "${it.key}=${it.value}" }}.""",
+        properties = mapOf("duplicate_template_property_paths" to duplicates)
+    )
+
 class TemplateClosed(id: ThingId) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,

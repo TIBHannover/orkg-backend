@@ -4,6 +4,6 @@
     "description": "updated resource property description",
     "min_count": 2,
     "max_count": 5,
-    "path": "P27",
+    "path": "description",
     "class": "C28"
 }

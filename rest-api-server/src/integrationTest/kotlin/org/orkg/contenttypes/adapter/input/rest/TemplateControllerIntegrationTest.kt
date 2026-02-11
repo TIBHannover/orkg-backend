@@ -97,6 +97,7 @@ internal class TemplateControllerIntegrationTest : MockMvcBaseTest("templates") 
             Predicates.hasAuthor,
             Predicates.hasAuthors,
             Predicates.hasContribution,
+            Predicates.hasDOI,
             Predicates.hasResearchField,
             Predicates.hasResearchProblem,
             Predicates.placeholder,
@@ -140,6 +141,12 @@ internal class TemplateControllerIntegrationTest : MockMvcBaseTest("templates") 
         )
 
         // Example specific entities
+
+        predicateService.createPredicates(
+            ThingId("P25"),
+            ThingId("P28"),
+            ThingId("P29"),
+        )
 
         classService.createClasses(
             ThingId("C123"),
@@ -232,7 +239,7 @@ internal class TemplateControllerIntegrationTest : MockMvcBaseTest("templates") 
                 property.minCount shouldBe 1
                 property.maxCount shouldBe 2
                 property.pattern shouldBe "\\d+"
-                property.path shouldBe ObjectIdAndLabel(Predicates.field, "P24")
+                property.path shouldBe ObjectIdAndLabel(ThingId("P25"), "P25")
                 property.datatype shouldBe ClassReferenceRepresentation(Classes.string, "String", ParsedIRI.create(Literals.XSD.STRING.uri))
                 property.createdAt shouldNotBe null
                 property.createdBy shouldBe ContributorId(MockUserId.USER)
@@ -247,7 +254,7 @@ internal class TemplateControllerIntegrationTest : MockMvcBaseTest("templates") 
                 property.maxCount shouldBe 2
                 property.minInclusive shouldBe RealNumber(-1)
                 property.maxInclusive shouldBe RealNumber(10)
-                property.path shouldBe ObjectIdAndLabel(Predicates.field, "P24")
+                property.path shouldBe ObjectIdAndLabel(Predicates.hasDOI, "P26")
                 property.datatype shouldBe ClassReferenceRepresentation(Classes.integer, "Integer", ParsedIRI.create(Literals.XSD.INT.uri))
                 property.createdAt shouldNotBe null
                 property.createdBy shouldBe ContributorId(MockUserId.USER)
@@ -260,7 +267,7 @@ internal class TemplateControllerIntegrationTest : MockMvcBaseTest("templates") 
                 property.order shouldBe 3
                 property.minCount shouldBe 1
                 property.maxCount shouldBe 2
-                property.path shouldBe ObjectIdAndLabel(Predicates.field, "P24")
+                property.path shouldBe ObjectIdAndLabel(Predicates.hasAuthor, "P27")
                 property.datatype shouldBe ClassReferenceRepresentation(ThingId("C25"), "C25", null)
                 property.createdAt shouldNotBe null
                 property.createdBy shouldBe ContributorId(MockUserId.USER)
@@ -273,7 +280,7 @@ internal class TemplateControllerIntegrationTest : MockMvcBaseTest("templates") 
                 property.order shouldBe 4
                 property.minCount shouldBe 3
                 property.maxCount shouldBe 4
-                property.path shouldBe ObjectIdAndLabel(Predicates.hasAuthor, "P27")
+                property.path shouldBe ObjectIdAndLabel(ThingId("P28"), "P28")
                 property.`class` shouldBe ObjectIdAndLabel(ThingId("C28"), "C28")
                 property.createdAt shouldNotBe null
                 property.createdBy shouldBe ContributorId(MockUserId.USER)
@@ -343,7 +350,7 @@ internal class TemplateControllerIntegrationTest : MockMvcBaseTest("templates") 
                 property.minCount shouldBe 1
                 property.maxCount shouldBe 2
                 property.pattern shouldBe "\\w+"
-                property.path shouldBe ObjectIdAndLabel(Predicates.field, "P24")
+                property.path shouldBe ObjectIdAndLabel(Predicates.hasDOI, "P26")
                 property.datatype shouldBe ClassReference(Classes.string, "String", ParsedIRI.create(Literals.XSD.STRING.uri))
                 property.createdAt shouldNotBe null
                 property.createdBy shouldBe ContributorId(MockUserId.USER)
@@ -356,7 +363,7 @@ internal class TemplateControllerIntegrationTest : MockMvcBaseTest("templates") 
                 property.order shouldBe 3
                 property.minCount shouldBe 1
                 property.maxCount shouldBe 2
-                property.path shouldBe ObjectIdAndLabel(Predicates.field, "P24")
+                property.path shouldBe ObjectIdAndLabel(ThingId("P25"), "P25")
                 property.datatype shouldBe ClassReference(ThingId("C25"), "C25", null)
                 property.createdAt shouldNotBe null
                 property.createdBy shouldBe ContributorId(MockUserId.USER)
@@ -371,7 +378,7 @@ internal class TemplateControllerIntegrationTest : MockMvcBaseTest("templates") 
                 property.maxCount shouldBe 2
                 property.minInclusive shouldBe RealNumber(-5)
                 property.maxInclusive shouldBe RealNumber(15.5)
-                property.path shouldBe ObjectIdAndLabel(Predicates.field, "P24")
+                property.path shouldBe ObjectIdAndLabel(ThingId("P28"), "P28")
                 property.datatype shouldBe ClassReference(Classes.decimal, "Decimal", ParsedIRI.create(Literals.XSD.DECIMAL.uri))
                 property.createdAt shouldNotBe null
                 property.createdBy shouldBe ContributorId(MockUserId.USER)
@@ -410,7 +417,7 @@ internal class TemplateControllerIntegrationTest : MockMvcBaseTest("templates") 
             it.order shouldBe template.properties.size - 1
             it.minCount shouldBe 1
             it.maxCount shouldBe 2
-            it.path shouldBe ObjectIdAndLabel(Predicates.field, "P24")
+            it.path shouldBe ObjectIdAndLabel(ThingId("P29"), "P29")
             it.createdAt shouldNotBe null
             it.createdBy shouldBe ContributorId(MockUserId.USER)
         }
@@ -435,7 +442,7 @@ internal class TemplateControllerIntegrationTest : MockMvcBaseTest("templates") 
             it.order shouldBe 0
             it.minCount shouldBe 4
             it.maxCount shouldBe 7
-            it.path shouldBe ObjectIdAndLabel(Predicates.field, "P24")
+            it.path shouldBe ObjectIdAndLabel(Predicates.description, "description")
             it.createdAt shouldNotBe null
             it.createdBy shouldBe ContributorId(MockUserId.USER)
         }
@@ -465,7 +472,7 @@ internal class TemplateControllerIntegrationTest : MockMvcBaseTest("templates") 
             it.minCount shouldBe 1
             it.maxCount shouldBe 2
             it.pattern shouldBe "\\d+"
-            it.path shouldBe ObjectIdAndLabel(Predicates.field, "P24")
+            it.path shouldBe ObjectIdAndLabel(ThingId("P29"), "P29")
             it.datatype shouldBe ClassReference(Classes.string, "String", ParsedIRI.create(Literals.XSD.STRING.uri))
             it.createdAt shouldNotBe null
             it.createdBy shouldBe ContributorId(MockUserId.USER)
@@ -492,7 +499,7 @@ internal class TemplateControllerIntegrationTest : MockMvcBaseTest("templates") 
             it.minCount shouldBe 1
             it.maxCount shouldBe 2
             it.pattern shouldBe "\\w+"
-            it.path shouldBe ObjectIdAndLabel(Predicates.field, "P24")
+            it.path shouldBe ObjectIdAndLabel(Predicates.description, "description")
             it.datatype shouldBe ClassReference(Classes.string, "String", ParsedIRI.create(Literals.XSD.STRING.uri))
             it.createdAt shouldNotBe null
             it.createdBy shouldBe ContributorId(MockUserId.USER)
@@ -524,7 +531,7 @@ internal class TemplateControllerIntegrationTest : MockMvcBaseTest("templates") 
             it.maxCount shouldBe 2
             it.minInclusive shouldBe RealNumber(-1)
             it.maxInclusive shouldBe RealNumber(10)
-            it.path shouldBe ObjectIdAndLabel(Predicates.field, "P24")
+            it.path shouldBe ObjectIdAndLabel(ThingId("P29"), "P29")
             it.datatype shouldBe ClassReference(Classes.integer, "Integer", ParsedIRI.create(Literals.XSD.INT.uri))
             it.createdAt shouldNotBe null
             it.createdBy shouldBe ContributorId(MockUserId.USER)
@@ -552,7 +559,7 @@ internal class TemplateControllerIntegrationTest : MockMvcBaseTest("templates") 
             it.maxCount shouldBe 2
             it.minInclusive shouldBe RealNumber(-5)
             it.maxInclusive shouldBe RealNumber(15.5)
-            it.path shouldBe ObjectIdAndLabel(Predicates.field, "P24")
+            it.path shouldBe ObjectIdAndLabel(Predicates.description, "description")
             it.datatype shouldBe ClassReference(Classes.decimal, "Decimal", ParsedIRI.create(Literals.XSD.DECIMAL.uri))
             it.createdAt shouldNotBe null
             it.createdBy shouldBe ContributorId(MockUserId.USER)
@@ -582,7 +589,7 @@ internal class TemplateControllerIntegrationTest : MockMvcBaseTest("templates") 
             it.order shouldBe template.properties.size - 1
             it.minCount shouldBe 1
             it.maxCount shouldBe 2
-            it.path shouldBe ObjectIdAndLabel(Predicates.field, "P24")
+            it.path shouldBe ObjectIdAndLabel(ThingId("P29"), "P29")
             it.datatype shouldBe ClassReference(ThingId("C25"), "C25", null)
             it.createdAt shouldNotBe null
             it.createdBy shouldBe ContributorId(MockUserId.USER)
@@ -638,7 +645,7 @@ internal class TemplateControllerIntegrationTest : MockMvcBaseTest("templates") 
             it.order shouldBe template.properties.size - 1
             it.minCount shouldBe 3
             it.maxCount shouldBe 4
-            it.path shouldBe ObjectIdAndLabel(Predicates.hasAuthor, "P27")
+            it.path shouldBe ObjectIdAndLabel(ThingId("P29"), "P29")
             it.`class` shouldBe ObjectIdAndLabel(ThingId("C28"), "C28")
             it.createdAt shouldNotBe null
             it.createdBy shouldBe ContributorId(MockUserId.USER)
@@ -664,7 +671,7 @@ internal class TemplateControllerIntegrationTest : MockMvcBaseTest("templates") 
             it.order shouldBe 0
             it.minCount shouldBe 2
             it.maxCount shouldBe 5
-            it.path shouldBe ObjectIdAndLabel(Predicates.hasAuthor, "P27")
+            it.path shouldBe ObjectIdAndLabel(Predicates.description, "description")
             it.`class` shouldBe ObjectIdAndLabel(ThingId("C28"), "C28")
             it.createdAt shouldNotBe null
             it.createdBy shouldBe ContributorId(MockUserId.USER)

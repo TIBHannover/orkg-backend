@@ -1,5 +1,6 @@
 package org.orkg.contenttypes.domain.actions.templates
 
+import org.orkg.contenttypes.domain.DuplicateTemplatePropertyPaths
 import org.orkg.contenttypes.domain.TemplateProperty
 import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertyValidator
 import org.orkg.contenttypes.domain.actions.Action
@@ -27,11 +28,18 @@ class TemplatePropertiesValidator<T, S>(
         val newProperties = newValueSelector(command)
         if (newProperties != null) {
             val oldProperties = oldValueSelector(state)
-            newProperties.filter { newProperty ->
+            val properties = newProperties.filter { newProperty ->
                 oldProperties.none { oldProperty ->
                     newProperty.matchesProperty(oldProperty)
                 }
-            }.forEach(abstractTemplatePropertyValidator::validate)
+            }
+            val duplicatePropertyPaths = properties.groupingBy { it.path }
+                .eachCount()
+                .filter { it.value > 1 }
+            if (duplicatePropertyPaths.isNotEmpty()) {
+                throw DuplicateTemplatePropertyPaths(duplicatePropertyPaths)
+            }
+            properties.forEach(abstractTemplatePropertyValidator::validate)
         }
         return state
     }

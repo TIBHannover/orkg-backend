@@ -1,5 +1,6 @@
 package org.orkg.contenttypes.domain.actions.templates
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.just
@@ -8,6 +9,7 @@ import io.mockk.runs
 import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.orkg.common.testing.fixtures.MockkBaseTest
+import org.orkg.contenttypes.domain.DuplicateTemplatePropertyPaths
 import org.orkg.contenttypes.domain.TemplateProperty
 import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertyValidator
 import org.orkg.contenttypes.domain.testing.fixtures.createNumberLiteralTemplateProperty
@@ -22,6 +24,7 @@ import org.orkg.contenttypes.input.testing.fixtures.updateOtherLiteralTemplatePr
 import org.orkg.contenttypes.input.testing.fixtures.updateResourceTemplatePropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.updateStringLiteralTemplatePropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.updateUntypedTemplatePropertyCommand
+import org.orkg.graph.domain.Predicates
 
 internal class TemplatePropertiesValidatorUnitTest : MockkBaseTest {
     private val abstractTemplatePropertyValidator: AbstractTemplatePropertyValidator = mockk()
@@ -95,5 +98,19 @@ internal class TemplatePropertiesValidatorUnitTest : MockkBaseTest {
         val command = state.map { it.toTemplatePropertyCommand() }
 
         templatePropertiesValidator(command, state) shouldBe state
+    }
+
+    @Test
+    fun `Given a template update command, when new set of template properties contains a duplicate path, it throws an exception`() {
+        val command = listOf(
+            updateUntypedTemplatePropertyCommand(),
+            updateStringLiteralTemplatePropertyCommand().copy(path = Predicates.field),
+        )
+        val state = listOf(
+            createUntypedTemplateProperty(),
+            createStringLiteralTemplateProperty(),
+        )
+
+        shouldThrow<DuplicateTemplatePropertyPaths> { templatePropertiesValidator(command, state) }
     }
 }

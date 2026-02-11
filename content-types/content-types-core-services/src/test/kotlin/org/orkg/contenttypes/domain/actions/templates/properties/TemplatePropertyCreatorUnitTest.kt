@@ -10,6 +10,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertyCreator
 import org.orkg.contenttypes.domain.actions.CreateTemplatePropertyState
+import org.orkg.contenttypes.domain.testing.fixtures.createTemplate
 import org.orkg.contenttypes.input.testing.fixtures.createUntypedTemplatePropertyCommand
 
 internal class TemplatePropertyCreatorUnitTest : MockkBaseTest {
@@ -19,10 +20,11 @@ internal class TemplatePropertyCreatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a create template property command, when property is created, it properly updates the state`() {
+        val template = createTemplate()
         val command = createUntypedTemplatePropertyCommand()
         val state = CreateTemplatePropertyState(
+            template = template,
             templatePropertyId = command.templateId,
-            propertyCount = 4
         )
         val templatePropertyId = ThingId("R1568")
 
@@ -30,7 +32,7 @@ internal class TemplatePropertyCreatorUnitTest : MockkBaseTest {
             abstractTemplatePropertyCreator.create(
                 contributorId = command.contributorId,
                 templateId = command.templateId,
-                order = state.propertyCount!!,
+                order = template.properties.size,
                 property = command
             )
         } returns templatePropertyId
@@ -38,15 +40,15 @@ internal class TemplatePropertyCreatorUnitTest : MockkBaseTest {
         val result = templatePropertyCreator(command, state)
 
         result.asClue {
+            it.template shouldBe template
             it.templatePropertyId shouldBe templatePropertyId
-            it.propertyCount shouldBe state.propertyCount!! + 1
         }
 
         verify(exactly = 1) {
             abstractTemplatePropertyCreator.create(
                 contributorId = command.contributorId,
                 templateId = command.templateId,
-                order = state.propertyCount!!,
+                order = template.properties.size,
                 property = command
             )
         }

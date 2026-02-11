@@ -1,5 +1,6 @@
 package org.orkg.contenttypes.domain.actions.templates.properties
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.just
@@ -8,6 +9,7 @@ import io.mockk.runs
 import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.orkg.common.testing.fixtures.MockkBaseTest
+import org.orkg.contenttypes.domain.DuplicateTemplatePropertyPaths
 import org.orkg.contenttypes.domain.TemplateProperty
 import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertyValidator
 import org.orkg.contenttypes.domain.testing.fixtures.createStringLiteralTemplateProperty
@@ -20,16 +22,17 @@ internal class TemplatePropertyValidatorUnitTest : MockkBaseTest {
     private val abstractTemplatePropertyValidator: AbstractTemplatePropertyValidator = mockk()
 
     private val templatePropertyValidator =
-        TemplatePropertyValidator<TemplatePropertyCommand, TemplateProperty?>(
+        TemplatePropertyValidator<TemplatePropertyCommand, Pair<List<TemplateProperty>, TemplateProperty?>>(
             abstractTemplatePropertyValidator = abstractTemplatePropertyValidator,
+            existingTemplatePropertiesSelector = { it.first },
             newValueSelector = { it },
-            oldValueSelector = { it }
+            oldValueSelector = { it.second }
         )
 
     @Test
     fun `Given a template property update command, when previous template property is not defined, it validates the new template property`() {
         val command = updateUntypedTemplatePropertyCommand()
-        val state = null
+        val state = emptyList<TemplateProperty>() to null
 
         every { abstractTemplatePropertyValidator.validate(command) } just runs
 
@@ -41,7 +44,7 @@ internal class TemplatePropertyValidatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a template property update command, when new template property is different to existing template property, it is validated`() {
         val command = updateUntypedTemplatePropertyCommand()
-        val state = createStringLiteralTemplateProperty()
+        val state = emptyList<TemplateProperty>() to createStringLiteralTemplateProperty()
 
         every { abstractTemplatePropertyValidator.validate(command) } just runs
 
@@ -52,9 +55,25 @@ internal class TemplatePropertyValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template property update command, when new template property is identical to existing template property, it is not validated again`() {
-        val state = createUntypedTemplateProperty()
-        val command = state.toTemplatePropertyCommand()
+        val state = emptyList<TemplateProperty>() to createUntypedTemplateProperty()
+        val command = state.second.toTemplatePropertyCommand()
 
         templatePropertyValidator(command, state) shouldBe state
+    }
+
+    @Test
+    fun `Given a template property update command, when previous template property is not defined, but path is already is use, it throws an exception`() {
+        val command = updateUntypedTemplatePropertyCommand()
+        val state = listOf(createUntypedTemplateProperty()) to null
+
+        shouldThrow<DuplicateTemplatePropertyPaths> { templatePropertyValidator(command, state) }
+    }
+
+    @Test
+    fun `Given a template property update command, when new template property has a different property path to existing template property, and path is already is use, it throws an exception`() {
+        val command = updateUntypedTemplatePropertyCommand()
+        val state = listOf(createUntypedTemplateProperty()) to createStringLiteralTemplateProperty()
+
+        shouldThrow<DuplicateTemplatePropertyPaths> { templatePropertyValidator(command, state) }
     }
 }

@@ -5,6 +5,6 @@
     "min_count": 1,
     "max_count": 2,
     "pattern": "\\w+",
-    "path": "P24",
+    "path": "description",
     "datatype": "String"
 }

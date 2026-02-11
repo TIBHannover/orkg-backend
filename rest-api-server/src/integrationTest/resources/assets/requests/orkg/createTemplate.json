@@ -28,7 +28,7 @@
             "min_count": 1,
             "max_count": 2,
             "pattern": "\\d+",
-            "path": "P24",
+            "path": "P25",
             "datatype": "String"
         },
         {
@@ -39,7 +39,7 @@
             "max_count": 2,
             "min_inclusive": -1,
             "max_inclusive": 10,
-            "path": "P24",
+            "path": "P26",
             "datatype": "Integer"
         },
         {
@@ -48,7 +48,7 @@
             "description": "literal property description",
             "min_count": 1,
             "max_count": 2,
-            "path": "P24",
+            "path": "P27",
             "datatype": "C25"
         },
         {
@@ -57,7 +57,7 @@
             "description": "resource property description",
             "min_count": 3,
             "max_count": 4,
-            "path": "P27",
+            "path": "P28",
             "class": "C28"
         }
     ],

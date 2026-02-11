@@ -22,9 +22,8 @@ class TemplatePropertyCreator(
         templatePropertyId = abstractTemplatePropertyCreator.create(
             contributorId = command.contributorId,
             templateId = command.templateId,
-            order = state.propertyCount!!,
+            order = state.template!!.properties.size,
             property = command
-        ),
-        propertyCount = state.propertyCount + 1
+        )
     )
 }

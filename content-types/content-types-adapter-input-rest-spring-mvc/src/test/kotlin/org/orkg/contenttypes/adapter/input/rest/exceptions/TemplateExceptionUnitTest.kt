@@ -3,6 +3,7 @@ package org.orkg.contenttypes.adapter.input.rest.exceptions
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.thingIdConstraint
+import org.orkg.contenttypes.domain.DuplicateTemplatePropertyPaths
 import org.orkg.contenttypes.domain.InvalidBounds
 import org.orkg.contenttypes.domain.InvalidCardinality
 import org.orkg.contenttypes.domain.InvalidDataType
@@ -168,6 +169,24 @@ internal class TemplateExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andDocument {
                 responseFields<InvalidRegexPattern>(
                     fieldWithPath("regex_pattern").description("The provided regex pattern."),
+                    *exceptionResponseFields(type).toTypedArray(),
+                )
+            }
+    }
+
+    @Test
+    fun duplicateTemplatePropertyPaths() {
+        val type = "orkg:problem:duplicate_template_property_paths"
+        documentedGetRequestTo(DuplicateTemplatePropertyPaths(mapOf(ThingId("P12") to 5)))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType(type)
+            .andExpectTitle("Bad Request")
+            .andExpectDetail("""Duplicate template property paths: P12=5.""")
+            .andExpect(jsonPath("$.duplicate_template_property_paths['P12']").value("5"))
+            .andDocument {
+                responseFields<DuplicateTemplatePropertyPaths>(
+                    fieldWithPath("duplicate_template_property_paths").description("A key-value map of template property path ids to their occurrence count."),
+                    fieldWithPath("duplicate_template_property_paths.*").description("The occurrence count of the template property path.").type<Int>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }

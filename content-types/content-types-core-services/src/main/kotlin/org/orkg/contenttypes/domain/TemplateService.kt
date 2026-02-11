@@ -153,9 +153,9 @@ class TemplateService(
 
     override fun create(command: CreateTemplatePropertyCommand): ThingId {
         val steps = listOf(
-            TemplatePropertyExistenceCreateValidator(resourceRepository),
-            TemplatePropertyTemplateCreateValidator(statementRepository),
-            TemplatePropertyValidator(predicateRepository, classRepository, { it }),
+            TemplatePropertyExistenceCreateValidator(this, resourceRepository),
+            TemplatePropertyTemplateCreateValidator(),
+            TemplatePropertyValidator(predicateRepository, classRepository, { it.template!!.properties }, { it }),
             TemplatePropertyCreator(unsafeResourceUseCases, unsafeLiteralUseCases, unsafeStatementUseCases)
         )
         return steps.execute(command, CreateTemplatePropertyState()).templatePropertyId!!
@@ -188,7 +188,7 @@ class TemplateService(
         val steps = listOf(
             TemplatePropertyExistenceUpdateValidator(this, resourceRepository),
             TemplatePropertyTemplateUpdateValidator(),
-            TemplatePropertyValidator(predicateRepository, classRepository, { it }, { it.templateProperty }),
+            TemplatePropertyValidator(predicateRepository, classRepository, { it.template!!.properties }, { it }, { it.templateProperty }),
             TemplatePropertyUpdater(unsafeLiteralUseCases, unsafeResourceUseCases, statementService, unsafeStatementUseCases)
         )
         steps.execute(command, UpdateTemplatePropertyState())

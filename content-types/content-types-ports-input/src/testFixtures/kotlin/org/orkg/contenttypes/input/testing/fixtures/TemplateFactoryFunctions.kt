@@ -101,7 +101,7 @@ fun createStringLiteralTemplatePropertyCommand() = CreateTemplatePropertyUseCase
     minCount = 1,
     maxCount = 2,
     pattern = """\d+""",
-    path = Predicates.field,
+    path = Predicates.exampleOfUsage,
     datatype = Classes.string,
 )
 
@@ -115,7 +115,7 @@ fun createNumberLiteralTemplatePropertyCommand() = CreateTemplatePropertyUseCase
     maxCount = 2,
     minInclusive = RealNumber(-1),
     maxInclusive = RealNumber(10),
-    path = Predicates.field,
+    path = Predicates.monthPublished,
     datatype = Classes.integer,
 )
 
@@ -127,7 +127,7 @@ fun createOtherLiteralTemplatePropertyCommand() = CreateTemplatePropertyUseCase.
     description = "literal property description",
     minCount = 1,
     maxCount = 2,
-    path = Predicates.field,
+    path = Predicates.mentions,
     datatype = ThingId("C25"),
 )
 
@@ -152,7 +152,7 @@ fun updateUntypedTemplatePropertyCommand() = UpdateTemplatePropertyUseCase.Updat
     description = "updated property description",
     minCount = 0,
     maxCount = 1,
-    path = Predicates.description
+    path = Predicates.field
 )
 
 fun updateStringLiteralTemplatePropertyCommand() = UpdateTemplatePropertyUseCase.UpdateStringLiteralPropertyCommand(
@@ -165,7 +165,7 @@ fun updateStringLiteralTemplatePropertyCommand() = UpdateTemplatePropertyUseCase
     minCount = 0,
     maxCount = 1,
     pattern = """\w+""",
-    path = Predicates.description,
+    path = Predicates.exampleOfUsage,
     datatype = Classes.string,
 )
 
@@ -180,7 +180,7 @@ fun updateNumberLiteralTemplatePropertyCommand() = UpdateTemplatePropertyUseCase
     maxCount = 1,
     minInclusive = RealNumber(2),
     maxInclusive = RealNumber(5),
-    path = Predicates.description,
+    path = Predicates.monthPublished,
     datatype = Classes.decimal,
 )
 
@@ -193,7 +193,7 @@ fun updateOtherLiteralTemplatePropertyCommand() = UpdateTemplatePropertyUseCase.
     description = "updated literal property description",
     minCount = 0,
     maxCount = 1,
-    path = Predicates.description,
+    path = Predicates.yearPublished,
     datatype = Classes.string,
 )
 

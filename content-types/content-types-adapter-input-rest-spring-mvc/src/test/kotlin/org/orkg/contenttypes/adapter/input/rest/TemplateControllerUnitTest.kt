@@ -25,6 +25,7 @@ import org.orkg.community.domain.ObservatoryNotFound
 import org.orkg.community.domain.OrganizationNotFound
 import org.orkg.contenttypes.adapter.input.rest.TemplateController.CreateTemplateRequest
 import org.orkg.contenttypes.adapter.input.rest.TemplateController.UpdateTemplateRequest
+import org.orkg.contenttypes.domain.DuplicateTemplatePropertyPaths
 import org.orkg.contenttypes.domain.InvalidBounds
 import org.orkg.contenttypes.domain.InvalidCardinality
 import org.orkg.contenttypes.domain.InvalidDataType
@@ -305,6 +306,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
                     ResearchFieldNotFound::class,
                     ResearchProblemNotFound::class,
                     PredicateNotFound::class,
+                    DuplicateTemplatePropertyPaths::class,
                     InvalidMinCount::class,
                     InvalidMaxCount::class,
                     InvalidCardinality::class,
@@ -587,6 +589,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
                     ResearchFieldNotFound::class,
                     ResearchProblemNotFound::class,
                     PredicateNotFound::class,
+                    DuplicateTemplatePropertyPaths::class,
                     InvalidMinCount::class,
                     InvalidMaxCount::class,
                     InvalidCardinality::class,
@@ -642,6 +645,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
                 throws(
                     TemplateNotFound::class,
                     TemplateClosed::class,
+                    DuplicateTemplatePropertyPaths::class,
                     InvalidLabel::class,
                     InvalidDescription::class,
                     InvalidMinCount::class,
@@ -940,6 +944,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
                     TemplateNotFound::class,
                     TemplateClosed::class,
                     UnrelatedTemplateProperty::class,
+                    DuplicateTemplatePropertyPaths::class,
                     *additionalThrowables.toTypedArray(),
                 )
             }

@@ -8,7 +8,7 @@ plugins {
 
 dependencies {
     api("jakarta.persistence:jakarta.persistence-api")
-    api("com.fasterxml.jackson.core:jackson-databind")
+    api("tools.jackson.core:jackson-databind")
     api("org.springframework.boot:spring-boot-persistence")
     api("org.springframework.data:spring-data-commons")
     api("org.springframework.data:spring-data-jpa")
@@ -17,14 +17,13 @@ dependencies {
     api(project(":common:spring-data"))
     api(project(":content-types:content-types-core-model"))
     api(project(":content-types:content-types-ports-output"))
-    implementation("com.fasterxml.jackson.core:jackson-core")
+    implementation("tools.jackson.core:jackson-core")
     implementation("dev.forkhandles:values4k")
-    implementation("io.hypersistence:hypersistence-utils-hibernate-71")
+    implementation("io.hypersistence:hypersistence-utils-hibernate-73")
     implementation("org.hibernate.orm:hibernate-core")
     implementation(project(":common:external-identifiers"))
     implementation(project(":common:pagination"))
     runtimeOnly(project(":graph:graph-adapter-input-rest-spring-mvc")) // for thing serialization
-    runtimeOnly("com.fasterxml.jackson.datatype:jackson-datatype-jsr310") // for timestamp serialization
     runtimeOnly("org.springframework.boot:spring-boot-starter-data-jpa")
 }
 
@@ -40,7 +39,7 @@ testing {
                 implementation("org.springframework:spring-beans")
                 implementation("org.springframework:spring-orm")
                 implementation("org.springframework:spring-test")
-                implementation("org.springframework.boot:spring-boot-jackson2")
+                implementation("org.springframework.boot:spring-boot-jackson")
                 implementation("org.springframework.boot:spring-boot-jdbc-test")
                 implementation("org.springframework.boot:spring-boot-test")
                 implementation(project(":common:serialization"))

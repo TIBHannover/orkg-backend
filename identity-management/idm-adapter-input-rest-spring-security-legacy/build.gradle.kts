@@ -28,7 +28,7 @@ testing {
                 implementation("org.springframework:spring-context")
                 implementation("org.springframework:spring-test")
                 implementation("com.ninja-squad:springmockk")
-                runtimeOnly("com.fasterxml.jackson.module:jackson-module-kotlin")
+                runtimeOnly("tools.jackson.module:jackson-module-kotlin")
                 runtimeOnly("com.jayway.jsonpath:json-path")
                 runtimeOnly("org.springframework.boot:spring-boot-starter-test")
             }
@@ -41,7 +41,7 @@ dependencies {
     api("org.springframework.security:spring-security-oauth2-resource-server")
     api("org.springframework:spring-beans")
     api("org.springframework:spring-web")
-    api("com.fasterxml.jackson.core:jackson-databind")
+    api("tools.jackson.core:jackson-databind")
     api(project(":common:core-identifiers"))
     api(project(":common:spring-webmvc"))
     api(project(":community:community-core-model"))

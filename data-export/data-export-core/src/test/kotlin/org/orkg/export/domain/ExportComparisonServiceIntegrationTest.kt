@@ -1,6 +1,5 @@
 package org.orkg.export.domain
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.kotest.engine.spec.tempdir
 import io.kotest.matchers.shouldBe
 import io.mockk.every
@@ -15,13 +14,17 @@ import org.orkg.contenttypes.input.ComparisonUseCases
 import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.export.testing.fixtures.verifyThatDirectoryExistsAndIsEmpty
 import org.orkg.testing.pageOf
+import tools.jackson.databind.MapperFeature
+import tools.jackson.databind.json.JsonMapper
 
 internal class ExportComparisonServiceIntegrationTest :
     MockkDescribeSpec({
         val comparisonService: ComparisonUseCases = mockk()
         val comparisonRepository: ComparisonRepository = mockk()
         val fileExportService = FileExportService()
-        val objectMapper = ObjectMapper()
+        val objectMapper = JsonMapper.builder()
+            .disable(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY)
+            .build()
         val service = ExportComparisonService(
             comparisonService = comparisonService,
             comparisonRepository = comparisonRepository,

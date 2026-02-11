@@ -19,7 +19,7 @@ testing {
                 implementation("org.springframework.boot:spring-boot-webmvc-test")
                 implementation("org.springframework:spring-test")
                 implementation("org.springframework:spring-web")
-                runtimeOnly("org.springframework.boot:spring-boot-jackson2")
+                runtimeOnly("org.springframework.boot:spring-boot-jackson")
                 runtimeOnly("com.jayway.jsonpath:json-path")
             }
         }

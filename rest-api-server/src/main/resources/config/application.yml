@@ -29,9 +29,6 @@ spring:
       enabled: false
     jdbc:
       initialize-schema: never
-  http:
-    converters:
-      preferred-json-mapper: jackson2
 orkg:
   mail:
     from:

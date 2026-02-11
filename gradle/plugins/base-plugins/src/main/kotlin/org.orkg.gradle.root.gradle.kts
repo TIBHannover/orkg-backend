@@ -42,9 +42,9 @@ fun isSpringManaged(
         candidate.group in
         setOf(
             "ch.qos.logback",
-            "com.fasterxml.jackson.core",
-            "com.fasterxml.jackson.datatype",
-            "com.fasterxml.jackson.module",
+            "tools.jackson.core",
+            "tools.jackson.datatype",
+            "tools.jackson.module",
             "com.github.ben-manes.caffeine",
             "io.micrometer",
             "jakarta.activation",

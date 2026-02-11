@@ -1,12 +1,12 @@
 package org.orkg.community.adapter.input.rest.json
 
-import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.databind.DeserializationContext
-import com.fasterxml.jackson.databind.JsonDeserializer
 import org.orkg.community.domain.ContributorIdentifier
 import org.orkg.community.domain.UnknownIdentifierType
+import tools.jackson.core.JsonParser
+import tools.jackson.databind.DeserializationContext
+import tools.jackson.databind.ValueDeserializer
 
-class ContributorIdentifierTypeDeserializer : JsonDeserializer<ContributorIdentifier.Type>() {
+class ContributorIdentifierTypeDeserializer : ValueDeserializer<ContributorIdentifier.Type>() {
     override fun deserialize(
         p: JsonParser?,
         ctxt: DeserializationContext?,

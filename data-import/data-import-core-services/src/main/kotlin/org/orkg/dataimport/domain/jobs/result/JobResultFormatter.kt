@@ -1,7 +1,5 @@
 package org.orkg.dataimport.domain.jobs.result
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import org.orkg.dataimport.domain.JobException
 import org.orkg.dataimport.domain.PROBLEMS
 import org.orkg.dataimport.domain.getAndCast
@@ -9,6 +7,8 @@ import org.orkg.dataimport.domain.jobs.JobStatus.Status
 import org.springframework.batch.core.job.JobExecution
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ProblemDetail
+import tools.jackson.databind.ObjectMapper
+import tools.jackson.module.kotlin.readValue
 import java.util.Optional
 
 interface JobResultFormatter {

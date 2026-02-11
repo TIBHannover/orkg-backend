@@ -1,13 +1,13 @@
 package org.orkg.common.json
 
-import com.fasterxml.jackson.databind.module.SimpleDeserializers
-import com.fasterxml.jackson.databind.module.SimpleModule
-import com.fasterxml.jackson.databind.module.SimpleSerializers
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import tools.jackson.databind.module.SimpleDeserializers
+import tools.jackson.databind.module.SimpleModule
+import tools.jackson.databind.module.SimpleSerializers
 
 class CommonJacksonModule : SimpleModule() {
     override fun setupModule(context: SetupContext?) {

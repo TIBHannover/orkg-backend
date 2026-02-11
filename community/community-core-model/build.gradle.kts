@@ -17,7 +17,7 @@ dependencies {
     api(project(":common:spring-webmvc"))
     api(project(":media-storage:media-storage-core-model"))
     implementation(project(":graph:graph-core-model"))
-    runtimeOnly("com.fasterxml.jackson.core:jackson-databind")
+    runtimeOnly("tools.jackson.core:jackson-databind")
 
     testFixturesApi(project(":common:core-identifiers"))
     testFixturesApi(project(":common:external-identifiers"))

@@ -6,7 +6,7 @@ plugins {
 }
 
 dependencies {
-    api("com.fasterxml.jackson.core:jackson-databind")
+    api("tools.jackson.core:jackson-databind")
     api("org.eclipse.rdf4j:rdf4j-model-api")
     api("org.springframework:spring-beans")
     api("org.springframework:spring-context")
@@ -16,7 +16,7 @@ dependencies {
     api(project(":data-export:data-export-ports-input"))
     api(project(":graph:graph-core-model"))
     api(project(":graph:graph-ports-output"))
-    implementation("com.fasterxml.jackson.core:jackson-core")
+    implementation("tools.jackson.core:jackson-core")
     implementation("org.eclipse.rdf4j:rdf4j-common-io")
     implementation("org.eclipse.rdf4j:rdf4j-model")
     implementation("org.eclipse.rdf4j:rdf4j-model-vocabulary")

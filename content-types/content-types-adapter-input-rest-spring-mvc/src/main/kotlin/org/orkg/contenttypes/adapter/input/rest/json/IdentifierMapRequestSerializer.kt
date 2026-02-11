@@ -1,15 +1,15 @@
 package org.orkg.contenttypes.adapter.input.rest.json
 
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.databind.JsonSerializer
-import com.fasterxml.jackson.databind.SerializerProvider
 import org.orkg.contenttypes.adapter.input.rest.IdentifierMapRequest
+import tools.jackson.core.JsonGenerator
+import tools.jackson.databind.SerializationContext
+import tools.jackson.databind.ValueSerializer
 
-class IdentifierMapRequestSerializer : JsonSerializer<IdentifierMapRequest>() {
+class IdentifierMapRequestSerializer : ValueSerializer<IdentifierMapRequest>() {
     override fun serialize(
         value: IdentifierMapRequest?,
         gen: JsonGenerator?,
-        serializers: SerializerProvider?,
+        serializers: SerializationContext?,
     ) {
         gen?.writePOJO(value?.values)
     }

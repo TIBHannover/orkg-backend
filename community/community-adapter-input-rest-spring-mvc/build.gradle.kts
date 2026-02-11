@@ -44,8 +44,8 @@ testing {
 
 dependencies {
     api("com.fasterxml.jackson.core:jackson-annotations")
-    api("com.fasterxml.jackson.core:jackson-core")
-    api("com.fasterxml.jackson.core:jackson-databind")
+    api("tools.jackson.core:jackson-core")
+    api("tools.jackson.core:jackson-databind")
     api("jakarta.validation:jakarta.validation-api")
     api("org.apache.tomcat.embed:tomcat-embed-core")
     api("org.springframework.data:spring-data-commons")

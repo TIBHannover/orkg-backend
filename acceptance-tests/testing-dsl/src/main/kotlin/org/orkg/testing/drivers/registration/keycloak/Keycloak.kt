@@ -1,10 +1,10 @@
 package org.orkg.testing.drivers.registration.keycloak
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.orkg.testing.dsl.require
 import org.orkg.world.Environment
+import tools.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES
+import tools.jackson.module.kotlin.jacksonObjectMapper
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpClient.Redirect.NORMAL

@@ -1,7 +1,7 @@
 package org.orkg.contenttypes.domain
 
-import com.fasterxml.jackson.databind.JsonNode
 import org.orkg.common.ThingId
+import tools.jackson.databind.JsonNode
 
 data class VisualizationData(
     val id: ThingId,
@@ -9,6 +9,6 @@ data class VisualizationData(
 ) {
     companion object {
         fun from(node: JsonNode): VisualizationData =
-            VisualizationData(ThingId(node["orkgOrigin"].textValue()), node)
+            VisualizationData(ThingId(node["orkgOrigin"].stringValue(null)), node)
     }
 }

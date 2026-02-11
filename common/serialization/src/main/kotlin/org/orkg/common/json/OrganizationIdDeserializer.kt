@@ -1,13 +1,13 @@
 package org.orkg.common.json
 
-import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.databind.DeserializationContext
-import com.fasterxml.jackson.databind.JsonDeserializer
 import org.orkg.common.OrganizationId
 import org.orkg.common.exceptions.InvalidUUID
+import tools.jackson.core.JsonParser
+import tools.jackson.databind.DeserializationContext
+import tools.jackson.databind.ValueDeserializer
 import java.util.UUID
 
-class OrganizationIdDeserializer : JsonDeserializer<OrganizationId>() {
+class OrganizationIdDeserializer : ValueDeserializer<OrganizationId>() {
     override fun deserialize(
         p: JsonParser?,
         ctxt: DeserializationContext?,

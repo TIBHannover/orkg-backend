@@ -12,10 +12,13 @@ dependencies {
     api(platform("io.rest-assured:rest-assured-bom:6.0.0"))
     api(platform("org.eclipse.rdf4j:rdf4j-bom:5.2.2"))
 
+//    api(platform("tools.jackson:jackson-bom:3.0.3"))
+
+    // Upgrade to Hibernate 7.3 for Jackson 3 support. Can be removed once Spring includes Hibernate 7.3+.
+    api("org.hibernate.orm:hibernate-core:7.3.0.CR1")
+
     // Third-party versions not provided by Spring, and without platform/BOM
     api("io.mockk:mockk:1.14.7") // anchor for MockKVirtualPlatformAlignmentRule
-
-//    api(platform("com.fasterxml.jackson:jackson-bom:2.20.1"))
 
     // The Lucene Query Parser version should match the one used by the currently used Neo4j database.
     // Although newer versions should not be a problem, differences in the syntax can be a problem.
@@ -41,7 +44,7 @@ dependencies {
     api("com.redfin:contractual:3.0.0")
     api("org.jbibtex:jbibtex:1.0.20")
     api("net.datafaker:datafaker:2.5.3")
-    api("io.hypersistence:hypersistence-utils-hibernate-71:3.14.1") // jsonb support for hibernate
+    api("io.hypersistence:hypersistence-utils-hibernate-73:3.15.1") // JSONB support for Hibernate
     api("net.handle:handle-client:9.3.2")
     api("org.freemarker:freemarker:2.3.34")
     api("org.apache.commons:commons-csv:1.14.1")

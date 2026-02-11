@@ -1,8 +1,5 @@
 package org.orkg.graph.adapter.input.rest.json
 
-import com.fasterxml.jackson.databind.module.SimpleDeserializers
-import com.fasterxml.jackson.databind.module.SimpleModule
-import com.fasterxml.jackson.databind.module.SimpleSerializers
 import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literal
@@ -10,6 +7,9 @@ import org.orkg.graph.domain.Predicate
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.Thing
+import tools.jackson.databind.module.SimpleDeserializers
+import tools.jackson.databind.module.SimpleModule
+import tools.jackson.databind.module.SimpleSerializers
 
 class GraphJacksonModule : SimpleModule() {
     override fun setupModule(context: SetupContext?) {
@@ -24,11 +24,11 @@ class GraphJacksonModule : SimpleModule() {
                 addDeserializer(Resource::class.java, ResourceDeserializer())
             }
         )
-        context?.setMixInAnnotations(Thing::class.java, ThingMixin::class.java)
-        context?.setMixInAnnotations(Class::class.java, ClassMixin::class.java)
-        context?.setMixInAnnotations(Literal::class.java, LiteralMixin::class.java)
-        context?.setMixInAnnotations(Resource::class.java, ResourceMixin::class.java)
-        context?.setMixInAnnotations(Predicate::class.java, PredicateMixin::class.java)
-        context?.setMixInAnnotations(GeneralStatement::class.java, StatementMixin::class.java)
+        context?.setMixIn(Thing::class.java, ThingMixin::class.java)
+        context?.setMixIn(Class::class.java, ClassMixin::class.java)
+        context?.setMixIn(Literal::class.java, LiteralMixin::class.java)
+        context?.setMixIn(Resource::class.java, ResourceMixin::class.java)
+        context?.setMixIn(Predicate::class.java, PredicateMixin::class.java)
+        context?.setMixIn(GeneralStatement::class.java, StatementMixin::class.java)
     }
 }

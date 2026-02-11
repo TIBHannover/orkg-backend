@@ -1,7 +1,5 @@
 package org.orkg.contenttypes.adapter.output.simcomp
 
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.kotest.assertions.asClue
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
@@ -40,6 +38,8 @@ import org.orkg.graph.testing.fixtures.createStatement
 import org.springframework.http.HttpHeaders.CONTENT_TYPE
 import org.springframework.http.HttpHeaders.USER_AGENT
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
+import tools.jackson.databind.cfg.DateTimeFeature
+import tools.jackson.databind.json.JsonMapper
 import java.io.IOException
 import java.net.URI
 import java.net.http.HttpClient
@@ -53,10 +53,11 @@ internal class SimCompThingRepositoryAdapterUnitTest : MockkBaseTest {
     private val simCompApiKey = "TEST_API_KEY"
     private val userAgent = "test user agent"
     private val httpClient: HttpClient = mockk()
-    private val objectMapper = ObjectMapper()
-        .findAndRegisterModules()
-        .registerModules(CommonJacksonModule(), GraphJacksonModule(), SimCompJacksonModule())
-        .disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+    private val objectMapper = JsonMapper.builder()
+        .findAndAddModules()
+        .addModules(CommonJacksonModule(), GraphJacksonModule(), SimCompJacksonModule())
+        .disable(DateTimeFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+        .build()
     private val adapter =
         SimCompThingRepositoryAdapter(objectMapper, httpClient, ::TestBodyPublisher, userAgent, simCompHostUrl, simCompApiKey)
 

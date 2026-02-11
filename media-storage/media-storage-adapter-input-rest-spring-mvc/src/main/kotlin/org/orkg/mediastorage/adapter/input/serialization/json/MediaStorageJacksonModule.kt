@@ -1,9 +1,9 @@
 package org.orkg.mediastorage.adapter.input.serialization.json
 
-import com.fasterxml.jackson.databind.module.SimpleDeserializers
-import com.fasterxml.jackson.databind.module.SimpleModule
-import com.fasterxml.jackson.databind.module.SimpleSerializers
 import org.orkg.mediastorage.domain.ImageId
+import tools.jackson.databind.module.SimpleDeserializers
+import tools.jackson.databind.module.SimpleModule
+import tools.jackson.databind.module.SimpleSerializers
 
 class MediaStorageJacksonModule : SimpleModule() {
     override fun setupModule(context: SetupContext?) {

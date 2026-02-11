@@ -1,6 +1,5 @@
 package org.orkg.keycloak
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import dasniko.testcontainers.keycloak.KeycloakContainer
 import io.restassured.RestAssured.given
 import io.restassured.http.ContentType
@@ -16,6 +15,7 @@ import org.orkg.testing.KEYCLOAK_CLIENT_ID
 import org.orkg.testing.KEYCLOAK_CLIENT_SECRET
 import org.orkg.testing.KEYCLOAK_REALM
 import org.orkg.testing.KeycloakTestContainersBaseTest
+import tools.jackson.databind.ObjectMapper
 import java.util.Base64
 
 private fun KeycloakContainer.wellKnownUrl(realm: String): String =
@@ -126,10 +126,10 @@ internal class KeyCloakIntegrationTest : KeycloakTestContainersBaseTest() {
             .map { String(Base64.getDecoder().decode(it)) }
         val payload = ObjectMapper().readTree(tokenPayload)
 
-        assertThat(payload.path("azp").textValue()).isEqualTo("orkg-frontend")
-        assertThat(payload.path("preferred_username").textValue()).isEqualTo("test")
-        assertThat(payload.path("email").textValue()).isEqualTo("test@example.org")
-        assertThat(payload.path("display_name").textValue()).isEqualTo("John Doe")
-        assertThat(payload.path("iss").textValue()).isEqualTo("${container.authServerUrl}/realms/orkg")
+        assertThat(payload.path("azp").stringValue(null)).isEqualTo("orkg-frontend")
+        assertThat(payload.path("preferred_username").stringValue(null)).isEqualTo("test")
+        assertThat(payload.path("email").stringValue(null)).isEqualTo("test@example.org")
+        assertThat(payload.path("display_name").stringValue(null)).isEqualTo("John Doe")
+        assertThat(payload.path("iss").stringValue(null)).isEqualTo("${container.authServerUrl}/realms/orkg")
     }
 }

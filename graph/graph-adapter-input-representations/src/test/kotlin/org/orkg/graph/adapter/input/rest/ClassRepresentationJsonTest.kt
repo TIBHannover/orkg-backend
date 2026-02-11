@@ -10,7 +10,7 @@ import org.orkg.graph.adapter.input.rest.mapping.ClassRepresentationAdapter
 import org.orkg.graph.domain.Class
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.json.JsonTest
-import org.springframework.boot.test.json.Jackson2Tester
+import org.springframework.boot.test.json.JacksonTester
 import org.springframework.test.context.ContextConfiguration
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
@@ -22,7 +22,7 @@ import java.time.ZoneOffset
 @ContextConfiguration(classes = [ClassRepresentationAdapter::class, CommonJacksonModule::class])
 internal class ClassRepresentationJsonTest {
     @Autowired
-    private lateinit var json: Jackson2Tester<ClassRepresentation>
+    private lateinit var json: JacksonTester<ClassRepresentation>
 
     @Test
     fun serializedClassShouldHaveId() {

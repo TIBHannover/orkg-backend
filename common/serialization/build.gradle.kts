@@ -6,14 +6,13 @@ plugins {
 dependencies {
     api(project(":common:core-identifiers"))
     implementation(project(":common:spring-webmvc"))
-    api("com.fasterxml.jackson.core:jackson-core")
+    api("tools.jackson.core:jackson-core")
     api("jakarta.validation:jakarta.validation-api")
     api("org.eclipse.rdf4j:rdf4j-common-io")
-    api("org.springframework.boot:spring-boot-jackson2")
+    api("org.springframework.boot:spring-boot-jackson")
     api("org.springframework:spring-context")
-    api("com.fasterxml.jackson.core:jackson-databind")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation("org.springframework:spring-web")
+    api("tools.jackson.core:jackson-databind")
+    implementation("tools.jackson.module:jackson-module-kotlin")
 
     testFixturesImplementation("io.kotest:kotest-assertions-core")
     testFixturesImplementation("io.kotest:kotest-assertions-shared")

@@ -1,6 +1,5 @@
 package org.orkg.contenttypes.adapter.output.jpa.internal
 
-import com.fasterxml.jackson.databind.JsonNode
 import io.hypersistence.utils.hibernate.type.json.JsonType
 import jakarta.persistence.Column
 import jakarta.persistence.EnumType
@@ -8,6 +7,7 @@ import jakarta.persistence.Enumerated
 import jakarta.persistence.Id
 import jakarta.persistence.MappedSuperclass
 import org.hibernate.annotations.Type
+import tools.jackson.databind.JsonNode
 import java.time.OffsetDateTime
 import java.util.UUID
 

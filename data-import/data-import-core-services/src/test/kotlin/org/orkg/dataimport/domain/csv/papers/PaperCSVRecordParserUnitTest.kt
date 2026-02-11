@@ -1,6 +1,5 @@
 package org.orkg.dataimport.domain.csv.papers
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.kotest.assertions.asClue
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.nulls.shouldNotBeNull
@@ -43,6 +42,7 @@ import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.ThingRepository
 import org.orkg.graph.testing.fixtures.createResource
 import org.springframework.batch.core.job.parameters.JobParametersBuilder
+import tools.jackson.databind.ObjectMapper
 import java.util.Optional
 import java.util.UUID
 

@@ -1,11 +1,11 @@
 package org.orkg.graph.adapter.input.rest.json
 
-import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.databind.DeserializationContext
-import com.fasterxml.jackson.databind.JsonDeserializer
 import org.orkg.graph.domain.StatementId
+import tools.jackson.core.JsonParser
+import tools.jackson.databind.DeserializationContext
+import tools.jackson.databind.ValueDeserializer
 
-class StatementIdDeserializer : JsonDeserializer<StatementId>() {
+class StatementIdDeserializer : ValueDeserializer<StatementId>() {
     override fun deserialize(
         p: JsonParser?,
         ctxt: DeserializationContext?,

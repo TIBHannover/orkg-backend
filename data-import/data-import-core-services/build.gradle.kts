@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    api("com.fasterxml.jackson.core:jackson-databind")
+    api("tools.jackson.core:jackson-databind")
     api("org.springframework.batch:spring-batch-core")
     api("org.springframework.batch:spring-batch-infrastructure")
     api("org.springframework.data:spring-data-commons")
@@ -21,8 +21,8 @@ dependencies {
     api(project(":data-import:data-import-ports-output"))
     api(project(":graph:graph-ports-input"))
     api(project(":graph:graph-ports-output"))
-    implementation("com.fasterxml.jackson.core:jackson-core")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("tools.jackson.core:jackson-core")
+    implementation("tools.jackson.module:jackson-module-kotlin")
     implementation("dev.forkhandles:values4k")
     implementation("io.kotest:kotest-assertions-core")
     implementation("io.kotest:kotest-assertions-shared")

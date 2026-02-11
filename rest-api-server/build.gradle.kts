@@ -1,7 +1,6 @@
 @file:Suppress("UnstableApiUsage")
 
 import com.google.cloud.tools.jib.gradle.JibTask
-import org.gradle.kotlin.dsl.invoke
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 import org.springframework.boot.gradle.tasks.run.BootRun
 
@@ -210,13 +209,13 @@ dependencies {
     implementation("org.springframework:spring-context-support")
     implementation("org.springframework:spring-context")
     implementation("org.springframework:spring-web")
-    implementation("com.fasterxml.jackson.core:jackson-core")
-    implementation("com.fasterxml.jackson.core:jackson-databind")
+    implementation("tools.jackson.core:jackson-core")
+    implementation("tools.jackson.core:jackson-databind")
     implementation("org.springframework:spring-tx")
     implementation("org.springframework:spring-webmvc")
     implementation("org.springframework:spring-orm")
     implementation("jakarta.persistence:jakarta.persistence-api")
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
+    implementation("tools.jackson.dataformat:jackson-dataformat-yaml")
 
     kapt("org.springframework.boot:spring-boot-configuration-processor")
 
@@ -233,7 +232,7 @@ dependencies {
     runtimeOnly("org.springframework.boot:spring-boot-starter-security-oauth2-resource-server")
     runtimeOnly("org.springframework.data:spring-data-neo4j")
     runtimeOnly("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-starter")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("tools.jackson.module:jackson-module-kotlin")
     // Caching
     runtimeOnly("org.springframework.boot:spring-boot-starter-cache")
     implementation("com.github.ben-manes.caffeine:caffeine")
@@ -266,10 +265,10 @@ dependencies {
     "integrationTestApi"("com.github.multiformats:java-multihash")
     "integrationTestApi"("org.eclipse.rdf4j:rdf4j-common-io")
     "integrationTestApi"("org.springframework:spring-context")
-    "integrationTestApi"("com.fasterxml.jackson.core:jackson-databind")
+    "integrationTestApi"("tools.jackson.core:jackson-databind")
     "integrationTestImplementation"(project(":common:datatypes"))
-    "integrationTestImplementation"("com.fasterxml.jackson.core:jackson-core")
-    "integrationTestImplementation"("com.fasterxml.jackson.module:jackson-module-kotlin")
+    "integrationTestImplementation"("tools.jackson.core:jackson-core")
+    "integrationTestImplementation"("tools.jackson.module:jackson-module-kotlin")
     "integrationTestImplementation"("org.apache.tomcat.embed:tomcat-embed-core")
     "integrationTestImplementation"("org.jetbrains.kotlinx:kotlinx-coroutines-core")
     "integrationTestImplementation"("org.junit.jupiter:junit-jupiter-api")

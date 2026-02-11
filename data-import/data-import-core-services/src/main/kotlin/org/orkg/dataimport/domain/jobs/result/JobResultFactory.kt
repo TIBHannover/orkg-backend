@@ -1,10 +1,10 @@
 package org.orkg.dataimport.domain.jobs.result
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.orkg.dataimport.domain.jobs.JobStatus.Status
 import org.springframework.batch.core.job.JobExecution
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
+import tools.jackson.databind.ObjectMapper
 import java.util.Optional
 
 @Component

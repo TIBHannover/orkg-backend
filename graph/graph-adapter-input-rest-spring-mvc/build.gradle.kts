@@ -8,13 +8,13 @@ plugins {
 
 dependencies {
     api("com.fasterxml.jackson.core:jackson-annotations")
-    api("com.fasterxml.jackson.core:jackson-core")
+    api("tools.jackson.core:jackson-core")
     api("org.eclipse.rdf4j:rdf4j-common-io")
     api("org.springframework.data:spring-data-commons")
     api("org.springframework.security:spring-security-core")
     api("org.springframework:spring-context")
     api("org.springframework:spring-web")
-    api("com.fasterxml.jackson.core:jackson-databind")
+    api("tools.jackson.core:jackson-databind")
     api("jakarta.validation:jakarta.validation-api")
     api(project(":common:core-identifiers"))
     api(project(":common:spring-webmvc"))

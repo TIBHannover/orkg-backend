@@ -1,6 +1,5 @@
 package org.orkg.graph.adapter.input.rest.json
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import org.assertj.core.api.Assertions.assertThat
@@ -15,8 +14,9 @@ import org.orkg.graph.domain.Predicate
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.json.JsonTest
-import org.springframework.boot.test.json.Jackson2Tester
+import org.springframework.boot.test.json.JacksonTester
 import org.springframework.test.context.ContextConfiguration
+import tools.jackson.databind.ObjectMapper
 import java.time.OffsetDateTime
 
 @JsonTest
@@ -26,7 +26,7 @@ internal class PredicateSerializationJsonTest {
     private lateinit var objectMapper: ObjectMapper
 
     @Autowired
-    private lateinit var json: Jackson2Tester<Predicate>
+    private lateinit var json: JacksonTester<Predicate>
 
     /**
      * Predicate Representation V1

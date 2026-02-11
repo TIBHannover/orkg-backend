@@ -1,8 +1,5 @@
 package org.orkg.common.configuration
 
-import com.fasterxml.jackson.core.JsonParseException
-import com.fasterxml.jackson.databind.exc.MismatchedInputException
-import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException
 import org.orkg.common.exceptions.ErrorResponseCustomizer.Companion.errorResponseCustomizer
 import org.orkg.common.exceptions.FieldError
 import org.orkg.common.exceptions.createProblemURI
@@ -24,6 +21,9 @@ import org.springframework.web.HttpMediaTypeNotAcceptableException
 import org.springframework.web.HttpMediaTypeNotSupportedException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
+import tools.jackson.core.exc.StreamReadException
+import tools.jackson.databind.exc.MismatchedInputException
+import tools.jackson.databind.exc.UnrecognizedPropertyException
 import java.net.URI
 import java.net.URISyntaxException
 
@@ -52,6 +52,7 @@ class ErrorResponseCustomizers {
                     problemDetail.detail = """Unknown field "${cause.fieldPath}"."""
                     problemDetail.setProperty("pointer", cause.jsonPointer)
                 }
+
                 is MismatchedInputException -> {
                     problemDetail.type = createProblemURI("mismatched_json_input")
                     problemDetail.title = BAD_REQUEST.reasonPhrase
@@ -59,17 +60,21 @@ class ErrorResponseCustomizers {
                     problemDetail.detail = """Field "${cause.fieldPath}" is either missing, "null", of invalid type, or contains "null" values."""
                     problemDetail.setProperty("pointer", cause.jsonPointer)
                 }
-                is JsonParseException -> {
+
+                is StreamReadException -> {
                     problemDetail.type = createProblemURI("invalid_json")
                     problemDetail.title = BAD_REQUEST.reasonPhrase
                     problemDetail.status = BAD_REQUEST.value()
                     problemDetail.detail = cause.originalMessage
                 }
-                else -> customizeSpringException<HttpMessageNotReadableException>(
-                    problemDetail = problemDetail,
-                    messageSource = messageSource,
-                    defaultDetail = "Failed to read request",
-                )
+
+                else -> {
+                    customizeSpringException<HttpMessageNotReadableException>(
+                        problemDetail = problemDetail,
+                        messageSource = messageSource,
+                        defaultDetail = "Failed to read request",
+                    )
+                }
             }
         }
 

@@ -1,15 +1,15 @@
 package org.orkg.community.adapter.input.rest.json
 
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.databind.JsonSerializer
-import com.fasterxml.jackson.databind.SerializerProvider
 import org.orkg.community.domain.ObservatoryFilterId
+import tools.jackson.core.JsonGenerator
+import tools.jackson.databind.SerializationContext
+import tools.jackson.databind.ValueSerializer
 
-class ObservatoryFilterIdSerializer : JsonSerializer<ObservatoryFilterId>() {
+class ObservatoryFilterIdSerializer : ValueSerializer<ObservatoryFilterId>() {
     override fun serialize(
         value: ObservatoryFilterId?,
         gen: JsonGenerator?,
-        serializers: SerializerProvider?,
+        serializers: SerializationContext?,
     ) {
         gen?.writeString(value.toString())
     }

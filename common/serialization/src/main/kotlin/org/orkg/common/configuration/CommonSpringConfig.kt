@@ -1,29 +1,30 @@
 package org.orkg.common.configuration
 
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.Module
-import com.fasterxml.jackson.module.kotlin.KotlinFeature.NewStrictNullChecks
-import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.orkg.common.json.CommonJacksonModule
-import org.springframework.boot.jackson2.autoconfigure.Jackson2ObjectMapperBuilderCustomizer
+import org.springframework.boot.jackson.autoconfigure.JsonMapperBuilderCustomizer
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
+import tools.jackson.databind.DeserializationFeature
+import tools.jackson.databind.JacksonModule
+import tools.jackson.databind.cfg.DateTimeFeature
+import tools.jackson.databind.json.JsonMapper
+import tools.jackson.module.kotlin.KotlinFeature
+import tools.jackson.module.kotlin.KotlinModule
 
 @Configuration
 class CommonSpringConfig {
     @Bean
-    fun commonJacksonModule(): Module = CommonJacksonModule()
+    fun commonJacksonModule(): JacksonModule = CommonJacksonModule()
 
     @Bean
-    fun kotlinJacksonModule(): Module = KotlinModule.Builder()
-        .enable(NewStrictNullChecks)
+    fun kotlinJacksonModule(): JacksonModule = KotlinModule.Builder()
+        .enable(KotlinFeature.StrictNullChecks)
         .build()
 
     @Bean
-    fun jacksonCustomizer(): Jackson2ObjectMapperBuilderCustomizer =
-        Jackson2ObjectMapperBuilderCustomizer { builder: Jackson2ObjectMapperBuilder ->
-            builder.failOnUnknownProperties(true)
-            builder.featuresToDisable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+    fun jacksonCustomizer(): JsonMapperBuilderCustomizer =
+        JsonMapperBuilderCustomizer { builder: JsonMapper.Builder ->
+            builder.enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+            builder.disable(DateTimeFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
         }
 }

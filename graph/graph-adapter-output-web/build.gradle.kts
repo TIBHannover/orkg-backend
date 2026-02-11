@@ -10,13 +10,13 @@ dependencies {
     api("org.eclipse.rdf4j:rdf4j-common-io")
     api("org.springframework:spring-beans")
     api("org.springframework:spring-context")
-    api("com.fasterxml.jackson.core:jackson-databind")
+    api("tools.jackson.core:jackson-databind")
     api(project(":graph:graph-ports-output"))
     api(project(":graph:graph-core-model"))
     implementation("org.springframework:spring-web")
     implementation("org.springframework.data:spring-data-commons")
     implementation(project(":common:spring-webmvc"))
-    runtimeOnly("com.fasterxml.jackson.core:jackson-core")
+    runtimeOnly("tools.jackson.core:jackson-core")
 }
 
 testing {

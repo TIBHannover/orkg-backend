@@ -1,7 +1,5 @@
 package org.orkg.graph.adapter.output.web
 
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.kotest.assertions.asClue
 import io.kotest.matchers.maps.shouldContainAll
 import io.kotest.matchers.shouldBe
@@ -26,6 +24,8 @@ import org.orkg.graph.domain.ExternalThing
 import org.springframework.http.HttpHeaders.ACCEPT
 import org.springframework.http.HttpHeaders.USER_AGENT
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
+import tools.jackson.databind.cfg.DateTimeFeature
+import tools.jackson.databind.json.JsonMapper
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpResponse
@@ -35,10 +35,11 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
     private val wikidataHostUrl = "https://example.org/wikidata"
     private val userAgent = "test user agent"
     private val httpClient: HttpClient = mockk()
-    private val objectMapper = ObjectMapper()
-        .findAndRegisterModules()
-        .registerModules(CommonJacksonModule(), GraphJacksonModule())
-        .disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+    private val objectMapper = JsonMapper.builder()
+        .findAndAddModules()
+        .addModules(CommonJacksonModule(), GraphJacksonModule())
+        .disable(DateTimeFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+        .build()
     private val repository = WikidataServiceAdapter(objectMapper, httpClient, userAgent, wikidataHostUrl)
 
     @ParameterizedTest

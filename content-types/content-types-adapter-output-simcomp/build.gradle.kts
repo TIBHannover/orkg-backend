@@ -11,7 +11,7 @@ dependencies {
     api("org.springframework.data:spring-data-commons")
     api("org.springframework:spring-beans")
     api("org.springframework:spring-context")
-    api("com.fasterxml.jackson.core:jackson-databind")
+    api("tools.jackson.core:jackson-databind")
     api(project(":common:core-identifiers"))
     api(project(":common:spring-webmvc"))
     api(project(":content-types:content-types-core-model"))
@@ -19,10 +19,10 @@ dependencies {
     api(project(":graph:graph-core-model"))
     api(project(":graph:graph-ports-input"))
     api(project(":graph:graph-adapter-input-representations"))
-    implementation("com.fasterxml.jackson.core:jackson-core")
+    implementation("tools.jackson.core:jackson-core")
     implementation("org.springframework:spring-web")
     testFixturesApi(project(":common:core-identifiers"))
-    testFixturesApi("com.fasterxml.jackson.core:jackson-databind")
+    testFixturesApi("tools.jackson.core:jackson-databind")
     testFixturesApi("org.springframework:spring-context")
 }
 

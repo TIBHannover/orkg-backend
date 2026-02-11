@@ -1,8 +1,5 @@
 package org.orkg.contenttypes.adapter.input.rest
 
-import com.fasterxml.jackson.core.JsonParseException
-import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
@@ -12,6 +9,9 @@ import org.orkg.contenttypes.adapter.input.rest.configuration.ContentTypeSpringC
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.test.context.ContextConfiguration
+import tools.jackson.core.type.TypeReference
+import tools.jackson.databind.ObjectMapper
+import tools.jackson.databind.exc.MismatchedInputException
 
 @WebMvcTest
 @ContextConfiguration(classes = [CommonSpringConfig::class, ContentTypeSpringConfig::class])
@@ -35,7 +35,7 @@ internal class IdentifierMapRequestJsonTest {
 
     @Test
     fun throwsErrorWhenListValueIsNull() {
-        assertThrows<JsonParseException> {
+        assertThrows<MismatchedInputException> {
             objectMapper.readValue("""{"field": ["foo"], "list": ["bar", null]}""", IdentifierMapRequest::class.java)
         }.asClue {
             it.originalMessage shouldBe """Field "$.list[1]" is either missing, "null", of invalid type, or contains "null" values."""
@@ -44,7 +44,7 @@ internal class IdentifierMapRequestJsonTest {
 
     @Test
     fun throwsErrorWhenListValueIsNullAndObjectIsNested() {
-        assertThrows<JsonParseException> {
+        assertThrows<MismatchedInputException> {
             objectMapper.readValue("""{"wrapper":{"field": ["foo"], "list": ["bar", null]}}""", object : TypeReference<Map<String, IdentifierMapRequest>>() {})
         }.asClue {
             it.originalMessage shouldBe """Field "$.wrapper.list[1]" is either missing, "null", of invalid type, or contains "null" values."""

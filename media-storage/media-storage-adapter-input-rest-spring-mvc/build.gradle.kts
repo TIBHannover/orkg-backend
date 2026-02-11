@@ -3,9 +3,9 @@ plugins {
 }
 
 dependencies {
-    api("com.fasterxml.jackson.core:jackson-core")
+    api("tools.jackson.core:jackson-core")
     api("org.springframework:spring-context")
-    api("com.fasterxml.jackson.core:jackson-databind")
+    api("tools.jackson.core:jackson-databind")
     api(project(":media-storage:media-storage-core-model"))
     implementation(project(":common:spring-webmvc"))
 }

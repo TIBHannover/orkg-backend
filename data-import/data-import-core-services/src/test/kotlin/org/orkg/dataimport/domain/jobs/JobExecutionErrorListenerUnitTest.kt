@@ -1,7 +1,5 @@
 package org.orkg.dataimport.domain.jobs
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.just
@@ -20,6 +18,8 @@ import org.springframework.batch.core.repository.JobRepository
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import org.springframework.http.ProblemDetail
+import tools.jackson.databind.ObjectMapper
+import tools.jackson.module.kotlin.readValue
 
 internal class JobExecutionErrorListenerUnitTest : MockkBaseTest {
     private val jobRepository: JobRepository = mockk()

@@ -1,6 +1,5 @@
 package org.orkg
 
-import com.fasterxml.jackson.core.type.TypeReference
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import org.junit.jupiter.api.Test
@@ -26,6 +25,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import tools.jackson.core.type.TypeReference
 
 @ContextConfiguration(
     classes = [

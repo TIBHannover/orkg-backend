@@ -1,8 +1,8 @@
 package org.orkg.contenttypes.output
 
-import com.fasterxml.jackson.databind.JsonNode
 import org.orkg.common.DOI
 import org.orkg.contenttypes.domain.Author
+import tools.jackson.databind.JsonNode
 import java.net.URI
 import java.util.Optional
 

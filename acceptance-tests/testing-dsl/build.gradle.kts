@@ -24,7 +24,7 @@ dependencies {
     api(platform("org.orkg:platform"))
     api("org.junit.jupiter:junit-jupiter-api")
     api("org.orkg:world")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("tools.jackson.module:jackson-module-kotlin")
     implementation("it.skrape:skrapeit:1.2.2")
     implementation("org.keycloak:keycloak-admin-client")
     implementation("org.keycloak:keycloak-client-common-synced")

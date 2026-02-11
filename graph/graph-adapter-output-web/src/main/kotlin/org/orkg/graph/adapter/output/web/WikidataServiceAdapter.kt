@@ -1,7 +1,5 @@
 package org.orkg.graph.adapter.output.web
 
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.exceptions.ServiceUnavailable
 import org.orkg.common.send
@@ -19,6 +17,8 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.util.UriComponentsBuilder
+import tools.jackson.databind.JsonNode
+import tools.jackson.databind.ObjectMapper
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.util.function.Predicate
@@ -89,7 +89,7 @@ class WikidataServiceAdapter(
             val tree = objectMapper.readTree(response)
             val error = tree.path("error").path("code")
             if (!error.isMissingNode) {
-                if (error.textValue() == "no-such-entity") {
+                if (error.stringValue(null) == "no-such-entity") {
                     return@send null
                 } else {
                     throw ServiceUnavailable.create("Wikidata", HttpStatus.SERVICE_UNAVAILABLE.value(), response)
@@ -104,8 +104,8 @@ class WikidataServiceAdapter(
             }
             ExternalThing(
                 uri = ParsedIRI.create("https://www.wikidata.org/entity/$id"),
-                label = entity.path("labels").path("en").path("value").asText(),
-                description = entity.path("descriptions").path("en").path("value").asText()
+                label = entity.path("labels").path("en").path("value").asString(),
+                description = entity.path("descriptions").path("en").path("value").asString()
             )
         }
     }

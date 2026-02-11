@@ -1,6 +1,5 @@
 package org.orkg.dataimport.domain.jobs
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.orkg.common.exceptions.ProblemResponseFactory
 import org.orkg.common.exceptions.SimpleMessageException
 import org.orkg.dataimport.domain.PROBLEMS
@@ -10,6 +9,7 @@ import org.springframework.batch.core.listener.JobExecutionListener
 import org.springframework.batch.core.repository.JobRepository
 import org.springframework.batch.core.step.FatalStepExecutionException
 import org.springframework.http.HttpStatus
+import tools.jackson.databind.ObjectMapper
 
 class JobExecutionErrorListener(
     private val jobRepository: JobRepository,

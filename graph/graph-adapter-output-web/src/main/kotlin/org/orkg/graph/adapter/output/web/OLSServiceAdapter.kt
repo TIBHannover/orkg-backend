@@ -1,6 +1,5 @@
 package org.orkg.graph.adapter.output.web
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.send
 import org.orkg.graph.domain.ExternalThing
@@ -13,6 +12,7 @@ import org.springframework.http.HttpHeaders.USER_AGENT
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.util.UriComponentsBuilder
+import tools.jackson.databind.ObjectMapper
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -95,11 +95,11 @@ class OLSServiceAdapter(
             val item = tree.path("elements").toList().singleOrNull()
                 ?: return@send null
             ExternalThing(
-                uri = ParsedIRI.create(item.path("iri").asText()),
+                uri = ParsedIRI.create(item.path("iri").asString()),
                 label = item.path("label").toList()
-                    .firstOrNull()?.asText() ?: return@send null,
+                    .firstOrNull()?.asString() ?: return@send null,
                 description = item.path("definition").toList()
-                    .firstOrNull()?.asText()
+                    .firstOrNull()?.asString()
                     .takeIf { !it.isNullOrBlank() },
             )
         }

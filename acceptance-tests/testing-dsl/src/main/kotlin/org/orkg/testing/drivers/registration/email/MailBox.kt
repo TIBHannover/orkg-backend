@@ -1,13 +1,13 @@
 package org.orkg.testing.drivers.registration.email
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import it.skrape.core.htmlDocument
 import it.skrape.matchers.toBePresentExactlyOnce
 import it.skrape.selects.attribute
 import it.skrape.selects.html5.a
 import org.orkg.world.Environment
+import tools.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES
+import tools.jackson.module.kotlin.jacksonObjectMapper
 import java.net.URI.create
 import java.net.URLEncoder
 import java.net.http.HttpClient

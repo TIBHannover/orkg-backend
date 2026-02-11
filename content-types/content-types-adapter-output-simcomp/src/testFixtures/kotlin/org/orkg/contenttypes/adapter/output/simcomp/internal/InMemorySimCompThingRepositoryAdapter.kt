@@ -1,8 +1,8 @@
 package org.orkg.contenttypes.adapter.output.simcomp.internal
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.orkg.common.ThingId
 import org.springframework.stereotype.Component
+import tools.jackson.databind.ObjectMapper
 import java.time.Clock
 import java.time.LocalDateTime
 import java.util.Optional

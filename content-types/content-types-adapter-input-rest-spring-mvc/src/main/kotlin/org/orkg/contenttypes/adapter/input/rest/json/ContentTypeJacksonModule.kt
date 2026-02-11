@@ -1,8 +1,5 @@
 package org.orkg.contenttypes.adapter.input.rest.json
 
-import com.fasterxml.jackson.databind.module.SimpleDeserializers
-import com.fasterxml.jackson.databind.module.SimpleModule
-import com.fasterxml.jackson.databind.module.SimpleSerializers
 import org.orkg.contenttypes.adapter.input.rest.IdentifierMapRequest
 import org.orkg.contenttypes.adapter.input.rest.TemplatePropertyRepresentation
 import org.orkg.contenttypes.adapter.input.rest.TemplatePropertyRequest
@@ -13,6 +10,9 @@ import org.orkg.contenttypes.domain.ComparisonTargetCell
 import org.orkg.contenttypes.domain.ConfiguredComparisonTargetCell
 import org.orkg.contenttypes.domain.SnapshotId
 import org.orkg.graph.domain.DynamicLabel
+import tools.jackson.databind.module.SimpleDeserializers
+import tools.jackson.databind.module.SimpleModule
+import tools.jackson.databind.module.SimpleSerializers
 
 class ContentTypeJacksonModule : SimpleModule() {
     override fun setupModule(context: SetupContext?) {
@@ -32,10 +32,10 @@ class ContentTypeJacksonModule : SimpleModule() {
                 addSerializer(DynamicLabel::class.java, DynamicLabelSerializer())
             }
         )
-        context?.setMixInAnnotations(ComparisonConfig::class.java, ComparisonConfigMixin::class.java)
-        context?.setMixInAnnotations(ComparisonHeaderCell::class.java, ComparisonHeaderCellMixin::class.java)
-        context?.setMixInAnnotations(ComparisonIndexCell::class.java, ComparisonIndexCellMixin::class.java)
-        context?.setMixInAnnotations(ComparisonTargetCell::class.java, ComparisonTargetCellMixin::class.java)
-        context?.setMixInAnnotations(ConfiguredComparisonTargetCell::class.java, ConfiguredComparisonTargetCellMixin::class.java)
+        context?.setMixIn(ComparisonConfig::class.java, ComparisonConfigMixin::class.java)
+        context?.setMixIn(ComparisonHeaderCell::class.java, ComparisonHeaderCellMixin::class.java)
+        context?.setMixIn(ComparisonIndexCell::class.java, ComparisonIndexCellMixin::class.java)
+        context?.setMixIn(ComparisonTargetCell::class.java, ComparisonTargetCellMixin::class.java)
+        context?.setMixIn(ConfiguredComparisonTargetCell::class.java, ConfiguredComparisonTargetCellMixin::class.java)
     }
 }

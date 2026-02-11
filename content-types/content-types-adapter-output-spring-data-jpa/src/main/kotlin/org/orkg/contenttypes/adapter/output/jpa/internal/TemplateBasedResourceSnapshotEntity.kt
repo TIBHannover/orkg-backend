@@ -1,6 +1,5 @@
 package org.orkg.contenttypes.adapter.output.jpa.internal
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Table
@@ -12,6 +11,7 @@ import org.orkg.contenttypes.domain.TemplateBasedResourceSnapshot
 import org.orkg.contenttypes.domain.TemplateBasedResourceSnapshot.ModelVersion
 import org.orkg.contenttypes.domain.TemplateBasedResourceSnapshotV1
 import org.orkg.contenttypes.domain.TemplateInstance
+import tools.jackson.databind.ObjectMapper
 import java.time.ZoneOffset
 
 @Entity

@@ -1,7 +1,5 @@
 package org.orkg.common.json
 
-import com.fasterxml.jackson.databind.JsonMappingException
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.kotest.assertions.asClue
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
@@ -10,6 +8,8 @@ import org.orkg.common.configuration.CommonSpringConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.test.context.ContextConfiguration
+import tools.jackson.databind.ObjectMapper
+import tools.jackson.databind.exc.InvalidNullException
 
 @WebMvcTest
 @ContextConfiguration(classes = [CommonSpringConfig::class])
@@ -27,14 +27,14 @@ internal class JsonDeserializationTest {
 
     @Test
     fun throwsErrorWhenNonNullValueIsNull() {
-        shouldThrow<JsonMappingException> {
+        shouldThrow<InvalidNullException> {
             objectMapper.readValue("""{"field": null, "list": []}""", JsonObject::class.java)
         }
     }
 
     @Test
     fun throwsErrorWhenNullValueIsInNonNullList() {
-        shouldThrow<JsonMappingException> {
+        shouldThrow<InvalidNullException> {
             objectMapper.readValue("""{"field": "foo", "list": [null]}""", JsonObject::class.java)
         }
     }

@@ -1,15 +1,15 @@
 package org.orkg.common.json
 
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.databind.JsonSerializer
-import com.fasterxml.jackson.databind.SerializerProvider
 import org.orkg.common.OrganizationId
+import tools.jackson.core.JsonGenerator
+import tools.jackson.databind.SerializationContext
+import tools.jackson.databind.ValueSerializer
 
-class OrganizationIdSerializer : JsonSerializer<OrganizationId>() {
+class OrganizationIdSerializer : ValueSerializer<OrganizationId>() {
     override fun serialize(
         value: OrganizationId?,
         gen: JsonGenerator?,
-        serializers: SerializerProvider?,
+        serializers: SerializationContext?,
     ) {
         gen?.writeString(value.toString())
     }

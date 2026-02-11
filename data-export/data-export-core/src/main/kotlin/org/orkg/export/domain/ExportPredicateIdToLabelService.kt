@@ -1,10 +1,10 @@
 package org.orkg.export.domain
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.orkg.export.input.ExportPredicateIdToLabelUseCase
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.forEach
 import org.springframework.stereotype.Service
+import tools.jackson.databind.ObjectMapper
 import java.io.Writer
 
 private const val DEFAULT_FILE_NAME = "predicate-ids_to_label.json"
@@ -19,7 +19,7 @@ class ExportPredicateIdToLabelService(
         objectMapper.createGenerator(writer).use { generator ->
             generator.writeStartObject()
             predicateRepository.forEach({ predicate ->
-                generator.writeStringField(predicate.id.value, predicate.label)
+                generator.writeStringProperty(predicate.id.value, predicate.label)
             }, generator::flush)
             generator.writeEndObject()
         }

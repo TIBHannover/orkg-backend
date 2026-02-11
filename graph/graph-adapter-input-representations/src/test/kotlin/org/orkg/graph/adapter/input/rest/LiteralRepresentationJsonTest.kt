@@ -10,7 +10,7 @@ import org.orkg.graph.adapter.input.rest.mapping.LiteralRepresentationAdapter
 import org.orkg.graph.domain.Literal
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.json.JsonTest
-import org.springframework.boot.test.json.Jackson2Tester
+import org.springframework.boot.test.json.JacksonTester
 import org.springframework.test.context.ContextConfiguration
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
@@ -22,7 +22,7 @@ import java.time.ZoneOffset
 @ContextConfiguration(classes = [LiteralRepresentationAdapter::class, CommonJacksonModule::class])
 internal class LiteralRepresentationJsonTest {
     @Autowired
-    private lateinit var json: Jackson2Tester<LiteralRepresentation>
+    private lateinit var json: JacksonTester<LiteralRepresentation>
 
     private val literalRepresentationAdapter: LiteralRepresentationAdapter = object : LiteralRepresentationAdapter {}
 

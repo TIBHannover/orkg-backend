@@ -1,12 +1,12 @@
 package org.orkg.common.json
 
-import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.databind.DeserializationContext
-import com.fasterxml.jackson.databind.JsonDeserializer
 import org.orkg.common.ContributorId
+import tools.jackson.core.JsonParser
+import tools.jackson.databind.DeserializationContext
+import tools.jackson.databind.ValueDeserializer
 import java.util.UUID
 
-class ContributorIdDeserializer : JsonDeserializer<ContributorId>() {
+class ContributorIdDeserializer : ValueDeserializer<ContributorId>() {
     override fun deserialize(
         p: JsonParser?,
         ctxt: DeserializationContext?,

@@ -1,6 +1,5 @@
 package org.orkg.dataimport.adapter.input.rest
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -41,6 +40,7 @@ import org.springframework.context.annotation.Import
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.mock.web.MockPart
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import tools.jackson.module.kotlin.readValue
 
 @Neo4jContainerIntegrationTest
 @Import(

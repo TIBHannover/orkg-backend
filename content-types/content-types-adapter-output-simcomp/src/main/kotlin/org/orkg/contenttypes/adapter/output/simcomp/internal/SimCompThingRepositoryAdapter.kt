@@ -1,6 +1,5 @@
 package org.orkg.contenttypes.adapter.output.simcomp.internal
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ServiceUnavailable
 import org.orkg.common.send
@@ -13,6 +12,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.util.UriComponentsBuilder
+import tools.jackson.databind.ObjectMapper
 import java.io.IOException
 import java.net.http.HttpClient
 import java.net.http.HttpRequest

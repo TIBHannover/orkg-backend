@@ -1,11 +1,11 @@
 package org.orkg.contenttypes.adapter.input.rest.json
 
-import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.databind.DeserializationContext
-import com.fasterxml.jackson.databind.JsonDeserializer
 import org.orkg.contenttypes.domain.SnapshotId
+import tools.jackson.core.JsonParser
+import tools.jackson.databind.DeserializationContext
+import tools.jackson.databind.ValueDeserializer
 
-class SnapshotIdDeserializer : JsonDeserializer<SnapshotId>() {
+class SnapshotIdDeserializer : ValueDeserializer<SnapshotId>() {
     override fun deserialize(
         p: JsonParser?,
         ctxt: DeserializationContext?,

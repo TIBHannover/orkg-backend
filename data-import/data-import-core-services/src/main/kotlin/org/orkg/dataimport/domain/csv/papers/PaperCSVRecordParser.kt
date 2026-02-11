@@ -189,22 +189,22 @@ open class PaperCSVRecordParser(
         var publishedIn: String? = null
         var url: ParsedIRI? = null
         doiService.findMetadataByDoi(doi).ifPresent { metadata ->
-            title = metadata.path("title").textValue()
+            title = metadata.path("title").stringValue(null)
             val subtitle = metadata.path("subtitle")
             if (!subtitle.isMissingNode && !subtitle.isEmpty) {
-                title = "$title: ${subtitle[0].textValue()}"
+                title = "$title: ${subtitle[0].stringValue(null)}"
             }
             val author = metadata.path("author")
             if (!author.isMissingNode) {
                 authors = author.mapNotNull {
-                    val given = it.path("given").textValue()
-                    val family = it.path("family").textValue()
+                    val given = it.path("given").stringValue(null)
+                    val family = it.path("family").stringValue(null)
                     val fullName = listOfNotNull(given, family)
                         .takeIf { it.isNotEmpty() }
                         ?.joinToString(" ")
                         ?.trim()
-                        ?: it.path("literal").textValue()
-                    val orcid = it.path("ORCID").textValue()
+                        ?: it.path("literal").stringValue(null)
+                    val orcid = it.path("ORCID").stringValue(null)
                         ?.let { orcid -> ORCID.ofOrNull(orcid) }
                     Author(
                         name = fullName,
@@ -215,15 +215,15 @@ open class PaperCSVRecordParser(
             }
             val issued = metadata.path("issued").path("date-parts").path(0)
             if (!issued.isMissingNode && !issued.isEmpty) {
-                publicationYear = issued.get(0)?.asText(null)?.toLongOrNull()
-                publicationMonth = issued.get(1)?.asText(null)?.toIntOrNull()
+                publicationYear = issued.get(0)?.asString(null)?.toLongOrNull()
+                publicationMonth = issued.get(1)?.asString(null)?.toIntOrNull()
             }
             try {
-                url = metadata.path("URL").textValue()?.let(::ParsedIRI)
+                url = metadata.path("URL").stringValue(null)?.let(::ParsedIRI)
             } catch (_: Throwable) {
                 // ignore
             }
-            publishedIn = metadata.path("container-title").textValue()
+            publishedIn = metadata.path("container-title").stringValue(null)
         }
         return PaperMetadata(title, authors, publicationMonth, publicationYear, publishedIn, url)
     }

@@ -1,7 +1,5 @@
 package org.orkg
 
-import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.ObjectMapper
 import net.datafaker.Faker
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
@@ -32,6 +30,8 @@ import org.springframework.context.annotation.Profile
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpHeaders.USER_AGENT
 import org.springframework.stereotype.Component
+import tools.jackson.core.type.TypeReference
+import tools.jackson.databind.ObjectMapper
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest

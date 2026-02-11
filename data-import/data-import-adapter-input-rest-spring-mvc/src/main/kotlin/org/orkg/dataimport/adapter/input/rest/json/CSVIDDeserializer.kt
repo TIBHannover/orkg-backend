@@ -1,11 +1,11 @@
 package org.orkg.dataimport.adapter.input.rest.json
 
-import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.databind.DeserializationContext
-import com.fasterxml.jackson.databind.JsonDeserializer
 import org.orkg.dataimport.domain.csv.CSVID
+import tools.jackson.core.JsonParser
+import tools.jackson.databind.DeserializationContext
+import tools.jackson.databind.ValueDeserializer
 
-class CSVIDDeserializer : JsonDeserializer<CSVID>() {
+class CSVIDDeserializer : ValueDeserializer<CSVID>() {
     override fun deserialize(p: JsonParser?, ctxt: DeserializationContext?): CSVID? =
         p?.valueAsString?.let(::CSVID)
 }

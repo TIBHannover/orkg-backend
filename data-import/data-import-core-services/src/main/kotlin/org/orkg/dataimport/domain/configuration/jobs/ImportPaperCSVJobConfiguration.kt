@@ -1,6 +1,5 @@
 package org.orkg.dataimport.domain.configuration.jobs
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.orkg.common.exceptions.ProblemResponseFactory
 import org.orkg.dataimport.domain.csv.CSV.State
 import org.orkg.dataimport.domain.csv.papers.PaperCSVPredicateProcessor
@@ -23,6 +22,7 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.transaction.PlatformTransactionManager
+import tools.jackson.databind.ObjectMapper
 
 @Configuration
 class ImportPaperCSVJobConfiguration(

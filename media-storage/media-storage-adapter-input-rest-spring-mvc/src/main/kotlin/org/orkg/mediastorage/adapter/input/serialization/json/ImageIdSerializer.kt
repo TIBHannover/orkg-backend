@@ -1,15 +1,15 @@
 package org.orkg.mediastorage.adapter.input.serialization.json
 
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.databind.JsonSerializer
-import com.fasterxml.jackson.databind.SerializerProvider
 import org.orkg.mediastorage.domain.ImageId
+import tools.jackson.core.JsonGenerator
+import tools.jackson.databind.SerializationContext
+import tools.jackson.databind.ValueSerializer
 
-class ImageIdSerializer : JsonSerializer<ImageId>() {
+class ImageIdSerializer : ValueSerializer<ImageId>() {
     override fun serialize(
         value: ImageId?,
         gen: JsonGenerator?,
-        serializers: SerializerProvider?,
+        serializers: SerializationContext?,
     ) {
         gen?.writeString(value.toString())
     }

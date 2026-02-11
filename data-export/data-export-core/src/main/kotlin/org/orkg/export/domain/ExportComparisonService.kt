@@ -1,6 +1,5 @@
 package org.orkg.export.domain
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.orkg.contenttypes.domain.Comparison
 import org.orkg.contenttypes.input.ComparisonUseCases
 import org.orkg.contenttypes.output.ComparisonRepository
@@ -21,6 +20,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import tools.jackson.databind.ObjectMapper
 import java.io.Writer
 import java.net.URI
 

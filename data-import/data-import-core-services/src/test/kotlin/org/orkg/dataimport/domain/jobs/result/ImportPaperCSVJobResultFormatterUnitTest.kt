@@ -1,6 +1,5 @@
 package org.orkg.dataimport.domain.jobs.result
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.kotest.assertions.asClue
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
@@ -23,6 +22,7 @@ import org.springframework.batch.core.BatchStatus
 import org.springframework.batch.core.job.parameters.JobParametersBuilder
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.ProblemDetail
+import tools.jackson.databind.ObjectMapper
 import java.util.Optional
 
 internal class ImportPaperCSVJobResultFormatterUnitTest : MockkBaseTest {

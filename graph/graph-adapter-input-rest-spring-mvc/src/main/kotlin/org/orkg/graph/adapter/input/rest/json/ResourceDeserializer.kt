@@ -1,9 +1,5 @@
 package org.orkg.graph.adapter.input.rest.json
 
-import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.databind.DeserializationContext
-import com.fasterxml.jackson.databind.JsonDeserializer
-import com.fasterxml.jackson.databind.JsonNode
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -11,33 +7,38 @@ import org.orkg.common.ThingId
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.Visibility
+import tools.jackson.core.JsonParser
+import tools.jackson.databind.DeserializationContext
+import tools.jackson.databind.ValueDeserializer
 import java.time.OffsetDateTime
 
-class ResourceDeserializer : JsonDeserializer<Resource>() {
+class ResourceDeserializer : ValueDeserializer<Resource>() {
     override fun deserialize(
-        p: JsonParser?,
-        ctxt: DeserializationContext?,
-    ): Resource = with(p!!.codec.readTree<JsonNode>(p)) {
-        Resource(
-            id = ThingId(this["id"].asText()),
-            label = this["label"].asText(),
-            createdAt = OffsetDateTime.parse(this["created_at"].asText()),
-            classes = this["classes"].map { ThingId(it.asText()) }.toSet(),
-            createdBy = ContributorId(this["created_by"].asText()),
-            observatoryId = ObservatoryId(this["observatory_id"].asText()),
-            extractionMethod = ExtractionMethod.valueOf(this["extraction_method"].asText()),
-            organizationId = OrganizationId(this["organization_id"].asText()),
-            visibility = this["visibility"]?.asText()?.let(Visibility::valueOf)
-                ?: visibilityFromFlags(this["featured"]?.asBoolean(), this["unlisted"]?.asBoolean()),
-            verified = this["verified"]?.asBoolean(),
-            unlistedBy = this["unlisted_by"]?.textValue()?.let(::ContributorId),
-            modifiable = this["modifiable"]?.asBoolean() ?: true
+        p: JsonParser,
+        ctxt: DeserializationContext,
+    ): Resource {
+        val node = ctxt.readTree(p)
+        return Resource(
+            id = ThingId(node["id"].asString()),
+            label = node["label"].asString(),
+            createdAt = OffsetDateTime.parse(node["created_at"].asString()),
+            classes = node["classes"].map { ThingId(it.asString()) }.toSet(),
+            createdBy = ContributorId(node["created_by"].asString()),
+            observatoryId = ObservatoryId(node["observatory_id"].asString()),
+            extractionMethod = ExtractionMethod.valueOf(node["extraction_method"].asString()),
+            organizationId = OrganizationId(node["organization_id"].asString()),
+            visibility = node["visibility"]?.asString()?.let(Visibility::valueOf)
+                ?: visibilityFromFlags(node["featured"]?.asBoolean(), node["unlisted"]?.asBoolean()),
+            verified = node["verified"]?.asBoolean(),
+            unlistedBy = node["unlisted_by"]?.stringValue(null)?.let(::ContributorId),
+            modifiable = node["modifiable"]?.asBoolean() ?: true
         )
     }
 
     private fun visibilityFromFlags(featured: Boolean?, unlisted: Boolean?): Visibility =
         when (unlisted) {
             true -> Visibility.UNLISTED
+
             else -> when (featured) {
                 true -> Visibility.FEATURED
                 else -> Visibility.DEFAULT

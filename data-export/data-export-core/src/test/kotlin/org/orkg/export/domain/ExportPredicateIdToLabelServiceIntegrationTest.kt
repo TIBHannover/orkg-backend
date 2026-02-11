@@ -1,6 +1,5 @@
 package org.orkg.export.domain
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.kotest.engine.spec.tempdir
 import io.kotest.matchers.shouldBe
 import io.mockk.every
@@ -14,6 +13,7 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.testing.pageOf
+import tools.jackson.databind.ObjectMapper
 
 internal class ExportPredicateIdToLabelServiceIntegrationTest :
     MockkDescribeSpec({

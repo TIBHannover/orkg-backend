@@ -9,7 +9,7 @@ plugins {
 dependencies {
     api("org.springframework:spring-beans")
     api("org.springframework:spring-context")
-    api("com.fasterxml.jackson.core:jackson-databind")
+    api("tools.jackson.core:jackson-databind")
     api(project(":content-types:content-types-core-model"))
     api(project(":content-types:content-types-ports-output"))
     implementation("org.springframework:spring-web")
@@ -25,7 +25,7 @@ testing {
     suites {
         val test by getting(JvmTestSuite::class) {
             dependencies {
-                implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+                implementation("tools.jackson.module:jackson-module-kotlin")
                 implementation("io.kotest:kotest-assertions-core")
                 implementation("io.kotest:kotest-assertions-shared")
                 implementation("io.kotest:kotest-common")

@@ -1,7 +1,5 @@
 package org.orkg
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.PageRequests
@@ -22,6 +20,8 @@ import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
+import tools.jackson.databind.ObjectMapper
+import tools.jackson.module.kotlin.readValue
 import java.time.Clock
 import java.time.OffsetDateTime
 import java.util.Optional
@@ -124,7 +124,7 @@ class InitialDataSetup(
     }
 
     private inline fun <reified T> readFile(file: String): T =
-        objectMapper.readValue<T>(this::class.java.classLoader.getResource(file)!!)
+        objectMapper.readValue<T>(this::class.java.classLoader.getResource(file)!!.openStream())
 
     data class RequiredClassCommand(
         val id: ThingId,

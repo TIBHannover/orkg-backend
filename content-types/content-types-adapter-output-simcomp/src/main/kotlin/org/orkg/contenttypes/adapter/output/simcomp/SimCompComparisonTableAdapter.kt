@@ -1,12 +1,12 @@
 package org.orkg.contenttypes.adapter.output.simcomp
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.adapter.output.simcomp.internal.SimCompThingRepository
 import org.orkg.contenttypes.adapter.output.simcomp.internal.ThingType
 import org.orkg.contenttypes.domain.ComparisonTable
 import org.orkg.contenttypes.output.ComparisonTableRepository
 import org.springframework.stereotype.Component
+import tools.jackson.databind.ObjectMapper
 import java.util.Optional
 
 @Component

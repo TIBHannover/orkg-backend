@@ -2,7 +2,6 @@ package org.orkg.auth.adapter.input.rest
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.orkg.common.exceptions.ServiceUnavailable
 import org.orkg.common.exceptions.SimpleMessageException
 import org.orkg.common.exceptions.Unauthorized
@@ -19,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import tools.jackson.databind.ObjectMapper
 import java.net.URI
 import java.net.URLEncoder
 import java.net.http.HttpClient

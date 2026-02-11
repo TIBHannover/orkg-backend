@@ -1,15 +1,15 @@
 package org.orkg.graph.adapter.input.rest.json
 
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.databind.JsonSerializer
-import com.fasterxml.jackson.databind.SerializerProvider
 import org.orkg.graph.domain.StatementId
+import tools.jackson.core.JsonGenerator
+import tools.jackson.databind.SerializationContext
+import tools.jackson.databind.ValueSerializer
 
-class StatementIdSerializer : JsonSerializer<StatementId>() {
+class StatementIdSerializer : ValueSerializer<StatementId>() {
     override fun serialize(
         value: StatementId?,
         gen: JsonGenerator?,
-        serializers: SerializerProvider?,
+        serializers: SerializationContext?,
     ) {
         gen?.writeString(value.toString())
     }

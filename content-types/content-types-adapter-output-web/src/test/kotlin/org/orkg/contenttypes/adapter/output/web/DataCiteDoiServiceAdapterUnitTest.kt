@@ -1,7 +1,5 @@
 package org.orkg.contenttypes.adapter.output.web
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.kotest.assertions.asClue
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.maps.shouldContainAll
@@ -26,6 +24,7 @@ import org.springframework.http.HttpHeaders.CONTENT_TYPE
 import org.springframework.http.HttpHeaders.USER_AGENT
 import org.springframework.http.MediaType
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
+import tools.jackson.module.kotlin.jacksonObjectMapper
 import java.io.ByteArrayInputStream
 import java.io.InputStream
 import java.net.URI
@@ -39,7 +38,7 @@ internal class DataCiteDoiServiceAdapterUnitTest : MockkBaseTest {
     private val dataciteConfiguration: DataCiteConfiguration = mockk()
     private val httpClient: HttpClient = mockk()
     private val userAgent = "test user agent"
-    private val objectMapper = ObjectMapper().registerKotlinModule()
+    private val objectMapper = jacksonObjectMapper()
     private val adapter =
         DataCiteDoiServiceAdapter(dataciteConfiguration, objectMapper, httpClient, ::TestBodyPublisher, userAgent, fixedClock)
 

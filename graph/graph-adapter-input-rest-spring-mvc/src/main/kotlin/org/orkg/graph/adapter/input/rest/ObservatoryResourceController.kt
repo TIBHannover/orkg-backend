@@ -1,7 +1,5 @@
 package org.orkg.graph.adapter.input.rest
 
-import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ObservatoryId
 import org.orkg.community.domain.InvalidFilterConfig
@@ -19,6 +17,8 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import tools.jackson.core.type.TypeReference
+import tools.jackson.databind.ObjectMapper
 
 @RestController
 @RequestMapping("/api/observatories", produces = [MediaType.APPLICATION_JSON_VALUE])

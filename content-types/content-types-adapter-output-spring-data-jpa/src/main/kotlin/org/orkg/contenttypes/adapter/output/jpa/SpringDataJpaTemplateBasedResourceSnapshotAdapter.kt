@@ -1,6 +1,5 @@
 package org.orkg.contenttypes.adapter.output.jpa
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.orkg.common.ThingId
 import org.orkg.common.withDefaultSort
 import org.orkg.contenttypes.adapter.output.jpa.internal.PostgresTemplateBasedResourceSnapshotRepository
@@ -13,6 +12,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Component
+import tools.jackson.databind.ObjectMapper
 import java.util.Optional
 
 @Component

@@ -9,7 +9,7 @@ import org.orkg.graph.adapter.input.rest.configuration.GraphSpringConfig
 import org.orkg.testing.PostgresContainerInitializer
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest
-import org.springframework.boot.jackson2.autoconfigure.Jackson2AutoConfiguration
+import org.springframework.boot.jackson.autoconfigure.JacksonAutoConfiguration
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestConstructor
@@ -22,7 +22,7 @@ import org.springframework.test.context.TestConstructor
         GraphSpringConfig::class,
         ContentTypesJpaConfiguration::class,
         ContentTypesJpaTestConfiguration::class,
-        Jackson2AutoConfiguration::class
+        JacksonAutoConfiguration::class
     ],
     initializers = [PostgresContainerInitializer::class]
 )

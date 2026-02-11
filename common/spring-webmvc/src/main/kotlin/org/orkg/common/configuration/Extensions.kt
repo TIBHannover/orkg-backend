@@ -1,25 +1,25 @@
 package org.orkg.common.configuration
 
-import com.fasterxml.jackson.databind.JsonMappingException
 import org.orkg.common.exceptions.escapeJsonPointerReferenceToken
+import tools.jackson.core.JacksonException
 
 @Deprecated("To be removed")
-internal val JsonMappingException.fieldPath: String
+internal val JacksonException.fieldPath: String
     get() = path.joinToString(prefix = "$", separator = "") {
         with(it) {
             when {
-                fieldName != null -> ".$fieldName"
+                propertyName != null -> ".$propertyName"
                 index >= 0 -> "[$index]"
                 else -> ".?"
             }
         }
     }
 
-internal val JsonMappingException.jsonPointer: String
+internal val JacksonException.jsonPointer: String
     get() = path.joinToString(prefix = "#/", separator = "/") {
         with(it) {
             when {
-                fieldName != null -> escapeJsonPointerReferenceToken(fieldName)
+                propertyName != null -> escapeJsonPointerReferenceToken(propertyName)
                 index >= 0 -> "$index"
                 else -> "?"
             }

@@ -45,7 +45,7 @@ testing {
                 implementation(testFixtures(project(":graph:graph-core-model")))
                 implementation(testFixtures(project(":testing:spring")))
                 runtimeOnly("org.springframework.boot:spring-boot-starter-test")
-                runtimeOnly("com.fasterxml.jackson.module:jackson-module-kotlin") // to (de)serialize data classes
+                runtimeOnly("tools.jackson.module:jackson-module-kotlin") // to (de)serialize data classes
             }
         }
     }

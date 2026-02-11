@@ -1,7 +1,5 @@
 package org.orkg.testing.spring.restdocs.snippets
 
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.orkg.common.exceptions.Unauthorized
 import org.springframework.http.HttpHeaders
 import org.springframework.restdocs.RestDocumentationContext
@@ -10,6 +8,8 @@ import org.springframework.restdocs.snippet.RestDocumentationContextPlaceholderR
 import org.springframework.restdocs.snippet.Snippet
 import org.springframework.restdocs.snippet.StandardWriterResolver
 import org.springframework.restdocs.templates.TemplateFormat
+import tools.jackson.databind.SerializationFeature
+import tools.jackson.module.kotlin.jacksonMapperBuilder
 import kotlin.reflect.KClass
 
 class ExceptionSnippet private constructor(
@@ -30,7 +30,9 @@ class ExceptionSnippet private constructor(
     }
 
     companion object {
-        private val objectMapper = jacksonObjectMapper().enable(SerializationFeature.INDENT_OUTPUT)
+        private val objectMapper = jacksonMapperBuilder()
+            .enable(SerializationFeature.INDENT_OUTPUT)
+            .build()
 
         fun exceptions(exceptions: List<KClass<out Throwable>>) = ExceptionSnippet(exceptions)
 

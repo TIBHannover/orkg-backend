@@ -2,7 +2,7 @@ package org.orkg.dataimport.domain.jobs.status
 
 import org.orkg.dataimport.domain.extractCSVID
 import org.orkg.dataimport.domain.jobs.JobNames
-import org.springframework.batch.core.JobExecution
+import org.springframework.batch.core.job.JobExecution
 import org.springframework.stereotype.Component
 
 @Component

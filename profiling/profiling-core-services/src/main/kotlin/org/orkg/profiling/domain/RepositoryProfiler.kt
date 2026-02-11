@@ -32,7 +32,7 @@ abstract class RepositoryProfiler(
         valueGenerator::class.allSupertypes.first { it.classifier == ValueGenerator::class }.arguments.first().type?.classifier!!
     }
 
-    override fun run(args: ApplicationArguments?) {
+    override fun run(args: ApplicationArguments) {
         val functionMap = repositories.functionsToProfile()
         validateValueGenerators(functionMap)
         val repositoryCount = functionMap.keys.size

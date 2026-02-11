@@ -4,7 +4,7 @@ import org.apache.commons.csv.CSVParser
 import org.apache.commons.csv.CSVRecord
 import org.orkg.dataimport.domain.CSVNotFound
 import org.orkg.dataimport.output.CSVRepository
-import org.springframework.batch.item.support.AbstractItemCountingItemStreamItemReader
+import org.springframework.batch.infrastructure.item.support.AbstractItemCountingItemStreamItemReader
 import java.io.StringReader
 
 open class CSVRecordReader(
@@ -27,7 +27,7 @@ open class CSVRecordReader(
 
     override fun doOpen() {
         val csv = csvRepository.findById(csvId).orElseThrow { CSVNotFound(csvId) }
-        name = csvId.toString()
+        setName(csvId.toString())
         csvParser = csv.format.csvFormat.parse(StringReader(csv.data))
         iterator = csvParser.iterator()
         // skip header

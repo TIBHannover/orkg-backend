@@ -50,7 +50,7 @@ testing {
                 implementation("org.hamcrest:hamcrest")
                 implementation("org.junit.jupiter:junit-jupiter-api")
                 implementation("org.springframework:spring-test")
-                implementation("org.springframework.boot:spring-boot-test-autoconfigure")
+                implementation("org.springframework.boot:spring-boot-webmvc-test")
                 implementation("org.springframework.restdocs:spring-restdocs-core")
                 implementation(project(":graph:graph-core-constants"))
                 implementation(testFixtures(project(":common:testing")))

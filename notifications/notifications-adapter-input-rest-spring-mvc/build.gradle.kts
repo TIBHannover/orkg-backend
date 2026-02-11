@@ -26,15 +26,15 @@ testing {
     suites {
         val test by getting(JvmTestSuite::class) {
             dependencies {
-                implementation("io.mockk:mockk-dsl")
-                implementation("io.mockk:mockk-jvm")
-                implementation("org.junit.jupiter:junit-jupiter-api")
                 runtimeOnly("org.springframework.boot:spring-boot-starter-security")
                 runtimeOnly("org.springframework.boot:spring-boot-starter-test")
-                implementation("org.springframework.boot:spring-boot-test-autoconfigure")
-                implementation("org.springframework:spring-test")
-                implementation("org.springframework.restdocs:spring-restdocs-core")
+                implementation("io.mockk:mockk-dsl")
+                implementation("io.mockk:mockk-jvm")
                 implementation("com.ninja-squad:springmockk")
+                implementation("org.junit.jupiter:junit-jupiter-api")
+                implementation("org.springframework:spring-test")
+                implementation("org.springframework.boot:spring-boot-webmvc-test")
+                implementation("org.springframework.restdocs:spring-restdocs-core")
                 implementation(testFixtures(project(":testing:spring")))
             }
         }

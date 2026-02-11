@@ -17,10 +17,10 @@ import java.time.ZoneOffset
 @Entity
 @Table(name = "template_based_resource_snapshots")
 class TemplateBasedResourceSnapshotEntity : SnapshotEntity<ModelVersion>() {
-    @Column(name = "resource_id")
+    @Column(name = "resource_id", nullable = false)
     var resourceId: String? = null
 
-    @Column(name = "template_id")
+    @Column(name = "template_id", nullable = false)
     var templateId: String? = null
 
     var handle: String? = null

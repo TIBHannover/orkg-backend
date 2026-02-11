@@ -17,11 +17,13 @@ import java.util.UUID
 @Table(name = "observatory_filters")
 class ObservatoryFilterEntity {
     @Id
+    @Column(nullable = false)
     var id: UUID? = null
 
-    @Column(name = "observatory_id")
+    @Column(name = "observatory_id", nullable = false)
     var observatoryId: UUID? = null
 
+    @Column(nullable = false)
     var label: String? = null
 
     @Column(name = "created_by", nullable = false)
@@ -30,15 +32,19 @@ class ObservatoryFilterEntity {
     @Column(name = "created_at", nullable = false)
     var createdAt: OffsetDateTime? = null
 
-    @Column(name = "created_at_offset_total_seconds")
+    @Column(name = "created_at_offset_total_seconds", nullable = false)
     var createdAtOffsetTotalSeconds: Int? = null
 
+    @Column(nullable = false)
     var path: String? = null
 
+    @Column(nullable = false)
     var range: String? = null
 
+    @Column(nullable = false)
     var exact: Boolean? = null
 
+    @Column(nullable = false)
     var featured: Boolean? = null
 }
 

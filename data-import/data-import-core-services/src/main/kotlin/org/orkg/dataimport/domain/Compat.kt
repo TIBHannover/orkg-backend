@@ -3,8 +3,8 @@ package org.orkg.dataimport.domain
 import org.orkg.common.ContributorId
 import org.orkg.dataimport.domain.csv.CSV
 import org.orkg.dataimport.domain.csv.CSVID
-import org.springframework.batch.core.JobExecution
-import org.springframework.batch.core.StepExecution
+import org.springframework.batch.core.job.JobExecution
+import org.springframework.batch.core.step.StepExecution
 
 internal fun extractContributorId(jobExecution: JobExecution): ContributorId =
     jobExecution.jobParameters.get<ContributorId>(CONTRIBUTOR_ID_FIELD)

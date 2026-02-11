@@ -1,6 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
 import com.google.cloud.tools.jib.gradle.JibTask
+import org.gradle.kotlin.dsl.invoke
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 import org.springframework.boot.gradle.tasks.run.BootRun
 
@@ -30,6 +31,7 @@ testing {
                 implementation("org.springframework:spring-test")
                 implementation(project(":common:serialization"))
                 implementation("org.springframework.boot:spring-boot-test")
+                implementation("org.springframework.boot:spring-boot-webmvc-test")
                 compileOnly("jakarta.servlet:jakarta.servlet-api")
                 runtimeOnly("com.jayway.jsonpath:json-path")
                 runtimeOnly("org.apache.tomcat.embed:tomcat-embed-core")
@@ -104,8 +106,6 @@ tasks.withType<JibTask> {
 dependencies {
     kapt(platform("org.orkg:platform"))
     api(platform("org.orkg:platform"))
-
-    implementation("org.jetbrains.kotlin:kotlin-stdlib") // "downgrade" from api()
 
     // This project is essentially a "configuration" project in Spring's sense, so we depend on all components:
     implementation(project(":common:pagination"))
@@ -199,8 +199,11 @@ dependencies {
     implementation("org.neo4j.driver:neo4j-java-driver")
     implementation("org.slf4j:slf4j-api")
     implementation("org.springframework.batch:spring-batch-core")
-    implementation("org.springframework.boot:spring-boot-autoconfigure")
     implementation("org.springframework.boot:spring-boot")
+    implementation("org.springframework.boot:spring-boot-autoconfigure")
+    implementation("org.springframework.boot:spring-boot-cache")
+    implementation("org.springframework.boot:spring-boot-data-neo4j")
+    implementation("org.springframework.boot:spring-boot-transaction")
     implementation("org.springframework.data:spring-data-commons")
     implementation("org.springframework.security:spring-security-web")
     implementation("org.springframework:spring-beans")
@@ -221,12 +224,13 @@ dependencies {
     runtimeOnly("org.springframework.boot:spring-boot-starter-data-jpa")
     runtimeOnly("org.postgresql:postgresql")
     runtimeOnly("org.liquibase:liquibase-core")
+    runtimeOnly("org.springframework.boot:spring-boot-liquibase")
     runtimeOnly("org.springframework.boot:spring-boot-starter-data-neo4j")
     runtimeOnly("org.springframework.boot:spring-boot-starter-security")
     runtimeOnly("org.springframework.boot:spring-boot-starter-validation")
-    runtimeOnly("org.springframework.boot:spring-boot-starter-web")
+    runtimeOnly("org.springframework.boot:spring-boot-starter-webmvc")
     runtimeOnly("org.springframework.boot:spring-boot-starter-cache")
-    runtimeOnly("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
+    runtimeOnly("org.springframework.boot:spring-boot-starter-security-oauth2-resource-server")
     runtimeOnly("org.springframework.data:spring-data-neo4j")
     runtimeOnly("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-starter")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")

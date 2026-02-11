@@ -3,8 +3,8 @@ package org.orkg.common.configuration
 import org.orkg.common.exceptions.ErrorController
 import org.orkg.common.exceptions.ProblemResponseFactory
 import org.springframework.beans.factory.ObjectProvider
-import org.springframework.boot.autoconfigure.web.servlet.error.ErrorViewResolver
-import org.springframework.boot.web.servlet.error.ErrorAttributes
+import org.springframework.boot.webmvc.autoconfigure.error.ErrorViewResolver
+import org.springframework.boot.webmvc.error.ErrorAttributes
 import org.springframework.context.MessageSource
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

@@ -16,9 +16,10 @@ testing {
                 implementation("io.kotest:kotest-assertions-core")
                 implementation("org.junit.jupiter:junit-jupiter-api")
                 implementation("org.springframework.boot:spring-boot-test")
-                implementation("org.springframework.boot:spring-boot-test-autoconfigure")
+                implementation("org.springframework.boot:spring-boot-webmvc-test")
                 implementation("org.springframework:spring-test")
                 implementation("org.springframework:spring-web")
+                runtimeOnly("org.springframework.boot:spring-boot-jackson2")
                 runtimeOnly("com.jayway.jsonpath:json-path")
             }
         }

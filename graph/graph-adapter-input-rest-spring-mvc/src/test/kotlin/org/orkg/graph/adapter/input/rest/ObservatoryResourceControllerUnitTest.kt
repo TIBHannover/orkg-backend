@@ -28,7 +28,7 @@ import org.orkg.testing.andExpectResource
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.data.domain.PageImpl
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName

@@ -11,13 +11,12 @@ import org.orkg.dataimport.domain.CSVNotFound
 import org.orkg.dataimport.domain.CSV_HEADERS_FIELD
 import org.orkg.dataimport.domain.testing.fixtures.createCSV
 import org.orkg.dataimport.domain.testing.fixtures.createPaperCSVHeaders
+import org.orkg.dataimport.domain.testing.fixtures.createStepExecution
 import org.orkg.dataimport.output.CSVRepository
-import org.springframework.batch.core.JobExecution
-import org.springframework.batch.core.StepContribution
-import org.springframework.batch.core.StepExecution
 import org.springframework.batch.core.scope.context.ChunkContext
 import org.springframework.batch.core.scope.context.StepContext
-import org.springframework.batch.repeat.RepeatStatus
+import org.springframework.batch.core.step.StepContribution
+import org.springframework.batch.infrastructure.repeat.RepeatStatus
 import java.util.Optional
 
 internal class CSVHeaderParserUnitTest : MockkBaseTest {
@@ -29,7 +28,7 @@ internal class CSVHeaderParserUnitTest : MockkBaseTest {
     @Test
     fun `Given a csv id, when parsing the headers of the csv, it saves the headers to the job execution context`() {
         val csv = createCSV()
-        val stepExecution = StepExecution("test", JobExecution(123))
+        val stepExecution = createStepExecution()
         val contribution = StepContribution(stepExecution)
         val chunkContext = ChunkContext(StepContext(stepExecution))
 
@@ -44,7 +43,7 @@ internal class CSVHeaderParserUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a csv id, when parsing the headers of the csv, and csv does not exist, it throws an exception`() {
-        val stepExecution = StepExecution("test", JobExecution(123))
+        val stepExecution = createStepExecution()
         val contribution = StepContribution(stepExecution)
         val chunkContext = ChunkContext(StepContext(stepExecution))
 

@@ -16,18 +16,18 @@ import org.orkg.dataimport.domain.CSV_HEADERS_FIELD
 import org.orkg.dataimport.domain.CSV_HEADER_TO_PREDICATE_FIELD
 import org.orkg.dataimport.domain.CSV_TYPE_FIELD
 import org.orkg.dataimport.domain.add
+import org.orkg.dataimport.domain.testing.fixtures.createJobExecution
+import org.orkg.dataimport.domain.testing.fixtures.createStepExecution
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.PredicateNotFound
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.testing.pageOf
-import org.springframework.batch.core.JobExecution
-import org.springframework.batch.core.JobParametersBuilder
-import org.springframework.batch.core.StepContribution
-import org.springframework.batch.core.StepExecution
+import org.springframework.batch.core.job.parameters.JobParametersBuilder
 import org.springframework.batch.core.scope.context.ChunkContext
 import org.springframework.batch.core.scope.context.StepContext
-import org.springframework.batch.repeat.RepeatStatus
+import org.springframework.batch.core.step.StepContribution
+import org.springframework.batch.infrastructure.repeat.RepeatStatus
 import org.springframework.data.domain.Page
 import java.util.Optional
 
@@ -48,10 +48,10 @@ internal class CSVHeaderProcessorUnitTest : MockkBaseTest {
             )
         )
         val jobParameters = JobParametersBuilder().add(CSV_TYPE_FIELD, CSV.Type.PAPER).toJobParameters()
-        val jobExecution = JobExecution(123, jobParameters).apply {
+        val jobExecution = createJobExecution(jobParameters = jobParameters).apply {
             executionContext.put(CSV_HEADERS_FIELD, headers)
         }
-        val stepExecution = StepExecution("test", jobExecution)
+        val stepExecution = createStepExecution(jobExecution = jobExecution)
         val contribution = StepContribution(stepExecution)
         val chunkContext = ChunkContext(StepContext(stepExecution))
         val predicate = createPredicate(id = predicateId)
@@ -78,10 +78,10 @@ internal class CSVHeaderProcessorUnitTest : MockkBaseTest {
             )
         )
         val jobParameters = JobParametersBuilder().add(CSV_TYPE_FIELD, CSV.Type.PAPER).toJobParameters()
-        val jobExecution = JobExecution(123, jobParameters).apply {
+        val jobExecution = createJobExecution(jobParameters = jobParameters).apply {
             executionContext.put(CSV_HEADERS_FIELD, headers)
         }
-        val stepExecution = StepExecution("test", jobExecution)
+        val stepExecution = createStepExecution(jobExecution = jobExecution)
         val contribution = StepContribution(stepExecution)
         val chunkContext = ChunkContext(StepContext(stepExecution))
 
@@ -103,10 +103,10 @@ internal class CSVHeaderProcessorUnitTest : MockkBaseTest {
             )
         )
         val jobParameters = JobParametersBuilder().add(CSV_TYPE_FIELD, CSV.Type.PAPER).toJobParameters()
-        val jobExecution = JobExecution(123, jobParameters).apply {
+        val jobExecution = createJobExecution(jobParameters = jobParameters).apply {
             executionContext.put(CSV_HEADERS_FIELD, headers)
         }
-        val stepExecution = StepExecution("test", jobExecution)
+        val stepExecution = createStepExecution(jobExecution = jobExecution)
         val contribution = StepContribution(stepExecution)
         val chunkContext = ChunkContext(StepContext(stepExecution))
 
@@ -129,10 +129,10 @@ internal class CSVHeaderProcessorUnitTest : MockkBaseTest {
             )
         )
         val jobParameters = JobParametersBuilder().add(CSV_TYPE_FIELD, CSV.Type.PAPER).toJobParameters()
-        val jobExecution = JobExecution(123, jobParameters).apply {
+        val jobExecution = createJobExecution(jobParameters = jobParameters).apply {
             executionContext.put(CSV_HEADERS_FIELD, headers)
         }
-        val stepExecution = StepExecution("test", jobExecution)
+        val stepExecution = createStepExecution(jobExecution = jobExecution)
         val contribution = StepContribution(stepExecution)
         val chunkContext = ChunkContext(StepContext(stepExecution))
         val predicate = createPredicate(label = label)
@@ -168,10 +168,10 @@ internal class CSVHeaderProcessorUnitTest : MockkBaseTest {
             )
         )
         val jobParameters = JobParametersBuilder().add(CSV_TYPE_FIELD, CSV.Type.PAPER).toJobParameters()
-        val jobExecution = JobExecution(123, jobParameters).apply {
+        val jobExecution = createJobExecution(jobParameters = jobParameters).apply {
             executionContext.put(CSV_HEADERS_FIELD, headers)
         }
-        val stepExecution = StepExecution("test", jobExecution)
+        val stepExecution = createStepExecution(jobExecution = jobExecution)
         val contribution = StepContribution(stepExecution)
         val chunkContext = ChunkContext(StepContext(stepExecution))
 

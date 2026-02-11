@@ -73,7 +73,3 @@ Authorization: Bearer {{access_token}}
 ### Delete CSV
 GET {{server_url}}/api/csvs/{{csv_id}}
 Authorization: Bearer {{access_token}}
-
-### Get DOI
-GET http://doi.org/10.1000/182
-Accept: application/vnd.citationstyles.csl+json

@@ -15,7 +15,7 @@ import org.orkg.graph.domain.Predicate
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.json.JsonTest
-import org.springframework.boot.test.json.JacksonTester
+import org.springframework.boot.test.json.Jackson2Tester
 import org.springframework.test.context.ContextConfiguration
 import java.time.OffsetDateTime
 
@@ -26,7 +26,7 @@ internal class PredicateSerializationJsonTest {
     private lateinit var objectMapper: ObjectMapper
 
     @Autowired
-    private lateinit var json: JacksonTester<Predicate>
+    private lateinit var json: Jackson2Tester<Predicate>
 
     /**
      * Predicate Representation V1

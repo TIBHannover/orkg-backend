@@ -16,7 +16,7 @@ import org.orkg.contenttypes.input.testing.fixtures.datasetResponseFields
 import org.orkg.contenttypes.input.testing.fixtures.datasetSummaryResponseFields
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.test.context.ContextConfiguration

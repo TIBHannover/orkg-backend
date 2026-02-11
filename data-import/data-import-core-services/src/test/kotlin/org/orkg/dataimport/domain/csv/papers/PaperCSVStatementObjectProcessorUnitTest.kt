@@ -17,7 +17,9 @@ import org.orkg.dataimport.domain.CSV_PAPERS_RESOURCE_LABEL_TO_ID_FIELD
 import org.orkg.dataimport.domain.TypedValue
 import org.orkg.dataimport.domain.add
 import org.orkg.dataimport.domain.getAndCast
+import org.orkg.dataimport.domain.testing.fixtures.createJobExecution
 import org.orkg.dataimport.domain.testing.fixtures.createPaperCSVRecord
+import org.orkg.dataimport.domain.testing.fixtures.createStepExecution
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
@@ -26,9 +28,7 @@ import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.testing.MockUserId
-import org.springframework.batch.core.JobExecution
-import org.springframework.batch.core.JobParametersBuilder
-import org.springframework.batch.core.StepExecution
+import org.springframework.batch.core.job.parameters.JobParametersBuilder
 
 internal class PaperCSVStatementObjectProcessorUnitTest : MockkBaseTest {
     private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
@@ -60,8 +60,8 @@ internal class PaperCSVStatementObjectProcessorUnitTest : MockkBaseTest {
         )
         val contributorId = ContributorId(MockUserId.USER)
         val jobParameters = JobParametersBuilder().add(CONTRIBUTOR_ID_FIELD, contributorId).toJobParameters()
-        val jobExecution = JobExecution(123, jobParameters)
-        val stepExecution = StepExecution("test", jobExecution)
+        val jobExecution = createJobExecution(jobParameters = jobParameters)
+        val stepExecution = createStepExecution(jobExecution = jobExecution)
         val resourceId = ThingId("R1")
         val newProblemId = ThingId("R2")
         val literalId = ThingId("L1")

@@ -8,31 +8,26 @@ plugins {
 }
 
 dependencies {
+    api("org.eclipse.rdf4j:rdf4j-common-io")
+    api("org.neo4j.driver:neo4j-java-driver")
+    api("org.neo4j:neo4j-cypher-dsl")
+    api("org.springframework.boot:spring-boot-persistence")
+    api("org.springframework.data:spring-data-commons")
+    api("org.springframework.data:spring-data-neo4j")
+    api("org.springframework:spring-context")
+    api("org.springframework:spring-core")
     api(project(":common:core-identifiers"))
     api(project(":common:spring-data"))
     api(project(":common:neo4j-dsl"))
     api(project(":graph:graph-core-model"))
     api(project(":graph:graph-ports-output"))
+    implementation("org.apache.lucene:lucene-queryparser")
     implementation(project(":common:datatypes"))
     implementation(project(":common:spring-webmvc"))
     implementation(project(":common:string-utils"))
     implementation(project(":graph:graph-core-constants"))
 
-    api("org.eclipse.rdf4j:rdf4j-common-io")
-    api("org.neo4j.driver:neo4j-java-driver")
-    api("org.neo4j:neo4j-cypher-dsl")
-    api("org.springframework.boot:spring-boot-autoconfigure")
-    api("org.springframework.data:spring-data-commons")
-    api("org.springframework.data:spring-data-neo4j")
-    api("org.springframework:spring-context")
-    api("org.springframework:spring-core")
-
-    implementation("org.apache.lucene:lucene-queryparser")
-    implementation("org.jetbrains:annotations")
-
     testFixturesApi(project(":common:core-identifiers"))
-
-    testApi("io.kotest:kotest-framework-engine")
 }
 
 testing {
@@ -43,6 +38,7 @@ testing {
                 implementation(testFixtures(project(":common:testing")))
                 implementation(testFixtures(project(":graph:graph-core-model")))
                 implementation("io.kotest:kotest-assertions-core")
+                implementation("io.kotest:kotest-framework-engine")
                 implementation("org.junit.jupiter:junit-jupiter-api")
                 implementation("org.springframework:spring-beans")
                 implementation("org.springframework:spring-test")

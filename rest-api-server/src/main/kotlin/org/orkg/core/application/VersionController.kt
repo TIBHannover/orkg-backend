@@ -12,5 +12,5 @@ class VersionController(
     private val buildProperties: BuildProperties,
 ) {
     @GetMapping
-    fun version(): Map<String, String> = mapOf("version" to buildProperties.version)
+    fun version(): Map<String, String?> = mapOf("version" to buildProperties.version)
 }

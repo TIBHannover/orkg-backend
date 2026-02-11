@@ -16,6 +16,11 @@ class SpringDataJpaKeycloakEventStateAdapter(
         postgresRepository.findById(id).get().counter
 
     override fun save(id: EventType, counter: Int) {
-        postgresRepository.save(KeycloakEventStateEntity(id, counter))
+        postgresRepository.save(
+            KeycloakEventStateEntity().apply {
+                this@apply.eventType = id
+                this@apply.counter = counter
+            }
+        )
     }
 }

@@ -12,6 +12,7 @@ dependencies {
     api("com.fasterxml.jackson.core:jackson-annotations")
     api("com.fasterxml.jackson.core:jackson-databind")
     api("org.apache.tomcat.embed:tomcat-embed-core") // for HttpServletRequest
+    api("org.springframework.boot:spring-boot-webmvc")
     api("org.springframework.data:spring-data-commons")
     api("org.springframework.security:spring-security-config")
     api("org.springframework.security:spring-security-core")
@@ -33,6 +34,8 @@ testing {
     suites {
         val test by getting(JvmTestSuite::class) {
             dependencies {
+                compileOnly("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-starter")
+                compileOnly("org.jspecify:jspecify")
                 implementation(project(":common:serialization"))
                 implementation(testFixtures(project(":common:core-identifiers")))
                 implementation(testFixtures(project(":common:testing")))
@@ -44,11 +47,10 @@ testing {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
                 implementation("org.junit.jupiter:junit-jupiter-api")
                 implementation("org.springframework.boot:spring-boot-test")
-                implementation("org.springframework.boot:spring-boot-test-autoconfigure")
+                implementation("org.springframework.boot:spring-boot-webmvc-test")
                 implementation("org.springframework.restdocs:spring-restdocs-core")
                 implementation("org.springframework:spring-test")
                 runtimeOnly("com.jayway.jsonpath:json-path")
-                compileOnly("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-starter")
             }
         }
     }

@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Pattern
 import org.springframework.restdocs.constraints.Constraint
 
 val statementIdConstraint = Constraint(
-    Pattern::class.qualifiedName,
+    Pattern::class.qualifiedName!!,
     mapOf(
         "regexp" to "^S[a-zA-Z0-9:_-]+$",
         "flags" to emptyArray<Pattern.Flag>(),

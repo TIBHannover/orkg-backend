@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 
 /**
- * Workaround for using a custom [org.springframework.boot.web.servlet.error.ErrorController] implementation in MockMvc tests.
+ * Workaround for using a custom [org.springframework.boot.webmvc.error.ErrorController] implementation in MockMvc tests.
  * See https://github.com/spring-projects/spring-boot/issues/5574
  */
 @ControllerAdvice

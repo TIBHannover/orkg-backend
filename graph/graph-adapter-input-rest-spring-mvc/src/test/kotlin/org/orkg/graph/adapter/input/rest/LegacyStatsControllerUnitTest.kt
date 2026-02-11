@@ -11,7 +11,7 @@ import org.orkg.graph.domain.ObservatoryStats
 import org.orkg.graph.input.LegacyStatisticsUseCases
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.UUID

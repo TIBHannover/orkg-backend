@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
+import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpMethod
@@ -28,14 +29,14 @@ class ApiSpecController(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @GetMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun json(): String =
-        objectMapper.writer(prettyPrinter).writeValueAsString(readApiSpec())
+    fun json(request: HttpServletRequest): String =
+        objectMapper.writer(prettyPrinter).writeValueAsString(readApiSpec(request))
 
     @GetMapping(produces = [MediaType.APPLICATION_YAML_VALUE])
-    fun yaml(): String =
-        yamlMapper.writer(prettyPrinter).writeValueAsString(readApiSpec())
+    fun yaml(request: HttpServletRequest): String =
+        yamlMapper.writer(prettyPrinter).writeValueAsString(readApiSpec(request))
 
-    private fun readApiSpec(): JsonNode? {
+    private fun readApiSpec(request: HttpServletRequest): JsonNode? {
         try {
             if (apiSpecPath != null) {
                 val file = File(apiSpecPath)
@@ -50,7 +51,7 @@ class ApiSpecController(
         } catch (e: IOException) {
             logger.error("Failed to read api spec.", e)
         }
-        throw NoResourceFoundException(HttpMethod.GET, "/api")
+        throw NoResourceFoundException(HttpMethod.GET, request.requestURI, "/api")
     }
 
     companion object {

@@ -45,7 +45,7 @@ class ListMigrationRunner(
     @Autowired
     private lateinit var context: ConfigurableApplicationContext
 
-    override fun run(args: ApplicationArguments?) {
+    override fun run(args: ApplicationArguments) {
         logger.info("Starting list migration...")
         neo4jClient.query("""MATCH (:LiteratureList)-[:RELATED {predicate_id: "HasSection"}]->(:ListSection)-[:RELATED {predicate_id: "HasEntry"}]->(:Resource)-[r:RELATED {predicate_id: "HasPaper"}]->(:Resource) SET r.predicate_id = "HasLink" RETURN COUNT(r)""")
             .run()

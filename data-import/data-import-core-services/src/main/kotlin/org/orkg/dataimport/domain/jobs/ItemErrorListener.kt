@@ -2,9 +2,9 @@ package org.orkg.dataimport.domain.jobs
 
 import org.springframework.batch.core.BatchStatus
 import org.springframework.batch.core.ExitStatus
-import org.springframework.batch.core.SkipListener
-import org.springframework.batch.core.StepExecution
-import org.springframework.batch.core.StepExecutionListener
+import org.springframework.batch.core.listener.SkipListener
+import org.springframework.batch.core.listener.StepExecutionListener
+import org.springframework.batch.core.step.StepExecution
 
 /**
  * This listener can be used to track all errors during a step execution.

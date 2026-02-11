@@ -11,9 +11,7 @@ import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.statementRepositoryContract
 import org.orkg.testing.annotations.Neo4jContainerUnitTest
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.cache.annotation.EnableCaching
 
-@EnableCaching
 @Neo4jContainerUnitTest(
     classes = [
         SpringDataNeo4jStatementAdapter::class,

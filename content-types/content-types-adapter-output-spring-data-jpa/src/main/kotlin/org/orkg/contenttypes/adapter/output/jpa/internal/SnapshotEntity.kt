@@ -14,20 +14,23 @@ import java.util.UUID
 @MappedSuperclass
 abstract class SnapshotEntity<V : Enum<V>> {
     @Id
+    @Column(nullable = false)
     var id: String? = null
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", nullable = false)
     var createdAt: OffsetDateTime? = null
 
-    @Column(name = "created_at_offset_total_seconds")
+    @Column(name = "created_at_offset_total_seconds", nullable = false)
     var createdAtOffsetTotalSeconds: Int? = null
 
+    @Column(nullable = false)
     var createdBy: UUID? = null
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "model_version")
+    @Column(name = "model_version", nullable = false)
     var modelVersion: V? = null
 
     @Type(JsonType::class)
+    @Column(nullable = false)
     var data: JsonNode? = null
 }

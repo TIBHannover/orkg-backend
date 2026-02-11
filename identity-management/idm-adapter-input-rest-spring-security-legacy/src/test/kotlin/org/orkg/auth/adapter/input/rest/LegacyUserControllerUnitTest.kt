@@ -21,7 +21,7 @@ import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath

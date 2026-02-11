@@ -3,8 +3,8 @@ package org.orkg.configuration
 import org.neo4j.driver.Driver
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
-import org.springframework.boot.autoconfigure.data.neo4j.Neo4jDataAutoConfiguration
-import org.springframework.boot.autoconfigure.transaction.TransactionManagerCustomizers
+import org.springframework.boot.data.neo4j.autoconfigure.DataNeo4jAutoConfiguration
+import org.springframework.boot.transaction.autoconfigure.TransactionManagerCustomizers
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.neo4j.core.DatabaseSelectionProvider
@@ -33,7 +33,7 @@ class Neo4jConfiguration {
     /**
      * A new transaction manager for Neo4j.
      *
-     * The source was copied from [Neo4jDataAutoConfiguration.transactionManager] and converted to Kotlin.
+     * The source was copied from [DataNeo4jAutoConfiguration.transactionManager] and converted to Kotlin.
      * The customizers are required, so custom converters, e.g., for IDs, can be hooked into it.
      */
     @Bean

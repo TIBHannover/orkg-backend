@@ -45,7 +45,7 @@ class InitialDataSetup(
      * Creating new classes and predicates only
      * if they don't exist
      */
-    override fun run(args: ApplicationArguments?) {
+    override fun run(args: ApplicationArguments) {
         logger.info("Begin setting up initial data...")
 
         createClasses(readFile<List<RequiredClassCommand>>("$directory/classes.json"))

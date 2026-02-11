@@ -30,6 +30,9 @@ class ProblemResponseFactory(
                 title = status.reasonPhrase
             }
         }
+        if (problemDetail.type == null) {
+            problemDetail.type = ABOUT_BLANK
+        }
         if (problemDetail.title == null) {
             problemDetail.title = (HttpStatus.resolve(problemDetail.status) ?: HttpStatus.INTERNAL_SERVER_ERROR).reasonPhrase
         }

@@ -27,6 +27,7 @@ testing {
     suites {
         val test by getting(JvmTestSuite::class) {
             dependencies {
+                implementation("com.ninja-squad:springmockk")
                 implementation("io.kotest:kotest-assertions-core")
                 implementation("io.kotest:kotest-assertions-shared")
                 implementation("io.kotest:kotest-common")
@@ -37,14 +38,13 @@ testing {
                 implementation("org.hamcrest:hamcrest")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
                 implementation("org.junit.jupiter:junit-jupiter-api")
-                runtimeOnly("org.springframework.boot:spring-boot-starter-test")
-                implementation("org.springframework.boot:spring-boot-test-autoconfigure")
+                implementation("org.springframework.boot:spring-boot-webmvc-test")
                 implementation("org.springframework.restdocs:spring-restdocs-core")
                 implementation("org.springframework:spring-test")
-                implementation("com.ninja-squad:springmockk")
                 implementation(testFixtures(project(":common:testing")))
                 implementation(testFixtures(project(":graph:graph-core-model")))
                 implementation(testFixtures(project(":testing:spring")))
+                runtimeOnly("org.springframework.boot:spring-boot-starter-test")
                 runtimeOnly("com.fasterxml.jackson.module:jackson-module-kotlin") // to (de)serialize data classes
             }
         }

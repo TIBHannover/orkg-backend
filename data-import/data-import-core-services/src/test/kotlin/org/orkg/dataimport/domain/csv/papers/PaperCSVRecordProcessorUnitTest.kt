@@ -20,13 +20,13 @@ import org.orkg.contenttypes.input.PublicationInfoCommand
 import org.orkg.dataimport.domain.CONTRIBUTOR_ID_FIELD
 import org.orkg.dataimport.domain.TypedValue
 import org.orkg.dataimport.domain.add
+import org.orkg.dataimport.domain.testing.fixtures.createJobExecution
 import org.orkg.dataimport.domain.testing.fixtures.createPaperCSVRecord
+import org.orkg.dataimport.domain.testing.fixtures.createStepExecution
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.testing.MockUserId
-import org.springframework.batch.core.JobExecution
-import org.springframework.batch.core.JobParametersBuilder
-import org.springframework.batch.core.StepExecution
+import org.springframework.batch.core.job.parameters.JobParametersBuilder
 import java.util.Optional
 import java.util.UUID
 
@@ -41,8 +41,8 @@ internal class PaperCSVRecordProcessorUnitTest : MockkBaseTest {
         val record = createProcessedPaperCSVRecord()
         val contributorId = ContributorId(MockUserId.USER)
         val jobParameters = JobParametersBuilder().add(CONTRIBUTOR_ID_FIELD, contributorId).toJobParameters()
-        val jobExecution = JobExecution(123, jobParameters)
-        val stepExecution = StepExecution("test", jobExecution)
+        val jobExecution = createJobExecution(jobParameters = jobParameters)
+        val stepExecution = createStepExecution(jobExecution = jobExecution)
         val id = UUID.fromString("390b0013-96a0-4e46-b67a-7c2bfa0d977c")
         val paperId = ThingId("R123")
         val contributionId = ThingId("R147")
@@ -80,8 +80,8 @@ internal class PaperCSVRecordProcessorUnitTest : MockkBaseTest {
         val record = createProcessedPaperCSVRecord().copy(doi = null)
         val contributorId = ContributorId(MockUserId.USER)
         val jobParameters = JobParametersBuilder().add(CONTRIBUTOR_ID_FIELD, contributorId).toJobParameters()
-        val jobExecution = JobExecution(123, jobParameters)
-        val stepExecution = StepExecution("test", jobExecution)
+        val jobExecution = createJobExecution(jobParameters = jobParameters)
+        val stepExecution = createStepExecution(jobExecution = jobExecution)
         val id = UUID.fromString("390b0013-96a0-4e46-b67a-7c2bfa0d977c")
         val paperId = ThingId("R123")
         val contributionId = ThingId("R147")
@@ -119,8 +119,8 @@ internal class PaperCSVRecordProcessorUnitTest : MockkBaseTest {
         val record = createProcessedPaperCSVRecord()
         val contributorId = ContributorId(MockUserId.USER)
         val jobParameters = JobParametersBuilder().add(CONTRIBUTOR_ID_FIELD, contributorId).toJobParameters()
-        val jobExecution = JobExecution(123, jobParameters)
-        val stepExecution = StepExecution("test", jobExecution)
+        val jobExecution = createJobExecution(jobParameters = jobParameters)
+        val stepExecution = createStepExecution(jobExecution = jobExecution)
         val id = UUID.fromString("390b0013-96a0-4e46-b67a-7c2bfa0d977c")
         val paperId = ThingId("R123")
         val paperCreateCommand = CreatePaperUseCase.CreateCommand(

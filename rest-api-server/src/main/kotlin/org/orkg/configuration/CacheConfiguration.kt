@@ -12,8 +12,8 @@ import org.orkg.graph.adapter.output.neo4j.RESOURCE_ID_TO_RESOURCE_CACHE
 import org.orkg.graph.adapter.output.neo4j.RESOURCE_ID_TO_RESOURCE_EXISTS_CACHE
 import org.orkg.graph.adapter.output.neo4j.THING_ID_TO_THING_CACHE
 import org.slf4j.LoggerFactory
-import org.springframework.boot.autoconfigure.cache.CacheManagerCustomizer
-import org.springframework.boot.autoconfigure.cache.CacheProperties
+import org.springframework.boot.cache.autoconfigure.CacheManagerCustomizer
+import org.springframework.boot.cache.autoconfigure.CacheProperties
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cache.annotation.EnableCaching
@@ -57,8 +57,13 @@ class CacheConfiguration {
                     custom == null -> basic
                     else -> mergeSpecs(basic, custom)
                 }
-                logger.info("""Using cache configuration $spec for $cacheName""")
-                cacheManager.registerCustomCache(cacheName, Caffeine.from(spec).build())
+                if (spec != null) {
+                    logger.info("""Using cache configuration $spec for $cacheName""")
+                    cacheManager.registerCustomCache(cacheName, Caffeine.from(spec).build())
+                } else {
+                    logger.info("""Using default cache configuration for $cacheName""")
+                    cacheManager.registerCustomCache(cacheName, Caffeine.newBuilder().build())
+                }
             }
         }
 

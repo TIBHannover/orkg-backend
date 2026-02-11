@@ -10,9 +10,9 @@ import org.orkg.dataimport.domain.getOrDefault
 import org.orkg.graph.input.CreatePredicateUseCase
 import org.orkg.graph.input.UnsafePredicateUseCases
 import org.springframework.batch.core.ExitStatus
-import org.springframework.batch.core.StepExecution
-import org.springframework.batch.core.StepExecutionListener
-import org.springframework.batch.item.ItemProcessor
+import org.springframework.batch.core.listener.StepExecutionListener
+import org.springframework.batch.core.step.StepExecution
+import org.springframework.batch.infrastructure.item.ItemProcessor
 
 open class PaperCSVPredicateProcessor(
     private val unsafePredicateUseCases: UnsafePredicateUseCases,

@@ -16,7 +16,7 @@ import org.orkg.graph.domain.Class
 import org.orkg.graph.testing.fixtures.createClass
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.json.JsonTest
-import org.springframework.boot.test.json.JacksonTester
+import org.springframework.boot.test.json.Jackson2Tester
 import org.springframework.test.context.ContextConfiguration
 import java.time.OffsetDateTime
 
@@ -27,7 +27,7 @@ internal class ClassSerializationJsonTest {
     private lateinit var objectMapper: ObjectMapper
 
     @Autowired
-    private lateinit var json: JacksonTester<Class>
+    private lateinit var json: Jackson2Tester<Class>
 
     /**
      * Class Representation V1

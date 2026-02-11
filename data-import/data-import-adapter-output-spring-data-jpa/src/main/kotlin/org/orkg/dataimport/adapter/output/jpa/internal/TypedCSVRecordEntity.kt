@@ -14,6 +14,7 @@ import java.util.UUID
 @Table(name = "typed_csv_records")
 class TypedCSVRecordEntity {
     @Id
+    @Column(nullable = false)
     var id: UUID? = null
 
     @Column(name = "csv_id", nullable = false)

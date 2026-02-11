@@ -12,7 +12,7 @@ import kotlin.reflect.KClass
 
 fun pageableDetailedFieldParameters(
     schemaClass: KClass<*>? = null,
-    additionalContentArrayAttributes: Map<String, Any?>? = null,
+    additionalContentArrayAttributes: Map<String, Any>? = null,
 ): List<FieldDescriptor> = listOf(
     if (schemaClass != null) {
         subsectionWithPath("content[]").references(schemaClass)

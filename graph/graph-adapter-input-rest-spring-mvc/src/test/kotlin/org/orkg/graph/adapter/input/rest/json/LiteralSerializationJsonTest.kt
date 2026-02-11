@@ -16,7 +16,7 @@ import org.orkg.graph.domain.Literals
 import org.orkg.graph.testing.fixtures.createLiteral
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.json.JsonTest
-import org.springframework.boot.test.json.JacksonTester
+import org.springframework.boot.test.json.Jackson2Tester
 import org.springframework.test.context.ContextConfiguration
 import java.time.OffsetDateTime
 
@@ -27,7 +27,7 @@ internal class LiteralSerializationJsonTest {
     private lateinit var objectMapper: ObjectMapper
 
     @Autowired
-    private lateinit var json: JacksonTester<Literal>
+    private lateinit var json: Jackson2Tester<Literal>
 
     /**
      * Literal Representation V1

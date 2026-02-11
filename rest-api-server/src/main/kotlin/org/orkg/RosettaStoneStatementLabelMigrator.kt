@@ -38,7 +38,7 @@ class RosettaStoneStatementLabelMigrator(
 ) : ApplicationRunner {
     private val logger = LoggerFactory.getLogger(this::class.java.name)
 
-    override fun run(args: ApplicationArguments?) {
+    override fun run(args: ApplicationArguments) {
         logger.info("Migrating rosetta stone statement labels...")
 
         val ignored = mutableSetOf<ThingId>()

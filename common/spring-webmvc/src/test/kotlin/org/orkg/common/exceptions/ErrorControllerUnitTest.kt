@@ -8,8 +8,8 @@ import org.orkg.common.exceptions.ErrorControllerUnitTest.TestController
 import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcBaseTest
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestComponent
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NO_CONTENT
 import org.springframework.http.MediaType

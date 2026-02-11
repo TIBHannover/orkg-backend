@@ -5,7 +5,7 @@ plugins {
 
 dependencies {
     api("jakarta.persistence:jakarta.persistence-api")
-    api("org.springframework.boot:spring-boot-autoconfigure")
+    api("org.springframework.boot:spring-boot-persistence")
     api("org.springframework.data:spring-data-jpa")
     api("org.springframework:spring-context")
     api(project(":media-storage:media-storage-core-model"))
@@ -20,20 +20,20 @@ testing {
         val test by getting(JvmTestSuite::class) {
             dependencies {
                 compileOnly("org.junit.jupiter:junit-jupiter-api")
-                runtimeOnly("org.springframework.boot:spring-boot-starter-test")
-                runtimeOnly("org.springframework.boot:spring-boot-starter-data-jpa")
-                runtimeOnly(project(":migrations:liquibase"))
-                runtimeOnly("io.kotest:kotest-extensions-spring")
-                runtimeOnly("org.liquibase:liquibase-core")
-                runtimeOnly("org.postgresql:postgresql")
+                implementation("org.springframework.boot:spring-boot-jdbc-test")
+                implementation("org.springframework.boot:spring-boot-test")
                 implementation("org.springframework:spring-beans")
-                runtimeOnly("org.springframework.boot:spring-boot-starter-data-jpa")
-                implementation("org.springframework.boot:spring-boot-test-autoconfigure")
+                implementation("org.springframework:spring-orm")
                 implementation("org.springframework:spring-test")
                 implementation(testFixtures(project(":media-storage:media-storage-ports-output")))
                 implementation(testFixtures(project(":testing:spring")))
-                implementation("org.springframework.boot:spring-boot-test")
-                implementation("org.springframework:spring-orm")
+                runtimeOnly("io.kotest:kotest-extensions-spring")
+                runtimeOnly("org.liquibase:liquibase-core")
+                runtimeOnly("org.postgresql:postgresql")
+                runtimeOnly("org.springframework.boot:spring-boot-liquibase")
+                runtimeOnly("org.springframework.boot:spring-boot-starter-data-jpa")
+                runtimeOnly("org.springframework.boot:spring-boot-starter-test")
+                runtimeOnly(project(":migrations:liquibase"))
             }
         }
     }

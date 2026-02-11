@@ -8,7 +8,7 @@ import org.orkg.statistics.domain.MetricNotFound
 import org.orkg.statistics.domain.TooManyParameterValues
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
 import org.orkg.testing.spring.restdocs.exceptionResponseFields
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath

@@ -8,7 +8,7 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.testing.spring.MockMvcOpenApiBaseTest
 import org.orkg.testing.spring.restdocs.oneOf
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.test.context.ContextConfiguration
 
 @WebMvcTest

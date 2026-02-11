@@ -17,6 +17,7 @@ dependencies {
     implementation(project(":graph:graph-core-constants"))
 
     testFixturesApi("dev.forkhandles:fabrikate4k")
+    testFixturesApi("org.springframework.batch:spring-batch-core")
     testFixturesApi(project(":common:core-identifiers"))
     testFixturesImplementation(project(":graph:graph-core-constants"))
     testFixturesImplementation(testFixtures(project(":common:testing")))

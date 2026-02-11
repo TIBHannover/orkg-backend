@@ -12,11 +12,11 @@ import org.orkg.dataimport.domain.CSV_HEADERS_FIELD
 import org.orkg.dataimport.domain.CSV_TYPE_FIELD
 import org.orkg.dataimport.domain.add
 import org.orkg.dataimport.domain.testing.fixtures.createCSVRecord
+import org.orkg.dataimport.domain.testing.fixtures.createJobExecution
 import org.orkg.dataimport.domain.testing.fixtures.createPaperCSVHeaders
+import org.orkg.dataimport.domain.testing.fixtures.createStepExecution
 import org.orkg.dataimport.domain.testing.fixtures.createTypedCSVRecord
-import org.springframework.batch.core.JobExecution
-import org.springframework.batch.core.JobParametersBuilder
-import org.springframework.batch.core.StepExecution
+import org.springframework.batch.core.job.parameters.JobParametersBuilder
 import java.util.UUID
 
 internal class TypedCSVRecordParserUnitTest : MockkBaseTest {
@@ -29,10 +29,10 @@ internal class TypedCSVRecordParserUnitTest : MockkBaseTest {
         val id = UUID.fromString("e7de95a8-d1f5-4837-9a1f-a2eb8b45a254")
         val headers = createPaperCSVHeaders()
         val jobParameters = JobParametersBuilder().add(CSV_TYPE_FIELD, CSV.Type.PAPER).toJobParameters()
-        val jobExecution = JobExecution(123, jobParameters).apply {
+        val jobExecution = createJobExecution(jobParameters = jobParameters).apply {
             executionContext.put(CSV_HEADERS_FIELD, headers)
         }
-        val stepExecution = StepExecution("test", jobExecution)
+        val stepExecution = createStepExecution(jobExecution = jobExecution)
         // Mock CSVRecord, because its constructor is package private
         val csvRecord = mockk<CSVRecord>()
         val record = PositionAwareCSVRecord(

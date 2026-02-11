@@ -80,7 +80,7 @@ import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
 import org.orkg.testing.spring.restdocs.format
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath

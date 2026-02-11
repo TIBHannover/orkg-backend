@@ -19,7 +19,7 @@ import org.orkg.graph.domain.Visibility
 import org.orkg.graph.testing.fixtures.createResource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.json.JsonTest
-import org.springframework.boot.test.json.JacksonTester
+import org.springframework.boot.test.json.Jackson2Tester
 import org.springframework.test.context.ContextConfiguration
 import java.time.OffsetDateTime
 
@@ -30,7 +30,7 @@ internal class ResourceSerializationJsonTest {
     private lateinit var objectMapper: ObjectMapper
 
     @Autowired
-    private lateinit var json: JacksonTester<Resource>
+    private lateinit var json: Jackson2Tester<Resource>
 
     /**
      * Resource Representation V1

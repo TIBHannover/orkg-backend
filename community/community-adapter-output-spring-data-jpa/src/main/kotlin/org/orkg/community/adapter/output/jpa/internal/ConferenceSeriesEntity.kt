@@ -22,21 +22,24 @@ import java.util.UUID
 @Table(name = "conferences_series")
 class ConferenceSeriesEntity {
     @Id
+    @Column(nullable = false)
     var id: UUID? = null
 
     @NotBlank
+    @Column(nullable = false)
     var name: String? = null
 
+    @Column(nullable = false)
     var url: String? = null
 
-    @Column(name = "display_id")
+    @Column(name = "display_id", nullable = false)
     var displayId: String? = null
 
-    @Column(name = "start_date")
+    @Column(name = "start_date", nullable = false)
     var startDate: LocalDate? = null
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "review_type")
+    @Column(name = "review_type", nullable = false)
     var reviewType: PeerReviewType? = null
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

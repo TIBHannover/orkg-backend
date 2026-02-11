@@ -11,8 +11,8 @@ import org.orkg.testing.spring.restdocs.references
 import org.springframework.beans.ConversionNotSupportedException
 import org.springframework.beans.TypeMismatchException
 import org.springframework.core.MethodParameter
-import org.springframework.data.mapping.PropertyReferenceException
-import org.springframework.data.util.TypeInformation
+import org.springframework.data.core.PropertyReferenceException
+import org.springframework.data.core.TypeInformation
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus.BAD_REQUEST
@@ -285,7 +285,7 @@ internal class SpringExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun noResourceFoundException() {
         val type = "orkg:problem:not_found"
-        documentedGetRequestTo(NoResourceFoundException(HttpMethod.GET, "/resource"))
+        documentedGetRequestTo(NoResourceFoundException(HttpMethod.GET, "/resource", "/resource"))
             .andExpectErrorStatus(NOT_FOUND)
             .andExpectType(type)
             .andExpectTitle("Not Found")

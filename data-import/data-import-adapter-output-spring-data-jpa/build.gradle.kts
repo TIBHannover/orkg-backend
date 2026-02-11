@@ -8,7 +8,7 @@ plugins {
 
 dependencies {
     api("jakarta.persistence:jakarta.persistence-api")
-    api("org.springframework.boot:spring-boot-autoconfigure")
+    api("org.springframework.boot:spring-boot-persistence")
     api("org.springframework.data:spring-data-commons")
     api("org.springframework.data:spring-data-jpa")
     api("org.springframework:spring-context")
@@ -33,12 +33,13 @@ testing {
                 implementation("org.springframework:spring-beans")
                 implementation("org.springframework:spring-orm")
                 implementation("org.springframework:spring-test")
+                implementation("org.springframework.boot:spring-boot-jdbc-test")
                 implementation("org.springframework.boot:spring-boot-test")
-                implementation("org.springframework.boot:spring-boot-test-autoconfigure")
                 implementation(testFixtures(project(":data-import:data-import-ports-output")))
                 implementation(testFixtures(project(":testing:spring")))
                 runtimeOnly("org.liquibase:liquibase-core")
                 runtimeOnly("org.postgresql:postgresql")
+                runtimeOnly("org.springframework.boot:spring-boot-liquibase")
                 runtimeOnly(project(":migrations:liquibase"))
             }
         }

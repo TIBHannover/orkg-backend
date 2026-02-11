@@ -5,8 +5,8 @@ import org.orkg.common.exceptions.ProblemResponseFactory
 import org.orkg.common.exceptions.SimpleMessageException
 import org.orkg.dataimport.domain.PROBLEMS
 import org.orkg.dataimport.domain.internal.RecordParsingException
-import org.springframework.batch.core.JobExecution
-import org.springframework.batch.core.JobExecutionListener
+import org.springframework.batch.core.job.JobExecution
+import org.springframework.batch.core.listener.JobExecutionListener
 import org.springframework.batch.core.repository.JobRepository
 import org.springframework.batch.core.step.FatalStepExecutionException
 import org.springframework.http.HttpStatus

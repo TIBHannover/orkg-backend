@@ -62,7 +62,7 @@ import org.orkg.testing.spring.restdocs.format
 import org.orkg.testing.spring.restdocs.repeatable
 import org.orkg.testing.spring.restdocs.type
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus.BAD_REQUEST

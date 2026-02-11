@@ -18,7 +18,7 @@ import org.orkg.dataimport.output.PaperCSVRecordImportResultRepository
 import org.orkg.dataimport.output.PaperCSVRecordRepository
 import org.orkg.dataimport.output.TypedCSVRecordRepository
 import org.slf4j.LoggerFactory
-import org.springframework.batch.core.JobParametersBuilder
+import org.springframework.batch.core.job.parameters.JobParametersBuilder
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component

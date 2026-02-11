@@ -16,6 +16,7 @@ import java.util.UUID
 @Table(name = "paper_csv_import_result_records")
 class PaperCSVRecordImportResultEntity {
     @Id
+    @Column(nullable = false)
     var id: UUID? = null
 
     @Column(name = "imported_entity_id", nullable = false)

@@ -4,7 +4,7 @@ import org.orkg.common.ContributorId
 import org.orkg.dataimport.domain.jobs.JobId
 import org.orkg.dataimport.domain.jobs.JobResult
 import org.orkg.dataimport.domain.jobs.JobStatus
-import org.springframework.batch.core.JobParameters
+import org.springframework.batch.core.job.parameters.JobParameters
 import org.springframework.data.domain.Pageable
 import java.util.Optional
 

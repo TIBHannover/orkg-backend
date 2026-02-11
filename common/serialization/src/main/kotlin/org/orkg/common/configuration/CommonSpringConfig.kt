@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.Module
 import com.fasterxml.jackson.module.kotlin.KotlinFeature.NewStrictNullChecks
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.orkg.common.json.CommonJacksonModule
-import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
+import org.springframework.boot.jackson2.autoconfigure.Jackson2ObjectMapperBuilderCustomizer
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder

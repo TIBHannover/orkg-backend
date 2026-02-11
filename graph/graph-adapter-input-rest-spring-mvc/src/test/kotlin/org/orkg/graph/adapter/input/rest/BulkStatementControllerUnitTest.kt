@@ -30,7 +30,7 @@ import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.restdocs.pagedResponseFields
 import org.orkg.testing.spring.restdocs.referencesPageOf
 import org.orkg.testing.spring.restdocs.repeatable
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.data.domain.PageRequest
 import org.springframework.restdocs.payload.PayloadDocumentation.applyPathPrefix
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath

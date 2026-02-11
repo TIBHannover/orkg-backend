@@ -17,8 +17,8 @@ import org.orkg.common.testing.fixtures.INCOMING_STATEMENTS_COUNT_CAPABILITY
 import org.orkg.testing.configuration.ExceptionTestConfiguration
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcBaseTest
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestComponent
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.http.MediaType
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.ResultActions

@@ -3,9 +3,9 @@ package org.orkg.common.exceptions
 import jakarta.servlet.RequestDispatcher
 import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.LoggerFactory
-import org.springframework.boot.autoconfigure.web.servlet.error.AbstractErrorController
-import org.springframework.boot.autoconfigure.web.servlet.error.ErrorViewResolver
-import org.springframework.boot.web.servlet.error.ErrorAttributes
+import org.springframework.boot.webmvc.autoconfigure.error.AbstractErrorController
+import org.springframework.boot.webmvc.autoconfigure.error.ErrorViewResolver
+import org.springframework.boot.webmvc.error.ErrorAttributes
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ProblemDetail
@@ -32,7 +32,7 @@ class ErrorController(
     @RequestMapping
     fun error(request: HttpServletRequest): ResponseEntity<Map<String, Any?>> {
         val servletWebRequest = ServletWebRequest(request)
-        val exception = errorAttributes.getError(servletWebRequest)
+        val exception = errorAttributes.getError(servletWebRequest)!!
         val instance = servletWebRequest.getAttribute(RequestDispatcher.ERROR_REQUEST_URI, RequestAttributes.SCOPE_REQUEST) as? String
         val (httpHeaders, problemDetail) = problemResponseFactory.createProblemResponse(exception, getStatus(request), instance)
 
@@ -46,6 +46,10 @@ class ErrorController(
         val status = problemDetail.status
         if (status == HttpStatus.NO_CONTENT.value()) {
             return ResponseEntity.noContent().build()
+        }
+
+        if (problemDetail.type == null) {
+            problemDetail.type = ABOUT_BLANK
         }
 
         problemDetail.appendLegacyField("error", problemDetail.title)

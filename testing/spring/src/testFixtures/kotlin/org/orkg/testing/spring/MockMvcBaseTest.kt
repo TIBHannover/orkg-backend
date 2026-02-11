@@ -63,6 +63,7 @@ import org.springframework.restdocs.snippet.Snippet
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.RequestBuilder
 import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.ResultHandler
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
@@ -82,7 +83,12 @@ import org.springframework.web.context.WebApplicationContext
     DocumentationContext::class,
 )
 @ExtendWith(RestDocumentationExtension::class)
-@TestPropertySource(properties = ["spring.jackson.mapper.sort-properties-alphabetically=true"])
+@TestPropertySource(
+    properties = [
+        "spring.jackson2.mapper.sort-properties-alphabetically=true",
+        "spring.http.converters.preferred-json-mapper=jackson2"
+    ]
+)
 abstract class MockMvcBaseTest(val prefix: String) : MockkBaseTest {
     @Autowired
     protected lateinit var objectMapper: ObjectMapper
@@ -131,7 +137,7 @@ abstract class MockMvcBaseTest(val prefix: String) : MockkBaseTest {
      */
     protected fun generateDefaultDocSnippets(): ResultHandler = documentationHandler
 
-    protected fun MockHttpServletRequestBuilder.perform(): ResultActions = mockMvc.perform(this)
+    protected fun RequestBuilder.perform(): ResultActions = mockMvc.perform(this)
 
     protected fun MockHttpServletRequestBuilder.content(body: Any): MockHttpServletRequestBuilder =
         content(body.toContent())

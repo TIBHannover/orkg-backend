@@ -15,7 +15,7 @@ testing {
         val test by getting(JvmTestSuite::class) {
             dependencies {
                 implementation("org.junit.jupiter:junit-jupiter-api")
-                implementation("org.springframework.boot:spring-boot-test-autoconfigure")
+                implementation("org.springframework.boot:spring-boot-webmvc-test")
                 implementation("org.springframework.restdocs:spring-restdocs-core")
                 implementation("org.springframework:spring-core")
                 implementation("org.springframework:spring-test")

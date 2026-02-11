@@ -15,7 +15,7 @@ import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.dataimport.domain.PROBLEMS
 import org.orkg.dataimport.domain.getAndCast
 import org.orkg.dataimport.domain.internal.RecordParsingException
-import org.springframework.batch.core.JobExecution
+import org.orkg.dataimport.domain.testing.fixtures.createJobExecution
 import org.springframework.batch.core.repository.JobRepository
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
@@ -31,7 +31,7 @@ internal class JobExecutionErrorListenerUnitTest : MockkBaseTest {
     @Test
     fun `Given a job execution, when an exception was thrown during a step, it saves the problem detail to the execution context`() {
         val exception = RuntimeException("Error during step")
-        val jobExecution = JobExecution(123)
+        val jobExecution = createJobExecution()
         jobExecution.addFailureException(exception)
         val problemDetails = listOf(
             ProblemDetail.forStatusAndDetail(INTERNAL_SERVER_ERROR, exception.message),
@@ -53,7 +53,7 @@ internal class JobExecutionErrorListenerUnitTest : MockkBaseTest {
         val exception1 = RuntimeException("Error during step 1")
         val exception2 = RuntimeException("Error during step 2")
         val recordParsingException = RecordParsingException(listOf(exception1, exception2))
-        val jobExecution = JobExecution(123)
+        val jobExecution = createJobExecution()
         jobExecution.addFailureException(recordParsingException)
         val problemDetails = listOf(
             ProblemDetail.forStatusAndDetail(INTERNAL_SERVER_ERROR, exception1.message),
@@ -73,7 +73,7 @@ internal class JobExecutionErrorListenerUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a job execution, when no exception was thrown during a step, it does nothing`() {
-        val jobExecution = JobExecution(123)
+        val jobExecution = createJobExecution()
 
         jobExecutionErrorListener.afterJob(jobExecution)
         jobExecution.executionContext.containsKey(PROBLEMS) shouldBe false

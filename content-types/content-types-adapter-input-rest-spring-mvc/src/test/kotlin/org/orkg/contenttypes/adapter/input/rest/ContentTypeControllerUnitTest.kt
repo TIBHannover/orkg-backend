@@ -48,7 +48,7 @@ import org.orkg.testing.spring.restdocs.enumValues
 import org.orkg.testing.spring.restdocs.format
 import org.orkg.testing.spring.restdocs.repeatable
 import org.orkg.testing.spring.restdocs.type
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.restdocs.request.ParameterDescriptor
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName

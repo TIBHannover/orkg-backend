@@ -18,20 +18,23 @@ import java.util.UUID
 class ContributorIdentifierEntity {
     @Id
     @GeneratedValue
+    @Column(nullable = false)
     var id: UUID? = null
 
-    @Column(name = "contributor_id")
+    @Column(name = "contributor_id", nullable = false)
     var contributorId: UUID? = null
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     var type: ContributorIdentifier.Type? = null
 
+    @Column(nullable = false)
     var value: String? = null
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", nullable = false)
     var createdAt: OffsetDateTime? = null
 
-    @Column(name = "created_at_offset_total_seconds")
+    @Column(name = "created_at_offset_total_seconds", nullable = false)
     var createdAtOffsetTotalSeconds: Int? = null
 
     fun toContributorIdenfitier() = ContributorIdentifier(

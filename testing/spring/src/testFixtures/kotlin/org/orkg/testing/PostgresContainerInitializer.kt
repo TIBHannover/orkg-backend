@@ -28,7 +28,7 @@ class PostgresContainerInitializer : ApplicationContextInitializer<ConfigurableA
         "spring.datasource.username=$username",
         "spring.datasource.password=$password",
         "spring.datasource.driver-class-name=$driverClassName",
-        "spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect",
+        "spring.jpa.database=postgresql",
         "spring.jpa.hibernate.ddl-auto=validate",
         "spring.jpa.show-sql=true",
     )

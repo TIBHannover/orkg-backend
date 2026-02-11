@@ -12,7 +12,7 @@ import org.springframework.context.MessageSource
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.i18n.LocaleContextHolder
-import org.springframework.data.mapping.PropertyReferenceException
+import org.springframework.data.core.PropertyReferenceException
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.ProblemDetail
@@ -99,11 +99,13 @@ class ErrorResponseCustomizers {
     @Bean
     fun conversionNotSupportedExceptionCustomizer(messageSource: MessageSource?) =
         errorResponseCustomizer<ConversionNotSupportedException> { ex, problemDetail, _ ->
-            val args = arrayOf<Any?>(ex.propertyName, ex.value)
+            val propertyName = ex.propertyName
+            val value = ex.value
+            val args = if (propertyName != null && value != null) arrayOf(propertyName, value) else null
             customizeSpringException<ConversionNotSupportedException>(
                 problemDetail = problemDetail,
                 messageSource = messageSource,
-                defaultDetail = "Failed to convert '${args[0]}' with value: '${args[1]}'",
+                defaultDetail = "Failed to convert '$propertyName' with value: '$value'",
                 args = args,
             )
         }
@@ -121,11 +123,13 @@ class ErrorResponseCustomizers {
     @Bean
     fun typeMismatchExceptionCustomizer(messageSource: MessageSource?) =
         errorResponseCustomizer<TypeMismatchException>(status = BAD_REQUEST) { ex, problemDetail, _ ->
-            val args = arrayOf<Any?>(ex.propertyName, ex.value)
+            val propertyName = ex.propertyName
+            val value = ex.value
+            val args = if (propertyName != null && value != null) arrayOf(propertyName, value) else null
             customizeSpringException<TypeMismatchException>(
                 problemDetail = problemDetail,
                 messageSource = messageSource,
-                defaultDetail = "Failed to convert '${args[0]}' with value: '${args[1]}'",
+                defaultDetail = "Failed to convert '$propertyName' with value: '$value'",
                 args = args,
             )
         }
@@ -155,7 +159,7 @@ class ErrorResponseCustomizers {
         problemDetail: ProblemDetail,
         messageSource: MessageSource?,
         defaultDetail: String? = null,
-        args: Array<Any?>? = null,
+        args: Array<Any>? = null,
     ) {
         if (messageSource != null) {
             val locale = LocaleContextHolder.getLocale()

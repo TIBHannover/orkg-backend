@@ -10,7 +10,6 @@ testing {
     suites {
         val test by getting(JvmTestSuite::class) {
             dependencies {
-                implementation("org.jetbrains.kotlin:kotlin-stdlib") // "downgrade" from api()
                 runtimeOnly("org.springframework.boot:spring-boot-starter-test")
                 implementation("io.kotest:kotest-framework-engine")
                 implementation("org.springframework:spring-beans")
@@ -28,7 +27,7 @@ testing {
 }
 
 dependencies {
-    api("org.springframework.boot:spring-boot-autoconfigure")
+    api("org.springframework.boot:spring-boot-persistence")
     api("org.springframework.data:spring-data-neo4j")
     api("org.springframework:spring-context")
     api(project(":common:neo4j-dsl"))

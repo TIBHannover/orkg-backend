@@ -12,7 +12,7 @@ import org.orkg.testing.MailpitContainerInitializer
 import org.orkg.testing.MailpitContainerInitializer.Companion.httpPort
 import org.orkg.testing.MailpitContainerInitializer.Companion.mailpitContainer
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration
+import org.springframework.boot.mail.autoconfigure.MailSenderAutoConfiguration
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit.jupiter.SpringExtension

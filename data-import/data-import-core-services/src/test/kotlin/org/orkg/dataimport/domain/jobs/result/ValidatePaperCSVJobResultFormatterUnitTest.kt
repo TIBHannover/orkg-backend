@@ -15,12 +15,12 @@ import org.orkg.dataimport.domain.PROBLEMS
 import org.orkg.dataimport.domain.add
 import org.orkg.dataimport.domain.csv.CSVID
 import org.orkg.dataimport.domain.jobs.JobStatus.Status
+import org.orkg.dataimport.domain.testing.fixtures.createJobExecution
 import org.orkg.dataimport.domain.testing.fixtures.createPaperCSVRecord
 import org.orkg.dataimport.output.PaperCSVRecordRepository
 import org.orkg.testing.pageOf
 import org.springframework.batch.core.BatchStatus
-import org.springframework.batch.core.JobExecution
-import org.springframework.batch.core.JobParametersBuilder
+import org.springframework.batch.core.job.parameters.JobParametersBuilder
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.ProblemDetail
 import java.util.Optional
@@ -33,7 +33,7 @@ internal class ValidatePaperCSVJobResultFormatterUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a job execution, when status is pending, it returns an empty result`() {
-        val jobExecution = JobExecution(123)
+        val jobExecution = createJobExecution()
         jobExecution.status = BatchStatus.STARTING
         val result = validatePaperCSVJobResultFormatter.getResult(
             jobExecution = jobExecution,
@@ -46,7 +46,7 @@ internal class ValidatePaperCSVJobResultFormatterUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a job execution, when status is running, it returns an empty result`() {
-        val jobExecution = JobExecution(123)
+        val jobExecution = createJobExecution()
         jobExecution.status = BatchStatus.STARTED
         val result = validatePaperCSVJobResultFormatter.getResult(
             jobExecution = jobExecution,
@@ -59,7 +59,7 @@ internal class ValidatePaperCSVJobResultFormatterUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a job execution, when status is stopped, it returns an empty result`() {
-        val jobExecution = JobExecution(123)
+        val jobExecution = createJobExecution()
         jobExecution.status = BatchStatus.STOPPED
         val result = validatePaperCSVJobResultFormatter.getResult(
             jobExecution = jobExecution,
@@ -72,7 +72,7 @@ internal class ValidatePaperCSVJobResultFormatterUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a job execution, when status is failed, and execution context contains problem details, it throws an exception containing the problem details`() {
-        val jobExecution = JobExecution(123)
+        val jobExecution = createJobExecution()
         jobExecution.status = BatchStatus.FAILED
         val problemDetails = listOf<ProblemDetail>(ProblemDetail.forStatus(400))
         jobExecution.executionContext.put(PROBLEMS, objectMapper.writeValueAsBytes(problemDetails))
@@ -87,7 +87,7 @@ internal class ValidatePaperCSVJobResultFormatterUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a job execution, when status is failed, and execution does not contain any problem details, it throws an exception`() {
-        val jobExecution = JobExecution(123)
+        val jobExecution = createJobExecution()
         jobExecution.status = BatchStatus.FAILED
         val pageable = PageRequest.of(0, 10)
 
@@ -102,7 +102,7 @@ internal class ValidatePaperCSVJobResultFormatterUnitTest : MockkBaseTest {
     fun `Given a job execution, when status is done, it returns a page of result objects`() {
         val csvId = CSVID("bf59dd89-6a4b-424b-b9d5-36042661e837")
         val jobParameters = JobParametersBuilder().add(CSV_ID_FIELD, csvId).toJobParameters()
-        val jobExecution = JobExecution(123, jobParameters)
+        val jobExecution = createJobExecution(jobParameters = jobParameters)
         jobExecution.status = BatchStatus.COMPLETED
         val pageable = PageRequest.of(0, 10)
         val expected = pageOf(createPaperCSVRecord(), pageable = pageable)

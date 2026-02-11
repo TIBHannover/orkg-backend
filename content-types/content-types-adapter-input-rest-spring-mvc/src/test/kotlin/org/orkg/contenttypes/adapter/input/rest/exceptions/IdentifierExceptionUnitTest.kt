@@ -6,7 +6,7 @@ import org.orkg.contenttypes.domain.InvalidDOI
 import org.orkg.contenttypes.domain.InvalidIdentifier
 import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerExceptionUnitTestConfiguration
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath

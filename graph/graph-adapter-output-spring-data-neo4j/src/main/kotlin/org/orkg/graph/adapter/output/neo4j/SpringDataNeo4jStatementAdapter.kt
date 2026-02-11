@@ -22,6 +22,7 @@ import org.neo4j.cypherdsl.core.Cypher.valueAt
 import org.neo4j.cypherdsl.core.ExposesWith
 import org.neo4j.cypherdsl.core.Expression
 import org.neo4j.cypherdsl.core.StatementBuilder
+import org.neo4j.driver.internal.value.NullValue
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -56,6 +57,7 @@ import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.neo4j.core.Neo4jClient
+import org.springframework.data.neo4j.core.fetchAs
 import org.springframework.stereotype.Component
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
@@ -116,7 +118,7 @@ class SpringDataNeo4jStatementAdapter(
                 "predicateId" to statement.predicate.id.value,
                 "createdBy" to statement.createdBy.value.toString(),
                 "createdAt" to statement.createdAt!!.format(ISO_OFFSET_DATE_TIME),
-                "index" to statement.index,
+                "index" to (statement.index ?: NullValue.NULL),
                 "modifiable" to statement.modifiable
             )
             .run()
@@ -834,21 +836,20 @@ class SpringDataNeo4jStatementAdapter(
         }
         val countQuery = "$commonQuery RETURN COUNT(DISTINCT paper)"
         val parameters = mapOf(
-            "observatoryId" to observatoryId?.value?.toString(),
+            "observatoryId" to (observatoryId?.value?.toString() ?: NullValue.NULL),
             "values" to filters.map { it.values.map(Value::value) },
             "sdnSkip" to pageable.offset,
             "sdnLimit" to pageable.pageSize
         )
         val elements = neo4jClient.query(query)
             .bindAll(parameters)
-            .fetchAs(Resource::class.java)
+            .fetchAs<Resource>()
             .mappedBy(ResourceMapper("paper"))
             .all()
         val count = neo4jClient.query(countQuery)
             .bindAll(parameters)
-            .fetchAs(Long::class.java)
-            .one()
-            .orElse(0)
+            .fetchAs<Long>()
+            .one() ?: 0
         return PageImpl(elements.toList(), pageable, count)
     }
 

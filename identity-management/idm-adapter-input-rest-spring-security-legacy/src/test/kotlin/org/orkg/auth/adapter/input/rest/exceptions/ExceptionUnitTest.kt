@@ -6,7 +6,7 @@ import org.orkg.common.CommonDocumentationContextProvider
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
 import org.orkg.testing.spring.restdocs.exceptionResponseFields
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.test.context.ContextConfiguration

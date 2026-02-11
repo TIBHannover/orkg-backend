@@ -35,7 +35,7 @@ import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectError
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
 import org.orkg.testing.spring.restdocs.arrayItemsType
 import org.orkg.testing.spring.restdocs.constraints
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable

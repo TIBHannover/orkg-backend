@@ -29,6 +29,9 @@ spring:
       enabled: false
     jdbc:
       initialize-schema: never
+  http:
+    converters:
+      preferred-json-mapper: jackson2
 orkg:
   mail:
     from:
@@ -124,13 +127,14 @@ orkg:
     path: "openapi3.yaml"
 management:
   endpoints:
-    enabled-by-default: false
     web:
       exposure:
         include: health,info,jolokia,liquibase,loggers,env,metrics
     jmx:
       exposure:
         include: '*'
+    access:
+      default: none
   endpoint:
     env:
       enabled: true

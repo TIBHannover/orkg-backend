@@ -6,7 +6,7 @@ import org.orkg.dataimport.domain.JobException
 import org.orkg.dataimport.domain.PROBLEMS
 import org.orkg.dataimport.domain.getAndCast
 import org.orkg.dataimport.domain.jobs.JobStatus.Status
-import org.springframework.batch.core.JobExecution
+import org.springframework.batch.core.job.JobExecution
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ProblemDetail
 import java.util.Optional

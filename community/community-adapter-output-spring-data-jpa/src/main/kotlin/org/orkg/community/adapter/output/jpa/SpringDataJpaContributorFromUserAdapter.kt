@@ -50,17 +50,17 @@ class SpringDataJpaContributorFromUserAdapter(
 
     override fun save(contributor: Contributor) {
         postgresContributorRepository.save(
-            ContributorEntity(
-                id = contributor.id.value,
-                displayName = contributor.name,
-                joinedAt = contributor.joinedAt,
-                joinedAtOffsetTotalSeconds = contributor.joinedAt.offset.totalSeconds,
-                organizationId = contributor.organizationId.takeUnless { it == OrganizationId.UNKNOWN }?.value,
-                observatoryId = contributor.observatoryId.takeUnless { it == ObservatoryId.UNKNOWN }?.value,
-                emailMultiHash = contributor.emailHash.toHex(),
-                curator = contributor.isCurator,
+            ContributorEntity().apply {
+                id = contributor.id.value
+                displayName = contributor.name
+                joinedAt = contributor.joinedAt
+                joinedAtOffsetTotalSeconds = contributor.joinedAt.offset.totalSeconds
+                organizationId = contributor.organizationId.takeUnless { it == OrganizationId.UNKNOWN }?.value
+                observatoryId = contributor.observatoryId.takeUnless { it == ObservatoryId.UNKNOWN }?.value
+                emailMultiHash = contributor.emailHash.toHex()
+                curator = contributor.isCurator
                 admin = contributor.isAdmin
-            )
+            }
         )
     }
 

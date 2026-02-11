@@ -29,10 +29,10 @@ import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.ThingRepository
-import org.springframework.batch.core.StepExecution
-import org.springframework.batch.core.StepExecutionListener
 import org.springframework.batch.core.annotation.BeforeStep
-import org.springframework.batch.item.ItemProcessor
+import org.springframework.batch.core.listener.StepExecutionListener
+import org.springframework.batch.core.step.StepExecution
+import org.springframework.batch.infrastructure.item.ItemProcessor
 import java.util.UUID
 
 open class PaperCSVRecordParser(

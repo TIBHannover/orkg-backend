@@ -14,7 +14,7 @@ testing {
                 implementation("io.mockk:mockk-jvm")
                 implementation("org.hamcrest:hamcrest")
                 implementation("org.junit.jupiter:junit-jupiter-api")
-                implementation("org.springframework.boot:spring-boot-test-autoconfigure")
+                implementation("org.springframework.boot:spring-boot-webmvc-test")
                 implementation("org.springframework.restdocs:spring-restdocs-core")
                 implementation("org.springframework:spring-test")
                 implementation("com.ninja-squad:springmockk")

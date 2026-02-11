@@ -14,8 +14,8 @@ import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafePredicateUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.springframework.batch.core.configuration.annotation.JobScope
-import org.springframework.batch.item.data.RepositoryItemReader
-import org.springframework.batch.item.data.RepositoryItemWriter
+import org.springframework.batch.infrastructure.item.data.RepositoryItemReader
+import org.springframework.batch.infrastructure.item.data.RepositoryItemWriter
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -30,11 +30,9 @@ class ImportPaperCSVStepConfiguration {
         jobParameters: Map<String, Any>,
         paperCSVRecordRepository: PaperCSVRecordRepository,
     ): RepositoryItemReader<PaperCSVRecord> =
-        RepositoryItemReader<PaperCSVRecord>().apply {
-            setRepository(paperCSVRecordRepository)
+        RepositoryItemReader<PaperCSVRecord>(paperCSVRecordRepository, mapOf("itemNumber" to Sort.Direction.ASC)).apply {
             setMethodName("findAllByCSVID")
             setArguments(listOf(extractCSVID(jobParameters)))
-            setSort(mapOf("itemNumber" to Sort.Direction.ASC))
         }
 
     @Bean
@@ -61,7 +59,5 @@ class ImportPaperCSVStepConfiguration {
     fun paperCSVRecordImportResultWriter(
         paperCSVRecordImportResultRepository: PaperCSVRecordImportResultRepository,
     ): RepositoryItemWriter<PaperCSVRecordImportResult> =
-        RepositoryItemWriter<PaperCSVRecordImportResult>().apply {
-            setRepository(paperCSVRecordImportResultRepository)
-        }
+        RepositoryItemWriter<PaperCSVRecordImportResult>(paperCSVRecordImportResultRepository)
 }

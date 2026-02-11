@@ -13,8 +13,8 @@ import kotlin.system.exitProcess
 
 @SpringBootApplication
 class Application : SpringBootServletInitializer() {
-    override fun configure(builder: SpringApplicationBuilder?) =
-        builder?.sources(Application::class.java)
+    override fun configure(builder: SpringApplicationBuilder) =
+        builder.sources(Application::class.java)
 }
 
 fun main(args: Array<String>) {

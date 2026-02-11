@@ -7,10 +7,10 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import java.util.stream.Collectors
 
-fun <T, R> Page<T>.pmap(transform: (T) -> R): Page<R> =
+fun <T : Any, R : Any> Page<T>.pmap(transform: (T) -> R): Page<R> =
     PageImpl(content.pmap(transform), pageable, totalElements)
 
-fun <T, R> Collection<T>.pmap(transform: (T) -> R): List<R> =
+fun <T : Any, R : Any> Collection<T>.pmap(transform: (T) -> R): List<R> =
     parallelStream().map(transform).collect(Collectors.toList())
 
 inline fun Pageable.withDefaultSort(sort: () -> Sort): Pageable =

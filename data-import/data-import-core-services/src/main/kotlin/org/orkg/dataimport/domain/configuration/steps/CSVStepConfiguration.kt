@@ -10,8 +10,8 @@ import org.orkg.dataimport.output.CSVRepository
 import org.orkg.dataimport.output.TypedCSVRecordRepository
 import org.orkg.graph.output.PredicateRepository
 import org.springframework.batch.core.configuration.annotation.JobScope
-import org.springframework.batch.item.data.RepositoryItemReader
-import org.springframework.batch.item.data.RepositoryItemWriter
+import org.springframework.batch.infrastructure.item.data.RepositoryItemReader
+import org.springframework.batch.infrastructure.item.data.RepositoryItemWriter
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -55,9 +55,7 @@ class CSVStepConfiguration {
     fun typedCSVRecordWriter(
         typedCSVRecordRepository: TypedCSVRecordRepository,
     ): RepositoryItemWriter<TypedCSVRecord> =
-        RepositoryItemWriter<TypedCSVRecord>().apply {
-            setRepository(typedCSVRecordRepository)
-        }
+        RepositoryItemWriter<TypedCSVRecord>(typedCSVRecordRepository)
 
     @Bean
     fun csvHeaderProcessor(
@@ -72,10 +70,8 @@ class CSVStepConfiguration {
         jobParameters: Map<String, Any>,
         typedCSVRecordRepository: TypedCSVRecordRepository,
     ): RepositoryItemReader<TypedCSVRecord> =
-        RepositoryItemReader<TypedCSVRecord>().apply {
-            setRepository(typedCSVRecordRepository)
+        RepositoryItemReader<TypedCSVRecord>(typedCSVRecordRepository, mapOf("itemNumber" to Sort.Direction.ASC)).apply {
             setMethodName("findAllByCSVID")
             setArguments(listOf(extractCSVID(jobParameters)))
-            setSort(mapOf("itemNumber" to Sort.Direction.ASC))
         }
 }

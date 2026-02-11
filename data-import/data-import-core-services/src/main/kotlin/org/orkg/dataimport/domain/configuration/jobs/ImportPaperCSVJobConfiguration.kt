@@ -12,13 +12,13 @@ import org.orkg.dataimport.domain.jobs.CSVStateUpdater
 import org.orkg.dataimport.domain.jobs.JobExecutionErrorListener
 import org.orkg.dataimport.domain.jobs.JobNames.IMPORT_PAPER_CSV
 import org.orkg.dataimport.output.CSVRepository
-import org.springframework.batch.core.Job
-import org.springframework.batch.core.Step
+import org.springframework.batch.core.job.Job
 import org.springframework.batch.core.job.builder.JobBuilder
 import org.springframework.batch.core.repository.JobRepository
+import org.springframework.batch.core.step.Step
 import org.springframework.batch.core.step.builder.StepBuilder
-import org.springframework.batch.item.data.RepositoryItemReader
-import org.springframework.batch.item.data.RepositoryItemWriter
+import org.springframework.batch.infrastructure.item.data.RepositoryItemReader
+import org.springframework.batch.infrastructure.item.data.RepositoryItemWriter
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

@@ -11,7 +11,7 @@ import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.json.JsonTest
-import org.springframework.boot.test.json.JacksonTester
+import org.springframework.boot.test.json.Jackson2Tester
 import org.springframework.test.context.ContextConfiguration
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
@@ -23,7 +23,7 @@ import java.time.ZoneOffset
 @ContextConfiguration(classes = [ResourceRepresentationAdapter::class, CommonJacksonModule::class])
 internal class ResourceRepresentationJsonTest {
     @Autowired
-    private lateinit var json: JacksonTester<ResourceRepresentation> // FIXME: This whole test might be pointless.
+    private lateinit var json: Jackson2Tester<ResourceRepresentation> // FIXME: This whole test might be pointless.
 
     private val resourceRepresentationAdapter: ResourceRepresentationAdapter = object : ResourceRepresentationAdapter {
         override val statementService: StatementUseCases = mockk()

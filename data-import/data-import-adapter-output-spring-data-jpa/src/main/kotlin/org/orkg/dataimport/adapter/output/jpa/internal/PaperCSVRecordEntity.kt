@@ -20,6 +20,7 @@ import java.util.UUID
 @Table(name = "paper_csv_records")
 class PaperCSVRecordEntity {
     @Id
+    @Column(nullable = false)
     var id: UUID? = null
 
     @Column(name = "csv_id", nullable = false)
@@ -50,7 +51,7 @@ class PaperCSVRecordEntity {
 
     var doi: String? = null
 
-    @Column(name = "research_field_id")
+    @Column(name = "research_field_id", nullable = false)
     var researchFieldId: String? = null
 
     @Enumerated(EnumType.STRING)

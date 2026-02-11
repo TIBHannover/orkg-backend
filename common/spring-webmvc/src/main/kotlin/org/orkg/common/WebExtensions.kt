@@ -16,7 +16,7 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.time.Duration
 
-fun <T> T.withCacheControl(duration: Duration): ResponseEntity<T> =
+fun <T : Any> T.withCacheControl(duration: Duration): ResponseEntity<T> =
     ResponseEntity.ok().cacheControl(CacheControl.maxAge(duration)).body(this)
 
 fun Pageable.withSort(sort: Sort): Pageable =

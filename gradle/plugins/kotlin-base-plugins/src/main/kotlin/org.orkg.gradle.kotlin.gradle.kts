@@ -1,3 +1,6 @@
+import org.gradle.kotlin.dsl.invoke
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+
 plugins {
     id("java")
     id("org.jetbrains.kotlin.jvm")
@@ -34,7 +37,7 @@ kotlin {
         languageVersion.set(javaLanguageVersion)
     }
     compilerOptions {
-        languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9)
+        languageVersion.set(KotlinVersion.KOTLIN_2_2)
     }
 }
 
@@ -67,6 +70,7 @@ configurations.all {
 dependencies {
     api(platform("org.orkg:platform"))
     testApi(platform("org.orkg:platform"))
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testRuntimeOnly("ch.qos.logback:logback-classic") // Logger implementation. Should be same as in production.
 }

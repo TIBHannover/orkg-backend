@@ -21,7 +21,7 @@ class ExceptionSnippet private constructor(
         val writerResolver = StandardWriterResolver(placeholderResolverFactory, Charsets.UTF_8.name(), JsonTemplateFormat)
         val writer = writerResolver.resolve(operation.getName(), "exceptions", context)
         val exceptions = exceptions.toMutableList()
-        if (operation.request.headers.containsKey(HttpHeaders.AUTHORIZATION)) {
+        if (operation.request.headers.containsHeader(HttpHeaders.AUTHORIZATION)) {
             exceptions.add(Unauthorized::class)
         }
         writer.use { writer ->

@@ -1,7 +1,7 @@
 package org.orkg.dataimport.domain.jobs
 
 import org.springframework.batch.core.BatchStatus
-import org.springframework.batch.core.JobExecution
+import org.springframework.batch.core.job.JobExecution
 
 data class JobStatus(
     val jobId: JobId,

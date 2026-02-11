@@ -18,6 +18,7 @@ import java.util.UUID
 @Table(name = "csvs")
 class CSVEntity {
     @Id
+    @Column(nullable = false)
     var id: UUID? = null
 
     @Column(nullable = false)
@@ -53,7 +54,7 @@ class CSVEntity {
     @Column(name = "created_at", nullable = false)
     var createdAt: OffsetDateTime? = null
 
-    @Column(name = "created_at_offset_total_seconds")
+    @Column(name = "created_at_offset_total_seconds", nullable = false)
     var createdAtOffsetTotalSeconds: Int? = null
 
     fun toCSV() =

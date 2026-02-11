@@ -10,6 +10,7 @@ import org.neo4j.cypherdsl.core.Cypher.match
 import org.neo4j.cypherdsl.core.Cypher.name
 import org.neo4j.cypherdsl.core.Cypher.noCondition
 import org.neo4j.cypherdsl.core.Cypher.node
+import org.neo4j.driver.internal.value.NullValue
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -361,7 +362,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
                         "unlisted_by" to statement.unlistedBy?.value?.toString(),
                         "modifiable" to statement.modifiable
                     ),
-                    "__contextId__" to statement.contextId?.value,
+                    "__contextId__" to (statement.contextId?.value ?: NullValue.NULL),
                     "__templateId__" to statement.templateId.value,
                     "__versions__" to statement.versions.drop(versionInfo?.second?.toInt() ?: 0)
                         .mapIndexed { index, version ->

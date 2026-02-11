@@ -17,7 +17,7 @@ import org.orkg.testing.andExpectPage
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.restdocs.type
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status

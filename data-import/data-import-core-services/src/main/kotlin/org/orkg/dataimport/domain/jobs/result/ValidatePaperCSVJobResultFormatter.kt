@@ -5,7 +5,7 @@ import org.orkg.dataimport.domain.extractCSVID
 import org.orkg.dataimport.domain.jobs.JobNames
 import org.orkg.dataimport.domain.jobs.JobStatus.Status
 import org.orkg.dataimport.output.PaperCSVRecordRepository
-import org.springframework.batch.core.JobExecution
+import org.springframework.batch.core.job.JobExecution
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
 import java.util.Optional

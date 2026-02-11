@@ -13,9 +13,9 @@ import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.springframework.batch.core.ExitStatus
-import org.springframework.batch.core.StepExecution
-import org.springframework.batch.core.StepExecutionListener
-import org.springframework.batch.item.ItemProcessor
+import org.springframework.batch.core.listener.StepExecutionListener
+import org.springframework.batch.core.step.StepExecution
+import org.springframework.batch.infrastructure.item.ItemProcessor
 
 open class PaperCSVStatementObjectProcessor(
     private val unsafeResourceUseCases: UnsafeResourceUseCases,

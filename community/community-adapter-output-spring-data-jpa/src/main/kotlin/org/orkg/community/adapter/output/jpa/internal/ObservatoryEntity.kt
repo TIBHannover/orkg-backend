@@ -24,9 +24,11 @@ import java.util.UUID
 @Table(name = "observatories")
 class ObservatoryEntity {
     @Id
+    @Column(nullable = false)
     var id: UUID? = null
 
     @NotBlank
+    @Column(nullable = false)
     var name: String? = null
 
     var description: String? = null
@@ -38,7 +40,7 @@ class ObservatoryEntity {
     @JoinColumn(name = "observatory_id")
     var users: MutableSet<ContributorEntity>? = null
 
-    @Column(name = "display_id")
+    @Column(name = "display_id", nullable = false)
     var displayId: String? = null
 
     @ManyToMany(cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
@@ -54,7 +56,7 @@ class ObservatoryEntity {
         name = "observatories_sdgs",
         joinColumns = [JoinColumn(name = "observatory_id", referencedColumnName = "id")]
     )
-    @Column(name = "sdg_id")
+    @Column(name = "sdg_id", nullable = false)
     var sustainableDevelopmentGoals: MutableSet<String>? = mutableSetOf()
 }
 

@@ -18,7 +18,7 @@ import org.orkg.testing.andExpectClass
 import org.orkg.testing.andExpectPredicate
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 

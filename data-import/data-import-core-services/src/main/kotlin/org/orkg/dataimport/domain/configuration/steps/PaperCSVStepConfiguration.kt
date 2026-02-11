@@ -6,7 +6,7 @@ import org.orkg.dataimport.domain.extractCSVID
 import org.orkg.dataimport.output.PaperCSVRecordRepository
 import org.orkg.dataimport.output.TypedCSVRecordRepository
 import org.springframework.batch.core.configuration.annotation.JobScope
-import org.springframework.batch.item.data.RepositoryItemWriter
+import org.springframework.batch.infrastructure.item.data.RepositoryItemWriter
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -17,9 +17,7 @@ class PaperCSVStepConfiguration {
     fun paperCSVRecordWriter(
         paperCSVRecordRepository: PaperCSVRecordRepository,
     ): RepositoryItemWriter<PaperCSVRecord> =
-        RepositoryItemWriter<PaperCSVRecord>().apply {
-            setRepository(paperCSVRecordRepository)
-        }
+        RepositoryItemWriter<PaperCSVRecord>(paperCSVRecordRepository)
 
     @Bean
     @JobScope

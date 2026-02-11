@@ -8,8 +8,8 @@ import org.orkg.graph.domain.SearchFilter
 import org.orkg.graph.domain.SearchFilter.Operator
 import org.orkg.graph.domain.SearchFilter.Value
 import org.orkg.testing.spring.MockMvcBaseTest
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestComponent
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status

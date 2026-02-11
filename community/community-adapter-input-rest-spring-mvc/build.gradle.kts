@@ -30,6 +30,7 @@ testing {
                 implementation("org.junit.jupiter:junit-jupiter-params")
                 implementation("org.springframework.boot:spring-boot-test")
                 implementation("org.springframework.boot:spring-boot-test-autoconfigure")
+                implementation("org.springframework.boot:spring-boot-webmvc-test")
                 implementation("org.springframework.restdocs:spring-restdocs-core")
                 implementation("org.springframework:spring-beans")
                 implementation("org.springframework:spring-test")

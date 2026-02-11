@@ -30,7 +30,7 @@ import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.mock.web.MockMultipartFile

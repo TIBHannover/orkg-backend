@@ -12,7 +12,7 @@ import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.dataimport.domain.testing.fixtures.createCSV
 import org.orkg.dataimport.domain.testing.fixtures.createCSVRecord
 import org.orkg.dataimport.output.CSVRepository
-import org.springframework.batch.item.ExecutionContext
+import org.springframework.batch.infrastructure.item.ExecutionContext
 import java.util.Optional
 
 internal class CSVRecordReaderUnitTest : MockkBaseTest {

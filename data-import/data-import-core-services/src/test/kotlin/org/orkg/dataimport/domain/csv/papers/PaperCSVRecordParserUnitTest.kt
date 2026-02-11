@@ -32,7 +32,9 @@ import org.orkg.dataimport.domain.UnknownCSVValueType
 import org.orkg.dataimport.domain.add
 import org.orkg.dataimport.domain.csv.CSV.Type
 import org.orkg.dataimport.domain.csv.CSVHeader
+import org.orkg.dataimport.domain.testing.fixtures.createJobExecution
 import org.orkg.dataimport.domain.testing.fixtures.createPaperCSVHeaders
+import org.orkg.dataimport.domain.testing.fixtures.createStepExecution
 import org.orkg.dataimport.domain.testing.fixtures.createTypedCSVRecord
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
@@ -40,9 +42,7 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.ThingRepository
 import org.orkg.graph.testing.fixtures.createResource
-import org.springframework.batch.core.JobExecution
-import org.springframework.batch.core.JobParametersBuilder
-import org.springframework.batch.core.StepExecution
+import org.springframework.batch.core.job.parameters.JobParametersBuilder
 import java.util.Optional
 import java.util.UUID
 
@@ -65,13 +65,13 @@ internal class PaperCSVRecordParserUnitTest : MockkBaseTest {
             headers[13] to Either.left(ThingId("numericValue")),
             headers[14] to Either.left(Predicates.description),
         )
-        val jobExecution = JobExecution(123, jobParameters).apply {
+        val jobExecution = createJobExecution(jobParameters = jobParameters).apply {
             executionContext.put(CSV_HEADERS_FIELD, headers)
             executionContext.put(CSV_HEADER_TO_PREDICATE_FIELD, headerToPredicate)
         }
         val researchFieldId = ThingId("R456")
         val researchField = createResource(id = researchFieldId, classes = setOf(Classes.researchField))
-        val stepExecution = StepExecution("test", jobExecution)
+        val stepExecution = createStepExecution(jobExecution = jobExecution)
         val id = UUID.fromString("a0e2f360-64a9-4e60-919f-76f906b987f3")
         val doi = DOI.of("10.1000/182")
 
@@ -130,13 +130,13 @@ internal class PaperCSVRecordParserUnitTest : MockkBaseTest {
             headers[13] to Either.left(ThingId("numericValue")),
             headers[14] to Either.left(Predicates.description),
         )
-        val jobExecution = JobExecution(123, jobParameters).apply {
+        val jobExecution = createJobExecution(jobParameters = jobParameters).apply {
             executionContext.put(CSV_HEADERS_FIELD, headers)
             executionContext.put(CSV_HEADER_TO_PREDICATE_FIELD, headerToPredicate)
         }
         val researchFieldId = ThingId("R456")
         val researchField = createResource(id = researchFieldId, classes = setOf(Classes.researchField))
-        val stepExecution = StepExecution("test", jobExecution)
+        val stepExecution = createStepExecution(jobExecution = jobExecution)
         val id = UUID.fromString("a0e2f360-64a9-4e60-919f-76f906b987f3")
         val doi = DOI.of("10.1000/182")
         val doiResponse = ObjectMapper().readTree(responseJson("datacite/doiLookupSuccess"))
@@ -198,11 +198,11 @@ internal class PaperCSVRecordParserUnitTest : MockkBaseTest {
         }
         val jobParameters = JobParametersBuilder().add(CSV_TYPE_FIELD, Type.PAPER).toJobParameters()
         val headers = createPaperCSVHeaders().dropLast(5)
-        val jobExecution = JobExecution(123, jobParameters).apply {
+        val jobExecution = createJobExecution(jobParameters = jobParameters).apply {
             executionContext.put(CSV_HEADERS_FIELD, headers)
             executionContext.put(CSV_HEADER_TO_PREDICATE_FIELD, emptyMap<CSVHeader, Either<ThingId, String>>())
         }
-        val stepExecution = StepExecution("test", jobExecution)
+        val stepExecution = createStepExecution(jobExecution = jobExecution)
         val doi = DOI.of("10.1000/182")
 
         paperCSVRecordParser.beforeStep(stepExecution)
@@ -218,12 +218,12 @@ internal class PaperCSVRecordParserUnitTest : MockkBaseTest {
     fun `Given a typed csv record, when parsing a paper csv record, and research field does not exist, it throws an exception`() {
         val record = createTypedCSVRecord()
         val jobParameters = JobParametersBuilder().add(CSV_TYPE_FIELD, Type.PAPER).toJobParameters()
-        val jobExecution = JobExecution(123, jobParameters).apply {
+        val jobExecution = createJobExecution(jobParameters = jobParameters).apply {
             executionContext.put(CSV_HEADERS_FIELD, createPaperCSVHeaders())
             executionContext.put(CSV_HEADER_TO_PREDICATE_FIELD, emptyMap<CSVHeader, Either<ThingId, String>>())
         }
         val researchFieldId = ThingId("R456")
-        val stepExecution = StepExecution("test", jobExecution)
+        val stepExecution = createStepExecution(jobExecution = jobExecution)
         val doi = DOI.of("10.1000/182")
 
         paperCSVRecordParser.beforeStep(stepExecution)
@@ -241,13 +241,13 @@ internal class PaperCSVRecordParserUnitTest : MockkBaseTest {
     fun `Given a typed csv record, when parsing a paper csv record, and research field resouce is not a research field instance, it throws an exception`() {
         val record = createTypedCSVRecord()
         val jobParameters = JobParametersBuilder().add(CSV_TYPE_FIELD, Type.PAPER).toJobParameters()
-        val jobExecution = JobExecution(123, jobParameters).apply {
+        val jobExecution = createJobExecution(jobParameters = jobParameters).apply {
             executionContext.put(CSV_HEADERS_FIELD, createPaperCSVHeaders())
             executionContext.put(CSV_HEADER_TO_PREDICATE_FIELD, emptyMap<CSVHeader, Either<ThingId, String>>())
         }
         val researchFieldId = ThingId("R456")
         val researchField = createResource(id = researchFieldId)
-        val stepExecution = StepExecution("test", jobExecution)
+        val stepExecution = createStepExecution(jobExecution = jobExecution)
         val doi = DOI.of("10.1000/182")
 
         paperCSVRecordParser.beforeStep(stepExecution)
@@ -271,13 +271,13 @@ internal class PaperCSVRecordParserUnitTest : MockkBaseTest {
         }
         val jobParameters = JobParametersBuilder().add(CSV_TYPE_FIELD, Type.PAPER).toJobParameters()
         val headers = createPaperCSVHeaders().dropLast(5)
-        val jobExecution = JobExecution(123, jobParameters).apply {
+        val jobExecution = createJobExecution(jobParameters = jobParameters).apply {
             executionContext.put(CSV_HEADERS_FIELD, headers)
             executionContext.put(CSV_HEADER_TO_PREDICATE_FIELD, emptyMap<CSVHeader, Either<ThingId, String>>())
         }
         val researchFieldId = ThingId("R456")
         val researchField = createResource(id = researchFieldId, classes = setOf(Classes.researchField))
-        val stepExecution = StepExecution("test", jobExecution)
+        val stepExecution = createStepExecution(jobExecution = jobExecution)
         val doi = DOI.of("10.1000/182")
 
         paperCSVRecordParser.beforeStep(stepExecution)
@@ -303,14 +303,14 @@ internal class PaperCSVRecordParserUnitTest : MockkBaseTest {
         }
         val jobParameters = JobParametersBuilder().add(CSV_TYPE_FIELD, Type.PAPER).toJobParameters()
         val headers = createPaperCSVHeaders().dropLast(5)
-        val jobExecution = JobExecution(123, jobParameters).apply {
+        val jobExecution = createJobExecution(jobParameters = jobParameters).apply {
             executionContext.put(CSV_HEADERS_FIELD, headers)
             executionContext.put(CSV_HEADER_TO_PREDICATE_FIELD, emptyMap<CSVHeader, Either<ThingId, String>>())
         }
         val researchFieldId = ThingId("R456")
         val researchField = createResource(id = researchFieldId, classes = setOf(Classes.researchField))
         val researchProblem = createResource(id = researchProblemId)
-        val stepExecution = StepExecution("test", jobExecution)
+        val stepExecution = createStepExecution(jobExecution = jobExecution)
         val doi = DOI.of("10.1000/182")
 
         paperCSVRecordParser.beforeStep(stepExecution)
@@ -336,13 +336,13 @@ internal class PaperCSVRecordParserUnitTest : MockkBaseTest {
         }
         val jobParameters = JobParametersBuilder().add(CSV_TYPE_FIELD, Type.PAPER).toJobParameters()
         val headers = createPaperCSVHeaders().dropLast(4)
-        val jobExecution = JobExecution(123, jobParameters).apply {
+        val jobExecution = createJobExecution(jobParameters = jobParameters).apply {
             executionContext.put(CSV_HEADERS_FIELD, headers)
             executionContext.put(CSV_HEADER_TO_PREDICATE_FIELD, emptyMap<CSVHeader, Either<ThingId, String>>())
         }
         val researchFieldId = ThingId("R456")
         val researchField = createResource(id = researchFieldId, classes = setOf(Classes.researchField))
-        val stepExecution = StepExecution("test", jobExecution)
+        val stepExecution = createStepExecution(jobExecution = jobExecution)
         val doi = DOI.of("10.1000/182")
 
         paperCSVRecordParser.beforeStep(stepExecution)
@@ -366,13 +366,13 @@ internal class PaperCSVRecordParserUnitTest : MockkBaseTest {
         }
         val jobParameters = JobParametersBuilder().add(CSV_TYPE_FIELD, Type.PAPER).toJobParameters()
         val headers = createPaperCSVHeaders().dropLast(4)
-        val jobExecution = JobExecution(123, jobParameters).apply {
+        val jobExecution = createJobExecution(jobParameters = jobParameters).apply {
             executionContext.put(CSV_HEADERS_FIELD, headers)
             executionContext.put(CSV_HEADER_TO_PREDICATE_FIELD, emptyMap<CSVHeader, Either<ThingId, String>>())
         }
         val researchFieldId = ThingId("R456")
         val researchField = createResource(id = researchFieldId, classes = setOf(Classes.researchField))
-        val stepExecution = StepExecution("test", jobExecution)
+        val stepExecution = createStepExecution(jobExecution = jobExecution)
         val doi = DOI.of("10.1000/182")
 
         paperCSVRecordParser.beforeStep(stepExecution)

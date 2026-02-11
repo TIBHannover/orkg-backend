@@ -10,7 +10,6 @@ testing {
     suites {
         val test by getting(JvmTestSuite::class) {
             dependencies {
-                implementation("org.jetbrains.kotlin:kotlin-stdlib") // "downgrade" from api()
                 runtimeOnly("org.springframework.boot:spring-boot-starter-test")
                 runtimeOnly("org.springframework.boot:spring-boot-starter-data-neo4j")
                 implementation("io.kotest:kotest-framework-engine")
@@ -30,7 +29,10 @@ testing {
 }
 
 dependencies {
-    api("org.springframework.boot:spring-boot-autoconfigure")
+    compileOnly("org.jetbrains:annotations")
+    api("org.neo4j.driver:neo4j-java-driver")
+    api("org.neo4j:neo4j-cypher-dsl")
+    api("org.springframework.boot:spring-boot-persistence")
     api("org.springframework.data:spring-data-commons")
     api("org.springframework.data:spring-data-neo4j")
     api("org.springframework:spring-context")
@@ -39,10 +41,7 @@ dependencies {
     api(project(":content-types:content-types-ports-output"))
     api(project(":graph:graph-adapter-output-spring-data-neo4j"))
     api(project(":graph:graph-core-model"))
-    api("org.neo4j.driver:neo4j-java-driver")
-    api("org.neo4j:neo4j-cypher-dsl")
     api(project(":common:neo4j-dsl"))
-    implementation("org.jetbrains:annotations")
     implementation(project(":common:pagination"))
     implementation(project(":common:spring-webmvc"))
     implementation(project(":graph:graph-core-constants"))

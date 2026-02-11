@@ -17,21 +17,22 @@ import org.orkg.dataimport.domain.jobs.JobResult
 import org.orkg.dataimport.domain.jobs.JobStatus.Status
 import org.orkg.dataimport.domain.jobs.result.JobResultFactory
 import org.orkg.dataimport.domain.jobs.status.JobStatusFactory
+import org.orkg.dataimport.domain.testing.fixtures.createJobExecution
+import org.orkg.dataimport.domain.testing.fixtures.createJobInstance
 import org.orkg.dataimport.domain.testing.fixtures.createJobStatus
 import org.orkg.testing.MockUserId
 import org.springframework.batch.core.BatchStatus
-import org.springframework.batch.core.Job
-import org.springframework.batch.core.JobExecution
-import org.springframework.batch.core.JobInstance
-import org.springframework.batch.core.JobParametersBuilder
-import org.springframework.batch.core.explore.JobExplorer
+import org.springframework.batch.core.job.Job
+import org.springframework.batch.core.job.JobInstance
 import org.springframework.batch.core.job.SimpleJob
+import org.springframework.batch.core.job.parameters.JobParametersBuilder
+import org.springframework.batch.core.launch.JobExecutionAlreadyRunningException
 import org.springframework.batch.core.launch.JobExecutionNotRunningException
+import org.springframework.batch.core.launch.JobInstanceAlreadyCompleteException
 import org.springframework.batch.core.launch.JobLauncher
 import org.springframework.batch.core.launch.JobOperator
-import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException
-import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException
-import org.springframework.batch.core.repository.JobRestartException
+import org.springframework.batch.core.launch.JobRestartException
+import org.springframework.batch.core.repository.explore.JobExplorer
 import org.springframework.data.domain.PageRequest
 import java.util.Optional
 
@@ -58,7 +59,7 @@ internal class JobServiceUnitTest : MockkBaseTest {
     fun `Given a job name and job parameters, when starting a new job, it returns success`() {
         val parameters = JobParametersBuilder().add("parameter", "testing123").toJobParameters()
 
-        every { jobLauncher.run(testJob, parameters) } returns JobExecution(123, parameters)
+        every { jobLauncher.run(testJob, parameters) } returns createJobExecution(jobParameters = parameters)
 
         service.runJob(testJob.name, parameters) shouldBe JobId(123)
 
@@ -77,7 +78,7 @@ internal class JobServiceUnitTest : MockkBaseTest {
         val parameters = JobParametersBuilder().add("parameter", "testing123").toJobParameters()
 
         every { jobLauncher.run(testJob, parameters) } throws JobExecutionAlreadyRunningException("Job already running")
-        every { jobExplorer.getJobInstance(testJob.name, parameters) } returns JobInstance(123, testJob.name)
+        every { jobExplorer.getJobInstance(testJob.name, parameters) } returns createJobInstance(name = testJob.name)
 
         shouldThrow<JobAlreadyRunning> { service.runJob(testJob.name, parameters) }
 
@@ -90,7 +91,7 @@ internal class JobServiceUnitTest : MockkBaseTest {
         val parameters = JobParametersBuilder().add("parameter", "testing123").toJobParameters()
 
         every { jobLauncher.run(testJob, parameters) } throws JobRestartException("Job restart failed")
-        every { jobExplorer.getJobInstance(testJob.name, parameters) } returns JobInstance(123, testJob.name)
+        every { jobExplorer.getJobInstance(testJob.name, parameters) } returns createJobInstance(name = testJob.name)
 
         shouldThrow<JobRestartFailed> { service.runJob(testJob.name, parameters) }
 
@@ -103,7 +104,7 @@ internal class JobServiceUnitTest : MockkBaseTest {
         val parameters = JobParametersBuilder().add("parameter", "testing123").toJobParameters()
 
         every { jobLauncher.run(testJob, parameters) } throws JobInstanceAlreadyCompleteException("Job already complete")
-        every { jobExplorer.getJobInstance(testJob.name, parameters) } returns JobInstance(123, testJob.name)
+        every { jobExplorer.getJobInstance(testJob.name, parameters) } returns createJobInstance(name = testJob.name)
 
         shouldThrow<JobAlreadyComplete> { service.runJob(testJob.name, parameters) }
 
@@ -116,7 +117,7 @@ internal class JobServiceUnitTest : MockkBaseTest {
         val jobId = JobId(123)
         val contributorId = ContributorId(MockUserId.USER)
         val parameters = JobParametersBuilder().add(CONTRIBUTOR_ID_FIELD, contributorId).toJobParameters()
-        val jobExecution = JobExecution(jobId.value, parameters)
+        val jobExecution = createJobExecution(id = jobId.value, jobParameters = parameters)
         val jobStatus = createJobStatus()
 
         every { jobExplorer.getJobExecution(jobId.value) } returns jobExecution
@@ -133,7 +134,7 @@ internal class JobServiceUnitTest : MockkBaseTest {
         val jobId = JobId(123)
         val otherUser = createContributor()
         val parameters = JobParametersBuilder().add(CONTRIBUTOR_ID_FIELD, ContributorId(MockUserId.USER)).toJobParameters()
-        val jobExecution = JobExecution(jobId.value, parameters)
+        val jobExecution = createJobExecution(id = jobId.value, jobParameters = parameters)
 
         every { jobExplorer.getJobExecution(jobId.value) } returns jobExecution
         every { contributorRepository.findById(otherUser.id) } returns Optional.of(otherUser)
@@ -149,7 +150,7 @@ internal class JobServiceUnitTest : MockkBaseTest {
         val jobId = JobId(123)
         val admin = createContributor(isAdmin = true)
         val parameters = JobParametersBuilder().add(CONTRIBUTOR_ID_FIELD, ContributorId(MockUserId.USER)).toJobParameters()
-        val jobExecution = JobExecution(jobId.value, parameters)
+        val jobExecution = createJobExecution(id = jobId.value, jobParameters = parameters)
         val jobStatus = createJobStatus()
 
         every { jobExplorer.getJobExecution(jobId.value) } returns jobExecution
@@ -181,7 +182,7 @@ internal class JobServiceUnitTest : MockkBaseTest {
         val jobId = JobId(123)
         val contributorId = ContributorId(MockUserId.USER)
         val parameters = JobParametersBuilder().add(CONTRIBUTOR_ID_FIELD, contributorId).toJobParameters()
-        val jobExecution = JobExecution(jobId.value, parameters).apply {
+        val jobExecution = createJobExecution(id = jobId.value, jobParameters = parameters).apply {
             status = batchStatus
             jobInstance = JobInstance(jobId.value, testJob.name)
         }
@@ -210,7 +211,7 @@ internal class JobServiceUnitTest : MockkBaseTest {
         val jobId = JobId(123)
         val otherUser = createContributor()
         val parameters = JobParametersBuilder().add(CONTRIBUTOR_ID_FIELD, ContributorId(MockUserId.USER)).toJobParameters()
-        val jobExecution = JobExecution(jobId.value, parameters).apply { status = batchStatus }
+        val jobExecution = createJobExecution(id = jobId.value, jobParameters = parameters).apply { status = batchStatus }
         val pageable = PageRequest.of(0, 10)
 
         every { jobExplorer.getJobExecution(jobId.value) } returns jobExecution
@@ -228,7 +229,7 @@ internal class JobServiceUnitTest : MockkBaseTest {
         val jobId = JobId(123)
         val admin = createContributor(isAdmin = true)
         val parameters = JobParametersBuilder().add(CONTRIBUTOR_ID_FIELD, ContributorId(MockUserId.USER)).toJobParameters()
-        val jobExecution = JobExecution(jobId.value, parameters).apply {
+        val jobExecution = createJobExecution(id = jobId.value, jobParameters = parameters).apply {
             status = batchStatus
             jobInstance = JobInstance(jobId.value, testJob.name)
         }
@@ -272,7 +273,7 @@ internal class JobServiceUnitTest : MockkBaseTest {
         val jobId = JobId(123)
         val contributorId = ContributorId(MockUserId.USER)
         val parameters = JobParametersBuilder().add(CONTRIBUTOR_ID_FIELD, contributorId).toJobParameters()
-        val jobExecution = JobExecution(jobId.value, parameters).apply { status = batchStatus }
+        val jobExecution = createJobExecution(id = jobId.value, jobParameters = parameters).apply { status = batchStatus }
         val pageable = PageRequest.of(0, 10)
 
         every { jobExplorer.getJobExecution(jobId.value) } returns jobExecution
@@ -287,7 +288,7 @@ internal class JobServiceUnitTest : MockkBaseTest {
         val jobId = JobId(123)
         val contributorId = ContributorId(MockUserId.USER)
         val parameters = JobParametersBuilder().add(CONTRIBUTOR_ID_FIELD, contributorId).toJobParameters()
-        val jobExecution = JobExecution(jobId.value, parameters).apply { status = BatchStatus.STARTED }
+        val jobExecution = createJobExecution(id = jobId.value, jobParameters = parameters).apply { status = BatchStatus.STARTED }
 
         every { jobExplorer.getJobExecution(jobId.value) } returns jobExecution
         every { jobOperator.stop(jobId.value) } returns true
@@ -303,7 +304,7 @@ internal class JobServiceUnitTest : MockkBaseTest {
         val jobId = JobId(123)
         val otherUser = createContributor()
         val parameters = JobParametersBuilder().add(CONTRIBUTOR_ID_FIELD, ContributorId(MockUserId.USER)).toJobParameters()
-        val jobExecution = JobExecution(jobId.value, parameters).apply { status = BatchStatus.STARTED }
+        val jobExecution = createJobExecution(id = jobId.value, jobParameters = parameters).apply { status = BatchStatus.STARTED }
 
         every { jobExplorer.getJobExecution(jobId.value) } returns jobExecution
         every { contributorRepository.findById(otherUser.id) } returns Optional.of(otherUser)
@@ -319,7 +320,7 @@ internal class JobServiceUnitTest : MockkBaseTest {
         val jobId = JobId(123)
         val admin = createContributor(isAdmin = true)
         val parameters = JobParametersBuilder().add(CONTRIBUTOR_ID_FIELD, ContributorId(MockUserId.USER)).toJobParameters()
-        val jobExecution = JobExecution(jobId.value, parameters).apply { status = BatchStatus.STARTED }
+        val jobExecution = createJobExecution(id = jobId.value, jobParameters = parameters).apply { status = BatchStatus.STARTED }
 
         every { jobExplorer.getJobExecution(jobId.value) } returns jobExecution
         every { contributorRepository.findById(admin.id) } returns Optional.of(admin)
@@ -349,7 +350,7 @@ internal class JobServiceUnitTest : MockkBaseTest {
         val jobId = JobId(123)
         val contributorId = ContributorId(MockUserId.USER)
         val parameters = JobParametersBuilder().add(CONTRIBUTOR_ID_FIELD, contributorId).toJobParameters()
-        val jobExecution = JobExecution(jobId.value, parameters).apply { status = BatchStatus.STOPPED }
+        val jobExecution = createJobExecution(id = jobId.value, jobParameters = parameters).apply { status = BatchStatus.STOPPED }
 
         every { jobExplorer.getJobExecution(jobId.value) } returns jobExecution
 
@@ -363,7 +364,7 @@ internal class JobServiceUnitTest : MockkBaseTest {
         val jobId = JobId(123)
         val contributorId = ContributorId(MockUserId.USER)
         val parameters = JobParametersBuilder().add(CONTRIBUTOR_ID_FIELD, contributorId).toJobParameters()
-        val jobExecution = JobExecution(jobId.value, parameters).apply { status = BatchStatus.STOPPING }
+        val jobExecution = createJobExecution(id = jobId.value, jobParameters = parameters).apply { status = BatchStatus.STOPPING }
 
         every { jobExplorer.getJobExecution(jobId.value) } returns jobExecution
         every { jobOperator.stop(jobId.value) } throws JobExecutionNotRunningException("Job not running")

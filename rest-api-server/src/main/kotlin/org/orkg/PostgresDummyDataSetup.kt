@@ -57,7 +57,7 @@ class PostgresDummyDataSetup(
     @Autowired
     private lateinit var context: ConfigurableApplicationContext
 
-    override fun run(args: ApplicationArguments?) {
+    override fun run(args: ApplicationArguments) {
         val users = findUserIds()
         generateUsers(users)
         val organizations = fetchOrganizations() + fetchConferences()

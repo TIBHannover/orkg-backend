@@ -19,37 +19,48 @@ import java.util.UUID
 
 @Entity
 @Table(name = "contributors")
-class ContributorEntity(
+class ContributorEntity {
     @Id
-    var id: UUID? = null,
-    @Column(name = "display_name")
-    var displayName: String? = null,
-    @Column(name = "joined_at")
-    var joinedAt: OffsetDateTime? = null,
-    @Column(name = "joined_at_offset_total_seconds")
-    var joinedAtOffsetTotalSeconds: Int? = null,
+    @Column(nullable = false)
+    var id: UUID? = null
+
+    @Column(name = "display_name", nullable = false)
+    var displayName: String? = null
+
+    @Column(name = "joined_at", nullable = false)
+    var joinedAt: OffsetDateTime? = null
+
+    @Column(name = "joined_at_offset_total_seconds", nullable = false)
+    var joinedAtOffsetTotalSeconds: Int? = null
+
     @Column(name = "organization_id")
-    var organizationId: UUID? = null,
+    var organizationId: UUID? = null
+
     @Column(name = "observatory_id")
-    var observatoryId: UUID? = null,
+    var observatoryId: UUID? = null
+
     @Column(name = "email_multihash")
-    var emailMultiHash: String? = null,
-    var curator: Boolean? = null,
-    var admin: Boolean? = null,
-) {
+    var emailMultiHash: String? = null
+
+    @Column(nullable = false)
+    var curator: Boolean? = null
+
+    @Column(nullable = false)
+    var admin: Boolean? = null
+
     companion object {
         fun from(event: UserRegistered): ContributorEntity =
-            ContributorEntity(
-                id = UUID.fromString(event.id),
-                displayName = event.displayName,
-                joinedAt = event.createdAt,
-                joinedAtOffsetTotalSeconds = event.createdAt.offset.totalSeconds,
-                organizationId = event.organizationId?.let { UUID.fromString(event.organizationId) },
-                observatoryId = event.observatoryId?.let { UUID.fromString(event.observatoryId) },
-                emailMultiHash = SHA256.fromEmail(event.email).toHex(),
-                curator = CURATOR in event.roles || ADMIN in event.roles,
-                admin = ADMIN in event.roles,
-            )
+            ContributorEntity().apply {
+                id = UUID.fromString(event.id)
+                displayName = event.displayName
+                joinedAt = event.createdAt
+                joinedAtOffsetTotalSeconds = event.createdAt.offset.totalSeconds
+                organizationId = event.organizationId?.let { UUID.fromString(event.organizationId) }
+                observatoryId = event.observatoryId?.let { UUID.fromString(event.observatoryId) }
+                emailMultiHash = SHA256.fromEmail(event.email).toHex()
+                curator = CURATOR in event.roles || ADMIN in event.roles
+                admin = ADMIN in event.roles
+            }
     }
 }
 

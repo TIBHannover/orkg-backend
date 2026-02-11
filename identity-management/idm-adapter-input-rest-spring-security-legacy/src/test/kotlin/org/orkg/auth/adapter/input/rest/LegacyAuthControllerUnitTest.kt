@@ -21,8 +21,8 @@ import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectError
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestConfiguration
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.context.annotation.Bean
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpHeaders.CONTENT_TYPE

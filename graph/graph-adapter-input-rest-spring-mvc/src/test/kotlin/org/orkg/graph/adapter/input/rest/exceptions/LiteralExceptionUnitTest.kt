@@ -13,7 +13,7 @@ import org.orkg.graph.domain.MAX_LABEL_LENGTH
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
 import org.orkg.testing.spring.restdocs.exceptionResponseFields
 import org.orkg.testing.spring.restdocs.type
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.HttpStatus.NOT_FOUND

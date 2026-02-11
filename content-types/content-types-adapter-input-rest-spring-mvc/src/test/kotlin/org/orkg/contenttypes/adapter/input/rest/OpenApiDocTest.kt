@@ -50,7 +50,7 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Visibility
 import org.orkg.testing.spring.MockMvcOpenApiBaseTest
 import org.orkg.testing.spring.restdocs.oneOf
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.test.context.ContextConfiguration

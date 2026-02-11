@@ -7,12 +7,12 @@ import org.orkg.testing.Neo4jContainerInitializer
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
-import org.springframework.boot.autoconfigure.transaction.TransactionManagerCustomizers
-import org.springframework.boot.test.autoconfigure.data.neo4j.DataNeo4jTest
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest
+import org.springframework.boot.data.neo4j.test.autoconfigure.DataNeo4jTest
+import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.TestConfiguration
+import org.springframework.boot.transaction.autoconfigure.TransactionManagerCustomizers
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Import
 import org.springframework.core.annotation.AliasFor

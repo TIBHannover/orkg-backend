@@ -10,10 +10,10 @@ import org.orkg.dataimport.domain.getAndCast
 import org.orkg.graph.domain.PredicateNotFound
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.output.PredicateRepository
-import org.springframework.batch.core.StepContribution
 import org.springframework.batch.core.scope.context.ChunkContext
+import org.springframework.batch.core.step.StepContribution
 import org.springframework.batch.core.step.tasklet.Tasklet
-import org.springframework.batch.repeat.RepeatStatus
+import org.springframework.batch.infrastructure.repeat.RepeatStatus
 
 open class CSVHeaderProcessor(
     private val predicateRepository: PredicateRepository,

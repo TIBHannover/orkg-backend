@@ -13,9 +13,9 @@ import org.orkg.dataimport.domain.extractContributorId
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.SearchString
 import org.slf4j.LoggerFactory
-import org.springframework.batch.core.StepExecution
-import org.springframework.batch.core.StepExecutionListener
-import org.springframework.batch.item.ItemProcessor
+import org.springframework.batch.core.listener.StepExecutionListener
+import org.springframework.batch.core.step.StepExecution
+import org.springframework.batch.infrastructure.item.ItemProcessor
 import java.util.Optional
 import java.util.UUID
 

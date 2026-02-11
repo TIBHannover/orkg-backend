@@ -10,11 +10,12 @@ import org.orkg.community.domain.EventType
 
 @Entity
 @Table(name = "keycloak_event_states")
-class KeycloakEventStateEntity(
+class KeycloakEventStateEntity {
     @Id
     @Enumerated(EnumType.STRING)
-    @Column(name = "event_type")
-    var eventType: EventType? = null,
-    @Column(name = "counter")
-    var counter: Int = 0,
-)
+    @Column(name = "event_type", nullable = false)
+    var eventType: EventType? = null
+
+    @Column(name = "counter", nullable = false)
+    var counter: Int = 0
+}

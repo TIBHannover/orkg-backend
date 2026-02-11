@@ -27,17 +27,19 @@ class OrganizationEntity() {
     }
 
     @Id
+    @Column(nullable = false)
     var id: UUID? = null
 
     @NotBlank
+    @Column(nullable = false)
     var name: String? = null
 
-    @Column(name = "created_by")
+    @Column(name = "created_by", nullable = false)
     var createdBy: UUID? = null
 
     var url: String? = null
 
-    @Column(name = "display_id")
+    @Column(name = "display_id", nullable = false)
     var displayId: String? = null
 
     @Enumerated(EnumType.STRING)

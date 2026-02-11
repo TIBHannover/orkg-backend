@@ -1,7 +1,7 @@
 package org.orkg.dataimport.domain.jobs.status
 
 import org.orkg.dataimport.domain.jobs.JobStatus.Status
-import org.springframework.batch.core.JobExecution
+import org.springframework.batch.core.job.JobExecution
 
 interface JobStatusFormatter {
     fun getContext(jobExecution: JobExecution): Map<String, Any?> = emptyMap()

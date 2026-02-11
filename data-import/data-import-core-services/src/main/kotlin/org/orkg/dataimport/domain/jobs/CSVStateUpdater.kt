@@ -6,8 +6,8 @@ import org.orkg.dataimport.domain.csv.CSV.State
 import org.orkg.dataimport.domain.extractCSVID
 import org.orkg.dataimport.output.CSVRepository
 import org.springframework.batch.core.BatchStatus
-import org.springframework.batch.core.JobExecution
-import org.springframework.batch.core.JobExecutionListener
+import org.springframework.batch.core.job.JobExecution
+import org.springframework.batch.core.listener.JobExecutionListener
 
 class CSVStateUpdater(
     private val csvRepository: CSVRepository,

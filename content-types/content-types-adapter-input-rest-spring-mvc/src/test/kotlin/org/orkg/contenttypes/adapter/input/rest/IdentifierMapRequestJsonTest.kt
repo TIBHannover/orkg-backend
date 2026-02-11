@@ -10,7 +10,7 @@ import org.junit.jupiter.api.assertThrows
 import org.orkg.common.configuration.CommonSpringConfig
 import org.orkg.contenttypes.adapter.input.rest.configuration.ContentTypeSpringConfig
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.test.context.ContextConfiguration
 
 @WebMvcTest

@@ -38,7 +38,7 @@ abstract class ForbiddenOperationException(
 
 abstract class SimpleMessageException(
     status: HttpStatus,
-    override val message: String?,
+    message: String?,
     override val cause: Throwable? = null,
     properties: Map<String, Any?> = emptyMap(),
     type: URI? = null,
@@ -54,6 +54,8 @@ abstract class SimpleMessageException(
         }
         properties.forEach { property, value -> body.setProperty(property, value) }
     }
+
+    override val message: String = reason ?: status.reasonPhrase
 }
 
 abstract class LoggedMessageException(

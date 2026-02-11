@@ -10,6 +10,6 @@ class Neo4jOffsetDateTimeConverter : Neo4jPersistentPropertyConverter<OffsetDate
     override fun write(source: OffsetDateTime?): Value =
         Values.value(source?.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
 
-    override fun read(source: Value): OffsetDateTime? =
-        OffsetDateTime.parse(source.asString(), DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+    override fun read(source: Value?): OffsetDateTime? =
+        source?.let { OffsetDateTime.parse(it.asString(), DateTimeFormatter.ISO_OFFSET_DATE_TIME) }
 }

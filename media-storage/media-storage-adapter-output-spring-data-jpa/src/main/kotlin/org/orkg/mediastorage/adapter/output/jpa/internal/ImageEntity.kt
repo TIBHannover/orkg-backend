@@ -19,6 +19,7 @@ import java.util.UUID
 @Table(name = "images")
 class ImageEntity {
     @Id
+    @Column(nullable = false)
     var id: UUID? = null
 
     @NotEmpty
@@ -29,7 +30,7 @@ class ImageEntity {
     @Column(name = "mime_type", nullable = false)
     var mimeType: String? = null
 
-    @Column(name = "created_by", nullable = false)
+    @Column(name = "created_by")
     var createdBy: UUID? = null
 
     @Column(name = "created_at", nullable = false)

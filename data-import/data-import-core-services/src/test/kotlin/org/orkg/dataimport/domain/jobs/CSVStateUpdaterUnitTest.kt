@@ -18,10 +18,10 @@ import org.orkg.dataimport.domain.csv.CSV
 import org.orkg.dataimport.domain.csv.CSV.State
 import org.orkg.dataimport.domain.csv.CSVID
 import org.orkg.dataimport.domain.testing.fixtures.createCSV
+import org.orkg.dataimport.domain.testing.fixtures.createJobExecution
 import org.orkg.dataimport.output.CSVRepository
 import org.springframework.batch.core.BatchStatus
-import org.springframework.batch.core.JobExecution
-import org.springframework.batch.core.JobParametersBuilder
+import org.springframework.batch.core.job.parameters.JobParametersBuilder
 import java.util.Optional
 
 internal class CSVStateUpdaterUnitTest : MockkBaseTest {
@@ -39,7 +39,7 @@ internal class CSVStateUpdaterUnitTest : MockkBaseTest {
         val jobId = JobId(123)
         val csv = createCSV()
         val jobParameters = JobParametersBuilder().add(CSV_ID_FIELD, csv.id).toJobParameters()
-        val jobExecution = JobExecution(jobId.value, jobParameters)
+        val jobExecution = createJobExecution(id = jobId.value, jobParameters = jobParameters)
 
         every { csvRepository.findById(csv.id) } returns Optional.of(csv)
         every { csvRepository.save(any()) } just runs
@@ -64,7 +64,7 @@ internal class CSVStateUpdaterUnitTest : MockkBaseTest {
         val jobId = JobId(123)
         val csv = createCSV().copy(state = startState)
         val jobParameters = JobParametersBuilder().add(CSV_ID_FIELD, csv.id).toJobParameters()
-        val jobExecution = JobExecution(jobId.value, jobParameters)
+        val jobExecution = createJobExecution(id = jobId.value, jobParameters = jobParameters)
 
         every { csvRepository.findById(csv.id) } returns Optional.of(csv)
         every { csvRepository.save(any()) } just runs
@@ -88,7 +88,7 @@ internal class CSVStateUpdaterUnitTest : MockkBaseTest {
     fun `Given a job execution, when before the job execution, and csv does not exist, it throws an exception`() {
         val csvId = CSVID("bf59dd89-6a4b-424b-b9d5-36042661e837")
         val jobParameters = JobParametersBuilder().add(CSV_ID_FIELD, csvId).toJobParameters()
-        val jobExecution = JobExecution(123, jobParameters)
+        val jobExecution = createJobExecution(jobParameters = jobParameters)
 
         every { csvRepository.findById(csvId) } returns Optional.empty()
 
@@ -102,7 +102,7 @@ internal class CSVStateUpdaterUnitTest : MockkBaseTest {
         val jobId = JobId(123)
         val csv = createCSV().copy(state = State.IMPORT_DONE)
         val jobParameters = JobParametersBuilder().add(CSV_ID_FIELD, csv.id).toJobParameters()
-        val jobExecution = JobExecution(jobId.value, jobParameters)
+        val jobExecution = createJobExecution(id = jobId.value, jobParameters = jobParameters)
 
         every { csvRepository.findById(csv.id) } returns Optional.of(csv)
         every { jobIdSetter.invoke(any(), any()) } returns csv.copy(importJobId = jobId)
@@ -119,7 +119,7 @@ internal class CSVStateUpdaterUnitTest : MockkBaseTest {
         val jobId = JobId(123)
         val csv = createCSV().copy(state = State.VALIDATION_RUNNING)
         val jobParameters = JobParametersBuilder().add(CSV_ID_FIELD, csv.id).toJobParameters()
-        val jobExecution = JobExecution(jobId.value, jobParameters).apply {
+        val jobExecution = createJobExecution(id = jobId.value, jobParameters = jobParameters).apply {
             status = batchStatus
         }
 
@@ -144,7 +144,7 @@ internal class CSVStateUpdaterUnitTest : MockkBaseTest {
         val jobId = JobId(123)
         val csv = createCSV().copy(state = State.VALIDATION_RUNNING)
         val jobParameters = JobParametersBuilder().add(CSV_ID_FIELD, csv.id).toJobParameters()
-        val jobExecution = JobExecution(jobId.value, jobParameters).apply {
+        val jobExecution = createJobExecution(id = jobId.value, jobParameters = jobParameters).apply {
             status = batchStatus
         }
 
@@ -169,7 +169,7 @@ internal class CSVStateUpdaterUnitTest : MockkBaseTest {
         val jobId = JobId(123)
         val csv = createCSV().copy(state = State.VALIDATION_RUNNING)
         val jobParameters = JobParametersBuilder().add(CSV_ID_FIELD, csv.id).toJobParameters()
-        val jobExecution = JobExecution(jobId.value, jobParameters).apply {
+        val jobExecution = createJobExecution(id = jobId.value, jobParameters = jobParameters).apply {
             status = batchStatus
         }
 
@@ -193,7 +193,7 @@ internal class CSVStateUpdaterUnitTest : MockkBaseTest {
         val jobId = JobId(123)
         val csv = createCSV()
         val jobParameters = JobParametersBuilder().add(CSV_ID_FIELD, csv.id).toJobParameters()
-        val jobExecution = JobExecution(jobId.value, jobParameters).apply {
+        val jobExecution = createJobExecution(id = jobId.value, jobParameters = jobParameters).apply {
             status = BatchStatus.COMPLETED
         }
 
@@ -209,7 +209,7 @@ internal class CSVStateUpdaterUnitTest : MockkBaseTest {
         val jobId = JobId(123)
         val csv = createCSV().copy(state = State.IMPORT_DONE)
         val jobParameters = JobParametersBuilder().add(CSV_ID_FIELD, csv.id).toJobParameters()
-        val jobExecution = JobExecution(jobId.value, jobParameters).apply {
+        val jobExecution = createJobExecution(id = jobId.value, jobParameters = jobParameters).apply {
             status = BatchStatus.COMPLETED
         }
 

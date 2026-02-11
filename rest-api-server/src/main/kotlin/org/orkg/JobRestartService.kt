@@ -2,10 +2,10 @@ package org.orkg
 
 import org.slf4j.LoggerFactory
 import org.springframework.batch.core.BatchStatus
-import org.springframework.batch.core.Job
-import org.springframework.batch.core.explore.JobExplorer
+import org.springframework.batch.core.job.Job
 import org.springframework.batch.core.launch.JobOperator
 import org.springframework.batch.core.repository.JobRepository
+import org.springframework.batch.core.repository.explore.JobExplorer
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
 import org.springframework.stereotype.Component
@@ -22,7 +22,7 @@ class JobRestartService(
 ) : ApplicationRunner {
     private val logger = LoggerFactory.getLogger(this::class.java.name)
 
-    override fun run(args: ApplicationArguments?) {
+    override fun run(args: ApplicationArguments) {
         jobs.forEach { job ->
             if (!job.isRestartable) {
                 return@forEach
@@ -36,11 +36,11 @@ class JobRestartService(
                         logger.error("Failed to stop job {}.", jobExecution, e)
                     }
                     jobExecution.stepExecutions.lastOrNull()?.apply {
-                        status = BatchStatus.FAILED
-                        endTime = LocalDateTime.now(clock)
+                        setStatus(BatchStatus.FAILED)
+                        setEndTime(LocalDateTime.now(clock))
                     }
-                    jobExecution.status = BatchStatus.FAILED
-                    jobExecution.endTime = LocalDateTime.now(clock)
+                    jobExecution.setStatus(BatchStatus.FAILED)
+                    jobExecution.setEndTime(LocalDateTime.now(clock))
                     jobRepository.update(jobExecution)
                     try {
                         jobOperator.restart(jobExecution.id)

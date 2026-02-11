@@ -5,7 +5,6 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.orkg.common.Either
 import org.orkg.common.testing.fixtures.MockkBaseTest
@@ -16,7 +15,6 @@ import org.orkg.contenttypes.input.testing.fixtures.updateTemplateInstanceComman
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.testing.fixtures.createResource
 
-@Nested
 internal class TemplateInstanceThingsCommandValidatorUnitTest : MockkBaseTest {
     private val thingsCommandValidator: ThingsCommandValidator = mockk()
 

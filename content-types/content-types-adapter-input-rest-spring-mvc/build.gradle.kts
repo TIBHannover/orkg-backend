@@ -74,6 +74,7 @@ testing {
                 runtimeOnly("org.springframework.boot:spring-boot-starter-test")
                 implementation("org.springframework.boot:spring-boot-test")
                 implementation("org.springframework.boot:spring-boot-test-autoconfigure")
+                implementation("org.springframework.boot:spring-boot-webmvc-test")
                 implementation("org.springframework.restdocs:spring-restdocs-core")
                 implementation("org.springframework:spring-test")
                 implementation("io.kotest:kotest-assertions-core")

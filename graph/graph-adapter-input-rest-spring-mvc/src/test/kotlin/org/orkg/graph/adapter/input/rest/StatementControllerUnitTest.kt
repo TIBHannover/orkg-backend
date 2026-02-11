@@ -50,7 +50,7 @@ import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
 import org.orkg.testing.spring.restdocs.format
 import org.orkg.testing.spring.restdocs.repeatable
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.FORBIDDEN

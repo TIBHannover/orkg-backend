@@ -22,7 +22,7 @@ class ContributorEmailHashUpdater(
 ) : ApplicationRunner {
     private val logger = LoggerFactory.getLogger(this::class.java.name)
 
-    override fun run(args: ApplicationArguments?) {
+    override fun run(args: ApplicationArguments) {
         val query = entityManager.createNativeQuery("SELECT id FROM contributors WHERE email_multihash LIKE 'd50110%'")
         val contributorIds = query.resultList.map { id -> ContributorId(id!!.toString()) }
         contributorIds.forEach { contributorId ->

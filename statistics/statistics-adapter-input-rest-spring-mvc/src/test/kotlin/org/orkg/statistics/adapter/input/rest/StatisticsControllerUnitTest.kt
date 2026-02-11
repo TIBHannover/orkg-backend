@@ -21,7 +21,7 @@ import org.orkg.testing.spring.restdocs.enumValues
 import org.orkg.testing.spring.restdocs.explode
 import org.orkg.testing.spring.restdocs.style
 import org.orkg.testing.spring.restdocs.wildcard
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.restdocs.payload.FieldDescriptor
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath

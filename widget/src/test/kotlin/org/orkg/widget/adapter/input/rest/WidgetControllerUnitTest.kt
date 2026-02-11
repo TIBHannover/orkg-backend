@@ -22,7 +22,7 @@ import org.orkg.testing.spring.restdocs.type
 import org.orkg.widget.adapter.input.rest.testing.fixtures.WidgetControllerUnitTestConfiguration
 import org.orkg.widget.input.ResolveDOIUseCase
 import org.orkg.widget.input.ResolveDOIUseCase.WidgetInfo
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName

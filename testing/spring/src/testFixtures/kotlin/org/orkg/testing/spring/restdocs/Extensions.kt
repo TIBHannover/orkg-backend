@@ -57,7 +57,7 @@ fun <T : AbstractDescriptor<T>> T.format(format: String): T =
 fun <T : AbstractDescriptor<T>> T.min(min: Int): T =
     constraints(
         Constraint(
-            Min::class.qualifiedName,
+            Min::class.qualifiedName!!,
             mapOf(
                 "value" to min,
                 "message" to "{jakarta.validation.constraints.Min.message}",
@@ -70,7 +70,7 @@ fun <T : AbstractDescriptor<T>> T.min(min: Int): T =
 fun <T : AbstractDescriptor<T>> T.max(max: Int): T =
     constraints(
         Constraint(
-            Max::class.qualifiedName,
+            Max::class.qualifiedName!!,
             mapOf(
                 "value" to max,
                 "message" to "{jakarta.validation.constraints.Max.message}",
@@ -83,7 +83,7 @@ fun <T : AbstractDescriptor<T>> T.max(max: Int): T =
 fun <T : AbstractDescriptor<T>> T.size(min: Int = 0, max: Int = Integer.MAX_VALUE): T =
     constraints(
         Constraint(
-            Size::class.qualifiedName,
+            Size::class.qualifiedName!!,
             mapOf(
                 "min" to min,
                 "max" to max,

@@ -6,7 +6,7 @@ import org.springframework.restdocs.snippet.TemplatedSnippet
 class DescriptionSnippet private constructor(
     private val description: String,
 ) : TemplatedSnippet("description", null) {
-    protected override fun createModel(operation: Operation): MutableMap<String, Any?> =
+    protected override fun createModel(operation: Operation): MutableMap<String, Any> =
         mutableMapOf("description" to description)
 
     companion object {

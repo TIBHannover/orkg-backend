@@ -50,6 +50,8 @@ testing {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
                 implementation("org.junit.jupiter:junit-jupiter-api")
                 implementation("org.junit.jupiter:junit-jupiter-params")
+                implementation("org.junit.platform:junit-platform-commons")
+                implementation("org.opentest4j:opentest4j")
                 implementation(project(":content-types:content-types-core-services"))
                 implementation(project(":media-storage:media-storage-core-model"))
                 implementation(testFixtures(project(":common:testing")))

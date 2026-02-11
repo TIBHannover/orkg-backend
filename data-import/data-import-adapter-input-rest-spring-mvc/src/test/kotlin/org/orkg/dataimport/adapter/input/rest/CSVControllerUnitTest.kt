@@ -53,7 +53,7 @@ import org.orkg.testing.andExpectPage
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.mock.web.MockPart
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName

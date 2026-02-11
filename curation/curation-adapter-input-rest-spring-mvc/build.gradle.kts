@@ -14,7 +14,7 @@ testing {
                 implementation("io.mockk:mockk-jvm")
                 implementation("org.junit.jupiter:junit-jupiter-api")
                 implementation("org.eclipse.rdf4j:rdf4j-common-io")
-                implementation("org.springframework.boot:spring-boot-test-autoconfigure")
+                implementation("org.springframework.boot:spring-boot-webmvc-test")
                 implementation("org.springframework:spring-test")
                 implementation("com.ninja-squad:springmockk")
                 implementation(project(":common:core-identifiers"))

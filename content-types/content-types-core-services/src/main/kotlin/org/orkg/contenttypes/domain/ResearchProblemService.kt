@@ -48,5 +48,7 @@ class ResearchProblemService(
             organizationId = organizationId,
             researchField = researchField,
             includeSubfields = includeSubfields,
+            addressedByObservatory = addressedByObservatory,
+            addressedByOrganization = addressedByOrganization,
         )
 }

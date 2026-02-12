@@ -1,8 +1,8 @@
 package org.orkg.contenttypes.adapter.output.neo4j
 
 import org.neo4j.cypherdsl.core.Condition
+import org.neo4j.cypherdsl.core.Cypher
 import org.neo4j.cypherdsl.core.Cypher.anonParameter
-import org.neo4j.cypherdsl.core.Cypher.countDistinct
 import org.neo4j.cypherdsl.core.Cypher.exists
 import org.neo4j.cypherdsl.core.Cypher.literalOf
 import org.neo4j.cypherdsl.core.Cypher.match
@@ -128,7 +128,7 @@ class SpringDataNeo4jResearchProblemAdapter(
                 val match = researchField
                     ?.let { match(node).match(researchFieldPattern) }
                     ?: match(node).optionalMatch(researchFieldPattern)
-                match.with(node, countDistinct(researchFieldNodeName).`as`("research_field_count"))
+                match.with(node, Cypher.count(researchFieldNodeName).`as`("research_field_count"))
             } else {
                 match(node).with(node)
             }

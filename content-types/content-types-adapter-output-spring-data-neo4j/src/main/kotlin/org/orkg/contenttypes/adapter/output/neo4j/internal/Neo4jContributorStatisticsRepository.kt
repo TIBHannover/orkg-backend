@@ -164,7 +164,7 @@ RETURN COUNT(contributorId)"""
     @Query(
 """
 MATCH (ppr:Paper)-[:RELATED {predicate_id: "P31"}]->(ctr:Contribution)
-MATCH (cmp:ComparisonPublished)-[:RELATED {predicate_id: "compareContribution"}]->(ctr)
+OPTIONAL MATCH (cmp:ComparisonPublished)-[:RELATED {predicate_id: "compareContribution"}]->(ctr)
 OPTIONAL MATCH (cmp)-[:RELATED {predicate_id: "hasVisualization"}]->(vsl:Visualization)
 MATCH (ctr)-[:RELATED {predicate_id: "P32"}]->(prb:Problem {id: $ID})
 WITH [
@@ -181,7 +181,7 @@ WITH n[0].created_by AS contributorId, SUM(n[1][0]) AS paperCount, SUM(n[1][1]) 
 RETURN contributorId, paperCount, contributionCount, comparisonCount, visualizationCount, researchProblemCount, (paperCount + contributionCount + comparisonCount + visualizationCount + researchProblemCount) AS totalCount $ORDER_BY_PAGE_PARAMS""",
         countQuery = """
 MATCH (ppr:Paper)-[:RELATED {predicate_id: "P31"}]->(ctr:Contribution)
-MATCH (cmp:ComparisonPublished)-[:RELATED {predicate_id: "compareContribution"}]->(ctr)
+OPTIONAL MATCH (cmp:ComparisonPublished)-[:RELATED {predicate_id: "compareContribution"}]->(ctr)
 OPTIONAL MATCH (cmp)-[:RELATED {predicate_id: "hasVisualization"}]->(vsl:Visualization)
 MATCH (ctr)-[:RELATED {predicate_id: "P32"}]->(prb:Problem {id: $ID})
 WITH [ppr, ctr, cmp, vsl, prb] AS nodes
@@ -208,7 +208,8 @@ CALL () {
     RETURN startNode(rel) AS problem
 }
 WITH problem AS prb
-MATCH (ppr:Paper)-[:RELATED {predicate_id: "P31"}]->(ctr:Contribution)-[:RELATED {predicate_id: "P32"}]->(prb)
+MATCH (ctr:Contribution)-[:RELATED {predicate_id: "P32"}]->(prb)
+OPTIONAL MATCH (ppr:Paper)-[:RELATED {predicate_id: "P31"}]->(ctr)
 OPTIONAL MATCH (cmp:ComparisonPublished)-[:RELATED {predicate_id: "compareContribution"}]->(ctr)
 OPTIONAL MATCH (cmp)-[:RELATED {predicate_id: "hasVisualization"}]->(vsl:Visualization)
 WITH [
@@ -238,7 +239,8 @@ CALL () {
     RETURN startNode(rel) AS problem
 }
 WITH problem AS prb
-MATCH (ppr:Paper)-[:RELATED {predicate_id: "P31"}]->(ctr:Contribution)-[:RELATED {predicate_id: "P32"}]->(prb)
+MATCH (ctr:Contribution)-[:RELATED {predicate_id: "P32"}]->(prb)
+OPTIONAL MATCH (ppr:Paper)-[:RELATED {predicate_id: "P31"}]->(ctr)
 OPTIONAL MATCH (cmp:ComparisonPublished)-[:RELATED {predicate_id: "compareContribution"}]->(ctr)
 OPTIONAL MATCH (cmp)-[:RELATED {predicate_id: "hasVisualization"}]->(vsl:Visualization)
 WITH [ppr, ctr, cmp, vsl, prb] AS nodes

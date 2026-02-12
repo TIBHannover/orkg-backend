@@ -6,6 +6,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- Improved the robustness of Keycloak event polling.
+  (See [!1428](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1428))
+- It is no longer possible to create templates with properties that have the same property path.
+  (See [!1427](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1427))
+
+### Fixed
+- Fixed the query parameters `addressed_by_observatory` and `addressed_by_organization` not working for research problem listing endpoint.
+- Fixed sorting by `research_field_count` not working correctly for the research problem listing endpoint.
+  (See [!1430](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1430))
+- Fixed sorting by `research_problem_count` not working correctly for the research field listing endpoint.
+  (See [!1430](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1430))
+- Fixed contributor statistics computation for research problems.
+  (See [!1430](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1430))
+
+### Breaking
+- The REST-API now requires Kotlin 2.2.
+  (See [!1419](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1419))
+- Endpoint requests with trailing slashes will now result in a status 308 Permanent Redirect instead of directly serving the request.
+  (See [!1419](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1419))
 
 ## [0.91.4] - 2026-01-20
 ### Fixed

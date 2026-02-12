@@ -36,60 +36,68 @@ class KeycloakEventProcessor(
 
     @Scheduled(cron = "\${orkg.keycloak.event-poll-schedule}")
     fun processEvents() {
-        var offset = keycloakEventStateRepository.findById(EventType.USER_EVENT)
-        val events = keycloak.realm(realm).getEvents(
-            // @formatter:off
-            /* types = */ listOf("REGISTER", "UPDATE_PROFILE", "DELETE_ACCOUNT"),
-            /* client = */ null,
-            /* user = */ null,
-            /* dateFrom = */ null,
-            /* dateTo = */ null,
-            /* ipAddress = */ null,
-            /* firstResult = */ offset,
-            /* maxResults = */ eventPollChunkSize,
-            /* direction = */ "asc",
-            // @formatter:on
-        )
-        events.forEach { event ->
-            when (event.type) {
-                "REGISTER", "UPDATE_PROFILE" -> fetchUserAsConributorById(event.userId)?.also(contributorRepository::save)
-                "DELETE_ACCOUNT" -> contributorRepository.deleteById(ContributorId(event.userId))
+        try {
+            var offset = keycloakEventStateRepository.findById(EventType.USER_EVENT)
+            val events = keycloak.realm(realm).getEvents(
+                // @formatter:off
+                /* types = */ listOf("REGISTER", "UPDATE_PROFILE", "DELETE_ACCOUNT"),
+                /* client = */ null,
+                /* user = */ null,
+                /* dateFrom = */ null,
+                /* dateTo = */ null,
+                /* ipAddress = */ null,
+                /* firstResult = */ offset,
+                /* maxResults = */ eventPollChunkSize,
+                /* direction = */ "asc",
+                // @formatter:on
+            )
+            events.forEach { event ->
+                when (event.type) {
+                    "REGISTER", "UPDATE_PROFILE" -> fetchUserAsConributorById(event.userId)?.also(contributorRepository::save)
+                    "DELETE_ACCOUNT" -> contributorRepository.deleteById(ContributorId(event.userId))
+                }
+                keycloakEventStateRepository.save(EventType.USER_EVENT, ++offset)
             }
-            keycloakEventStateRepository.save(EventType.USER_EVENT, ++offset)
+        } catch (t: Throwable) {
+            logger.error("Error while processing user events.", t)
         }
     }
 
     @Scheduled(cron = "\${orkg.keycloak.event-poll-schedule}")
     fun processAdminEvents() {
-        var offset = keycloakEventStateRepository.findById(EventType.ADMIN_EVENT)
-        val events = keycloak.realm(realm).getAdminEvents(
-            // @formatter:off
-            /* operationTypes = */ listOf("CREATE", "UPDATE", "DELETE"),
-            /* authRealm = */ null,
-            /* authClient = */ null,
-            /* authUser = */ null,
-            /* authIpAddress = */ null,
-            /* resourcePath = */ null,
-            /* resourceTypes = */ null,
-            /* dateFrom = */ null,
-            /* dateTo = */ null,
-            /* firstResult = */ offset,
-            /* maxResults = */ eventPollChunkSize,
-            /* direction = */ "asc",
-            // @formatter:on
-        )
-        events.forEach { event ->
-            if (event.isUserEvent) {
-                val userId = extractUserIdFromResourcePath(event.resourcePath)
-                when (event.operationType) {
-                    "CREATE", "UPDATE" -> fetchUserAsConributorById(userId)?.also(contributorRepository::save)
-                    "DELETE" -> contributorRepository.deleteById(ContributorId(userId))
+        try {
+            var offset = keycloakEventStateRepository.findById(EventType.ADMIN_EVENT)
+            val events = keycloak.realm(realm).getAdminEvents(
+                // @formatter:off
+                /* operationTypes = */ listOf("CREATE", "UPDATE", "DELETE"),
+                /* authRealm = */ null,
+                /* authClient = */ null,
+                /* authUser = */ null,
+                /* authIpAddress = */ null,
+                /* resourcePath = */ null,
+                /* resourceTypes = */ null,
+                /* dateFrom = */ null,
+                /* dateTo = */ null,
+                /* firstResult = */ offset,
+                /* maxResults = */ eventPollChunkSize,
+                /* direction = */ "asc",
+                // @formatter:on
+            )
+            events.forEach { event ->
+                if (event.isUserEvent) {
+                    val userId = extractUserIdFromResourcePath(event.resourcePath)
+                    when (event.operationType) {
+                        "CREATE", "UPDATE" -> fetchUserAsConributorById(userId)?.also(contributorRepository::save)
+                        "DELETE" -> contributorRepository.deleteById(ContributorId(userId))
+                    }
+                } else if (event.isRoleEvent) {
+                    val userId = extractUserIdFromResourcePath(event.resourcePath)
+                    fetchUserAsConributorById(userId)?.also(contributorRepository::save)
                 }
-            } else if (event.isRoleEvent) {
-                val userId = extractUserIdFromResourcePath(event.resourcePath)
-                fetchUserAsConributorById(userId)?.also(contributorRepository::save)
+                keycloakEventStateRepository.save(EventType.ADMIN_EVENT, ++offset)
             }
-            keycloakEventStateRepository.save(EventType.ADMIN_EVENT, ++offset)
+        } catch (t: Throwable) {
+            logger.error("Error while processing admin events.", t)
         }
     }
 

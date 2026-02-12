@@ -194,6 +194,7 @@ dependencies {
 
     // Direct transitive dependencies
     implementation("com.github.multiformats:java-multihash")
+    implementation("io.micrometer:micrometer-core")
     implementation("org.eclipse.rdf4j:rdf4j-common-io")
     implementation("org.neo4j.driver:neo4j-java-driver")
     implementation("org.slf4j:slf4j-api")

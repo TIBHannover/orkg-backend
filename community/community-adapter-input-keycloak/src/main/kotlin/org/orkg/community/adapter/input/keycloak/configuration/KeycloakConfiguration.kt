@@ -10,6 +10,7 @@ import org.keycloak.admin.client.KeycloakBuilder
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import java.util.concurrent.TimeUnit
 
 @Configuration
 class KeycloakConfiguration {
@@ -29,6 +30,8 @@ class KeycloakConfiguration {
                         override fun filter(requestContext: ClientRequestContext) =
                             requestContext.headers.set(HttpHeaders.USER_AGENT, listOf(userAgent))
                     })
+                    .readTimeout(5, TimeUnit.SECONDS)
+                    .connectTimeout(5, TimeUnit.SECONDS)
                     .build()
             )
             .serverUrl(host)

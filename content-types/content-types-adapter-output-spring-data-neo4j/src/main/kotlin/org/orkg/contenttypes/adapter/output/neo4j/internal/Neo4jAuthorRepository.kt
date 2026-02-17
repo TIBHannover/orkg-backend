@@ -28,19 +28,6 @@ WITH a.label as authorLabel
 RETURN COUNT(DISTINCT authorLabel) as cnt"""
     )
     fun findTopAuthorsOfComparison(id: ThingId, pageable: Pageable): Page<Neo4jAuthorOfComparison>
-
-    @Query(
-        value = """
-MATCH (problem:Problem:Resource {id: $PROBLEM_ID})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution:Resource)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper:Resource)-[:RELATED {predicate_id: 'hasAuthors'}]->(:List)-[:RELATED {predicate_id: "hasListElement"}]->(author:Thing)
-WITH DISTINCT author.label AS author, author AS thing, COUNT(paper.id) AS papers
-ORDER BY papers DESC, author
-RETURN author, thing, papers $PAGE_PARAMS""",
-        countQuery = """
-MATCH (problem:Problem:Resource {id: $PROBLEM_ID})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution:Resource)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper:Resource)-[:RELATED {predicate_id: 'hasAuthors'}]->(:List)-[:RELATED {predicate_id: "hasListElement"}]->(author:Thing)
-WITH DISTINCT author.label AS author, author AS thing
-RETURN COUNT(author)"""
-    )
-    fun findAllByProblemId(problemId: ThingId, pageable: Pageable): Page<Neo4jAuthorPerProblem>
 }
 
 data class Neo4jAuthorOfComparison(

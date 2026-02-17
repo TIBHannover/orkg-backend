@@ -8,7 +8,6 @@ dependencies {
     api(project(":common:functional"))
     api(project(":common:core-identifiers"))
     api(project(":common:datatypes"))
-    api(project(":community:community-core-model"))
     api(project(":content-types:content-types-core-model"))
     api(project(":graph:graph-core-model"))
     implementation(project(":common:external-identifiers"))

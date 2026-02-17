@@ -22,7 +22,6 @@ dependencies {
     api(project(":graph:graph-core-model"))
     api(project(":graph:graph-adapter-input-representations"))
     api(project(":graph:graph-ports-input"))
-    implementation(project(":common:pagination"))
     implementation(project(":community:community-core-model"))
 
     testFixturesApi("org.springframework:spring-context")
@@ -39,6 +38,7 @@ testing {
     suites {
         val test by getting(JvmTestSuite::class) {
             dependencies {
+                implementation(project(":common:pagination"))
                 implementation(project(":common:serialization"))
                 implementation(project(":graph:graph-core-constants"))
                 implementation(testFixtures(project(":common:testing")))

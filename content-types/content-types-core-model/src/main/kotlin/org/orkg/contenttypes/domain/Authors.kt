@@ -36,8 +36,3 @@ sealed class SimpleAuthor {
 
     data class LiteralAuthor(val value: String) : SimpleAuthor()
 }
-
-data class PaperAuthor(
-    val author: SimpleAuthor,
-    val papers: Int,
-)

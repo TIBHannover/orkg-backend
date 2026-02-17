@@ -66,8 +66,6 @@ interface RetrieveResourceUseCase {
         visibility: VisibilityFilter,
         pageable: Pageable,
     ): Page<Resource>
-
-    fun findAllProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource>
 }
 
 interface CreateResourceUseCase {

@@ -18,8 +18,5 @@ include::graph/things.adoc[leveloffset=+1]
 [[statements]]
 include::graph/statements.adoc[leveloffset=+1]
 
-[[bulk-statements]]
-include::graph/bulk-statements.adoc[leveloffset=+1]
-
 [[lists]]
 include::graph/lists.adoc[leveloffset=+1]

@@ -2,7 +2,6 @@ package org.orkg.graph.adapter.output.inmemory
 
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
-import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.paged
@@ -365,23 +364,6 @@ class InMemoryStatementRepository(private val inMemoryGraph: InMemoryGraph) :
             .toList()
             .paged(pageable)
     }
-
-    override fun findAllProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> =
-        entities.values.filter {
-            it.subject is Resource &&
-                Classes.comparison in (it.subject as Resource).classes &&
-                (it.subject as Resource).organizationId == id &&
-                it.predicate.id == Predicates.comparesContribution &&
-                it.`object` is Resource &&
-                Classes.contribution in (it.`object` as Resource).classes
-        }.map { compareContributionStatement ->
-            entities.values.filter {
-                it.subject.id == compareContributionStatement.`object`.id &&
-                    it.predicate.id == Predicates.hasResearchProblem &&
-                    it.`object` is Resource &&
-                    Classes.problem in (it.`object` as Resource).classes
-            }.map { it.`object` as Resource }
-        }.flatten().distinct().paged(pageable)
 
     override fun nextIdentity(): StatementId {
         var count = entities.size.toLong()

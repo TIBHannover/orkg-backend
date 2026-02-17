@@ -2,7 +2,6 @@ package org.orkg.graph.output
 
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
-import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.GeneralStatement
@@ -66,11 +65,6 @@ interface StatementReadRepository : EntityRepository<GeneralStatement, Statement
         observatoryId: ObservatoryId?,
         filters: List<SearchFilter>,
         visibility: VisibilityFilter,
-        pageable: Pageable,
-    ): Page<Resource>
-
-    fun findAllProblemsByOrganizationId(
-        id: OrganizationId,
         pageable: Pageable,
     ): Page<Resource>
 

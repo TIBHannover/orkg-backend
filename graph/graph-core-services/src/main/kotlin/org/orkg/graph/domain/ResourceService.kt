@@ -101,12 +101,6 @@ class ResourceService(
     ): Page<Resource> =
         statementRepository.findAllPapersByObservatoryIdAndFilters(observatoryId, filters, visibility, pageable)
 
-    override fun findAllProblemsByOrganizationId(
-        id: OrganizationId,
-        pageable: Pageable,
-    ): Page<Resource> =
-        statementRepository.findAllProblemsByOrganizationId(id, pageable)
-
     override fun update(command: UpdateCommand) {
         if (command.hasNoContents()) return
         val resource = repository.findById(command.id)

@@ -12,7 +12,6 @@ import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.Visibility
-import org.springframework.data.domain.Page
 import java.time.OffsetDateTime
 
 typealias PathRepresentation = List<List<ThingRepresentation>>
@@ -191,21 +190,6 @@ sealed interface SimpleAuthorRepresentation {
     ) : SimpleAuthorRepresentation
 }
 
-data class PaperAuthorRepresentation(
-    val author: SimpleAuthorRepresentation,
-    val papers: Int,
-)
-
-data class PaperCountPerResearchProblemRepresentation(
-    val problem: ResourceRepresentation,
-    val papers: Long,
-)
-
-data class FieldWithFreqRepresentation(
-    val field: ResourceRepresentation,
-    val freq: Long,
-)
-
 data class ChildClassRepresentation(
     val `class`: ClassRepresentation,
     @get:JsonProperty("child_count")
@@ -228,11 +212,6 @@ data class ResearchFieldHierarchyEntryRepresentation(
     val resource: ResourceRepresentation,
     @get:JsonProperty("parent_ids")
     val parentIds: Set<ThingId>,
-)
-
-data class BulkStatementRepresentation(
-    val id: ThingId,
-    val statements: Page<StatementRepresentation>,
 )
 
 data class CountResponse(

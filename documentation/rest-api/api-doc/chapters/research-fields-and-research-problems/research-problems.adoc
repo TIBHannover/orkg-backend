@@ -31,30 +31,3 @@ operation::research-problems_get-paged[snippets='curl-request']
 The following list of request parameters are supported:
 
 operation::research-problems_find-all[snippets='query-parameters,curl-request,errors']
-
-////
-[[problems-fields]]
-== Fields per problem
-
-A `GET` request get all research fields relating to a problem
-
-//operation::organization_controller-test-index[snippets='curl-request,http-response,errors']
-////
-
-[[problems-users]]
-== Listing Contributors of Research Problems
-
-WARNING: **Deprecated**: Replace with <<contributor-statistics-list-by-research-problem,Listing contributor statistics by research problem>>.
-
-include::{snippets}/research-problems_find-all-contributors-by-research-problem-id/description.adoc[]
-
-operation::research-problems_find-all-contributors-by-research-problem-id[snippets='path-parameters,query-parameters,curl-request,http-response,response-fields']
-
-[[problems-authors]]
-== Listing Paper Authors of Research Problems
-
-WARNING: **Deprecated**: Replace with <<author-statistics-list-by-research-problem,Listing author statistics by research problem>>.
-
-include::{snippets}/research-problems_find-all-authors-by-research-problem-id/description.adoc[]
-
-operation::research-problems_find-all-authors-by-research-problem-id[snippets='path-parameters,curl-request,http-response,response-fields']

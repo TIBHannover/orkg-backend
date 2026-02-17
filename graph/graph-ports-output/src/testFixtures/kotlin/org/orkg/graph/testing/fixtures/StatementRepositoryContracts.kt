@@ -14,7 +14,6 @@ import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldNotMatch
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
-import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.graph.domain.BundleConfiguration
@@ -1368,68 +1367,6 @@ fun <
                     result.content.zipWithNext { a, b ->
                         a.createdAt shouldBeLessThan b.createdAt
                     }
-                }
-            }
-        }
-    }
-
-    describe("finding several research problems") {
-        context("by organization id") {
-            val organizationId = fabricator.random<OrganizationId>()
-            val compareContribution = fabricator.random<Predicate>().copy(
-                id = Predicates.comparesContribution
-            )
-            val hasResearchProblem = fabricator.random<Predicate>().copy(
-                id = Predicates.hasResearchProblem
-            )
-            val expected = (0 until 2).map {
-                val contribution = createResource(
-                    id = fabricator.random(),
-                    classes = setOf(Classes.contribution)
-                )
-                val researchProblem = createResource(
-                    id = fabricator.random(),
-                    classes = setOf(Classes.problem)
-                )
-                val comparison = createResource(
-                    id = fabricator.random(),
-                    classes = setOf(Classes.comparison),
-                    organizationId = organizationId
-                )
-                val comparisonHasContribution = createStatement(
-                    id = fabricator.random(),
-                    subject = comparison,
-                    predicate = compareContribution,
-                    `object` = contribution
-                )
-                val contributionHasResearchProblem = createStatement(
-                    id = fabricator.random(),
-                    subject = contribution,
-                    predicate = hasResearchProblem,
-                    `object` = researchProblem
-                )
-                saveStatement(comparisonHasContribution)
-                saveStatement(contributionHasResearchProblem)
-                researchProblem
-            }
-
-            val result = repository.findAllProblemsByOrganizationId(organizationId, PageRequest.of(0, 5))
-
-            it("returns the correct result") {
-                result shouldNotBe null
-                result.content shouldNotBe null
-                result.content.size shouldBe 2
-                result.content shouldContainAll expected
-            }
-            it("pages the result correctly") {
-                result.size shouldBe 5
-                result.number shouldBe 0
-                result.totalPages shouldBe 1
-                result.totalElements shouldBe 2
-            }
-            xit("sorts the results by creation date by default") {
-                result.content.zipWithNext { a, b ->
-                    a.createdAt shouldBeLessThan b.createdAt
                 }
             }
         }

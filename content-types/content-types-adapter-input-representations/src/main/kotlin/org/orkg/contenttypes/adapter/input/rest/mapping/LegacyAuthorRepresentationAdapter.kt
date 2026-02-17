@@ -5,11 +5,9 @@ import org.orkg.contenttypes.adapter.input.rest.ComparisonAuthorInfoRepresentati
 import org.orkg.contenttypes.adapter.input.rest.ComparisonAuthorRepresentation
 import org.orkg.contenttypes.domain.ComparisonAuthor
 import org.orkg.contenttypes.domain.ComparisonAuthorInfo
-import org.orkg.contenttypes.domain.PaperAuthor
 import org.orkg.contenttypes.domain.SimpleAuthor
 import org.orkg.contenttypes.domain.SimpleAuthor.LiteralAuthor
 import org.orkg.contenttypes.domain.SimpleAuthor.ResourceAuthor
-import org.orkg.graph.adapter.input.rest.PaperAuthorRepresentation
 import org.orkg.graph.adapter.input.rest.SimpleAuthorRepresentation
 import org.orkg.graph.adapter.input.rest.SimpleAuthorRepresentation.LiteralAuthorRepresentation
 import org.orkg.graph.adapter.input.rest.SimpleAuthorRepresentation.ResourceAuthorRepresentation
@@ -28,15 +26,6 @@ interface LegacyAuthorRepresentationAdapter : ResourceRepresentationAdapter {
         return map { it.toComparisonAuthorRepresentation(usageCounts, formattedLabels) }
     }
 
-    fun Page<PaperAuthor>.mapToPaperAuthorRepresentation(
-        capabilities: MediaTypeCapabilities,
-    ): Page<PaperAuthorRepresentation> {
-        val resources = content.map { it.author }.filterIsInstance<ResourceAuthor>().map { it.value }
-        val usageCounts = countIncomingStatements(resources)
-        val formattedLabels = formatLabelFor(resources, capabilities)
-        return map { it.toPaperAuthorRepresentation(usageCounts, formattedLabels) }
-    }
-
     fun ComparisonAuthor.toComparisonAuthorRepresentation(
         usageCounts: StatementCounts,
         formattedLabels: FormattedLabels,
@@ -45,12 +34,6 @@ interface LegacyAuthorRepresentationAdapter : ResourceRepresentationAdapter {
             author.toSimpleAuthorRepresentation(usageCounts, formattedLabels),
             info.map { it.toComparisonAuthorInfoRepresentation() }
         )
-
-    fun PaperAuthor.toPaperAuthorRepresentation(
-        usageCounts: StatementCounts,
-        formattedLabels: FormattedLabels,
-    ): PaperAuthorRepresentation =
-        PaperAuthorRepresentation(author.toSimpleAuthorRepresentation(usageCounts, formattedLabels), papers)
 
     fun SimpleAuthor.toSimpleAuthorRepresentation(
         usageCounts: StatementCounts,

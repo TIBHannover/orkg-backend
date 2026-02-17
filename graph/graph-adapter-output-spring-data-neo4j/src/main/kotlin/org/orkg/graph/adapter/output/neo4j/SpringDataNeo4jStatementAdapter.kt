@@ -25,7 +25,6 @@ import org.neo4j.cypherdsl.core.StatementBuilder
 import org.neo4j.driver.internal.value.NullValue
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
-import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.common.neo4jdsl.CypherQueryBuilderFactory
 import org.orkg.common.neo4jdsl.PagedQueryBuilder.countDistinctOver
@@ -716,25 +715,6 @@ class SpringDataNeo4jStatementAdapter(
             .countOver("edit")
             .withParameters("id" to id.value)
             .mappedBy { _, record -> ResourceContributor(record["createdBy"].toContributorId(), record["createdAt"].toOffsetDateTime()) }
-            .fetch(pageable)
-
-    override fun findAllProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> =
-        cypherQueryBuilderFactory.newBuilder()
-            .withCommonQuery {
-                match(
-                    comparisonNode()
-                        .withProperties("organization_id", parameter("id"))
-                        .relationshipTo(contributionNode(), RELATED)
-                        .withProperties("predicate_id", literalOf<String>("compareContribution"))
-                        .relationshipTo(problemNode().named("p"), RELATED)
-                        .properties("predicate_id", literalOf<String>("P32"))
-                )
-            }.withQuery { commonQuery ->
-                commonQuery.returningDistinct(name("p"))
-            }
-            .countDistinctOver("p")
-            .withParameters("id" to id.value.toString())
-            .mappedBy(ResourceMapper("p"))
             .fetch(pageable)
 
     override fun findAllPapersByObservatoryIdAndFilters(

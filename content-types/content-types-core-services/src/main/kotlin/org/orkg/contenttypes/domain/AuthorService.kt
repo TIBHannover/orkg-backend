@@ -15,7 +15,4 @@ class AuthorService(
 ) : AuthorUseCases {
     override fun findTopAuthorsOfComparison(id: ThingId, pageable: Pageable): Page<ComparisonAuthor> =
         repository.findTopAuthorsOfComparison(id, pageable)
-
-    override fun findAllByProblemId(problemId: ThingId, pageable: Pageable): Page<PaperAuthor> =
-        repository.findAllByProblemId(problemId, pageable)
 }

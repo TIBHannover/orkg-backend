@@ -13,15 +13,16 @@ testing {
                 implementation("com.epages:restdocs-api-spec")
                 implementation("io.mockk:mockk-dsl")
                 implementation("io.mockk:mockk-jvm")
+                implementation("org.eclipse.rdf4j:rdf4j-common-io")
                 implementation("org.hamcrest:hamcrest")
                 implementation("org.junit.jupiter:junit-jupiter-api")
+                implementation("org.springframework.data:spring-data-commons")
                 implementation("org.springframework.boot:spring-boot-webmvc-test")
                 implementation("org.springframework.restdocs:spring-restdocs-core")
                 implementation("org.springframework:spring-test")
-                implementation("io.kotest:kotest-assertions-core")
-                implementation("io.kotest:kotest-assertions-shared")
                 implementation("com.ninja-squad:springmockk")
                 implementation(project(":data-export:data-export-core"))
+                implementation(project(":graph:graph-ports-output"))
             }
         }
     }
@@ -29,7 +30,6 @@ testing {
 
 dependencies {
     api("org.springframework.boot:spring-boot")
-    api("org.springframework.data:spring-data-commons")
     api("org.springframework:spring-beans")
     api("org.springframework:spring-context")
     api("org.springframework:spring-core")
@@ -37,14 +37,10 @@ dependencies {
     api(project(":common:core-identifiers"))
     api(project(":common:spring-webmvc"))
     api(project(":data-export:data-export-ports-input"))
-    api(project(":graph:graph-adapter-input-representations"))
-    api(project(":graph:graph-core-model"))
-    api(project(":graph:graph-ports-input"))
-    api(project(":graph:graph-ports-output"))
-    implementation("org.eclipse.rdf4j:rdf4j-common-io")
     implementation("org.eclipse.rdf4j:rdf4j-model-api")
     implementation("org.eclipse.rdf4j:rdf4j-rio-api")
     implementation("org.slf4j:slf4j-api")
+    implementation(project(":graph:graph-core-model"))
     runtimeOnly("org.eclipse.rdf4j:rdf4j-rio-jsonld")
     runtimeOnly("org.eclipse.rdf4j:rdf4j-rio-n3")
     runtimeOnly("org.eclipse.rdf4j:rdf4j-rio-ntriples")

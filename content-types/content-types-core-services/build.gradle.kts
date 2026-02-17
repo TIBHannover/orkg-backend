@@ -13,8 +13,6 @@ dependencies {
     api(project(":common:functional"))
     api(project(":common:core-identifiers"))
     api(project(":common:spring-data"))
-    api(project(":community:community-core-model"))
-    api(project(":community:community-ports-input")) // used in LegacyPaperService
     api(project(":community:community-ports-output"))
     api(project(":content-types:content-types-core-model"))
     api(project(":content-types:content-types-ports-input"))
@@ -29,6 +27,7 @@ dependencies {
     implementation(project(":common:datatypes"))
     implementation(project(":common:external-identifiers"))
     implementation(project(":common:pagination"))
+    implementation(project(":community:community-core-model"))
     implementation(project(":graph:graph-core-constants"))
     testFixturesApi(project(":common:core-identifiers"))
     testFixturesApi(project(":graph:graph-core-model"))

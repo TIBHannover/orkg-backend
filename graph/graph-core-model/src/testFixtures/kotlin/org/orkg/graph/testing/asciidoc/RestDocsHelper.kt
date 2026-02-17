@@ -24,12 +24,3 @@ fun visibilityFilterQueryParameter(): ParameterDescriptor =
         .description("Filter for the visibility modifier. Must be one of $allowedVisibilityFilterValues.")
         .enumValues(VisibilityFilter::class)
         .optional()
-
-fun legacyVisibilityFilterRequestParameters(): Array<ParameterDescriptor> = arrayOf(
-    parameterWithName("featured")
-        .description("Return only featured results. Defaults to `false`. (*Deprecated*. See <<visibility-filter,Visibility filter>>.)")
-        .optional(),
-    parameterWithName("unlisted")
-        .description("Return only unlisted results. Defaults to `false`. (*Deprecated*. See <<visibility-filter,Visibility filter>>.)")
-        .optional(),
-)

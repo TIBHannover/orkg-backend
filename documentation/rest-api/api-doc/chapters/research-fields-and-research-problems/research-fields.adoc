@@ -32,49 +32,6 @@ The following list of request parameters are supported:
 
 operation::research-fields_find-all[snippets='query-parameters,curl-request,errors']
 
-NOTE: In the following sections, the response fields of the page object are omitted for brevity.
-
-== Research Fields and Research Problems
-
-[[research-fields-list-research-problems]]
-=== Listing Research Problems of Research Fields
-
-WARNING: **Deprecated**: Replace with <<research-fields-list>>.
-
-include::{snippets}/research-fields_find-all-research-problems-by-research-field-id/description.adoc[]
-
-operation::research-fields_find-all-research-problems-by-research-field-id[snippets='path-parameters,curl-request,errors']
-
-[[research-fields-list-research-problems-with-subfields]]
-=== Listing Research Problems of Research Fields and their Subfields
-
-WARNING: **Deprecated**: Replace with <<research-fields-list>>.
-
-A `GET` request to `/api/research-fields/{id}/subfields/research-problems` returns a <<sorting-and-pagination,paged>> list of research problem <<resources,resources>> belonging to a given research field and its subfields.
-
-All path and request parameters are exactly the same as on the <<research-fields-list-research-problems,endpoint without subfields>>.
-
-
-== Research Fields and Contributors
-
-[[research-fields-list-contributors]]
-=== Listing Contributors of Research Fields
-
-WARNING: **Deprecated**: Replace with <<contributor-statistics-list-by-research-field,Listing contributor statistics by research field>>.
-
-include::{snippets}/research-fields_find-all-contributors-by-research-field-id/description.adoc[]
-
-operation::research-fields_find-all-contributors-by-research-field-id[snippets='path-parameters,curl-request']
-
-[[research-fields-list-contributors-with-subfields]]
-=== Listing Contributors of Research Fields and their Subfields
-
-WARNING: **Deprecated**: Replace with <<contributor-statistics-list-by-research-field,Listing contributor statistics by research field>>.
-
-A `GET` request to `/api/research-fields/{id}/subfields/contributors` returns a <<sorting-and-pagination,paged>> list of contributors that contributed to a given research field and its subfields.
-All path and request parameters are exactly the same as on the <<research-fields-list-contributors,endpoint without subfields>>.
-
-
 [[research-fields-list-children]]
 == Listing Subfields
 

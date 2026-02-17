@@ -21,7 +21,6 @@ import org.orkg.graph.output.ClassHierarchyRepository
 import org.orkg.graph.output.ClassRelationRepository
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.FormattedLabelRepository
-import org.orkg.graph.output.LegacyStatisticsRepository
 import org.orkg.graph.output.ListRepository
 import org.orkg.graph.output.LiteralRepository
 import org.orkg.graph.output.PredicateRepository
@@ -68,7 +67,6 @@ class Neo4jRepositoryProfiler(
         FormattedLabelRepository::class,
         LegacyResearchFieldRepository::class,
         LegacyResearchProblemRepository::class,
-        LegacyStatisticsRepository::class,
         ListRepository::class,
         LiteralRepository::class,
         LiteratureListRepository::class,

@@ -2,11 +2,9 @@ package org.orkg.contenttypes.adapter.output.neo4j
 
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.adapter.output.neo4j.internal.Neo4jAuthorOfComparison
-import org.orkg.contenttypes.adapter.output.neo4j.internal.Neo4jAuthorPerProblem
 import org.orkg.contenttypes.adapter.output.neo4j.internal.Neo4jAuthorRepository
 import org.orkg.contenttypes.domain.ComparisonAuthor
 import org.orkg.contenttypes.domain.ComparisonAuthorInfo
-import org.orkg.contenttypes.domain.PaperAuthor
 import org.orkg.contenttypes.domain.SimpleAuthor
 import org.orkg.contenttypes.output.AuthorRepository
 import org.orkg.graph.adapter.output.neo4j.internal.Neo4jLiteral
@@ -22,10 +20,6 @@ class SpringDataNeo4jAuthorAdapter(
     override fun findTopAuthorsOfComparison(id: ThingId, pageable: Pageable): Page<ComparisonAuthor> =
         neo4jRepository.findTopAuthorsOfComparison(id, pageable)
             .map(Neo4jAuthorOfComparison::toComparisonAuthor)
-
-    override fun findAllByProblemId(problemId: ThingId, pageable: Pageable): Page<PaperAuthor> =
-        neo4jRepository.findAllByProblemId(problemId, pageable)
-            .map(Neo4jAuthorPerProblem::toPaperAuthor)
 }
 
 private fun Neo4jAuthorOfComparison.toComparisonAuthor() =
@@ -43,14 +37,4 @@ private fun Neo4jAuthorOfComparison.toComparisonAuthor() =
                 it.year?.toInt()
             )
         }
-    )
-
-private fun Neo4jAuthorPerProblem.toPaperAuthor() =
-    PaperAuthor(
-        if (thing is Neo4jResource) {
-            SimpleAuthor.ResourceAuthor(thing.toResource())
-        } else {
-            SimpleAuthor.LiteralAuthor(thing.label!!)
-        },
-        papers.toInt()
     )

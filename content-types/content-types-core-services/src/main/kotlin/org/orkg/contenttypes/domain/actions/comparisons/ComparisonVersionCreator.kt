@@ -6,7 +6,6 @@ import org.orkg.contenttypes.domain.actions.PublishComparisonCommand
 import org.orkg.contenttypes.domain.actions.comparisons.PublishComparisonAction.State
 import org.orkg.contenttypes.domain.actions.execute
 import org.orkg.contenttypes.domain.ids
-import org.orkg.contenttypes.output.ComparisonPublishedRepository
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
@@ -21,7 +20,6 @@ class ComparisonVersionCreator(
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
     private val unsafeLiteralUseCases: UnsafeLiteralUseCases,
     private val listService: ListUseCases,
-    private val comparisonPublishedRepository: ComparisonPublishedRepository,
 ) : PublishComparisonAction {
     override fun invoke(command: PublishComparisonCommand, state: State): State {
         val comparison = state.comparison!!
@@ -32,9 +30,7 @@ class ComparisonVersionCreator(
             researchFields = comparison.researchFields.ids,
             authors = comparison.authors,
             sustainableDevelopmentGoals = comparison.sustainableDevelopmentGoals.ids,
-            contributions = comparison.contributions.ids,
-            config = state.config!!,
-            data = state.data!!,
+            sources = comparison.sources,
             visualizations = comparison.visualizations.ids,
             references = comparison.references,
             observatories = comparison.observatories,
@@ -53,7 +49,6 @@ class ComparisonVersionCreator(
             ComparisonIsAnonymizedCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
             ComparisonContributionCreator(unsafeStatementUseCases),
             ComparisonVisualizationCreator(unsafeStatementUseCases),
-            ComparisonVersionTableCreator(comparisonPublishedRepository),
             ComparisonPublicationInfoCreator(unsafeStatementUseCases, unsafeLiteralUseCases)
         )
         return state.copy(

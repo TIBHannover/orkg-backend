@@ -737,7 +737,6 @@ internal class SmartReviewServiceUnitTest : MockkBaseTest {
             )
         )
         every { statementRepository.fetchAsBundle(any(), any(), any()) } returns emptyList()
-        every { with(comparisonService) { content.findTableData() } } returns ComparisonTable.empty(content.id)
         every { with(comparisonService) { content.findVersionInfo(any()) } } returns versions
 
         val result = service.findPublishedContentById(smartReview.id, content.id)
@@ -760,7 +759,6 @@ internal class SmartReviewServiceUnitTest : MockkBaseTest {
         verify(exactly = 1) { resourceRepository.findById(smartReview.id) }
         verify(exactly = 1) { smartReviewPublishedRepository.findById(smartReview.id) }
         verify(exactly = 1) { statementRepository.fetchAsBundle(any(), any(), any()) }
-        verify(exactly = 1) { with(comparisonService) { content.findTableData() } }
         verify(exactly = 1) { with(comparisonService) { content.findVersionInfo(any()) } }
     }
 

@@ -3,18 +3,22 @@ package org.orkg.contenttypes.adapter.input.rest.exceptions
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.ComparisonAlreadyPublished
+import org.orkg.contenttypes.domain.ComparisonDataSource
 import org.orkg.contenttypes.domain.ComparisonNotFound
 import org.orkg.contenttypes.domain.ComparisonNotModifiable
 import org.orkg.contenttypes.domain.ComparisonRelatedFigureNotFound
 import org.orkg.contenttypes.domain.ComparisonRelatedFigureNotModifiable
 import org.orkg.contenttypes.domain.ComparisonRelatedResourceNotFound
 import org.orkg.contenttypes.domain.ComparisonRelatedResourceNotModifiable
+import org.orkg.contenttypes.domain.ComparisonTableNotFound
+import org.orkg.contenttypes.domain.DuplicateComparisonDataSources
 import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerExceptionUnitTestConfiguration
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
 import org.orkg.testing.spring.restdocs.exceptionResponseFields
 import org.orkg.testing.spring.restdocs.type
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.test.context.ContextConfiguration
@@ -52,6 +56,25 @@ internal class ComparisonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andDocument {
                 responseFields<ComparisonNotModifiable>(
                     fieldWithPath("comparison_id").description("The id of the comparison.").type<ThingId>(),
+                    *exceptionResponseFields(type).toTypedArray(),
+                )
+            }
+    }
+
+    @Test
+    fun duplicateComparisonDataSources() {
+        val type = "orkg:problem:duplicate_data_sources"
+        val comparisonDataSource = ComparisonDataSource(ThingId("R123"), ComparisonDataSource.Type.THING)
+        documentedGetRequestTo(DuplicateComparisonDataSources(mapOf(comparisonDataSource to 5)))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType(type)
+            .andExpectTitle("Bad Request")
+            .andExpectDetail("""Duplicate data sources: (id=R123,type=THING)=5.""")
+            .andExpect(jsonPath("$.duplicate_data_sources['(id=R123,type=THING)']").value("5"))
+            .andDocument {
+                responseFields<DuplicateComparisonDataSources>(
+                    fieldWithPath("duplicate_data_sources").description("A key-value map of data sources to their occurrence count."),
+                    fieldWithPath("duplicate_data_sources.*").description("The occurrence count of the data source.").type<Int>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -102,6 +125,23 @@ internal class ComparisonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.comparison_id").value("R123"))
             .andDocument {
                 responseFields<ComparisonNotFound>(
+                    fieldWithPath("comparison_id").description("The id of the comparison.").type<ThingId>(),
+                    *exceptionResponseFields(type).toTypedArray(),
+                )
+            }
+    }
+
+    @Test
+    fun comparisonTableNotFound() {
+        val type = "orkg:problem:comparison_table_not_found"
+        documentedGetRequestTo(ComparisonTableNotFound(ThingId("R123")))
+            .andExpectErrorStatus(HttpStatus.NOT_FOUND)
+            .andExpectType(type)
+            .andExpectTitle("Not Found")
+            .andExpectDetail("""Comparison table for comparison "R123" not found.""")
+            .andExpect(jsonPath("$.comparison_id").value("R123"))
+            .andDocument {
+                responseFields<ComparisonTableNotFound>(
                     fieldWithPath("comparison_id").description("The id of the comparison.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )

@@ -56,7 +56,7 @@ internal class ComparisonRelatedResourceControllerUnitTest : MockMvcBaseTest("co
         } returns Optional.of(comparisonRelatedResource)
 
         documentedGetRequestTo("/api/comparisons/{id}/related-resources/{comparisonRelatedResourceId}", comparisonId, comparisonRelatedResource.id)
-            .accept(COMPARISON_JSON_V2)
+            .accept(COMPARISON_JSON_V3)
             .perform()
             .andExpect(status().isOk)
             .andExpectComparisonRelatedResource()
@@ -87,7 +87,7 @@ internal class ComparisonRelatedResourceControllerUnitTest : MockMvcBaseTest("co
         } returns Optional.empty()
 
         get("/api/comparisons/{id}/related-resources/{comparisonRelatedResourceId}", comparisonId, comparisonRelatedResourceId)
-            .accept(COMPARISON_JSON_V2)
+            .accept(COMPARISON_JSON_V3)
             .perform()
             .andExpectErrorStatus(NOT_FOUND)
             .andExpectType("orkg:problem:comparison_related_resource_not_found")
@@ -104,7 +104,7 @@ internal class ComparisonRelatedResourceControllerUnitTest : MockMvcBaseTest("co
         every { comparisonRelatedResourceService.findAllByComparisonId(comparisonId, any()) } returns pageOf(comparisonRelatedResource)
 
         documentedGetRequestTo("/api/comparisons/{id}/related-resources", comparisonId)
-            .accept(COMPARISON_JSON_V2)
+            .accept(COMPARISON_JSON_V3)
             .perform()
             .andExpect(status().isOk)
             .andExpectPage()
@@ -136,8 +136,8 @@ internal class ComparisonRelatedResourceControllerUnitTest : MockMvcBaseTest("co
 
         documentedPostRequestTo("/api/comparisons/{id}/related-resources", comparisonId)
             .content(createComparisonRelatedResourceRequest())
-            .accept(COMPARISON_JSON_V2)
-            .contentType(COMPARISON_JSON_V2)
+            .accept(COMPARISON_JSON_V3)
+            .contentType(COMPARISON_JSON_V3)
             .perform()
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("/api/comparisons/$comparisonId/related-resources/$id")))
@@ -177,8 +177,8 @@ internal class ComparisonRelatedResourceControllerUnitTest : MockMvcBaseTest("co
 
         post("/api/comparisons/$comparisonId/related-resources")
             .content(createComparisonRelatedResourceRequest())
-            .accept(COMPARISON_JSON_V2)
-            .contentType(COMPARISON_JSON_V2)
+            .accept(COMPARISON_JSON_V3)
+            .contentType(COMPARISON_JSON_V3)
             .perform()
             .andExpectErrorStatus(NOT_FOUND)
             .andExpectType("orkg:problem:comparison_not_found")
@@ -196,8 +196,8 @@ internal class ComparisonRelatedResourceControllerUnitTest : MockMvcBaseTest("co
 
         documentedPutRequestTo("/api/comparisons/{id}/related-resources/{comparisonRelatedFigureId}", comparisonId, id)
             .content(updateComparisonRelatedResourceRequest())
-            .accept(COMPARISON_JSON_V2)
-            .contentType(COMPARISON_JSON_V2)
+            .accept(COMPARISON_JSON_V3)
+            .contentType(COMPARISON_JSON_V3)
             .perform()
             .andExpect(status().isNoContent)
             .andExpect(header().string("Location", endsWith("/api/comparisons/$comparisonId/related-resources/$id")))
@@ -252,7 +252,7 @@ internal class ComparisonRelatedResourceControllerUnitTest : MockMvcBaseTest("co
         } just runs
 
         documentedDeleteRequestTo("/api/comparisons/{id}/related-resources/{comparisonRelatedResourceId}", comparisonId, comparisonRelatedResourceId)
-            .accept(COMPARISON_JSON_V2)
+            .accept(COMPARISON_JSON_V3)
             .perform()
             .andExpect(status().isNoContent)
             .andExpect(header().string("Location", endsWith("/api/comparisons/$comparisonId")))

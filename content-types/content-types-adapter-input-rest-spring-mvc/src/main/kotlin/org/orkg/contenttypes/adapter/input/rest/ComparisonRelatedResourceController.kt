@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
-@RequestMapping("/api/comparisons", produces = [COMPARISON_JSON_V2])
+@RequestMapping("/api/comparisons", produces = [COMPARISON_JSON_V3])
 class ComparisonRelatedResourceController(
     private val service: ComparisonRelatedResourceUseCases,
 ) : ComparisonRelatedResourceRepresentationAdapter {
@@ -50,7 +50,7 @@ class ComparisonRelatedResourceController(
             .mapToComparisonRelatedResourceRepresentation()
 
     @RequireLogin
-    @PostMapping("/{id}/related-resources", consumes = [COMPARISON_JSON_V2])
+    @PostMapping("/{id}/related-resources", consumes = [COMPARISON_JSON_V3])
     fun create(
         @PathVariable id: ThingId,
         @RequestBody @Valid request: CreateComparisonRelatedResourceRequest,
@@ -67,7 +67,7 @@ class ComparisonRelatedResourceController(
     }
 
     @RequireLogin
-    @PutMapping("/{id}/related-resources/{comparisonRelatedResourceId}", consumes = [COMPARISON_JSON_V2])
+    @PutMapping("/{id}/related-resources/{comparisonRelatedResourceId}", consumes = [COMPARISON_JSON_V3])
     fun update(
         @PathVariable id: ThingId,
         @PathVariable comparisonRelatedResourceId: ThingId,

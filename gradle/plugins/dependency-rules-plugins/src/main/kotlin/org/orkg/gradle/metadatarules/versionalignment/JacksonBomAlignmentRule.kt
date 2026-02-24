@@ -8,7 +8,7 @@ import org.gradle.api.artifacts.ComponentMetadataRule
 abstract class JacksonBomAlignmentRule : ComponentMetadataRule {
     override fun execute(ctx: ComponentMetadataContext) {
         ctx.details.run {
-            if (id.group.startsWith("tools.jackson")) {
+            if (id.group.startsWith("tools.jackson") && id.name != "jackson-annotations") {
                 // declare that Jackson modules belong to the platform defined by the Jackson BOM
                 belongsTo("tools.jackson:jackson-bom:${id.version}", false)
             }

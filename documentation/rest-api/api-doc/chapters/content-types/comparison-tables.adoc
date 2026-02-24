@@ -1,0 +1,22 @@
+= Comparison Tables
+
+[[comparisons-tables-paths]]
+== Listing Comparison Table Paths
+
+include::{snippets}/comparison-tables_find-all-paths-by-comparison-id/description.adoc[]
+
+operation::comparison-tables_find-all-paths-by-comparison-id[snippets='path-parameters,curl-request,http-response,response-fields']
+
+[[comparisons-tables-fetch]]
+== Fetching Comparison Tables
+
+include::{snippets}/comparison-tables_find-table-by-comparison-id/description.adoc[]
+
+operation::comparison-tables_find-table-by-comparison-id[snippets='path-parameters,curl-request,http-response,response-fields,errors']
+
+[[comparisons-tables-edit]]
+== Updating Comparison Tables
+
+include::{snippets}/comparison-tables_update-table/description.adoc[]
+
+operation::comparison-tables_update-table[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']

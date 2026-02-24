@@ -5,6 +5,7 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.RosettaStoneStatement
+import org.orkg.graph.domain.Thing
 import org.orkg.graph.domain.VisibilityFilter
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -28,6 +29,8 @@ interface RosettaStoneStatementRepository {
         observatoryId: ObservatoryId? = null,
         organizationId: OrganizationId? = null,
     ): Page<RosettaStoneStatement>
+
+    fun findAllByContextIdsAndTemplateIds(contextIds: Set<ThingId>, templateIds: Set<ThingId>): Map<Thing, Set<RosettaStoneStatement>>
 
     fun save(statement: RosettaStoneStatement)
 

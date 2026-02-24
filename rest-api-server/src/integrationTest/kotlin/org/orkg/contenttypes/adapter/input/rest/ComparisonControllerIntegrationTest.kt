@@ -22,13 +22,8 @@ import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
 import org.orkg.contenttypes.adapter.output.simcomp.internal.InMemorySimCompThingRepositoryAdapter
 import org.orkg.contenttypes.domain.Author
-import org.orkg.contenttypes.domain.ComparisonConfig
-import org.orkg.contenttypes.domain.ComparisonData
-import org.orkg.contenttypes.domain.ComparisonHeaderCell
-import org.orkg.contenttypes.domain.ComparisonIndexCell
+import org.orkg.contenttypes.domain.ComparisonDataSource
 import org.orkg.contenttypes.domain.ComparisonNotFound
-import org.orkg.contenttypes.domain.ComparisonType
-import org.orkg.contenttypes.domain.ConfiguredComparisonTargetCell
 import org.orkg.contenttypes.domain.HeadVersion
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.domain.VersionInfo
@@ -224,8 +219,8 @@ internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparison
     fun createAndFetchAndUpdate() {
         val id = post("/api/comparisons")
             .content(requestJson("orkg/createComparison"))
-            .accept(COMPARISON_JSON_V2)
-            .contentType(COMPARISON_JSON_V2)
+            .accept(COMPARISON_JSON_V3)
+            .contentType(COMPARISON_JSON_V3)
             .perform()
             .andExpect(status().isCreated)
             .andReturn()
@@ -236,8 +231,8 @@ internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparison
             .let(::ThingId)
 
         val comparison = get("/api/comparisons/{id}", id)
-            .accept(COMPARISON_JSON_V2)
-            .contentType(COMPARISON_JSON_V2)
+            .accept(COMPARISON_JSON_V3)
+            .contentType(COMPARISON_JSON_V3)
             .perform()
             .andExpect(status().isOk)
             .andReturn()
@@ -286,61 +281,11 @@ internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparison
                 LabeledObjectRepresentation(ThingId("SDG_1"), "No poverty"),
                 LabeledObjectRepresentation(ThingId("SDG_2"), "Zero hunger")
             )
-            it.contributions shouldContainExactlyInAnyOrder listOf(
-                LabeledObjectRepresentation(ThingId("R6541"), "Contribution 1"),
-                LabeledObjectRepresentation(ThingId("R5364"), "Contribution 2"),
-                LabeledObjectRepresentation(ThingId("R9786"), "Contribution 3"),
-                LabeledObjectRepresentation(ThingId("R3120"), "Contribution 4")
-            )
-            it.config shouldBe ComparisonConfig(
-                predicates = listOf(),
-                contributions = listOf("R456789", "R987654"),
-                transpose = false,
-                type = ComparisonType.MERGE,
-                shortCodes = emptyList()
-            )
-            it.data shouldBe ComparisonData(
-                listOf(
-                    ComparisonHeaderCell(
-                        id = "R456789",
-                        label = "Contribution 1",
-                        paperId = "R456",
-                        paperLabel = "Paper 1",
-                        paperYear = 2024,
-                        active = true
-                    ),
-                    ComparisonHeaderCell(
-                        id = "R987654",
-                        label = "Contribution 1",
-                        paperId = "R789",
-                        paperLabel = "Paper 2",
-                        paperYear = 2022,
-                        active = true
-                    )
-                ),
-                listOf(
-                    ComparisonIndexCell(
-                        id = "P32",
-                        label = "research problem",
-                        contributionAmount = 2,
-                        active = true,
-                        similarPredicates = listOf("P15")
-                    )
-                ),
-                mapOf(
-                    "P32" to listOf(
-                        listOf(
-                            ConfiguredComparisonTargetCell(
-                                id = "R192326",
-                                label = "Covid-19 Pandemic Ontology Development",
-                                classes = listOf(Classes.problem),
-                                path = listOf(ThingId("R187004"), Predicates.hasResearchProblem),
-                                pathLabels = listOf("Contribution 1", "research problem"),
-                                `class` = "resource"
-                            )
-                        )
-                    )
-                )
+            it.sources shouldBe listOf(
+                ComparisonDataSourceRepresentation(ThingId("R6541"), ComparisonDataSource.Type.THING),
+                ComparisonDataSourceRepresentation(ThingId("R5364"), ComparisonDataSource.Type.THING),
+                ComparisonDataSourceRepresentation(ThingId("R9786"), ComparisonDataSource.Type.THING),
+                ComparisonDataSourceRepresentation(ThingId("R3120"), ComparisonDataSource.Type.THING)
             )
             it.visualizations shouldContainExactlyInAnyOrder listOf(
                 LabeledObjectRepresentation(ThingId("R6571"), "Visualization 1"),
@@ -365,8 +310,8 @@ internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparison
 
         put("/api/comparisons/{id}", id)
             .content(requestJson("orkg/updateComparison"))
-            .accept(COMPARISON_JSON_V2)
-            .contentType(COMPARISON_JSON_V2)
+            .accept(COMPARISON_JSON_V3)
+            .contentType(COMPARISON_JSON_V3)
             .perform()
             .andExpect(status().isNoContent)
 
@@ -413,69 +358,11 @@ internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparison
                 ObjectIdAndLabel(ThingId("SDG_2"), "Zero hunger"),
                 ObjectIdAndLabel(ThingId("SDG_3"), "Good health and well-being")
             )
-            it.contributions shouldContainExactlyInAnyOrder listOf(
-                ObjectIdAndLabel(ThingId("R6541"), "Contribution 1"),
-                ObjectIdAndLabel(ThingId("R5364"), "Contribution 2"),
-                ObjectIdAndLabel(ThingId("R3120"), "Contribution 4"),
-                ObjectIdAndLabel(ThingId("R7864"), "Contribution 5")
-            )
-            it.config shouldBe ComparisonConfig(
-                predicates = listOf(),
-                contributions = listOf("R456790", "R987654", "R1546864"),
-                transpose = false,
-                type = ComparisonType.PATH,
-                shortCodes = emptyList()
-            )
-            it.data shouldBe ComparisonData(
-                listOf(
-                    ComparisonHeaderCell(
-                        id = "R456790",
-                        label = "Contribution 2",
-                        paperId = "R456",
-                        paperLabel = "Paper 1",
-                        paperYear = 2024,
-                        active = true
-                    ),
-                    ComparisonHeaderCell(
-                        id = "R987654",
-                        label = "Contribution 1",
-                        paperId = "R789",
-                        paperLabel = "Paper 2",
-                        paperYear = 2022,
-                        active = true
-                    ),
-                    ComparisonHeaderCell(
-                        id = "R1546864",
-                        label = "Contribution 1",
-                        paperId = "R258",
-                        paperLabel = "Paper 3",
-                        paperYear = 2023,
-                        active = true
-                    )
-                ),
-                listOf(
-                    ComparisonIndexCell(
-                        id = "P32",
-                        label = "research problem",
-                        contributionAmount = 2,
-                        active = true,
-                        similarPredicates = listOf("P15")
-                    )
-                ),
-                mapOf(
-                    "P32" to listOf(
-                        listOf(
-                            ConfiguredComparisonTargetCell(
-                                id = "R192326",
-                                label = "Covid-19 Pandemic Ontology Development",
-                                classes = listOf(Classes.problem),
-                                path = listOf(ThingId("R187004"), Predicates.hasResearchProblem),
-                                pathLabels = listOf("Contribution 1", "research problem"),
-                                `class` = "resource"
-                            )
-                        )
-                    )
-                )
+            it.sources shouldBe listOf(
+                ComparisonDataSource(ThingId("R6541"), ComparisonDataSource.Type.THING),
+                ComparisonDataSource(ThingId("R5364"), ComparisonDataSource.Type.THING),
+                ComparisonDataSource(ThingId("R3120"), ComparisonDataSource.Type.THING),
+                ComparisonDataSource(ThingId("R7864"), ComparisonDataSource.Type.THING)
             )
             it.visualizations shouldContainExactlyInAnyOrder listOf(
                 ObjectIdAndLabel(ThingId("R1354"), "Visualization 2"),

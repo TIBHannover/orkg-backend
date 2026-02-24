@@ -10,7 +10,6 @@ import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreateComparisonState
 import org.orkg.contenttypes.input.testing.fixtures.createComparisonCommand
-import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.UnsafeStatementUseCases
@@ -37,14 +36,14 @@ internal class ComparisonContributionCreatorUnitTest : MockkBaseTest {
             it.comparisonId shouldBe state.comparisonId
         }
 
-        command.contributions.forEach {
+        command.sources.forEach { source ->
             verify(exactly = 1) {
                 unsafeStatementUseCases.create(
                     CreateStatementUseCase.CreateCommand(
                         contributorId = command.contributorId,
                         subjectId = comparisonId,
-                        predicateId = Predicates.comparesContribution,
-                        objectId = it
+                        predicateId = source.type.predicateId,
+                        objectId = source.id
                     )
                 )
             }

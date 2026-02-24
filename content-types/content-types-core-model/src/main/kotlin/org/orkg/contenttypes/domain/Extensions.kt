@@ -84,3 +84,19 @@ fun Map<ThingId, List<GeneralStatement>>.legacyAuthors(subjectId: ThingId): List
         ?.filter { it is Resource || it is Literal }
         ?.map { it.toAuthor(this[it.id].orEmpty()) }
         .orEmpty()
+
+fun parseComparisonDataSources(statements: List<GeneralStatement>): List<ComparisonDataSource> =
+    statements.filter { it.predicate.id == Predicates.comparesContribution || it.predicate.id == Predicates.comparesRosettaStoneContribution }
+        .map { statement ->
+            statement.createdAt to ComparisonDataSource(
+                id = statement.`object`.id,
+                type = when (statement.predicate.id) {
+                    Predicates.comparesContribution -> ComparisonDataSource.Type.THING
+                    Predicates.comparesRosettaStoneContribution -> ComparisonDataSource.Type.ROSETTA_STONE_STATEMENT
+                    else -> throw IllegalStateException()
+                }
+            )
+        }
+        .sortedBy { it.first }
+        .map { it.second }
+        .distinct()

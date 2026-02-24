@@ -68,7 +68,8 @@ data class RosettaStoneStatementVersion(
         require(organizations.size <= 1) { "Must be at most one organization." }
     }
 
-    val allInputs: Set<Thing> get() = subjects union objects.flatten()
+    val inputs: List<List<Thing>> get() = listOf(subjects) + objects
+    val inputValues: Set<Thing> get() = subjects union objects.flatten()
 }
 
 enum class Certainty {

@@ -8,7 +8,6 @@ import org.orkg.common.exceptions.jsonFieldPathToJsonPointerReference
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.springframework.http.HttpStatus
-import kotlin.collections.mapOf
 
 class PaperNotFound private constructor(
     override val message: String,
@@ -34,6 +33,13 @@ class ComparisonNotFound(id: ThingId) :
     SimpleMessageException(
         HttpStatus.NOT_FOUND,
         """Comparison "$id" not found.""",
+        properties = mapOf("comparison_id" to id),
+    )
+
+class ComparisonTableNotFound(id: ThingId) :
+    SimpleMessageException(
+        HttpStatus.NOT_FOUND,
+        """Comparison table for comparison "$id" not found.""",
         properties = mapOf("comparison_id" to id),
     )
 
@@ -171,6 +177,14 @@ class ComparisonNotModifiable(id: ThingId) :
         properties = mapOf("comparison_id" to id),
     )
 
+class DuplicateComparisonDataSources(val duplicates: Map<ComparisonDataSource, Int>) :
+    SimpleMessageException(
+        HttpStatus.BAD_REQUEST,
+        """Duplicate data sources: ${duplicates.entries.joinToString { "(id=${it.key.id},type=${it.key.type})=${it.value}" }}.""",
+        type = createProblemURI("duplicate_data_sources"),
+        properties = mapOf("duplicate_data_sources" to duplicates.mapKeys { "(id=${it.key.id},type=${it.key.type})" })
+    )
+
 class ComparisonRelatedResourceNotModifiable(id: ThingId) :
     SimpleMessageException(
         HttpStatus.FORBIDDEN,
@@ -300,10 +314,10 @@ class OnlyOneObservatoryAllowed :
         """Ony one observatory is allowed."""
     )
 
-class RequiresAtLeastTwoContributions :
+class RequiresAtLeastTwoSources :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """At least two contributions are required."""
+        """At least two sources are required."""
     )
 
 class ThingNotDefined(id: String) :
@@ -1293,4 +1307,61 @@ class ResearchFieldNotFound(id: ThingId) :
         HttpStatus.NOT_FOUND,
         """Research field "$id" not found.""",
         properties = mapOf("research_field_id" to id)
+    )
+
+class InvalidComparisonPath private constructor(
+    override val message: String,
+    properties: Map<String, Any?>,
+) : SimpleMessageException(HttpStatus.BAD_REQUEST, message, properties = properties) {
+    companion object {
+        fun statementMustBeAtFirstLevel(path: List<ThingId>) =
+            InvalidComparisonPath(
+                """A rosetta stone statement path must be at the root.""",
+                properties = mapOf("comparison_path" to path)
+            )
+
+        fun statementValueMustBeAtSecondLevel(path: List<ThingId>) =
+            InvalidComparisonPath(
+                """A rosetta stone statement value path must be a children of a rosetta stone statement path.""",
+                properties = mapOf("comparison_path" to path)
+            )
+
+        fun statementChildMustBeStatementValue(path: List<ThingId>) =
+            InvalidComparisonPath(
+                """A child path of a rosetta stone statement must be a rosetta stone statement value path.""",
+                properties = mapOf("comparison_path" to path)
+            )
+
+        fun statementValueCannotHaveChildren(path: List<ThingId>) =
+            InvalidComparisonPath(
+                """A rosetta stone statement value path cannot have any children.""",
+                properties = mapOf("comparison_path" to path)
+            )
+
+        fun invalidStatementValuePredicateId(path: List<ThingId>, predicateId: ThingId) =
+            InvalidComparisonPath(
+                """The id "$predicateId" is not a valid rosetta stone statement value id.""",
+                properties = mapOf(
+                    "comparison_path" to path,
+                    "predicate_id" to predicateId,
+                )
+            )
+
+        fun exceedsMaxDepth(path: List<ThingId>, depth: Int) =
+            InvalidComparisonPath(
+                message = """The comparison path exceeds the maximum depth of $depth.""",
+                properties = mapOf(
+                    "comparison_path" to path,
+                    "max_comparison_path_depth" to depth,
+                )
+            )
+    }
+}
+
+class ComparisonPathNotFound(
+    path: List<ThingId>,
+) : SimpleMessageException(
+        HttpStatus.NOT_FOUND,
+        """Comparison path "${path.joinToString(" > ")}" not found.""",
+        properties = mapOf("comparison_path" to path)
     )

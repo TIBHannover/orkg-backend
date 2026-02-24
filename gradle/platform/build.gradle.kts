@@ -12,7 +12,7 @@ dependencies {
     api(platform("io.rest-assured:rest-assured-bom:6.0.0"))
     api(platform("org.eclipse.rdf4j:rdf4j-bom:5.2.2"))
 
-//    api(platform("tools.jackson:jackson-bom:3.0.3"))
+    api(platform("tools.jackson:jackson-bom:3.0.4"))
 
     // Upgrade to Hibernate 7.3 for Jackson 3 support. Can be removed once Spring includes Hibernate 7.3+.
     api("org.hibernate.orm:hibernate-core:7.3.0.CR1")

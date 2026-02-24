@@ -11,7 +11,7 @@ import org.orkg.contenttypes.domain.InvalidTempId
 import org.orkg.contenttypes.domain.OnlyOneObservatoryAllowed
 import org.orkg.contenttypes.domain.OnlyOneOrganizationAllowed
 import org.orkg.contenttypes.domain.OnlyOneResearchFieldAllowed
-import org.orkg.contenttypes.domain.RequiresAtLeastTwoContributions
+import org.orkg.contenttypes.domain.RequiresAtLeastTwoSources
 import org.orkg.contenttypes.domain.ResearchFieldNotFound
 import org.orkg.contenttypes.domain.ResearchProblemNotFound
 import org.orkg.contenttypes.domain.SustainableDevelopmentGoalNotFound
@@ -117,14 +117,14 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
     }
 
     @Test
-    fun requiresAtLeastTwoContributions() {
-        val type = "orkg:problem:requires_at_least_two_contributions"
-        documentedGetRequestTo(RequiresAtLeastTwoContributions())
+    fun requiresAtLeastTwoSources() {
+        val type = "orkg:problem:requires_at_least_two_sources"
+        documentedGetRequestTo(RequiresAtLeastTwoSources())
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType(type)
+            .andExpectType("orkg:problem:requires_at_least_two_sources")
             .andExpectTitle("Bad Request")
-            .andExpectDetail("""At least two contributions are required.""")
-            .andDocumentWithDefaultExceptionResponseFields<RequiresAtLeastTwoContributions>(type)
+            .andExpectDetail("""At least two sources are required.""")
+            .andDocumentWithDefaultExceptionResponseFields<RequiresAtLeastTwoSources>(type)
     }
 
     @Test

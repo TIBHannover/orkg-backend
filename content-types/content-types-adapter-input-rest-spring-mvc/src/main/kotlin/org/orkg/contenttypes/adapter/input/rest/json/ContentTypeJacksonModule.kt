@@ -3,12 +3,12 @@ package org.orkg.contenttypes.adapter.input.rest.json
 import org.orkg.contenttypes.adapter.input.rest.IdentifierMapRequest
 import org.orkg.contenttypes.adapter.input.rest.TemplatePropertyRepresentation
 import org.orkg.contenttypes.adapter.input.rest.TemplatePropertyRequest
-import org.orkg.contenttypes.domain.ComparisonConfig
-import org.orkg.contenttypes.domain.ComparisonHeaderCell
-import org.orkg.contenttypes.domain.ComparisonIndexCell
-import org.orkg.contenttypes.domain.ComparisonTargetCell
-import org.orkg.contenttypes.domain.ConfiguredComparisonTargetCell
 import org.orkg.contenttypes.domain.SnapshotId
+import org.orkg.contenttypes.domain.legacy.ComparisonHeaderCell
+import org.orkg.contenttypes.domain.legacy.ComparisonIndexCell
+import org.orkg.contenttypes.domain.legacy.ComparisonTargetCell
+import org.orkg.contenttypes.domain.legacy.ConfiguredComparisonTargetCell
+import org.orkg.contenttypes.domain.legacy.LegacyComparisonConfig
 import org.orkg.graph.domain.DynamicLabel
 import tools.jackson.databind.module.SimpleDeserializers
 import tools.jackson.databind.module.SimpleModule
@@ -32,7 +32,7 @@ class ContentTypeJacksonModule : SimpleModule() {
                 addSerializer(DynamicLabel::class.java, DynamicLabelSerializer())
             }
         )
-        context?.setMixIn(ComparisonConfig::class.java, ComparisonConfigMixin::class.java)
+        context?.setMixIn(LegacyComparisonConfig::class.java, ComparisonConfigMixin::class.java)
         context?.setMixIn(ComparisonHeaderCell::class.java, ComparisonHeaderCellMixin::class.java)
         context?.setMixIn(ComparisonIndexCell::class.java, ComparisonIndexCellMixin::class.java)
         context?.setMixIn(ComparisonTargetCell::class.java, ComparisonTargetCellMixin::class.java)

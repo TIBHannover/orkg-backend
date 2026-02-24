@@ -173,7 +173,7 @@ class SmartReviewService(
             ?: throw PublishedSmartReviewContentNotFound(smartReviewId, contentId)
         return when {
             content is Resource && Classes.comparison in content.classes -> with(comparisonService) {
-                Either.left(Comparison.from(content, statements, content.findTableData(), content.findVersionInfo(statements)))
+                Either.left(Comparison.from(content, statements, content.findVersionInfo(statements)))
             }
             content is Resource && Classes.visualization in content.classes -> {
                 Either.left(Visualization.from(content, statements))

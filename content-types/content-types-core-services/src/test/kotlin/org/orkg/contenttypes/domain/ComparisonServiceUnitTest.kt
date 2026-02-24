@@ -17,9 +17,7 @@ import org.orkg.community.output.ConferenceSeriesRepository
 import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
-import org.orkg.contenttypes.domain.testing.fixtures.createComparisonConfig
-import org.orkg.contenttypes.domain.testing.fixtures.createComparisonData
-import org.orkg.contenttypes.output.ComparisonPublishedRepository
+import org.orkg.contenttypes.input.ComparisonTableUseCases
 import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.contenttypes.output.ComparisonTableRepository
 import org.orkg.contenttypes.output.ContributionComparisonRepository
@@ -64,8 +62,8 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
     private val conferenceSeriesRepository: ConferenceSeriesRepository = mockk()
     private val contributorRepository: ContributorRepository = mockk()
     private val comparisonRepository: ComparisonRepository = mockk()
+    private val comparisonTableUseCases: ComparisonTableUseCases = mockk()
     private val comparisonTableRepository: ComparisonTableRepository = mockk()
-    private val comparisonPublishedRepository: ComparisonPublishedRepository = mockk()
 
     private val service = ComparisonService(
         repository = contributionComparisonRepository,
@@ -83,8 +81,8 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
         conferenceSeriesRepository = conferenceSeriesRepository,
         contributorRepository = contributorRepository,
         comparisonRepository = comparisonRepository,
+        comparisonTableUseCases = comparisonTableUseCases,
         comparisonTableRepository = comparisonTableRepository,
-        comparisonPublishedRepository = comparisonPublishedRepository,
         comparisonPublishBaseUri = "https://orkg.org/comparison/"
     )
 
@@ -138,8 +136,6 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
                 Classes.sustainableDevelopmentGoal
             )
         )
-        val config = createComparisonConfig()
-        val data = createComparisonData()
 
         every { resourceRepository.findById(expected.id) } returns Optional.of(expected)
         every {
@@ -229,6 +225,15 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
             ),
             createStatement(
                 subject = expected,
+                predicate = createPredicate(Predicates.comparesRosettaStoneContribution),
+                `object` = createResource(
+                    classes = setOf(Classes.rosettaStoneStatement),
+                    label = "Rosetta Stone Statement",
+                    id = ThingId("RosettaStoneStatement123")
+                )
+            ),
+            createStatement(
+                subject = expected,
                 predicate = createPredicate(Predicates.hasVisualization),
                 `object` = createResource(
                     classes = setOf(Classes.visualization),
@@ -255,7 +260,6 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
                 )
             )
         )
-        every { comparisonTableRepository.findById(expected.id) } returns Optional.of(ComparisonTable(expected.id, config, data))
 
         val actual = service.findById(expected.id)
 
@@ -290,12 +294,11 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
             comparison.sustainableDevelopmentGoals shouldBe setOf(
                 ObjectIdAndLabel(ThingId("SDG_1"), "No poverty")
             )
-            comparison.contributions shouldNotBe null
-            comparison.contributions shouldBe listOf(
-                ObjectIdAndLabel(ThingId("Contribution123"), "Contribution")
+            comparison.sources shouldNotBe null
+            comparison.sources shouldBe listOf(
+                ComparisonDataSource(ThingId("Contribution123"), ComparisonDataSource.Type.THING),
+                ComparisonDataSource(ThingId("RosettaStoneStatement123"), ComparisonDataSource.Type.ROSETTA_STONE_STATEMENT),
             )
-            comparison.config shouldBe config
-            comparison.data shouldBe data
             comparison.visualizations shouldNotBe null
             comparison.visualizations shouldBe listOf(
                 ObjectIdAndLabel(ThingId("Visualization123"), "Visualization")
@@ -337,7 +340,6 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
                 sort = Sort.unsorted()
             )
         }
-        verify(exactly = 1) { comparisonTableRepository.findById(expected.id) }
     }
 
     @Test
@@ -400,8 +402,6 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
                 Classes.sustainableDevelopmentGoal
             )
         )
-        val config = createComparisonConfig()
-        val data = createComparisonData()
 
         every { resourceRepository.findById(expected.id) } returns Optional.of(expected)
         every {
@@ -486,6 +486,15 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
             ),
             createStatement(
                 subject = expected,
+                predicate = createPredicate(Predicates.comparesRosettaStoneContribution),
+                `object` = createResource(
+                    classes = setOf(Classes.rosettaStoneStatement),
+                    label = "Rosetta Stone Statement",
+                    id = ThingId("RosettaStoneStatement123")
+                )
+            ),
+            createStatement(
+                subject = expected,
                 predicate = createPredicate(Predicates.hasVisualization),
                 `object` = createResource(
                     classes = setOf(Classes.visualization),
@@ -515,7 +524,6 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
         every {
             comparisonRepository.findVersionHistoryForPublishedComparison(expected.id)
         } returns versions
-        every { comparisonPublishedRepository.findById(expected.id) } returns Optional.of(PublishedComparison(expected.id, config, data))
 
         val actual = service.findById(expected.id)
 
@@ -550,12 +558,11 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
             comparison.sustainableDevelopmentGoals shouldBe setOf(
                 ObjectIdAndLabel(ThingId("SDG_1"), "No poverty")
             )
-            comparison.contributions shouldNotBe null
-            comparison.contributions shouldBe listOf(
-                ObjectIdAndLabel(ThingId("Contribution123"), "Contribution")
+            comparison.sources shouldNotBe null
+            comparison.sources shouldBe listOf(
+                ComparisonDataSource(ThingId("Contribution123"), ComparisonDataSource.Type.THING),
+                ComparisonDataSource(ThingId("RosettaStoneStatement123"), ComparisonDataSource.Type.ROSETTA_STONE_STATEMENT),
             )
-            comparison.config shouldBe config
-            comparison.data shouldBe data
             comparison.visualizations shouldNotBe null
             comparison.visualizations shouldBe listOf(
                 ObjectIdAndLabel(ThingId("Visualization123"), "Visualization")
@@ -600,6 +607,5 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             comparisonRepository.findVersionHistoryForPublishedComparison(expected.id)
         }
-        verify(exactly = 1) { comparisonPublishedRepository.findById(expected.id) }
     }
 }

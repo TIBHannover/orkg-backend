@@ -12,7 +12,7 @@ import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
-class StatementCollectionPropertyUpdater(
+data class StatementCollectionPropertyUpdater(
     private val unsafeLiteralUseCases: UnsafeLiteralUseCases,
     private val statementService: StatementUseCases,
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
@@ -54,19 +54,39 @@ class StatementCollectionPropertyUpdater(
         subjectId: ThingId,
         predicateId: ThingId,
         objects: List<ThingId>,
+    ) = update(
+        statements = statements,
+        contributorId = contributorId,
+        subjectId = subjectId,
+        predicates = setOf(predicateId),
+        objects = objects,
+        predicateSelector = { predicateId },
+        objectIdSelector = { it }
+    )
+
+    internal fun <T> update(
+        statements: List<GeneralStatement>,
+        contributorId: ContributorId,
+        subjectId: ThingId,
+        predicates: Set<ThingId>,
+        objects: List<T>,
+        predicateSelector: (T) -> ThingId,
+        objectIdSelector: (T) -> ThingId,
     ) {
-        val statementsIterator = statements.wherePredicate(predicateId)
+        val statementsIterator = statements.filter { it.predicate.id in predicates }
             .sortedBy { it.createdAt }
             .listIterator()
         val objectsIterator = objects.listIterator()
         val toRemove = mutableSetOf<StatementId>()
 
         while (objectsIterator.hasNext()) {
-            val objectId = objectsIterator.next()
+            val `object` = objectsIterator.next()
+            val objectId = objectIdSelector(`object`)
+            val predicateId = predicateSelector(`object`)
             var matchingStatement: GeneralStatement? = null
             while (statementsIterator.hasNext()) {
                 val statement = statementsIterator.next()
-                if (statement.`object`.id == objectId) {
+                if (statement.`object`.id == objectId && statement.predicate.id == predicateId) {
                     matchingStatement = statement
                     break
                 }

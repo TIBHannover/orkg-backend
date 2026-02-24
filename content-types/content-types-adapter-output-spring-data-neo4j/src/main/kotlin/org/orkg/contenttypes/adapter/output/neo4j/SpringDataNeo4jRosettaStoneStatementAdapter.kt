@@ -25,7 +25,9 @@ import org.orkg.graph.adapter.output.neo4j.orElseGet
 import org.orkg.graph.adapter.output.neo4j.orderByOptimizations
 import org.orkg.graph.adapter.output.neo4j.toCondition
 import org.orkg.graph.adapter.output.neo4j.toSortItems
+import org.orkg.graph.adapter.output.neo4j.toThing
 import org.orkg.graph.adapter.output.neo4j.where
+import org.orkg.graph.domain.Thing
 import org.orkg.graph.domain.VisibilityFilter
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -80,7 +82,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
     )
         .bindAll(mapOf("id" to id.value))
         .fetchAs(RosettaStoneStatement::class.java)
-        .mappedBy(RosettaStoneStatementMapper())
+        .mappedBy(RosettaStoneStatementMapper.DEFAULT_INSTANCE)
         .one()
 
     override fun findAll(
@@ -223,8 +225,46 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
                 .returning(count(latest))
         }
         .fetchAs<RosettaStoneStatement>()
-        .mappedBy(RosettaStoneStatementMapper())
+        .mappedBy(RosettaStoneStatementMapper.DEFAULT_INSTANCE)
         .fetch(pageable, false)
+
+    override fun findAllByContextIdsAndTemplateIds(
+        contextIds: Set<ThingId>,
+        templateIds: Set<ThingId>,
+    ): Map<Thing, Set<RosettaStoneStatement>> = neo4jClient.query(
+        """
+        UNWIND ${'$'}contextIds AS contextId
+        MATCH (context:Thing {id: contextId})
+        CALL (context) {
+            MATCH (context)<-[:CONTEXT]-(latest:RosettaStoneStatement:LatestVersion)-[:TEMPLATE]->(template:RosettaNodeShape)
+            WHERE template.id IN ${'$'}templateIds
+            WITH latest, context, template
+            MATCH (latest)-[:VERSION]->(version:RosettaStoneStatement:Version)-[:METADATA]->(metadata:RosettaStoneStatementMetadata)
+            MATCH (version)-[:SUBJECT]->(subjectNode:SubjectNode)-[:VALUE]->(subject:Thing)
+            WITH latest, context.id AS contextId, template.id AS templateId, metadata, version, COLLECT([subject, subjectNode.index]) AS subjects
+            CALL (version) {
+                MATCH (version)-[:OBJECT]->(objectNode:ObjectNode)-[:VALUE]->(object:Thing)
+                RETURN COLLECT([object, objectNode.index, objectNode.position]) AS objects
+            }
+            WITH latest, contextId, templateId, COLLECT([version, metadata, subjects, objects]) AS versions
+            RETURN COLLECT({latest: latest, contextId: contextId, templateId: templateId, versions: versions}) AS statements
+        }
+        RETURN context, statements
+        """.trimIndent()
+    )
+        .bindAll(
+            mapOf(
+                "contextIds" to contextIds.map { it.value },
+                "templateIds" to templateIds.map { it.value },
+            )
+        )
+        .fetchAs<Pair<Thing, List<RosettaStoneStatement>>>()
+        .mappedBy { _, record ->
+            record["context"].asNode().toThing() to record["statements"].asList(RosettaStoneStatementMapper.DEFAULT_INSTANCE::apply)
+        }
+        .all()
+        .groupBy({ it.first }, { it.second })
+        .mapValues { (_, value) -> value.flatten().toSet() }
 
     override fun save(statement: RosettaStoneStatement) {
         val versionInfo = neo4jClient.query(

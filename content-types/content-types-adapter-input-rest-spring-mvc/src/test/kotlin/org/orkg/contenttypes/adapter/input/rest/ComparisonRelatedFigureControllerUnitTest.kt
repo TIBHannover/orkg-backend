@@ -56,7 +56,7 @@ internal class ComparisonRelatedFigureControllerUnitTest : MockMvcBaseTest("comp
         } returns Optional.of(comparisonRelatedFigure)
 
         documentedGetRequestTo("/api/comparisons/{id}/related-figures/{comparisonRelatedFigureId}", comparisonId, comparisonRelatedFigure.id)
-            .accept(COMPARISON_JSON_V2)
+            .accept(COMPARISON_JSON_V3)
             .perform()
             .andExpect(status().isOk)
             .andExpectComparisonRelatedFigure()
@@ -87,7 +87,7 @@ internal class ComparisonRelatedFigureControllerUnitTest : MockMvcBaseTest("comp
         } returns Optional.empty()
 
         get("/api/comparisons/{id}/related-figures/{comparisonRelatedFigureId}", comparisonId, comparisonRelatedFigureId)
-            .accept(COMPARISON_JSON_V2)
+            .accept(COMPARISON_JSON_V3)
             .perform()
             .andExpectErrorStatus(NOT_FOUND)
             .andExpectType("orkg:problem:comparison_related_figure_not_found")
@@ -104,7 +104,7 @@ internal class ComparisonRelatedFigureControllerUnitTest : MockMvcBaseTest("comp
         every { comparisonRelatedFigureService.findAllByComparisonId(comparisonId, any()) } returns pageOf(comparisonRelatedFigure)
 
         documentedGetRequestTo("/api/comparisons/{id}/related-figures", comparisonId)
-            .accept(COMPARISON_JSON_V2)
+            .accept(COMPARISON_JSON_V3)
             .perform()
             .andExpect(status().isOk)
             .andExpectPage()
@@ -136,8 +136,8 @@ internal class ComparisonRelatedFigureControllerUnitTest : MockMvcBaseTest("comp
 
         documentedPostRequestTo("/api/comparisons/{id}/related-figures", comparisonId)
             .content(createComparisonRelatedFigureRequest())
-            .accept(COMPARISON_JSON_V2)
-            .contentType(COMPARISON_JSON_V2)
+            .accept(COMPARISON_JSON_V3)
+            .contentType(COMPARISON_JSON_V3)
             .perform()
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("/api/comparisons/$comparisonId/related-figures/$id")))
@@ -176,8 +176,8 @@ internal class ComparisonRelatedFigureControllerUnitTest : MockMvcBaseTest("comp
 
         post("/api/comparisons/$comparisonId/related-figures")
             .content(createComparisonRelatedFigureRequest())
-            .accept(COMPARISON_JSON_V2)
-            .contentType(COMPARISON_JSON_V2)
+            .accept(COMPARISON_JSON_V3)
+            .contentType(COMPARISON_JSON_V3)
             .perform()
             .andExpectErrorStatus(NOT_FOUND)
             .andExpectType("orkg:problem:comparison_not_found")
@@ -195,8 +195,8 @@ internal class ComparisonRelatedFigureControllerUnitTest : MockMvcBaseTest("comp
 
         documentedPutRequestTo("/api/comparisons/{id}/related-figures/{comparisonRelatedFigureId}", comparisonId, id)
             .content(updateComparisonRelatedFigureRequest())
-            .accept(COMPARISON_JSON_V2)
-            .contentType(COMPARISON_JSON_V2)
+            .accept(COMPARISON_JSON_V3)
+            .contentType(COMPARISON_JSON_V3)
             .perform()
             .andExpect(status().isNoContent)
             .andExpect(header().string("Location", endsWith("/api/comparisons/$comparisonId/related-figures/$id")))
@@ -251,7 +251,7 @@ internal class ComparisonRelatedFigureControllerUnitTest : MockMvcBaseTest("comp
         } just runs
 
         documentedDeleteRequestTo("/api/comparisons/{id}/related-figures/{comparisonRelatedFigureId}", comparisonId, comparisonRelatedFigureId)
-            .accept(COMPARISON_JSON_V2)
+            .accept(COMPARISON_JSON_V3)
             .perform()
             .andExpect(status().isNoContent)
             .andExpect(header().string("Location", endsWith("/api/comparisons/$comparisonId")))

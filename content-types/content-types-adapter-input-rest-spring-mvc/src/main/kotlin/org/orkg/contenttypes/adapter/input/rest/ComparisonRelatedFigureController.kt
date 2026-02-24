@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
-@RequestMapping("/api/comparisons", produces = [COMPARISON_JSON_V2])
+@RequestMapping("/api/comparisons", produces = [COMPARISON_JSON_V3])
 class ComparisonRelatedFigureController(
     private val service: ComparisonRelatedFigureUseCases,
 ) : ComparisonRelatedFigureRepresentationAdapter {
@@ -50,7 +50,7 @@ class ComparisonRelatedFigureController(
             .mapToComparisonRelatedFigureRepresentation()
 
     @RequireLogin
-    @PostMapping("/{id}/related-figures", consumes = [COMPARISON_JSON_V2])
+    @PostMapping("/{id}/related-figures", consumes = [COMPARISON_JSON_V3])
     fun create(
         @PathVariable id: ThingId,
         @RequestBody @Valid request: CreateComparisonRelatedFigureRequest,
@@ -67,7 +67,7 @@ class ComparisonRelatedFigureController(
     }
 
     @RequireLogin
-    @PutMapping("/{id}/related-figures/{comparisonRelatedFigureId}", consumes = [COMPARISON_JSON_V2])
+    @PutMapping("/{id}/related-figures/{comparisonRelatedFigureId}", consumes = [COMPARISON_JSON_V3])
     fun update(
         @PathVariable id: ThingId,
         @PathVariable comparisonRelatedFigureId: ThingId,

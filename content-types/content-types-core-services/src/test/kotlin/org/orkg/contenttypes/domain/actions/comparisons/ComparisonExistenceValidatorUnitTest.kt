@@ -15,7 +15,6 @@ import org.orkg.contenttypes.domain.Comparison
 import org.orkg.contenttypes.domain.ComparisonNotFound
 import org.orkg.contenttypes.domain.ComparisonNotModifiable
 import org.orkg.contenttypes.domain.ComparisonService
-import org.orkg.contenttypes.domain.ComparisonTable
 import org.orkg.contenttypes.domain.ContentTypeSubgraph
 import org.orkg.contenttypes.domain.HeadVersion
 import org.orkg.contenttypes.domain.VersionInfo
@@ -45,7 +44,6 @@ internal class ComparisonExistenceValidatorUnitTest : MockkBaseTest {
             classes = setOf(Classes.comparison)
         )
         val statements = listOf(createStatement(subject = root)).groupBy { it.subject.id }
-        val table = ComparisonTable.empty(root.id)
         val versionInfo = VersionInfo(
             head = HeadVersion(root),
             published = emptyList()
@@ -54,9 +52,8 @@ internal class ComparisonExistenceValidatorUnitTest : MockkBaseTest {
         mockkObject(Comparison.Companion) {
             every { resourceRepository.findById(comparison.id) } returns Optional.of(root)
             every { comparisonService.findSubgraph(root) } returns ContentTypeSubgraph(root.id, statements)
-            every { with(comparisonService) { root.findTableData() } } returns table
             every { with(comparisonService) { root.findVersionInfo(statements) } } returns versionInfo
-            every { Comparison.from(root, statements, table, versionInfo) } returns comparison
+            every { Comparison.from(root, statements, versionInfo) } returns comparison
 
             comparisonExistenceValidator(command, state).asClue {
                 it.comparison shouldBe comparison
@@ -66,9 +63,8 @@ internal class ComparisonExistenceValidatorUnitTest : MockkBaseTest {
 
             verify(exactly = 1) { resourceRepository.findById(comparison.id) }
             verify(exactly = 1) { comparisonService.findSubgraph(root) }
-            verify(exactly = 1) { with(comparisonService) { root.findTableData() } }
             verify(exactly = 1) { with(comparisonService) { root.findVersionInfo(statements) } }
-            verify(exactly = 1) { Comparison.from(root, statements, table, versionInfo) }
+            verify(exactly = 1) { Comparison.from(root, statements, versionInfo) }
         }
     }
 

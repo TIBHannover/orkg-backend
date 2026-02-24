@@ -23,12 +23,10 @@ class ComparisonExistenceValidator(
             }
             .orElseThrow { ComparisonNotFound(command.comparisonId) }
         val subgraph = comparisonService.findSubgraph(resource)
-        val table = with(comparisonService) { resource.findTableData() }
         val versionInfo = with(comparisonService) { resource.findVersionInfo(subgraph.statements) }
         val comparison = Comparison.from(
             resource = resource,
             statements = subgraph.statements,
-            table = table,
             versionInfo = versionInfo
         )
         return state.copy(comparison = comparison, statements = subgraph.statements)

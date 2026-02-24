@@ -24,9 +24,7 @@ data class Comparison(
     val publicationInfo: PublicationInfo,
     val authors: List<Author>,
     val sustainableDevelopmentGoals: Set<ObjectIdAndLabel>,
-    val contributions: List<ObjectIdAndLabel>,
-    val config: ComparisonConfig,
-    val data: ComparisonData,
+    val sources: List<ComparisonDataSource>,
     val visualizations: List<ObjectIdAndLabel>,
     val relatedFigures: List<ObjectIdAndLabel>,
     val relatedResources: List<ObjectIdAndLabel>,
@@ -46,7 +44,6 @@ data class Comparison(
         fun from(
             resource: Resource,
             statements: Map<ThingId, List<GeneralStatement>>,
-            table: ComparisonTable,
             versionInfo: VersionInfo,
         ): Comparison {
             val directStatements = statements[resource.id].orEmpty()
@@ -63,9 +60,7 @@ data class Comparison(
                     .objectIdsAndLabel()
                     .sortedBy { it.id }
                     .toSet(),
-                contributions = directStatements.wherePredicate(Predicates.comparesContribution).objectIdsAndLabel(),
-                config = table.config,
-                data = table.data,
+                sources = parseComparisonDataSources(directStatements),
                 visualizations = directStatements.wherePredicate(Predicates.hasVisualization).objectIdsAndLabel(),
                 relatedFigures = directStatements.wherePredicate(Predicates.hasRelatedFigure).objectIdsAndLabel(),
                 relatedResources = directStatements.wherePredicate(Predicates.hasRelatedResource).objectIdsAndLabel(),

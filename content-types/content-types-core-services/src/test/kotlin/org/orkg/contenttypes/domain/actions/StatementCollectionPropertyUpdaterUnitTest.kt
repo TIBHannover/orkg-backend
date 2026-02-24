@@ -39,7 +39,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
     )
 
     @Test
-    fun `Given set of objects, it replaces the all object statements`() {
+    fun `Given a set of objects, it replaces the all object statements`() {
         val subjectId = ThingId("R123")
         val objects = listOf(ThingId("R3"), ThingId("R4"))
         val oldObjectStatements = setOf(ThingId("R1"), ThingId("R2")).toReferenceStatements(subjectId)
@@ -74,7 +74,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given set of objects, when some objects are identical to old objects, it only updates changed objects`() {
+    fun `Given a set of objects, when some objects are identical to old objects, it only updates changed objects`() {
         val subjectId = ThingId("R123")
         val objects = listOf(ThingId("R2"), ThingId("R3"))
         val oldObjectStatements = setOf(ThingId("R1"), ThingId("R2")).toReferenceStatements(subjectId)
@@ -155,7 +155,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given set of literals, it replaces the all literal statements`() {
+    fun `Given a set of literals, it replaces the all literal statements`() {
         val subjectId = ThingId("R123")
         val literals = listOf("R3", "R4")
         val oldLiteralStatements = setOf("R1", "R2").toLiteralStatements(subjectId)
@@ -198,7 +198,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given set of literals, when some literals are identical to old literals, it only updates changed literals`() {
+    fun `Given a set of literals, when some literals are identical to old literals, it only updates changed literals`() {
         val subjectId = ThingId("R123")
         val literals = listOf("R2", "R3")
         val oldLiteralStatements = setOf("R1", "R2").toLiteralStatements(subjectId)
@@ -293,7 +293,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given list of objects, it replaces the all object statements`() {
+    fun `Given a list of objects, it replaces the all object statements`() {
         val subjectId = ThingId("R123")
         val objects = listOf(ThingId("R3"), ThingId("R4"))
         val oldObjectStatements = setOf(ThingId("R1"), ThingId("R2")).toReferenceStatements(subjectId)
@@ -328,7 +328,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given list of objects, when some objects are identical to old objects, it reuses existing statements`() {
+    fun `Given a list of objects, when some objects are identical to old objects, it reuses existing statements`() {
         val subjectId = ThingId("R123")
         val objects = listOf(ThingId("R2"), ThingId("R3"))
         val oldObjectStatements = setOf(ThingId("R1"), ThingId("R2")).toReferenceStatements(subjectId)
@@ -424,7 +424,51 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given list of literals, it replaces the all literal statements`() {
+    fun `Given a list of generic objects, when upating, it updates the statements correctly`() {
+        val subjectId = ThingId("R123")
+        val objects = listOf(
+            ThingId("R1") to ThingId("P1"),
+            ThingId("R2") to ThingId("P1"),
+            ThingId("R3") to ThingId("P2")
+        )
+        val oldObjectStatements = listOf(
+            ThingId("R1") to ThingId("P1"),
+            ThingId("R2") to ThingId("P2"),
+            ThingId("R3") to ThingId("P1")
+        ).toStatements(subjectId, { it.second }, { it.first })
+        val contributorId = ContributorId(UUID.randomUUID())
+        val predicateIds = setOf(ThingId("P1"), ThingId("P2"))
+
+        every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
+        every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
+
+        statementCollectionPropertyUpdater.update(oldObjectStatements, contributorId, subjectId, predicateIds, objects, { it.second }, { it.first })
+
+        verify(exactly = 1) {
+            unsafeStatementUseCases.create(
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = ThingId("P1"),
+                    objectId = ThingId("R2")
+                )
+            )
+        }
+        verify(exactly = 1) {
+            unsafeStatementUseCases.create(
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = ThingId("P2"),
+                    objectId = ThingId("R3")
+                )
+            )
+        }
+        verify(exactly = 1) { statementService.deleteAllById(oldObjectStatements.drop(1).map { it.id }.toSet()) }
+    }
+
+    @Test
+    fun `Given a list of literals, it replaces the all literal statements`() {
         val subjectId = ThingId("R123")
         val literals = listOf("R3", "R4")
         val oldObjectStatements = setOf("R1", "R2").toLiteralStatements(subjectId)
@@ -475,7 +519,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given list of literals, when some literals are identical to old literals, it reuses existing statements`() {
+    fun `Given a list of literals, when some literals are identical to old literals, it reuses existing statements`() {
         val subjectId = ThingId("R123")
         val literals = listOf("R2", "R3")
         val oldObjectStatements = setOf("R1", "R2").toLiteralStatements(subjectId)
@@ -600,6 +644,20 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
             subject = createResource(subjectId, createdAt = OffsetDateTime.now(fixedClock).plusHours(index.toLong())),
             predicate = createPredicate(Predicates.reference),
             `object` = createResource(id, classes = setOf(Classes.paper))
+        )
+    }
+
+    private fun <T : Any> Collection<T>.toStatements(
+        subjectId: ThingId,
+        predicateIdSelector: (T) -> ThingId,
+        objectIdSelector: (T) -> ThingId,
+    ): List<GeneralStatement> = mapIndexed { index, `object` ->
+        val objectId = objectIdSelector(`object`)
+        createStatement(
+            id = StatementId("S$objectId"),
+            subject = createResource(subjectId, createdAt = OffsetDateTime.now(fixedClock).plusHours(index.toLong())),
+            predicate = createPredicate(predicateIdSelector(`object`)),
+            `object` = createResource(objectId, classes = setOf(Classes.paper))
         )
     }
 

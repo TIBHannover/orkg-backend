@@ -1,14 +1,14 @@
-package org.orkg.contenttypes.domain
+package org.orkg.contenttypes.domain.legacy
 
-data class ComparisonConfig(
+data class LegacyComparisonConfig(
     val predicates: List<String>,
     val contributions: List<String>,
     val transpose: Boolean,
-    val type: ComparisonType,
+    val type: LegacyComparisonType,
     val shortCodes: List<String> = emptyList(),
 )
 
-enum class ComparisonType {
+enum class LegacyComparisonType {
     PATH,
     MERGE,
 }

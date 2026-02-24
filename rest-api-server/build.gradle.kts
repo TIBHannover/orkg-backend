@@ -29,6 +29,7 @@ testing {
                 implementation("org.springframework.boot:spring-boot-test-autoconfigure")
                 implementation("org.springframework:spring-test")
                 implementation(project(":common:serialization"))
+                implementation(testFixtures(project(":common:testing")))
                 implementation("org.springframework.boot:spring-boot-test")
                 implementation("org.springframework.boot:spring-boot-webmvc-test")
                 compileOnly("jakarta.servlet:jakarta.servlet-api")
@@ -330,10 +331,10 @@ tasks {
         args("--spring.profiles.active=development,listMigrations")
     }
 
-    registerBootRunTask("runComparisonMigrations") {
+    registerBootRunTask("runComparisonTableMigrations") {
         group = "migration"
-        description = "Migrates the current database model for comparisons to a head and published version model."
-        args("--spring.profiles.active=development,comparisonMigrations")
+        description = "Migrates the comparison tables to v3 format."
+        args("--spring.profiles.active=development,comparisonTableMigrations")
     }
 
     withType<JacocoReport>().configureEach {

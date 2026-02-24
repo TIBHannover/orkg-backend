@@ -18,20 +18,21 @@ import org.orkg.contenttypes.adapter.input.rest.SmartReviewController.SmartRevie
 import org.orkg.contenttypes.adapter.input.rest.SmartReviewController.SmartReviewSectionRequest
 import org.orkg.contenttypes.adapter.input.rest.SmartReviewController.SmartReviewTextSectionRequest
 import org.orkg.contenttypes.adapter.input.rest.SmartReviewController.SmartReviewVisualizationSectionRequest
-import org.orkg.contenttypes.domain.ComparisonTargetCell
-import org.orkg.contenttypes.domain.ConfiguredComparisonTargetCell
-import org.orkg.contenttypes.domain.EmptyComparisonTargetCell
+import org.orkg.contenttypes.domain.ComparisonPath
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
+import org.orkg.contenttypes.domain.SimpleComparisonPath
 import org.orkg.contenttypes.domain.testing.fixtures.createLiteratureListTextSection
 import org.orkg.contenttypes.domain.testing.fixtures.createPaper
 import org.orkg.contenttypes.domain.testing.fixtures.createSmartReviewComparisonSection
 import org.orkg.contenttypes.input.testing.fixtures.commonTemplatePropertyResponseFields
+import org.orkg.contenttypes.input.testing.fixtures.comparisonTableRowResponseFields
 import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerUnitTestConfiguration
-import org.orkg.contenttypes.input.testing.fixtures.configuredComparisonTargetCellResponseFields
 import org.orkg.contenttypes.input.testing.fixtures.embeddedStatementResponseFields
+import org.orkg.contenttypes.input.testing.fixtures.labeledComparisonPathResponseFields
 import org.orkg.contenttypes.input.testing.fixtures.literalReferenceResponseFields
 import org.orkg.contenttypes.input.testing.fixtures.literatureListListSectionResponseFields
 import org.orkg.contenttypes.input.testing.fixtures.literatureListTextSectionResponseFields
+import org.orkg.contenttypes.input.testing.fixtures.simpleComparisonPathResponseFields
 import org.orkg.contenttypes.input.testing.fixtures.smartReviewComparisonSectionResponseFields
 import org.orkg.contenttypes.input.testing.fixtures.smartReviewOntologySectionResponseFields
 import org.orkg.contenttypes.input.testing.fixtures.smartReviewPropertySectionResponseFields
@@ -59,38 +60,6 @@ import java.time.OffsetDateTime
 @WebMvcTest
 @ContextConfiguration(classes = [ContentTypeControllerUnitTestConfiguration::class])
 internal class OpenApiDocTest : MockMvcOpenApiBaseTest() {
-    @Test
-    fun configuredComparisonTargetCell() {
-        val configuredComparisonTargetCell = ConfiguredComparisonTargetCell(
-            id = "R192326",
-            label = "Covid-19 Pandemic Ontology Development",
-            classes = listOf(Classes.problem),
-            path = listOf(ThingId("R187004"), Predicates.hasResearchProblem),
-            pathLabels = listOf("Contribution 1", "research problem"),
-            `class` = "resource"
-        )
-
-        document(configuredComparisonTargetCell) {
-            responseFields<ConfiguredComparisonTargetCell>(configuredComparisonTargetCellResponseFields())
-        }
-    }
-
-    @Test
-    fun emptyComparisonTargetCell() {
-        document(EmptyComparisonTargetCell) {
-            responseFields<EmptyComparisonTargetCell>()
-        }
-    }
-
-    @Test
-    fun comparisonTargetCell() {
-        document(EmptyComparisonTargetCell) {
-            responseFields<ComparisonTargetCell>(
-                oneOf(EmptyComparisonTargetCell::class, ConfiguredComparisonTargetCell::class)
-            )
-        }
-    }
-
     @Test
     fun contentTypeRepresentation() {
         document(createPaper()) {
@@ -551,6 +520,53 @@ internal class OpenApiDocTest : MockMvcOpenApiBaseTest() {
                     SmartReviewTextSectionRequest::class,
                 )
             )
+        }
+    }
+
+    @Test
+    fun comparisonTableRowRepresentation() {
+        val comparisonTableRowRepresentation = ComparisonTableRowRepresentation(
+            values = listOf(createResourceReferenceRepresentation()),
+            children = mapOf(
+                ThingId("P123") to listOf(
+                    ComparisonTableRowRepresentation(
+                        values = listOf(createResourceReferenceRepresentation()),
+                        children = emptyMap(),
+                    )
+                )
+            )
+        )
+
+        document(comparisonTableRowRepresentation) {
+            responseFields<ComparisonTableRowRepresentation>(comparisonTableRowResponseFields())
+        }
+    }
+
+    @Test
+    fun labeledComparisonPath() {
+        val labeledComparisonPath = LabeledComparisonPathRepresentation(
+            id = Predicates.addresses,
+            label = "addresses",
+            description = "addresses",
+            type = ComparisonPath.Type.PREDICATE,
+            children = emptyList(),
+        )
+
+        document(labeledComparisonPath) {
+            responseFields<LabeledComparisonPathRepresentation>(labeledComparisonPathResponseFields())
+        }
+    }
+
+    @Test
+    fun simpleComparisonPath() {
+        val simpleComparisonPath = SimpleComparisonPath(
+            id = Predicates.addresses,
+            type = ComparisonPath.Type.PREDICATE,
+            children = emptyList(),
+        )
+
+        document(simpleComparisonPath) {
+            responseFields<SimpleComparisonPath>(simpleComparisonPathResponseFields())
         }
     }
 

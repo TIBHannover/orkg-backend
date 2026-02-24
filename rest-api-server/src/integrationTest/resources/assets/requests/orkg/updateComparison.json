@@ -38,83 +38,24 @@
         "SDG_3",
         "SDG_2"
     ],
-    "contributions": [
-        "R6541",
-        "R5364",
-        "R3120",
-        "R7864"
-    ],
-    "config": {
-        "contributions": [
-            "R456790",
-            "R987654",
-            "R1546864"
-        ],
-        "predicates": [],
-        "transpose": false,
-        "type": "PATH"
-    },
-    "data": {
-        "contributions": [
-            {
-                "active": true,
-                "id": "R456790",
-                "label": "Contribution 2",
-                "paper_id": "R456",
-                "paper_label": "Paper 1",
-                "paper_year": 2024
-            },
-            {
-                "active": true,
-                "id": "R987654",
-                "label": "Contribution 1",
-                "paper_id": "R789",
-                "paper_label": "Paper 2",
-                "paper_year": 2022
-            },
-            {
-                "active": true,
-                "id": "R1546864",
-                "label": "Contribution 1",
-                "paper_id": "R258",
-                "paper_label": "Paper 3",
-                "paper_year": 2023
-            }
-        ],
-        "data": {
-            "P32": [
-                [
-                    {
-                        "_class": "resource",
-                        "classes": [
-                            "Problem"
-                        ],
-                        "id": "R192326",
-                        "label": "Covid-19 Pandemic Ontology Development",
-                        "path": [
-                            "R187004",
-                            "P32"
-                        ],
-                        "path_labels": [
-                            "Contribution 1",
-                            "research problem"
-                        ]
-                    }
-                ]
-            ]
+    "sources": [
+        {
+            "id": "R6541",
+            "type": "THING"
         },
-        "predicates": [
-            {
-                "active": true,
-                "id": "P32",
-                "label": "research problem",
-                "n_contributions": 2,
-                "similar_predicates": [
-                    "P15"
-                ]
-            }
-        ]
-    },
+        {
+            "id": "R5364",
+            "type": "THING"
+        },
+        {
+            "id": "R3120",
+            "type": "THING"
+        },
+        {
+            "id": "R7864",
+            "type": "THING"
+        }
+    ],
     "visualizations": [
         "R1354",
         "R6571"

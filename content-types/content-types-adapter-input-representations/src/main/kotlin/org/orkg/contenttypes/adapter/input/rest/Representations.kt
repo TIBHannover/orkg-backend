@@ -23,8 +23,8 @@ import org.orkg.community.domain.Contributor
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.Certainty
 import org.orkg.contenttypes.domain.ClassReference
-import org.orkg.contenttypes.domain.ComparisonConfig
-import org.orkg.contenttypes.domain.ComparisonData
+import org.orkg.contenttypes.domain.ComparisonDataSource
+import org.orkg.contenttypes.domain.ComparisonPath
 import org.orkg.contenttypes.domain.LiteralReference
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.domain.PredicateReference
@@ -135,9 +135,7 @@ data class ComparisonRepresentation(
     val authors: List<AuthorRepresentation>,
     @get:JsonProperty("sdgs")
     val sustainableDevelopmentGoals: Set<LabeledObjectRepresentation>,
-    val contributions: List<LabeledObjectRepresentation>,
-    val config: ComparisonConfig,
-    val data: ComparisonData,
+    val sources: List<ComparisonDataSourceRepresentation>,
     val visualizations: List<LabeledObjectRepresentation>,
     @get:JsonProperty("related_figures")
     val relatedFigures: List<LabeledObjectRepresentation>,
@@ -798,6 +796,32 @@ data class TemplateBasedResourceSnapshotRepresentation(
     @get:JsonProperty("template_id")
     val templateId: ThingId,
     val handle: Handle?,
+)
+
+data class ComparisonTableRepresentation(
+    @get:JsonProperty("selected_paths")
+    val selectedPaths: List<LabeledComparisonPathRepresentation> = emptyList(),
+    val titles: List<ThingReferenceRepresentation> = emptyList(),
+    val subtitles: List<ThingReferenceRepresentation?> = emptyList(),
+    val values: Map<ThingId, List<ComparisonTableRowRepresentation>> = emptyMap(),
+)
+
+data class LabeledComparisonPathRepresentation(
+    val id: ThingId,
+    val label: String,
+    val description: String?,
+    val type: ComparisonPath.Type,
+    val children: List<LabeledComparisonPathRepresentation>,
+)
+
+data class ComparisonTableRowRepresentation(
+    val values: List<ThingReferenceRepresentation?>,
+    val children: Map<ThingId, List<ComparisonTableRowRepresentation>>,
+)
+
+data class ComparisonDataSourceRepresentation(
+    val id: ThingId,
+    val type: ComparisonDataSource.Type,
 )
 
 data class ContributorRecordRepresentation(

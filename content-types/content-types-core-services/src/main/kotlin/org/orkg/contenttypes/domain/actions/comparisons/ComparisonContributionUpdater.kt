@@ -13,20 +13,22 @@ class ComparisonContributionUpdater(
 ) : UpdateComparisonAction {
     constructor(
         unsafeLiteralUseCases: UnsafeLiteralUseCases,
-        statementService: StatementUseCases,
+        statementuseCaes: StatementUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
-        StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases)
+        StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementuseCaes, unsafeStatementUseCases)
     )
 
     override fun invoke(command: UpdateComparisonCommand, state: State): State {
-        if (command.contributions != null && command.contributions != state.comparison!!.contributions) {
+        if (command.sources != null && command.sources != state.comparison!!.sources) {
             statementCollectionPropertyUpdater.update(
                 statements = state.statements[command.comparisonId].orEmpty(),
                 contributorId = command.contributorId,
                 subjectId = command.comparisonId,
-                predicateId = Predicates.comparesContribution,
-                objects = command.contributions!!.toSet()
+                predicates = setOf(Predicates.comparesContribution, Predicates.comparesRosettaStoneContribution),
+                objects = command.sources!!,
+                predicateSelector = { it.type.predicateId },
+                objectIdSelector = { it.id }
             )
         }
         return state

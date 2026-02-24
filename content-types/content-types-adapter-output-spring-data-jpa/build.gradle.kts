@@ -18,11 +18,13 @@ dependencies {
     api(project(":content-types:content-types-core-model"))
     api(project(":content-types:content-types-ports-output"))
     implementation("tools.jackson.core:jackson-core")
+    implementation("tools.jackson.module:jackson-module-kotlin")
     implementation("dev.forkhandles:values4k")
     implementation("io.hypersistence:hypersistence-utils-hibernate-73")
     implementation("org.hibernate.orm:hibernate-core")
     implementation(project(":common:external-identifiers"))
     implementation(project(":common:pagination"))
+    implementation(project(":graph:graph-core-model"))
     runtimeOnly(project(":graph:graph-adapter-input-rest-spring-mvc")) // for thing serialization
     runtimeOnly("org.springframework.boot:spring-boot-starter-data-jpa")
 }

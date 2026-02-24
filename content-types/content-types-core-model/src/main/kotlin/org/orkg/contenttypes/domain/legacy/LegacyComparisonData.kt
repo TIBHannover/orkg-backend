@@ -1,8 +1,8 @@
-package org.orkg.contenttypes.domain
+package org.orkg.contenttypes.domain.legacy
 
 import org.orkg.common.ThingId
 
-data class ComparisonData(
+data class LegacyComparisonData(
     val contributions: List<ComparisonHeaderCell>,
     val predicates: List<ComparisonIndexCell>,
     val data: Map<String, List<List<ComparisonTargetCell>>>,
@@ -20,7 +20,7 @@ data class ComparisonHeaderCell(
 data class ComparisonIndexCell(
     val id: String,
     val label: String,
-    val contributionAmount: Int,
+    val contributionAmount: Int?,
     val active: Boolean,
     val similarPredicates: List<String>,
 )

@@ -30,20 +30,20 @@ import org.orkg.contenttypes.domain.AmbiguousAuthor
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.AuthorNotFound
 import org.orkg.contenttypes.domain.ComparisonAlreadyPublished
+import org.orkg.contenttypes.domain.ComparisonDataSource
 import org.orkg.contenttypes.domain.ComparisonNotFound
 import org.orkg.contenttypes.domain.ComparisonNotModifiable
 import org.orkg.contenttypes.domain.ContributionNotFound
+import org.orkg.contenttypes.domain.DuplicateComparisonDataSources
 import org.orkg.contenttypes.domain.OnlyOneObservatoryAllowed
 import org.orkg.contenttypes.domain.OnlyOneOrganizationAllowed
 import org.orkg.contenttypes.domain.OnlyOneResearchFieldAllowed
-import org.orkg.contenttypes.domain.RequiresAtLeastTwoContributions
+import org.orkg.contenttypes.domain.RequiresAtLeastTwoSources
 import org.orkg.contenttypes.domain.ResearchFieldNotFound
 import org.orkg.contenttypes.domain.SustainableDevelopmentGoalNotFound
 import org.orkg.contenttypes.domain.VisualizationNotFound
-import org.orkg.contenttypes.domain.testing.asciidoc.allowedComparisonTypeValues
+import org.orkg.contenttypes.domain.testing.asciidoc.allowedComparisonDataSourceTypeValues
 import org.orkg.contenttypes.domain.testing.fixtures.createComparison
-import org.orkg.contenttypes.domain.testing.fixtures.createComparisonConfig
-import org.orkg.contenttypes.domain.testing.fixtures.createComparisonData
 import org.orkg.contenttypes.input.ComparisonUseCases
 import org.orkg.contenttypes.input.testing.fixtures.authorListFields
 import org.orkg.contenttypes.input.testing.fixtures.comparisonResponseFields
@@ -97,8 +97,8 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
         every { comparisonService.findById(comparison.id) } returns Optional.of(comparison)
 
         documentedGetRequestTo("/api/comparisons/{id}", comparison.id)
-            .accept(COMPARISON_JSON_V2)
-            .contentType(COMPARISON_JSON_V2)
+            .accept(COMPARISON_JSON_V3)
+            .contentType(COMPARISON_JSON_V3)
             .perform()
             .andExpect(status().isOk)
             .andExpectComparison()
@@ -125,7 +125,7 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
         every { comparisonService.findById(id) } returns Optional.empty()
 
         get("/api/comparisons/{id}", id)
-            .accept(COMPARISON_JSON_V2)
+            .accept(COMPARISON_JSON_V3)
             .perform()
             .andExpectErrorStatus(NOT_FOUND)
             .andExpectType("orkg:problem:comparison_not_found")
@@ -156,8 +156,8 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
         } returns pageOf(createComparison())
 
         documentedGetRequestTo("/api/comparisons")
-            .accept(COMPARISON_JSON_V2)
-            .contentType(COMPARISON_JSON_V2)
+            .accept(COMPARISON_JSON_V3)
+            .contentType(COMPARISON_JSON_V3)
             .perform()
             .andExpect(status().isOk)
             .andExpectPage()
@@ -236,8 +236,8 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
             .param("published", published.toString())
             .param("sdg", sdg.value)
             .param("research_problem", researchProblemId.value)
-            .accept(COMPARISON_JSON_V2)
-            .contentType(COMPARISON_JSON_V2)
+            .accept(COMPARISON_JSON_V3)
+            .contentType(COMPARISON_JSON_V3)
             .perform()
             .andExpect(status().isOk)
             .andExpectPage()
@@ -318,7 +318,7 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
 
         get("/api/comparisons")
             .param("sort", "unknown")
-            .accept(COMPARISON_JSON_V2)
+            .accept(COMPARISON_JSON_V3)
             .perform()
             .andExpectErrorStatus(BAD_REQUEST)
             .andExpectType("orkg:problem:unknown_sorting_property")
@@ -393,7 +393,7 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
                 throws(
                     ComparisonNotFound::class,
                     ComparisonAlreadyPublished::class,
-                    RequiresAtLeastTwoContributions::class,
+                    RequiresAtLeastTwoSources::class,
                     AuthorNotFound::class,
                     AmbiguousAuthor::class,
                     InvalidLabel::class,
@@ -500,8 +500,8 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
 
         documentedPostRequestTo("/api/comparisons")
             .content(createComparisonRequest())
-            .accept(COMPARISON_JSON_V2)
-            .contentType(COMPARISON_JSON_V2)
+            .accept(COMPARISON_JSON_V3)
+            .contentType(COMPARISON_JSON_V3)
             .perform()
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("/api/comparisons/$id")))
@@ -522,38 +522,9 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
                     fieldWithPath("description").description("The description of the comparison."),
                     fieldWithPath("research_fields").description("The list of research fields the comparison will be assigned to."),
                     fieldWithPath("sdgs").description("The set of ids of sustainable development goals the comparison will be assigned to. (optional)").arrayItemsType("String").constraints(thingIdConstraint).optional(),
-                    fieldWithPath("contributions[]").description("The ids of the contributions the comparison compares."),
-                    fieldWithPath("config").description("The configuration of the comparison."),
-                    fieldWithPath("config.predicates").description("The list of labels of the predicates used in the comparison."),
-                    fieldWithPath("config.contributions").description("The list of ids of contributions that are being compared in the comparison."),
-                    fieldWithPath("config.transpose").description("Whether the comparison table is transposed."),
-                    fieldWithPath("config.type").description("The type of method used to create the comparison. Either of $allowedComparisonTypeValues."),
-                    // The short_codes field exists for compatibility reasons, but should not end up in the documentation, as it allows for arbitrary inputs.
-                    fieldWithPath("config.short_codes").description("The list of short form ids for the comparison.").optional().ignored(),
-                    fieldWithPath("data").description("The data contained in the comparison."),
-                    fieldWithPath("data.contributions").description("The list of contributions that are being compared in the comparison."),
-                    fieldWithPath("data.contributions[].id").description("The id of the contribution."),
-                    fieldWithPath("data.contributions[].label").description("The label of the contribution."),
-                    fieldWithPath("data.contributions[].paper_id").description("The id of the paper the contribution belongs to."),
-                    fieldWithPath("data.contributions[].paper_label").description("The label of the paper the contribution belongs to."),
-                    fieldWithPath("data.contributions[].paper_year").description("The publication year of the paper the contribution belongs to."),
-                    fieldWithPath("data.contributions[].active").description("Whether the contribution (column or row if transposed) should be displayed."),
-                    fieldWithPath("data.predicates").description("The list of predicates used in the comparison."),
-                    fieldWithPath("data.predicates[].id").description("When the comparison type is \"MERGE\", this is the predicate id. When the comparison type is \"PATH\", this is a '/' delimited list of predicate labels, indicating the path from the contribution resource."),
-                    fieldWithPath("data.predicates[].label").description("When the comparison type is \"MERGE\", this is the label of the predicate. When the comparison type is \"PATH\", this is a '/' delimited list of predicate labels, indicating the path from the contribution resource."),
-                    fieldWithPath("data.predicates[].n_contributions").description("The count of contributions that contain a statements for the predicate."),
-                    fieldWithPath("data.predicates[].active").description("Whether the predicate (row or column if transposed) should be displayed."),
-                    fieldWithPath("data.predicates[].similar_predicates").description("The list of similar predicate labels."),
-                    fieldWithPath("data.data").description("The values of the comparison."),
-                    fieldWithPath("data.data.*").description("A map of predicate ids to the values for each contribution."),
-                    fieldWithPath("data.data.*[]").description("All values for the predicate in the comparison. This corresponds to a row (or column if transposed) of the comparison."),
-                    fieldWithPath("data.data.*[][]").description("All values for the predicate and a single contribution. Every value corresponds to a single cell of the comparison."),
-                    fieldWithPath("data.data.*[][].id").description("The id of the orkg entity behind the value."),
-                    fieldWithPath("data.data.*[][].label").description("The label of the orkg entity behind the value. This corresponds to the cell value."),
-                    fieldWithPath("data.data.*[][].classes").description("The classes of the orkg entity, if it is a resource, empty otherwise."),
-                    fieldWithPath("data.data.*[][].path").description("The predicate path (ids) of the value within the contribution."),
-                    fieldWithPath("data.data.*[][].path_labels").description("The corresponding predicate labels of the predicate path."),
-                    fieldWithPath("data.data.*[][]._class").description("The type of the orkg entity behind the value. Either of \"class\", \"resource\", \"predicate\" or \"literal\"."),
+                    fieldWithPath("sources").description("The list of data sources of the comparison."),
+                    fieldWithPath("sources[].id").description("The ID of the data source."),
+                    fieldWithPath("sources[].type").description("The type of the data soruce. Either of $allowedComparisonDataSourceTypeValues"),
                     fieldWithPath("visualizations[]").description("The list of IDs of visualizations that will be assigned to the comparison."),
                     fieldWithPath("references[]").description("The references to external sources that the comparison refers to."),
                     fieldWithPath("organizations[]").description("The list of IDs of the organizations the comparison belongs to."),
@@ -566,6 +537,7 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
                     InvalidLabel::class,
                     InvalidDescription::class,
                     ContributionNotFound::class,
+                    DuplicateComparisonDataSources::class,
                     VisualizationNotFound::class,
                     OnlyOneResearchFieldAllowed::class,
                     ResearchFieldNotFound::class,
@@ -584,17 +556,17 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
 
     @Test
     @TestWithMockUser
-    fun `Given a create comparison request, when service reports too few contributions, then status is 400 BAD REQUEST`() {
-        val exception = RequiresAtLeastTwoContributions()
+    fun `Given a create comparison request, when service reports too few sources, then status is 400 BAD REQUEST`() {
+        val exception = RequiresAtLeastTwoSources()
         every { comparisonService.create(any()) } throws exception
 
         post("/api/comparisons")
             .content(createComparisonRequest())
-            .accept(COMPARISON_JSON_V2)
-            .contentType(COMPARISON_JSON_V2)
+            .accept(COMPARISON_JSON_V3)
+            .contentType(COMPARISON_JSON_V3)
             .perform()
             .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType("orkg:problem:requires_at_least_two_contributions")
+            .andExpectType("orkg:problem:requires_at_least_two_sources")
 
         verify(exactly = 1) { comparisonService.create(any()) }
     }
@@ -607,8 +579,8 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
 
         post("/api/comparisons")
             .content(createComparisonRequest())
-            .accept(COMPARISON_JSON_V2)
-            .contentType(COMPARISON_JSON_V2)
+            .accept(COMPARISON_JSON_V3)
+            .contentType(COMPARISON_JSON_V3)
             .perform()
             .andExpectErrorStatus(NOT_FOUND)
             .andExpectType("orkg:problem:contribution_not_found")
@@ -624,8 +596,8 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
 
         post("/api/comparisons")
             .content(createComparisonRequest())
-            .accept(COMPARISON_JSON_V2)
-            .contentType(COMPARISON_JSON_V2)
+            .accept(COMPARISON_JSON_V3)
+            .contentType(COMPARISON_JSON_V3)
             .perform()
             .andExpectErrorStatus(BAD_REQUEST)
             .andExpectType("orkg:problem:only_one_research_field_allowed")
@@ -641,8 +613,8 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
 
         post("/api/comparisons")
             .content(createComparisonRequest())
-            .accept(COMPARISON_JSON_V2)
-            .contentType(COMPARISON_JSON_V2)
+            .accept(COMPARISON_JSON_V3)
+            .contentType(COMPARISON_JSON_V3)
             .perform()
             .andExpectErrorStatus(NOT_FOUND)
             .andExpectType("orkg:problem:research_field_not_found")
@@ -658,8 +630,8 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
 
         post("/api/comparisons")
             .content(createComparisonRequest())
-            .accept(COMPARISON_JSON_V2)
-            .contentType(COMPARISON_JSON_V2)
+            .accept(COMPARISON_JSON_V3)
+            .contentType(COMPARISON_JSON_V3)
             .perform()
             .andExpectErrorStatus(BAD_REQUEST)
             .andExpectType("orkg:problem:only_one_organization_allowed")
@@ -675,8 +647,8 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
 
         post("/api/comparisons")
             .content(createComparisonRequest())
-            .accept(COMPARISON_JSON_V2)
-            .contentType(COMPARISON_JSON_V2)
+            .accept(COMPARISON_JSON_V3)
+            .contentType(COMPARISON_JSON_V3)
             .perform()
             .andExpectErrorStatus(BAD_REQUEST)
             .andExpectType("orkg:problem:only_one_observatory_allowed")
@@ -692,8 +664,8 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
 
         post("/api/comparisons")
             .content(createComparisonRequest())
-            .accept(COMPARISON_JSON_V2)
-            .contentType(COMPARISON_JSON_V2)
+            .accept(COMPARISON_JSON_V3)
+            .contentType(COMPARISON_JSON_V3)
             .perform()
             .andExpectErrorStatus(NOT_FOUND)
             .andExpectType("orkg:problem:author_not_found")
@@ -715,8 +687,8 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
 
         post("/api/comparisons")
             .content(createComparisonRequest())
-            .accept(COMPARISON_JSON_V2)
-            .contentType(COMPARISON_JSON_V2)
+            .accept(COMPARISON_JSON_V3)
+            .contentType(COMPARISON_JSON_V3)
             .perform()
             .andExpectErrorStatus(BAD_REQUEST)
             .andExpectType("orkg:problem:ambiguous_author")
@@ -733,8 +705,8 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
 
         documentedPutRequestTo("/api/comparisons/{id}", id)
             .content(updateComparisonRequest())
-            .accept(COMPARISON_JSON_V2)
-            .contentType(COMPARISON_JSON_V2)
+            .accept(COMPARISON_JSON_V3)
+            .contentType(COMPARISON_JSON_V3)
             .perform()
             .andExpect(status().isNoContent)
             .andExpect(header().string("Location", endsWith("/api/comparisons/$id")))
@@ -766,38 +738,9 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
                     fieldWithPath("description").description("The description of the comparison. (optional)").optional(),
                     fieldWithPath("research_fields").description("The list of research fields the comparison will be assigned to. (optional)").optional(),
                     fieldWithPath("sdgs").description("The set of ids of sustainable development goals the comparison will be assigned to. (optional)").arrayItemsType("String").constraints(thingIdConstraint).optional(),
-                    fieldWithPath("contributions[]").description("The ids of the contributions the comparison compares. (optional)").optional(),
-                    fieldWithPath("config").description("The configuration of the comparison. (optional)").optional(),
-                    fieldWithPath("config.predicates").description("The list of labels of the predicates used in the comparison."),
-                    fieldWithPath("config.contributions").description("The list of ids of contributions that are being compared in the comparison."),
-                    fieldWithPath("config.transpose").description("Whether the comparison table is transposed."),
-                    fieldWithPath("config.type").description("The type of method used to create the comparison. Either of $allowedComparisonTypeValues."),
-                    // The short_codes field exists for compatibility reasons, but should not end up in the documentation, as it allows for arbitrary inputs.
-                    fieldWithPath("config.short_codes").description("The list of short form ids for the comparison.").optional().ignored(),
-                    fieldWithPath("data").description("The data contained in the comparison.").optional(),
-                    fieldWithPath("data.contributions").description("The list of contributions that are being compared in the comparison."),
-                    fieldWithPath("data.contributions[].id").description("The id of the contribution."),
-                    fieldWithPath("data.contributions[].label").description("The label of the contribution."),
-                    fieldWithPath("data.contributions[].paper_id").description("The id of the paper the contribution belongs to."),
-                    fieldWithPath("data.contributions[].paper_label").description("The label of the paper the contribution belongs to."),
-                    fieldWithPath("data.contributions[].paper_year").description("The publication year of the paper the contribution belongs to."),
-                    fieldWithPath("data.contributions[].active").description("Whether the contribution (column or row if transposed) should be displayed."),
-                    fieldWithPath("data.predicates").description("The list of predicates used in the comparison."),
-                    fieldWithPath("data.predicates[].id").description("When the comparison type is \"MERGE\", this is the predicate id. When the comparison type is \"PATH\", this is a '/' delimited list of predicate labels, indicating the path from the contribution resource."),
-                    fieldWithPath("data.predicates[].label").description("When the comparison type is \"MERGE\", this is the label of the predicate. When the comparison type is \"PATH\", this is a '/' delimited list of predicate labels, indicating the path from the contribution resource."),
-                    fieldWithPath("data.predicates[].n_contributions").description("The count of contributions that contain a statements for the predicate."),
-                    fieldWithPath("data.predicates[].active").description("Whether the predicate (row or column if transposed) should be displayed."),
-                    fieldWithPath("data.predicates[].similar_predicates").description("The list of similar predicate labels."),
-                    fieldWithPath("data.data").description("The values of the comparison"),
-                    fieldWithPath("data.data.*").description("A map of predicate ids to the values for each contribution."),
-                    fieldWithPath("data.data.*[]").description("All values for the predicate in the comparison. This corresponds to a row (or column if transposed) of the comparison."),
-                    fieldWithPath("data.data.*[][]").description("All values for the predicate and a single contribution. Every value corresponds to a single cell of the comparison."),
-                    fieldWithPath("data.data.*[][].id").description("The id of the orkg entity behind the value."),
-                    fieldWithPath("data.data.*[][].label").description("The label of the orkg entity behind the value. This corresponds to the cell value."),
-                    fieldWithPath("data.data.*[][].classes").description("The classes of the orkg entity, if it is a resource, empty otherwise."),
-                    fieldWithPath("data.data.*[][].path").description("The predicate path (ids) of the value within the contribution."),
-                    fieldWithPath("data.data.*[][].path_labels").description("The corresponding predicate labels of the predicate path."),
-                    fieldWithPath("data.data.*[][]._class").description("The type of the orkg entity behind the value. Either of \"class\", \"resource\", \"predicate\" or \"literal\"."),
+                    fieldWithPath("sources").description("The list of data sources of the comparison. (optional)"),
+                    fieldWithPath("sources[].id").description("The ID of the data source."),
+                    fieldWithPath("sources[].type").description("The type of the data soruce. Either of $allowedComparisonDataSourceTypeValues"),
                     fieldWithPath("visualizations[]").description("The list of IDs of visualizations the comparison has. (optional)").optional(),
                     fieldWithPath("references[]").description("The references to external sources that the comparison refers to. (optional)").optional(),
                     fieldWithPath("organizations[]").description("The list of IDs of the organizations or conference series the comparison belongs to. (optional)").optional(),
@@ -810,6 +753,7 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
                 throws(
                     InvalidLabel::class,
                     InvalidDescription::class,
+                    DuplicateComparisonDataSources::class,
                     ComparisonNotModifiable::class,
                     ComparisonNotFound::class,
                     ContributorNotFound::class,
@@ -872,9 +816,12 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
                 ThingId("SDG_1"),
                 ThingId("SDG_2")
             ),
-            contributions = listOf(ThingId("R6541"), ThingId("R5364"), ThingId("R9786"), ThingId("R3120")),
-            config = createComparisonConfig(),
-            data = createComparisonData(),
+            sources = listOf(
+                ComparisonDataSource(ThingId("R6541"), ComparisonDataSource.Type.THING),
+                ComparisonDataSource(ThingId("R5364"), ComparisonDataSource.Type.THING),
+                ComparisonDataSource(ThingId("R9786"), ComparisonDataSource.Type.THING),
+                ComparisonDataSource(ThingId("R3120"), ComparisonDataSource.Type.ROSETTA_STONE_STATEMENT)
+            ),
             visualizations = listOf(ThingId("R63845")),
             references = listOf("https://orkg.org/resources/R1000", "paper citation"),
             observatories = listOf(ObservatoryId("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")),
@@ -924,9 +871,12 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
                 ThingId("SDG_1"),
                 ThingId("SDG_2")
             ),
-            contributions = listOf(ThingId("R6541"), ThingId("R5364"), ThingId("R9786"), ThingId("R3120")),
-            config = createComparisonConfig(),
-            data = createComparisonData(),
+            sources = listOf(
+                ComparisonDataSource(ThingId("R6541"), ComparisonDataSource.Type.THING),
+                ComparisonDataSource(ThingId("R5364"), ComparisonDataSource.Type.THING),
+                ComparisonDataSource(ThingId("R9786"), ComparisonDataSource.Type.THING),
+                ComparisonDataSource(ThingId("R3120"), ComparisonDataSource.Type.ROSETTA_STONE_STATEMENT)
+            ),
             visualizations = listOf(ThingId("R63845")),
             references = listOf("https://orkg.org/resources/R1000", "paper citation"),
             observatories = listOf(ObservatoryId("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")),

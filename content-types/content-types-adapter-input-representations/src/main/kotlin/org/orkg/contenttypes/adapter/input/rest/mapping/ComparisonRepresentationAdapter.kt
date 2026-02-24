@@ -7,6 +7,7 @@ import java.util.Optional
 
 interface ComparisonRepresentationAdapter :
     AuthorRepresentationAdapter,
+    ComparisonDataSourceRepresentationAdapter,
     LabeledObjectRepresentationAdapter,
     PublicationInfoRepresentationAdapter,
     VersionRepresentationAdapter {
@@ -26,9 +27,7 @@ interface ComparisonRepresentationAdapter :
             publicationInfo = publicationInfo.toPublicationInfoRepresentation(),
             authors = authors.mapToAuthorRepresentation(),
             sustainableDevelopmentGoals = sustainableDevelopmentGoals.mapToLabeledObjectRepresentation(),
-            contributions = contributions.mapToLabeledObjectRepresentation(),
-            config = config,
-            data = data,
+            sources = sources.mapToComparisonDataSourceRepresentation(),
             visualizations = visualizations.mapToLabeledObjectRepresentation(),
             relatedFigures = relatedFigures.mapToLabeledObjectRepresentation(),
             relatedResources = relatedResources.mapToLabeledObjectRepresentation(),

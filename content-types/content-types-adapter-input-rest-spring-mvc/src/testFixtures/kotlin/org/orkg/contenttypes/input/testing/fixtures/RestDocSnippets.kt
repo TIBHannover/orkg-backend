@@ -16,9 +16,9 @@ import org.orkg.common.thingIdConstraint
 import org.orkg.contenttypes.adapter.input.rest.LabeledObjectRepresentation
 import org.orkg.contenttypes.adapter.input.rest.LiteratureListSectionRepresentation
 import org.orkg.contenttypes.adapter.input.rest.SmartReviewSectionRepresentation
-import org.orkg.contenttypes.domain.ComparisonTargetCell
 import org.orkg.contenttypes.domain.testing.asciidoc.allowedCertaintyValues
-import org.orkg.contenttypes.domain.testing.asciidoc.allowedComparisonTypeValues
+import org.orkg.contenttypes.domain.testing.asciidoc.allowedComparisonDataSourceTypeValues
+import org.orkg.contenttypes.domain.testing.asciidoc.allowedComparisonPathTypeValues
 import org.orkg.graph.adapter.input.rest.testing.fixtures.predicateResponseFields
 import org.orkg.graph.adapter.input.rest.testing.fixtures.resourceResponseFields
 import org.orkg.graph.adapter.input.rest.testing.fixtures.statementResponseFields
@@ -145,34 +145,9 @@ fun comparisonResponseFields() = listOf(
     fieldWithPath("research_fields").description("The list of research fields the comparison is assigned to."),
     *applyPathPrefix("research_fields[].", labeledObjectResponseFields()).toTypedArray(),
     *comparisonIdentifierResponseFields().toTypedArray(),
-    fieldWithPath("contributions").description("The list of contributions of the comparison."),
-    *applyPathPrefix("contributions[].", labeledObjectResponseFields()).toTypedArray(),
-    fieldWithPath("config").description("The configuration of the comparison."),
-    fieldWithPath("config.predicates").description("The list of labels of the predicates used in the comparison."),
-    fieldWithPath("config.contributions").description("The list of ids of contributions that are being compared in the comparison."),
-    fieldWithPath("config.transpose").description("Whether the comparison table is transposed."),
-    fieldWithPath("config.type").description("The type of method used to create the comparison. Either of $allowedComparisonTypeValues."),
-    // The short_codes field exists for compatibility reasons, but should not end up in the documentation, as it allows for arbitrary inputs.
-    fieldWithPath("config.short_codes").description("The list of short form ids for the comparison.").optional().ignored(),
-    fieldWithPath("data").description("The data contained in the comparison."),
-    fieldWithPath("data.contributions").description("The list of contributions that are being compared in the comparison."),
-    fieldWithPath("data.contributions[].id").description("The id of the contribution."),
-    fieldWithPath("data.contributions[].label").description("The label of the contribution."),
-    fieldWithPath("data.contributions[].paper_id").description("The id of the paper the contribution belongs to."),
-    fieldWithPath("data.contributions[].paper_label").description("The label of the paper the contribution belongs to."),
-    fieldWithPath("data.contributions[].paper_year").description("The publication year of the paper the contribution belongs to."),
-    fieldWithPath("data.contributions[].active").description("Whether the contribution (column or row if transposed) should be displayed."),
-    fieldWithPath("data.predicates").description("The list of predicates used in the comparison."),
-    fieldWithPath("data.predicates[].id").description("When the comparison type is \"MERGE\", this is the predicate id. When the comparison type is \"PATH\", this is a '/' delimited list of predicate labels, indicating the path from the contribution resource."),
-    fieldWithPath("data.predicates[].label").description("When the comparison type is \"MERGE\", this is the label of the predicate. When the comparison type is \"PATH\", this is a '/' delimited list of predicate labels, indicating the path from the contribution resource."),
-    fieldWithPath("data.predicates[].n_contributions").description("The count of contributions that contain a statements for the predicate."),
-    fieldWithPath("data.predicates[].active").description("Whether the predicate (row or column if transposed) should be displayed."),
-    fieldWithPath("data.predicates[].similar_predicates").description("The list of similar predicate labels."),
-    fieldWithPath("data.data").description("The values of the comparison."),
-    fieldWithPath("data.data.*").description("A map of predicate ids to the values for each contribution."),
-    fieldWithPath("data.data.*[]").description("All values for the predicate in the comparison. This corresponds to a row (or column if transposed) of the comparison."),
-    fieldWithPath("data.data.*[][]").description("All values for the predicate and a single contribution. Every value corresponds to a single cell of the comparison.").arrayItemsType("object").references<ComparisonTargetCell>(),
-    *applyPathPrefix("data.data.*[][].", configuredComparisonTargetCellResponseFields()).toTypedArray(),
+    fieldWithPath("sources").description("The list of data sources of the comparison."),
+    fieldWithPath("sources[].id").description("The ID of the data source."),
+    fieldWithPath("sources[].type").description("The type of the data soruce. Either of $allowedComparisonDataSourceTypeValues"),
     fieldWithPath("visualizations").description("The list of visualizations of the comparison."),
     *applyPathPrefix("visualizations[].", labeledObjectResponseFields()).toTypedArray(),
     fieldWithPath("related_figures").description("The list of related figures of the comparison."),
@@ -545,15 +520,6 @@ fun statementListResponseFields() = listOf(
     fieldWithPath("_class").description("Indicates which type of entity was returned. Always has the value `statement_list`."),
 )
 
-fun configuredComparisonTargetCellResponseFields() = listOf(
-    fieldWithPath("id").description("The id of the orkg entity behind the value."),
-    fieldWithPath("label").description("The label of the orkg entity behind the value. This corresponds to the cell value."),
-    fieldWithPath("classes").description("The classes of the orkg entity, if it is a resource, empty otherwise.").arrayItemsType("String"),
-    fieldWithPath("path").description("The predicate path (ids) of the value within the contribution.").arrayItemsType("String"),
-    fieldWithPath("path_labels").description("The corresponding predicate labels of the predicate path.").arrayItemsType("String"),
-    fieldWithPath("_class").description("The type of the orkg entity behind the value. Either of \"class\", \"resource\", \"predicate\" or \"literal\"."),
-)
-
 fun commonContentTypeResponseFields() = listOf(
     fieldWithPath("id").description("The id of the content-type."),
     fieldWithPath("extraction_method").description("""The method used to extract the content-type resource. Can be one of $allowedExtractionMethodValues."""),
@@ -700,6 +666,37 @@ fun contributorRecordResponseFields(): List<FieldDescriptor> = listOf(
     fieldWithPath("research_problem_count").description("The count of research problems the contributor created."),
     fieldWithPath("visualization_count").description("The count of visualizations the contributor created."),
     fieldWithPath("total_count").description("The total count of contributions of the contributor."),
+)
+
+fun comparisonTableResponseFields() = listOf(
+    fieldWithPath("selected_paths[]").description("The selected table paths of the comparison table."),
+    *applyPathPrefix("selected_paths[].", labeledComparisonPathResponseFields()).toTypedArray(),
+    subsectionWithPath("titles[]").description("The titles (thing reference representations) of each column. The list is guaranteed to have same count of elements as sources are defined for the comparison."),
+    subsectionWithPath("subtitles[]").description("The subtitles (thing reference representations) of each column. Elements might be null. The list is guaranteed to have same count of elements as sources are defined for the comparison."),
+    fieldWithPath("values").description("A key-value map of predicate/rosetta stone template ids to comparison table row representations."),
+    fieldWithPath("values.*").description("The predicate or rosetta stone template id."),
+    *applyPathPrefix("values.*[].", comparisonTableRowResponseFields()).toTypedArray(),
+)
+
+fun comparisonTableRowResponseFields() = listOf(
+    subsectionWithPath("values[]").description("The values (thing reference representations) of the row. Elements might be null. The list is guaranteed to have same count of elements as sources are defined for the comparison."),
+    fieldWithPath("children").description("A key-value map of predicate/rosetta stone template ids to comparison table row representations."),
+    fieldWithPath("children.*").description("The predicate or rosetta stone template id."),
+    subsectionWithPath("children.*[]").description("A list of nested comparison table row representations."),
+)
+
+fun labeledComparisonPathResponseFields() = listOf(
+    fieldWithPath("id").description("The id of the predicate or rosetta stone statement template."),
+    fieldWithPath("label").description("The label of the path."),
+    fieldWithPath("description").description("The description of the predicate or rosetta stone statement template.").optional(),
+    fieldWithPath("type").description("The type of the path. Either of $allowedComparisonPathTypeValues"),
+    subsectionWithPath("children[]").description("A list of nested predicate paths originating from this predicate path or the list of nested rosetta stone statement input positions.")
+)
+
+fun simpleComparisonPathResponseFields() = listOf(
+    fieldWithPath("id").description("The id of the predicate or rosetta stone statement template."),
+    fieldWithPath("type").description("The type of the path. Either of $allowedComparisonPathTypeValues."),
+    subsectionWithPath("children[]").description("A nested list of comparison paths."),
 )
 
 fun authorRecordResponseFields(): List<FieldDescriptor> = listOf(

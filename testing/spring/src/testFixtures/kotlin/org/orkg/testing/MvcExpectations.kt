@@ -125,9 +125,9 @@ fun ResultActions.andExpectComparison(path: String = "$"): ResultActions = this
     .andExpect(jsonPath("$path.authors[*].name", `is`(notNullValue())))
     .andExpect(jsonPath("$path.authors[*].identifiers").exists())
     .andExpect(jsonPath("$path.authors[*].homepage").exists())
-    .andExpect(jsonPath("$path.contributions").exists())
-    .andExpect(jsonPath("$path.contributions[*].id", `is`(notNullValue())))
-    .andExpect(jsonPath("$path.contributions[*].label", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.sources").exists())
+    .andExpect(jsonPath("$path.sources[*].id", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.sources[*].type", `is`(notNullValue())))
     .andExpect(jsonPath("$path.visualizations").exists())
     .andExpect(jsonPath("$path.visualizations[*].id", `is`(notNullValue())))
     .andExpect(jsonPath("$path.visualizations[*].label", `is`(notNullValue())))
@@ -500,6 +500,19 @@ fun ResultActions.andExpectJobStatus(path: String = "$"): ResultActions = this
     .andExpect(jsonPath("$path.job_name", `is`(notNullValue())))
     .andExpect(jsonPath("$path.context", `is`(notNullValue())))
     .andExpect(jsonPath("$path.status", `is`(notNullValue())))
+
+fun ResultActions.andExpectComparisonTable(path: String = "$"): ResultActions = this
+    .andExpect(jsonPath("$path.selected_paths").isArray)
+    .andExpect(jsonPath("$path.titles").isArray)
+    .andExpect(jsonPath("$path.subtitles").isArray)
+    .andExpect(jsonPath("$path.values").isMap)
+
+fun ResultActions.andExpectComparisonPath(path: String = "$"): ResultActions = this
+    .andExpect(jsonPath("$path.id", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.label", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.description").hasJsonPath())
+    .andExpect(jsonPath("$path.type", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.children").isArray)
 
 fun ResultActions.andExpectContributionRecord(path: String = "$"): ResultActions = this
     .andExpect(jsonPath("$path.id", `is`(notNullValue())))

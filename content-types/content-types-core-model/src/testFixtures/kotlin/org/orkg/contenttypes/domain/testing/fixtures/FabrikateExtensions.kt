@@ -6,7 +6,11 @@ import dev.forkhandles.fabrikate.Fabrikate
 import dev.forkhandles.fabrikate.register
 import org.orkg.common.Handle
 import org.orkg.common.ThingId
+import org.orkg.contenttypes.domain.ComparisonColumnData
+import org.orkg.contenttypes.domain.ComparisonTableRow
+import org.orkg.contenttypes.domain.ComparisonTableValue
 import org.orkg.contenttypes.domain.EmbeddedStatement
+import org.orkg.contenttypes.domain.LabeledComparisonPath
 import org.orkg.contenttypes.domain.RosettaStoneStatement
 import org.orkg.contenttypes.domain.RosettaStoneStatementVersion
 import org.orkg.contenttypes.domain.TemplateInstance
@@ -14,6 +18,7 @@ import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.DynamicLabel
 import org.orkg.graph.domain.Predicate
 import org.orkg.graph.domain.Resource
+import org.orkg.graph.domain.Thing
 import kotlin.math.absoluteValue
 
 class RosettaStoneStatementVersionFabricator : Fabricator<RosettaStoneStatementVersion> {
@@ -82,6 +87,38 @@ class HandleFabricator : Fabricator<Handle> {
         Handle.of("${fabrikate.random<Long>().absoluteValue}.${fabrikate.random<Long>().absoluteValue}/${fabrikate.random<Long>()}")
 }
 
+class LabeledComparisonPathFabricator : Fabricator<LabeledComparisonPath> {
+    override fun invoke(fabrikate: Fabrikate): LabeledComparisonPath = LabeledComparisonPath(
+        id = fabrikate.random(),
+        label = fabrikate.random(),
+        description = fabrikate.random(),
+        type = fabrikate.random(),
+        children = emptyList(),
+    )
+}
+
+class ComparisonColumnDataFabricator : Fabricator<ComparisonColumnData> {
+    override fun invoke(fabrikate: Fabrikate): ComparisonColumnData = ComparisonColumnData(
+        title = fabrikate.random(),
+        subtitle = fabrikate.random(),
+        values = fabrikate.random<List<ThingId>>().associateWith { fabrikate.random<List<ComparisonTableValue>>() },
+    )
+}
+
+class ComparisonTableValueFabricator : Fabricator<ComparisonTableValue> {
+    override fun invoke(fabrikate: Fabrikate): ComparisonTableValue = ComparisonTableValue(
+        value = fabrikate.random(),
+        children = emptyMap(),
+    )
+}
+
+class ComparisonTableRowFabricator : Fabricator<ComparisonTableRow> {
+    override fun invoke(fabrikate: Fabrikate): ComparisonTableRow = ComparisonTableRow(
+        values = fabrikate.random<List<Thing>>(),
+        children = emptyMap(),
+    )
+}
+
 fun FabricatorConfig.withRosettaStoneStatementMappings(): FabricatorConfig = withMappings {
     register(RosettaStoneStatementVersionFabricator())
     register(RosettaStoneStatementFabricator())
@@ -91,4 +128,8 @@ fun FabricatorConfig.withContentTypeMappings(): FabricatorConfig = withMappings 
     register(EmbeddedStatementFabricator())
     register(TemplateInstanceFabricator())
     register(HandleFabricator())
+    register(LabeledComparisonPathFabricator())
+    register(ComparisonColumnDataFabricator())
+    register(ComparisonTableValueFabricator())
+    register(ComparisonTableRowFabricator())
 }

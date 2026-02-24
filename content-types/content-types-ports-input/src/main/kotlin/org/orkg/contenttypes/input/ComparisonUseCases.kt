@@ -6,8 +6,7 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.Comparison
-import org.orkg.contenttypes.domain.ComparisonConfig
-import org.orkg.contenttypes.domain.ComparisonData
+import org.orkg.contenttypes.domain.ComparisonDataSource
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.Visibility
@@ -57,9 +56,7 @@ interface CreateComparisonUseCase {
         val researchFields: List<ThingId>,
         val authors: List<Author>,
         val sustainableDevelopmentGoals: Set<ThingId>,
-        val contributions: List<ThingId>,
-        val config: ComparisonConfig,
-        val data: ComparisonData,
+        val sources: List<ComparisonDataSource>,
         val visualizations: List<ThingId>,
         val references: List<String>,
         val observatories: List<ObservatoryId>,
@@ -80,9 +77,7 @@ interface UpdateComparisonUseCase {
         val researchFields: List<ThingId>?,
         val authors: List<Author>?,
         val sustainableDevelopmentGoals: Set<ThingId>?,
-        val contributions: List<ThingId>?,
-        val config: ComparisonConfig?,
-        val data: ComparisonData?,
+        val sources: List<ComparisonDataSource>?,
         val visualizations: List<ThingId>?,
         val references: List<String>?,
         val observatories: List<ObservatoryId>?,

@@ -1,6 +1,6 @@
 ### Create a new comparison
 POST {{server_url}}/api/comparisons
-Content-Type: application/vnd.orkg.comparison.v2+json
+Content-Type: application/vnd.orkg.comparison.v3+json
 Authorization: Bearer {{access_token}}
 
 {
@@ -36,66 +36,24 @@ Authorization: Bearer {{access_token}}
         }
     ],
     "sdgs": ["SDG_1", "SDG_2"],
-    "contributions": [
-        "R1031", "R2006", "R2012", "R2101"
-    ],
-    "config": {
-        "contributions": [
-            "R1031", "R2006"
-        ],
-        "predicates": [],
-        "transpose": false,
-        "type": "MERGE"
-    },
-    "data": {
-        "contributions": [
-            {
-                "active": true,
-                "id": "R1031",
-                "label": "Contribution 1",
-                "paper_id": "R1020",
-                "paper_label": "Paper 1",
-                "paper_year": 2024
-            },
-            {
-                "active": true,
-                "id": "R2006",
-                "label": "Contribution 1",
-                "paper_id": "R2018",
-                "paper_label": "Paper 2",
-                "paper_year": 2022
-            }
-        ],
-        "data": {
-            "P32": [
-                [
-                    {
-                        "_class": "resource",
-                        "classes": ["Problem"],
-                        "id": "R192326",
-                        "label": "Covid-19 Pandemic Ontology Development",
-                        "path": [
-                            "R187004",
-                            "P32"
-                        ],
-                        "path_labels": [
-                            "Contribution 1",
-                            "research problem"
-                        ]
-                    }
-                ]
-            ]
+    "sources": [
+        {
+            "id": "R1031",
+            "type": "THING"
         },
-        "predicates": [
-            {
-                "active": true,
-                "id": "P32",
-                "label": "research problem",
-                "n_contributions": 2,
-                "similar_predicates": ["P15"]
-            }
-        ]
-    },
+        {
+            "id": "R2006",
+            "type": "THING"
+        },
+        {
+            "id": "R2012",
+            "type": "THING"
+        },
+        {
+            "id": "R2101",
+            "type": "THING"
+        }
+    ],
     "references": [
         "https://orkg.org/resources/R1000",
         "paper citation"
@@ -116,9 +74,154 @@ Authorization: Bearer {{access_token}}
     client.global.set("comparison_id", id);
 %}
 
+### Fetch comparison table paths
+GET {{server_url}}/api/comparisons/{{comparison_id}}/table-paths
+Content-Type: application/vnd.orkg.comparison.v3+json
+
+### Update comparison table contents
+PUT {{server_url}}/api/comparisons/{{comparison_id}}/contents
+Content-Type: application/vnd.orkg.comparison.v3+json
+Authorization: Bearer {{access_token}}
+
+{
+    "selected_paths": [
+        {
+            "id": "P2001",
+            "type": "PREDICATE",
+            "children": [
+                {
+                    "id": "P2003",
+                    "type": "PREDICATE",
+                    "children": []
+                },
+                {
+                    "id": "P2002",
+                    "type": "PREDICATE",
+                    "children": []
+                },
+                {
+                    "id": "P2004",
+                    "type": "PREDICATE",
+                    "children": []
+                },
+                {
+                    "id": "P21",
+                    "type": "PREDICATE",
+                    "children": []
+                }
+            ]
+        },
+        {
+            "id": "P27",
+            "type": "PREDICATE",
+            "children": []
+        },
+        {
+            "id": "P34",
+            "type": "PREDICATE",
+            "children": [
+                {
+                    "id": "P1007",
+                    "type": "PREDICATE",
+                    "children": [
+                        {
+                            "id": "P1008",
+                            "type": "PREDICATE",
+                            "children": []
+                        },
+                        {
+                            "id": "P1009",
+                            "type": "PREDICATE",
+                            "children": []
+                        }
+                    ]
+                },
+                {
+                    "id": "P1005",
+                    "type": "PREDICATE",
+                    "children": []
+                },
+                {
+                    "id": "P1006",
+                    "type": "PREDICATE",
+                    "children": []
+                }
+            ]
+        },
+        {
+            "id": "P15",
+            "type": "PREDICATE",
+            "children": [
+                {
+                    "id": "P21",
+                    "type": "PREDICATE",
+                    "children": [
+                        {
+                            "id": "P15358",
+                            "type": "PREDICATE",
+                            "children": []
+                        },
+                        {
+                            "id": "P14",
+                            "type": "PREDICATE",
+                            "children": []
+                        }
+                    ]
+                },
+                {
+                    "id": "P1002",
+                    "type": "PREDICATE",
+                    "children": []
+                },
+                {
+                    "id": "P1001",
+                    "type": "PREDICATE",
+                    "children": [
+                        {
+                            "id": "P1004",
+                            "type": "PREDICATE",
+                            "children": []
+                        },
+                        {
+                            "id": "P1003",
+                            "type": "PREDICATE",
+                            "children": []
+                        }
+                    ]
+                },
+                {
+                    "id": "P1000",
+                    "type": "PREDICATE",
+                    "children": []
+                }
+            ]
+        },
+        {
+            "id": "P32",
+            "type": "PREDICATE",
+            "children": [
+                {
+                    "id": "SAME_AS",
+                    "type": "PREDICATE",
+                    "children": []
+                }
+            ]
+        },
+        {
+            "id": "P2000",
+            "type": "PREDICATE",
+            "children": []
+        }
+    ]
+}
+
+### Fetch comparison table contents
+GET {{server_url}}/api/comparisons/{{comparison_id}}/contents
+Content-Type: application/vnd.orkg.comparison.v3+json
+
 ### Update the newly created comparison
 PUT {{server_url}}/api/comparisons/{{comparison_id}}
-Content-Type: application/vnd.orkg.comparison.v2+json
+Content-Type: application/vnd.orkg.comparison.v3+json
 Authorization: Bearer {{access_token}}
 
 {
@@ -154,74 +257,24 @@ Authorization: Bearer {{access_token}}
         }
     ],
     "sdgs": ["SDG_3", "SDG_2"],
-    "contributions": [
-        "R3005", "R1010", "R1018", "R2021"
-    ],
-    "config": {
-        "contributions": [
-            "R3005", "R1010", "R1018"
-        ],
-        "predicates": [],
-        "transpose": false,
-        "type": "PATH"
-    },
-    "data": {
-        "contributions": [
-            {
-                "active": true,
-                "id": "R3005",
-                "label": "Contribution 2",
-                "paper_id": "R3000",
-                "paper_label": "Paper 1",
-                "paper_year": 2024
-            },
-            {
-                "active": true,
-                "id": "R1010",
-                "label": "Contribution 1",
-                "paper_id": "R1004",
-                "paper_label": "Paper 2",
-                "paper_year": 2022
-            },
-            {
-                "active": true,
-                "id": "R1018",
-                "label": "Contribution 1",
-                "paper_id": "R1013",
-                "paper_label": "Paper 3",
-                "paper_year": 2023
-            }
-        ],
-        "data": {
-            "P32": [
-                [
-                    {
-                        "_class": "resource",
-                        "classes": ["Problem"],
-                        "id": "R192326",
-                        "label": "Covid-19 Pandemic Ontology Development",
-                        "path": [
-                            "R187004",
-                            "P32"
-                        ],
-                        "path_labels": [
-                            "Contribution 1",
-                            "research problem"
-                        ]
-                    }
-                ]
-            ]
+    "sources": [
+        {
+            "id": "R1031",
+            "type": "THING"
         },
-        "predicates": [
-            {
-                "active": true,
-                "id": "P32",
-                "label": "research problem",
-                "n_contributions": 2,
-                "similar_predicates": ["P15"]
-            }
-        ]
-    },
+        {
+            "id": "R2006",
+            "type": "THING"
+        },
+        {
+            "id": "R2012",
+            "type": "THING"
+        },
+        {
+            "id": "R2101",
+            "type": "THING"
+        }
+    ],
     "references": [
         "other paper citation",
         "paper citation"

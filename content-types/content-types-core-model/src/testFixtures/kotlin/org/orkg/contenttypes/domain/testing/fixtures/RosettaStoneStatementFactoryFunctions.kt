@@ -39,17 +39,17 @@ fun createRosettaStoneStatementVersion() = RosettaStoneStatementVersion(
     label = "Dummy Rosetta Stone Statement Label",
     dynamicLabel = DynamicLabel("{0} {1} {2}"),
     subjects = listOf(
-        createResource(id = ThingId("R258")),
-        createResource(id = ThingId("R369"))
+        createResource(id = ThingId("R258"), label = "Subject 1"),
+        createResource(id = ThingId("R369"), label = "Subject 2")
     ),
     objects = listOf(
         listOf(
-            createResource(id = ThingId("R987")),
-            createResource(id = ThingId("R654"))
+            createResource(id = ThingId("R987"), label = "Object 1-1"),
+            createResource(id = ThingId("R654"), label = "Object 1-2")
         ),
         listOf(
-            createResource(id = ThingId("R321")),
-            createResource(id = ThingId("R741"))
+            createResource(id = ThingId("R321"), label = "Object 2-1"),
+            createResource(id = ThingId("R741"), label = "Object 2-2")
         )
     ),
     createdAt = OffsetDateTime.parse("2024-04-30T16:22:58.959539600+02:00"),

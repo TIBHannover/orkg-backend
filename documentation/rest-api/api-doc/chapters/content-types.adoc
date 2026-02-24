@@ -11,6 +11,9 @@ include::content-types/contributions.adoc[leveloffset=+1]
 [[comparisons]]
 include::content-types/comparisons.adoc[leveloffset=+1]
 
+[[comparisons-tables]]
+include::content-types/comparison-tables.adoc[leveloffset=+1]
+
 [[comparisons-related-figures]]
 include::content-types/comparison-related-figures.adoc[leveloffset=+1]
 

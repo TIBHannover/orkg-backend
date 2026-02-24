@@ -494,5 +494,9 @@
     {
         "id": "subProblem",
         "label": "Sub Problem"
+    },
+    {
+        "id": "compareRosettaStoneContribution",
+        "label": "compare rosetta stone contribution"
     }
 ]

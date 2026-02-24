@@ -5,6 +5,7 @@ import org.orkg.common.ThingId
 object Predicates {
     val addresses = ThingId("P0")
     val comparesContribution = ThingId("compareContribution")
+    val comparesRosettaStoneContribution = ThingId("compareRosettaStoneContribution")
     val csvwCells = ThingId("CSVW_Cells")
     val csvwColumn = ThingId("CSVW_Column")
     val csvwColumns = ThingId("CSVW_Columns")

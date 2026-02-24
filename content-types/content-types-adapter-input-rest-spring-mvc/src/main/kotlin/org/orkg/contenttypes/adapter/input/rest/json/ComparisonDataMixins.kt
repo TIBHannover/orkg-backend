@@ -5,8 +5,8 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
-import org.orkg.contenttypes.domain.ConfiguredComparisonTargetCell
-import org.orkg.contenttypes.domain.EmptyComparisonTargetCell
+import org.orkg.contenttypes.domain.legacy.ConfiguredComparisonTargetCell
+import org.orkg.contenttypes.domain.legacy.EmptyComparisonTargetCell
 
 abstract class ComparisonHeaderCellMixin(
     @field:JsonProperty("paper_id")
@@ -22,7 +22,7 @@ abstract class ComparisonHeaderCellMixin(
 abstract class ComparisonIndexCellMixin(
     @field:JsonAlias("contributionAmount")
     @field:JsonProperty("n_contributions")
-    val contributionAmount: Int,
+    val contributionAmount: Int?,
     @field:JsonAlias("similar")
     @field:JsonProperty("similar_predicates")
     val similarPredicates: List<String>,

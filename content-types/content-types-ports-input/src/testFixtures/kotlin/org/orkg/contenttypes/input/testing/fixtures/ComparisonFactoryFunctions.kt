@@ -6,10 +6,11 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Author
-import org.orkg.contenttypes.domain.testing.fixtures.createComparisonConfig
-import org.orkg.contenttypes.domain.testing.fixtures.createComparisonData
+import org.orkg.contenttypes.domain.ComparisonDataSource
+import org.orkg.contenttypes.domain.testing.fixtures.createSimpleComparisonPaths
 import org.orkg.contenttypes.input.CreateComparisonUseCase
 import org.orkg.contenttypes.input.PublishComparisonUseCase
+import org.orkg.contenttypes.input.UpdateComparisonTableUseCase
 import org.orkg.contenttypes.input.UpdateComparisonUseCase
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Visibility
@@ -43,9 +44,12 @@ fun createComparisonCommand() = CreateComparisonUseCase.CreateCommand(
         )
     ),
     sustainableDevelopmentGoals = setOf(ThingId("SDG_1"), ThingId("SDG_2")),
-    contributions = listOf(ThingId("R6541"), ThingId("R5364"), ThingId("R9786"), ThingId("R3120")),
-    config = createComparisonConfig(),
-    data = createComparisonData(),
+    sources = listOf(
+        ComparisonDataSource(ThingId("R6541"), ComparisonDataSource.Type.THING),
+        ComparisonDataSource(ThingId("R5364"), ComparisonDataSource.Type.THING),
+        ComparisonDataSource(ThingId("R9786"), ComparisonDataSource.Type.THING),
+        ComparisonDataSource(ThingId("R3120"), ComparisonDataSource.Type.THING)
+    ),
     visualizations = listOf(ThingId("R63845")),
     references = listOf("https://orkg.org/resources/R1000", "paper citation"),
     observatories = listOf(ObservatoryId("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")),
@@ -83,9 +87,12 @@ fun updateComparisonCommand() = UpdateComparisonUseCase.UpdateCommand(
         )
     ),
     sustainableDevelopmentGoals = setOf(ThingId("SDG_2"), ThingId("SDG_3")),
-    contributions = listOf(ThingId("R6541"), ThingId("R5364"), ThingId("R9786"), ThingId("R3120")),
-    config = createComparisonConfig(),
-    data = createComparisonData(),
+    sources = listOf(
+        ComparisonDataSource(ThingId("R6541"), ComparisonDataSource.Type.THING),
+        ComparisonDataSource(ThingId("R5364"), ComparisonDataSource.Type.THING),
+        ComparisonDataSource(ThingId("R9786"), ComparisonDataSource.Type.THING),
+        ComparisonDataSource(ThingId("R3120"), ComparisonDataSource.Type.THING)
+    ),
     visualizations = listOf(ThingId("R63845")),
     references = listOf("https://orkg.org/resources/R1000", "paper citation"),
     observatories = listOf(ObservatoryId("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")),
@@ -117,4 +124,10 @@ fun publishComparisonCommand() = PublishComparisonUseCase.PublishCommand(
         )
     ),
     assignDOI = true
+)
+
+fun updateComparisonTableCommand() = UpdateComparisonTableUseCase.UpdateCommand(
+    comparisonId = ThingId("R16453"),
+    contributorId = ContributorId("0b3d7108-ea98-448f-85ef-e67a63a8b32b"),
+    selectedPaths = createSimpleComparisonPaths()
 )

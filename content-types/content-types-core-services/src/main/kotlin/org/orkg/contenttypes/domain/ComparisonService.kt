@@ -10,7 +10,6 @@ import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.domain.actions.Action
-import org.orkg.contenttypes.domain.actions.ContributionIdsValidator
 import org.orkg.contenttypes.domain.actions.CreateComparisonCommand
 import org.orkg.contenttypes.domain.actions.CreateComparisonState
 import org.orkg.contenttypes.domain.actions.DescriptionValidator
@@ -21,6 +20,7 @@ import org.orkg.contenttypes.domain.actions.OrganizationOrConferenceValidator
 import org.orkg.contenttypes.domain.actions.PublishComparisonCommand
 import org.orkg.contenttypes.domain.actions.PublishComparisonState
 import org.orkg.contenttypes.domain.actions.ResearchFieldValidator
+import org.orkg.contenttypes.domain.actions.ResourceValidator
 import org.orkg.contenttypes.domain.actions.SDGValidator
 import org.orkg.contenttypes.domain.actions.UpdateComparisonCommand
 import org.orkg.contenttypes.domain.actions.UpdateComparisonState
@@ -32,6 +32,7 @@ import org.orkg.contenttypes.domain.actions.comparisons.ComparisonAuthorListUpda
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonAuthorListUpdater
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonContributionCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonContributionUpdater
+import org.orkg.contenttypes.domain.actions.comparisons.ComparisonDataSourcesValidator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonDescriptionCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonDescriptionUpdater
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonExistenceValidator
@@ -46,17 +47,16 @@ import org.orkg.contenttypes.domain.actions.comparisons.ComparisonResourceCreato
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonResourceUpdater
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonSDGCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonSDGUpdater
-import org.orkg.contenttypes.domain.actions.comparisons.ComparisonTableCreator
-import org.orkg.contenttypes.domain.actions.comparisons.ComparisonTableUpdater
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonVersionCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonVersionDoiPublisher
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonVersionHistoryUpdater
+import org.orkg.contenttypes.domain.actions.comparisons.ComparisonVersionTableCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonVisualizationCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonVisualizationUpdater
 import org.orkg.contenttypes.domain.actions.execute
 import org.orkg.contenttypes.input.ComparisonContributionsUseCases
+import org.orkg.contenttypes.input.ComparisonTableUseCases
 import org.orkg.contenttypes.input.ComparisonUseCases
-import org.orkg.contenttypes.output.ComparisonPublishedRepository
 import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.contenttypes.output.ComparisonTableRepository
 import org.orkg.contenttypes.output.ContributionComparisonRepository
@@ -103,8 +103,8 @@ class ComparisonService(
     private val conferenceSeriesRepository: ConferenceSeriesRepository,
     private val contributorRepository: ContributorRepository,
     private val comparisonRepository: ComparisonRepository,
+    private val comparisonTableUseCases: ComparisonTableUseCases,
     private val comparisonTableRepository: ComparisonTableRepository,
-    private val comparisonPublishedRepository: ComparisonPublishedRepository,
     @Value("\${orkg.publishing.base-url.comparison}")
     private val comparisonPublishBaseUri: String = "http://localhost/comparison/",
 ) : ComparisonUseCases,
@@ -159,7 +159,8 @@ class ComparisonService(
             LabelValidator("title") { it.title },
             DescriptionValidator { it.description },
             LabelCollectionValidator("references") { it.references },
-            ContributionIdsValidator(resourceRepository) { it.contributions },
+            ComparisonDataSourcesValidator { it.sources },
+            ResourceValidator(resourceRepository, { it.sources.map { it.id }.toSet() }),
             VisualizationIdsValidator(resourceRepository) { it.visualizations },
             ResearchFieldValidator(resourceRepository, { it.researchFields }),
             ObservatoryValidator(observatoryRepository, { it.observatories }),
@@ -175,7 +176,6 @@ class ComparisonService(
             ComparisonIsAnonymizedCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
             ComparisonContributionCreator(unsafeStatementUseCases),
             ComparisonVisualizationCreator(unsafeStatementUseCases),
-            ComparisonTableCreator(comparisonTableRepository)
         )
         return steps.execute(command, CreateComparisonState()).comparisonId!!
     }
@@ -185,9 +185,10 @@ class ComparisonService(
             LabelValidator("title") { it.title },
             DescriptionValidator { it.description },
             LabelCollectionValidator("references") { it.references },
+            ComparisonDataSourcesValidator { it.sources },
             ComparisonExistenceValidator(this, resourceRepository),
             VisibilityValidator(contributorRepository, { it.contributorId }, { it.comparison!! }, { it.visibility }),
-            ContributionIdsValidator(resourceRepository) { it.contributions },
+            ResourceValidator(resourceRepository, { it.sources?.map { it.id }?.toSet() }),
             VisualizationIdsValidator(resourceRepository) { it.visualizations },
             ResearchFieldValidator(resourceRepository, { it.researchFields }),
             ObservatoryValidator(observatoryRepository, { it.observatories }),
@@ -203,15 +204,15 @@ class ComparisonService(
             ComparisonVisualizationUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
             ComparisonReferencesUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
             ComparisonIsAnonymizedUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
-            ComparisonTableUpdater(comparisonTableRepository)
         )
         steps.execute(command, UpdateComparisonState())
     }
 
     override fun publish(command: PublishComparisonCommand): ThingId {
         val steps = listOf<Action<PublishComparisonCommand, PublishComparisonState>>(
-            ComparisonPublishableValidator(this, comparisonTableRepository),
-            ComparisonVersionCreator(resourceRepository, statementRepository, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService, comparisonPublishedRepository),
+            ComparisonPublishableValidator(this),
+            ComparisonVersionCreator(resourceRepository, statementRepository, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService),
+            ComparisonVersionTableCreator(comparisonTableUseCases, comparisonTableRepository),
             ComparisonVersionHistoryUpdater(unsafeStatementUseCases, unsafeResourceUseCases),
             ComparisonVersionDoiPublisher(unsafeStatementUseCases, unsafeLiteralUseCases, comparisonRepository, doiService, comparisonPublishBaseUri)
         )
@@ -255,14 +256,6 @@ class ComparisonService(
         return ContentTypeSubgraph(resource.id, statements.groupBy { it.subject.id })
     }
 
-    internal fun Resource.findTableData(): ComparisonTable =
-        when {
-            Classes.comparisonPublished in classes -> comparisonPublishedRepository.findById(id)
-                .map { ComparisonTable(id, it.config, it.data) }
-                .orElseGet { ComparisonTable.empty(id) }
-            else -> comparisonTableRepository.findById(id).orElseGet { ComparisonTable.empty(id) }
-        }
-
     internal fun Resource.findVersionInfo(statements: Map<ThingId, List<GeneralStatement>>): VersionInfo =
         when {
             Classes.comparisonPublished in classes -> comparisonRepository.findVersionHistoryForPublishedComparison(id)
@@ -280,7 +273,6 @@ class ComparisonService(
             Comparison.from(
                 resource = this,
                 statements = it.statements,
-                table = findTableData(),
                 versionInfo = findVersionInfo(it.statements)
             )
         }

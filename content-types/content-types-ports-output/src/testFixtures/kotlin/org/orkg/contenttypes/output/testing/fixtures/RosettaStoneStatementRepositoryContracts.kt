@@ -21,7 +21,6 @@ import org.orkg.contenttypes.domain.RosettaStoneStatementVersion
 import org.orkg.contenttypes.domain.testing.fixtures.withRosettaStoneStatementMappings
 import org.orkg.contenttypes.output.RosettaStoneStatementRepository
 import org.orkg.graph.domain.Class
-import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literal
 import org.orkg.graph.domain.Predicate
@@ -89,20 +88,10 @@ fun <
         statementRepository.save(it)
     }
 
-    fun RosettaStoneStatementVersion.requiredEntities(): Set<Thing> =
-        subjects.toSet() + objects.flatten()
-
-    fun RosettaStoneStatement.requiredEntities(): Set<Thing> =
-        setOfNotNull(
-            fabricator.random<Resource>().copy(id = templateId, classes = setOf(Classes.rosettaNodeShape)),
-            contextId?.let { fabricator.random<Resource>().copy(id = it) },
-            fabricator.random<Class>().copy(id = templateTargetClassId),
-        ) + versions.flatMap { it.requiredEntities() }
-
     describe("saving a rosetta stone statement") {
         it("saves and loads all properties correctly") {
             val expected: RosettaStoneStatement = fabricator.random()
-            expected.requiredEntities().forEach(saveThing)
+            expected.requiredEntities(fabricator).forEach(saveThing)
             repository.save(expected)
 
             val actual = repository.findByIdOrVersionId(expected.id).orElse(null)
@@ -125,14 +114,14 @@ fun <
         }
         it("updates an already existing rosetta stone statement") {
             val original: RosettaStoneStatement = fabricator.random()
-            original.requiredEntities().forEach(saveThing)
+            original.requiredEntities(fabricator).forEach(saveThing)
             repository.save(original)
 
             val found = repository.findByIdOrVersionId(original.id).get()
             val modified = found.copy(
                 label = "some new label, never seen before"
             )
-            modified.requiredEntities().forEach(saveThing)
+            modified.requiredEntities(fabricator).forEach(saveThing)
             repository.save(modified)
 
             repository.findAll(PageRequests.ALL).toSet().size shouldBe 1
@@ -142,7 +131,7 @@ fun <
         }
         it("appends new rosetta stone statement versions") {
             val original: RosettaStoneStatement = fabricator.random()
-            original.requiredEntities().forEach(saveThing)
+            original.requiredEntities(fabricator).forEach(saveThing)
             repository.save(original)
 
             val found = repository.findByIdOrVersionId(original.id).get()
@@ -161,7 +150,7 @@ fun <
     describe("finding a rosetta stone statement") {
         it("by id") {
             val expected: RosettaStoneStatement = fabricator.random()
-            expected.requiredEntities().forEach(saveThing)
+            expected.requiredEntities(fabricator).forEach(saveThing)
             repository.save(expected)
 
             val actual = repository.findByIdOrVersionId(expected.id).orElse(null)
@@ -169,7 +158,7 @@ fun <
         }
         it("by version id") {
             val expected: RosettaStoneStatement = fabricator.random()
-            expected.requiredEntities().forEach(saveThing)
+            expected.requiredEntities(fabricator).forEach(saveThing)
             repository.save(expected)
 
             val actual = repository.findByIdOrVersionId(expected.latestVersion.id).orElse(null)
@@ -181,7 +170,7 @@ fun <
         context("without filters") {
             val statements = fabricator.random<List<RosettaStoneStatement>>()
             statements.forEach {
-                it.requiredEntities().forEach(saveThing)
+                it.requiredEntities(fabricator).forEach(saveThing)
                 repository.save(it)
             }
             val expected = statements.sortedBy { it.versions.first().createdAt }.take(10)
@@ -212,7 +201,7 @@ fun <
                 statements[index] = statement.copy(contextId = contextId)
             }
             statements.forEach {
-                it.requiredEntities().forEach(saveThing)
+                it.requiredEntities(fabricator).forEach(saveThing)
                 repository.save(it)
             }
             val expected = statements.take(3).sortedBy { it.versions.first().createdAt }
@@ -243,7 +232,7 @@ fun <
                 statements[index] = statement.copy(templateId = templateId)
             }
             statements.forEach {
-                it.requiredEntities().forEach(saveThing)
+                it.requiredEntities(fabricator).forEach(saveThing)
                 repository.save(it)
             }
             val expected = statements.take(3).sortedBy { it.versions.first().createdAt }
@@ -274,7 +263,7 @@ fun <
                 statements[index] = statement.copy(templateTargetClassId = classId)
             }
             statements.forEach {
-                it.requiredEntities().forEach(saveThing)
+                it.requiredEntities(fabricator).forEach(saveThing)
                 repository.save(it)
             }
             val expected = statements.take(3).sortedBy { it.versions.first().createdAt }
@@ -306,7 +295,7 @@ fun <
             VisibilityFilter.entries.forEach { visibilityFilter ->
                 context("when visibility is $visibilityFilter") {
                     statements.forEach {
-                        it.requiredEntities().forEach(saveThing)
+                        it.requiredEntities(fabricator).forEach(saveThing)
                         repository.save(it)
                     }
                     val expected = statements.filter { it.visibility in visibilityFilter.targets }.sortedBy { it.versions.first().createdAt }
@@ -343,7 +332,7 @@ fun <
                 )
             }
             statements.forEach {
-                it.requiredEntities().forEach(saveThing)
+                it.requiredEntities(fabricator).forEach(saveThing)
                 repository.save(it)
             }
             val expected = statements.take(3).sortedBy { it.versions.first().createdAt }
@@ -377,7 +366,7 @@ fun <
                 )
             }
             statements.forEach {
-                it.requiredEntities().forEach(saveThing)
+                it.requiredEntities(fabricator).forEach(saveThing)
                 repository.save(it)
             }
             val expected = statements.take(3)
@@ -414,7 +403,7 @@ fun <
                 )
             }
             statements.forEach {
-                it.requiredEntities().forEach(saveThing)
+                it.requiredEntities(fabricator).forEach(saveThing)
                 repository.save(it)
             }
             val expected = statements.take(3)
@@ -448,7 +437,7 @@ fun <
                 statements[index] = statement.copy(organizations = listOf(organizationId))
             }
             statements.forEach {
-                it.requiredEntities().forEach(saveThing)
+                it.requiredEntities(fabricator).forEach(saveThing)
                 repository.save(it)
             }
             val expected = statements.take(3).sortedBy { it.versions.first().createdAt }
@@ -480,7 +469,7 @@ fun <
                 statements[index] = statement.copy(observatories = listOf(observatoryId))
             }
             statements.forEach {
-                it.requiredEntities().forEach(saveThing)
+                it.requiredEntities(fabricator).forEach(saveThing)
                 repository.save(it)
             }
             val expected = statements.take(3).sortedBy { it.versions.first().createdAt }
@@ -508,7 +497,7 @@ fun <
             val statements = fabricator.random<List<RosettaStoneStatement>>()
                 .map { it.copy(visibility = Visibility.FEATURED) }
             statements.forEach {
-                it.requiredEntities().forEach(saveThing)
+                it.requiredEntities(fabricator).forEach(saveThing)
                 repository.save(it)
             }
             val expected = statements.first()
@@ -552,7 +541,7 @@ fun <
                 }
             )
             statements.forEach {
-                it.requiredEntities().forEach(saveThing)
+                it.requiredEntities(fabricator).forEach(saveThing)
                 repository.save(it)
             }
             val sort = Sort.by("created_by").ascending().and(Sort.by("created_at").descending())
@@ -564,6 +553,34 @@ fun <
                 } else {
                     a.versions.first().createdBy.value.toString() shouldBeLessThan b.versions.first().createdBy.value.toString()
                 }
+            }
+        }
+        context("by several context ids and template ids") {
+            val statements = fabricator.random<MutableList<RosettaStoneStatement>>()
+            val contextId = fabricator.random<ThingId>()
+            statements.take(3).forEachIndexed { index, statement ->
+                statements[index] = statement.copy(contextId = contextId)
+            }
+            val requiredEntities = statements
+                .flatMap { it.requiredEntities(fabricator) }
+                .associateBy { it.id }
+            requiredEntities.values.forEach(saveThing)
+            statements.forEach(repository::save)
+            val emptyContext = fabricator.random<Resource>()
+            saveThing(emptyContext)
+
+            val contextIds = setOf(contextId, statements[3].contextId!!, emptyContext.id)
+            val templateIds = (statements.drop(1).take(2).map { it.templateId } + statements[3].templateId).toSet()
+            val expected = statements.drop(1).take(3)
+                .groupBy { it.contextId }
+                .map { requiredEntities[it.key]!! to it.value.toSet() }
+                .let { it + (emptyContext to emptySet<RosettaStoneStatement>()) }
+                .toMap()
+            val result = repository.findAllByContextIdsAndTemplateIds(contextIds, templateIds)
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result shouldBe expected
             }
         }
     }
@@ -579,7 +596,7 @@ fun <
         }
         it("returns an id that is not yet in the repository") {
             val statement = fabricator.random<RosettaStoneStatement>().copy(id = repository.nextIdentity())
-            statement.requiredEntities().forEach(saveThing)
+            statement.requiredEntities(fabricator).forEach(saveThing)
             repository.save(statement)
 
             val id = repository.nextIdentity()
@@ -590,7 +607,7 @@ fun <
     it("deletes all rosetta stone statements") {
         repeat(3) {
             val statement = fabricator.random<RosettaStoneStatement>().copy(id = ThingId("R$it"))
-            statement.requiredEntities().forEach(saveThing)
+            statement.requiredEntities(fabricator).forEach(saveThing)
             repository.save(statement)
         }
         // RosettaStoneStatementRepository has no count method
@@ -601,7 +618,7 @@ fun <
 
     it("soft deletes a rosetta stone statement") {
         val statement = fabricator.random<RosettaStoneStatement>()
-        statement.requiredEntities().forEach(saveThing)
+        statement.requiredEntities(fabricator).forEach(saveThing)
         repository.save(statement)
         val contributorId = ContributorId(MockUserId.USER)
 
@@ -622,7 +639,7 @@ fun <
 
     it("deletes a rosetta stone statement") {
         val statement = fabricator.random<RosettaStoneStatement>()
-        statement.requiredEntities().forEach(saveThing)
+        statement.requiredEntities(fabricator).forEach(saveThing)
         repository.save(statement)
 
         repository.delete(statement.id)
@@ -634,7 +651,7 @@ fun <
         context("when it is not used as an object") {
             it("returns the correct result") {
                 val statement = fabricator.random<RosettaStoneStatement>()
-                statement.requiredEntities().forEach(saveThing)
+                statement.requiredEntities(fabricator).forEach(saveThing)
                 repository.save(statement)
 
                 repository.isUsedAsObject(statement.id) shouldBe false
@@ -644,7 +661,7 @@ fun <
         context("when the latest version is used as a subject in another rosetta stone statement") {
             it("returns the correct result") {
                 val statement = fabricator.random<RosettaStoneStatement>()
-                statement.requiredEntities().forEach(saveThing)
+                statement.requiredEntities(fabricator).forEach(saveThing)
                 repository.save(statement)
 
                 val statementResource = resourceRepository.findById(statement.id).get()
@@ -656,7 +673,7 @@ fun <
                         )
                     )
                 }
-                otherStatement.requiredEntities().forEach(saveThing)
+                otherStatement.requiredEntities(fabricator).forEach(saveThing)
                 repository.save(otherStatement)
 
                 repository.isUsedAsObject(statement.id) shouldBe true
@@ -666,7 +683,7 @@ fun <
         context("when an older version is used as a subject in another rosetta stone statement") {
             it("returns the correct result") {
                 val statement = fabricator.random<RosettaStoneStatement>()
-                statement.requiredEntities().forEach(saveThing)
+                statement.requiredEntities(fabricator).forEach(saveThing)
                 repository.save(statement)
 
                 val statementResource = resourceRepository.findById(statement.versions.last().id).get()
@@ -678,7 +695,7 @@ fun <
                         )
                     )
                 }
-                otherStatement.requiredEntities().forEach(saveThing)
+                otherStatement.requiredEntities(fabricator).forEach(saveThing)
                 repository.save(otherStatement)
 
                 repository.isUsedAsObject(statement.id) shouldBe true
@@ -688,7 +705,7 @@ fun <
         context("when the latest version is used as an object in another rosetta stone statement") {
             it("returns the correct result") {
                 val statement = fabricator.random<RosettaStoneStatement>()
-                statement.requiredEntities().forEach(saveThing)
+                statement.requiredEntities(fabricator).forEach(saveThing)
                 repository.save(statement)
 
                 val statementResource = resourceRepository.findById(statement.id).get()
@@ -700,7 +717,7 @@ fun <
                         )
                     )
                 }
-                otherStatement.requiredEntities().forEach(saveThing)
+                otherStatement.requiredEntities(fabricator).forEach(saveThing)
                 repository.save(otherStatement)
 
                 repository.isUsedAsObject(statement.id) shouldBe true
@@ -710,7 +727,7 @@ fun <
         context("when an older version is used as an object in another rosetta stone statement") {
             it("returns the correct result") {
                 val statement = fabricator.random<RosettaStoneStatement>()
-                statement.requiredEntities().forEach(saveThing)
+                statement.requiredEntities(fabricator).forEach(saveThing)
                 repository.save(statement)
 
                 val statementResource = resourceRepository.findById(statement.versions.last().id).get()
@@ -722,7 +739,7 @@ fun <
                         )
                     )
                 }
-                otherStatement.requiredEntities().forEach(saveThing)
+                otherStatement.requiredEntities(fabricator).forEach(saveThing)
                 repository.save(otherStatement)
 
                 repository.isUsedAsObject(statement.id) shouldBe true
@@ -732,7 +749,7 @@ fun <
         context("when the latest version is used in a triple") {
             it("returns the correct result") {
                 val statement = fabricator.random<RosettaStoneStatement>()
-                statement.requiredEntities().forEach(saveThing)
+                statement.requiredEntities(fabricator).forEach(saveThing)
                 repository.save(statement)
 
                 saveStatement(
@@ -748,7 +765,7 @@ fun <
         context("when an older version is used in a triple") {
             it("returns the correct result") {
                 val statement = fabricator.random<RosettaStoneStatement>()
-                statement.requiredEntities().forEach(saveThing)
+                statement.requiredEntities(fabricator).forEach(saveThing)
                 repository.save(statement)
 
                 saveStatement(

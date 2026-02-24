@@ -95,7 +95,7 @@ class AbstractRosettaStoneStatementPropertyValueValidator(
                         val statementVersion = rosettaStoneStatementService.findByIdOrVersionId(thing.id)
                             .orElseThrow { RosettaStoneStatementNotFound(thing.id) }
                             .findVersionById(thing.id) ?: throw RosettaStoneStatementVersionNotFound(thing.id)
-                        val resourceInputs = statementVersion.allInputs.filterIsInstance<Resource>()
+                        val resourceInputs = statementVersion.inputValues.filterIsInstance<Resource>()
                         if (resourceInputs.any { Classes.rosettaStoneStatement in it.classes }) {
                             throw NestedRosettaStoneStatement(thing.id, index)
                         }

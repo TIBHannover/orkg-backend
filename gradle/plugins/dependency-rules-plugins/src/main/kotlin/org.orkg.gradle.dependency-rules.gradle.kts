@@ -25,7 +25,7 @@ jvmDependencyConflicts {
 }
 
 dependencies.components {
-//    all<JacksonBomAlignmentRule>()
+    all<JacksonBomAlignmentRule>()
     all<MockKVirtualPlatformAlignmentRule>()
     all<RestdocsApiSpecVirtualPlatformAlignmentRule>()
 //    all<TestcontainersBomAlignmentRule>()

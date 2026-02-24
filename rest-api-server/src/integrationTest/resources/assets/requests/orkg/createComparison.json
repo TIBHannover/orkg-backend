@@ -38,74 +38,24 @@
         "SDG_1",
         "SDG_2"
     ],
-    "contributions": [
-        "R6541",
-        "R5364",
-        "R9786",
-        "R3120"
-    ],
-    "config": {
-        "contributions": [
-            "R456789",
-            "R987654"
-        ],
-        "predicates": [],
-        "transpose": false,
-        "type": "MERGE"
-    },
-    "data": {
-        "contributions": [
-            {
-                "active": true,
-                "id": "R456789",
-                "label": "Contribution 1",
-                "paper_id": "R456",
-                "paper_label": "Paper 1",
-                "paper_year": 2024
-            },
-            {
-                "active": true,
-                "id": "R987654",
-                "label": "Contribution 1",
-                "paper_id": "R789",
-                "paper_label": "Paper 2",
-                "paper_year": 2022
-            }
-        ],
-        "data": {
-            "P32": [
-                [
-                    {
-                        "_class": "resource",
-                        "classes": [
-                            "Problem"
-                        ],
-                        "id": "R192326",
-                        "label": "Covid-19 Pandemic Ontology Development",
-                        "path": [
-                            "R187004",
-                            "P32"
-                        ],
-                        "path_labels": [
-                            "Contribution 1",
-                            "research problem"
-                        ]
-                    }
-                ]
-            ]
+    "sources": [
+        {
+            "id": "R6541",
+            "type": "THING"
         },
-        "predicates": [
-            {
-                "active": true,
-                "id": "P32",
-                "label": "research problem",
-                "n_contributions": 2,
-                "similar_predicates": [
-                    "P15"
-                ]
-            }
-        ]
-    },
+        {
+            "id": "R5364",
+            "type": "THING"
+        },
+        {
+            "id": "R9786",
+            "type": "THING"
+        },
+        {
+            "id": "R3120",
+            "type": "THING"
+        }
+    ],
     "visualizations": [
         "R6571",
         "R1354"

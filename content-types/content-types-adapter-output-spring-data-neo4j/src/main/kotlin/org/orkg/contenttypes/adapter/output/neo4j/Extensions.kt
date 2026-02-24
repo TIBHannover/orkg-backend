@@ -8,6 +8,7 @@ import org.neo4j.cypherdsl.core.RelationshipPattern
 import org.neo4j.cypherdsl.core.StatementBuilder
 import org.neo4j.cypherdsl.core.SymbolicName
 import org.neo4j.driver.Record
+import org.neo4j.driver.types.MapAccessorWithDefaultValue
 import org.neo4j.driver.types.TypeSystem
 import org.orkg.common.ContributorId
 import org.orkg.contenttypes.domain.Certainty
@@ -45,7 +46,9 @@ data class RosettaStoneStatementMapper(
         versions: SymbolicName,
     ) : this(latest.value, templateId.value, context.value, versions.value)
 
-    override fun apply(typeSystem: TypeSystem, record: Record): RosettaStoneStatement {
+    override fun apply(typeSystem: TypeSystem, record: Record): RosettaStoneStatement = apply(record)
+
+    fun apply(record: MapAccessorWithDefaultValue): RosettaStoneStatement {
         val latest = record[latest].asNode().toResource()
         val templateId = record[templateId].toThingId()!!
         val contextId = record[contextId].takeUnless { it.isNull }?.toThingId()
@@ -119,6 +122,10 @@ data class RosettaStoneStatementMapper(
         val index: Int,
         val position: Int,
     )
+
+    companion object {
+        val DEFAULT_INSTANCE = RosettaStoneStatementMapper()
+    }
 }
 
 internal fun matchLiteratureList(

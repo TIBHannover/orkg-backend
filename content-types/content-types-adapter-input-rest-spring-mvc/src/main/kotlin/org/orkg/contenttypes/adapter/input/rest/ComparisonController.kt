@@ -12,8 +12,7 @@ import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId
 import org.orkg.common.validation.NullableNotBlank
 import org.orkg.contenttypes.adapter.input.rest.mapping.ComparisonRepresentationAdapter
-import org.orkg.contenttypes.domain.ComparisonConfig
-import org.orkg.contenttypes.domain.ComparisonData
+import org.orkg.contenttypes.domain.ComparisonDataSource
 import org.orkg.contenttypes.domain.ComparisonNotFound
 import org.orkg.contenttypes.input.ComparisonUseCases
 import org.orkg.contenttypes.input.CreateComparisonUseCase
@@ -43,14 +42,14 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 import java.time.OffsetDateTime
 
-const val COMPARISON_JSON_V2 = "application/vnd.orkg.comparison.v2+json"
+const val COMPARISON_JSON_V3 = "application/vnd.orkg.comparison.v3+json"
 
 @RestController
 @RequestMapping("/api/comparisons", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ComparisonController(
     private val service: ComparisonUseCases,
 ) : ComparisonRepresentationAdapter {
-    @GetMapping("/{id}", produces = [COMPARISON_JSON_V2])
+    @GetMapping("/{id}", produces = [COMPARISON_JSON_V3])
     fun findById(
         @PathVariable id: ThingId,
     ): ComparisonRepresentation =
@@ -58,13 +57,12 @@ class ComparisonController(
             .mapToComparisonRepresentation()
             .orElseThrow { ComparisonNotFound(id) }
 
-    @GetMapping(produces = [COMPARISON_JSON_V2])
+    @GetMapping(produces = [COMPARISON_JSON_V3])
     fun findAll(
         @RequestParam("title", required = false) title: String?,
         @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,
         @RequestParam("doi", required = false) doi: String?,
         @RequestParam("visibility", required = false) visibility: VisibilityFilter?,
-        @RequestParam("verified", required = false) verified: Boolean?,
         @RequestParam("created_by", required = false) createdBy: ContributorId?,
         @RequestParam("created_at_start", required = false) @DateTimeFormat(iso = ISO.DATE_TIME) createdAtStart: OffsetDateTime?,
         @RequestParam("created_at_end", required = false) @DateTimeFormat(iso = ISO.DATE_TIME) createdAtEnd: OffsetDateTime?,
@@ -95,7 +93,7 @@ class ComparisonController(
         ).mapToComparisonRepresentation()
 
     @RequireLogin
-    @PostMapping(consumes = [COMPARISON_JSON_V2], produces = [COMPARISON_JSON_V2])
+    @PostMapping(consumes = [COMPARISON_JSON_V3], produces = [COMPARISON_JSON_V3])
     fun create(
         @RequestBody @Valid request: CreateComparisonRequest,
         uriComponentsBuilder: UriComponentsBuilder,
@@ -111,7 +109,7 @@ class ComparisonController(
     }
 
     @RequireLogin
-    @PutMapping("/{id}", consumes = [COMPARISON_JSON_V2], produces = [COMPARISON_JSON_V2])
+    @PutMapping("/{id}", consumes = [COMPARISON_JSON_V3], produces = [COMPARISON_JSON_V3])
     fun update(
         @PathVariable id: ThingId,
         @RequestBody @Valid request: UpdateComparisonRequest,
@@ -155,9 +153,7 @@ class ComparisonController(
         val authors: List<AuthorRequest>,
         @JsonProperty("sdgs")
         val sustainableDevelopmentGoals: Set<ThingId>?,
-        val contributions: List<ThingId>,
-        val config: ComparisonConfig,
-        val data: ComparisonData,
+        val sources: List<ComparisonDataSource>,
         val visualizations: List<ThingId>?,
         val references: List<String>,
         @field:Size(max = 1)
@@ -177,9 +173,7 @@ class ComparisonController(
                 researchFields = researchFields,
                 authors = authors.map { it.toAuthor() },
                 sustainableDevelopmentGoals = sustainableDevelopmentGoals.orEmpty(),
-                contributions = contributions,
-                config = config,
-                data = data,
+                sources = sources,
                 visualizations = visualizations.orEmpty(),
                 references = references,
                 observatories = observatories,
@@ -201,9 +195,7 @@ class ComparisonController(
         val authors: List<AuthorRequest>?,
         @JsonProperty("sdgs")
         val sustainableDevelopmentGoals: Set<ThingId>?,
-        val contributions: List<ThingId>?,
-        val config: ComparisonConfig?,
-        val data: ComparisonData?,
+        val sources: List<ComparisonDataSource>?,
         val visualizations: List<ThingId>?,
         val references: List<String>?,
         @field:Size(max = 1)
@@ -225,9 +217,7 @@ class ComparisonController(
                 researchFields = researchFields,
                 authors = authors?.map { it.toAuthor() },
                 sustainableDevelopmentGoals = sustainableDevelopmentGoals,
-                contributions = contributions,
-                config = config,
-                data = data,
+                sources = sources,
                 visualizations = visualizations,
                 references = references,
                 observatories = observatories,

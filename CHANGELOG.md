@@ -6,6 +6,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Breaking
+- The following deprecated endpoints were removed
+  (See: [!1429](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1429)):
+  - GET /api/stats/top/contributors
+  - GET /api/stats/research-field/{id}/top/contributors
+  - GET /api/stats/research-field/{id}/subfields/top/contributors
+  - GET /api/stats/observatories
+  - GET /api/stats/observatories/{id}
+  - GET /api/statements/subjects?ids=R1&ids=R3
+  - GET /api/statements/objects?ids=R1&ids=R3
+  - PUT /api/statements?ids=S1&ids=S2
+  - DELETE /api/statements?ids=S1,S2
+  - GET /api/problems/{id}/fields
+  - GET /api/research-fields/{id}/contributors
+  - GET /api/research-fields/{id}/subfields/contributors
+  - GET /api/problems/{id}/users
+  - GET /api/problems/{id}/authors
+  - GET /api/organizations/{id}/problems
+  - GET /api/research-fields/{id}/problems
+  - GET /api/research-fields/{id}/research-problems
+  - GET /api/research-fields/{id}/subfields/research-problems
+  - GET /api/rdf/hints
 
 ## [0.92.0] - 2026-02-12
 ### Changed

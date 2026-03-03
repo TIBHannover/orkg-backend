@@ -104,8 +104,9 @@ class WikidataServiceAdapter(
             }
             ExternalThing(
                 uri = ParsedIRI.create("https://www.wikidata.org/entity/$id"),
-                label = entity.path("labels").path("en").path("value").asString(),
-                description = entity.path("descriptions").path("en").path("value").asString()
+                label = entity.path("labels").path("en").path("value").asString(null)
+                    ?: return@send null,
+                description = entity.path("descriptions").path("en").path("value").asString(null)
             )
         }
     }

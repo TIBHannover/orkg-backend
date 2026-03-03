@@ -45,7 +45,8 @@ class GeoNamesServiceAdapter(
         return httpClient.send(request, "GeoNames") { response ->
             ExternalThing(
                 uri = ParsedIRI.create("https://sws.geonames.org/$shortForm"),
-                label = objectMapper.readTree(response).path("name").asString(),
+                label = objectMapper.readTree(response).path("name").asString(null)
+                    ?: return@send null,
                 description = null
             )
         }

@@ -97,9 +97,10 @@ class OLSServiceAdapter(
             ExternalThing(
                 uri = ParsedIRI.create(item.path("iri").asString()),
                 label = item.path("label").toList()
-                    .firstOrNull()?.asString() ?: return@send null,
+                    .firstOrNull()?.asString(null)
+                    ?: return@send null,
                 description = item.path("definition").toList()
-                    .firstOrNull()?.asString()
+                    .firstOrNull()?.asString(null)
                     .takeIf { !it.isNullOrBlank() },
             )
         }

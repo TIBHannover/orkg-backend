@@ -129,7 +129,7 @@ dependencies {
     runtimeOnly(project(":content-types:content-types-adapter-output-spring-data-neo4j"))
     runtimeOnly(project(":content-types:content-types-adapter-output-web"))
     runtimeOnly(project(":content-types:content-types-core-model"))
-    runtimeOnly(project(":content-types:content-types-core-services"))
+    implementation(project(":content-types:content-types-core-services"))
     runtimeOnly(project(":content-types:content-types-ports-input"))
     runtimeOnly(project(":content-types:content-types-ports-output"))
 
@@ -335,6 +335,12 @@ tasks {
         group = "migration"
         description = "Migrates the comparison tables to v3 format."
         args("--spring.profiles.active=development,comparisonTableMigrations")
+    }
+
+    registerBootRunTask("runSmartReviewSnapshotMigration") {
+        group = "migration"
+        description = "Migrates published smart reviews from SimComp to the backend database."
+        args("--spring.profiles.active=development,smartReviewSnapshotMigration")
     }
 
     withType<JacocoReport>().configureEach {

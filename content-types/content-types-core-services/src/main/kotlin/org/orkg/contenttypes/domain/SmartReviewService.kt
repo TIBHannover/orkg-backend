@@ -68,8 +68,8 @@ import org.orkg.contenttypes.domain.actions.smartreviews.sections.SmartReviewSec
 import org.orkg.contenttypes.domain.actions.smartreviews.sections.SmartReviewSectionUpdater
 import org.orkg.contenttypes.input.SmartReviewUseCases
 import org.orkg.contenttypes.output.DoiService
-import org.orkg.contenttypes.output.SmartReviewPublishedRepository
 import org.orkg.contenttypes.output.SmartReviewRepository
+import org.orkg.contenttypes.output.SmartReviewSnapshotRepository
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.GeneralStatement
@@ -94,6 +94,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
+import java.time.Clock
 import java.time.OffsetDateTime
 import java.util.Optional
 
@@ -101,7 +102,8 @@ import java.util.Optional
 class SmartReviewService(
     private val resourceRepository: ResourceRepository,
     private val smartReviewRepository: SmartReviewRepository,
-    private val smartReviewPublishedRepository: SmartReviewPublishedRepository,
+    private val smartReviewSnapshotRepository: SmartReviewSnapshotRepository,
+    private val snapshotIdGenerator: SnapshotIdGenerator,
     private val comparisonService: ComparisonService,
     private val statementRepository: StatementRepository,
     private val observatoryRepository: ObservatoryRepository,
@@ -117,6 +119,7 @@ class SmartReviewService(
     private val listRepository: ListRepository,
     private val contributorRepository: ContributorRepository,
     private val doiService: DoiService,
+    private val clock: Clock,
     @Value("\${orkg.publishing.base-url.smart-review}")
     private val smartReviewPublishBaseUri: String = "http://localhost/review/",
 ) : SmartReviewUseCases {
@@ -263,7 +266,7 @@ class SmartReviewService(
             DescriptionValidator { it.description?.takeIf { _ -> it.assignDOI } },
             SmartReviewVersionCreator(resourceRepository, statementRepository, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService),
             SmartReviewChangelogCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
-            SmartReviewVersionArchiver(statementService, smartReviewPublishedRepository),
+            SmartReviewVersionArchiver(statementService, smartReviewSnapshotRepository, snapshotIdGenerator, clock),
             SmartReviewVersionHistoryUpdater(unsafeStatementUseCases, unsafeResourceUseCases),
             SmartReviewVersionDoiPublisher(unsafeStatementUseCases, unsafeLiteralUseCases, doiService, smartReviewPublishBaseUri)
         )
@@ -274,7 +277,7 @@ class SmartReviewService(
         var root = resource.id
         val statements = when {
             Classes.smartReviewPublished in resource.classes -> {
-                val published = smartReviewPublishedRepository.findById(resource.id)
+                val published = smartReviewSnapshotRepository.findByResourceId(resource.id)
                     .orElseThrow { SmartReviewNotFound(resource.id) }
                 root = published.rootId
                 val versions = statementRepository.fetchAsBundle(

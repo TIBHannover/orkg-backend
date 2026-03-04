@@ -1,13 +1,16 @@
 package org.orkg.contenttypes.domain.actions.smartreviews
 
-import org.orkg.contenttypes.domain.PublishedContentType
+import org.orkg.contenttypes.domain.SmartReviewSnapshotV1
+import org.orkg.contenttypes.domain.SnapshotIdGenerator
 import org.orkg.contenttypes.domain.actions.PublishSmartReviewCommand
 import org.orkg.contenttypes.domain.actions.smartreviews.PublishSmartReviewAction.State
-import org.orkg.contenttypes.output.SmartReviewPublishedRepository
+import org.orkg.contenttypes.output.SmartReviewSnapshotRepository
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.StatementUseCases
 import org.springframework.data.domain.Sort
+import java.time.Clock
+import java.time.OffsetDateTime
 
 private val bundleConfiguration = BundleConfiguration(
     minLevel = null,
@@ -18,7 +21,9 @@ private val bundleConfiguration = BundleConfiguration(
 
 class SmartReviewVersionArchiver(
     private val statementService: StatementUseCases,
-    private val smartReviewPublishedRepository: SmartReviewPublishedRepository,
+    private val smartReviewPublishedRepository: SmartReviewSnapshotRepository,
+    private val snapshotIdGenerator: SnapshotIdGenerator,
+    private val clock: Clock,
 ) : PublishSmartReviewAction {
     override fun invoke(command: PublishSmartReviewCommand, state: State): State {
         val statementsToPersist = statementService.fetchAsBundle(
@@ -28,10 +33,13 @@ class SmartReviewVersionArchiver(
             sort = Sort.unsorted()
         ).bundle
         smartReviewPublishedRepository.save(
-            PublishedContentType(
-                id = state.smartReviewVersionId!!,
+            SmartReviewSnapshotV1(
+                id = snapshotIdGenerator.nextIdentity(),
+                createdBy = command.contributorId,
+                createdAt = OffsetDateTime.now(clock),
+                resourceId = state.smartReviewVersionId!!,
                 rootId = command.smartReviewId,
-                subgraph = statementsToPersist
+                subgraph = statementsToPersist,
             )
         )
         return state

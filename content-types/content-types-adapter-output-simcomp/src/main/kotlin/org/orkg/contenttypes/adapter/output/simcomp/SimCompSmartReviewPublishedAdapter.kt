@@ -17,6 +17,7 @@ import java.util.Optional
 
 const val THING_ID_TO_PUBLISHED_SMART_REVIEW_CACHE = "thing-id-to-published-smart-review"
 
+@Deprecated(message = "To be removed", ReplaceWith("org.orkg.contenttypes.adapter.output.jpa.SpringDataJpaSmartReviewSnapshotAdapter"))
 @Component
 @CacheConfig(cacheNames = [THING_ID_TO_PUBLISHED_SMART_REVIEW_CACHE])
 class SimCompSmartReviewPublishedAdapter(

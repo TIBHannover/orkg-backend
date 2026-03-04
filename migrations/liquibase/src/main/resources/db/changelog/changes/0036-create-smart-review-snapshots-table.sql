@@ -1,6 +1,6 @@
 --liquibase formatted sql
 
---changeset orkg:35 dbms:postgresql
+--changeset orkg:36 dbms:postgresql
 
 CREATE TABLE smart_review_snapshots
 (

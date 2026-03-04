@@ -65,11 +65,12 @@ class TestContextTest {
         private val testClass: Class<*>? = null,
         private val tags: Set<String> = emptySet(),
     ) : TestInfo {
-        override fun getDisplayName(): String? =
+        override fun getDisplayName(): String =
             // This does not simulate the full signature, but we also do not need it.
             getTestMethod().getOrNull()?.let { "${it.name}()" }
+                ?: error("Unable to determine test name")
 
-        override fun getTags(): Set<String?>? = tags
+        override fun getTags(): Set<String> = tags
 
         override fun getTestClass(): Optional<Class<*>> = Optional.ofNullable(testClass)
 

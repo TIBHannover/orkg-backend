@@ -6,7 +6,6 @@ import it.skrape.matchers.toBePresentExactlyOnce
 import it.skrape.selects.attribute
 import it.skrape.selects.html5.a
 import org.orkg.world.Environment
-import tools.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES
 import tools.jackson.module.kotlin.jacksonObjectMapper
 import java.net.URI.create
 import java.net.URLEncoder
@@ -27,7 +26,7 @@ class MailBox(
     private val messagesEndpoint = "$mailAPI/messages"
 
     // Members
-    private val mapper = jacksonObjectMapper().configure(FAIL_ON_UNKNOWN_PROPERTIES, false)
+    private val mapper = jacksonObjectMapper()
     private val client = HttpClient.newBuilder().followRedirects(NORMAL).build()
     private val requestBuilder = HttpRequest.newBuilder()
         .header("Accept", "application/json")

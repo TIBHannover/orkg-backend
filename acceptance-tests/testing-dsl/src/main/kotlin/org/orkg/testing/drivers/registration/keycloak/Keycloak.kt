@@ -3,7 +3,6 @@ package org.orkg.testing.drivers.registration.keycloak
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.orkg.testing.dsl.require
 import org.orkg.world.Environment
-import tools.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES
 import tools.jackson.module.kotlin.jacksonObjectMapper
 import java.net.URI
 import java.net.http.HttpClient
@@ -51,7 +50,7 @@ class Keycloak private constructor(
             .joinToString("&")
             .let { encoded -> HttpRequest.BodyPublishers.ofString(encoded) }
         val endpoint = oidc.tokenEndpoint
-        val mapper = jacksonObjectMapper().configure(FAIL_ON_UNKNOWN_PROPERTIES, false)
+        val mapper = jacksonObjectMapper()
         val client: HttpClient = HttpClient.newBuilder().followRedirects(NORMAL).build()
         val request = HttpRequest.newBuilder()
             .POST(formData)
@@ -89,7 +88,7 @@ class Keycloak private constructor(
     }
 
     private inline fun <reified T> fetchInfo(url: String): T {
-        val mapper = jacksonObjectMapper().configure(FAIL_ON_UNKNOWN_PROPERTIES, false)
+        val mapper = jacksonObjectMapper()
         val client: HttpClient = HttpClient.newBuilder().followRedirects(NORMAL).build()
         val request = HttpRequest.newBuilder().GET().uri(URI.create(url)).build()
         val response = client.send(request, BodyHandlers.ofString())

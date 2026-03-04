@@ -343,6 +343,12 @@ tasks {
         args("--spring.profiles.active=development,smartReviewSnapshotMigration")
     }
 
+    registerBootRunTask("runLiteratureListSnapshotMigration") {
+        group = "migration"
+        description = "Migrates published literature lists from SimComp to the backend database."
+        args("--spring.profiles.active=development,literatureListSnapshotMigration")
+    }
+
     withType<JacocoReport>().configureEach {
         reports {
             html.required.set(true)

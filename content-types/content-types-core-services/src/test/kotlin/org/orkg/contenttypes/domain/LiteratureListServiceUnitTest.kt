@@ -20,8 +20,8 @@ import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
-import org.orkg.contenttypes.output.LiteratureListPublishedRepository
 import org.orkg.contenttypes.output.LiteratureListRepository
+import org.orkg.contenttypes.output.LiteratureListSnapshotRepository
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
@@ -49,7 +49,8 @@ import java.util.UUID
 internal class LiteratureListServiceUnitTest : MockkBaseTest {
     private val resourceRepository: ResourceRepository = mockk()
     private val literatureListRepository: LiteratureListRepository = mockk()
-    private val literatureListPublishedRepository: LiteratureListPublishedRepository = mockk()
+    private val literatureListSnapshotRepository: LiteratureListSnapshotRepository = mockk()
+    private val snapshotIdGenerator: SnapshotIdGenerator = mockk()
     private val statementRepository: StatementRepository = mockk()
     private val observatoryRepository: ObservatoryRepository = mockk()
     private val organizationRepository: OrganizationRepository = mockk()
@@ -65,7 +66,8 @@ internal class LiteratureListServiceUnitTest : MockkBaseTest {
     private val service = LiteratureListService(
         resourceRepository,
         literatureListRepository,
-        literatureListPublishedRepository,
+        literatureListSnapshotRepository,
+        snapshotIdGenerator,
         statementRepository,
         observatoryRepository,
         organizationRepository,
@@ -76,7 +78,8 @@ internal class LiteratureListServiceUnitTest : MockkBaseTest {
         unsafeStatementUseCases,
         listService,
         listRepository,
-        contributorRepository
+        contributorRepository,
+        fixedClock,
     )
 
     @Test
@@ -361,9 +364,12 @@ internal class LiteratureListServiceUnitTest : MockkBaseTest {
         )
 
         every { resourceRepository.findById(expected.id) } returns Optional.of(expected)
-        every { literatureListPublishedRepository.findById(expected.id) } returns Optional.of(
-            PublishedContentType(
-                id = expected.id,
+        every { literatureListSnapshotRepository.findByResourceId(expected.id) } returns Optional.of(
+            LiteratureListSnapshotV1(
+                id = SnapshotId("ABC"),
+                createdBy = ContributorId.UNKNOWN,
+                createdAt = OffsetDateTime.parse("2023-11-30T09:25:14.049085776+01:00"),
+                resourceId = expected.id,
                 rootId = unpublished.id,
                 subgraph = listOf(
                     createStatement(
@@ -550,7 +556,7 @@ internal class LiteratureListServiceUnitTest : MockkBaseTest {
         }
 
         verify(exactly = 1) { resourceRepository.findById(expected.id) }
-        verify(exactly = 1) { literatureListPublishedRepository.findById(expected.id) }
+        verify(exactly = 1) { literatureListSnapshotRepository.findByResourceId(expected.id) }
         verify(exactly = 1) {
             statementRepository.fetchAsBundle(
                 id = unpublished.id,
@@ -566,9 +572,12 @@ internal class LiteratureListServiceUnitTest : MockkBaseTest {
         val content = createResource(id = ThingId("R123"), classes = setOf(Classes.dataset))
 
         every { resourceRepository.findById(literatureList.id) } returns Optional.of(literatureList)
-        every { literatureListPublishedRepository.findById(literatureList.id) } returns Optional.of(
-            PublishedContentType(
-                id = literatureList.id,
+        every { literatureListSnapshotRepository.findByResourceId(literatureList.id) } returns Optional.of(
+            LiteratureListSnapshotV1(
+                id = SnapshotId("ABC"),
+                createdBy = ContributorId.UNKNOWN,
+                createdAt = OffsetDateTime.parse("2023-11-30T09:25:14.049085776+01:00"),
+                resourceId = literatureList.id,
                 rootId = ThingId("R456"),
                 subgraph = listOf(createStatement(`object` = content))
             )
@@ -580,7 +589,7 @@ internal class LiteratureListServiceUnitTest : MockkBaseTest {
         result.onRight { it shouldBe content }
 
         verify(exactly = 1) { resourceRepository.findById(literatureList.id) }
-        verify(exactly = 1) { literatureListPublishedRepository.findById(literatureList.id) }
+        verify(exactly = 1) { literatureListSnapshotRepository.findByResourceId(literatureList.id) }
         verify(exactly = 1) { statementRepository.fetchAsBundle(any(), any(), any()) }
     }
 
@@ -590,9 +599,12 @@ internal class LiteratureListServiceUnitTest : MockkBaseTest {
         val content = createResource(id = ThingId("R123"), classes = setOf(Classes.paper))
 
         every { resourceRepository.findById(literatureList.id) } returns Optional.of(literatureList)
-        every { literatureListPublishedRepository.findById(literatureList.id) } returns Optional.of(
-            PublishedContentType(
-                id = literatureList.id,
+        every { literatureListSnapshotRepository.findByResourceId(literatureList.id) } returns Optional.of(
+            LiteratureListSnapshotV1(
+                id = SnapshotId("ABC"),
+                createdBy = ContributorId.UNKNOWN,
+                createdAt = OffsetDateTime.parse("2023-11-30T09:25:14.049085776+01:00"),
+                resourceId = literatureList.id,
                 rootId = ThingId("R456"),
                 subgraph = listOf(createStatement(`object` = content))
             )
@@ -618,7 +630,7 @@ internal class LiteratureListServiceUnitTest : MockkBaseTest {
         }
 
         verify(exactly = 1) { resourceRepository.findById(literatureList.id) }
-        verify(exactly = 1) { literatureListPublishedRepository.findById(literatureList.id) }
+        verify(exactly = 1) { literatureListSnapshotRepository.findByResourceId(literatureList.id) }
         verify(exactly = 1) { statementRepository.fetchAsBundle(any(), any(), any()) }
     }
 
@@ -656,9 +668,12 @@ internal class LiteratureListServiceUnitTest : MockkBaseTest {
         val unrelatedContent = createResource(id = ThingId("R123"), classes = setOf(Classes.dataset))
 
         every { resourceRepository.findById(literatureList.id) } returns Optional.of(literatureList)
-        every { literatureListPublishedRepository.findById(literatureList.id) } returns Optional.of(
-            PublishedContentType(
-                id = literatureList.id,
+        every { literatureListSnapshotRepository.findByResourceId(literatureList.id) } returns Optional.of(
+            LiteratureListSnapshotV1(
+                id = SnapshotId("ABC"),
+                createdBy = ContributorId.UNKNOWN,
+                createdAt = OffsetDateTime.parse("2023-11-30T09:25:14.049085776+01:00"),
+                resourceId = literatureList.id,
                 rootId = ThingId("R456"),
                 subgraph = listOf()
             )
@@ -670,7 +685,7 @@ internal class LiteratureListServiceUnitTest : MockkBaseTest {
         }
 
         verify(exactly = 1) { resourceRepository.findById(literatureList.id) }
-        verify(exactly = 1) { literatureListPublishedRepository.findById(literatureList.id) }
+        verify(exactly = 1) { literatureListSnapshotRepository.findByResourceId(literatureList.id) }
         verify(exactly = 1) { statementRepository.fetchAsBundle(any(), any(), any()) }
     }
 
@@ -680,9 +695,12 @@ internal class LiteratureListServiceUnitTest : MockkBaseTest {
         val unknownContent = createResource(id = ThingId("R123"), classes = setOf(Classes.caption))
 
         every { resourceRepository.findById(literatureList.id) } returns Optional.of(literatureList)
-        every { literatureListPublishedRepository.findById(literatureList.id) } returns Optional.of(
-            PublishedContentType(
-                id = literatureList.id,
+        every { literatureListSnapshotRepository.findByResourceId(literatureList.id) } returns Optional.of(
+            LiteratureListSnapshotV1(
+                id = SnapshotId("ABC"),
+                createdBy = ContributorId.UNKNOWN,
+                createdAt = OffsetDateTime.parse("2023-11-30T09:25:14.049085776+01:00"),
+                resourceId = literatureList.id,
                 rootId = ThingId("R456"),
                 subgraph = listOf()
             )
@@ -694,7 +712,7 @@ internal class LiteratureListServiceUnitTest : MockkBaseTest {
         }
 
         verify(exactly = 1) { resourceRepository.findById(literatureList.id) }
-        verify(exactly = 1) { literatureListPublishedRepository.findById(literatureList.id) }
+        verify(exactly = 1) { literatureListSnapshotRepository.findByResourceId(literatureList.id) }
         verify(exactly = 1) { statementRepository.fetchAsBundle(any(), any(), any()) }
     }
 }

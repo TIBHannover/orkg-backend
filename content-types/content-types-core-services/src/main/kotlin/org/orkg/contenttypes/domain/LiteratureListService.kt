@@ -61,8 +61,8 @@ import org.orkg.contenttypes.domain.actions.literaturelists.sections.LiteratureL
 import org.orkg.contenttypes.domain.actions.literaturelists.sections.LiteratureListSectionUpdateValidator
 import org.orkg.contenttypes.domain.actions.literaturelists.sections.LiteratureListSectionUpdater
 import org.orkg.contenttypes.input.LiteratureListUseCases
-import org.orkg.contenttypes.output.LiteratureListPublishedRepository
 import org.orkg.contenttypes.output.LiteratureListRepository
+import org.orkg.contenttypes.output.LiteratureListSnapshotRepository
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
@@ -82,6 +82,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
+import java.time.Clock
 import java.time.OffsetDateTime
 import java.util.Optional
 
@@ -89,7 +90,8 @@ import java.util.Optional
 class LiteratureListService(
     private val resourceRepository: ResourceRepository,
     private val literatureListRepository: LiteratureListRepository,
-    private val literatureListPublishedRepository: LiteratureListPublishedRepository,
+    private val literatureListSnapshotRepository: LiteratureListSnapshotRepository,
+    private val snapshotIdGenerator: SnapshotIdGenerator,
     private val statementRepository: StatementRepository,
     private val observatoryRepository: ObservatoryRepository,
     private val organizationRepository: OrganizationRepository,
@@ -101,6 +103,7 @@ class LiteratureListService(
     private val listService: ListUseCases,
     private val listRepository: ListRepository,
     private val contributorRepository: ContributorRepository,
+    private val clock: Clock,
 ) : LiteratureListUseCases {
     override fun findById(id: ThingId): Optional<LiteratureList> =
         resourceRepository.findById(id)
@@ -227,7 +230,7 @@ class LiteratureListService(
             DescriptionValidator("changelog") { it.changelog },
             LiteratureListVersionCreator(resourceRepository, statementRepository, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService),
             LiteratureListChangelogCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
-            LiteratureListVersionArchiver(statementService, literatureListPublishedRepository),
+            LiteratureListVersionArchiver(statementService, literatureListSnapshotRepository, snapshotIdGenerator, clock),
             LiteratureListVersionHistoryUpdater(unsafeStatementUseCases, unsafeResourceUseCases)
         )
         return steps.execute(command, PublishLiteratureListState()).literatureListVersionId!!
@@ -237,7 +240,7 @@ class LiteratureListService(
         var root = resource.id
         val statements = when {
             Classes.literatureListPublished in resource.classes -> {
-                val published = literatureListPublishedRepository.findById(resource.id)
+                val published = literatureListSnapshotRepository.findByResourceId(resource.id)
                     .orElseThrow { LiteratureListNotFound(resource.id) }
                 root = published.rootId
                 val versions = statementRepository.fetchAsBundle(

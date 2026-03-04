@@ -10,22 +10,32 @@ import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
+import org.orkg.common.testing.fixtures.fixedClock
+import org.orkg.contenttypes.domain.SnapshotId
+import org.orkg.contenttypes.domain.SnapshotIdGenerator
 import org.orkg.contenttypes.domain.actions.PublishLiteratureListState
 import org.orkg.contenttypes.domain.testing.fixtures.createLiteratureList
 import org.orkg.contenttypes.input.testing.fixtures.publishLiteratureListCommand
-import org.orkg.contenttypes.output.LiteratureListPublishedRepository
+import org.orkg.contenttypes.output.LiteratureListSnapshotRepository
 import org.orkg.graph.domain.Bundle
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.fixtures.createStatement
 import org.springframework.data.domain.Sort
+import java.time.OffsetDateTime
 
 internal class LiteratureListVersionArchiverUnitTest : MockkBaseTest {
     private val statementService: StatementUseCases = mockk()
-    private val literatureListPublishedRepository: LiteratureListPublishedRepository = mockk()
+    private val literatureListSnapshotRepository: LiteratureListSnapshotRepository = mockk()
+    private val snapshotIdGenerator: SnapshotIdGenerator = mockk()
 
-    private val literatureListVersionArchiver = LiteratureListVersionArchiver(statementService, literatureListPublishedRepository)
+    private val literatureListVersionArchiver = LiteratureListVersionArchiver(
+        statementService,
+        literatureListSnapshotRepository,
+        snapshotIdGenerator,
+        fixedClock,
+    )
 
     @Test
     fun `Given a literature list publish command, it archives all statements about the literature list`() {
@@ -42,6 +52,7 @@ internal class LiteratureListVersionArchiverUnitTest : MockkBaseTest {
             blacklist = listOf(Classes.researchField),
             whitelist = emptyList()
         )
+        val snapshotId = SnapshotId("ABC")
 
         every {
             statementService.fetchAsBundle(
@@ -54,7 +65,8 @@ internal class LiteratureListVersionArchiverUnitTest : MockkBaseTest {
             rootId = literatureList.id,
             bundle = mutableListOf(createStatement())
         )
-        every { literatureListPublishedRepository.save(any()) } just runs
+        every { snapshotIdGenerator.nextIdentity() } returns snapshotId
+        every { literatureListSnapshotRepository.save(any()) } just runs
 
         literatureListVersionArchiver(command, state).asClue {
             it.literatureList shouldBe literatureList
@@ -69,10 +81,14 @@ internal class LiteratureListVersionArchiverUnitTest : MockkBaseTest {
                 sort = Sort.unsorted()
             )
         }
+        verify(exactly = 1) { snapshotIdGenerator.nextIdentity() }
         verify(exactly = 1) {
-            literatureListPublishedRepository.save(
+            literatureListSnapshotRepository.save(
                 withArg {
-                    it.id shouldBe state.literatureListVersionId!!
+                    it.id shouldBe snapshotId
+                    it.createdAt shouldBe OffsetDateTime.now(fixedClock)
+                    it.createdBy shouldBe command.contributorId
+                    it.resourceId shouldBe state.literatureListVersionId!!
                     it.rootId shouldBe command.id
                     it.subgraph shouldBe listOf(createStatement())
                 }

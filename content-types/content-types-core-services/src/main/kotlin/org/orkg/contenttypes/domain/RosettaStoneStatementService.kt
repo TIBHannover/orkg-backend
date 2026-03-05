@@ -71,7 +71,7 @@ class RosettaStoneStatementService(
     private val listService: ListUseCases,
     private val contributorRepository: ContributorRepository,
     private val classHierarchyRepository: ClassHierarchyRepository,
-    private val clock: Clock = Clock.systemDefaultZone(),
+    private val clock: Clock,
 ) : RosettaStoneStatementUseCases {
     override fun findByIdOrVersionId(id: ThingId): Optional<RosettaStoneStatement> =
         repository.findByIdOrVersionId(id)

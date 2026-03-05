@@ -18,6 +18,7 @@ import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.testing.annotations.Neo4jContainerUnitTest
+import org.orkg.testing.configuration.FixedClockConfig
 import org.springframework.beans.factory.annotation.Autowired
 
 @Neo4jContainerUnitTest(
@@ -32,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired
         GraphNeo4jConfiguration::class,
         ContentTypesNeo4jConfiguration::class,
         CypherQueryBuilderConfiguration::class,
+        FixedClockConfig::class,
     ],
 )
 internal class SpringDataNeo4jComparisonAuxiliaryAdapterContractTest(

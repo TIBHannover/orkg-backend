@@ -14,7 +14,7 @@ import java.time.OffsetDateTime
 class ComparisonPublicationInfoCreator(
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
     private val unsafeLiteralUseCases: UnsafeLiteralUseCases,
-    private val clock: Clock = Clock.systemDefaultZone(),
+    private val clock: Clock,
 ) : CreateComparisonAction {
     override fun invoke(command: CreateComparisonCommand, state: State): State {
         val comparisonId = state.comparisonId!!

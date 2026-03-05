@@ -83,6 +83,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
         comparisonRepository = comparisonRepository,
         comparisonTableUseCases = comparisonTableUseCases,
         comparisonTableRepository = comparisonTableRepository,
+        clock = fixedClock,
         comparisonPublishBaseUri = "https://orkg.org/comparison/"
     )
 

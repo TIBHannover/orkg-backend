@@ -46,7 +46,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
     private val neo4jRepository: Neo4jResourceRepository,
     private val neo4jClient: Neo4jClient,
     private val cypherQueryBuilderFactory: CypherQueryBuilderFactory,
-    private val clock: Clock = Clock.systemDefaultZone(),
+    private val clock: Clock,
 ) : RosettaStoneStatementRepository {
     override fun nextIdentity(): ThingId {
         // IDs could exist already by manual creation. We need to find the next available one.

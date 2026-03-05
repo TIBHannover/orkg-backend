@@ -25,7 +25,7 @@ class ObservatoryFilterService(
     private val observatoryRepository: ObservatoryRepository,
     private val predicateRepository: PredicateRepository,
     private val classRepository: ClassRepository,
-    private val clock: Clock = Clock.systemDefaultZone(),
+    private val clock: Clock,
 ) : ObservatoryFilterUseCases {
     override fun create(command: CreateObservatoryFilterUseCase.CreateCommand): ObservatoryFilterId {
         val observatory = observatoryRepository

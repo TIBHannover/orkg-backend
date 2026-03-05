@@ -30,7 +30,7 @@ class ListAdapter(
     private val predicateRepository: PredicateRepository,
     private val resourceRepository: ResourceRepository,
     private val statementRepository: StatementRepository,
-    private val clock: Clock = Clock.systemDefaultZone(),
+    private val clock: Clock,
 ) : ListRepository {
     override fun save(list: List, contributorId: ContributorId) {
         val listResource = Resource(

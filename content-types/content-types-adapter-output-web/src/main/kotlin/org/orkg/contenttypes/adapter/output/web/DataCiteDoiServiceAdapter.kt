@@ -45,7 +45,7 @@ class DataCiteDoiServiceAdapter(
     private val bodyPublisherFactory: (String) -> HttpRequest.BodyPublisher = HttpRequest.BodyPublishers::ofString,
     @param:Value("\${orkg.http.user-agent}")
     private val userAgent: String,
-    private val clock: Clock = Clock.systemDefaultZone(),
+    private val clock: Clock,
 ) : DoiService {
     private val logger = LoggerFactory.getLogger(this::class.java.name)
 

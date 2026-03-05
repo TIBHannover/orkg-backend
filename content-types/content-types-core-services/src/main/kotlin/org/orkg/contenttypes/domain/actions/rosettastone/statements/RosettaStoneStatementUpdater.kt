@@ -12,7 +12,7 @@ import java.time.OffsetDateTime
 class RosettaStoneStatementUpdater(
     private val rosettaStoneStatementRepository: RosettaStoneStatementRepository,
     private val thingRepository: ThingRepository,
-    private val clock: Clock = Clock.systemDefaultZone(),
+    private val clock: Clock,
 ) : UpdateRosettaStoneStatementAction {
     override fun invoke(command: UpdateRosettaStoneStatementCommand, state: State): State {
         val dynamicLabel = state.rosettaStoneTemplate!!.dynamicLabel

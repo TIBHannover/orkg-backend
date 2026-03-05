@@ -82,6 +82,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
+import java.time.Clock
 import java.time.OffsetDateTime
 import java.util.Optional
 
@@ -105,6 +106,7 @@ class ComparisonService(
     private val comparisonRepository: ComparisonRepository,
     private val comparisonTableUseCases: ComparisonTableUseCases,
     private val comparisonTableRepository: ComparisonTableRepository,
+    private val clock: Clock,
     @Value("\${orkg.publishing.base-url.comparison}")
     private val comparisonPublishBaseUri: String = "http://localhost/comparison/",
 ) : ComparisonUseCases,
@@ -211,7 +213,7 @@ class ComparisonService(
     override fun publish(command: PublishComparisonCommand): ThingId {
         val steps = listOf<Action<PublishComparisonCommand, PublishComparisonState>>(
             ComparisonPublishableValidator(this),
-            ComparisonVersionCreator(resourceRepository, statementRepository, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService),
+            ComparisonVersionCreator(resourceRepository, statementRepository, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService, clock),
             ComparisonVersionTableCreator(comparisonTableUseCases, comparisonTableRepository),
             ComparisonVersionHistoryUpdater(unsafeStatementUseCases, unsafeResourceUseCases),
             ComparisonVersionDoiPublisher(unsafeStatementUseCases, unsafeLiteralUseCases, comparisonRepository, doiService, comparisonPublishBaseUri)

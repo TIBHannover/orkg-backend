@@ -12,7 +12,7 @@ import java.util.UUID
 class InMemorySimCompThingRepositoryAdapter(
     private val objectMapper: ObjectMapper,
     private val idGenerator: () -> UUID = UUID::randomUUID,
-    private val clock: Clock = Clock.systemDefaultZone(),
+    private val clock: Clock,
 ) : SimCompThingRepository {
     private val entities: MutableMap<ThingType, MutableMap<ThingId, BaseThing>> = mutableMapOf()
 

@@ -12,7 +12,7 @@ import java.time.OffsetDateTime
 @TransactionalOnJPA
 class ImageService(
     private val repository: ImageRepository,
-    private val clock: Clock = Clock.systemDefaultZone(),
+    private val clock: Clock,
 ) : ImageUseCases {
     override fun create(command: CreateImageUseCase.CreateCommand): ImageId {
         if (command.mimeType.type != "image") {

@@ -12,6 +12,7 @@ import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
+import java.time.Clock
 
 class ComparisonVersionCreator(
     private val resourceRepository: ResourceRepository,
@@ -20,6 +21,7 @@ class ComparisonVersionCreator(
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
     private val unsafeLiteralUseCases: UnsafeLiteralUseCases,
     private val listService: ListUseCases,
+    private val clock: Clock,
 ) : PublishComparisonAction {
     override fun invoke(command: PublishComparisonCommand, state: State): State {
         val comparison = state.comparison!!
@@ -49,7 +51,7 @@ class ComparisonVersionCreator(
             ComparisonIsAnonymizedCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
             ComparisonContributionCreator(unsafeStatementUseCases),
             ComparisonVisualizationCreator(unsafeStatementUseCases),
-            ComparisonPublicationInfoCreator(unsafeStatementUseCases, unsafeLiteralUseCases)
+            ComparisonPublicationInfoCreator(unsafeStatementUseCases, unsafeLiteralUseCases, clock),
         )
         return state.copy(
             comparisonVersionId = steps.execute(

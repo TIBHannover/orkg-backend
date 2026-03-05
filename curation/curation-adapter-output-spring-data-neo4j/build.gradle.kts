@@ -13,7 +13,6 @@ testing {
                 runtimeOnly("org.springframework.boot:spring-boot-starter-test")
                 runtimeOnly("org.springframework.boot:spring-boot-starter-data-neo4j")
                 implementation("io.kotest:kotest-framework-engine")
-                implementation("org.springframework:spring-beans")
                 implementation("io.kotest:kotest-runner-junit5")
                 runtimeOnly("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-starter")
                 implementation(project(":common:neo4j-dsl"))

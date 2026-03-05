@@ -13,7 +13,6 @@ import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.testing.annotations.Neo4jContainerUnitTest
-import org.springframework.beans.factory.annotation.Autowired
 
 @Neo4jContainerUnitTest(
     classes = [
@@ -27,10 +26,10 @@ import org.springframework.beans.factory.annotation.Autowired
     ]
 )
 internal class SpringDataNeo4jResearchFieldHierarchyAdapterContractTest(
-    @Autowired private val springDataNeo4jResearchFieldHierarchyAdapter: ResearchFieldHierarchyRepository,
-    @Autowired private val springDataNeo4jStatementAdapter: StatementRepository,
-    @Autowired private val springDataNeo4jResourceAdapter: ResourceRepository,
-    @Autowired private val springDataNeo4jPredicateAdapter: PredicateRepository,
+    private val springDataNeo4jResearchFieldHierarchyAdapter: ResearchFieldHierarchyRepository,
+    private val springDataNeo4jStatementAdapter: StatementRepository,
+    private val springDataNeo4jResourceAdapter: ResourceRepository,
+    private val springDataNeo4jPredicateAdapter: PredicateRepository,
 ) : DescribeSpec({
         include(
             researchFieldHierarchyRepositoryContract(

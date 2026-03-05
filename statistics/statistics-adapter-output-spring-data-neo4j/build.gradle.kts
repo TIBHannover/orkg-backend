@@ -12,7 +12,6 @@ testing {
             dependencies {
                 runtimeOnly("org.springframework.boot:spring-boot-starter-test")
                 implementation("io.kotest:kotest-framework-engine")
-                implementation("org.springframework:spring-beans")
                 implementation("io.kotest:kotest-runner-junit5")
                 implementation(project(":graph:graph-adapter-output-spring-data-neo4j")) // for SDN adapters, TODO: refactor?
                 implementation(project(":graph:graph-ports-output"))

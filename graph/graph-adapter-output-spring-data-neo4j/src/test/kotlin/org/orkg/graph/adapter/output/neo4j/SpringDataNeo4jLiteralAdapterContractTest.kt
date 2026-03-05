@@ -15,7 +15,6 @@ import org.orkg.graph.output.LiteralRepository
 import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.literalRepositoryContract
 import org.orkg.testing.annotations.Neo4jContainerUnitTest
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.data.neo4j.core.fetchAs
 
@@ -27,8 +26,8 @@ import org.springframework.data.neo4j.core.fetchAs
     ]
 )
 internal class SpringDataNeo4jLiteralAdapterContractTests(
-    @Autowired private val springDataNeo4jLiteralAdapter: LiteralRepository,
-    @Autowired private val neo4jClient: Neo4jClient,
+    private val springDataNeo4jLiteralAdapter: LiteralRepository,
+    private val neo4jClient: Neo4jClient,
 ) : DescribeSpec({
         include(literalRepositoryContract(springDataNeo4jLiteralAdapter))
         include(neo4jLiteralRepositoryContract(springDataNeo4jLiteralAdapter, neo4jClient))

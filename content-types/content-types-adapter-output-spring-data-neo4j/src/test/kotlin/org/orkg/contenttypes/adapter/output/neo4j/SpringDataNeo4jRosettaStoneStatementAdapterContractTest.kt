@@ -19,7 +19,6 @@ import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.testing.annotations.Neo4jContainerUnitTest
 import org.orkg.testing.configuration.FixedClockConfig
-import org.springframework.beans.factory.annotation.Autowired
 
 @Neo4jContainerUnitTest(
     classes = [
@@ -37,12 +36,12 @@ import org.springframework.beans.factory.annotation.Autowired
     ]
 )
 internal class SpringDataNeo4jRosettaStoneStatementAdapterContractTest(
-    @Autowired private val springDataNeo4jRosettaStoneStatementAdapter: RosettaStoneStatementRepository,
-    @Autowired private val springDataNeo4jResourceAdapter: ResourceRepository,
-    @Autowired private val springDataNeo4jPredicateAdapter: PredicateRepository,
-    @Autowired private val springDataNeo4jClassAdapter: ClassRepository,
-    @Autowired private val springDataNeo4jLiteralAdapter: LiteralRepository,
-    @Autowired private val springDataNeo4jStatementAdapter: StatementRepository,
+    private val springDataNeo4jRosettaStoneStatementAdapter: RosettaStoneStatementRepository,
+    private val springDataNeo4jResourceAdapter: ResourceRepository,
+    private val springDataNeo4jPredicateAdapter: PredicateRepository,
+    private val springDataNeo4jClassAdapter: ClassRepository,
+    private val springDataNeo4jLiteralAdapter: LiteralRepository,
+    private val springDataNeo4jStatementAdapter: StatementRepository,
 ) : DescribeSpec({
         include(
             rosettaStoneStatementRepositoryContract(

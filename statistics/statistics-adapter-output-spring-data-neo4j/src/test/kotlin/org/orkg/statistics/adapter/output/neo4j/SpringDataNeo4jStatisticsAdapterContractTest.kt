@@ -17,7 +17,6 @@ import org.orkg.statistics.adapter.output.neo4j.configuration.StatisticsNeo4jCon
 import org.orkg.statistics.output.StatisticsRepository
 import org.orkg.statistics.testing.fixtures.statisticsRepositoryContract
 import org.orkg.testing.annotations.Neo4jContainerUnitTest
-import org.springframework.beans.factory.annotation.Autowired
 
 @Neo4jContainerUnitTest(
     classes = [
@@ -33,12 +32,12 @@ import org.springframework.beans.factory.annotation.Autowired
     ]
 )
 internal class SpringDataNeo4jStatisticsAdapterContractTest(
-    @Autowired private val springDataNeo4jStatisticsAdapter: StatisticsRepository,
-    @Autowired private val springDataNeo4jStatementAdapter: StatementRepository,
-    @Autowired private val springDataNeo4jClassAdapter: ClassRepository,
-    @Autowired private val springDataNeo4jLiteralAdapter: LiteralRepository,
-    @Autowired private val springDataNeo4jResourceAdapter: ResourceRepository,
-    @Autowired private val springDataNeo4jPredicateAdapter: PredicateRepository,
+    private val springDataNeo4jStatisticsAdapter: StatisticsRepository,
+    private val springDataNeo4jStatementAdapter: StatementRepository,
+    private val springDataNeo4jClassAdapter: ClassRepository,
+    private val springDataNeo4jLiteralAdapter: LiteralRepository,
+    private val springDataNeo4jResourceAdapter: ResourceRepository,
+    private val springDataNeo4jPredicateAdapter: PredicateRepository,
 ) : DescribeSpec({
         include(
             statisticsRepositoryContract(

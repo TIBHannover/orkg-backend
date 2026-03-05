@@ -10,7 +10,6 @@ import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.ThingRepository
 import org.orkg.graph.testing.fixtures.thingRepositoryContract
 import org.orkg.testing.annotations.Neo4jContainerUnitTest
-import org.springframework.beans.factory.annotation.Autowired
 
 @Neo4jContainerUnitTest(
     classes = [
@@ -24,11 +23,11 @@ import org.springframework.beans.factory.annotation.Autowired
     ]
 )
 internal class SpringDataNeo4jThingAdapterContractTest(
-    @Autowired private val springDataNeo4jThingAdapter: ThingRepository,
-    @Autowired private val springDataNeo4jClassAdapter: ClassRepository,
-    @Autowired private val springDataNeo4jResourceAdapter: ResourceRepository,
-    @Autowired private val springDataNeo4jPredicateAdapter: PredicateRepository,
-    @Autowired private val springDataNeo4jLiteralAdapter: LiteralRepository,
+    private val springDataNeo4jThingAdapter: ThingRepository,
+    private val springDataNeo4jClassAdapter: ClassRepository,
+    private val springDataNeo4jResourceAdapter: ResourceRepository,
+    private val springDataNeo4jPredicateAdapter: PredicateRepository,
+    private val springDataNeo4jLiteralAdapter: LiteralRepository,
 ) : DescribeSpec({
         include(
             thingRepositoryContract(

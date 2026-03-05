@@ -10,7 +10,6 @@ import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.classHierarchyRepositoryContract
 import org.orkg.graph.testing.fixtures.classRelationRepositoryContract
 import org.orkg.testing.annotations.Neo4jContainerUnitTest
-import org.springframework.beans.factory.annotation.Autowired
 
 @Neo4jContainerUnitTest(
     classes = [
@@ -22,10 +21,10 @@ import org.springframework.beans.factory.annotation.Autowired
     ]
 )
 internal class SpringDataNeo4jClassHierarchyAdapterContractTest(
-    @Autowired private val springDataNeo4jClassAdapter: ClassRepository,
-    @Autowired private val springDataNeo4jClassRelationAdapter: ClassRelationRepository,
-    @Autowired private val springDataNeo4jClassHierarchyAdapter: ClassHierarchyRepository,
-    @Autowired private val springDataNeo4jResourceAdapter: ResourceRepository,
+    private val springDataNeo4jClassAdapter: ClassRepository,
+    private val springDataNeo4jClassRelationAdapter: ClassRelationRepository,
+    private val springDataNeo4jClassHierarchyAdapter: ClassHierarchyRepository,
+    private val springDataNeo4jResourceAdapter: ResourceRepository,
 ) : DescribeSpec({
         include(
             classHierarchyRepositoryContract(

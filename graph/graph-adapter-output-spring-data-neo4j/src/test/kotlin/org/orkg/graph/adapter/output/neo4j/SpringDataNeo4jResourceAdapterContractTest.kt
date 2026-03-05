@@ -17,7 +17,6 @@ import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.resourceRepositoryContract
 import org.orkg.testing.annotations.Neo4jContainerUnitTest
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.data.neo4j.core.fetchAs
 
@@ -31,10 +30,10 @@ import org.springframework.data.neo4j.core.fetchAs
     ]
 )
 internal class SpringDataNeo4jResourceAdapterContractTests(
-    @Autowired private val springDataNeo4jResourceAdapter: ResourceRepository,
-    @Autowired private val springDataNeo4jClassAdapter: ClassRepository,
-    @Autowired private val springDataNeo4jClassRelationAdapter: ClassRelationRepository,
-    @Autowired private val neo4jClient: Neo4jClient,
+    private val springDataNeo4jResourceAdapter: ResourceRepository,
+    private val springDataNeo4jClassAdapter: ClassRepository,
+    private val springDataNeo4jClassRelationAdapter: ClassRelationRepository,
+    private val neo4jClient: Neo4jClient,
 ) : DescribeSpec({
         include(
             resourceRepositoryContract(

@@ -19,7 +19,6 @@ import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.predicateRepositoryContract
 import org.orkg.testing.annotations.Neo4jContainerUnitTest
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.data.neo4j.core.fetchAs
 
@@ -35,12 +34,12 @@ import org.springframework.data.neo4j.core.fetchAs
     ]
 )
 internal class SpringDataNeo4jPredicateAdapterContractTests(
-    @Autowired private val springDataNeo4jPredicateAdapter: PredicateRepository,
-    @Autowired private val springDataNeo4jStatementAdapter: StatementRepository,
-    @Autowired private val springDataNeo4jClassAdapter: ClassRepository,
-    @Autowired private val springDataNeo4jLiteralAdapter: LiteralRepository,
-    @Autowired private val springDataNeo4jResourceAdapter: ResourceRepository,
-    @Autowired private val neo4jClient: Neo4jClient,
+    private val springDataNeo4jPredicateAdapter: PredicateRepository,
+    private val springDataNeo4jStatementAdapter: StatementRepository,
+    private val springDataNeo4jClassAdapter: ClassRepository,
+    private val springDataNeo4jLiteralAdapter: LiteralRepository,
+    private val springDataNeo4jResourceAdapter: ResourceRepository,
+    private val neo4jClient: Neo4jClient,
 ) : DescribeSpec({
         include(
             predicateRepositoryContract(
